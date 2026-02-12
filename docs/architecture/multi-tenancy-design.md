@@ -298,19 +298,23 @@ USING (
 
 ### 4.5 Role Hierarchy
 
-The RLS policies reference the following user roles, listed in descending order of privilege:
+The RLS policies reference the following canonical system roles (7 roles, locked), listed in descending order of privilege:
 
 | Role | Description |
 |------|-------------|
-| `owner` | Company owner; full access including company settings and deletion |
-| `admin` | Administrator; full access including deletion |
-| `accounting` | Accounting staff |
-| `pm` | Project manager |
-| `supervisor` | Field supervisor |
-| `office` | Office staff |
-| `field` | Field worker; most restricted access |
+| `owner` | Org owner; full access including billing, subscription, company settings, and deletion |
+| `admin` | Administrator; full feature access including deletion. No billing/subscription access. |
+| `pm` | Project manager; manages assigned projects, budgets, invoices, vendors |
+| `superintendent` | Field supervisor; approves daily logs, manages field workers, assigned projects only |
+| `office` | Office staff; accounting, selections, scheduling, documents |
+| `field` | Field worker; daily logs, photos, time entries, assigned tasks only |
+| `read_only` | Observer; view-only access to assigned projects, no create/edit/delete |
 
-Roles are stored in `users.role` and embedded in the JWT under `user_metadata.role`.
+Roles are stored in `user_tenant_memberships.role_id` (referencing `roles` table) and embedded in the JWT under `user_metadata.role`.
+
+**Custom roles:** Builders can create additional roles that inherit from a system role and add/remove specific permissions. Custom roles are scoped to `roles.builder_id`. See `docs/modules/01-auth-and-access.md` for full permission model.
+
+**Permissions mode:** Tenant-level setting `permissions_mode: 'open' | 'standard' | 'strict'`. In `open` mode (v1 default), all internal users see everything regardless of role. RLS still enforces tenant isolation.
 
 ---
 

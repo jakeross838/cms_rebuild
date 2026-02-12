@@ -8,6 +8,110 @@ This document outlines how AI is woven throughout the entire construction manage
 
 ---
 
+## 0. Unified AI Processing Layer — MANDATORY ARCHITECTURE RULE
+
+**Every piece of data that enters this system — regardless of source (email, PDF, photo, manual entry, API) — MUST pass through an AI processing step that extracts and normalizes it into a consistent, structured output before it's stored or used anywhere.**
+
+### How It Works
+
+```
+┌─────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
+│   INPUT      │     │  AI PROCESSING LAYER │     │  STRUCTURED OUTPUT  │
+│              │────▶│                      │────▶│                     │
+│ • PDF        │     │ • Classify document  │     │ • Consistent schema │
+│ • Email      │     │ • Extract fields     │     │ • Confidence scores │
+│ • Photo      │     │ • Normalize data     │     │ • Validated refs    │
+│ • Manual     │     │ • Match references   │     │ • Ready for storage │
+│ • API        │     │ • Score confidence   │     │                     │
+└─────────────┘     └──────────────────────┘     └─────────────────────┘
+                                                          │
+                                                          ▼
+                                                 ┌─────────────────────┐
+                                                 │  DOWNSTREAM SYSTEM  │
+                                                 │                     │
+                                                 │ • Dashboards        │
+                                                 │ • Reports           │
+                                                 │ • Pay apps          │
+                                                 │ • Cost tracking     │
+                                                 │ • Alerts            │
+                                                 │ • Approvals         │
+                                                 └─────────────────────┘
+```
+
+### The Rule
+
+> **Never build a feature that consumes raw/unprocessed input directly. Always go through the AI processing layer first. If a new document type comes in and we don't have a schema for it yet, define one before building features around it.**
+
+### Why This Matters
+
+1. **One source of truth** — data is structured the same way regardless of how it arrived
+2. **Reusable everywhere** — dashboards, pay apps, cost tracking, and reporting all pull from the same normalized data
+3. **Scalable** — adding a new document type = define its output schema + AI extraction rules. No downstream changes.
+4. **Clean** — no manual parsing or inconsistent formats breaking downstream features
+5. **Learnable** — corrections flow back to improve future extractions for that builder
+
+### Example — Invoice
+
+```
+Input: Raw invoice PDF (emailed, uploaded, or forwarded)
+
+AI Processing Layer extracts → {
+  vendor_name,           // matched to vendors table
+  invoice_number,        // deduplicated
+  amount,                // parsed from any format
+  date,                  // normalized to ISO 8601
+  po_number,             // matched to purchase_orders table
+  line_items[],          // each with description, quantity, unit_price, amount
+  job_reference,         // matched to jobs table (6-strategy matching)
+  cost_code_suggestions, // AI-suggested cost code per line item
+  attached_documents,    // detected PO, lien waiver, COI references
+  confidence_scores: {   // per-field confidence
+    vendor: 0.97,
+    amount: 0.99,
+    job: 0.85,
+    cost_codes: 0.72
+  }
+}
+
+Routing:
+  confidence >= 0.95 → auto-approve, store structured data
+  confidence >= 0.80 → human review queue with pre-filled fields
+  confidence >= 0.70 → needs attention, flagged fields highlighted
+  confidence < 0.50  → rejected, manual entry required
+```
+
+### Defined Document Type Schemas
+
+Each document type has a defined output schema. See `docs/architecture/document-intelligence.md` for full field specifications:
+
+| Document Type | Output Schema Defined | Extraction Priority |
+|---|---|---|
+| Vendor Invoice | Yes — 15+ fields | Phase 1 (proven in v1) |
+| Bid / Quote | Yes | Phase 2 |
+| AIA Pay App (G702/G703) | Yes | Phase 2 |
+| Lien Waiver | Yes | Phase 2 |
+| Certificate of Insurance (COI) | Yes | Phase 2 |
+| Construction Plans (PDF/DWG) | Yes | Phase 3 |
+| Daily Log (voice/text) | Yes | Phase 2 |
+| Photo (auto-tag) | Yes | Phase 2 |
+| Permit | Yes | Phase 3 |
+| Contract / Change Order | Yes | Phase 2 |
+
+### Adding a New Document Type
+
+When a new document type needs to enter the system:
+
+1. **Define the output schema** — what structured fields should the AI extract?
+2. **Add extraction rules** to the AI processing layer — prompts, validation, matching logic
+3. **Define confidence thresholds** — what confidence triggers auto-approve vs human review?
+4. **Create the review UI** — pre-filled form for human verification
+5. **Connect downstream** — only now build features that consume the structured data
+6. **Implement learning** — corrections feed back to improve future extractions
+
+**Never skip to step 5.** The AI layer comes first.
+
+---
+
 ## 1. AI Integration Map
 
 ```

@@ -116,6 +116,9 @@ describe('[Feature] Plan Adherence', () => {
 - **Job context detection** via `usePathname()` + `useParams()`
 - **Skeleton mode** is a visual prototype — no real data, mock data only
 - **Layouts nest:** (skeleton)/layout.tsx → skeleton/layout.tsx → jobs/[id]/layout.tsx
+- **Unified AI Processing Layer** — ALL data entering the system (PDF, email, photo, manual entry, API) MUST pass through AI extraction/normalization before storage or downstream use. See `docs/architecture/ai-engine-design.md` Section 0 and `docs/architecture/unified-data-outputs.md` for every page's expected structured data.
+- **7 canonical roles** — `owner > admin > pm > superintendent > office > field > read_only`. Custom roles inherit from these. See `docs/modules/01-auth-and-access.md`.
+- **Permissions mode** — `open` (v1 default, everyone sees everything) → `standard` → `strict`. Infrastructure built from day 1.
 
 ## Do NOT
 
@@ -126,3 +129,5 @@ describe('[Feature] Plan Adherence', () => {
 - Create new files when editing an existing one would work
 - Add error handling for impossible scenarios
 - Over-abstract — three similar lines > a premature utility function
+- Build features that consume raw/unprocessed input directly — always go through the AI processing layer first
+- Add a new document type without defining its output schema and extraction rules first

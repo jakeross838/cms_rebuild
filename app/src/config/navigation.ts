@@ -12,6 +12,8 @@ import {
   FileText,
   FolderOpen,
   ArrowLeft,
+  Home,
+  BarChart3,
 } from 'lucide-react'
 
 export interface NavSubItem {
@@ -50,6 +52,11 @@ export const companyNav: NavItem[] = [
     label: 'Jobs',
     icon: Briefcase,
     href: '/skeleton/jobs',
+  },
+  {
+    label: 'Reports',
+    icon: BarChart3,
+    href: '/skeleton/reports',
   },
 ]
 
@@ -137,6 +144,11 @@ export const jobNav: NavItem[] = [
     icon: LayoutDashboard,
     href: '', // resolved to /skeleton/jobs/[id]
   },
+  {
+    label: 'Property',
+    icon: Home,
+    href: '/property', // resolved to /skeleton/jobs/[id]/property
+  },
 ]
 
 // Job lifecycle phases
@@ -189,5 +201,10 @@ export const jobPhaseNav: NavItem[] = [
       { name: 'Punch List', href: '/punch-list', description: 'Final punch tracking' },
       { name: 'Warranties', href: '/warranties', description: 'Warranty tracking' },
     ],
+  },
+  {
+    label: 'Reports',
+    icon: BarChart3,
+    href: '/reports',
   },
 ]

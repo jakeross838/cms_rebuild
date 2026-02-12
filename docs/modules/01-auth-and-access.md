@@ -2,13 +2,66 @@
 
 **Phase:** 1 - Foundation
 **Status:** TODO
-**Last Updated:** 2026-02-11
+**Last Updated:** 2026-02-12
+
+---
+
+## Decisions Log
+
+Decisions made 2026-02-12 after competitive research (Buildertrend) and architecture review:
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Canonical internal roles | 7 system roles: owner, admin, pm, superintendent, office, field, read-only | Covers full construction org chart. Superintendent/field split reflects real hierarchy. |
+| Custom roles | Builders can create unlimited custom roles inheriting from any system role | Matches Buildertrend capability, but we add per-user overrides (their #1 pain point) |
+| Default permissions mode | `open` — everyone sees everything | Small builders (1-5 people) don't want permissions blocking them on day 1 |
+| External users (v1) | Vendor + Client only | Lender, architect, designer, inspector, agent deferred to Phase 2+ |
+| Project-level role overrides | Table built, not enforced in v1 | Infrastructure ready for when builders hit 10+ active jobs |
+| Job status access | Roles can be restricted by job phase (pre_construction, active, warranty, closed) | Adopted from Buildertrend — proven pattern in construction |
+| Permission Wizard | Guided setup when adding users/vendors to a job | Adopted from Buildertrend — better UX than raw permissions grid |
+| "Preview as" feature | Builder can see exactly what a client/vendor sees | Adopted from Buildertrend — essential for trust |
+| Separate portals | Vendors and clients get scoped portal views, not the full app | Cleaner UX, prevents accidental data exposure |
+| Vendor access flexibility | Builder-configurable per vendor (unlike Buildertrend's fixed lockdown) | Buildertrend's #2 pain point — trusted subs can't be elevated |
+| Per-user permission overrides | Supported via project_user_roles | Buildertrend's #1 pain point — changing a role affects everyone |
+
+### Competitive Advantages Over Buildertrend
+
+1. **Per-user, per-project role overrides** — BT forces you to create a new role for one person's exception
+2. **Configurable vendor access** — BT locks all subs to a fixed permission set; we let builders elevate trusted vendors
+3. **`resource:action:scope` model** — more granular than BT's View/Add/Edit/Delete grid
+4. **Open access mode** — small builders skip all permissions complexity until they need it
+5. **Field-level permissions** — BT can't hide specific fields (e.g., budget line items visible but totals hidden)
+
+### What We Adopted From Buildertrend
+
+1. **Permission Wizard** — step-by-step guided setup when adding someone to a job
+2. **Job status-based access** — roles restricted by job phase (Pre-Sale, Active, Warranty, Closed)
+3. **"Preview as" button** — builder sees exactly what a client/vendor sees
+4. **Separate portals** — subs and clients get scoped views, not the full app with hidden features
+5. **Org Owner / Admin split** — billing/subscription access separated from feature access
+
+### Deferred to Phase 2+
+
+| Feature | Gap IDs | Reason |
+|---------|---------|--------|
+| Kiosk/shared device mode | GAP-216 | Complex auth flow, not needed for launch |
+| SSO (Google, Azure AD, Okta) | GAP-221 | Enterprise feature, email/password sufficient for v1 |
+| MFA enforcement | GAP-222 | Available via Supabase, but not enforced at tenant level yet |
+| IP restrictions | GAP-220 | No small builder needs this |
+| API key management | GAP-225 | Needed when integrations are built |
+| Guest/link-based access | GAP-219 | Nice-to-have, not critical |
+| Client delegation | GAP-233 | One level max when implemented; defer entirely for now |
+| Lender portal | GAP-234 | Phase 2 external user type |
+| Architect/engineer portal | GAP-229 | Phase 2 external user type |
+| Designer access | GAP-230 | Phase 2 external user type |
+| Inspector access | GAP-235 | Phase 2 external user type |
+| Real estate agent access | GAP-231 | Phase 2 external user type |
 
 ---
 
 ## Overview
 
-This module provides the complete authentication, authorization, and access control layer for the platform. Every request is scoped to a `builder_id` (tenant), ensuring absolute data isolation. The module supports internal users (builder employees), external users (vendors, clients, designers, lenders), and platform administrators. It must handle everything from a one-person shop where the owner sees everything, to a 50-person operation with granular per-project, per-field permissions.
+This module provides the complete authentication, authorization, and access control layer for the platform. Every request is scoped to a `company_id` (tenant), ensuring absolute data isolation. The module supports internal users (builder employees), external users (vendors, clients, designers, lenders), and platform administrators. It must handle everything from a one-person shop where the owner sees everything, to a 50-person operation with granular per-project, per-field permissions.
 
 This is the first module that must be built because every other module depends on it for identity, tenant context, and permission checks.
 
@@ -102,68 +155,163 @@ This is the first module that must be built because every other module depends o
 
 ### 2. Role Hierarchy & Permissions Engine
 
-**Default roles (GAP-213, GAP-214):**
+**Canonical system roles (GAP-213, GAP-214) — 7 roles, locked, cannot be deleted:**
 
 ```
-Platform Admin (internal only)
+Platform Admin (internal only — RossOS staff)
   |
-Builder Owner
+Owner (org owner — billing, subscription, company deletion)
   |
-Builder Admin
+Admin (full feature access — no billing/subscription)
   |
-Project Manager
+Project Manager (PM)
   |
-Field Superintendent
+Superintendent (field leadership — approves daily logs, manages field workers)
   |
-Office Staff
+Office (office staff — accounting, selections, scheduling)
   |
-Read-Only / Observer
+Field (field workers — daily logs, photos, time entries, assigned tasks)
+  |
+Read-Only (observer — view only, no create/edit/delete)
 ```
 
-**Custom roles (GAP-211):** Builders can create unlimited custom roles. Each role is a named collection of permissions. Custom roles can inherit from a base role and add/remove specific permissions.
+**Key distinction (adopted from Buildertrend June 2025 split):** Owner has billing/subscription access. Admin has full feature access but cannot manage billing. This prevents accidental subscription changes.
+
+**Job status access per role:** Each role can be restricted to specific job phases. This controls which jobs appear in their views.
+
+| Role | Pre-Construction | Active | Warranty | Closed |
+|---|---|---|---|---|
+| Owner | Y | Y | Y | Y |
+| Admin | Y | Y | Y | Y |
+| PM | Y | Y | Y | configurable |
+| Superintendent | N | Y | Y | N |
+| Office | Y | Y | Y | Y |
+| Field | N | Y | N | N |
+| Read-Only | configurable | configurable | configurable | configurable |
+
+**Custom roles (GAP-211):** Builders can create unlimited custom roles. Each custom role:
+- Has a name and description
+- Inherits from a base system role (gets all its permissions)
+- Can add specific permissions beyond the base role
+- Can remove specific permissions from the base role
+- Changes to a custom role affect all users assigned to it
+- Examples: "Selection Coordinator" (inherits office + adds selections:approve:all), "Assistant PM" (inherits pm - removes budgets:approve:all), "Warranty Manager" (inherits office + adds warranty:*:all)
 
 **Permission model (GAP-224):**
 - Permissions are defined as `resource:action:scope` triples
-- Resources: projects, budgets, invoices, change_orders, schedules, documents, contacts, selections, daily_logs, reports, settings
+- Resources: projects, budgets, invoices, change_orders, schedules, documents, contacts, selections, daily_logs, reports, settings, warranties, time_entries, photos
 - Actions: create, read, update, delete, approve, export
 - Scope: all, own, assigned, none
 - Field-level overrides: specific fields can be hidden/read-only per role (e.g., budget line items hidden but total visible)
 
-**Permissions matrix example:**
+**Permissions matrix (system role defaults):**
 
-| Permission | Owner | Admin | PM | Field | Office | Read-Only |
-|---|---|---|---|---|---|---|
-| projects:read:all | Y | Y | Y | assigned | assigned | assigned |
-| budgets:read:all | Y | Y | Y | N | Y | N |
-| budgets:read:totals_only | Y | Y | Y | Y | Y | Y |
-| invoices:approve:all | Y | Y | threshold | N | N | N |
-| change_orders:create | Y | Y | Y | N | N | N |
-| settings:update | Y | Y | N | N | N | N |
+| Permission | Owner | Admin | PM | Super | Office | Field | Read-Only |
+|---|---|---|---|---|---|---|---|
+| projects:read:all | Y | Y | Y | assigned | assigned | assigned | assigned |
+| projects:create | Y | Y | Y | N | N | N | N |
+| projects:delete | Y | Y | N | N | N | N | N |
+| budgets:read:all | Y | Y | Y | N | Y | N | N |
+| budgets:read:totals_only | Y | Y | Y | Y | Y | Y | Y |
+| invoices:read:all | Y | Y | assigned | N | Y | N | N |
+| invoices:approve:all | Y | Y | threshold | N | N | N | N |
+| change_orders:create | Y | Y | Y | N | N | N | N |
+| change_orders:approve | Y | Y | threshold | N | N | N | N |
+| daily_logs:create | Y | Y | Y | Y | N | Y | N |
+| daily_logs:read:all | Y | Y | Y | assigned | Y | own | N |
+| photos:create | Y | Y | Y | Y | N | Y | N |
+| schedules:update | Y | Y | Y | N | Y | N | N |
+| selections:update | Y | Y | Y | N | Y | N | N |
+| time_entries:create | Y | Y | Y | Y | N | Y | N |
+| time_entries:read:all | Y | Y | assigned | assigned | Y | own | N |
+| documents:read:all | Y | Y | Y | assigned | Y | assigned | assigned |
+| reports:read:all | Y | Y | Y | N | Y | N | N |
+| settings:update | Y | Y | N | N | N | N | N |
+| billing:manage | Y | N | N | N | N | N | N |
 
-**Project-level overrides (GAP-212):** A user's role can be overridden per project. User X is PM on Project A but read-only on Project B. Stored in a `project_user_roles` junction table.
+**Project-level overrides (GAP-212):** A user's company-wide role can be overridden per project. User X is PM on Project A but read-only on Project B. Stored in a `project_user_roles` junction table. **v1: table exists but not enforced. Company-wide role applies everywhere.**
 
-**"Open access" mode (GAP-214):** A tenant-level setting `permissions_mode: 'open' | 'standard' | 'strict'`. In "open" mode, all authenticated users see everything. Permissions infrastructure still exists so switching to "standard" later is seamless.
+**"Open access" mode (GAP-214):** A tenant-level setting `permissions_mode: 'open' | 'standard' | 'strict'`.
+- **open** (v1 default): All authenticated internal users see everything. No permission checks on features. Simplest mode for small builders.
+- **standard**: Role-based permissions enforced as described in the matrix above. Builder flips this on when they're ready.
+- **strict**: Standard + field-level overrides + approval chains enforced. For larger operations.
+
+Permissions infrastructure is built from day 1 so switching from `open` to `standard` is a config toggle, not a code change.
+
+**Permission resolution order:**
+1. Check `permissions_mode` — if `open`, allow everything for internal users
+2. Check project-level role override (`project_user_roles`) — most specific wins
+3. Fall back to company-wide role (`user_tenant_memberships.role_id`)
+4. Resolve custom role: start with inherited permissions, apply additions, apply removals
+5. Check field-level overrides if in `strict` mode
+
+**UI modes for role management:**
+- **Simple mode**: Builder picks from the 7 system roles, assigns to users. Done.
+- **Advanced mode**: Builder sees a permissions matrix (checkbox grid: View/Add/Edit/Delete per feature area), can create/name custom roles. Copies from existing role as a starting point.
 
 ### 3. External User Access (GAP-226 through GAP-235)
 
-**Cross-tenant identity (GAP-002, GAP-226):** A single email can be associated with accounts under multiple builders. The `users` table lives at the platform level (not tenant-scoped). A `user_tenant_memberships` junction table maps users to tenants with roles.
+**Cross-tenant identity (GAP-002, GAP-226):** A single email can be associated with accounts under multiple builders. The `platform_users` table lives at the platform level (not tenant-scoped). A `user_tenant_memberships` junction table maps users to tenants with roles. When a user with multiple memberships logs in, they see a tenant switcher (like Slack workspaces).
 
-**External user types and their default access patterns:**
+#### v1 External Users (Phase 1)
 
-| User Type | Default Access | Configurable By Builder (GAP-228) |
+Only **Vendor** and **Client** external users are implemented in v1.
+
+**Vendor Portal (v1):**
+Unlike Buildertrend's fixed lockdown, vendor access is **builder-configurable per vendor**. When adding a vendor to a job, a **Permission Wizard** guides the builder through:
+
+| Feature | Default | Builder Can Toggle |
 |---|---|---|
-| Vendor - Office (GAP-227) | Invoices, POs, schedule (their tasks), documents (their scope) | Yes, per vendor |
-| Vendor - Field (GAP-227) | Schedule (their tasks), daily logs (their entries), photos | Yes, per vendor |
-| Architect/Engineer (GAP-229) | Plans, RFIs, submittals, specs. NO financial data | Yes |
-| Interior Designer (GAP-230) | Selections, allowance budgets for their scope | Yes |
-| Client - Construction (GAP-232) | Progress photos, schedule, selections, budget summary, change orders, draw schedule | Yes |
-| Client - Warranty (GAP-232) | Warranty requests, service history, home manual | Yes |
-| Client Representative (GAP-233) | Delegated by client, scoped to what client grants | Client-controlled |
-| Lender (GAP-234) | Draw requests, lien waivers, progress photos, inspection reports (read-only) | Yes |
-| Real Estate Agent (GAP-231) | Completion timeline, feature list, photos (read-only) | Yes |
-| Inspector (GAP-235) | Inspection-related documents, temporary access (auto-expires) | Yes |
+| Schedule (their tasks only) | ON | Yes — can expand to all tasks |
+| Schedule (all tasks) | OFF | Yes |
+| Daily logs (their entries) | ON | Yes |
+| Daily logs (all entries) | OFF | Yes |
+| Documents (their scope) | ON | Yes — can expand to all docs |
+| Photos | ON | Yes |
+| Invoices (their own) | ON | Yes |
+| POs (their own) | ON | Yes |
+| Change orders (their scope) | OFF | Yes |
+| RFIs (tagged only) | ON | Yes |
+| Internal costs/markup/pricing | OFF | **No — never visible to vendors** |
 
-**Guest/link-based access (GAP-219):** Generate time-limited, scope-limited shareable links. No account required. Tracked via anonymous session ID. Used for one-off document sharing (architect views RFI log).
+**Key difference from Buildertrend:** A trusted vendor (e.g., GC's go-to framer who acts like staff) can be given near-internal-user access. The builder controls this, not the platform.
+
+**Client Portal (v1):**
+Per-job feature toggles, configured by the builder. Matches Buildertrend's approach with additions:
+
+| Feature | Default | Builder Can Toggle |
+|---|---|---|
+| Schedule | ON | Yes — can set time horizon (2 weeks, 1 month, all) |
+| Budget summary (totals only) | ON | Yes |
+| Budget details (line items) | OFF | Yes |
+| Invoices | OFF | Yes |
+| Daily logs | ON | Yes |
+| Photos | ON | Yes |
+| Selections | ON | Yes — can allow approve/reject |
+| Change orders | ON | Yes — can allow approve/reject |
+| Warranty requests | ON (warranty phase) | Yes |
+| Documents | ON | Yes |
+| Draw schedule | OFF | Yes |
+
+**"Preview as" button:** Builder can click "Preview as [Client Name]" to see exactly what the client sees. Essential for trust and debugging access issues.
+
+**Client Guest Access:** Clients can invite guests (family, friends) who only see photos + schedule. No financials, no approvals.
+
+#### Phase 2+ External Users (deferred)
+
+Full external user type table preserved for future implementation:
+
+| User Type | Default Access | Phase |
+|---|---|---|
+| Architect/Engineer (GAP-229) | Plans, RFIs, submittals, specs. NO financial data | Phase 2 |
+| Interior Designer (GAP-230) | Selections, allowance budgets for their scope | Phase 2 |
+| Client - Warranty (GAP-232) | Warranty requests, service history, home manual | Phase 2 |
+| Client Representative (GAP-233) | Delegated by client, one level max | Phase 2 |
+| Lender (GAP-234) | Draw requests, lien waivers, progress photos (read-only) | Phase 2 |
+| Real Estate Agent (GAP-231) | Completion timeline, feature list, photos (read-only) | Phase 3 |
+| Inspector (GAP-235) | Inspection-related documents, temporary auto-expiring access | Phase 3 |
+
+**Guest/link-based access (GAP-219):** Deferred to Phase 2. Generate time-limited, scope-limited shareable links. No account required. Tracked via anonymous session ID.
 
 ### 4. SSO & MFA (GAP-221, GAP-222)
 

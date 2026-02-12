@@ -38,7 +38,7 @@ export interface Database {
           company_id: string
           email: string
           name: string
-          role: 'owner' | 'admin' | 'pm' | 'accountant' | 'field'
+          role: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
           phone: string | null
           avatar_url: string | null
           is_active: boolean
@@ -49,7 +49,7 @@ export interface Database {
           company_id: string
           email: string
           name: string
-          role?: 'owner' | 'admin' | 'pm' | 'accountant' | 'field'
+          role?: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
           phone?: string | null
           avatar_url?: string | null
           is_active?: boolean
@@ -60,7 +60,7 @@ export interface Database {
           company_id?: string
           email?: string
           name?: string
-          role?: 'owner' | 'admin' | 'pm' | 'accountant' | 'field'
+          role?: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
           phone?: string | null
           avatar_url?: string | null
           is_active?: boolean
@@ -314,7 +314,7 @@ export interface Database {
     }
     Enums: {
       job_status: 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
-      user_role: 'owner' | 'admin' | 'pm' | 'accountant' | 'field'
+      user_role: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
       contract_type: 'fixed_price' | 'cost_plus' | 'time_materials'
     }
   }
