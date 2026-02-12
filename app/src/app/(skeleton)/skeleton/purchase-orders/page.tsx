@@ -75,12 +75,6 @@ export default function PurchaseOrdersSkeleton() {
         { name: 'notes', type: 'text', description: 'Internal notes' },
         { name: 'vendor_notes', type: 'text', description: 'Notes visible to vendor' },
       ]}
-      lineItemFields={[
-        { name: 'selection_id', type: 'uuid', description: 'FK to selections_catalog - what product/material' },
-        { name: 'quantity', type: 'decimal', description: 'Quantity ordered' },
-        { name: 'unit_price', type: 'decimal', description: 'Price per unit (from selection or overridden)' },
-        { name: 'price_variance', type: 'decimal', description: 'Difference from catalog price' },
-      ]}
       aiFeatures={[
         {
           name: 'Vendor Selection',
