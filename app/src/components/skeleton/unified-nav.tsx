@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   ChevronDown,
@@ -152,11 +152,11 @@ function NavItemList({ items, jobBase }: { items: NavItem[]; jobBase?: string })
 
 export function UnifiedNav() {
   const pathname = usePathname()
-  const params = useParams()
 
-  const jobId = params.id as string | undefined
-  const isJobContext =
-    !!jobId && pathname.startsWith(`/skeleton/jobs/${jobId}`)
+  // Parse job ID from pathname since useParams may not work in parent layouts
+  const jobIdMatch = pathname.match(/\/skeleton\/jobs\/([^\/]+)/)
+  const jobId = jobIdMatch ? jobIdMatch[1] : undefined
+  const isJobContext = !!jobId && jobId !== 'page.tsx'
 
   const jobBase = jobId ? `/skeleton/jobs/${jobId}` : undefined
 
