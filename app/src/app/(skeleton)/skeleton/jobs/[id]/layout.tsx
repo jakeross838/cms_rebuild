@@ -1,4 +1,4 @@
-import { JobNav } from '@/components/skeleton/job-nav'
+import { JobContextBar } from '@/components/skeleton/job-context-bar'
 
 export default function JobLayout({
   children,
@@ -6,11 +6,9 @@ export default function JobLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-3.5rem)]">
-      {/* Job Navigation */}
-      <JobNav />
+    <div className="flex flex-col">
+      <JobContextBar />
 
-      {/* Job Page content */}
       <div className="flex-1 p-6">
         {children}
       </div>

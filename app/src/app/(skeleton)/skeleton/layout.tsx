@@ -1,4 +1,5 @@
-import { CompanyNav } from '@/components/skeleton/company-nav'
+import { UnifiedNav } from '@/components/skeleton/unified-nav'
+import { SkeletonJobFilter } from '@/components/skeleton/skeleton-job-filter'
 
 export const metadata = {
   title: 'RossOS - Skeleton Preview',
@@ -12,13 +13,15 @@ export default function SkeletonLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Company Navigation */}
-      <CompanyNav />
+      <UnifiedNav />
 
-      {/* Page content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <div className="flex flex-1 overflow-hidden">
+        <SkeletonJobFilter />
+
+        <main className="flex-1 overflow-y-auto p-6">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
