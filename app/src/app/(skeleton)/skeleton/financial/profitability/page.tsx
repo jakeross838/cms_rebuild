@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { ProfitabilityPreview } from '@/components/skeleton/previews/profitability-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const profitabilityWorkflow = ['Select Job', 'View Margins', 'Analyze Variances', 'Identify Patterns', 'Apply Learnings']
 
 export default function ProfitabilityPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <ProfitabilityPreview /> : <PageSpec
       title="Job Profitability"
       phase="Phase 1 - Financial Planning"
       planFile="views/financial/PROFITABILITY.md"
       description="Analyze profit margins across all jobs. Compare estimated vs actual costs, identify margin erosion, and understand what drives profitability. Learn from every project to improve future estimates."
-      workflow={['Select Job', 'View Margins', 'Analyze Variances', 'Identify Patterns', 'Apply Learnings']}
+      workflow={profitabilityWorkflow}
       features={[
         'Job-by-job profitability',
         'Gross margin analysis',
@@ -70,28 +86,28 @@ export default function ProfitabilityPage() {
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Job Profitability                               Avg Margin: 17.5%   │
 ├─────────────────────────────────────────────────────────────────────┤
-│ View: [All Jobs] [Active] [Completed]    Sort: [Margin ▾]          │
+│ View: [All Jobs] [Active] [Completed]    Sort: [Margin]            │
 ├─────────────────────────────────────────────────────────────────────┤
 │ ACTIVE JOBS SUMMARY                                                 │
 │ ┌────────────────────────────────────────────────────────────────┐  │
 │ │ Job                    Contract    Est Cost   Act Cost   Margin│  │
 │ │ ─────────────────────────────────────────────────────────────── │  │
 │ │ Smith Residence        $2.4M       $1.97M     $985K      14.2% │  │
-│ │                        ⚠ Margin below target (was 18%)         │  │
+│ │                        Margin below target (was 18%)           │  │
 │ │ Johnson Beach House    $1.8M       $1.47M     $420K      18.5% │  │
-│ │                        ✓ On track                               │  │
+│ │                        On track                                │  │
 │ │ Williams Remodel       $450K       $360K      $290K      19.8% │  │
-│ │                        ✓ Above target                           │  │
+│ │                        Above target                            │  │
 │ └────────────────────────────────────────────────────────────────┘  │
 │                                                                     │
 │ SMITH RESIDENCE - VARIANCE ANALYSIS                                 │
 │ ┌────────────────────────────────────────────────────────────────┐  │
 │ │ Cost Code          Budget      Actual      Variance            │  │
 │ │ ─────────────────────────────────────────────────────────────── │  │
-│ │ Framing Labor      $85,000     $119,000    -$34,000 ⚠         │  │
-│ │ Framing Material   $124,000    $131,000    -$7,000            │  │
-│ │ Electrical         $95,000     $92,000     +$3,000  ✓         │  │
-│ │ Plumbing           $78,000     $76,500     +$1,500  ✓         │  │
+│ │ Framing Labor      $85,000     $119,000    -$34,000            │  │
+│ │ Framing Material   $124,000    $131,000    -$7,000             │  │
+│ │ Electrical         $95,000     $92,000     +$3,000             │  │
+│ │ Plumbing           $78,000     $76,500     +$1,500             │  │
 │ │                                                                │  │
 │ │ AI: "Framing labor over due to scope creep in tray ceilings.  │  │
 │ │ Recommend: Change order for $18K additional work."             │  │
@@ -100,6 +116,7 @@ export default function ProfitabilityPage() {
 │ YTD: $8.4M Revenue | $6.9M Cost | $1.5M Profit | 17.5% Margin      │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

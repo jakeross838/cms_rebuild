@@ -1,56 +1,87 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { VendorPortalPreview } from '@/components/skeleton/previews/vendor-portal-preview'
 
 const constructionWorkflow = [
   'Portal Login', 'Dashboard', 'Active Jobs', 'POs/Invoices', 'Bids', 'Documents'
 ]
 
 export default function VendorPortalSkeleton() {
+  const [activeTab, setActiveTab] = useState('overview')
+
   return (
-    <PageSpec
-      title="Vendor Portal"
-      phase="Phase 2 - Vendor Collaboration"
-      planFile="views/vendor-portal/VENDOR_PORTAL.md"
-      description="Self-service portal for subcontractors and suppliers. View POs, submit invoices, respond to bids, upload compliance documents, and track payments."
-      workflow={constructionWorkflow}
-      features={[
-        'Vendor self-registration with approval workflow',
-        'Dashboard with active work and pending items',
-        'View and acknowledge Purchase Orders',
-        'Submit invoices against POs',
-        'Respond to bid requests with proposals',
-        'Upload insurance certificates and W-9',
-        'Payment history and aging',
-        'Project documents access (their scope only)',
-        'Schedule visibility for their work',
-        'Mobile-responsive for field access',
-      ]}
-      connections={[
-        { name: 'Vendors', type: 'input', description: 'Vendor account and profile data' },
-        { name: 'Purchase Orders', type: 'input', description: 'POs visible to vendor' },
-        { name: 'Invoices', type: 'bidirectional', description: 'Vendor submits invoices' },
-        { name: 'Bids', type: 'bidirectional', description: 'Vendor responds to bids' },
-        { name: 'Documents', type: 'bidirectional', description: 'Vendor uploads compliance docs' },
-        { name: 'Payments', type: 'input', description: 'Payment status and history' },
-        { name: 'Schedule', type: 'input', description: 'Schedule items for their work' },
-        { name: 'Notifications', type: 'output', description: 'Email/push for new POs, bid invites' },
-      ]}
-      dataFields={[
-        { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'vendor_id', type: 'uuid', required: true, description: 'FK to vendors' },
-        { name: 'portal_user_id', type: 'uuid', required: true, description: 'Portal auth user' },
-        { name: 'role', type: 'string', required: true, description: 'Admin, User (per vendor)' },
-        { name: 'last_login', type: 'timestamp', description: 'Last portal access' },
-        { name: 'notification_preferences', type: 'jsonb', description: 'Email/push settings' },
-        { name: 'accessible_jobs', type: 'uuid[]', description: 'Jobs vendor can see' },
-      ]}
-      aiFeatures={[
-        { name: 'Invoice Assistance', description: 'AI helps vendors fill invoice details from PO data', trigger: 'On invoice creation' },
-        { name: 'Document Extraction', description: 'Extracts insurance expiration dates from uploaded certificates', trigger: 'On document upload' },
-        { name: 'Bid Guidance', description: 'Provides scope interpretation and clarification for bid responses', trigger: 'On bid view' },
-      ]}
-      mockupAscii={`
+    <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="flex border-b border-gray-200">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`px-6 py-4 text-sm font-medium transition-colors ${
+            activeTab === 'overview'
+              ? 'border-b-2 border-blue-600 text-blue-600'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={`px-6 py-4 text-sm font-medium transition-colors ${
+            activeTab === 'preview'
+              ? 'border-b-2 border-blue-600 text-blue-600'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          UI Preview
+        </button>
+      </div>
+
+      {/* Overview Tab */}
+      {activeTab === 'overview' && (
+        <PageSpec
+          title="Vendor Portal"
+          phase="Phase 2 - Vendor Collaboration"
+          planFile="views/vendor-portal/VENDOR_PORTAL.md"
+          description="Self-service portal for subcontractors and suppliers. View POs, submit invoices, respond to bids, upload compliance documents, and track payments."
+          workflow={constructionWorkflow}
+          features={[
+            'Vendor self-registration with approval workflow',
+            'Dashboard with active work and pending items',
+            'View and acknowledge Purchase Orders',
+            'Submit invoices against POs',
+            'Respond to bid requests with proposals',
+            'Upload insurance certificates and W-9',
+            'Payment history and aging',
+            'Project documents access (their scope only)',
+            'Schedule visibility for their work',
+            'Mobile-responsive for field access',
+          ]}
+          connections={[
+            { name: 'Vendors', type: 'input', description: 'Vendor account and profile data' },
+            { name: 'Purchase Orders', type: 'input', description: 'POs visible to vendor' },
+            { name: 'Invoices', type: 'bidirectional', description: 'Vendor submits invoices' },
+            { name: 'Bids', type: 'bidirectional', description: 'Vendor responds to bids' },
+            { name: 'Documents', type: 'bidirectional', description: 'Vendor uploads compliance docs' },
+            { name: 'Payments', type: 'input', description: 'Payment status and history' },
+            { name: 'Schedule', type: 'input', description: 'Schedule items for their work' },
+            { name: 'Notifications', type: 'output', description: 'Email/push for new POs, bid invites' },
+          ]}
+          dataFields={[
+            { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
+            { name: 'vendor_id', type: 'uuid', required: true, description: 'FK to vendors' },
+            { name: 'portal_user_id', type: 'uuid', required: true, description: 'Portal auth user' },
+            { name: 'role', type: 'string', required: true, description: 'Admin, User (per vendor)' },
+            { name: 'last_login', type: 'timestamp', description: 'Last portal access' },
+            { name: 'notification_preferences', type: 'jsonb', description: 'Email/push settings' },
+            { name: 'accessible_jobs', type: 'uuid[]', description: 'Jobs vendor can see' },
+          ]}
+          aiFeatures={[
+            { name: 'Invoice Assistance', description: 'AI helps vendors fill invoice details from PO data', trigger: 'On invoice creation' },
+            { name: 'Document Extraction', description: 'Extracts insurance expiration dates from uploaded certificates', trigger: 'On document upload' },
+            { name: 'Bid Guidance', description: 'Provides scope interpretation and clarification for bid responses', trigger: 'On bid view' },
+          ]}
+          mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ [Builder Logo]  Vendor Portal                   Welcome, ABC Electric│
 ├─────────────────────────────────────────────────────────────────────┤
@@ -81,6 +112,21 @@ export default function VendorPortalSkeleton() {
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+
+      {/* Preview Tab */}
+      {activeTab === 'preview' && (
+        <div className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-semibold text-blue-900 mb-1">Vendor Portal UI Preview</h3>
+            <p className="text-sm text-blue-700">
+              Interactive mockup showing the vendor dashboard with active POs, bid requests, invoice submissions, document uploads, and payment tracking.
+            </p>
+          </div>
+          <VendorPortalPreview />
+        </div>
+      )}
+    </div>
   )
 }

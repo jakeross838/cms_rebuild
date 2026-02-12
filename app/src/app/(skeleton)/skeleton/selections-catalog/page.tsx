@@ -1,14 +1,28 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { SelectionsCatalogPreview } from '@/components/skeleton/previews/selections-catalog-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
   'Selections Catalog', 'Estimates', 'Client Selections', 'Purchase Orders', 'Invoices'
 ]
 
 export default function SelectionsCatalogSkeleton() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <SelectionsCatalogPreview /> : <PageSpec
       title="Selections Catalog"
       phase="Phase 0 - Foundation"
       planFile="views/catalog/SELECTIONS_CATALOG.md"
@@ -141,6 +155,7 @@ export default function SelectionsCatalogSkeleton() {
 │ AI: "3 selections have outdated pricing (>90 days). Review needed." │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

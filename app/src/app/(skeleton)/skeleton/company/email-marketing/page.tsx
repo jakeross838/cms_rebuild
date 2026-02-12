@@ -1,71 +1,102 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { EmailMarketingPreview } from '@/components/skeleton/previews/email-marketing-preview'
 
 export default function EmailMarketingPage() {
+  const [activeTab, setActiveTab] = useState<'specs' | 'preview'>('specs')
+
   return (
-    <PageSpec
-      title="Email Marketing"
-      phase="Phase 2 - Marketing"
-      planFile="views/company/EMAIL_MARKETING.md"
-      description="Manage email campaigns to past and potential clients. Seasonal reminders, company updates, and nurture campaigns to stay top-of-mind with your network."
-      workflow={['Plan Campaign', 'Design Email', 'Select Audience', 'Schedule', 'Track Results']}
-      features={[
-        'Email templates',
-        'Drag-and-drop editor',
-        'Audience segmentation',
-        'Past client lists',
-        'Prospect lists',
-        'Campaign scheduling',
-        'A/B testing',
-        'Open/click tracking',
-        'Unsubscribe management',
-        'Bounce handling',
-        'Analytics dashboard',
-        'Template library',
-        'Automated sequences',
-        'Personalization tokens',
-      ]}
-      connections={[
-        { name: 'Clients', type: 'input', description: 'Client list' },
-        { name: 'Leads', type: 'input', description: 'Prospect list' },
-        { name: 'Contacts', type: 'input', description: 'All contacts' },
-        { name: 'Email Service', type: 'bidirectional', description: 'Delivery and tracking' },
-      ]}
-      dataFields={[
-        { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'name', type: 'string', required: true, description: 'Campaign name' },
-        { name: 'subject', type: 'string', required: true, description: 'Email subject' },
-        { name: 'content', type: 'text', required: true, description: 'Email content' },
-        { name: 'template_id', type: 'uuid', description: 'Template used' },
-        { name: 'audience', type: 'jsonb', description: 'Recipient criteria' },
-        { name: 'scheduled_at', type: 'timestamp', description: 'Send time' },
-        { name: 'sent_at', type: 'timestamp', description: 'Actual send time' },
-        { name: 'status', type: 'string', required: true, description: 'Draft, Scheduled, Sent' },
-        { name: 'sent_count', type: 'integer', description: 'Emails sent' },
-        { name: 'open_count', type: 'integer', description: 'Opens' },
-        { name: 'click_count', type: 'integer', description: 'Clicks' },
-        { name: 'bounce_count', type: 'integer', description: 'Bounces' },
-        { name: 'unsubscribe_count', type: 'integer', description: 'Unsubscribes' },
-      ]}
-      aiFeatures={[
-        {
-          name: 'Campaign Suggestions',
-          description: 'Recommends campaigns. "Hurricane season approaching. Suggest: Impact window maintenance email to past clients."',
-          trigger: 'Seasonal triggers'
-        },
-        {
-          name: 'Subject Optimization',
-          description: 'Improves open rates. "Subject line A: 22% open rate. Suggest: Add urgency for 35% improvement."',
-          trigger: 'On campaign creation'
-        },
-        {
-          name: 'Audience Insights',
-          description: 'Identifies targets. "45 past clients haven\'t heard from you in 6+ months. Consider re-engagement campaign."',
-          trigger: 'Periodic analysis'
-        },
-      ]}
-      mockupAscii={`
+    <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="flex gap-2 border-b border-gray-200">
+        <button
+          onClick={() => setActiveTab('specs')}
+          className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+            activeTab === 'specs'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Specifications
+        </button>
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+            activeTab === 'preview'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Preview
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'specs' ? (
+        <PageSpec
+          title="Email Marketing"
+          phase="Phase 2 - Marketing"
+          planFile="views/company/EMAIL_MARKETING.md"
+          description="Manage email campaigns to past and potential clients. Seasonal reminders, company updates, and nurture campaigns to stay top-of-mind with your network."
+          workflow={['Plan Campaign', 'Design Email', 'Select Audience', 'Schedule', 'Track Results']}
+          features={[
+            'Email templates',
+            'Drag-and-drop editor',
+            'Audience segmentation',
+            'Past client lists',
+            'Prospect lists',
+            'Campaign scheduling',
+            'A/B testing',
+            'Open/click tracking',
+            'Unsubscribe management',
+            'Bounce handling',
+            'Analytics dashboard',
+            'Template library',
+            'Automated sequences',
+            'Personalization tokens',
+          ]}
+          connections={[
+            { name: 'Clients', type: 'input', description: 'Client list' },
+            { name: 'Leads', type: 'input', description: 'Prospect list' },
+            { name: 'Contacts', type: 'input', description: 'All contacts' },
+            { name: 'Email Service', type: 'bidirectional', description: 'Delivery and tracking' },
+          ]}
+          dataFields={[
+            { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
+            { name: 'name', type: 'string', required: true, description: 'Campaign name' },
+            { name: 'subject', type: 'string', required: true, description: 'Email subject' },
+            { name: 'content', type: 'text', required: true, description: 'Email content' },
+            { name: 'template_id', type: 'uuid', description: 'Template used' },
+            { name: 'audience', type: 'jsonb', description: 'Recipient criteria' },
+            { name: 'scheduled_at', type: 'timestamp', description: 'Send time' },
+            { name: 'sent_at', type: 'timestamp', description: 'Actual send time' },
+            { name: 'status', type: 'string', required: true, description: 'Draft, Scheduled, Sent' },
+            { name: 'sent_count', type: 'integer', description: 'Emails sent' },
+            { name: 'open_count', type: 'integer', description: 'Opens' },
+            { name: 'click_count', type: 'integer', description: 'Clicks' },
+            { name: 'bounce_count', type: 'integer', description: 'Bounces' },
+            { name: 'unsubscribe_count', type: 'integer', description: 'Unsubscribes' },
+          ]}
+          aiFeatures={[
+            {
+              name: 'Campaign Suggestions',
+              description: 'Recommends campaigns. "Hurricane season approaching. Suggest: Impact window maintenance email to past clients."',
+              trigger: 'Seasonal triggers'
+            },
+            {
+              name: 'Subject Optimization',
+              description: 'Improves open rates. "Subject line A: 22% open rate. Suggest: Add urgency for 35% improvement."',
+              trigger: 'On campaign creation'
+            },
+            {
+              name: 'Audience Insights',
+              description: 'Identifies targets. "45 past clients haven\'t heard from you in 6+ months. Consider re-engagement campaign."',
+              trigger: 'Periodic analysis'
+            },
+          ]}
+          mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Email Marketing                                [+ Create Campaign]  │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -97,6 +128,10 @@ export default function EmailMarketingPage() {
 │ Lists: 3 | Total Contacts: 458 | Unsubscribed: 12                  │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      ) : (
+        <EmailMarketingPreview />
+      )}
+    </div>
   )
 }

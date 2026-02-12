@@ -1,11 +1,50 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { TemplatesPreview } from '@/components/skeleton/previews/templates-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function DocumentTemplatesPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
-      title="Document Templates"
+    <div className="space-y-4">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+
+      {/* Content */}
+      {activeTab === 'preview' ? (
+        <TemplatesPreview />
+      ) : (
+        <PageSpec
+          title="Document Templates"
       phase="Phase 0 - Foundation"
       planFile="views/library/DOCUMENT_TEMPLATES.md"
       description="Standard document templates for contracts, proposals, POs, change orders, and other business forms. Customize with your branding and standard terms. Templates auto-populate with project data when generated."
@@ -53,7 +92,7 @@ export default function DocumentTemplatesPage() {
           trigger: 'On template creation'
         },
       ]}
-      mockupAscii={`
+          mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Document Templates                              [+ New Template]    │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -73,6 +112,8 @@ export default function DocumentTemplatesPage() {
 │ └─────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+    </div>
   )
 }

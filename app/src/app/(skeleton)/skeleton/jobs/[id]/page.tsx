@@ -1,60 +1,99 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { JobOverviewPreview } from '@/components/skeleton/previews/job-overview-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
   'Jobs List', 'Job Dashboard', 'Budget', 'Schedule', 'Daily Logs', 'Photos', 'Files'
 ]
 
 export default function JobDashboardSkeleton() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
-      title="Job Dashboard"
-      phase="Phase 0 - Foundation"
-      planFile="views/jobs/JOB_DETAIL.md"
-      description="Central hub for a single job. Overview of budget status, schedule progress, recent activity, and quick access to all job-related features."
-      workflow={constructionWorkflow}
-      features={[
-        'Job header with status, client, address, key dates',
-        'Budget summary: Contract, Costs, Billed, Profit',
-        'Schedule progress with next milestones',
-        'Recent activity feed (invoices, photos, logs)',
-        'Quick action buttons: Add Invoice, Add Photo, Create Task',
-        'Weather widget for job site location',
-        'Team assignments and contact info',
-        'Document shortcuts',
-        'Client portal link',
-        'Job-scoped navigation tabs',
-      ]}
-      connections={[
-        { name: 'Jobs List', type: 'input', description: 'Navigation from jobs list' },
-        { name: 'Budget', type: 'bidirectional', description: 'Budget summary and link to detail' },
-        { name: 'Schedule', type: 'bidirectional', description: 'Schedule summary and link' },
-        { name: 'Invoices', type: 'input', description: 'Recent invoices displayed' },
-        { name: 'Photos', type: 'input', description: 'Recent photos shown' },
-        { name: 'Daily Logs', type: 'input', description: 'Recent logs shown' },
-        { name: 'Tasks', type: 'input', description: 'Pending tasks displayed' },
-        { name: 'Client', type: 'input', description: 'Client info in header' },
-        { name: 'Users', type: 'input', description: 'Team assignments' },
-      ]}
-      dataFields={[
-        { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'name', type: 'string', required: true, description: 'Job name' },
-        { name: 'job_number', type: 'string', description: 'Reference number' },
-        { name: 'status', type: 'string', required: true, description: 'Job status' },
-        { name: 'address', type: 'string', description: 'Full address' },
-        { name: 'client_id', type: 'uuid', description: 'FK to clients' },
-        { name: 'contract_amount', type: 'decimal', description: 'Total contract' },
-        { name: 'start_date', type: 'date', description: 'Start date' },
-        { name: 'target_completion', type: 'date', description: 'Target completion' },
-        { name: 'percent_complete', type: 'decimal', description: 'Progress %' },
-      ]}
-      aiFeatures={[
-        { name: 'Health Score', description: 'AI calculates job health based on budget, schedule, and activity metrics', trigger: 'Real-time' },
-        { name: 'Risk Alerts', description: 'Proactive warnings about budget overruns, schedule delays, or activity gaps', trigger: 'Continuous monitoring' },
-        { name: 'Next Steps', description: 'AI suggests next actions based on project phase and pending items', trigger: 'On page load' },
-      ]}
-      mockupAscii={`
+    <div className="space-y-4">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+
+      {/* Content */}
+      {activeTab === 'preview' ? (
+        <JobOverviewPreview />
+      ) : (
+        <PageSpec
+          title="Job Dashboard"
+          phase="Phase 0 - Foundation"
+          planFile="views/jobs/JOB_DETAIL.md"
+          description="Central hub for a single job. Overview of budget status, schedule progress, recent activity, and quick access to all job-related features."
+          workflow={constructionWorkflow}
+          features={[
+            'Job header with status, client, address, key dates',
+            'Budget summary: Contract, Costs, Billed, Profit',
+            'Schedule progress with next milestones',
+            'Recent activity feed (invoices, photos, logs)',
+            'Quick action buttons: Add Invoice, Add Photo, Create Task',
+            'Weather widget for job site location',
+            'Team assignments and contact info',
+            'Document shortcuts',
+            'Client portal link',
+            'Job-scoped navigation tabs',
+          ]}
+          connections={[
+            { name: 'Jobs List', type: 'input', description: 'Navigation from jobs list' },
+            { name: 'Budget', type: 'bidirectional', description: 'Budget summary and link to detail' },
+            { name: 'Schedule', type: 'bidirectional', description: 'Schedule summary and link' },
+            { name: 'Invoices', type: 'input', description: 'Recent invoices displayed' },
+            { name: 'Photos', type: 'input', description: 'Recent photos shown' },
+            { name: 'Daily Logs', type: 'input', description: 'Recent logs shown' },
+            { name: 'Tasks', type: 'input', description: 'Pending tasks displayed' },
+            { name: 'Client', type: 'input', description: 'Client info in header' },
+            { name: 'Users', type: 'input', description: 'Team assignments' },
+          ]}
+          dataFields={[
+            { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
+            { name: 'name', type: 'string', required: true, description: 'Job name' },
+            { name: 'job_number', type: 'string', description: 'Reference number' },
+            { name: 'status', type: 'string', required: true, description: 'Job status' },
+            { name: 'address', type: 'string', description: 'Full address' },
+            { name: 'client_id', type: 'uuid', description: 'FK to clients' },
+            { name: 'contract_amount', type: 'decimal', description: 'Total contract' },
+            { name: 'start_date', type: 'date', description: 'Start date' },
+            { name: 'target_completion', type: 'date', description: 'Target completion' },
+            { name: 'percent_complete', type: 'decimal', description: 'Progress %' },
+          ]}
+          aiFeatures={[
+            { name: 'Health Score', description: 'AI calculates job health based on budget, schedule, and activity metrics', trigger: 'Real-time' },
+            { name: 'Risk Alerts', description: 'Proactive warnings about budget overruns, schedule delays, or activity gaps', trigger: 'Continuous monitoring' },
+            { name: 'Next Steps', description: 'AI suggests next actions based on project phase and pending items', trigger: 'On page load' },
+          ]}
+          mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ← Jobs  |  Smith Residence                    ● Active   [Edit] [...] │
 │ 123 Oak Street, Austin TX  |  Client: John Smith  |  PM: Jake R.     │
@@ -81,6 +120,8 @@ export default function JobDashboardSkeleton() {
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+    </div>
   )
 }

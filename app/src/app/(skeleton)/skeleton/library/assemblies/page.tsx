@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { AssembliesPreview } from '@/components/skeleton/previews/assemblies-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const workflow = ['Create Assembly', 'Add to Estimate', 'Customize', 'Track Performance']
 
 export default function AssembliesPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <AssembliesPreview /> : <PageSpec
       title="Assemblies & Templates"
       phase="Phase 0 - Foundation"
       planFile="views/library/ASSEMBLIES.md"
       description="Reusable estimate building blocks with default selections. Create assemblies like 'Standard Kitchen Package' or 'Coastal Bathroom' that include all line items with pre-selected products from the Selections Catalog. Dramatically speeds up estimating while ensuring consistency."
-      workflow={['Create Assembly', 'Add to Estimate', 'Customize', 'Track Performance']}
+      workflow={workflow}
       features={[
         'Assembly library organized by category',
         'Each assembly = group of line items with default selections',
@@ -79,6 +95,7 @@ export default function AssembliesPage() {
 │ └─────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

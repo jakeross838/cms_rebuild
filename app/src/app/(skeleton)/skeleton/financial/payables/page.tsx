@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { PayablesPreview } from '@/components/skeleton/previews/payables-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const payablesWorkflow = ['Invoice Received', 'Approved', 'Scheduled', 'Paid', 'Reconciled']
 
 export default function AccountsPayablePage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <PayablesPreview /> : <PageSpec
       title="Accounts Payable"
       phase="Phase 0 - Foundation"
       planFile="views/financial/ACCOUNTS_PAYABLE.md"
       description="Track all money you owe to vendors and subcontractors. View outstanding invoices, payment schedules, aging analysis, and optimize payment timing to manage cash flow while maintaining vendor relationships."
-      workflow={['Invoice Received', 'Approved', 'Scheduled', 'Paid', 'Reconciled']}
+      workflow={payablesWorkflow}
       features={[
         'AP summary by vendor',
         'AP summary by job',
@@ -79,28 +95,29 @@ export default function AccountsPayablePage() {
 │ ┌─────────────────────────────────────────────────────────────────┐ │
 │ │ □ ABC Lumber                    Due: Feb 1      $24,000         │ │
 │ │   Smith Residence - Framing lumber                              │ │
-│ │   💰 2% discount if paid by Jan 30 (save $480)                  │ │
-│ │   Lien waiver: ✓ Received                                       │ │
+│ │   2% discount if paid by Jan 30 (save $480)                     │ │
+│ │   Lien waiver: Received                                         │ │
 │ │   [Pay Now] [Schedule] [View Invoice]                           │ │
 │ └─────────────────────────────────────────────────────────────────┘ │
 │ ┌─────────────────────────────────────────────────────────────────┐ │
 │ │ □ XYZ Electric                  Due: Feb 3      $12,450         │ │
 │ │   Smith Residence - Rough-in                                    │ │
-│ │   Lien waiver: ⚠ Pending                                        │ │
+│ │   Lien waiver: Pending                                          │ │
 │ │   AI: "Request waiver before payment"                           │ │
 │ │   [Request Waiver] [Schedule] [View Invoice]                    │ │
 │ └─────────────────────────────────────────────────────────────────┘ │
 │ ┌─────────────────────────────────────────────────────────────────┐ │
 │ │ □ Coastal Plumbing              Due: Feb 5      $8,900          │ │
 │ │   Multiple jobs (3 invoices)                                    │ │
-│ │   Lien waiver: ✓ Received                                       │ │
+│ │   Lien waiver: Received                                         │ │
 │ │   [Pay Now] [Schedule] [View Invoices]                          │ │
 │ └─────────────────────────────────────────────────────────────────┘ │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Selected: $0 | [Pay Selected] | This week total: $45,350           │
-│ ⚠ 2 invoices need lien waivers before payment                      │
+│ 2 invoices need lien waivers before payment                        │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

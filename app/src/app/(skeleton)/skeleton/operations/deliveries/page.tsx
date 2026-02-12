@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { DeliveriesPreview } from '@/components/skeleton/previews/deliveries-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const workflow = ['PO Created', 'Delivery Scheduled', 'Arriving Soon', 'Received', 'Verified']
 
 export default function DeliveriesPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <DeliveriesPreview /> : <PageSpec
       title="Deliveries"
       phase="Phase 2 - Operations"
       planFile="views/operations/DELIVERIES.md"
       description="Track incoming material deliveries across all jobs. Know what's arriving when and where. Coordinate with job schedules to ensure materials arrive when needed and site is prepared to receive them."
-      workflow={['PO Created', 'Delivery Scheduled', 'Arriving Soon', 'Received', 'Verified']}
+      workflow={workflow}
       features={[
         'Delivery list with status',
         'Calendar view of upcoming deliveries',
@@ -100,6 +116,7 @@ export default function DeliveriesPage() {
 │ This Week: 8 deliveries | On Time: 6 | Delayed: 2                  │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

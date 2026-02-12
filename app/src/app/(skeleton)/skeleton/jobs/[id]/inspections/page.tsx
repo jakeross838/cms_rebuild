@@ -1,10 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { InspectionsPreview } from '@/components/skeleton/previews/inspections-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobInspectionsPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <InspectionsPreview /> : <PageSpec
       title="Inspections"
       phase="Phase 1 - Compliance"
       planFile="views/jobs/INSPECTIONS.md"
@@ -52,55 +66,22 @@ export default function JobInspectionsPage() {
       aiFeatures={[
         {
           name: 'Pre-Inspection Check',
-          description: 'Ensures readiness. "Foundation inspection tomorrow. Checklist: Rebar spacing ✓, Tie-downs ✓, Setback markers needed."',
+          description: 'Ensures readiness.',
           trigger: 'Day before inspection'
         },
         {
           name: 'Scheduling Optimization',
-          description: 'Plans inspection timing. "Request framing inspection by Tuesday for Thursday slot. Inspector typically available Tue/Thu."',
+          description: 'Plans inspection timing.',
           trigger: 'On work completion'
         },
         {
           name: 'Failure Resolution',
-          description: 'Addresses failures. "Electrical inspection failed: Missing GFCI at exterior outlet. Quick fix - schedule reinspect same day."',
+          description: 'Addresses failures.',
           trigger: 'On failure'
         },
       ]}
-      mockupAscii={`
-┌─────────────────────────────────────────────────────────────────────┐
-│ Inspections - Smith Residence                   Pass Rate: 92%      │
-├─────────────────────────────────────────────────────────────────────┤
-│ UPCOMING                                                            │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Framing - Rough                           Tomorrow 9am-12pm     │ │
-│ │ Inspector: John Smith                                           │ │
-│ │ Pre-inspection: ✓ Nailing patterns ✓ Headers ✓ Hold-downs      │ │
-│ │ AI: "All prep items complete. Ready for inspection."           │ │
-│ │ [View Checklist] [Reschedule] [Cancel]                         │ │
-│ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ Electrical - Rough                        Requested: Jan 30     │ │
-│ │ Status: Awaiting confirmation                                   │ │
-│ │ [Check Status]                                                  │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ NEEDS RE-INSPECTION                                                 │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ ⚠ Plumbing - Rough                       Failed: Jan 25        │ │
-│ │ Issue: Missing cleanout at kitchen stack                        │ │
-│ │ Correction: Cleanout installed Jan 26                           │ │
-│ │ Re-inspection: Scheduled Jan 28                                 │ │
-│ │ [View Details] [Update Status]                                  │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ COMPLETED                                                           │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Foundation        ✓ Passed Jan 10  | Slab Pre-Pour ✓ Passed    │ │
-│ │ Slab Post-Pour    ✓ Passed Jan 15  | Termite Pre-Treat ✓ Pass  │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────┤
-│ Completed: 12 | Passed: 11 | Failed: 1 | Pending: 3                │
-└─────────────────────────────────────────────────────────────────────┘
-`}
-    />
+      mockupAscii=""
+    />}
+    </div>
   )
 }

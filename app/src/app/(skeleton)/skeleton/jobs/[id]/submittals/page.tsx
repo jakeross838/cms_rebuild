@@ -1,10 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { SubmittalsPreview } from '@/components/skeleton/previews/submittals-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobSubmittalsPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <SubmittalsPreview /> : <PageSpec
       title="Submittals"
       phase="Phase 1 - Project Management"
       planFile="views/jobs/SUBMITTALS.md"
@@ -43,7 +57,7 @@ export default function JobSubmittalsPage() {
         { name: 'submitted_date', type: 'date', description: 'When submitted' },
         { name: 'required_date', type: 'date', description: 'Need approval by' },
         { name: 'lead_time', type: 'integer', description: 'Days after approval' },
-        { name: 'status', type: 'string', required: true, description: 'Pending, Submitted, Approved, Revise & Resubmit, Rejected' },
+        { name: 'status', type: 'string', required: true, description: 'Pending, Submitted, Approved, Revise and Resubmit, Rejected' },
         { name: 'revision', type: 'integer', description: 'Revision number' },
         { name: 'reviewer', type: 'string', description: 'Who reviews' },
         { name: 'review_date', type: 'date', description: 'When reviewed' },
@@ -53,54 +67,22 @@ export default function JobSubmittalsPage() {
       aiFeatures={[
         {
           name: 'Schedule Integration',
-          description: 'Manages timing. "Window submittal needed by Feb 1 for 8-week lead time. Installation scheduled Apr 15."',
+          description: 'Manages timing.',
           trigger: 'On schedule update'
         },
         {
           name: 'Vendor Follow-up',
-          description: 'Tracks requests. "Requested cabinet submittals from ABC Cabinets 10 days ago. Auto-reminder sent."',
+          description: 'Tracks requests.',
           trigger: 'Daily check'
         },
         {
           name: 'Approval Prediction',
-          description: 'Estimates timelines. "Based on architect response history, expect 5-day review. May need to expedite."',
+          description: 'Estimates timelines.',
           trigger: 'On submission'
         },
       ]}
-      mockupAscii={`
-┌─────────────────────────────────────────────────────────────────────┐
-│ Submittals - Smith Residence                    Total: 28 Items     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Status: [All ▾]    Spec Section: [All ▾]         [+ New Submittal] │
-├─────────────────────────────────────────────────────────────────────┤
-│ AWAITING VENDOR (3)                                                 │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ 08-001  Windows - PGT Impact               Need by: Feb 1       │ │
-│ │         Requested from: ABC Glass Jan 15 (13 days ago)          │ │
-│ │         Lead time: 8 weeks | [Send Reminder] [View Request]     │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ SUBMITTED - UNDER REVIEW (4)                                        │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ 06-100  Cabinets - Kitchen              Submitted: Jan 20       │ │
-│ │         Reviewer: Architect | Due: Jan 30                       │ │
-│ │         Status: Under Review | [View Submittal]                 │ │
-│ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ 09-250  Countertops - Quartz            Submitted: Jan 22       │ │
-│ │         Reviewer: Architect | Due: Feb 1                        │ │
-│ │         Status: Under Review | [View Submittal]                 │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ RECENTLY APPROVED                                                   │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ 03-300  Concrete Mix Design        ✓ Approved Jan 18            │ │
-│ │ 07-200  Roofing - Metal Standing   ✓ Approved Jan 15            │ │
-│ │ 04-200  CMU Block                  ✓ Approved Jan 12            │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────┤
-│ Approved: 18 | Pending: 4 | Awaiting Vendor: 3 | Revise: 3         │
-└─────────────────────────────────────────────────────────────────────┘
-`}
-    />
+      mockupAscii=""
+    />}
+    </div>
   )
 }

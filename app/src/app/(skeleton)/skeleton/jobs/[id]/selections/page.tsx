@@ -1,10 +1,27 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { SelectionsPreview } from '@/components/skeleton/previews/selections-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobSelectionsPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <SelectionsPreview /> : <PageSpec
       title="Job Selections"
       phase="Phase 0 - Foundation"
       planFile="views/jobs/SELECTIONS.md"
@@ -89,6 +106,7 @@ export default function JobSelectionsPage() {
 │ Running Total: $133,500 (+$8,500 over allowance)                   │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

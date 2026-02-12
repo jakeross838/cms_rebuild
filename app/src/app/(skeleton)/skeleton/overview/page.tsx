@@ -25,9 +25,13 @@ import {
   Target,
   ClipboardCheck,
   Calendar,
+  Eye,
+  BookOpen,
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { OverviewPreview } from '@/components/skeleton/previews/overview-preview'
+import { PageSpec } from '@/components/skeleton/page-spec'
 
 interface Page {
   name: string
@@ -191,6 +195,7 @@ const colorClasses: Record<string, { bg: string; text: string; badge: string; bo
 }
 
 export default function OverviewPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   const [search, setSearch] = useState('')
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null)
 
@@ -214,177 +219,157 @@ export default function OverviewPage() {
     .filter((cat) => cat.pages.length > 0)
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-xl p-6 text-white">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-12 w-12 rounded-xl bg-white/10 flex items-center justify-center">
-            <Building2 className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">RossOS - System Overview</h1>
-            <p className="text-blue-200 text-sm">Developer Reference - All Pages</p>
-          </div>
-        </div>
-        <p className="text-blue-100 mb-4">
-          Complete page inventory with Hub & Spoke architecture. Company-level pages for cross-job functions,
-          Job-level pages for project-specific work.
-        </p>
-        <div className="flex gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <Layers className="h-4 w-4 text-blue-300" />
-            <span>{totalPages} Pages</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-amber-300" />
-            <span>{totalAIFeatures} AI Features</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <PanelRightOpen className="h-4 w-4 text-green-300" />
-            <span>Panel-based UX</span>
-          </div>
-        </div>
+    <div className="space-y-4">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
       </div>
 
-      {/* Search & Filter */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search pages..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => setSelectedPhase(null)}
-              className={cn(
-                'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                selectedPhase === null ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              )}
-            >
-              All
-            </button>
-            {[0, 1].map((phase) => (
-              <button
-                key={phase}
-                onClick={() => setSelectedPhase(phase)}
-                className={cn(
-                  'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                  selectedPhase === phase
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                )}
-              >
-                Phase {phase}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Categories */}
-      <div className="space-y-4">
-        {filteredCategories.map((category) => {
-          const colors = colorClasses[category.color]
-          return (
-            <div key={category.name} className={cn('rounded-lg border', colors.border, colors.bg)}>
-              <div className="px-4 py-3 border-b border-gray-200/50 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <category.icon className={cn('h-5 w-5', colors.text)} />
-                  <h2 className="font-semibold text-gray-900">{category.name}</h2>
-                  <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', colors.badge, colors.text)}>
-                    Phase {category.phase}
-                  </span>
-                </div>
-                <span className="text-sm text-gray-500">{category.pages.length} pages</span>
-              </div>
-
-              <div className="divide-y divide-gray-200/50">
-                {category.pages.map((page) => (
-                  <Link
-                    key={page.href}
-                    href={page.href}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-white/50 transition-colors group"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                          {page.name}
-                        </span>
-                        {page.aiFeatures && (
-                          <span className="flex items-center gap-1 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
-                            <Sparkles className="h-3 w-3" />
-                            {page.aiFeatures} AI
-                          </span>
-                        )}
-                        {page.uiPattern && (
-                          <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                            {page.uiPattern}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500 mt-0.5">{page.description}</p>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 ml-4" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Architecture Overview */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Hub & Spoke Architecture</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="font-medium text-blue-900 mb-2">Company Context (Hub)</h3>
-            <p className="text-sm text-blue-700">
-              Company-wide views when no job is selected. Sales pipeline, directories, financial dashboard,
-              compliance tracking, settings. Accessible via top navigation.
-            </p>
-          </div>
-          <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-            <h3 className="font-medium text-orange-900 mb-2">Job Context (Spoke)</h3>
-            <p className="text-sm text-orange-700">
-              Job-specific views when a job is selected. Budget, schedule, daily logs, photos, documents,
-              and all PM functions. Horizontal tabs within job header.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Intelligence Modules */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200 p-6">
-        <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-amber-600" />
-          9 Intelligence Modules
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { name: 'Cost Intelligence', desc: 'Historical pricing, market rates' },
-            { name: 'Selection Intelligence', desc: 'Catalog pricing, tier recommendations' },
-            { name: 'Vendor Intelligence', desc: 'Scorecards, performance metrics' },
-            { name: 'Labor Intelligence', desc: 'Productivity, crew optimization' },
-            { name: 'Schedule Intelligence', desc: 'Weather, tide, predictions' },
-            { name: 'Estimating Intelligence', desc: 'Feedback loop, bias detection' },
-            { name: 'Document Intelligence', desc: 'OCR, extraction, classification' },
-            { name: 'Project Intelligence', desc: 'Risk scoring, pattern detection' },
-            { name: 'Client Intelligence', desc: 'Preferences, communication style' },
-          ].map((module) => (
-            <div key={module.name} className="bg-white/80 rounded-lg p-3">
-              <div className="font-medium text-sm text-gray-900">{module.name}</div>
-              <div className="text-xs text-gray-500 mt-0.5">{module.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Tab Content */}
+      {activeTab === 'preview' ? (
+        <OverviewPreview />
+      ) : (
+        <PageSpec
+          title="Company Overview"
+          phase="Phase 0 - Core Operations"
+          planFile="views/overview/OVERVIEW.md"
+          description="High-level dashboard providing company-wide visibility. Real-time metrics on active jobs, revenue, AR/AP status. AI-powered insights highlighting risks and opportunities. Quick actions for common tasks. Team activity feed showing recent updates across the company. Sales pipeline visualization at a glance."
+          workflow={['Dashboard', 'Metrics', 'Analytics', 'Decision Making']}
+          features={[
+            'Key performance indicators (KPIs) for jobs, revenue, and cash',
+            'Real-time alerts on critical issues requiring attention',
+            'AI-generated insights and recommendations',
+            'Quick action buttons for common workflows',
+            'Team activity feed with recent updates',
+            'Sales pipeline summary by stage',
+            'Upcoming inspections and scheduled events',
+            'Accounts receivable and payable summary',
+            'Job status overview with filter by phase',
+            'Revenue trending and profitability snapshot',
+          ]}
+          connections={[
+            { name: 'Jobs', type: 'input', description: 'Job status and metrics aggregated' },
+            { name: 'Financial Dashboard', type: 'input', description: 'AR, AP, revenue data' },
+            { name: 'Sales Pipeline', type: 'input', description: 'Pipeline stages and values' },
+            { name: 'Team Directory', type: 'input', description: 'Team members and activity' },
+            { name: 'Inspections', type: 'input', description: 'Upcoming inspections' },
+            { name: 'Documents', type: 'input', description: 'Recent document uploads' },
+            { name: 'All Pages', type: 'output', description: 'Navigation to all system pages' },
+          ]}
+          dataFields={[
+            { name: 'company_id', type: 'uuid', required: true, description: 'Primary key' },
+            { name: 'active_job_count', type: 'integer', description: 'Count of active jobs' },
+            { name: 'revenue_mtd', type: 'decimal', description: 'Month-to-date revenue' },
+            { name: 'revenue_target', type: 'decimal', description: 'Monthly revenue target' },
+            { name: 'accounts_receivable', type: 'decimal', description: 'Total AR balance' },
+            { name: 'accounts_payable', type: 'decimal', description: 'Total AP balance' },
+            { name: 'pipeline_value', type: 'decimal', description: 'Total sales pipeline value' },
+            { name: 'profit_margin_ytd', type: 'decimal', description: 'Year-to-date profit margin %' },
+            { name: 'team_member_count', type: 'integer', description: 'Total active team members' },
+          ]}
+          aiFeatures={[
+            {
+              name: 'Metric Anomaly Detection',
+              description: 'Flags unusual patterns: "Revenue down 15% from trend. Check: 2 jobs paused, 1 delayed invoice. Recommend follow-up with clients."',
+              trigger: 'Real-time continuous monitoring'
+            },
+            {
+              name: 'Risk Scoring',
+              description: 'Prioritizes issues requiring attention: "3 high-risk alerts: Smith Residence 8 days behind schedule (93% probability of delay), AR aging $125K over 45 days, Miller Addition profit margin 2% below target."',
+              trigger: 'Daily dashboard load'
+            },
+            {
+              name: 'AI Insights Panel',
+              description: 'Generated recommendations: "Recommend calling Johnson Builders today - contract signed 3 hours ago, proposal accepted 2 weeks ago, no kick-off scheduled. 92% probability they\'re waiting on schedule confirmation."',
+              trigger: 'Every dashboard refresh'
+            },
+            {
+              name: 'Cash Flow Forecast',
+              description: 'Predicts cash position: "Cash position will drop below $50K in 10 days if 3 invoices not collected. XYZ Corp is 8 days from payment - recommend reminder call today."',
+              trigger: 'Daily'
+            },
+            {
+              name: 'Team Productivity Tracking',
+              description: 'Monitors team efficiency: "Crew efficiency on Johnson project up 14% week-over-week. Recommend applying same crew composition to similar scope items on other jobs."',
+              trigger: 'Weekly synthesis'
+            },
+            {
+              name: 'Material Cost Intelligence',
+              description: 'Alerts on market changes: "Lumber prices up 7% this week. 4 active jobs with high framing exposure. Recommend review estimate adequacy for Davis and Thompson projects."',
+              trigger: 'Daily market check'
+            },
+            {
+              name: 'Pipeline Stage Prediction',
+              description: 'Forecasts conversion: "5 proposals in system averaging 65% conversion rate. Projected $820K new revenue if all convert (historical: 68%). Risk: 2 proposals over 30 days old with no follow-up contact."',
+              trigger: 'Daily pipeline analysis'
+            },
+            {
+              name: 'Action Priority Ranking',
+              description: 'Sequences most impactful tasks: "Top 3 actions today: (1) Collect overdue invoice $125K, (2) Resolve Smith schedule delay risk, (3) Close Thompson proposal (4 days old, 1% decay per day)."',
+              trigger: 'Every navigation to overview'
+            },
+          ]}
+          mockupAscii={`
+┌─────────────────────────────────────────────────────────────────────┐
+│ Company Overview                    [Today] [Full Report]           │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
+│ │ Active Jobs  │ │ Revenue MTD  │ │    A/R       │ │    A/P       │ │
+│ │ 18           │ │ $2.4M        │ │ $1.8M        │ │ $945K        │ │
+│ │ +3 vs month  │ │ +12.5% vs tgt│ │ -8.3% vs mo  │ │ +5.2% vs mo  │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘ │
+├─────────────────────────────────────────────────────────────────────┤
+│ AI Insights & Alerts                 Quick Actions                   │
+│ ┌─────────────────────────────────┐ ┌──────────────────────────────┐ │
+│ │ Material Cost Alert - HIGH       │ │ + Start New Job              │ │
+│ │ Lumber +7% this week            │ │ Send Invoice                 │ │
+│ │ Actionable                      │ │ View Reports                 │ │
+│ │                                 │ │ Team Schedule                │ │
+│ │ Cash Flow Opportunity - HIGH     │ └──────────────────────────────┘ │
+│ │ Miller can invoice 2 wks early  │                                   │
+│ │ Actionable                      │ Sales Pipeline Summary           │
+│ │                                 │ ┌──────────────────────────────┐ │
+│ │ Crew Efficiency +14% - MEDIUM   │ │ Leads: 12 ($580K)   ████░░░ │ │
+│ │ Johnson project performing well │ │ Est:   8 ($820K)    ███░░░░░ │ │
+│ │                                 │ │ Props: 5 ($1.2M)    ██░░░░░░ │ │
+│ │ Overdue Invoices - HIGH         │ │ Cont:  3 ($650K)    █░░░░░░░ │ │
+│ │ 3 invoices over 45 days         │ └──────────────────────────────┘ │
+│ │ Actionable                      │                                   │
+│ └─────────────────────────────────┘ Team Activity                    │
+│                                      ┌──────────────────────────────┐ │
+│ Company Health:                      │ Jake Wilson - 3 active jobs  │ │
+│ 18 active jobs on track. Revenue    │ Sarah Chen - 5 active jobs   │ │
+│ +12.5% above target. Strong cash    │ Mike Johnson - 2 active jobs │ │
+│ position with $1.8M in receivables. │ Lisa Martinez - Accounting   │ │
+│ Team productivity up 8%.            │ View team directory          │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+`}
+        />
+      )}
     </div>
   )
 }

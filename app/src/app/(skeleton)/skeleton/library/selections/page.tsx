@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { SelectionsCatalogPreview } from '@/components/skeleton/previews/selections-catalog-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const workflow = ['Catalog Setup', 'Estimate Creation', 'Client Selection', 'Procurement']
 
 export default function SelectionsCatalogPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <SelectionsCatalogPreview /> : <PageSpec
       title="Selections Catalog"
       phase="Phase 0 - Foundation"
       planFile="views/library/SELECTIONS_CATALOG.md"
       description="Master library of all products, materials, and finishes available for selection. Every estimate line item requiring a choice pulls from this catalog. Includes pricing tiers (builder-grade to luxury), vendor sources, lead times, and specifications. The single source of truth for 'what can we install and what does it cost?'"
-      workflow={['Catalog Setup', 'Estimate Creation', 'Client Selection', 'Procurement']}
+      workflow={workflow}
       features={[
         'Organized by category: Finishes, Fixtures, Structural, MEP, Appliances',
         'Sub-categories: Flooring > Tile, Hardwood, LVP, Carpet',
@@ -102,6 +118,7 @@ export default function SelectionsCatalogPage() {
 │                  │  └─────────────────────────────────────────────┘ │
 └──────────────────┴──────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

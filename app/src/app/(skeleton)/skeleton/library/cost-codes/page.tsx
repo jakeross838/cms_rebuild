@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { CostCodesPreview } from '@/components/skeleton/previews/cost-codes-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const workflow = ['Define Codes', 'Map to QB', 'Use in Budgets', 'Track Costs']
 
 export default function CostCodesPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <CostCodesPreview /> : <PageSpec
       title="Cost Codes"
       phase="Phase 0 - Foundation"
       planFile="views/library/COST_CODES.md"
       description="Hierarchical cost code structure for organizing budgets and tracking costs. Map to QuickBooks accounts for seamless accounting integration. Define standard codes for your business with the ability to add job-specific codes as needed."
-      workflow={['Define Codes', 'Map to QB', 'Use in Budgets', 'Track Costs']}
+      workflow={workflow}
       features={[
         'Hierarchical structure (Division > Category > Code)',
         'CSI MasterFormat compatible',
@@ -75,6 +91,7 @@ export default function CostCodesPage() {
 │ ▶ 16 - Electrical                                                   │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

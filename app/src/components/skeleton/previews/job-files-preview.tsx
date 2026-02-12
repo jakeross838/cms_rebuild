@@ -1,0 +1,770 @@
+'use client'
+
+import { useState } from 'react'
+import {
+  Upload,
+  Search,
+  Filter,
+  Download,
+  MoreHorizontal,
+  Folder,
+  FolderOpen,
+  File,
+  FileText,
+  FileImage,
+  FileSpreadsheet,
+  FileArchive,
+  ChevronRight,
+  ChevronDown,
+  Calendar,
+  User,
+  HardDrive,
+  Sparkles,
+  AlertTriangle,
+  Clock,
+  Eye,
+  Trash2,
+  Grid3X3,
+  List,
+  X,
+  History,
+  Share2,
+  ExternalLink,
+  FileSearch,
+  Wand2,
+  ScanText,
+  Brain,
+  Zap,
+  FolderPlus,
+  CloudUpload,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+interface DocumentFile {
+  id: string
+  name: string
+  type: 'pdf' | 'doc' | 'xls' | 'jpg' | 'png' | 'zip' | 'dwg' | 'other'
+  size: string
+  sizeBytes: number
+  dateModified: string
+  uploadedBy: string
+  category: string
+  version: number
+  thumbnail?: string
+  aiNote?: string
+}
+
+interface FolderItem {
+  id: string
+  name: string
+  filesCount: number
+  color: string
+}
+
+const mockFolders: FolderItem[] = [
+  { id: '1', name: 'Plans', filesCount: 24, color: 'bg-blue-100 text-blue-600' },
+  { id: '2', name: 'Permits', filesCount: 12, color: 'bg-green-100 text-green-600' },
+  { id: '3', name: 'Contracts', filesCount: 8, color: 'bg-purple-100 text-purple-600' },
+  { id: '4', name: 'Warranties', filesCount: 6, color: 'bg-orange-100 text-orange-600' },
+  { id: '5', name: 'Specs', filesCount: 18, color: 'bg-red-100 text-red-600' },
+  { id: '6', name: 'Photos', filesCount: 156, color: 'bg-amber-100 text-amber-600' },
+]
+
+const mockFiles: DocumentFile[] = [
+  {
+    id: '1',
+    name: 'Foundation_Plan_Rev3.pdf',
+    type: 'pdf',
+    size: '2.4 MB',
+    sizeBytes: 2516582,
+    dateModified: '2024-11-08',
+    uploadedBy: 'John Smith',
+    category: 'Plans',
+    version: 3,
+    thumbnail: 'plan',
+  },
+  {
+    id: '2',
+    name: 'Building_Permit_Approved.pdf',
+    type: 'pdf',
+    size: '1.2 MB',
+    sizeBytes: 1258291,
+    dateModified: '2024-11-06',
+    uploadedBy: 'Mike Johnson',
+    category: 'Permits',
+    version: 1,
+    thumbnail: 'permit',
+    aiNote: 'Permit expires in 45 days - renewal recommended',
+  },
+  {
+    id: '3',
+    name: 'General_Contract_v2.doc',
+    type: 'doc',
+    size: '856 KB',
+    sizeBytes: 876544,
+    dateModified: '2024-11-05',
+    uploadedBy: 'Sarah Davis',
+    category: 'Contracts',
+    version: 2,
+  },
+  {
+    id: '4',
+    name: 'Site_Survey_2024.dwg',
+    type: 'dwg',
+    size: '8.7 MB',
+    sizeBytes: 9122611,
+    dateModified: '2024-11-04',
+    uploadedBy: 'Tom Wilson',
+    category: 'Plans',
+    version: 1,
+    thumbnail: 'cad',
+  },
+  {
+    id: '5',
+    name: 'Material_Specifications.xls',
+    type: 'xls',
+    size: '524 KB',
+    sizeBytes: 536576,
+    dateModified: '2024-11-03',
+    uploadedBy: 'Lisa Brown',
+    category: 'Specs',
+    version: 1,
+  },
+  {
+    id: '6',
+    name: 'Electrical_Layout_Final.pdf',
+    type: 'pdf',
+    size: '3.1 MB',
+    sizeBytes: 3250586,
+    dateModified: '2024-11-02',
+    uploadedBy: 'John Smith',
+    category: 'Plans',
+    version: 2,
+    thumbnail: 'plan',
+    aiNote: 'References outdated panel specs - verify with electrician',
+  },
+  {
+    id: '7',
+    name: 'Front_Elevation_Photo.jpg',
+    type: 'jpg',
+    size: '4.2 MB',
+    sizeBytes: 4404019,
+    dateModified: '2024-11-01',
+    uploadedBy: 'Mike Johnson',
+    category: 'Photos',
+    version: 1,
+    thumbnail: 'photo',
+  },
+  {
+    id: '8',
+    name: 'HVAC_Warranty.pdf',
+    type: 'pdf',
+    size: '456 KB',
+    sizeBytes: 466944,
+    dateModified: '2024-10-30',
+    uploadedBy: 'Sarah Davis',
+    category: 'Warranties',
+    version: 1,
+    aiNote: 'Warranty valid until 2034 - 10 year coverage',
+  },
+  {
+    id: '9',
+    name: 'Roofing_Specifications.pdf',
+    type: 'pdf',
+    size: '1.8 MB',
+    sizeBytes: 1887437,
+    dateModified: '2024-10-28',
+    uploadedBy: 'Tom Wilson',
+    category: 'Specs',
+    version: 3,
+  },
+  {
+    id: '10',
+    name: 'Window_Schedule.xls',
+    type: 'xls',
+    size: '312 KB',
+    sizeBytes: 319488,
+    dateModified: '2024-10-25',
+    uploadedBy: 'Lisa Brown',
+    category: 'Specs',
+    version: 2,
+  },
+]
+
+const recentFiles = mockFiles.slice(0, 4)
+
+const fileTypeIcons: Record<string, typeof File> = {
+  pdf: FileText,
+  doc: FileText,
+  xls: FileSpreadsheet,
+  jpg: FileImage,
+  png: FileImage,
+  zip: FileArchive,
+  dwg: File,
+  other: File,
+}
+
+const fileTypeColors: Record<string, string> = {
+  pdf: 'text-red-500',
+  doc: 'text-blue-500',
+  xls: 'text-green-500',
+  jpg: 'text-purple-500',
+  png: 'text-purple-500',
+  zip: 'text-amber-500',
+  dwg: 'text-orange-500',
+  other: 'text-gray-500',
+}
+
+const thumbnailColors: Record<string, string> = {
+  plan: 'bg-blue-100',
+  permit: 'bg-green-100',
+  cad: 'bg-orange-100',
+  photo: 'bg-purple-100',
+}
+
+const fileTypes = ['All Types', 'PDF', 'DOC', 'XLS', 'Images', 'Archives', 'CAD'] as const
+
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+function FolderCard({ folder, isSelected, onClick }: { folder: FolderItem; isSelected: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 p-3 rounded-lg border transition-all text-left w-full",
+        isSelected
+          ? "border-blue-300 bg-blue-50 ring-2 ring-blue-200"
+          : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+      )}
+    >
+      <div className={cn("p-2 rounded-lg", folder.color)}>
+        {isSelected ? <FolderOpen className="h-5 w-5" /> : <Folder className="h-5 w-5" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-gray-900 truncate">{folder.name}</div>
+        <div className="text-xs text-gray-500">{folder.filesCount} files</div>
+      </div>
+      <ChevronRight className={cn("h-4 w-4 text-gray-400 transition-transform", isSelected && "rotate-90")} />
+    </button>
+  )
+}
+
+function FileThumbnail({ file }: { file: DocumentFile }) {
+  const FileIcon = fileTypeIcons[file.type] || File
+  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+  const bgColor = file.thumbnail ? thumbnailColors[file.thumbnail] : 'bg-gray-100'
+
+  return (
+    <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0", bgColor)}>
+      <FileIcon className={cn("h-6 w-6", iconColor)} />
+    </div>
+  )
+}
+
+function FileRow({ file, isSelected, onClick }: { file: DocumentFile; isSelected: boolean; onClick: () => void }) {
+  const FileIcon = fileTypeIcons[file.type] || File
+  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-4 p-3 rounded-lg border transition-all cursor-pointer group",
+        isSelected
+          ? "bg-blue-50 border-blue-300 ring-2 ring-blue-200"
+          : "bg-white border-gray-200 hover:shadow-sm hover:border-gray-300"
+      )}
+    >
+      <FileThumbnail file={file} />
+
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-gray-900 truncate">{file.name}</div>
+        <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+          <span className="uppercase font-medium">{file.type}</span>
+          <span>{file.size}</span>
+          {file.version > 1 && (
+            <span className="flex items-center gap-1 text-blue-600">
+              <History className="h-3 w-3" />
+              v{file.version}
+            </span>
+          )}
+        </div>
+        {file.aiNote && (
+          <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+            <Sparkles className="h-3 w-3" />
+            <span>{file.aiNote}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="hidden md:flex items-center gap-1.5 text-sm text-gray-500">
+        <Calendar className="h-3.5 w-3.5" />
+        <span>{formatDate(file.dateModified)}</span>
+      </div>
+
+      <div className="hidden md:flex items-center gap-1.5 text-sm text-gray-500 min-w-[120px]">
+        <User className="h-3.5 w-3.5" />
+        <span className="truncate">{file.uploadedBy}</span>
+      </div>
+
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button className="p-1.5 hover:bg-gray-100 rounded" title="Preview">
+          <Eye className="h-4 w-4 text-gray-400" />
+        </button>
+        <button className="p-1.5 hover:bg-gray-100 rounded" title="Download">
+          <Download className="h-4 w-4 text-gray-400" />
+        </button>
+        <button className="p-1.5 hover:bg-gray-100 rounded" title="More">
+          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () => void }) {
+  const FileIcon = fileTypeIcons[file.type] || File
+  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+
+  return (
+    <div className="w-72 border-l border-gray-200 bg-white p-4 space-y-4">
+      <div className="flex items-center justify-between">
+        <h4 className="font-semibold text-gray-900">File Details</h4>
+        <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <X className="h-4 w-4 text-gray-400" />
+        </button>
+      </div>
+
+      {/* File Preview */}
+      <div className="bg-gray-100 rounded-lg p-6 flex items-center justify-center">
+        <FileIcon className={cn("h-16 w-16", iconColor)} />
+      </div>
+
+      {/* File Name */}
+      <div>
+        <div className="text-sm font-medium text-gray-900 break-words">{file.name}</div>
+        <div className="text-xs text-gray-500 uppercase mt-1">{file.type} File</div>
+      </div>
+
+      {/* Details Grid */}
+      <div className="space-y-3 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-500">Size</span>
+          <span className="text-gray-900 font-medium">{file.size}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500">Uploaded by</span>
+          <span className="text-gray-900 font-medium">{file.uploadedBy}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500">Date</span>
+          <span className="text-gray-900 font-medium">{formatDate(file.dateModified)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500">Version</span>
+          <span className="text-gray-900 font-medium">v{file.version}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500">Category</span>
+          <span className="text-gray-900 font-medium">{file.category}</span>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="space-y-2 pt-2 border-t border-gray-200">
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+          <Eye className="h-4 w-4" />
+          Preview
+        </button>
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+          <Download className="h-4 w-4" />
+          Download
+        </button>
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+          <Share2 className="h-4 w-4" />
+          Share
+        </button>
+        {file.version > 1 && (
+          <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+            <History className="h-4 w-4" />
+            View History ({file.version} versions)
+          </button>
+        )}
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">
+          <Trash2 className="h-4 w-4" />
+          Delete
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function UploadDropzone() {
+  return (
+    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-colors cursor-pointer">
+      <CloudUpload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+      <div className="text-sm font-medium text-gray-900">Drop files here or click to upload</div>
+      <div className="text-xs text-gray-500 mt-1">PDF, DOC, XLS, DWG, JPG, PNG up to 50MB</div>
+      <button className="mt-3 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        Browse Files
+      </button>
+    </div>
+  )
+}
+
+function RecentFilesSection({ files, onSelectFile }: { files: DocumentFile[]; onSelectFile: (file: DocumentFile) => void }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+          <Clock className="h-4 w-4 text-gray-500" />
+          Recent Files
+        </h4>
+        <button className="text-sm text-blue-600 hover:text-blue-700">View All</button>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {files.map(file => {
+          const FileIcon = fileTypeIcons[file.type] || File
+          const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+          return (
+            <button
+              key={file.id}
+              onClick={() => onSelectFile(file)}
+              className="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-left"
+            >
+              <FileIcon className={cn("h-5 w-5 flex-shrink-0", iconColor)} />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium text-gray-900 truncate">{file.name}</div>
+                <div className="text-xs text-gray-500">{formatDate(file.dateModified)}</div>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function AIFeaturesSection() {
+  const aiFeatures = [
+    {
+      icon: ScanText,
+      name: 'Text Extraction',
+      description: 'Automatically extract text from PDFs and images',
+      status: 'Active',
+      color: 'text-blue-600 bg-blue-100',
+    },
+    {
+      icon: FileSearch,
+      name: 'Smart Search',
+      description: 'Search across all document contents',
+      status: 'Active',
+      color: 'text-green-600 bg-green-100',
+    },
+    {
+      icon: Wand2,
+      name: 'Auto-Categorization',
+      description: 'Automatically sort uploads into folders',
+      status: 'Active',
+      color: 'text-purple-600 bg-purple-100',
+    },
+    {
+      icon: Brain,
+      name: 'Document Insights',
+      description: 'Extract key dates, amounts, and entities',
+      status: 'Active',
+      color: 'text-amber-600 bg-amber-100',
+    },
+  ]
+
+  return (
+    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="h-5 w-5 text-indigo-600" />
+        <h4 className="font-semibold text-indigo-900">AI Features</h4>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {aiFeatures.map(feature => (
+          <div key={feature.name} className="bg-white rounded-lg p-3 border border-gray-200">
+            <div className="flex items-center gap-2 mb-1">
+              <div className={cn("p-1.5 rounded", feature.color)}>
+                <feature.icon className="h-3.5 w-3.5" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">{feature.name}</span>
+            </div>
+            <p className="text-xs text-gray-500">{feature.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function JobFilesPreview() {
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<DocumentFile | null>(null)
+  const [typeFilter, setTypeFilter] = useState<string>('All Types')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
+  const [showFilters, setShowFilters] = useState(false)
+  const [showUploadZone, setShowUploadZone] = useState(false)
+
+  const filteredFiles = mockFiles.filter(file => {
+    if (selectedFolder && file.category !== selectedFolder) return false
+    if (typeFilter !== 'All Types') {
+      const typeMap: Record<string, string[]> = {
+        'PDF': ['pdf'],
+        'DOC': ['doc'],
+        'XLS': ['xls'],
+        'Images': ['jpg', 'png'],
+        'Archives': ['zip'],
+        'CAD': ['dwg'],
+      }
+      const allowedTypes = typeMap[typeFilter] || []
+      if (!allowedTypes.includes(file.type)) return false
+    }
+    if (searchQuery && !file.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
+    return true
+  })
+
+  // Calculate quick stats
+  const totalFiles = mockFiles.length
+  const totalSize = mockFiles.reduce((sum, f) => sum + f.sizeBytes, 0)
+  const totalSizeFormatted = totalSize >= 1073741824
+    ? (totalSize / 1073741824).toFixed(1) + ' GB'
+    : (totalSize / 1048576).toFixed(1) + ' MB'
+
+  const categoryStats = mockFolders.map(folder => ({
+    name: folder.name,
+    count: mockFiles.filter(f => f.category === folder.name).length,
+  }))
+
+  return (
+    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold text-gray-900">Job Files</h3>
+              <span className="text-sm text-gray-500">{totalFiles} files</span>
+            </div>
+            <div className="text-sm text-gray-500 mt-0.5">
+              Smith Residence | {totalSizeFormatted} total
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">
+              <FolderPlus className="h-4 w-4" />
+              New Folder
+            </button>
+            <button
+              onClick={() => setShowUploadZone(!showUploadZone)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Upload className="h-4 w-4" />
+              Upload Files
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Upload Dropzone */}
+      {showUploadZone && (
+        <div className="bg-white border-b border-gray-200 px-4 py-4">
+          <UploadDropzone />
+        </div>
+      )}
+
+      {/* Quick Stats */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="grid grid-cols-4 gap-3">
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-gray-500 text-sm">
+              <File className="h-4 w-4" />
+              Total Files
+            </div>
+            <div className="text-xl font-bold text-gray-900 mt-1">{totalFiles}</div>
+          </div>
+          <div className="bg-blue-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-blue-600 text-sm">
+              <HardDrive className="h-4 w-4" />
+              Storage Used
+            </div>
+            <div className="text-xl font-bold text-blue-700 mt-1">{totalSizeFormatted}</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-green-600 text-sm">
+              <FileText className="h-4 w-4" />
+              Plans & Specs
+            </div>
+            <div className="text-xl font-bold text-green-700 mt-1">
+              {categoryStats.filter(c => c.name === 'Plans' || c.name === 'Specs').reduce((sum, c) => sum + c.count, 0)}
+            </div>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-purple-600 text-sm">
+              <Folder className="h-4 w-4" />
+              Categories
+            </div>
+            <div className="text-xl font-bold text-purple-700 mt-1">{mockFolders.length}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filter Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search files..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {fileTypes.map(type => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg",
+              showFilters
+                ? "border-blue-200 text-blue-600 bg-blue-50"
+                : "border-gray-200 text-gray-600 hover:bg-gray-50"
+            )}
+          >
+            <Filter className="h-4 w-4" />
+            More Filters
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setViewMode('list')}
+              className={cn(
+                "p-1.5",
+                viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
+              )}
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={cn(
+                "p-1.5",
+                viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
+              )}
+            >
+              <Grid3X3 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex">
+        {/* Folder Sidebar */}
+        <div className="w-64 border-r border-gray-200 bg-white p-3 space-y-2">
+          <button
+            onClick={() => setSelectedFolder(null)}
+            className={cn(
+              "flex items-center gap-3 p-3 rounded-lg border transition-all text-left w-full",
+              selectedFolder === null
+                ? "border-blue-300 bg-blue-50 ring-2 ring-blue-200"
+                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+            )}
+          >
+            <div className="p-2 rounded-lg bg-gray-100 text-gray-600">
+              <Folder className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="font-medium text-gray-900">All Files</div>
+              <div className="text-xs text-gray-500">{totalFiles} files</div>
+            </div>
+          </button>
+          {mockFolders.map(folder => (
+            <FolderCard
+              key={folder.id}
+              folder={folder}
+              isSelected={selectedFolder === folder.name}
+              onClick={() => setSelectedFolder(selectedFolder === folder.name ? null : folder.name)}
+            />
+          ))}
+        </div>
+
+        {/* File List */}
+        <div className="flex-1 p-4 max-h-[400px] overflow-y-auto">
+          <div className="space-y-2">
+            {filteredFiles.length > 0 ? (
+              filteredFiles.map(file => (
+                <FileRow
+                  key={file.id}
+                  file={file}
+                  isSelected={selectedFile?.id === file.id}
+                  onClick={() => setSelectedFile(selectedFile?.id === file.id ? null : file)}
+                />
+              ))
+            ) : (
+              <div className="text-center py-12 text-gray-400">
+                <File className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p className="text-sm">No files match your search</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* File Details Panel */}
+        {selectedFile && (
+          <FileDetailsPanel
+            file={selectedFile}
+            onClose={() => setSelectedFile(null)}
+          />
+        )}
+      </div>
+
+      {/* Recent Files & AI Features Section */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <div className="grid grid-cols-2 gap-4">
+          <RecentFilesSection files={recentFiles} onSelectFile={setSelectedFile} />
+          <AIFeaturesSection />
+        </div>
+      </div>
+
+      {/* AI Insights Bar */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Sparkles className="h-4 w-4 text-amber-600" />
+            <span className="font-medium text-sm text-amber-800">Document Insights:</span>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-amber-700">
+            <span className="flex items-center gap-1">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              1 permit expiring soon
+            </span>
+            <span>|</span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />
+              3 plans updated this week
+            </span>
+            <span>|</span>
+            <span>2 files reference outdated specs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

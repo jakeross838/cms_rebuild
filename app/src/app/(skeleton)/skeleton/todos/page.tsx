@@ -1,12 +1,16 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { TodosPreview } from '@/components/skeleton/previews/todos-preview'
 
 const constructionWorkflow = [
   'Task Creation', 'Todo Lists', 'Task Board', 'Assignments', 'Notifications', 'Reports'
 ]
 
 export default function TodoListsSkeleton() {
+  const [activeTab, setActiveTab] = useState<'overview' | 'preview'>('overview')
+
   return (
     <PageSpec
       title="Todo Lists"
@@ -80,6 +84,37 @@ export default function TodoListsSkeleton() {
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    >
+      {/* Tabs */}
+      <div className="flex items-center gap-1 border-b border-gray-200 bg-white px-4">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'overview'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'preview'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Preview
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'preview' && (
+        <div className="p-4">
+          <TodosPreview />
+        </div>
+      )}
+    </PageSpec>
   )
 }

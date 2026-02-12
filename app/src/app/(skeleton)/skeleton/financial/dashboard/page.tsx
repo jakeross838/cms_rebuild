@@ -1,71 +1,107 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { FinancialDashboardPreview } from '@/components/skeleton/previews/financial-dashboard-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function FinancialDashboardPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
-      title="Financial Dashboard"
-      phase="Phase 0 - Foundation"
-      planFile="views/financial/DASHBOARD.md"
-      description="Company-wide financial overview showing cash position, accounts receivable, accounts payable, profitability, and key financial metrics. The command center for understanding your company's financial health at a glance."
-      workflow={['View Metrics', 'Drill Down', 'Take Action', 'Monitor Trends']}
-      features={[
-        'Cash position summary',
-        'Accounts receivable aging',
-        'Accounts payable aging',
-        'Revenue by period',
-        'Profit margins by job',
-        'Cash flow forecast',
-        'Outstanding draws',
-        'Pending invoices',
-        'Payment collection rate',
-        'Budget vs actual trends',
-        'QuickBooks sync status',
-        'Key financial KPIs',
-        'Alerts for issues',
-        'Drill-down to details',
-      ]}
-      connections={[
-        { name: 'Accounts Receivable', type: 'output', description: 'AR details' },
-        { name: 'Accounts Payable', type: 'output', description: 'AP details' },
-        { name: 'Cash Flow', type: 'output', description: 'Forecast details' },
-        { name: 'Job Profitability', type: 'output', description: 'Margin analysis' },
-        { name: 'Draws', type: 'input', description: 'Outstanding draws' },
-        { name: 'Invoices', type: 'input', description: 'Pending invoices' },
-        { name: 'QuickBooks', type: 'bidirectional', description: 'Sync status' },
-      ]}
-      dataFields={[
-        { name: 'cash_on_hand', type: 'decimal', description: 'Current cash balance' },
-        { name: 'ar_total', type: 'decimal', description: 'Total receivables' },
-        { name: 'ar_current', type: 'decimal', description: 'Current (0-30 days)' },
-        { name: 'ar_30_60', type: 'decimal', description: '30-60 days' },
-        { name: 'ar_60_90', type: 'decimal', description: '60-90 days' },
-        { name: 'ar_over_90', type: 'decimal', description: 'Over 90 days' },
-        { name: 'ap_total', type: 'decimal', description: 'Total payables' },
-        { name: 'revenue_mtd', type: 'decimal', description: 'Month to date revenue' },
-        { name: 'revenue_ytd', type: 'decimal', description: 'Year to date revenue' },
-        { name: 'profit_margin', type: 'decimal', description: 'Average profit margin' },
-        { name: 'active_contract_value', type: 'decimal', description: 'Total contract value' },
-      ]}
-      aiFeatures={[
-        {
-          name: 'Cash Flow Alert',
-          description: 'Warns of potential cash issues. "Based on AP due and AR collection rates, cash may be tight in 3 weeks. Accelerate Draw #5?"',
-          trigger: 'Daily analysis'
-        },
-        {
-          name: 'Collection Recommendations',
-          description: 'Suggests collection actions. "2 draws over 30 days. Historical: these clients pay after 2nd reminder."',
-          trigger: 'Weekly review'
-        },
-        {
-          name: 'Profitability Insights',
-          description: 'Highlights margin trends. "Profit margins declining 2% this quarter. Primary driver: lumber costs."',
-          trigger: 'Monthly analysis'
-        },
-      ]}
-      mockupAscii={`
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? (
+        <FinancialDashboardPreview />
+      ) : (
+        <PageSpec
+          title="Financial Dashboard"
+          phase="Phase 0 - Foundation"
+          planFile="views/financial/DASHBOARD.md"
+          description="Company-wide financial overview showing cash position, accounts receivable, accounts payable, profitability, and key financial metrics. The command center for understanding your company's financial health at a glance."
+          workflow={['View Metrics', 'Drill Down', 'Take Action', 'Monitor Trends']}
+          features={[
+            'Cash position summary',
+            'Accounts receivable aging',
+            'Accounts payable aging',
+            'Revenue by period',
+            'Profit margins by job',
+            'Cash flow forecast',
+            'Outstanding draws',
+            'Pending invoices',
+            'Payment collection rate',
+            'Budget vs actual trends',
+            'QuickBooks sync status',
+            'Key financial KPIs',
+            'Alerts for issues',
+            'Drill-down to details',
+          ]}
+          connections={[
+            { name: 'Accounts Receivable', type: 'output', description: 'AR details' },
+            { name: 'Accounts Payable', type: 'output', description: 'AP details' },
+            { name: 'Cash Flow', type: 'output', description: 'Forecast details' },
+            { name: 'Job Profitability', type: 'output', description: 'Margin analysis' },
+            { name: 'Draws', type: 'input', description: 'Outstanding draws' },
+            { name: 'Invoices', type: 'input', description: 'Pending invoices' },
+            { name: 'QuickBooks', type: 'bidirectional', description: 'Sync status' },
+          ]}
+          dataFields={[
+            { name: 'cash_on_hand', type: 'decimal', description: 'Current cash balance' },
+            { name: 'ar_total', type: 'decimal', description: 'Total receivables' },
+            { name: 'ar_current', type: 'decimal', description: 'Current (0-30 days)' },
+            { name: 'ar_30_60', type: 'decimal', description: '30-60 days' },
+            { name: 'ar_60_90', type: 'decimal', description: '60-90 days' },
+            { name: 'ar_over_90', type: 'decimal', description: 'Over 90 days' },
+            { name: 'ap_total', type: 'decimal', description: 'Total payables' },
+            { name: 'revenue_mtd', type: 'decimal', description: 'Month to date revenue' },
+            { name: 'revenue_ytd', type: 'decimal', description: 'Year to date revenue' },
+            { name: 'profit_margin', type: 'decimal', description: 'Average profit margin' },
+            { name: 'active_contract_value', type: 'decimal', description: 'Total contract value' },
+          ]}
+          aiFeatures={[
+            {
+              name: 'Cash Flow Alert',
+              description: 'Warns of potential cash issues. "Based on AP due and AR collection rates, cash may be tight in 3 weeks. Accelerate Draw #5?"',
+              trigger: 'Daily analysis'
+            },
+            {
+              name: 'Collection Recommendations',
+              description: 'Suggests collection actions. "2 draws over 30 days. Historical: these clients pay after 2nd reminder."',
+              trigger: 'Weekly review'
+            },
+            {
+              name: 'Profitability Insights',
+              description: 'Highlights margin trends. "Profit margins declining 2% this quarter. Primary driver: lumber costs."',
+              trigger: 'Monthly analysis'
+            },
+          ]}
+          mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Financial Dashboard                          Last sync: 5 min ago   │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -97,6 +133,8 @@ export default function FinancialDashboardPage() {
 │ Active Contracts: $8.4M | Revenue MTD: $485K | YTD: $2.1M          │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+    </div>
   )
 }

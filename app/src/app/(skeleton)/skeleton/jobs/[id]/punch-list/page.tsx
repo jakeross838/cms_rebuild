@@ -1,10 +1,27 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { PunchListPreview } from '@/components/skeleton/previews/punch-list-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobPunchListPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <PunchListPreview /> : <PageSpec
       title="Punch List"
       phase="Phase 1 - Project Management"
       planFile="views/jobs/PUNCH_LIST.md"
@@ -101,6 +118,7 @@ export default function JobPunchListPage() {
 │ [+ Add Item] [Client Walkthrough Mode] [Export for Trades]          │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

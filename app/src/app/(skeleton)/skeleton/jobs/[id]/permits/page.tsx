@@ -1,10 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { PermitsPreview } from '@/components/skeleton/previews/permits-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobPermitsPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <PermitsPreview /> : <PageSpec
       title="Permits"
       phase="Phase 1 - Compliance"
       planFile="views/jobs/PERMITS.md"
@@ -51,52 +65,22 @@ export default function JobPermitsPage() {
       aiFeatures={[
         {
           name: 'Permit Requirements',
-          description: 'Identifies needed permits. "Based on scope: Building, Electrical, Plumbing, Mechanical, and HVAC permits required."',
+          description: 'Identifies needed permits.',
           trigger: 'On job creation'
         },
         {
           name: 'Timeline Management',
-          description: 'Plans permit timing. "Building permit typically 3-4 weeks in this jurisdiction. Apply by Feb 1 for March start."',
+          description: 'Plans permit timing.',
           trigger: 'On schedule planning'
         },
         {
           name: 'Expiration Alerts',
-          description: 'Monitors permit validity. "Building permit expires in 60 days. Work 75% complete. May need extension."',
+          description: 'Monitors permit validity.',
           trigger: 'Periodic check'
         },
       ]}
-      mockupAscii={`
-┌─────────────────────────────────────────────────────────────────────┐
-│ Permits - Smith Residence                       Fees Paid: $8,450   │
-├─────────────────────────────────────────────────────────────────────┤
-│ PERMIT STATUS                                                       │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Permit Type      Number        Status      Expires              │ │
-│ │ ────────────────────────────────────────────────────────────── │ │
-│ │ Building         BLD-2024-1234 ✓ Approved  Jun 15, 2025        │ │
-│ │ Electrical       ELE-2024-5678 ✓ Approved  Jun 15, 2025        │ │
-│ │ Plumbing         PLB-2024-9012 ✓ Approved  Jun 15, 2025        │ │
-│ │ Mechanical       MEC-2024-3456 ⏳ Review   -                    │ │
-│ │ Pool             -             📝 Draft    -                    │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────┤
-│ PENDING ACTION                                                      │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Mechanical Permit                          Under Review         │ │
-│ │ Applied: Jan 15 | Typical review: 2 weeks                       │ │
-│ │ Status: Plan review - comments expected Jan 30                  │ │
-│ │ ⚠ HVAC rough-in scheduled Feb 5 - needs approval               │ │
-│ │ [Check Status] [Contact Reviewer]                               │ │
-│ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ Pool Permit                                 Draft               │ │
-│ │ Required documents: Site plan, pool plans, barrier plan         │ │
-│ │ AI: "Submit by Feb 15 for April pool construction start"       │ │
-│ │ [Edit Application] [Upload Documents] [Submit]                  │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────┤
-│ Inspector: John Smith (City of Clearwater) | 📞 (727) 555-0123     │
-└─────────────────────────────────────────────────────────────────────┘
-`}
-    />
+      mockupAscii=""
+    />}
+    </div>
   )
 }

@@ -1,15 +1,54 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { TemplatesPreview } from '@/components/skeleton/previews/templates-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
   'Selections Catalog', 'Assemblies/Templates', 'Estimates', 'Proposals'
 ]
 
 export default function TemplatesSkeleton() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
-      title="Assemblies & Templates"
+    <div className="space-y-4">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+
+      {/* Content */}
+      {activeTab === 'preview' ? (
+        <TemplatesPreview />
+      ) : (
+        <PageSpec
+          title="Assemblies & Templates"
       phase="Phase 0 - Foundation"
       planFile="views/catalog/ASSEMBLIES_TEMPLATES.md"
       description="Reusable estimate building blocks with default selections. Create assemblies like 'Standard Kitchen Package' or 'Coastal Bathroom' that include all line items with pre-selected products from the Selections Catalog. Dramatically speeds up estimating while ensuring consistency."
@@ -72,7 +111,7 @@ export default function TemplatesSkeleton() {
           trigger: 'On assembly review'
         },
       ]}
-      mockupAscii={`
+          mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Assemblies & Templates                      [+ New Assembly]        │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -106,6 +145,8 @@ export default function TemplatesSkeleton() {
 │ +6%. Consider updating estimate defaults or creating new tier."     │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+    </div>
   )
 }

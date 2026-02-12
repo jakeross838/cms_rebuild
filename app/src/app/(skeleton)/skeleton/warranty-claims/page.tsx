@@ -1,13 +1,28 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { WarrantyClaimsPreview } from '@/components/skeleton/previews/warranty-claims-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
   'Client Report', 'Warranty Check', 'Claim Filed', 'Resolution', 'Closeout'
 ]
 
 export default function WarrantyClaimsSkeleton() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <WarrantyClaimsPreview /> :
     <PageSpec
       title="Warranty Claims"
       phase="Phase 5 - Warranty"
@@ -91,40 +106,38 @@ export default function WarrantyClaimsSkeleton() {
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Warranty Claims                             [+ New Claim]           │
 ├─────────────────────────────────────────────────────────────────────┤
-│ Open: 8 | This Month: 12 | Avg Resolution: 4.2 days | Satisfaction: 94% │
+│ 6 claims | 2 open | 1 in progress | Avg Resolution: 4.2 days       │
 ├─────────────────────────────────────────────────────────────────────┤
-│ Filter: [All ▾] Priority: [All ▾] Status: [All ▾]                  │
+│ All (6) | Submitted (1) | Evaluating (1) | In Progress (1) | ...    │
+│ Priority: 🔴 Emergency (1) | 🟠 High (2) | 🔵 Normal (2) | ⚪ Low   │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│ 🔴 EMERGENCY                                                        │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ CLM-2024-089 Water leak - Smith Residence           Submitted   │ │
-│ │ "Water dripping from ceiling in master bath"         2 hrs ago  │ │
-│ │ AI: "Active leak. Photos show water staining. Emergency."       │ │
-│ │ Coverage: Builder 2yr warranty (active)                         │ │
-│ │ [Assign Vendor] [Schedule Emergency] [View Photos]              │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
+│ 🔴 CLM-2024-089 Water leak - Smith Residence      [Submitted]      │
+│ Master Bathroom | 2 hrs ago | 3 photos | Emergency Priority        │
+│ AI: "Active leak over electrical panel. Photos show water staining.│
+│ Escalate to Emergency. Contact Smith immediately."                 │
 │                                                                     │
-│ 🟡 IN PROGRESS                                                      │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ CLM-2024-085 HVAC not cooling - Johnson             Scheduled   │ │
-│ │ Assigned: ABC HVAC | Appt: Tomorrow 9am                         │ │
-│ │ Coverage: Trane warranty (parts only, labor expired)            │ │
-│ │ Est. Cost: $150 labor (builder responsibility)                  │ │
-│ │ [View Details] [Reschedule] [Contact Vendor]                    │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
+│ 🟠 CLM-2024-085 HVAC not cooling - Johnson        [In Progress]    │
+│ Main Floor | 3 days ago | 2 photos | High Priority                 │
+│ Assigned to: ABC HVAC Services                                     │
+│ Coverage: Trane warranty (parts only, labor expired)               │
 │                                                                     │
-│ ✓ RECENTLY RESOLVED                                                 │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ CLM-2024-082 Cabinet door alignment - Davis         Resolved    │ │
-│ │ Resolved: Jan 26 | 3 days | Client satisfied: Yes              │ │
-│ │ Resolution: Hinges adjusted by Cabinet Pros (vendor warranty)   │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────┤
-│ AI: "Pattern detected: 3 similar window seal claims this quarter.  │
-│ Consider proactive inspection of all PGT windows from 2023 batch." │
+│ ✓ CLM-2024-082 Cabinet door alignment - Davis    [Resolved] ★95%  │
+│ Kitchen | 6 days ago | 1 photo | Normal Priority                  │
+│ Resolved by: Cabinet Pros LLC | Client satisfied                   │
+│                                                                     │
+│ Timeline: Reported (Jan 28) → Evaluated (Jan 29) → Assigned (Jan 30)
+│          → Resolved (Feb 2)                                        │
+│                                                                     │
+│ AI Pattern Detection:                                               │
+│ • 3 window seal failures this quarter (same batch) - recommend      │
+│   proactive inspection of all affected units                       │
+│ • HVAC cooling issues peak in warm months - allocate more vendors  │
+│ • Cabinet adjustments resolve 95% of issues - schedule routine     │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+      />
+    }
+    </div>
   )
 }

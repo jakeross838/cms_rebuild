@@ -119,9 +119,10 @@ function NavLink({ item, resolvedHref }: { item: NavItem; resolvedHref: string }
 function NavItemList({ items, jobBase }: { items: NavItem[]; jobBase?: string }) {
   const resolveHref = (href: string) => {
     if (!jobBase) return href
-    // "← Company" has an absolute href
-    if (href.startsWith('/')) return href
-    // empty string = job overview
+    // "← Company" has a full absolute path back to company view
+    if (href.startsWith('/skeleton/')) return href
+    // Job-relative paths (like /schedule, /budget) get prepended with jobBase
+    // Empty string = job overview
     return jobBase + href
   }
 

@@ -1,15 +1,28 @@
 'use client'
-
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { SubmittalsPreview } from '@/components/skeleton/previews/submittals-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
   'Specifications', 'Submittals', 'Review', 'Approval', 'Procurement'
 ]
 
 export default function SubmittalsSkeleton() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
-      title="Submittals"
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <SubmittalsPreview /> : <PageSpec
+        title="Submittals"
       phase="Phase 3 - Advanced PM"
       planFile="views/advanced-pm/SUBMITTALS.md"
       description="Track product submittals from vendors through the approval process. Manage submittal packages, route for architect/engineer review, track revisions, and maintain approval status for procurement authorization."
@@ -112,6 +125,7 @@ export default function SubmittalsSkeleton() {
 │ path—12 week lead time. Recommend escalation to architect."         │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

@@ -1,10 +1,50 @@
 'use client'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { ChangeOrdersPreview } from '@/components/skeleton/previews/change-orders-preview'
+import { useState } from 'react'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobChangeOrdersPage() {
+  
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
+    <div className="space-y-4">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+
+      {/* Content */}
+      {activeTab === 'preview' ? (
+        <ChangeOrdersPreview />
+      ) : (
+        <PageSpec
       title="Change Orders"
       phase="Phase 1 - Project Management"
       planFile="views/jobs/CHANGE_ORDERS.md"
@@ -99,6 +139,8 @@ export default function JobChangeOrdersPage() {
 │ Original Contract: $2,400,000 | Changes: +$45,000 | New: $2,445,000│
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+    </div>
   )
 }

@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { ReportsPreview } from '@/components/skeleton/previews/reports-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const reportsWorkflow = ['Select Report', 'Set Parameters', 'Generate', 'Review', 'Export/Share']
 
 export default function FinancialReportsPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <ReportsPreview /> : <PageSpec
       title="Financial Reports"
       phase="Phase 2 - Reporting"
       planFile="views/financial/REPORTS.md"
       description="Generate standard and custom financial reports. Income statements, balance sheets, job cost reports, WIP schedules, and more. Export for accounting, banking, and tax purposes."
-      workflow={['Select Report', 'Set Parameters', 'Generate', 'Review', 'Export/Share']}
+      workflow={reportsWorkflow}
       features={[
         'Work in Progress (WIP) report',
         'Job cost summary',
@@ -69,33 +85,34 @@ export default function FinancialReportsPage() {
 ├─────────────────────────────────────────────────────────────────────┤
 │ STANDARD REPORTS                                                    │
 │ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ 📊 Work in Progress (WIP)                                       │ │
+│ │ Work in Progress (WIP)                                         │ │
 │ │    Over/under billing analysis for all active jobs              │ │
 │ │    Last run: Jan 15, 2025 | [Generate] [Schedule] [History]     │ │
 │ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ 📊 Job Cost Summary                                             │ │
+│ │ Job Cost Summary                                               │ │
 │ │    Budget vs actual for all jobs                                │ │
 │ │    Last run: Jan 20, 2025 | [Generate] [Schedule] [History]     │ │
 │ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ 📊 AP Aging Report                                              │ │
+│ │ AP Aging Report                                                │ │
 │ │    Outstanding payables by aging bucket                         │ │
 │ │    Last run: Jan 22, 2025 | [Generate] [Schedule] [History]     │ │
 │ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ 📊 AR Aging Report                                              │ │
+│ │ AR Aging Report                                                │ │
 │ │    Outstanding receivables by aging bucket                      │ │
 │ │    Last run: Jan 22, 2025 | [Generate] [Schedule] [History]     │ │
 │ └─────────────────────────────────────────────────────────────────┘ │
 │                                                                     │
 │ SCHEDULED REPORTS                                                   │
 │ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ WIP Report      Monthly (1st)    → jake@rossbuilt.com          │ │
-│ │ Cash Flow       Weekly (Mon)     → accounting@rossbuilt.com    │ │
-│ │ Job Cost Detail Monthly (15th)   → ops@rossbuilt.com           │ │
+│ │ WIP Report      Monthly (1st)    -> jake@rossbuilt.com          │ │
+│ │ Cash Flow       Weekly (Mon)     -> accounting@rossbuilt.com    │ │
+│ │ Job Cost Detail Monthly (15th)   -> ops@rossbuilt.com           │ │
 │ └─────────────────────────────────────────────────────────────────┘ │
 │                                                                     │
-│ 💡 AI: "Month-end in 3 days. WIP report due for bank review."      │
+│ AI: "Month-end in 3 days. WIP report due for bank review."         │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

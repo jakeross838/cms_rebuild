@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { ReceivablesPreview } from '@/components/skeleton/previews/receivables-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const receivablesWorkflow = ['Draw Approved', 'Invoice Sent', 'Payment Due', 'Follow Up', 'Payment Received']
 
 export default function AccountsReceivablePage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <ReceivablesPreview /> : <PageSpec
       title="Accounts Receivable"
       phase="Phase 0 - Foundation"
       planFile="views/financial/ACCOUNTS_RECEIVABLE.md"
       description="Track all money owed to you by clients. View outstanding draws by job and client, aging analysis, collection status, and payment history. Prioritize collection efforts and maintain healthy cash flow."
-      workflow={['Draw Approved', 'Invoice Sent', 'Payment Due', 'Follow Up', 'Payment Received']}
+      workflow={receivablesWorkflow}
       features={[
         'AR summary by client',
         'AR summary by job',
@@ -71,7 +87,7 @@ export default function AccountsReceivablePage() {
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Accounts Receivable                           Total: $485,000       │
 ├─────────────────────────────────────────────────────────────────────┤
-│ View: [By Client] [By Job] [Aging]    Status: [All ▾]              │
+│ View: [By Client] [By Job] [Aging]    Status: [All]                │
 ├─────────────────────────────────────────────────────────────────────┤
 │ AGING SUMMARY                                                       │
 │ ┌──────────┬──────────┬──────────┬──────────┬──────────┐           │
@@ -80,7 +96,7 @@ export default function AccountsReceivablePage() {
 │ │ 66%      │ 20%      │ 9%       │ 3%       │ 2%       │           │
 │ └──────────┴──────────┴──────────┴──────────┴──────────┘           │
 ├─────────────────────────────────────────────────────────────────────┤
-│ ⚠ ACTION NEEDED                                                     │
+│ ACTION NEEDED                                                       │
 │ ┌─────────────────────────────────────────────────────────────────┐ │
 │ │ Smith Residence - Draw #5                          $185,000     │ │
 │ │ Due: Jan 23 | 5 days overdue | Status: Reminder sent           │ │
@@ -97,6 +113,7 @@ export default function AccountsReceivablePage() {
 │ DSO: 28 days (Industry avg: 35) | Collection Rate: 94%             │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }

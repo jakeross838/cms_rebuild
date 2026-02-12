@@ -1,14 +1,54 @@
 'use client'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { PhotosPreview } from '@/components/skeleton/previews/photos-preview'
+import { useState } from 'react'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
   'Daily Logs', 'Photos', 'Client Portal', 'Documents'
 ]
 
 export default function PhotosSkeleton() {
+  
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
+
   return (
-    <PageSpec
+    <div className="space-y-4">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'preview'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <Eye className="h-4 w-4" />
+          UI Preview
+        </button>
+        <button
+          onClick={() => setActiveTab('spec')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors',
+            activeTab === 'spec'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-accent'
+          )}
+        >
+          <BookOpen className="h-4 w-4" />
+          Specification
+        </button>
+      </div>
+
+      {/* Content */}
+      {activeTab === 'preview' ? (
+        <PhotosPreview />
+      ) : (
+        <PageSpec
       title="Photos"
       phase="Phase 0 - Foundation"
       planFile="views/jobs/PHOTOS.md"
@@ -114,6 +154,8 @@ export default function PhotosSkeleton() {
 │ client weekly summary. 3 great progress shots selected."            │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+        />
+      )}
+    </div>
   )
 }

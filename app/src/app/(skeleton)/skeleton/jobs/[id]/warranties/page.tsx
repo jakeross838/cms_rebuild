@@ -1,10 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { WarrantiesPreview } from '@/components/skeleton/previews/warranties-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function JobWarrantiesPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <WarrantiesPreview /> : <PageSpec
       title="Job Warranties"
       phase="Phase 2 - Closeout"
       planFile="views/jobs/WARRANTIES.md"
@@ -47,61 +61,28 @@ export default function JobWarrantiesPage() {
         { name: 'terms', type: 'text', description: 'Warranty terms' },
         { name: 'claim_contact', type: 'string', description: 'Who to contact' },
         { name: 'claim_phone', type: 'string', description: 'Claim phone' },
-        { name: 'registration_number', type: 'string', description: 'Registration #' },
+        { name: 'registration_number', type: 'string', description: 'Registration number' },
         { name: 'documents', type: 'jsonb', description: 'Warranty documents' },
       ]}
       aiFeatures={[
         {
           name: 'Auto-Registration',
-          description: 'Prompts registration. "HVAC system installed. Manufacturer warranty requires registration within 30 days for full coverage."',
+          description: 'Prompts registration.',
           trigger: 'On installation'
         },
         {
           name: 'Warranty Binder',
-          description: 'Compiles documents. "Generating warranty binder: 45 items documented. Missing: Appliance registration."',
+          description: 'Compiles documents.',
           trigger: 'On closeout'
         },
         {
           name: 'Claim Routing',
-          description: 'Routes service calls. "Roof leak reported. Metal roof has 20-year warranty. Contact: Roofing Co at (727) 555-ROOF."',
+          description: 'Routes service calls.',
           trigger: 'On claim'
         },
       ]}
-      mockupAscii={`
-┌─────────────────────────────────────────────────────────────────────┐
-│ Warranties - Smith Residence                   Items: 45            │
-├─────────────────────────────────────────────────────────────────────┤
-│ Category: [All ▾]    Status: [All ▾]         [Generate Binder]     │
-├─────────────────────────────────────────────────────────────────────┤
-│ MAJOR SYSTEMS                                                       │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ 🏠 Structural - Ross Built                                      │ │
-│ │    10-year structural warranty | Expires: Jan 2035              │ │
-│ │    Coverage: Foundation, framing, load-bearing elements         │ │
-│ │    [View Terms] [View Certificate]                              │ │
-│ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ 🌡️ HVAC System - Carrier                                        │ │
-│ │    5-year parts, 10-year compressor | Expires: Jan 2030/2035   │ │
-│ │    Registration: ✓ Completed | Installed by: ABC HVAC          │ │
-│ │    [View Terms] [Contact Info]                                  │ │
-│ ├─────────────────────────────────────────────────────────────────┤ │
-│ │ 🏠 Roofing - Metal Standing Seam                                │ │
-│ │    20-year manufacturer + 5-year labor | Exp: Jan 2045/2030    │ │
-│ │    Installed by: Coastal Roofing                               │ │
-│ │    [View Terms] [Contact Info]                                  │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ ⚠ NEEDS ACTION                                                     │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Appliances - Kitchen (Sub-Zero, Wolf)                          │ │
-│ │ Registration required within 30 days for full warranty         │ │
-│ │ Installed: Jan 20 | Deadline: Feb 19                           │ │
-│ │ [Register Now] [View Instructions]                              │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────┤
-│ Registered: 42 | Pending Registration: 3 | Total Coverage: $2.4M   │
-└─────────────────────────────────────────────────────────────────────┘
-`}
-    />
+      mockupAscii=""
+    />}
+    </div>
   )
 }

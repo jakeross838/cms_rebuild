@@ -1,15 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
+import { EquipmentPreview } from '@/components/skeleton/previews/equipment-preview'
+import { Eye, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+const workflow = ['Add Asset', 'Assign to Job', 'Track Location', 'Schedule Maintenance']
 
 export default function EquipmentPage() {
+  const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
   return (
-    <PageSpec
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <button onClick={() => setActiveTab('preview')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'preview' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <Eye className="h-4 w-4" />UI Preview
+        </button>
+        <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
+          <BookOpen className="h-4 w-4" />Specification
+        </button>
+      </div>
+      {activeTab === 'preview' ? <EquipmentPreview /> : <PageSpec
       title="Equipment & Assets"
       phase="Phase 3 - Asset Management"
       planFile="views/operations/EQUIPMENT.md"
       description="Track company equipment, tools, and vehicles. Know where everything is, when it needs maintenance, and manage equipment assignments to jobs. Reduce loss and ensure tools are available when needed."
-      workflow={['Add Asset', 'Assign to Job', 'Track Location', 'Schedule Maintenance']}
+      workflow={workflow}
       features={[
         'Asset inventory with details',
         'Categories: Vehicles, Heavy Equipment, Power Tools, Hand Tools',
@@ -102,6 +118,7 @@ export default function EquipmentPage() {
 │ Total: 45 assets | Value: $285K | ⚠ 3 need maintenance            │
 └─────────────────────────────────────────────────────────────────────┘
 `}
-    />
+    />}
+    </div>
   )
 }
