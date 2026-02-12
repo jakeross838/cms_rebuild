@@ -54,7 +54,7 @@ Each CO captures: originator, source type, description, affected scope areas, su
 ### 2. CO Numbering (Gap #360)
 - Configurable per builder via template string.
 - Variables: `{YEAR}`, `{PROJECT_CODE}`, `{SEQ}`, `{PREFIX}`.
-- Examples: `CO-001`, `2026-AMI-CO-001`, `RB-{PROJECT_CODE}-CO-{SEQ}`.
+- Examples: `CO-001`, `2026-PRJ-CO-001`, `BC-{PROJECT_CODE}-CO-{SEQ}`.
 - Sequential counter is per-project, auto-incrementing.
 - Padding configurable (e.g., 3-digit: 001, 4-digit: 0001).
 

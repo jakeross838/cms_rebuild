@@ -293,6 +293,21 @@ Track the financial impact of every punch item.
 
 ---
 
+## Commissioning Process
+
+Systems commissioning and startup verification for project closeout.
+
+- **Commissioning Checklists:** Pre-built and builder-customizable checklists for systems commissioning at project closeout:
+  - HVAC balancing verification
+  - Plumbing pressure testing
+  - Electrical panel verification and labeling
+  - Smart home system testing (if applicable)
+  - Pool/spa startup procedures (if applicable)
+- **Commissioning Reports:** Generate formal commissioning reports documenting test results, settings, and pass/fail status for each system.
+- **Completion Milestones:** Track substantial completion and final completion as separate milestones, each with its own associated punch list. Substantial completion triggers client move-in eligibility; final completion triggers retainage release and warranty start date.
+
+---
+
 ## Open Questions
 
 1. Should the system support offline punch list creation with sync when connectivity returns? (Critical for field use.)

@@ -1,8 +1,8 @@
-# Ross Built CMS - Planning Summary
+# RossOS - Planning Summary
 
 ## Overview
 
-This document summarizes all planning documentation for the Ross Built Construction Management System.
+This document summarizes all planning documentation for the RossOS Construction Management Platform.
 
 ---
 

@@ -30,7 +30,7 @@ Every gap item is referenced by its number (e.g., GAP-001) and given a decision,
 
 ## 1. Overview
 
-Ross Built CMS uses a **shared database with company_id scoping and Row Level Security (RLS)** approach to multi-tenancy. All tenant data resides in a single Supabase (PostgreSQL) database. Every data-bearing table includes a `company_id` foreign key referencing the `companies` table, which serves as the multi-tenant root. RLS policies enforced at the database level ensure that users can only access data belonging to their own company, regardless of how queries are constructed at the application layer.
+RossOS uses a **shared database with company_id scoping and Row Level Security (RLS)** approach to multi-tenancy. All tenant data resides in a single Supabase (PostgreSQL) database. Every data-bearing table includes a `company_id` foreign key referencing the `companies` table, which serves as the multi-tenant root. RLS policies enforced at the database level ensure that users can only access data belonging to their own company, regardless of how queries are constructed at the application layer.
 
 **GAP-001: Shared tables with tenant_id filtering vs. separate databases per customer.**
 
@@ -534,28 +534,28 @@ This section addresses builders with complex organizational structures.
 **Decision:** Yes. The `companies` table supports a parent-child hierarchy via `parent_company_id`. A top-level company can have child companies representing divisions, subsidiaries, or brands.
 
 ```
-Ross Built LLC (primary)
+Builder Co LLC (primary)
   |
-  +-- Ross Built Custom Homes (division)
+  +-- Builder Co Custom Homes (division)
   |
-  +-- Ross Development LLC (subsidiary)
+  +-- Builder Development LLC (subsidiary)
   |
-  +-- Luxury Living by Ross (brand)
+  +-- Luxury Living by Builder Co (brand)
 ```
 
 **Entity types** (stored in `companies.entity_type`):
 
 | Type | Description | Example |
 |------|-------------|---------|
-| `primary` | Top-level tenant, the billing entity | Ross Built LLC |
+| `primary` | Top-level tenant, the billing entity | Builder Co LLC |
 | `division` | Operational division within the primary | Custom Homes Division, Remodeling Division |
-| `subsidiary` | Separate legal entity, related ownership | Ross Development LLC |
-| `brand` | Marketing brand, same legal entity | Luxury Living by Ross |
-| `franchise` | Independent operator using parent's templates/branding | Ross Built - Dallas |
+| `subsidiary` | Separate legal entity, related ownership | Builder Development LLC |
+| `brand` | Marketing brand, same legal entity | Luxury Living by Builder Co |
+| `franchise` | Independent operator using parent's templates/branding | Builder Co - Dallas |
 
 ### 12.2 Data Sharing Between Entities
 
-**GAP-574: Builder with multiple LLCs.** Each LLC is a separate company record with its own `company_id`. Data isolation is maintained by default. Cross-entity data sharing is opt-in:
+**GAP-574: Builders with multiple LLCs.** Each LLC is a separate company record with its own `company_id`. Data isolation is maintained by default. Cross-entity data sharing is opt-in:
 
 | Data Type | Sharing Behavior | Configuration |
 |-----------|-----------------|---------------|
@@ -568,7 +568,7 @@ Ross Built LLC (primary)
 | Projects | Always scoped to one entity | Cannot span entities |
 | Clients | Optionally shared (same client, different projects) | `shared_client_pool` setting |
 
-**GAP-575: Builder with construction company AND real estate company.** Modeled as two child companies under one parent. Separate data, shared vendor pool optional. Cross-entity referral tracking via a `referrals` table linking leads between entities.
+**GAP-575: Builders with construction company AND real estate company.** Modeled as two child companies under one parent. Separate data, shared vendor pool optional. Cross-entity referral tracking via a `referrals` table linking leads between entities.
 
 **GAP-576: Builder with multiple offices.** Each office can be a `division` entity. Different teams, different vendor relationships, but shared reporting at the parent level. Users with the `pm` role in one division cannot see another division's data unless they have memberships in both.
 

@@ -43,7 +43,7 @@ Integrate with QuickBooks Online to:
 │  ┌─────────────────────────────────────────────────────────────────┐│
 │  │                                                                 ││
 │  │  Status: ✓ Connected                                            ││
-│  │  Company: Ross Built Construction LLC                           ││
+│  │  Company: Builder Co Construction LLC                           ││
 │  │  Connected: November 15, 2024                                   ││
 │  │  Last Sync: December 10, 2024 at 3:45 PM                        ││
 │  │                                                                 ││
@@ -148,7 +148,7 @@ Integrate with QuickBooks Online to:
 1. Click "Connect to QuickBooks"
 2. Redirect to Intuit OAuth
 3. User logs in to QuickBooks
-4. Authorizes Ross Built CMS
+4. Authorizes RossOS
 5. Redirect back with auth code
 6. Exchange for access/refresh tokens
 7. Store tokens securely

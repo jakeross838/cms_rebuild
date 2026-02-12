@@ -1214,12 +1214,12 @@ Every entity with a number (jobs, POs, COs, invoices, estimates, RFIs, submittal
 | `{SEQUENCE}` | Auto-incrementing number | `1`, `2`, `3` |
 | `{SEQUENCE:N}` | Zero-padded to N digits | `001`, `002` |
 | `{JOB}` | Job number | `2026-015` |
-| `{PREFIX}` | Company-configured prefix | `AMI`, `RB` |
+| `{PREFIX}` | Company-configured prefix | `PRJ`, `BC` |
 | `{MONTH}` | Current 2-digit month | `02` |
 
 **Example formats:**
 - `PO-{SEQUENCE:4}` -> `PO-0001`
-- `{YEAR}-{PREFIX}-CO-{SEQUENCE:3}` -> `2026-AMI-CO-001`
+- `{YEAR}-{PREFIX}-CO-{SEQUENCE:3}` -> `2026-PRJ-CO-001`
 - `{JOB}-INV-{SEQUENCE}` -> `2026-015-INV-1`
 
 ### 10.2 Sequence Tracking

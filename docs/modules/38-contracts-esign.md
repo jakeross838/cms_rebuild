@@ -249,6 +249,18 @@ GET    /api/v2/contracts/compliance/:id            # Compliance tracking for con
 
 ---
 
+## Litigation & Dispute Tracking
+
+Track and manage disputes with clients, subcontractors, or vendors through resolution.
+
+- **Dispute Records:** Create dispute records linked to related contracts, change orders, invoices, and communications. Track counterparty, dispute type, amount in question, and status.
+- **Legal Hold Flag:** Flag a dispute for legal hold, which preserves all related documents, emails, and records from deletion or modification.
+- **Event Timeline:** Maintain a chronological timeline of events and correspondence related to each dispute, with document attachments at each entry.
+- **Resolution Tracking:** Track dispute resolution outcome (settled, withdrawn, judgment, mediation, arbitration) with financial impact and terms.
+- **Document Preservation:** Integration with document storage (Module 6) to tag and protect evidence documents associated with the dispute.
+
+---
+
 ## Open Questions
 
 1. Should the platform provide legally reviewed contract templates, or only blank template tools? (Liability concern)

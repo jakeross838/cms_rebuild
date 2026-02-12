@@ -531,7 +531,7 @@ LIEN WAIVER EXTRACTION
 | auto_liability_limit | decimal | 95%+ | Combined single limit |
 | umbrella_limit | decimal | 90%+ | Excess coverage |
 | workers_comp_limit | decimal | 95%+ | Each accident |
-| certificate_holder | string | 90%+ | Should be Ross Built |
+| certificate_holder | string | 90%+ | Should be Builder Name |
 | additional_insured | boolean | 95%+ | Are we listed? |
 | additional_insured_text | text | 85%+ | Endorsement details |
 | waiver_of_subrogation | boolean | 90%+ | WOS included? |

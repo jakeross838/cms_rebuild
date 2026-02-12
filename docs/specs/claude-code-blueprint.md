@@ -175,7 +175,7 @@ Before writing ANY value into code, ask: "Would a different builder want this to
 - Approval workflow chains and thresholds
 - Required fields on any form
 - Terminology (vendor vs. subcontractor vs. trade partner)
-- Numbering formats (CO-001 vs. 2024-AMI-CO-001)
+- Numbering formats (CO-001 vs. 2024-PRJ-CO-001)
 - Tax rates and rules
 - Lien waiver forms by state
 - Markup and fee calculations
@@ -678,7 +678,7 @@ Pre-fill everything possible:
 1081. **Scope Gap Detection** — Compare all vendor contracts to the complete scope of work → identify items nobody is responsible for
 1082. **Photo-Based Progress Assessment** — AI analyzes site photos to estimate construction progress percentage (future feature, high R&D)
 1083. **Warranty Prediction** — "Based on historical warranty claims, homes with [this vendor's] plumbing rough-in have 3x more warranty calls. Consider additional inspection."
-1084. **Seasonal Pattern Learning** — "October is historically your busiest month for permit delays in Manatee County. Submit permits 2 weeks earlier."
+1084. **Seasonal Pattern Learning** — "October is historically your busiest month for permit delays in [county]. Submit permits 2 weeks earlier."
 1085. **Profitability Pattern Analysis** — "Projects where selections are finalized before framing average 8% higher profit margin. Push for earlier selection deadlines."
 
 ---
@@ -765,7 +765,7 @@ Pre-fill everything possible:
 ### Persona 3: Office Admin / Bookkeeper
 - 8:00 AM: Reviews invoice queue — AI has extracted and coded 15 overnight invoices; verifies and routes for approval
 - 9:00 AM: Checks vendor compliance dashboard — 3 COIs expiring this week; sends one-click renewal requests
-- 10:00 AM: Prepares draw #5 for Project AMI-103 — system has assembled everything; formats for lender
+- 10:00 AM: Prepares draw #5 for Project PRJ-103 — system has assembled everything; formats for lender
 - 11:00 AM: QuickBooks sync review — checks sync status; resolves 2 mapping questions
 - 1:00 PM: Updates selection status — marks 5 selections as "ordered"; system auto-updates schedule lead times
 - 2:00 PM: Generates weekly report for owners — one click; system pulls all data; branded PDF auto-generated

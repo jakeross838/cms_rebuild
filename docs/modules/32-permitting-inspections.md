@@ -168,6 +168,17 @@ PATCH  /api/v2/projects/:id/co-tracking/:coId      # Update CO status
 
 ---
 
+## Building Code Versioning
+
+Track applicable building code editions per project and jurisdiction.
+
+- **Code Edition Tracking:** Record which building code edition applies to each project, typically determined by permit application date (e.g., IRC 2021 vs. IRC 2024).
+- **Code Change Alerts:** When a jurisdiction adopts a new code edition, alert builders with active projects in that jurisdiction about potential impacts.
+- **Per-Jurisdiction Code Database:** Maintain a database of code requirements per jurisdiction, including local amendments and special provisions.
+- **Inspection Code Linkage:** Link individual inspections to specific code sections being verified, providing clear documentation of compliance basis.
+
+---
+
 ## Open Questions
 
 1. Should the platform maintain a shared, community-contributed jurisdiction database, or is each builder's configuration fully private?

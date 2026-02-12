@@ -242,7 +242,14 @@ The stamp is regenerated (not appended) at the following points in the invoice l
 - Early payment discount tracking (2/10 Net 30)
 - Aging reports: current, 30, 60, 90, 120+ days
 
-### 8. Invoice Disputes
+### 8. Vendor Credit Tracking
+
+- **Credit/Refund Tracking:** Track vendor credits and refunds when materials are returned or pricing adjustments are made.
+- **Credit Memo Linkage:** Credit memos link back to the original PO and invoice for full audit trail.
+- **Credit Application:** Apply credits against future invoices or as a budget adjustment on the originating cost code.
+- **v1 Compatibility:** v1 already supports `credit_memo` as an invoice type; carry forward and extend with explicit PO/invoice linkage.
+
+### 9. Invoice Disputes
 
 - Dispute initiation from invoice detail (partial or full amount)
 - Dispute reason categories (configurable): incorrect amount, wrong scope, quality issue, duplicate, missing documentation

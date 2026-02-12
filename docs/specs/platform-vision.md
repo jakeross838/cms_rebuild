@@ -27,13 +27,12 @@ A single source of truth where:
 
 ## Business Context
 
-### Company Profile
-- **Company**: Ross Built
-- **Market**: Custom luxury coastal homes
-- **Location**: Bradenton/Anna Maria Island, Longboat Key, Siesta Key, Sarasota area, FL
-- **Price Range**: $1.5M–$5M+ construction cost ($500–$850/SF standard, up to $1,300/SF ultra-high-end)
-- **Project Types**: Primarily new construction, some major renovations
-- **Special Requirements**: Elevated construction, flood zones, hurricane-rated, coastal compliance
+### Target Market
+- **Market**: Custom residential builders across the US
+- **Location**: Multiple US markets
+- **Price Range**: $500K–$5M+ construction cost (varies by market)
+- **Project Types**: New construction, major renovations, remodels
+- **Optional Regional Features**: Elevated construction, flood zones, hurricane-rated, coastal compliance, seismic, wildfire zones
 
 ### Operations Profile
 - **Active Jobs**: 5–8 at various stages
@@ -45,8 +44,8 @@ A single source of truth where:
 ### Team Structure & Roles
 | Role | Access Level |
 |------|--------------|
-| Owners (Greg & Lee Ross) | Full visibility, financial dashboards, high-level approvals |
-| Director of Construction (Jake) | Everything operational—estimates, schedules, budgets, vendor management |
+| Company Owners | Full visibility, financial dashboards, high-level approvals |
+| Director of Construction | Everything operational—estimates, schedules, budgets, vendor management |
 | PM/Superintendent | Job-specific views, daily logs, field tools, RFIs |
 | Admin | Invoice processing, document management, client communication |
 | Trade/Vendor | Portal access for their scope—schedules, documents, pay apps |
@@ -70,8 +69,8 @@ A single source of truth where:
 4. **Builder-First, Not Generic**
    Every screen, workflow, and feature designed for custom home builders. Not adapted from commercial/industrial. Not simplified from enterprise.
 
-5. **Coastal/Luxury Aware**
-   Built-in support for flood zones, wind ratings, elevated construction, erosion projections, FEMA compliance, and premium finish expectations.
+5. **Regional Compliance Ready**
+   Optional support for flood zones, wind ratings, elevated construction, seismic zones, wildfire zones, FEMA compliance, and premium finish expectations — configurable per market.
 
 ---
 
@@ -126,7 +125,7 @@ Track at multiple levels simultaneously:
 3. Roofing (metal especially—supply chain volatility)
 4. Concrete (regional increases, fuel surcharges)
 5. Electrical/copper (commodity-driven)
-6. Impact glass/hurricane windows (specialty market)
+6. Impact glass/hurricane windows (regional specialty)
 7. Cabinetry (custom = long lead + volatility)
 8. Appliances (model changes, discontinuations)
 
@@ -192,20 +191,20 @@ Track specific crew leads/foremen:
 - Track bid status (sent, viewed, responded, declined)
 - Side-by-side comparison with historical context
 - Flag missing scope items: "Vendor X didn't include permit fees—they usually do"
-- Detect pricing anomalies: "ABC Electric is 15% high compared to the Smith Project"
+- Detect pricing anomalies: "ABC Electric is 15% high compared to the Johnson Project"
 
 ### 4. Schedule Intelligence
 
 #### Template-Based Scheduling
 Start with intelligent templates that auto-adjust:
-> "A 3,500 SF elevated CBS home on AMI typically takes 14 months. Here's the baseline schedule with your preferred vendors' typical durations."
+> "A 3,500 SF custom home typically takes 14 months. Here's the baseline schedule with your preferred vendors' typical durations."
 
 #### Pain Points to Solve
 1. Vendors not showing up / delayed starts
-2. Inspection delays (especially barrier islands)
-3. Weather delays (hurricane season, afternoon storms, king tides)
+2. Inspection delays (varies by jurisdiction)
+3. Weather delays (regional: hurricanes, winter storms, fire season, etc.)
 4. Client selection delays holding up orders
-5. Permit processing times (FDEP, Army Corps)
+5. Permit processing times (varies by jurisdiction)
 6. Dependency cascades
 
 #### AI Capabilities
@@ -216,13 +215,13 @@ Start with intelligent templates that auto-adjust:
 - Predict completion dates with confidence intervals:
   > "85% likely to complete by March 15, 95% by April 1"
 - Identify schedule float and suggest reordering
-- **Tide chart integration** for waterfront jobs
+- **Tide chart integration** for waterfront jobs (optional regional feature)
 
 #### Granularity
 - **Phase Level**: Preconstruction, Foundation, Framing, Dry-in, MEP Rough, Insulation, Drywall, Finishes, Trim, Final
 - **Task Level**: Each trade's rough-in, finish, and inspection
 - **Daily granularity** (not hourly)
-- **Factors**: Job size, complexity, vendor, season, location
+- **Factors**: Job size, complexity, vendor, season, region
 
 ### 5. Estimating Intelligence
 
@@ -246,7 +245,7 @@ Track WHERE estimates are off, not just overall:
 #### Assemblies
 Auto-updating assemblies that recalculate when component prices change:
 - "Bathroom Assembly - Master" = tile, fixtures, plumbing rough/trim, electrical rough/trim, drywall, paint, hardware, glass enclosure, vanity, mirror, accessories
-- "Foundation Assembly - Elevated CBS" = pilings, pile caps, grade beams, stem walls, fill, termite treatment, waterproofing
+- "Foundation Assembly - Elevated" = pilings, pile caps, grade beams, stem walls, fill, termite treatment, waterproofing
 
 #### The Feedback Loop
 > "This is the core feature. The software must get smarter with every job we build."
@@ -297,7 +296,7 @@ Auto-updating assemblies that recalculate when component prices change:
 - Partial payment support
 - Retainage calculation and tracking
 - Lien waiver enforcement
-- Sales tax verification (Florida)
+- Sales tax verification (per jurisdiction)
 - Auto-classify to QuickBooks cost codes
 - Duplicate detection across jobs
 
@@ -330,7 +329,7 @@ Auto-updating assemblies that recalculate when component prices change:
 - Vendor combinations that work best together
 - Time of year impact on trades
 - Client type correlations (referral vs. online leads)
-- Site characteristic impacts (island vs. mainland)
+- Site characteristic impacts (urban vs. rural, coastal vs. inland, etc.)
 - Scope definition quality vs. overrun correlation
 
 ### 8. Client Intelligence
@@ -365,7 +364,7 @@ Auto-updating assemblies that recalculate when component prices change:
 ### Core Platform (Phase 0: Foundation)
 
 #### Pre-Construction
-- Lead intake from website (rossbuilt.com integration)
+- Lead intake from website (builder website integration)
 - Lead qualification scoring
 - Preconstruction workflow: Inquiry → Qualification → Estimate → Proposal → Contract
 - Preliminary estimating from minimal inputs
@@ -518,7 +517,7 @@ Scheduled walk-through with checklist, generate report
 - Inspector contact info and preferences
 - Auto-request based on milestones
 - Expiration tracking
-- **Coastal Special**: FDEP, Army Corps, FEMA, beach nourishment credits, erosion projections
+- **Regional Special Permits**: FEMA, Army Corps, state environmental agencies, and jurisdiction-specific requirements (configurable per market)
 
 ### Time Tracking
 
@@ -539,7 +538,7 @@ Scheduled walk-through with checklist, generate report
 - Photos (auto-geotagged, timestamped)
 
 #### Key Features
-- **Offline capability** (sync when connected—critical for island sites)
+- **Offline capability** (sync when connected—critical for remote job sites)
 - Quick capture: Photo → Annotate → Assign → Track
 - **Voice-to-text** for logs and notes
 
@@ -547,12 +546,12 @@ Scheduled walk-through with checklist, generate report
 
 > "Upload PDF blueprints. Click a room on the plan to see all associated tasks, costs, and selections for that specific room."
 
-### Weather Integration (Florida-Specific)
+### Weather Integration (Regional)
 
 - Auto-log weather daily (for excusable delays)
 - Storm warnings affecting schedule
-- **Tide chart integration** for waterfront jobs
-- Hurricane season awareness
+- **Tide chart integration** for waterfront jobs (optional)
+- Regional weather awareness (hurricanes, winter storms, fire season, etc.)
 
 ---
 
@@ -609,7 +608,7 @@ Scheduled walk-through with checklist, generate report
 - Cost breakdowns by vendor
 
 ### Marketing Differentiators
-1. **"Complete cost transparency from estimate to final invoice"** — luxury clients want this
+1. **"Complete cost transparency from estimate to final invoice"** — custom home clients want this
 2. **"AI-powered scheduling that predicts and prevents delays"** — everyone hates uncertainty
 3. **"Your own project portal with real-time visibility"** — tech-savvy clients expect this
 
@@ -661,24 +660,24 @@ Scheduled walk-through with checklist, generate report
 
 ## Data Bootstrapping
 
-### Available Historical Data
-- **902 daily log entries** across 15 jobs (already extracted from Buildertrend)
-- **QuickBooks data**: All invoices, payments, vendor history (years)
-- **Buildertrend**: Budgets, schedules, communications, photos, documents
+### Typical Historical Data Sources
+- **Daily log entries** from existing PM software (Buildertrend, CoConstruct, Procore, etc.)
+- **QuickBooks data**: All invoices, payments, vendor history
+- **Existing PM platform**: Budgets, schedules, communications, photos, documents
 - **Email archives**: Vendor quotes, bids, correspondence
 - **Spreadsheets**: Various tracking and analysis
 - **Past estimates and proposals**
 
 ### Import Strategy
 1. Import everything available to jumpstart AI
-2. Prioritize: QuickBooks invoices (pricing), Buildertrend budgets (estimate vs. actual), daily logs (schedule)
+2. Prioritize: QuickBooks invoices (pricing), existing budgets (estimate vs. actual), daily logs (schedule)
 3. Clean and normalize during import
 4. Continue learning from every new document
 
 ### Benchmark Data
 - RSMeans for baseline context and new categories
-- **Primary source**: YOUR data—Ross Built's costs reflect luxury coastal construction (above standard benchmarks)
-- Regional adjustments critical—Sarasota/Manatee County ≠ national averages
+- **Primary source**: YOUR data—each builder's costs reflect their specific market and construction type
+- Regional adjustments critical—local markets ≠ national averages
 
 ---
 
@@ -697,7 +696,7 @@ Scheduled walk-through with checklist, generate report
 
 ## Success Metrics
 
-### For Ross Built
+### For Each Builder
 - Estimating accuracy improves from ±10% to ±5%
 - Time to create estimate reduced by 60%
 - Schedule prediction accuracy >90%
@@ -720,7 +719,7 @@ Scheduled walk-through with checklist, generate report
 The platform is designed to be:
 - **Intelligence-first**: Every feature feeds the learning engine
 - **Builder-specific**: Not adapted from generic project management
-- **Coastal-aware**: Built for Florida luxury construction realities
+- **Region-aware**: Configurable for any US market's construction realities
 - **Progressive**: Gets smarter with every transaction
 - **Single-source**: Eliminates data silos permanently
 

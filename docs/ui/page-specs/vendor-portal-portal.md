@@ -22,7 +22,7 @@ The Vendor Portal is a separate, simplified interface for vendors/subcontractors
 - Manage compliance documents (insurance, W9)
 
 ## Access
-- Separate URL: `/vendor-portal` or subdomain `vendors.rossbuilt.com`
+- Separate URL: `/vendor-portal` or subdomain `vendors.yourbuilder.com`
 - Authentication via email/password (invitation-based)
 - Multiple users per vendor company
 - Vendor sees only their jobs, POs, and bid invitations
@@ -272,7 +272,7 @@ CREATE TABLE vendor_compliance_docs (
 |                                                                     |
 |                        +-------------+                              |
 |                        |   [LOGO]    |                              |
-|                        |  ROSS BUILT |                              |
+|                        |  BUILDER CO |                              |
 |                        +-------------+                              |
 |                                                                     |
 |                     VENDOR PORTAL                                   |
@@ -295,7 +295,7 @@ CREATE TABLE vendor_compliance_docs (
 |          -------------------------------------------                |
 |                                                                     |
 |          Need access? Contact your project manager                  |
-|          info@rossbuilt.com | 512-555-0123                          |
+|          info@builderco.com | 512-555-0123                          |
 |                                                                     |
 +---------------------------------------------------------------------+
 ```
@@ -344,7 +344,7 @@ BUILDER SENDS INVITATION
 |                        |   [LOGO]    |                              |
 |                        +-------------+                              |
 |                                                                     |
-|                 Welcome to Ross Built Vendor Portal                 |
+|                 Welcome to Builder Co Vendor Portal                 |
 |                                                                     |
 |   You've been invited to join as a vendor contact for:              |
 |                                                                     |
@@ -383,7 +383,7 @@ BUILDER SENDS INVITATION
 ## Layout
 ```
 +---------------------------------------------------------------------+
-|  ROSS BUILT                           ABC Electric  [Notifications] |
+|  BUILDER CO                           ABC Electric  [Notifications] |
 |  VENDOR PORTAL                        John Smith [v]                |
 +---------------------------------------------------------------------+
 | [Dashboard] [Bids] [Schedule] [POs & Invoices] [Daily Logs]         |
@@ -494,7 +494,7 @@ View bid invitations, prepare and submit bid responses.
 ## Bid List View
 ```
 +---------------------------------------------------------------------+
-|  ROSS BUILT                           ABC Electric  [Notifications] |
+|  BUILDER CO                           ABC Electric  [Notifications] |
 |  VENDOR PORTAL                        John Smith [v]                |
 +---------------------------------------------------------------------+
 | [Dashboard] [*Bids*] [Schedule] [POs & Invoices] [Daily Logs]       |
@@ -560,7 +560,7 @@ View bid invitations, prepare and submit bid responses.
 |  ---------------                                                    |
 |  Job: Smith Residence                                               |
 |  Address: 123 Oak Street, Austin, TX 78701                          |
-|  Project Manager: Jake Ross | jake@rossbuilt.com | 512-555-0123     |
+|  Project Manager: John Smith | pm@builderco.com | 512-555-0123     |
 |                                                                     |
 |  BID DETAILS                                                        |
 |  -----------                                                        |
@@ -701,7 +701,7 @@ View assigned tasks across all jobs, mark work complete.
 ## Layout
 ```
 +---------------------------------------------------------------------+
-|  ROSS BUILT                           ABC Electric  [Notifications] |
+|  BUILDER CO                           ABC Electric  [Notifications] |
 |  VENDOR PORTAL                        John Smith [v]                |
 +---------------------------------------------------------------------+
 | [Dashboard] [Bids] [*Schedule*] [POs & Invoices] [Daily Logs]       |
@@ -734,7 +734,7 @@ View assigned tasks across all jobs, mark work complete.
 |  | [*] Smith Residence - Rough-in Inspection                     |  |
 |  |     8:00 AM - 10:00 AM                                        |  |
 |  |     Address: 123 Oak St, Austin TX                            |  |
-|  |     Contact: Jake Ross | 512-555-0123                         |  |
+|  |     Contact: John Smith | 512-555-0123                         |  |
 |  |                                                               |  |
 |  |     Notes: Inspector arriving at 8am. Ensure all boxes        |  |
 |  |     accessible and panel cover off.                           |  |
@@ -782,7 +782,7 @@ View assigned tasks across all jobs, mark work complete.
 |  ---------------                                                    |
 |  Job: Smith Residence                                               |
 |  Address: 123 Oak Street, Austin, TX 78701                          |
-|  PM: Jake Ross | jake@rossbuilt.com | 512-555-0123                  |
+|  PM: John Smith | pm@builderco.com | 512-555-0123                  |
 |                                                                     |
 |  TASK DETAILS                                                       |
 |  ------------                                                       |
@@ -869,7 +869,7 @@ View POs issued to vendor, track amounts, submit invoices.
 ## PO List View
 ```
 +---------------------------------------------------------------------+
-|  ROSS BUILT                           ABC Electric  [Notifications] |
+|  BUILDER CO                           ABC Electric  [Notifications] |
 |  VENDOR PORTAL                        John Smith [v]                |
 +---------------------------------------------------------------------+
 | [Dashboard] [Bids] [Schedule] [*POs & Invoices*] [Daily Logs]       |
@@ -922,7 +922,7 @@ View POs issued to vendor, track amounts, submit invoices.
 |                                                                     |
 |  Job: Smith Residence                                               |
 |  Address: 123 Oak Street, Austin, TX 78701                          |
-|  PM: Jake Ross | jake@rossbuilt.com                                 |
+|  PM: John Smith | pm@builderco.com                                 |
 |                                                                     |
 |  PO DETAILS                                                         |
 |  ----------                                                         |
@@ -1109,7 +1109,7 @@ Submit daily work logs for jobs, track hours, upload photos.
 ## Daily Log List View
 ```
 +---------------------------------------------------------------------+
-|  ROSS BUILT                           ABC Electric  [Notifications] |
+|  BUILDER CO                           ABC Electric  [Notifications] |
 |  VENDOR PORTAL                        John Smith [v]                |
 +---------------------------------------------------------------------+
 | [Dashboard] [Bids] [Schedule] [POs & Invoices] [*Daily Logs*]       |

@@ -128,7 +128,14 @@ A full-featured estimating and budgeting system that supports the wide variety o
 - **Plan takeoff** (future): Upload architectural plans; AI identifies rooms, counts fixtures, calculates square footages, and generates a preliminary estimate (Gap 499).
 - **Schedule generation**: From a completed estimate, AI suggests a construction schedule based on historical task durations for similar projects (Gap 500).
 
-### 11. Bid Comparison Tools
+### 11. Material Waste Factors
+
+- **Configurable Waste Percentages:** Define waste factor per material type (e.g., 10% drywall, 15% tile, 5% lumber, 8% paint).
+- **Auto-Applied to Estimates:** Waste percentages are automatically applied to quantity calculations when generating estimate line items.
+- **Per-Project Adjustment:** Waste factors adjustable per project based on complexity, site conditions, or design difficulty.
+- **Industry Defaults:** Platform provides industry-standard waste factor defaults; builders can customize and override at the tenant level.
+
+### 12. Bid Comparison Tools
 
 - Invite multiple vendors to bid on the same scope.
 - Side-by-side bid comparison with normalized line items.
@@ -136,7 +143,7 @@ A full-featured estimating and budgeting system that supports the wide variety o
 - One-click selection of winning bid to populate estimate line.
 - Historical bid tracking per vendor per scope.
 
-### 12. Value Engineering Tracking
+### 13. Value Engineering Tracking
 
 - Flag line items as "value engineering candidates."
 - Track original spec, proposed alternative, and cost delta.

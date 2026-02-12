@@ -221,6 +221,17 @@ Comprehensive RFI log with filtering, export, and analytics.
 
 ---
 
+## Structural Engineering Review Workflow
+
+Submittal tracking and approval workflows for structural engineering documents, integrated with the RFI lifecycle.
+
+- **Submittal Tracking:** Track structural engineering documents (calculations, shop drawings, connection details) through the submittal process with status visibility.
+- **Review/Approval/Stamp Workflow:** Full lifecycle: Submit → Engineer Review → Comments → Revision → Approval → Stamped. Each stage tracked with timestamps, responsible party, and notes.
+- **Permitting Integration:** Link structural submittals to permitting requirements (Module 32). Flag when structural permits require stamped engineering documents before application.
+- **Engineer Tracking:** Record which engineer reviewed, approved, and stamped each document. Maintain engineer contact directory with license numbers and jurisdictional credentials.
+
+---
+
 ## Open Questions
 
 1. Should external parties (architects, engineers) be able to create RFIs, or only respond to them? (Proposed: respond only in Phase 1.)

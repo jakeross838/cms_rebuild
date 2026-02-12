@@ -283,7 +283,7 @@ components/jobs/
 
 ### Cross-Section Gap Items
 - GAP-18: Configurable job phases and naming conventions — phase options on create should be builder-configurable
-- GAP-21: Configurable numbering conventions — job number format (e.g., "2024-001" vs. "RB-2024-AMI-001") must be per-builder
+- GAP-21: Configurable numbering conventions — job number format (e.g., "2024-001" vs. "BC-2024-PRJ-001") must be per-builder
 - GAP-23: Custom fields on projects — create form must include any builder-defined custom fields
 - GAP-24: Custom dropdown values — project type options should be configurable per tenant
 - GAP-29: Configurable required fields — some builders want job number required, others do not

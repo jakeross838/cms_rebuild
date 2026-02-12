@@ -1,4 +1,4 @@
-# Ross Built CMS - System Connections Map
+# RossOS - System Connections Map
 
 ## Executive Summary
 
@@ -10,7 +10,7 @@ This document maps every connection point in the construction management system 
 
 ```
                                     ┌─────────────────────────────────────────────────────────────────┐
-                                    │                       ROSS BUILT CMS                            │
+                                    │                       ROSSOS                            │
                                     │                    SYSTEM CONNECTIONS MAP                       │
                                     └─────────────────────────────────────────────────────────────────┘
 
@@ -698,7 +698,7 @@ Event Occurs
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │                     ┌───────────────────┐                                   │
-│                     │   ROSS BUILT CMS  │                                   │
+│                     │   ROSSOS  │                                   │
 │                     └─────────┬─────────┘                                   │
 │                               │                                             │
 │     ┌─────────────────────────┼─────────────────────────┐                   │
@@ -748,7 +748,7 @@ Event Occurs
 │                         PROCORE INTEGRATION FLOW                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│                 ROSS BUILT CMS          ◄──────────►          PROCORE       │
+│                 ROSSOS          ◄──────────►          PROCORE       │
 │                                                                             │
 │  ┌──────────────────────────────────────────────────────────────────────┐   │
 │  │                         BIDIRECTIONAL SYNC                           │   │
@@ -794,7 +794,7 @@ Event Occurs
 │                          SLACK INTEGRATION FLOW                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  ROSS BUILT CMS                                         SLACK WORKSPACE     │
+│  ROSSOS                                         SLACK WORKSPACE     │
 │                                                                             │
 │  ┌────────────────┐                                ┌──────────────────────┐ │
 │  │ Invoice Event  │────────────────────────────────▶│ #invoices channel   │ │

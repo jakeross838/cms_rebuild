@@ -8,7 +8,7 @@
 
 ## Overview
 
-Platform Analytics is the internal command center for the SaaS operator (Ross Built's platform team). It provides real-time visibility into system health, tenant activity, revenue metrics, feature adoption, churn prediction, deployment management, incident response, and disaster recovery readiness. This module is NOT visible to builder tenants -- it is exclusively for platform administrators and operators. It answers the question: "Is our SaaS business healthy, and where should we focus next?"
+Platform Analytics is the internal command center for the SaaS operator (the platform team). It provides real-time visibility into system health, tenant activity, revenue metrics, feature adoption, churn prediction, deployment management, incident response, and disaster recovery readiness. This module is NOT visible to builder tenants -- it is exclusively for platform administrators and operators. It answers the question: "Is our SaaS business healthy, and where should we focus next?"
 
 ---
 

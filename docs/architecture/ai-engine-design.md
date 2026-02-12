@@ -1,4 +1,4 @@
-# Ross Built CMS - AI Integration Strategy
+# RossOS - AI Integration Strategy
 
 ## Executive Summary
 
@@ -12,7 +12,7 @@ This document outlines how AI is woven throughout the entire construction manage
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           ROSS BUILT CMS - AI LAYER                             │
+│                           ROSSOS - AI LAYER                             │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐          │
@@ -376,7 +376,7 @@ INVOICE RECEIVED
 │ • Invoice amount: $12,450                                       │
 │ • Vendor: ABC Electric                                          │
 │ • Job: Smith Residence                                          │
-│ • Job PM: Jake Ross                                             │
+│ • Job PM: John Smith                                            │
 │ • Has matching PO: Yes (PO-2024-089)                            │
 │ • Within PO amount: Yes (PO = $15,000)                          │
 │ • Cost code: 26-00-00 Electrical                                │
@@ -385,10 +385,10 @@ INVOICE RECEIVED
 │ Decision:                                                       │
 │ ✓ Auto-allocate to cost code 26-00-00                           │
 │ ✓ Link to PO-2024-089                                           │
-│ ✓ Route to Jake Ross for PM approval                            │
+│ ✓ Route to John Smith for PM approval                           │
 │ ✗ Skip owner approval (under $25k threshold)                    │
 │                                                                 │
-│ Route: Jake Ross (PM) → Accountant → [Ready for Draw]           │
+│ Route: John Smith (PM) → Accountant → [Ready for Draw]          │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -528,7 +528,7 @@ INSIGHTS:
 |----------|----------|
 | **Vendor Aliases** | "ABC Elec" = "ABC Electric" = "ABC Electrical Inc" |
 | **Cost Code Mapping** | "Electrician" → 26-00-00, "Plumber" → 22-00-00 |
-| **Approval Patterns** | Jake approves invoices under $10k without review |
+| **Approval Patterns** | the PM approves invoices under $10k without review |
 | **Scheduling Patterns** | This company does framing before electrical rough |
 | **Pricing Patterns** | Material markup is typically 15%, labor 35% |
 | **Communication Styles** | Email templates, formal vs. informal by recipient |
@@ -873,5 +873,37 @@ This AI integration creates a platform that:
 
 ---
 
+## Future AI Capabilities
+
+### AI Code Compliance Check
+- Upload architectural plans and the system checks them against applicable building codes for the project's jurisdiction and permit date.
+- Flags potential code violations (setback encroachments, egress deficiencies, structural span issues) before permit submission to reduce rejection cycles.
+
+### AI Turnover Package Generator
+- At project closeout, AI auto-compiles all warranties, equipment manuals, material specifications, and maintenance schedules into a branded homeowner turnover package.
+- Generates a digital and print-ready document with table of contents, organized by system (HVAC, plumbing, electrical, appliances, finishes).
+
+### AI Permit Requirement Checker
+- Input project address and scope description; AI determines all required permits (building, electrical, plumbing, mechanical, grading, ROW, etc.) for that jurisdiction.
+- Cross-references jurisdiction database and historical permit data from similar projects in the same municipality.
+
+### AI Regulatory Engine
+- Input project address; AI returns all applicable regulations, building codes, tax rates, mechanic's lien deadlines, insurance minimums, and licensing requirements for that location.
+- Accounts for overlapping jurisdictions (city, county, state, HOA) and provides a unified compliance checklist.
+
+### AI Onboarding Configurator
+- New tenant describes their business (size, project types, trades, typical contract structure) during onboarding.
+- AI pre-configures modules, cost code libraries, workflow rules, approval thresholds, and document templates based on the description, reducing setup time from days to minutes.
+
+### AI Workflow Builder
+- Tenant describes their approval or routing process in plain English (e.g., "invoices over $10K need director approval, under $10K just the PM").
+- AI translates the description into configured workflow rules with thresholds, routing steps, and escalation paths.
+
+### AI Report Builder
+- Natural language query interface for custom reports (e.g., "show me profit margin by trade for 2024" or "which vendors had the most punch items last quarter").
+- AI generates the report with appropriate charts, tables, and filters, and saves the query as a reusable report template.
+
+---
+
 *Document created: 2024*
-*This document defines the AI strategy for Ross Built CMS.*
+*This document defines the AI strategy for RossOS.*

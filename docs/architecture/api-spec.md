@@ -41,7 +41,7 @@ Production: sanitizes 500-level errors (hides internal details)
 
 ## Overview
 
-The Ross Built CMS exposes a RESTful JSON API for all client-server communication. Every request (except authentication routes) must include a valid Supabase JWT in the `Authorization` header as a Bearer token.
+RossOS exposes a RESTful JSON API for all client-server communication. Every request (except authentication routes) must include a valid Supabase JWT in the `Authorization` header as a Bearer token.
 
 - **Protocol**: HTTPS
 - **Content-Type**: `application/json` for request and response bodies

@@ -37,7 +37,7 @@ A client-facing portal that gives homeowners/clients controlled visibility into 
 - Custom portal URL options:
   - Subdomain: `buildername.portal.platform.com`
   - Custom domain: `portal.buildername.com` (CNAME setup instructions provided)
-- Builder-customizable portal name (e.g., "Smith Homes Client Hub", "Ross Built Portal")
+- Builder-customizable portal name (e.g., "Smith Homes Client Hub", "Builder Co Portal")
 - Login page branding with builder's logo and colors
 - Email notifications sent from builder's configured "from" address (or platform default)
 - Footer text and links configurable (privacy policy, terms, contact info)

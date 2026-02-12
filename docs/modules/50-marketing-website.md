@@ -61,7 +61,7 @@ The marketing site is a **separate application** from the SaaS platform, optimiz
 | Demo | Book a live demo | Demo scheduling widget (Calendly/HubSpot), self-guided demo option |
 | Case Studies | Social proof | Builder success stories with metrics, photos, quotes |
 | Blog | SEO content marketing | Industry articles, product updates, best practices |
-| About | Company story and trust | Team, mission, Ross Built backstory, construction industry credibility |
+| About | Company story and trust | Team, mission, company backstory, construction industry credibility |
 | Contact | Sales and support inquiries | Contact form, phone, email, office address |
 | Changelog | Release transparency | Versioned release notes with feature descriptions |
 | Status | System reliability proof | Link to status.platform.com |

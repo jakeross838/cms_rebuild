@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Notification Engine is the centralized system through which all platform events reach users. Every module emits events (invoice approved, inspection failed, selection deadline approaching) and this engine routes them to the correct recipients via the correct channels based on builder-level configuration and user-level preferences. The system must support in-app real-time notifications, email, SMS, push notifications, and third-party integrations (Slack, webhooks). Because this is a multi-tenant SaaS product, every notification type, template, and routing rule must be configurable per builder -- what Ross Built considers a critical alert may be irrelevant to another builder.
+The Notification Engine is the centralized system through which all platform events reach users. Every module emits events (invoice approved, inspection failed, selection deadline approaching) and this engine routes them to the correct recipients via the correct channels based on builder-level configuration and user-level preferences. The system must support in-app real-time notifications, email, SMS, push notifications, and third-party integrations (Slack, webhooks). Because this is a multi-tenant SaaS product, every notification type, template, and routing rule must be configurable per builder -- what one builder considers a critical alert may be irrelevant to another builder.
 
 ---
 

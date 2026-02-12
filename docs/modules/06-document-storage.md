@@ -432,7 +432,7 @@ CREATE TABLE builder_document_settings (
   builder_id UUID NOT NULL REFERENCES builders(id) UNIQUE,
   folder_templates JSONB DEFAULT '[]',        -- [{name: "Custom Home", folders: [...]}]
   retention_policy JSONB DEFAULT '{}',        -- {document_type: {years: 7, action: "archive"}}
-  inbound_email_prefix TEXT,                  -- e.g., 'rossbuilt'
+  inbound_email_prefix TEXT,                  -- e.g., 'builderco'
   max_file_size_mb INT DEFAULT 500,
   blocked_extensions TEXT[] DEFAULT '{exe,bat,sh,cmd,ps1}',
   created_at TIMESTAMPTZ DEFAULT now(),

@@ -232,7 +232,7 @@ components/jobs/
 ### Section 45: Per-Page Feature Requirements (Project List Page, items 633-646)
 - GAP-633: Sortable by any column — name, status, PM, start date, budget, % complete
 - GAP-634: Filterable by multiple criteria simultaneously — status, PM, location, date range, project type
-- GAP-635: Saveable filter presets — "My Active Projects," "Over Budget Projects," "AMI Projects"
+- GAP-635: Saveable filter presets — "My Active Projects," "Over Budget Projects," "Saved Filter"
 - GAP-636: Shareable filter presets — create a view that the whole team can use
 - GAP-637: Bulk actions — archive multiple projects, reassign PM, update status
 - GAP-638: Customizable columns — choose which columns to display

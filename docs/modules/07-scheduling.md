@@ -304,6 +304,17 @@ Builder configures their default view. Each user can override with their own pre
 
 ---
 
+## Job Site Utility Coordination
+
+Track temporary utilities and site services throughout the project lifecycle.
+
+- **Temporary Utility Tracking:** Manage setup and teardown of temporary utilities: temporary power, water service, portable toilets, dumpsters, fencing, and temporary lighting.
+- **Delivery Scheduling:** Schedule utility setup delivery dates on the project calendar with vendor assignments and lead time alerts.
+- **Cost Tracking:** Track temporary utility costs as overhead or direct job cost (configurable per builder). Link utility invoices to a dedicated cost code.
+- **Teardown Reminders:** Auto-reminder for utility teardown at project closeout or phase completion. Prevent forgotten rentals from accruing unnecessary charges.
+
+---
+
 ## Open Questions
 
 1. Which weather API service provides the best balance of accuracy, cost, and construction-relevant data (precipitation probability, wind speed, heat index)?

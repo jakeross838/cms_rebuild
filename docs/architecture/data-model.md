@@ -1,8 +1,8 @@
-# Ross Built CMS - Complete Database Schema
+# RossOS - Complete Database Schema
 
 ## Overview
 
-This document provides the complete, authoritative database schema for the Ross Built CMS. All tables are designed for Supabase (PostgreSQL) with Row Level Security (RLS) policies for multi-tenant isolation.
+This document provides the complete, authoritative database schema for RossOS. All tables are designed for Supabase (PostgreSQL) with Row Level Security (RLS) policies for multi-tenant isolation.
 
 **Naming Conventions:**
 - All tables use `snake_case`
@@ -2515,4 +2515,4 @@ CREATE TRIGGER budget_lines_changed
 
 *Document Version: 1.0*
 *Last Updated: 2024*
-*This is the authoritative database schema for Ross Built CMS.*
+*This is the authoritative database schema for RossOS.*

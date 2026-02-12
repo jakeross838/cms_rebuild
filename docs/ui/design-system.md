@@ -1,6 +1,6 @@
 # Design System
 
-Ross Built Construction Management Software -- UI component library and design conventions.
+RossOS Construction Management Platform -- UI component library and design conventions.
 
 ## Technology Stack
 
@@ -46,7 +46,7 @@ Returns human-friendly relative strings: `"Today"`, `"Yesterday"`, `"3 days ago"
 
 ### `getInitials(name: string): string`
 
-Extracts up to two uppercase initials from a full name (e.g. `"Jake Ross"` -> `"JR"`).
+Extracts up to two uppercase initials from a full name (e.g. `"John Smith"` -> `"JS"`).
 
 ### `getStatusColor(status: string): string`
 
@@ -361,7 +361,7 @@ A fixed-width left sidebar (`w-64` / 256px) with white background and right bord
 ```
 <aside w-64 bg-white border-r>
   +-- Logo Area (h-16, border-b)
-  |     Building2 icon (blue square) + "Ross Built" / "Construction CMS"
+  |     Building2 icon (blue square) + "RossOS" / "Construction CMS"
   |
   +-- Navigation (flex-1, overflow-y-auto, p-3)
   |     Flat links and collapsible groups

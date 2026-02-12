@@ -81,7 +81,7 @@ Open → Assigned → In Progress → Complete → Verified
 │ Location: Kitchen                                                   │
 │ Trade: Cabinets                                                     │
 │ Vendor: ABC Cabinets                                                │
-│ Created: Dec 5, 2024 by Jake Ross                                   │
+│ Created: Dec 5, 2024 by John Smith                                   │
 │ Due: Dec 15, 2024                                                   │
 │                                                                     │
 │ DESCRIPTION                                                         │
@@ -99,7 +99,7 @@ Open → Assigned → In Progress → Complete → Verified
 │ ACTIVITY                                                            │
 │ ─────────                                                           │
 │ Dec 10 - Vendor notified via email                                  │
-│ Dec 5  - Item created by Jake Ross                                  │
+│ Dec 5  - Item created by John Smith                                  │
 │                                                                     │
 │ ADD COMMENT                                                         │
 │ [________________________________________________] [Post]           │
@@ -303,14 +303,14 @@ Configurable per company in Settings:
 │ │ Windows              │ Window Co       │ Dec 2044   │ Active  │  │
 │ │ Lifetime glass seal  │                 │ (20 years) │ [View]  │  │
 │ ├──────────────────────┼─────────────────┼────────────┼─────────┤  │
-│ │ Workmanship          │ Ross Built      │ Dec 2025   │ Active  │  │
+│ │ Workmanship          │ Builder Co      │ Dec 2025   │ Active  │  │
 │ │ 1-year builder       │                 │ (1 year)   │ [View]  │  │
 │ └───────────────────────────────────────────────────────────────┘  │
 │                                                                     │
 │ ═══ EXPIRING SOON (within 90 days) ════════════════════════════    │
 │                                                                     │
 │ ┌───────────────────────────────────────────────────────────────┐  │
-│ │ ⚠️ Workmanship - Ross Built              │ Expires Dec 2025  │  │
+│ │ ⚠️ Workmanship - Builder Co              │ Expires Dec 2025  │  │
 │ └───────────────────────────────────────────────────────────────┘  │
 │                                                                     │
 │ ═══ EXPIRED ════════════════════════════════════════════════════   │

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document compares the Ross Built CMS design against Buildertrend, the industry-leading construction management software, to identify missing features and prioritize development.
+This document compares the RossOS design against Buildertrend, the industry-leading construction management software, to identify missing features and prioritize development.
 
 **Sources:**
 - [Buildertrend Product Overview](https://buildertrend.com/product-overview/)
@@ -25,7 +25,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 1. SALES & CRM
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Lead Pipeline (Kanban) | ✓ | ✓ | ✅ Have |
 | Lead Activities | ✓ | ✓ | ✅ Have |
@@ -45,7 +45,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 2. PRE-CONSTRUCTION
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Estimates | ✓ | ✓ | ✅ Have |
 | Estimate Templates | ✓ | - | ❌ Missing |
@@ -66,7 +66,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 3. PROJECT MANAGEMENT
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Schedule (Gantt) | ✓ | ✓ | ✅ Have |
 | Schedule (List View) | ✓ | ✓ | ✅ Have |
@@ -87,7 +87,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 4. FINANCIAL MANAGEMENT
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Job Costing Budget | ✓ | ✓ | ✅ Have |
 | Budget vs Actual | ✓ | ✓ | ✅ Have |
@@ -107,7 +107,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 5. COMMUNICATION
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Internal Messaging | ✓ | - | ❌ Missing |
 | Comments on Items | ✓ | - | ❌ Missing |
@@ -120,7 +120,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 6. TIME TRACKING
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Time Clock | ✓ | - | ❌ Missing |
 | GPS Clock-in/out | ✓ | - | ❌ Missing |
@@ -132,7 +132,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 7. CLIENT PORTAL
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Portal Dashboard | ✓ | ✓ | ✅ Have |
 | Photos | ✓ | ✓ | ✅ Have |
@@ -151,7 +151,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 8. SUB/VENDOR PORTAL
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Vendor Portal | ✓ | - | ❌ Missing |
 | View Schedule | ✓ | - | ❌ Missing |
@@ -164,7 +164,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 9. CLOSEOUT
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Punch Lists | ✓ | ✓ | ✅ Have |
 | Punch Item Assignments | ✓ | ✓ | ✅ Have |
@@ -178,7 +178,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 10. FILES & DOCUMENTS
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | File Storage | ✓ | ✓ | ✅ Have |
 | Folder Organization | ✓ | ✓ | ✅ Have |
@@ -191,7 +191,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 11. REPORTS & ANALYTICS
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Job Profitability | ✓ | ✓ | ✅ Have |
 | Budget Variance | ✓ | ✓ | ✅ Have |
@@ -206,7 +206,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## 12. TEMPLATES & SETTINGS
 
-| Feature | Buildertrend | Ross Built CMS | Status |
+| Feature | Buildertrend | RossOS | Status |
 |---------|--------------|----------------|--------|
 | Estimate Templates | ✓ | - | ❌ Missing |
 | Schedule Templates | ✓ | - | ❌ Missing |
@@ -281,7 +281,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 2. **AI PO Creation** - Create POs from vendor quotes automatically
 3. **Modern Tech Stack** - Next.js 14+, Supabase, real-time subscriptions
 4. **Simpler Pricing** - Not $499-$1099/month like Buildertrend
-5. **Custom Built** - Tailored to Ross Built's exact workflow
+5. **Custom Built** - Tailored to the builder's exact workflow
 
 ---
 
@@ -321,7 +321,7 @@ This document compares the Ross Built CMS design against Buildertrend, the indus
 
 ## Next Steps
 
-1. **Prioritize** - Confirm which gaps matter most for Ross Built
+1. **Prioritize** - Confirm which gaps matter most for the builder
 2. **Design** - Create view plans for missing features
 3. **Build** - Implement in priority order
 4. **Test** - Validate with real projects

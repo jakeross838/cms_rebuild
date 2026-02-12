@@ -1,4 +1,4 @@
-# Ross Built CMS - Complete System Design
+# RossOS - Complete System Design
 
 ## Proven Patterns from v1
 
@@ -9,7 +9,7 @@ The existing CMS at C:\Users\jaker\Construction-Management-Software has 105 rout
 
 ## Overview
 
-This document defines the complete system architecture for the Ross Built Construction Management Software rebuild. Every entity, page, data flow, and API endpoint is documented here to ensure all features are properly connected from the start.
+This document defines the complete system architecture for the RossOS Construction Management Platform rebuild. Every entity, page, data flow, and API endpoint is documented here to ensure all features are properly connected from the start.
 
 ---
 
@@ -1609,4 +1609,4 @@ Before launching each phase, verify:
 ---
 
 *Document created: 2024*
-*This is the authoritative design document for the Ross Built CMS rebuild.*
+*This is the authoritative design document for the RossOS platform rebuild.*

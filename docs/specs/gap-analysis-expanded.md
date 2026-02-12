@@ -1,8 +1,8 @@
 # Platform Gap Analysis — EXPANDED
 ## SaaS Construction Management Platform for Custom Home Builders
-### Built by Ross Built, Sold to the Industry
+### Built for Builders, Sold to the Industry
 
-> **CRITICAL CONTEXT:** This is NOT just internal software for Ross Built. This is a SaaS product that Ross Built will use AND sell to other custom home builders nationwide. Every feature must be configurable, every workflow must be customizable, and every assumption must be a setting — not a hardcoded value. Ross Built is Customer #1 and the proving ground, but the architecture must support any custom home builder from a $2M/year one-man shop to a $200M/year multi-division operation.
+> **CRITICAL CONTEXT:** This is NOT just internal software for one builder. This is a SaaS product designed as both an internal tool and a product sold to other custom home builders nationwide. Every feature must be configurable, every workflow must be customizable, and every assumption must be a setting — not a hardcoded value. The primary builder is Customer #1 and the proving ground, but the architecture must support any custom home builder from a $2M/year one-man shop to a $200M/year multi-division operation.
 
 ---
 
@@ -99,7 +99,7 @@
 18. Job phases and naming conventions differ. How do you let each builder define their own phase structure?
 19. Terminology varies — some say "trade partner," some say "subcontractor," some say "vendor." Can terminology be customized per tenant?
 20. Document templates (proposals, contracts, change orders, draw requests) must be fully customizable per tenant. How?
-21. Numbering conventions differ — some want CO-001, some want 2024-AMI-CO-001. Configurable numbering schemes?
+21. Numbering conventions differ — some want CO-001, some want 2024-PRJ-CO-001. Configurable numbering schemes?
 22. Approval workflows differ — some builders need 3-level approval, others just need the owner to click approve. Configurable?
 23. What custom fields can tenants create? (On projects, vendors, clients, line items — any entity?)
 24. Can tenants create custom dropdown values? (Project types, client sources, defect categories)
@@ -265,7 +265,7 @@
 148. Can builders hire your team to create custom templates? (Professional services revenue)
 
 ### Vendor Network
-149. Can the platform facilitate connections between builders and vendors? ("Find a qualified electrician in Sarasota")
+149. Can the platform facilitate connections between builders and vendors? ("Find a qualified electrician in [city]")
 150. What about anonymous vendor benchmarking? ("How does your plumber compare to the platform average for your region?")
 151. Can vendors pay for premium listing or visibility? (Careful — this could compromise trust)
 152. What about vendor reviews/ratings visible across the platform? (Yelp for construction subs?)
@@ -560,7 +560,7 @@
 
 ### Change Order Workflows — Configurable
 359. Change order approval chains must be configurable. (PM → Director → Owner at certain thresholds)
-360. What about change order numbering formats? (Configurable per builder — CO-001, 2024-AMI-CO-001, etc.)
+360. What about change order numbering formats? (Configurable per builder — CO-001, 2024-PRJ-CO-001, etc.)
 361. How do you handle change order templates? (Different format for client-facing vs. internal tracking)
 362. What about change order markup/fee calculation? (Some charge flat % on COs, some have different markup for overhead vs. profit)
 363. How do you handle "allowance change orders"? (Selection exceeds allowance — auto-generated CO? Or manual?)
@@ -884,7 +884,7 @@
 # 41-43. SCALING & RESILIENCE
 
 ### Multi-Entity — Builders with Complex Structures
-574. How do you handle a builder with multiple LLCs? (Ross Built LLC, Ross Development LLC — different entities, related data)
+574. How do you handle a builder with multiple LLCs? (Builder Co LLC, Builder Development LLC — different entities, related data)
 575. What about builders who have a construction company AND a real estate company? (Cross-entity referrals and data sharing)
 576. How do you handle builders with multiple offices? (Regional offices with different teams, different vendor relationships)
 577. What about builders who operate under different brand names? (Luxury brand + production brand — same company, different client experience)
@@ -965,7 +965,7 @@
 ### Project List Page
 633. Sortable by any column — name, status, PM, start date, budget, % complete
 634. Filterable by multiple criteria simultaneously — status, PM, location, date range, project type
-635. Saveable filter presets — "My Active Projects," "Over Budget Projects," "AMI Projects"
+635. Saveable filter presets — "My Active Projects," "Over Budget Projects," "Saved Filter"
 636. Shareable filter presets — create a view that the whole team can use
 637. Bulk actions — archive multiple projects, reassign PM, update status
 638. Customizable columns — choose which columns to display
@@ -1223,13 +1223,13 @@
 848. What's the MVP? (Minimum viable product that's useful enough to sell)
 849. What's the build order? (Which modules first? What can wait for V2, V3?)
 850. What's the pricing strategy for early adopters? (Discount? Free? Beta access?)
-851. How do you balance Ross Built's specific needs with market-wide needs? (Don't over-customize for yourself)
+851. How do you balance the primary builder's specific needs with market-wide needs? (Don't over-customize for yourself)
 852. What's the go-to-market strategy? (Direct sales, partnerships, marketplace, word of mouth?)
 853. How do you handle competitive features that Buildertrend/Procore have but you don't yet? (Gap communication)
 854. What's the technology stack decision? (React + Supabase? Something else at scale?)
 855. How do you handle the "we need it NOW" features vs. the "this would be cool someday" features?
 856. What's the team? (Just Jake coding? Hired developers? Agency? Combination?)
-857. What's the funding model? (Bootstrapped? Investor-backed? Revenue-funded from Ross Built?)
+857. What's the funding model? (Bootstrapped? Investor-backed? Revenue-funded from the builder?)
 858. What's the timeline to first external customer? (6 months? 12 months? 24 months?)
 859. How do you handle customer expectations when the product is still being built? (Transparency about roadmap)
 860. What's the support model as you scale? (Jake can't support 100 customers personally)

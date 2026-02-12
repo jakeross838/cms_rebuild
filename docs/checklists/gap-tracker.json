@@ -222,7 +222,7 @@
   {
     "id": "GAP-021",
     "category": "SaaS Architecture & Multi-Tenancy",
-    "description": "Numbering conventions differ — some want CO-001, some want 2024-AMI-CO-001. Configurable numbering schemes?",
+    "description": "Numbering conventions differ — some want CO-001, some want 2024-PRJ-CO-001. Configurable numbering schemes?",
     "status": "planned",
     "priority": "P0",
     "module": "01,02,03",
@@ -6976,7 +6976,7 @@
   {
     "id": "GAP-635",
     "category": "Per-Page Features",
-    "description": "Saveable filter presets — \"My Active Projects,\" \"Over Budget Projects,\" \"AMI Projects\"",
+    "description": "Saveable filter presets — \"My Active Projects,\" \"Over Budget Projects,\" \"Saved Filter\"",
     "status": "planned",
     "priority": "P3",
     "module": "various",
@@ -9352,7 +9352,7 @@
   {
     "id": "GAP-851",
     "category": "Platform Business Strategy",
-    "description": "How do you balance Ross Built's specific needs with market-wide needs?",
+    "description": "How do you balance the primary builder's specific needs with market-wide needs?",
     "status": "planned",
     "priority": "P2",
     "module": "49,50",
@@ -11915,7 +11915,7 @@
   {
     "id": "GAP-1084",
     "category": "AI Intelligence Features",
-    "description": "Seasonal Pattern Learning — \"October is historically your busiest month for permit delays in Manatee County. Submit permits 2 weeks earlier.\"",
+    "description": "Seasonal Pattern Learning — \"October is historically your busiest month for permit delays in [county]. Submit permits 2 weeks earlier.\"",
     "status": "planned",
     "priority": "P2",
     "module": "24,25",

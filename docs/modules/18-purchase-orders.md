@@ -411,6 +411,26 @@ CREATE TABLE v2_po_settings (
 
 ---
 
+## Material Substitution Management
+
+Formal workflow for managing material substitutions when specified materials are unavailable.
+
+- **Substitution Workflow:** Original spec → Proposed substitute → Approval chain (architect and/or owner) → Accepted/Rejected. Each step tracked with timestamps.
+- **Comparison Documentation:** Side-by-side comparison of original material and proposed substitute including price, specifications, lead time, and warranty differences.
+- **Substitution Log:** Permanent log per project recording every substitution with reason, approver, and cost impact (positive or negative).
+- **Selections Integration:** Client-visible substitutions sync to the selections module (Module 25) so homeowners see the final material in their selections dashboard.
+
+## Payment Term Optimization
+
+Track and optimize vendor payment terms to improve cash flow.
+
+- **Payment Term Tracking:** Record vendor payment terms per PO (Net 30, 2/10 Net 30, Due on Receipt, etc.).
+- **Early-Pay Discount Dashboard:** Surface all invoices eligible for early-pay discounts with dollar savings if paid within the discount window.
+- **Cash Flow Impact Analysis:** Compare cost of paying early (lost float) versus discount captured; recommend optimal pay date.
+- **Per-Vendor Configuration:** Store default payment terms per vendor in vendor management; auto-populate on new POs.
+
+---
+
 ## Open Questions
 
 1. Should blanket POs span multiple projects or be project-specific?

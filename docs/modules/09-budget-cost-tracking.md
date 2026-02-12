@@ -181,7 +181,14 @@ Budget behavior adapts to contract type:
 - Configurable approval required to use contingency (e.g., director approval for >$5K).
 - Historical analysis: average contingency usage by project type for future estimating.
 
-### 9.9 Change Order Impact on Budget
+### 9.9 Inter-Job Cost Transfers
+
+- **Material/Cost Transfers:** Transfer materials or costs between projects (Job A to Job B) with a formal transfer record.
+- **Audit Trail:** Each transfer records the original job, destination job, reason for transfer, amount, and approver.
+- **Budget Impact:** Transferring costs automatically adjusts budgets on both source (credit) and destination (debit) jobs.
+- **Bulk Allocation:** Support common scenario of bulk material purchases allocated across multiple projects by quantity or percentage split.
+
+### 9.10 Change Order Impact on Budget
 
 - Approved change orders (Module 17) automatically update budget:
   - Add new budget lines for new scope.
@@ -190,7 +197,7 @@ Budget behavior adapts to contract type:
   - Track CO impact separately (original budget vs. COs).
 - Budget summary shows: Original Budget + Approved COs = Current Budget.
 
-### 9.10 WIP Reporting (GAP-434)
+### 9.11 WIP Reporting (GAP-434)
 
 - **Work-in-Progress (WIP) schedule**: standard construction accounting report.
 - Calculation methods (configurable per builder/accountant preference):
@@ -201,7 +208,7 @@ Budget behavior adapts to contract type:
 - Multi-project WIP summary report.
 - Period-locked WIP snapshots for month-end reporting (GAP-439).
 
-### 9.11 Draw Requests / AIA Billing (GAP-441 through GAP-448)
+### 9.12 Draw Requests / AIA Billing (GAP-441 through GAP-448)
 
 - **Generate draw requests** from budget data:
   - AIA G702/G703 format (GAP-441) or custom format.
@@ -213,7 +220,7 @@ Budget behavior adapts to contract type:
 - **Multiple lenders** (GAP-447): different draw formats and requirements per lender on the same project.
 - **Reconciliation** (GAP-448): track approved draw amount vs. actual disbursement, flag gaps.
 
-### 9.12 Multi-Audience Budget Views (GAP-280)
+### 9.13 Multi-Audience Budget Views (GAP-280)
 
 - **Owner/Client view**: 10-15 summary categories, no cost code detail, clean formatting.
 - **PM/Superintendent view**: full detail with all cost codes, committed/actual/projected columns.
@@ -222,7 +229,7 @@ Budget behavior adapts to contract type:
 - Each view is a presentation layer over the same underlying data.
 - Builder configures which view each role sees by default.
 
-### 9.13 Accounting Integration (GAP-431, GAP-432, GAP-433, GAP-435, GAP-439)
+### 9.14 Accounting Integration (GAP-431, GAP-432, GAP-433, GAP-435, GAP-439)
 
 - **Chart of accounts mapping** (GAP-431): each cost code maps to one or more GL accounts. Configurable per builder.
 - **Accounting system sync** (GAP-432): export transactions to QuickBooks Desktop, QuickBooks Online, Sage, Xero. Import payments from accounting system.
@@ -230,7 +237,7 @@ Budget behavior adapts to contract type:
 - **Bank accounts** (GAP-435): transactions can be tagged to specific bank accounts for reconciliation.
 - **Period close** (GAP-439): lock financial data for completed periods. No edits to prior period without admin override and audit trail.
 
-### 9.14 Financial Projections & KPIs (GAP-438, GAP-440)
+### 9.15 Financial Projections & KPIs (GAP-438, GAP-440)
 
 - **Revenue forecast** (GAP-440): projected billings across all active projects by month.
 - **Expense forecast**: projected costs by month based on schedule and commitments.
@@ -243,7 +250,7 @@ Budget behavior adapts to contract type:
   - Contingency remaining.
   - Cost performance index.
 
-### 9.15 Minimal Budget Mode (GAP-278)
+### 9.16 Minimal Budget Mode (GAP-278)
 
 - For builders who do not want full budgeting, provide a simplified mode:
   - Track actual costs only (no budget lines, no projections).

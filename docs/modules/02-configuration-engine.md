@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Configuration Engine is what transforms this platform from "internal software for Ross Built" into "a SaaS product any custom home builder can use." Every workflow, terminology, numbering convention, approval chain, cost code structure, and required field is a configuration setting -- not hardcoded logic.
+The Configuration Engine is what transforms this platform from "a single-builder tool" into "a SaaS product any custom home builder can use." Every workflow, terminology, numbering convention, approval chain, cost code structure, and required field is a configuration setting -- not hardcoded logic.
 
 Configuration follows a hierarchy: **Platform Defaults -> Company (Tenant) -> Project -> User Preferences**. A new tenant gets sensible defaults on day one but can customize everything over time. The engine must be powerful enough for a 50-person operation with complex workflows, yet simple enough that a one-man builder is not overwhelmed by setup.
 
@@ -27,7 +27,7 @@ This module is the second to be built (after Auth) because nearly every downstre
 | GAP-018 | Job phases and naming conventions differ per builder | Phase Structure Config |
 | GAP-019 | Terminology customization per tenant ("trade partner" vs "subcontractor" vs "vendor") | Terminology Engine |
 | GAP-020 | Document templates (proposals, contracts, COs, draw requests) fully customizable | Template Config |
-| GAP-021 | Configurable numbering schemes (CO-001 vs 2024-AMI-CO-001) | Numbering Engine |
+| GAP-021 | Configurable numbering schemes (CO-001 vs 2024-PRJ-CO-001) | Numbering Engine |
 | GAP-022 | Approval workflows differ — 3-level approval vs. owner-clicks-approve | Approval Workflow Config |
 | GAP-023 | Custom fields on any entity (projects, vendors, clients, line items) | Custom Fields Engine |
 | GAP-024 | Custom dropdown values per tenant (project types, client sources, defect categories) | Custom Dropdowns |
@@ -136,7 +136,7 @@ Builders use wildly different cost code systems:
 ### 4. Phase Structure Configuration (GAP-018)
 
 Each builder defines their own project phase structure:
-- Ross Built: "Preconstruction, Foundation, Framing, MEP Rough, Insulation, Drywall, Finishes, Landscaping, Punch, Close"
+- Builder Co: "Preconstruction, Foundation, Framing, MEP Rough, Insulation, Drywall, Finishes, Landscaping, Punch, Close"
 - Another builder: "Design, Permits, Sitework, Shell, Interior, Final"
 
 **Implementation:**
@@ -149,7 +149,7 @@ Each builder defines their own project phase structure:
 
 A mapping table of platform terms to tenant-preferred terms:
 
-| Platform Term (Key) | Ross Built | Builder B | Builder C |
+| Platform Term (Key) | Builder A | Builder B | Builder C |
 |---|---|---|---|
 | subcontractor | Trade Partner | Subcontractor | Vendor |
 | change_order | Change Order | CO | Variation |
@@ -174,14 +174,14 @@ Configurable numbering patterns for all document types:
 |---|---|---|
 | `{PREFIX}` | Fixed text | CO, INV, PO |
 | `{YEAR}` | Current year (2 or 4 digit) | 2026, 26 |
-| `{PROJECT_CODE}` | Project short code | AMI, OAK |
+| `{PROJECT_CODE}` | Project short code | PRJ, OAK |
 | `{SEQ:N}` | Auto-increment, zero-padded to N digits | 001, 0001 |
 | `{MONTH}` | Current month | 02 |
-| `{BUILDER_CODE}` | Tenant short code | RB |
+| `{BUILDER_CODE}` | Tenant short code | BC |
 
 **Examples:**
 - Simple: `CO-{SEQ:3}` -> CO-001, CO-002
-- Detailed: `{YEAR}-{PROJECT_CODE}-CO-{SEQ:4}` -> 2026-AMI-CO-0001
+- Detailed: `{YEAR}-{PROJECT_CODE}-CO-{SEQ:4}` -> 2026-PRJ-CO-0001
 - Per-project sequences reset or continue globally (configurable)
 
 **Sequence management:** Atomic counter per entity type per scope (global or per-project) stored in `numbering_sequences` table. Uses `SELECT ... FOR UPDATE` to prevent duplicates.
@@ -266,7 +266,7 @@ Every configuration change is versioned:
 ### 12. Configuration Templates (GAP-032, GAP-033)
 
 **Industry templates** (GAP-033 -- out-of-the-box config):
-- "Custom Home Builder - Standard" (Ross Built's config as the starting template)
+- "Custom Home Builder - Standard" (the default config as the starting template)
 - "Production Builder" (higher volume, simpler workflows)
 - "Remodeler" (different phases, smaller scope)
 - "Custom Home Builder - Luxury" (more detailed selections, higher approval thresholds)

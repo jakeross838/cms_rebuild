@@ -115,7 +115,7 @@ Post-closeout service request portal for warranty items.
 Each builder's client portal reflects their unique brand.
 
 - **Logo and Colors:** Builder uploads logo and selects primary/secondary colors. All portal pages branded accordingly.
-- **Custom Domain:** Optional custom domain (e.g., portal.rossbuilt.com) via CNAME configuration.
+- **Custom Domain:** Optional custom domain (e.g., portal.builderco.com) via CNAME configuration.
 - **Welcome Message:** Configurable welcome message and builder contact information on login page.
 - **Email Templates:** Client-facing emails use builder's branding, not platform branding.
 - **Footer/Legal:** Builder configures footer text, privacy policy link, and terms of service.
