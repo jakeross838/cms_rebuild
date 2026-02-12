@@ -67,6 +67,12 @@ Also references:
 - Virus scanning on upload via ClamAV or cloud-based scanner before storage.
 - Thumbnail generation for images and first-page preview for PDFs (async via background job).
 
+#### Edge Cases & What-If Scenarios
+
+1. **Storage quota exceeded UX:** When a builder reaches or exceeds their storage quota, the system must not silently fail uploads. Required behavior: (a) at 80% usage, display a persistent but dismissable banner in the admin dashboard warning of approaching limits, (b) at 95% usage, show a warning on every upload attempt: "You are approaching your storage limit — consider upgrading or cleaning up old files," (c) at 100% usage (hard block mode), reject new uploads with a clear error message and a direct link to the storage management page and plan upgrade page, (d) at 100% usage (soft block mode), allow uploads but flag the account for billing adjustment and display a prominent warning, (e) system-generated files (daily log PDFs, signed contracts returned from DocuSign) must never be blocked even if quota is exceeded — these are queued and the admin is alerted, and (f) the storage dashboard must provide a "Clean Up" tool that identifies the largest files, old project files, and duplicate uploads to help builders reclaim space.
+
+2. **Virus detected in uploaded file:** When the virus scanner detects a threat in an uploaded file, the system must: (a) immediately quarantine the file (store in an isolated quarantine bucket, not in the project's document folder), (b) notify the uploading user: "Your file [filename] was flagged as potentially unsafe and has been quarantined," (c) notify the builder admin with details of the threat type and the user who uploaded it, (d) record the event in the security audit log, (e) provide the admin with options: permanently delete the quarantined file or override the scan (for false positives, with an acknowledgment checkbox), and (f) never serve a quarantined file via download URL under any circumstance until it is explicitly cleared by an admin.
+
 ### 6.2 Folder Organization & Templates (Gap 340)
 
 **Folder Structure**
@@ -228,6 +234,10 @@ Also references:
 - Redacted version saved as a new file (original preserved with full access restricted to authorized roles).
 - Redaction is permanent in the output file (not just an overlay -- content is removed from the PDF).
 - Use case: redact pricing from plans before sharing with a subcontractor.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Permanent redaction security:** Redaction labeled as "permanent" must be truly unrecoverable — this is a critical security requirement. The redaction tool must: (a) use server-side PDF processing (not client-side JavaScript) to physically remove the underlying text and image data from the PDF, not just draw black rectangles over it, (b) strip all hidden layers, annotations, metadata, and embedded text that could reveal the redacted content, (c) re-render the affected pages as flattened images if necessary to ensure no hidden text remains in the PDF structure, (d) run a post-redaction verification that scans the output file to confirm no redacted text is extractable, (e) never store the redacted content in any log, cache, or temporary file that could be recovered, and (f) maintain the original unredacted file as a separate version accessible only to roles with explicit "view_unredacted" permission. The redacted file must be a completely new file object — not a modified copy of the original.
 
 ### 6.13 Document Retention (Gap 331)
 

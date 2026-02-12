@@ -38,6 +38,13 @@ Centralized directory of subcontractors, suppliers, clients, and other contacts 
 | GAP-392 | Vendor contract templates (builder-configurable standard subcontract) | Medium |
 | GAP-393 | Vendor onboarding to platform (first-time guided experience) | Medium |
 | GAP-394 | Vendor support (who helps vendors with portal issues?) | Low |
+| GAP-553 | State-specific insurance requirements (minimum coverage, endorsements) | Medium |
+| GAP-554 | Workers' compensation requirements by state (class codes, EMR) | Medium |
+| GAP-555 | Builder's Risk insurance tracking per project | Medium |
+| GAP-556 | Additional insured endorsement tracking (auto-request from vendors) | Medium |
+| GAP-557 | Annual insurance audit data preparation (payroll/sub costs by class code) | Low |
+| 1060 | Monthly insurance certificate review — any vendor certs expiring this month across all vendors | Insurance expiration dashboard with monthly review workflow |
+| 1061 | Monthly license renewal review — any licenses expiring for vendors or the builder | License expiration dashboard with proactive renewal alerts |
 
 ---
 
@@ -70,6 +77,10 @@ Vendors on the platform have two layers of data:
 
 A vendor working for Builder A and Builder B sees only their own profile and each builder's portal. Builder A cannot see Builder B's notes or ratings.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Dual-layer profile confusion.** The separation between vendor-owned (platform-level) and builder-specific data must be clearly communicated in the UI to avoid confusion. When a vendor updates their platform profile (e.g., company name, address, insurance), the change is visible to all connected builders. When a builder updates builder-specific data (e.g., preferred status, internal notes, trade assignments), that data is never visible to other builders or to the vendor. The system must display clear visual indicators distinguishing "Vendor Profile (shared)" fields from "Your Notes (private)" fields. If a vendor's self-declared trade specialty conflicts with a builder's trade assignment, both are displayed with a "differs from vendor profile" note.
+
 ### 10.2 Vendor Self-Registration & Onboarding (GAP-382, GAP-393)
 
 **Self-Registration Flow** (GAP-382):
@@ -88,6 +99,10 @@ A vendor working for Builder A and Builder B sees only their own profile and eac
 - Builder can customize the onboarding message/instructions.
 
 **Alternative**: builder creates vendor account manually (for vendors who won't self-register).
+
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor refuses to use the portal (manual mode).** When a builder wants to work with a vendor who will not self-register or use the portal, the system must support a "manual" mode for that vendor relationship. In manual mode, the builder's team enters all data on the vendor's behalf: compliance documents, bid responses, invoice details, and daily log information. The vendor record is flagged as "builder-managed" with reduced automation (no vendor portal notifications, no self-service features). All downstream workflows (bid comparison, performance scoring, payment tracking) continue to work using the builder-entered data.
 
 ### 10.3 Compliance Tracking (GAP-383)
 
@@ -110,6 +125,42 @@ A vendor working for Builder A and Builder B sees only their own profile and eac
 - Non-compliant vendors blocked from receiving new work orders (configurable: hard block or warning).
 - Certificate of Insurance (COI) verification: additional insured endorsement tracking.
 - Compliance history: track all past certificates, not just current.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor compliance documents expire mid-project.** The system must have clear and escalating alerts for both the builder and the vendor when compliance documents (e.g., insurance, licenses) expire during an active project. Escalation ladder: (a) 30/14/7-day advance warnings to vendor and builder, (b) on expiration day, vendor status changes to "conditional" and a prominent banner appears on all vendor-related screens, (c) builder-configurable policy determines whether the vendor is blocked from new work orders immediately or after a grace period. Active work orders are not auto-cancelled, but the builder is notified to take action.
+
+### 10.3a Insurance Compliance — State-Specific Requirements (GAP-553 through GAP-557)
+
+Insurance requirements vary by state, and the platform must support the full range of builder insurance tracking needs beyond basic COI management.
+
+- **State-specific insurance minimums** (GAP-553): insurance requirements (minimum coverage amounts, required endorsements, required policy types) vary by state. The system must store state-specific insurance requirement templates in the jurisdiction configuration database (Module 2, Section 14). When a vendor is added to a project, the system must validate their insurance against the requirements for the project's state, not just the builder's home-state defaults. Required insurance types may include: general liability, workers' compensation, auto liability, umbrella/excess, professional liability (for design trades), and pollution liability (for environmental trades). Minimum coverage amounts must be configurable per state and per builder (builder can require higher minimums than the state mandate).
+- **Workers' compensation by state** (GAP-554): workers' comp requirements vary by state including class codes, experience modification rates (EMR), and rate structures. The system must track per vendor: workers' comp carrier, policy number, class codes, EMR rating, and expiration date. The system must support the common requirement that vendors provide a workers' comp waiver or exemption certificate if they are sole proprietors exempt from workers' comp in their state. EMR ratings should be factored into the vendor prequalification scoring (Section 10.4).
+- **Builder's Risk insurance per project** (GAP-555): Builder's Risk insurance is project-specific (not vendor-specific) and covers the structure under construction. The system must track per project: Builder's Risk carrier, policy number, coverage limit, deductible, policy effective and expiration dates, and named insured parties. The system must alert the PM when a Builder's Risk policy is approaching expiration during active construction. Builder's Risk cost should be trackable as a project cost in the budget module.
+- **Additional insured endorsement tracking** (GAP-556): builders routinely require vendors to name them as "additional insured" on the vendor's GL policy. The system must: track whether the builder has been named as additional insured on each vendor's policy, auto-request the endorsement as part of the vendor onboarding workflow, flag vendors whose COI does not include the additional insured endorsement, and store the endorsement document linked to the vendor's COI record. When a vendor's COI is renewed, the system must verify that the additional insured endorsement is present on the renewed certificate.
+- **Annual insurance audit data** (GAP-557): builders undergo annual insurance audits that require detailed payroll and subcontractor cost data by class code. The system must auto-generate audit-ready reports containing: total payments to each subcontractor for the audit period, subcontractor class codes (from workers' comp tracking), employee payroll by class code (from Module 34 HR data), and project-level cost breakdowns by insurance class. This report must be exportable in CSV and PDF formats for the builder's insurance auditor.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor operates in a state where they are exempt from workers' comp.** Some states allow sole proprietors or partnerships without employees to opt out of workers' compensation insurance. When a vendor claims exemption, the system must require an uploaded exemption certificate or state-issued waiver document, track the exemption status with its expiration (some states require annual renewal of exemptions), and alert the builder that this vendor is exempt so the builder can assess the liability risk. If the vendor later adds employees, the exemption becomes invalid and the system must prompt for a new workers' comp policy.
+
+### 10.3b Monthly Compliance Review Workflows (Gaps 1060, 1061)
+
+**Monthly Insurance Certificate Review (Gap 1060):**
+- Monthly report listing all vendor insurance certificates expiring within the next 30/60/90 days
+- Cross-project view: show which active projects each expiring vendor is working on (impact assessment)
+- Batch renewal request: send renewal reminders to multiple vendors in one action
+- Auto-generated renewal request email with instructions for uploading updated certificate
+- Compliance dashboard: month-over-month trend showing compliance rate improvement or deterioration
+- Compliance gap report: vendors on active projects with expired or soon-to-expire certificates, sorted by urgency
+
+**Monthly License Renewal Review (Gap 1061):**
+- Monthly report listing all vendor and builder licenses expiring within the next 30/60/90 days
+- License types tracked: general contractor, specialty trade, business license, professional license (architect, engineer)
+- Builder's own license tracking: state contractor licenses, local business licenses, professional certifications
+- Auto-alert to vendor when their license is approaching expiration
+- License verification integration: link to state licensing database for real-time validation (where available, see Gap 1098)
+- License history: track all past license numbers and renewal dates for audit trail
 
 ### 10.4 Prequalification Workflows (GAP-384)
 
@@ -223,7 +274,19 @@ A vendor working for Builder A and Builder B sees only their own profile and eac
 - Builder can override for urgent communications.
 - Preferences stored at the vendor level but respected per builder relationship.
 
-### 10.13 Vendor Support Model (GAP-394)
+### 10.13 Subcontractor Termination Mid-Scope (GAP-601)
+
+When a builder needs to fire a subcontractor during active work on a project, the system must support a complete contractor replacement workflow:
+- **Termination documentation:** Capture the termination event with: reason (performance, safety, abandonment, insolvency, other), effective date, notice method (in-person, email, certified mail), and supporting evidence (photos, daily log entries, communication history, failed inspection records).
+- **Scope reassignment:** The terminated vendor's remaining scope items are identified from their active POs, subcontract, and schedule tasks. System generates a "remaining scope" package that can be sent to replacement vendor candidates as a bid package.
+- **Schedule impact analysis:** All schedule tasks assigned to the terminated vendor are flagged as "reassignment pending." The system calculates the schedule impact of the gap period (time between termination and replacement vendor mobilization) and surfaces it on the project dashboard.
+- **Cost reconciliation:** System generates a financial summary of the terminated vendor relationship: total subcontract value, work completed (% and $), amounts invoiced, amounts paid, retainage held, and remaining contract value. Any overpayment relative to work completed is flagged for recovery.
+- **Replacement vendor workflow:** System supports rapid re-bidding of the remaining scope: generate bid package from remaining scope, invite replacement vendors, compare bids, and award. The budget is updated to reflect the cost difference between original subcontract and replacement vendor.
+- **Compliance cleanup:** System checks for outstanding lien waiver requirements from the terminated vendor and flags any compliance gaps that could create lien exposure.
+- **Blacklist option:** Prompt builder to update the vendor's status (blacklist with documented reason per Section 10.9) and update performance scores.
+- **Legal hold:** If termination may result in a dispute, the project and vendor relationship records can be placed on legal hold (no modifications or deletions).
+
+### 10.14 Vendor Support Model (GAP-394)
 
 - Tier 1: In-app help center with FAQs, video tutorials, and guided tours.
 - Tier 2: Builder provides first-line support for their own vendors (builder knows their workflow).

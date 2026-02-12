@@ -58,6 +58,14 @@ The Onboarding Wizard is the first experience every new builder has with the pla
 - Tooltip-based prompts suggest next features based on usage patterns ("You've created 3 projects -- ready to try Scheduling?")
 - Feature activation tracked for customer health scoring (Module 49)
 
+### Edge Cases & What-If Scenarios
+
+1. **User stuck in the onboarding wizard.** If a user gets confused, encounters an error, or does not understand what is being asked at a wizard step, the system must provide immediate help without requiring them to leave the wizard. Every wizard step must include a contextual "Need help?" link that opens either a relevant KB article, a short video walkthrough of that specific step, or a live chat prompt (for plans that include chat support). The wizard must also allow skipping any non-critical step with a clear "Skip for now" option and a promise to remind them later. If a user spends more than 5 minutes on a single step without progressing, the system should proactively offer help via a tooltip or chat prompt. Users who are completely stuck can access a "Restart wizard" option that resets to step 1 without losing already-completed data.
+
+2. **Sample data does not accurately reflect the builder's business.** If the pre-loaded sample project data (budget items, schedule tasks, vendor types, cost codes) does not match the builder's construction type or market, it can create a poor first impression and confuse the user. The system must offer sample data sets tailored to the builder's declared construction type (luxury custom, production, remodel, commercial) and company size. When the builder selects "Create Sample Project" in the wizard, the system should ask 2-3 qualifying questions (project type, approximate value, typical duration) to select the most appropriate sample data set. Sample data must be clearly labeled as "SAMPLE" throughout the UI so users never confuse it with real data. The builder must be able to delete all sample data with a single action when ready to go live.
+
+3. **Optimizing for the "aha moment."** The wizard's primary goal is not data collection -- it is getting the user to the "aha moment" as quickly as possible. The aha moment is the point where the user sees real value (e.g., their first project with a budget and schedule visualized, their first client portal shared, or their first invoice processed). The wizard must be instrumented to track which completion paths correlate most strongly with 90-day retention, and the wizard flow should be continuously optimized (via A/B testing in Module 49) to route users toward those high-correlation actions. Steps that do not contribute to the aha moment should be deferred to post-wizard setup. The target is: aha moment reached within 20 minutes of wizard start.
+
 ### Success Milestones
 
 - Account Created (0 min)

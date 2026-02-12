@@ -95,6 +95,14 @@ analytics, and depreciation tracking for financial reporting.
   - Percentage of total project equipment budget
 - Project equipment cost reporting feeding into Module 19 financial reports
 
+### Edge Cases & What-If Scenarios
+
+1. **Equipment breakdown on a job site.** When a piece of equipment breaks down during active use on a project, the system must support a rapid response workflow: the field user reports the breakdown (with photos and description), the system automatically creates a corrective maintenance record, and the impact on the project schedule is flagged. If the equipment is critical to in-progress tasks, the system should suggest alternatives -- available owned equipment that can substitute, or rental options from the rental management module. The repair process must be tracked end-to-end: reported, diagnosed, parts ordered, repair in progress, returned to service. Downtime hours and repair costs are captured and attributed to the project and the asset's lifetime cost record.
+
+2. **Lost or stolen tools.** The checkout/check-in system must handle the scenario where an asset is not returned. When a checked-out item passes its expected return date by a configurable threshold (default: 3 days), the system escalates: first an overdue alert to the employee and their supervisor, then a second alert to the admin/owner. If the item cannot be located, the system must support marking it as "lost" or "stolen" with required documentation (date discovered, last known location, circumstances, police report number for theft). Lost/stolen assets are removed from the available inventory, their remaining book value is written off, and the loss is attributed to the project where the asset was last deployed. The system must generate a loss report for insurance claims.
+
+3. **Rent vs. own analysis for informed capital decisions.** The system must make it easy for a builder to see the total cost of renting a particular equipment type over a rolling period (12 months, 24 months) and compare that to the estimated total cost of ownership (purchase price, maintenance, insurance, storage, depreciation). The analysis should be triggered automatically when cumulative rental spend on a category exceeds a configurable threshold (e.g., "You have spent $18,000 renting skid steers in the last 12 months -- a comparable purchase would cost $45,000 with estimated annual operating cost of $8,000"). This decision support tool feeds from actual rental history and maintenance cost data already in the system, not hypothetical estimates.
+
 ### Check-Out / Check-In
 - Tool and small equipment checkout workflow
 - Employee signs out asset (digital signature or mobile scan)

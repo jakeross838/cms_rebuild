@@ -147,6 +147,15 @@ The stamp is regenerated (not appended) at the following points in the invoice l
 4. **During draw assignment** → `restampInvoice()`
 5. **During split operation** → `restampInvoice()` for each child invoice
 
+### Edge Cases & What-If Scenarios
+
+1. **PDF stamping robustness across formats.** The PDF stamping system must handle non-standard PDFs gracefully. Required behavior:
+   - **Encrypted/password-protected PDFs:** If the original PDF is encrypted and cannot be modified, the system must detect this before attempting to stamp. Alert the user that the PDF cannot be stamped and offer to create a wrapper page with the stamp information followed by the original PDF pages.
+   - **Corrupted or malformed PDFs:** If pdf-lib fails to parse the original PDF, catch the error and fall back to generating a standalone stamp-only page that references the invoice. The original PDF is preserved as-is and linked alongside the stamp page.
+   - **Very large PDFs (50+ pages):** Stamping must not timeout. Since only the first page is stamped, the system should read and modify only the first page without loading the entire PDF into memory if possible.
+   - **Scanned images saved as PDF:** These often have non-standard page dimensions or embedded images that conflict with stamp placement. The rotation-aware positioning system must handle atypical page sizes (e.g., 8.5x14, A3, or non-standard scanner output) by calculating stamp position relative to the actual page dimensions.
+   - **PDFs with form fields or annotations:** Stamping must not destroy existing form fields or annotations in the original PDF.
+
 ---
 
 ## Gap Items Addressed
@@ -179,6 +188,14 @@ The stamp is regenerated (not appended) at the following points in the invoice l
 - Support for credit memos (negative invoices) linked to original invoice
 - Builder-configurable required fields (some require PO number, some do not)
 
+#### Edge Cases & What-If Scenarios
+
+1. **Duplicate invoice submission.** A vendor submits the same invoice twice (same vendor, same invoice number, same or similar amount). The existing duplicate detection (vendor + invoice number + amount hash) warns on submission. Required additional behavior:
+   - Near-duplicate detection: flag invoices where vendor and amount match but invoice number differs by only a trailing character (e.g., "INV-1001" vs. "INV-1001a") -- these may be re-submissions with a modified number.
+   - Time-window check: if the same vendor submits an invoice with the same amount within 30 days of a prior invoice, flag for review even if the invoice number differs.
+   - The duplicate warning must be non-blocking (configurable to blocking per builder) and must clearly show the potential duplicate invoice side-by-side for comparison.
+   - If a true duplicate is confirmed, the system marks it as "duplicate -- rejected" with a link to the original invoice.
+
 ### 2. Invoice Coding
 
 - Cost code picker driven by builder's configured cost code hierarchy (CSI, custom, hybrid)
@@ -209,6 +226,26 @@ The stamp is regenerated (not appended) at the following points in the invoice l
 - **Unit Price:** Require quantity verification; validate unit prices against contract schedule
 - **Cost Plus:** Track actual costs; apply fee/markup calculation per contract terms
 - Contract type drives which fields are required and which validation rules apply
+
+### 4a. Progress Billing vs. Final Billing Workflows (Gap 346)
+
+The system must differentiate between progress invoices and final invoices with distinct validation and approval criteria:
+
+**Progress Billing:**
+- Invoice type = `progress`. Represents partial work completed during a billing period.
+- Required fields: billing period (start/end dates), percent complete for this period, cumulative percent complete.
+- Validation: cumulative billings must not exceed contract value (or GMP/NTE cap). System warns when cumulative progress billings approach contract limit.
+- Retainage: standard retainage percentage applied per the contract terms.
+- Approval criteria: standard approval chain applies.
+
+**Final Billing:**
+- Invoice type = `final`. Represents the last invoice on a contract -- all remaining work is complete.
+- Required fields: confirmation that all work is complete, final retainage release request (if applicable).
+- Validation: system checks that all prior progress invoices are in `approved` or `paid` status. Final invoice amount should reconcile with contract value minus prior billings. Variance must be explained.
+- Retainage: final invoice may include a retainage release request. The retainage release follows a separate approval path (often requires higher-level approval than progress invoices).
+- Approval criteria: final invoices require additional approval steps configurable per builder (e.g., superintendent confirms work is complete, PM confirms punch list is cleared, director approves final payment).
+- Compliance gate: final lien waiver must be received before final payment is released (configurable enforcement level -- strict blocks payment, warn allows with flag).
+- Closeout linkage: marking a final invoice as `paid` can trigger the contract closeout checklist in Module 38.
 
 ### 5. PO Matching
 
@@ -241,6 +278,15 @@ The stamp is regenerated (not appended) at the following points in the invoice l
 - Payment terms tracking (Net 30, Net 15, Due on Receipt, etc.)
 - Early payment discount tracking (2/10 Net 30)
 - Aging reports: current, 30, 60, 90, 120+ days
+
+#### Edge Cases & What-If Scenarios
+
+1. **Fraudulent invoice discovered post-payment.** An invoice is approved and paid, but later found to be fraudulent or erroneous. Required behavior:
+   - The system must support voiding a paid invoice with a documented reason.
+   - Voiding a paid invoice creates a reversal entry: the budget line's actual cost is reduced, the vendor's payment record is flagged as "voided -- recovery pending," and the AP aging report reflects the outstanding recovery.
+   - If the invoice was included in a draw request, the draw reconciliation report must surface the voided amount as a line item requiring lender notification.
+   - A "recovery tracking" workflow must be available: mark the voided amount as recovered (with reference number), partially recovered, or written off.
+   - Audit trail captures: who voided, when, reason, and all downstream financial adjustments.
 
 ### 8. Vendor Credit Tracking
 

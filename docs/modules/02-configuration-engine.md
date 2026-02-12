@@ -43,6 +43,44 @@ This module is the second to be built (after Auth) because nearly every downstre
 | GAP-034 | Complexity budget — setup should not take 40 hours | Progressive Disclosure |
 | GAP-035 | Self-service configuration vs. managed setup | Config UX Design |
 
+### Section 1: Regional Variability (GAP-036 through GAP-050)
+
+| Gap ID | Description | Sub-topic |
+|--------|-------------|-----------|
+| GAP-036 | Tax rules vary by state, county, municipality | Tax Config |
+| GAP-037 | Lien law varies by state (notice requirements, deadlines, waiver forms) | Lien Law Config |
+| GAP-038 | Building codes vary by jurisdiction | Code & Inspection Config |
+| GAP-039 | Permit types and processes vary by municipality | Permit Config |
+| GAP-040 | Insurance requirements vary by state | Insurance Config |
+| GAP-041 | Contract law varies by state — template language options | Legal Config |
+| GAP-042 | Weather patterns vary by region — scheduling intelligence | Weather Config |
+| GAP-043 | Material pricing varies by region | Regional Pricing |
+| GAP-044 | Labor rates vary by region | Regional Labor Rates |
+| GAP-045 | Holidays vary by region — scheduling impact | Holiday Config |
+| GAP-046 | Work hour restrictions vary by municipality | Work Hours Config |
+| GAP-047 | Environmental regulations vary by location | Environmental Config |
+| GAP-048 | Business licensing requirements vary by jurisdiction | Licensing Config |
+| GAP-049 | Sales tax rules for construction vary by state | Construction Tax Config |
+| GAP-050 | Mechanic's lien procedures and statutory forms vary by state | Lien Forms Config |
+
+### Section 42: Geographic Variability — National Platform (GAP-581 through GAP-590)
+
+| Gap ID | Description | Sub-topic |
+|--------|-------------|-----------|
+| GAP-581 | Building codes differ by state and jurisdiction | Code Database |
+| GAP-582 | Permit processes vary by municipality (online, in-person, timelines) | Permit Config |
+| GAP-583 | Weather data for all US regions (single API, regional accuracy) | Weather Config |
+| GAP-584 | Material availability by region (national vs. regional products) | Regional Materials |
+| GAP-585 | Regional labor market conditions (shortage areas, prevailing wage) | Labor Config |
+| GAP-586 | Natural disaster considerations by region (hurricanes, earthquakes, etc.) | Disaster Risk Config |
+| GAP-587 | Building on different foundation types by region (slab, basement, crawlspace) | Foundation Config |
+| GAP-588 | Energy code requirements vary by climate zone | Energy Code Config |
+| GAP-589 | Wildfire zone construction requirements (WUI, defensible space) | Wildfire Config |
+| GAP-590 | High-seismic zone structural and inspection requirements | Seismic Config |
+
+See `docs/architecture/multi-tenancy-design.md` Section 19 for full geographic variability architecture.
+See `docs/architecture/configuration-engine.md` (architecture doc) Section 4.21 for regional configuration items.
+
 ### Section 1: Related SaaS Architecture Items
 
 | Gap ID | Description | Sub-topic |
@@ -113,6 +151,10 @@ Workflows define the state machine for key business objects. Each entity type (c
 - Over $5,000: Owner approval required
 - Thresholds are fully configurable per tenant. Some tenants will have zero thresholds (owner approves everything). Some will have multi-level chains.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Workflow loop creation:** A builder may configure a workflow that creates an infinite loop (e.g., State A transitions to State B, which transitions back to State A with no exit condition) or a dead end (a state with no outgoing transitions except the terminal state, which is unreachable). The system must validate workflow definitions on save: run a directed graph analysis to detect cycles that bypass terminal states and unreachable states. Reject invalid configurations with a clear error message identifying the problematic states and transitions. See also Module 01 Section 2 for approval chain cycle detection.
+
 ### 3. Cost Code Configuration (GAP-017)
 
 Builders use wildly different cost code systems:
@@ -132,6 +174,10 @@ Builders use wildly different cost code systems:
 - A mapping table records old_code -> new_code for reporting continuity
 - New entries on existing projects use the new codes
 - Builder is warned before restructuring and can preview impact
+
+#### Edge Cases & What-If Scenarios
+
+1. **Poorly structured cost code imports:** When a builder imports a cost code list from CSV, the import may contain duplicates, circular parent references, missing parent codes, excessively deep nesting, or codes that conflict with existing active codes. The import process must: (a) run a dry-run validation before committing, (b) detect and report duplicate codes, (c) detect circular parent-child references, (d) flag rows referencing non-existent parent codes, (e) warn if nesting depth exceeds 5 levels, and (f) allow the builder to review and resolve each issue before importing. The import must not silently overwrite existing active cost codes.
 
 ### 4. Phase Structure Configuration (GAP-018)
 
@@ -163,6 +209,10 @@ A mapping table of platform terms to tenant-preferred terms:
 - Server uses overrides for generated documents and notifications
 - Default terms used when no override exists
 - ~50 configurable terms initially, expandable
+
+#### Edge Cases & What-If Scenarios
+
+1. **Terminology change propagation:** When a builder changes a term (e.g., "Change Order" to "Variation"), this change must propagate to: (a) all UI labels throughout the application, (b) client and vendor portal displays, (c) notification templates that reference the term, (d) generated documents (PDFs, emails), and (e) API responses where display names are used. However, the change must NOT affect: stored data values (database enum values remain unchanged), integration field names (QuickBooks sync still maps to "Change Order" internally), or historical document PDFs already generated. The system must use the `t(key)` translation function consistently everywhere — hardcoded display strings are not permitted.
 
 ### 6. Numbering Engine (GAP-021)
 
@@ -286,6 +336,70 @@ To avoid the "40 hours of setup" problem:
 - Each configuration section shows "Recommended" defaults that work for most builders
 - Configuration completeness score on the admin dashboard ("Your setup is 65% complete")
 - "Configure as you go" -- most settings can be changed at any time
+
+#### Edge Cases & What-If Scenarios
+
+1. **Progressive disclosure implementation risk:** The configuration engine is powerful but has the potential to overwhelm new builders. Progressive disclosure must be enforced at every level: (a) the Quick Start Wizard must complete in under 5 minutes with no more than 5 decision points, (b) advanced configuration sections (conditional logic, custom workflows, field-level rules) must be hidden behind an "Advanced Settings" toggle that is collapsed by default, (c) every advanced configuration page must have a "Reset to Recommended" button to undo accidental complexity, and (d) the system must track configuration complexity per tenant (number of custom fields, workflow steps, conditional rules) and surface a warning if complexity exceeds a threshold that could cause performance or usability issues (proposed threshold: 100 custom fields per entity, 20 workflow transitions per entity type, 50 conditional rules per entity type).
+
+### 14. Regional & Jurisdictional Configuration
+
+The platform must be location-aware because construction regulations, tax rules, contract law, and industry practices vary dramatically by jurisdiction. All regional configuration follows the same hierarchy as other config (Platform -> Company -> Project) and is keyed by jurisdiction (state, county, municipality).
+
+**Tax Configuration:**
+1. The system must support configurable tax rules per jurisdiction. Sales tax rules for construction vary by state — some tax materials, some tax labor, some tax neither. Tax rates, taxability rules, and exemptions must be stored per state/county/municipality and applied automatically based on project location.
+2. The system must support multi-jurisdiction tax calculation when a builder operates across state lines. Each project inherits tax rules from its physical location, not the builder's home state.
+
+**Lien Law Configuration:**
+3. Mechanic's lien procedures, statutory forms, notice requirements, and deadlines vary by state. The system must store state-specific lien law parameters (preliminary notice deadlines, lien filing deadlines, waiver form templates) and enforce them per project based on project state. Lien waiver forms must be selectable from a library of state-specific statutory forms.
+
+**Building Code & Inspection Configuration:**
+4. Building codes vary by jurisdiction. Checklists, inspection types, required documentation, and compliance requirements must be configurable per jurisdiction. Inspection type lists, required permit types, and code reference lookups must be location-aware.
+5. Permit types and processes vary by municipality. The system must support configurable permit type lists, required documentation checklists, and process workflows per jurisdiction.
+
+**Insurance & Licensing Configuration:**
+6. Insurance requirements vary by state. Minimum coverage amounts, required endorsements, and certificate of insurance templates must be configurable per jurisdiction.
+7. Business licensing requirements vary by jurisdiction. The system must track which licenses are required per jurisdiction and alert builders when licenses approach expiration.
+
+**Contract & Legal Configuration:**
+8. Contract law varies by state. Document templates (contracts, proposals, change orders) must support state-specific language options, clauses, and legal notices. The template engine must support conditional clause insertion based on project state.
+
+**Scheduling & Weather Configuration:**
+9. Weather patterns vary by region. The scheduling intelligence module must account for regional climate data (average rain days per month, extreme temperature days, hurricane season, snow season) when suggesting schedule durations and identifying weather risk windows.
+10. Work hour restrictions vary by municipality (no construction before 7am in some areas, 8am in others, weekend restrictions). The system must support configurable work hour rules per jurisdiction that the scheduling module respects.
+11. Holidays vary by region — some regions observe local holidays that affect scheduling. The system must support a configurable holiday calendar per jurisdiction (federal + state + local holidays) in addition to builder-defined company holidays.
+
+**Cost & Pricing Configuration:**
+12. Material pricing varies by region. The intelligence engine must be region-aware when providing cost benchmarks and estimates, using regional pricing indexes or supplier-specific pricing feeds.
+13. Labor rates vary by region. Cost benchmarks, estimate templates, and vendor rate comparisons must be region-adjusted using configurable regional labor rate tables.
+
+**Environmental & Regulatory Configuration:**
+14. Environmental regulations vary by location (coastal zones, wetlands, endangered species habitats). The system must support configurable environmental compliance checklists per project location, triggered by geographic attributes or project-level flags.
+
+**Implementation:**
+- A `jurisdiction_configs` table stores all jurisdiction-specific configuration: `(id, jurisdiction_type, jurisdiction_code, config_section, config_key, config_value JSONB)`
+- Jurisdiction types: `state`, `county`, `municipality`, `climate_zone`
+- Project location (state, county, city) automatically resolves applicable jurisdiction configs
+- Platform team maintains baseline jurisdiction data (tax rates, lien law deadlines); builders can override for their specific situations
+- Jurisdiction data is versioned — when laws or rates change, new versions are created with effective dates
+
+### 15. Geographic Variability Configuration (GAP-581 through GAP-590)
+
+The platform serves builders across all US regions. The jurisdiction configuration database (Section 14) must be extended to cover construction-specific regional variability that goes beyond legal/regulatory requirements.
+
+- **Building codes by jurisdiction** (GAP-581): the system must maintain a reference database of which building code edition is adopted by each jurisdiction (e.g., "2021 IRC", "2018 IBC with local amendments"). This data informs inspection checklists (Module 32), construction requirements, and compliance documentation. The database is maintained at the platform level with builder override capability.
+- **Permit process variability** (GAP-582): each municipality has different permit processes (online submission vs. in-person, plan review timelines, fee structures, required documentation). The system must store per-jurisdiction permit process metadata: typical review timeline, submission method (online API, email, in-person), required documents, fee schedule, and contact information. This data pre-populates the permitting module (Module 32) when a project location is set.
+- **Weather data coverage** (GAP-583): the weather API integration (Module 7, Section 7.10) must provide accurate forecast and historical data for all US regions. The system must handle regional weather patterns: hurricane season (Southeast/Gulf Coast), monsoon season (Southwest), fire weather (Western US), freeze/thaw cycles (Midwest/Northeast), and extreme heat (Southwest/Southeast). Regional weather data also feeds the scheduling intelligence module (Module 25).
+- **Material availability** (GAP-584): some construction materials are available nationally while others are regional (e.g., certain stone types, regional lumber species, locally-manufactured products). The estimating and procurement modules must support region-aware material selection. The price intelligence module (Module 23) provides regional pricing data. Future integration with supplier catalogs will include regional availability indicators.
+- **Labor market conditions** (GAP-585): labor availability, wage rates, and prevailing wage requirements vary by region. The system must store regional labor rate benchmarks in the jurisdiction database for use in estimating. For projects in prevailing wage areas (government-funded projects), the system must support Davis-Bacon Act wage rate lookups and compliance tracking.
+- **Natural disaster risk** (GAP-586): projects in high-risk areas (hurricane zones, earthquake zones, tornado alley, flood plains, wildfire-urban interface) may have additional construction requirements, insurance needs, and scheduling considerations. The jurisdiction database must store risk levels per location that inform: insurance requirement validation (Module 10), scheduling contingency recommendations (Module 25), and construction method checklists.
+- **Foundation types** (GAP-587): common foundation types vary by region (slab-on-grade in TX/FL, full basement in Midwest/Northeast, crawlspace in Southeast, pilings in coastal areas). The system must store common foundation types per region to support schedule template defaults and estimating templates that are appropriate for the project location.
+- **Energy code requirements** (GAP-588): energy code requirements vary by climate zone (IECC climate zones 1-8). The system must store the applicable energy code edition and climate zone per project location, and surface this information in the inspection checklist and compliance documentation modules.
+- **Wildfire zone requirements** (GAP-589): builders in wildfire-urban interface (WUI) zones face specific construction requirements (ember-resistant vents, non-combustible roofing, defensible space). The system must: identify when a project is in a WUI zone based on location data, add wildfire-specific items to inspection and compliance checklists, and flag wildfire zone requirements during the permitting process.
+- **Seismic zone requirements** (GAP-590): builders in high-seismic zones (primarily Western US) face different structural requirements and inspection requirements (seismic design categories A through F). The system must: store the seismic design category per project location, add seismic-specific inspection types to the inspection checklist, and surface seismic structural requirements during the permitting and plan review process.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Jurisdiction data becomes outdated.** Tax rates, lien law deadlines, and building codes change regularly. If the platform's jurisdiction data is outdated, builders may file incorrect tax returns, miss lien deadlines, or use non-compliant contract language. The system must: (a) display the "last verified" date on all jurisdiction data, (b) integrate with authoritative data sources where available (state tax authority APIs, legal databases) for automatic updates, (c) allow builders to override jurisdiction defaults for their projects when they have more current information, (d) flag jurisdiction data older than 12 months for review, and (e) provide a mechanism for builders to report outdated jurisdiction data so the platform team can update it.
 
 ---
 
@@ -484,6 +598,39 @@ config_templates (
   updated_at TIMESTAMPTZ
 )
 
+-- Jurisdiction-specific configuration (GAP-036 through GAP-050)
+jurisdiction_configs (
+  id UUID PK,
+  jurisdiction_type VARCHAR,  -- 'state', 'county', 'municipality', 'climate_zone'
+  jurisdiction_code VARCHAR,  -- 'FL', 'FL-Sarasota', 'FL-Sarasota-CityOfSarasota'
+  config_section VARCHAR,  -- 'tax', 'lien_law', 'building_code', 'insurance', 'work_hours', 'holidays', 'environmental'
+  config_key VARCHAR,
+  config_value JSONB,
+  effective_date DATE,
+  expires_date DATE NULL,
+  last_verified_at TIMESTAMPTZ,
+  verified_by UUID FK -> platform_users NULL,
+  source VARCHAR,  -- 'platform', 'builder_override', 'api_sync'
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ,
+  UNIQUE(jurisdiction_type, jurisdiction_code, config_section, config_key, effective_date)
+)
+
+-- Builder jurisdiction overrides
+builder_jurisdiction_overrides (
+  id UUID PK,
+  builder_id UUID FK -> builders,
+  jurisdiction_type VARCHAR,
+  jurisdiction_code VARCHAR,
+  config_section VARCHAR,
+  config_key VARCHAR,
+  config_value JSONB,
+  override_reason TEXT,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ,
+  UNIQUE(builder_id, jurisdiction_type, jurisdiction_code, config_section, config_key)
+)
+
 -- User-level preferences (Level 4)
 user_preferences (
   id UUID PK,
@@ -561,6 +708,13 @@ POST   /api/v1/config-templates/apply/:id       -- apply template to current ten
 -- User Preferences
 GET    /api/v1/preferences                      -- get current user preferences
 PUT    /api/v1/preferences/:key                 -- set preference
+
+-- Jurisdiction Configuration (GAP-036 through GAP-050)
+GET    /api/v1/jurisdiction/:state              -- get all config for a state
+GET    /api/v1/jurisdiction/:state/:section     -- get section config (tax, lien_law, etc.)
+GET    /api/v1/jurisdiction/resolve/:projectId  -- resolve all applicable jurisdiction config for a project
+PUT    /api/v1/jurisdiction/override/:section   -- set builder-level jurisdiction override
+GET    /api/v1/jurisdiction/overrides           -- list builder's jurisdiction overrides
 ```
 
 ---
@@ -570,6 +724,20 @@ PUT    /api/v1/preferences/:key                 -- set preference
 - **Module 1: Auth & Access** -- tenant context required for all config reads/writes
 - **Redis** -- configuration caching layer
 - **PostgreSQL** -- all config persisted with RLS on `builder_id`
+
+---
+
+## Unusual Business Scenarios — Configuration Edge Cases
+
+### Builder Expands into Light Commercial (GAP-612)
+When a residential custom home builder expands into light commercial construction (small office buildings, retail buildouts, mixed-use projects, churches, restaurants), the system must support the significantly different requirements without breaking the residential workflow:
+- **Contract type configuration:** Light commercial projects use different contract types (AIA A101/A201, DBIA, design-build, GMP, cost-plus with GMP cap) that differ from residential contracts. The configuration engine must support multiple contract type templates per tenant, selectable per project, with each type driving different workflow rules, payment application formats, and retainage schedules.
+- **Prevailing wage support:** Many light commercial projects require prevailing wage compliance (Davis-Bacon for federal, state-level for public projects). The system must support: configurable wage rate tables per trade per jurisdiction, certified payroll reporting (WH-347), fringe benefit tracking, and compliance documentation. This is enabled per project, not globally — a builder may have some prevailing wage projects and some market-rate projects simultaneously.
+- **Bonding requirements:** Commercial projects frequently require performance bonds and payment bonds. The system must support: bond tracking per project (type, amount, surety, bond number, expiration), bond cost allocation to the project budget, and bond release tracking at project completion.
+- **Different reporting requirements:** Commercial projects often require AIA-format pay applications (G702/G703), schedule of values, certified payroll, and OSHA-specific safety documentation that residential projects do not. The configuration engine must support project-type-specific report templates and required document checklists.
+- **Insurance threshold differences:** Commercial projects typically require higher insurance minimums (General Liability $2M vs residential $1M, additional umbrella requirements). The system must support per-project-type insurance requirement overrides so that vendor compliance checking uses the correct thresholds.
+- **Cost code structure extension:** Residential and commercial construction use different cost code structures. The system must support a unified cost code tree with branches that are active only for specific project types, or parallel cost code templates selectable per project type.
+- **Project type as a first-class configuration dimension:** The configuration hierarchy must support project-type-level overrides: Platform Defaults -> Company -> **Project Type** -> Project -> User Preferences. This allows a builder to configure different defaults, workflows, required fields, and templates for residential vs. commercial without duplicating everything.
 
 ---
 

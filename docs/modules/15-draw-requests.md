@@ -185,6 +185,21 @@ Prevents double-counting
   - Draws can be sequenced: primary lender first, then owner for remainder
 - Lender contact management (inspector, draw reviewer, loan officer)
 
+#### Edge Cases & What-If Scenarios
+
+1. **Lender rejects a draw request.** The lender reviews the draw and rejects it (partially or fully) due to incomplete documentation, disputed completion percentages, or other issues. Required behavior:
+   - The system must support a "revision requested" status that returns the draw to draft state with the lender's rejection notes attached.
+   - The PM must be able to see exactly which line items or documents were flagged by the lender and address them individually.
+   - A revised draw inherits the same draw number with a revision suffix (e.g., Draw #5 Rev A, Rev B) to maintain continuity with the lender.
+   - The revision must preserve the original submitted values alongside the revised values so the builder can see what changed.
+   - Rejection history is tracked per draw: how many revision cycles, what was disputed, and the final approved amount. This data feeds into lender performance analytics.
+
+2. **Percentage completion disputes.** The lender's inspector disagrees with the builder's claimed percentage of completion for one or more SOV line items. Required behavior:
+   - The system must provide supporting documentation tools: link progress photos, daily log entries, and inspection reports directly to disputed SOV lines to support the builder's claim.
+   - A "completion evidence package" can be generated per SOV line showing: photos with timestamps, daily log entries referencing the scope, material delivery receipts, and subcontractor invoices.
+   - If the lender adjusts the percentage downward, the system must recalculate the draw amount and track the delta as a "lender adjustment" separate from the builder's original claim.
+   - Over time, the system should track which SOV line types are most frequently disputed by each lender to help builders provide better upfront documentation.
+
 ### 9. Draw Schedule Management
 
 - Draw schedule defines planned submission dates
@@ -206,6 +221,14 @@ Prevents double-counting
   - Flagged items: schedule says 50% but only 30% billed -- review needed
   - Cost-to-date vs. billed-to-date variance analysis
 - Builder configures auto-generation: enabled/disabled, trigger (monthly date, manual)
+
+#### Edge Cases & What-If Scenarios
+
+1. **Auto-generation transparency.** The auto-generated draw recommendation must be fully transparent about how each line item amount was calculated so the PM can trust and defend the numbers. Required behavior:
+   - Each auto-generated line item must include a "calculation source" indicator: "from schedule progress," "from approved invoices," "from field-entered %," or "manual override from prior draw."
+   - A "show work" expandable section per line must display: the data sources used, the calculation formula, and any discrepancies between sources (e.g., "Schedule shows 60% but invoices only support 45%").
+   - When the PM overrides an auto-calculated value, the system records the override with a reason and flags it for the approval workflow as "PM-adjusted."
+   - Auto-generation must never submit a draw without PM review. The auto-generation output is always a draft requiring explicit approval.
 
 ### 11. Draw Request Reconciliation
 

@@ -101,6 +101,67 @@ Module Add-Ons:
 5. No payment after grace -> account suspended (read-only)
 6. 90 days with no payment -> account scheduled for deactivation (data export offered)
 
+### Edge Cases & What-If Scenarios
+
+1. **Charge dispute handling.** When a builder disputes a charge (via Stripe chargeback, direct complaint, or in-app dispute form), the system must follow a clear and fair workflow: auto-pause collection on the disputed amount (do not retry the charge), notify the platform billing team immediately, provide the builder with a detailed invoice breakdown showing exactly what was charged and why, capture the builder's dispute reason with supporting context, and track resolution through to completion. For Stripe chargebacks specifically, the system must auto-generate evidence submission (invoice history, usage data, ToS acceptance records) to fight fraudulent chargebacks. The dispute resolution must be time-bounded: resolve within 10 business days or escalate to management. All dispute records are retained for financial audit purposes.
+
+2. **Usage fluctuation and pricing fairness.** Builders whose usage fluctuates significantly (seasonal builders with 20 active projects in summer and 3 in winter, or builders who ramp up for a large project then scale back) need pricing flexibility to avoid feeling overcharged during low-usage periods. The system must support: usage-based billing components that automatically adjust (pay for actual active projects, not a fixed tier), the seasonal pause option (Gap 100) with clear terms, mid-cycle downgrade capability with prorated credit, and transparent usage dashboards showing current consumption vs. plan limits. When a builder's usage consistently falls below their plan for 3+ months, the system should proactively suggest a downgrade to build trust and reduce churn risk.
+
+3. **Dunning sequence effectiveness and recovery optimization.** The dunning sequence (retry schedule + communications for failed payments) is critical for minimizing involuntary churn. The system must go beyond simple automated retries: track recovery rate by dunning step (which step recovers the most payments?), A/B test dunning email copy and timing, support multiple payment method fallbacks (if card A fails, try card B before escalating), include personal outreach from the CS team for high-value accounts (Business and Enterprise tiers) at the second failure, and provide a one-click payment method update flow that does not require logging in. Dunning analytics must be visible in the platform admin dashboard (Module 49) showing recovery rate, average days to recovery, and churn-to-dunning ratio.
+
+### Grandfathering Engine (Gap #103)
+
+When the platform changes pricing (rate increases, plan restructuring, feature reallocation), existing customers must be protected:
+
+1. **Grandfathering period:** Existing subscribers keep their current pricing for a configurable period (default: 12 months from the pricing change date). Stored in `builder_subscriptions.grandfathered_until`.
+2. **Advance notice:** Customers receive email notification at least 60 days before grandfathering expires, showing their current price vs. the new price, and explaining what changed.
+3. **Opt-in upgrade:** During the grandfathering period, customers can voluntarily switch to the new pricing if the new plan offers better value.
+4. **Automatic transition:** When grandfathering expires, the customer is automatically moved to the closest equivalent new plan. If the new plan costs more, a 30-day grace period with the old price applies, and the customer is notified.
+5. **Enterprise exception:** Enterprise customers on custom contracts are never auto-transitioned. Their pricing changes only at contract renewal.
+6. **Audit trail:** All grandfathering decisions and transitions are logged in `billing_events` for financial reporting.
+
+### Partner & Referral Program (Gap #108)
+
+The referral program incentivizes builders to recommend the platform to other builders:
+
+1. **Referral tracking:** Each builder gets a unique referral link/code. When a referred builder signs up and activates a paid plan, the referrer is credited.
+2. **Referrer reward:** Account credit of configurable amount (default: one month of their current plan's base price) applied to their next invoice.
+3. **Referred reward:** Referred builder receives a configurable discount on their first billing period (default: 20% off first 3 months).
+4. **Credit expiration:** Referral credits expire 12 months after issuance if unused.
+5. **Limits:** Maximum referral credits per builder per year: configurable (default: 12 credits, i.e., one free year equivalent).
+6. **Fraud prevention:** Self-referrals are detected (same email domain, same IP, same payment method) and blocked. Referred builder must maintain an active paid subscription for at least 60 days before the referrer credit is issued.
+7. **Dashboard:** Referrers see their referral link, pending referrals, credited referrals, and total savings in Billing > Referrals.
+
+### Professional Services Pricing (Gap #109)
+
+Add-on professional services that are billable beyond the subscription:
+
+1. **Service catalog:** The system maintains a catalog of professional services: managed data migration, custom training sessions, custom template creation, dedicated onboarding concierge, custom integration development.
+2. **Quoting:** Professional services are quoted per-engagement. Quotes are generated by the CS or professional services team via the admin panel and sent to the builder as a one-time invoice.
+3. **Billing:** Professional service charges are added as one-time line items on the builder's next subscription invoice (via Stripe Invoice Items) or billed as a separate invoice for larger engagements.
+4. **Tracking:** Each professional service engagement is tracked with status (quoted, accepted, in progress, delivered, completed), hours, and deliverables.
+
+### Pricing Transparency (Gap #110)
+
+1. **Public pricing:** Starter, Professional, and Business plan pricing is published on the marketing website with full feature comparison matrix.
+2. **Enterprise pricing:** Enterprise tier displays "Contact Sales" with a request form that captures company size, project count, and specific needs.
+3. **In-app pricing:** Current plan details and upgrade options are visible in Settings > Billing with transparent pricing for all available plans and add-ons.
+4. **No hidden fees:** All usage-based charges (storage overage, AI queries, additional users) must be clearly listed with per-unit pricing on the pricing page and in the billing dashboard.
+
+### Cancellation & Offboarding Process
+
+When a customer wants to cancel their subscription, the system must follow a structured process that respects the builder's data while attempting to retain the customer:
+
+1. **Cancellation initiation:** Only the owner role can initiate cancellation. Navigate to Billing > Cancel Subscription.
+2. **Exit survey:** Before confirming, the builder must complete a short exit survey: reason for leaving (dropdown + freeform), where they are going (competitor, spreadsheets, none), what would have kept them (optional).
+3. **Retention offers:** Based on the exit reason, the system may present a targeted retention offer: downgrade to a lower tier, seasonal pause (if seasonal business), complimentary training session, temporary discount (configurable by CS team). The builder can accept or decline.
+4. **Cancellation confirmation:** If the builder proceeds, cancellation takes effect at the end of the current billing cycle. Access continues until the paid period expires.
+5. **Data export prompt:** On cancellation confirmation, the system prominently offers full data export (Module 3 Section 8) and gives a 90-day window to export after access ends.
+6. **Post-cancellation access:** After the billing period ends, the account enters read-only mode for 90 days. The owner can log in to export data and view records but cannot create or modify anything.
+7. **Data retention and deletion:** Data is retained for 90 days after the billing period ends. After 90 days, data is scheduled for permanent deletion per Module 3 Section 9. The owner receives email warnings at 60 and 80 days.
+8. **Reactivation:** At any point during the 90-day retention window, the owner can reactivate by subscribing to a new plan. All data is immediately restored. After data deletion, reactivation starts a fresh account.
+9. **Win-back campaigns:** Cancelled accounts are eligible for automated win-back email sequences at 30, 60, and 90 days post-cancellation (configurable by CS team).
+
 ### Upgrade/Downgrade Flows
 
 - **Upgrade**: Immediate access to new features. Prorated charge for remainder of billing cycle.

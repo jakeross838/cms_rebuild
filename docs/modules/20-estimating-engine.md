@@ -45,6 +45,10 @@ A full-featured estimating and budgeting system that supports the wide variety o
 | 496 | AI data requirements communicated to user | AI Intelligence |
 | 499 | AI plan takeoffs (rooms, fixtures, areas) | AI Intelligence |
 | 500 | AI schedule generation from estimate | AI Intelligence |
+| 944 | Allowance strategy builder — set allowance amounts based on historical data for similar selections at this tier | AI-assisted allowance recommendations based on historical selection costs by finish tier and project type |
+| 945 | Estimate presentation builder — client-facing estimate at configurable detail with builder branding | Branded estimate presentation generator with configurable detail level and PDF/web output |
+| 946 | Pre-construction cost tracker — design fees, engineering, survey, geotech, permit fees, impact fees tracked separately | Pre-construction soft cost tracking separate from construction budget |
+| 947 | Construction cost escalation calculator — estimate material/labor increases for delayed starts | Cost escalation projection tool using material and labor indices |
 
 ---
 
@@ -102,6 +106,44 @@ A full-featured estimating and budgeting system that supports the wide variety o
 - Alternate/option pricing: "If client chooses Option A = $50K; Option B = $75K" with toggle to show impact (Gap 270).
 - Estimate expiration date with configurable validity period (30, 60, 90 days) and auto-alerts (Gap 271).
 
+### 7a. Allowance Strategy Builder (Gap 944)
+
+- AI-assisted allowance amount recommendations for unbid selections (e.g., fixtures, appliances, tile, countertops)
+- Recommendations based on: builder's historical selection costs, project finish tier (builder/standard/semi-custom/luxury), project type, and region
+- Allowance categories: plumbing fixtures, lighting fixtures, appliances, flooring, tile, countertops, cabinet hardware, landscaping, window treatments
+- Per-category allowance display: recommended amount, range (low-high), confidence level, data points used
+- Bulk allowance generation: populate all allowance line items at once for a given finish tier
+- Client-facing allowance summary: clear display of what is covered by each allowance and what happens if selections exceed the allowance
+
+### 7b. Estimate Presentation Builder (Gap 945)
+
+- Branded estimate output with builder logo, colors, and contact information
+- Configurable detail levels: executive summary (5-10 lines), category summary (15-25 lines), detailed breakdown (full line items)
+- Section customization: choose which sections to include/exclude per presentation
+- Cover page with project rendering or photo, project address, client name, date, and estimate validity period
+- Output formats: interactive web view (shareable link), PDF download, print-optimized layout
+- Configurable disclaimers, terms, and conditions appended to each presentation
+- Comparison mode: present two scope options side-by-side for client decision-making
+
+### 7c. Pre-Construction Cost Tracker (Gap 946)
+
+- Separate tracking for soft costs incurred before construction starts: design fees, engineering fees, survey costs, geotechnical reports, permit fees, impact fees, utility connection fees, HOA submission fees
+- Pre-con budget template with common soft cost categories, customizable per builder
+- Pre-con costs tracked independently from the construction budget but roll into total project cost
+- Invoice and payment tracking for pre-construction vendors (architect, engineer, surveyor)
+- Pre-con cost report: summary of all soft costs with actual vs. estimated, linked to the pre-construction agreement (Module 36)
+- Auto-carry pre-con actuals into the construction budget as a completed cost category when the project transitions to construction
+
+### 7d. Construction Cost Escalation Calculator (Gap 947)
+
+- Project material and labor cost escalation based on projected start date
+- Escalation indices: builder can use national construction cost indices (RSMeans, ENR), regional indices, or custom escalation rates
+- Per-category escalation: different rates for lumber, concrete, steel, labor, etc.
+- Scenario modeling: "If we start in 3 months, estimated escalation is $X; if 6 months, $Y"
+- Historical escalation data: track actual escalation vs. projected for continuous calibration
+- Escalation auto-applied to estimates with future start dates; clearly disclosed as a separate line item
+- Integration with AI pricing intelligence: actual price trend data supplements published indices
+
 ### 8. Estimate-to-Budget Conversion
 
 - One-click conversion of approved estimate to project budget.
@@ -120,6 +162,18 @@ A full-featured estimating and budgeting system that supports the wide variety o
 - Contingency line item with drawdown tracking, requiring documented reason for each draw (Gap 279).
 - Multiple budget views by audience: Owner summary, PM detail, Bank AIA format (Gap 280).
 
+#### Edge Cases & What-If Scenarios
+
+1. **Material price changes dramatically after estimate creation but before approval.** The system must flag material price changes between estimate creation and approval. Required behavior:
+   - **Price history per material** -- track unit price for each material/SKU across all POs and invoices, normalized to a standard unit.
+   - **Anomaly detection** -- flag when a material's price changes by more than a configurable threshold (default: 10%) compared to the trailing 90-day average.
+   - **Alert levels:**
+     - **Info** (5-10% increase): logged, visible in price intelligence dashboard.
+     - **Warning** (10-20% increase): notification to PM on PO approval.
+     - **Alert** (>20% increase): blocks PO auto-approval, requires manual review.
+   - **Cross-vendor comparison** -- when a vendor's price for material X exceeds the platform average (anonymized cross-tenant) by >15%, surface a "cheaper alternatives available" suggestion.
+   - **Integration with Module 23 (Price Intelligence)** -- this feature feeds into and leverages the price intelligence engine; should not be a standalone implementation.
+
 ### 10. AI-Powered Estimating
 
 - **Historical cost intelligence**: When creating a new estimate, AI suggests unit prices based on the builder's own completed projects, filtered by project type, region, and date range (Gap 493).
@@ -127,6 +181,12 @@ A full-featured estimating and budgeting system that supports the wide variety o
 - **Cold-start**: New builders get industry benchmark data seeded by region until they have 10+ completed projects (Gap 494, 496).
 - **Plan takeoff** (future): Upload architectural plans; AI identifies rooms, counts fixtures, calculates square footages, and generates a preliminary estimate (Gap 499).
 - **Schedule generation**: From a completed estimate, AI suggests a construction schedule based on historical task durations for similar projects (Gap 500).
+
+#### Edge Cases & What-If Scenarios
+
+1. **Cold-start for completely new project types.** When a builder creates an estimate for a project type they have never built before (e.g., a production builder attempting their first custom home), the AI has no builder-specific historical data to draw from. The system must: (a) clearly indicate when suggestions are based on industry benchmarks rather than builder history, (b) provide a guided UX that walks the builder through the estimate with benchmark ranges and confidence intervals rather than point estimates, (c) allow the builder to tag similar-but-not-identical past projects to broaden the AI's reference pool, and (d) surface platform-wide anonymized data for the project type and region as a secondary reference.
+
+2. **Estimating-to-scheduling integration robustness.** The connection between the estimating engine and the scheduling module (for AI-powered schedule generation) must handle different construction methodologies and project complexities. The schedule generation engine must: (a) support configurable construction methodology presets (stick-frame, ICF, steel-frame, modular) that affect task sequencing, (b) allow builder overrides on AI-generated task durations, (c) account for regional factors (weather patterns, permitting timelines, inspection cadence) in duration estimates, and (d) clearly communicate confidence levels on schedule suggestions, with lower confidence for novel project types.
 
 ### 11. Material Waste Factors
 
@@ -205,6 +265,26 @@ v2_budget_lines
 
 v2_budget_contingency_draws
   id, budget_line_id, amount, reason, documented_by, approved_by, created_at
+
+v2_allowance_recommendations
+  id, builder_id, category, finish_tier, recommended_amount,
+  range_low, range_high, confidence, data_points, region, created_at
+
+v2_precon_budgets
+  id, builder_id, project_id, lead_id, precon_agreement_id,
+  status (active|closed|rolled_into_construction), created_at
+
+v2_precon_budget_lines
+  id, precon_budget_id, category, description, estimated_amount,
+  actual_amount, vendor_id, invoice_ids, notes, sort_order
+
+v2_escalation_indices
+  id, builder_id, index_name, index_source (rsmeans|enr|custom),
+  category, rate_pct_annual, effective_date, created_at
+
+v2_escalation_scenarios
+  id, estimate_id, projected_start_date, total_escalation_amount,
+  per_category_escalation, created_at
 ```
 
 ---
@@ -266,6 +346,27 @@ GET    /api/v2/budgets/:id/forecast             # Cost-to-complete projection
 GET    /api/v2/budgets/:id/earned-value         # Earned value metrics
 POST   /api/v2/budgets/:id/contingency/draw     # Record contingency draw
 GET    /api/v2/budgets/:id/presentation/:view   # Formatted view (owner|pm|bank)
+
+# Allowance Strategy
+POST   /api/v2/estimates/:id/allowances/recommend  # Generate AI allowance recommendations
+GET    /api/v2/allowance-benchmarks                 # Historical allowance data by category and tier
+
+# Estimate Presentation
+GET    /api/v2/estimates/:id/presentation/configure  # Get presentation config
+PUT    /api/v2/estimates/:id/presentation/configure  # Set presentation options
+GET    /api/v2/estimates/:id/presentation/pdf        # Generate branded PDF
+GET    /api/v2/estimates/:id/presentation/web/:token # Shareable web presentation link
+
+# Pre-Construction Costs
+GET    /api/v2/projects/:id/precon-budget            # Get pre-construction budget
+POST   /api/v2/projects/:id/precon-budget            # Create pre-construction budget
+PUT    /api/v2/precon-budgets/:id/lines/:lineId      # Update pre-con budget line
+POST   /api/v2/precon-budgets/:id/roll-to-construction  # Roll pre-con costs into construction budget
+
+# Cost Escalation
+POST   /api/v2/estimates/:id/escalation/calculate    # Calculate escalation for projected start date
+GET    /api/v2/escalation-indices                     # List available escalation indices
+PUT    /api/v2/escalation-indices/:id                 # Update custom escalation rate
 ```
 
 ---
@@ -311,3 +412,4 @@ GET    /api/v2/budgets/:id/presentation/:view   # Formatted view (owner|pm|bank)
 4. Should bid comparison include a "recommend" feature that auto-selects the best bid based on configurable criteria (lowest price, best value, preferred vendor)?
 5. What is the migration path for builders importing estimates from Excel, Buildertrend, or CoConstruct?
 6. How do we handle regional pricing adjustments -- by zip code, by metro area, or by state?
+

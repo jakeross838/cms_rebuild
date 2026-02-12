@@ -39,6 +39,7 @@ An automated scoring and analytics system that evaluates vendors and subcontract
 | 721 | Related vendors (subsidiary relationships) | Data Model |
 | 722 | Capacity indicator (active jobs with this builder) | Profile Page |
 | 723 | Quick actions (Create PO, Invite to Bid, Send Message, Schedule) | Profile Page |
+| 1054 | Weekly vendor performance review — any vendors underperforming this week | Weekly underperformance alert with per-vendor action recommendations |
 
 ---
 
@@ -46,7 +47,7 @@ An automated scoring and analytics system that evaluates vendors and subcontract
 
 ### 1. Scoring Algorithm
 
-The vendor performance score is a weighted composite of five dimensions. Weights are configurable per builder.
+The vendor performance score is a weighted composite of five dimensions. Weights are configurable per builder (see Edge Cases below for configuration details).
 
 **Quality Score (default weight: 30%)**
 - Punch list item count per project relative to scope size.
@@ -88,6 +89,25 @@ The vendor performance score is a weighted composite of five dimensions. Weights
 - Scores recalculate nightly via a background job, or on-demand when a vendor profile is viewed.
 - Score trend: track score changes over time to identify improving or declining vendors.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor performs well on some projects but poorly on others.** The system must support both per-project and overall performance scores. Per-project scores are displayed on the job history table (Section 3) and enable builders to assess whether poor performance was an anomaly or a pattern. The overall composite score uses the weighted rolling calculation, but the builder can drill down to see per-project breakdowns. If a vendor's per-project scores have high variance (standard deviation > configurable threshold), the system displays a "variable performance" indicator on their scorecard, alerting the builder that the overall score may not be representative.
+
+2. **Builder's scoring criteria are biased.** The system should include guidance and best practices for setting up scoring weights to reduce bias. Required behavior: (a) provide default weight presets based on industry norms (see below), (b) display a "scoring health" indicator that warns if weights are heavily skewed (e.g., one dimension > 50%), (c) when a builder adjusts weights, show a preview of how the top 5 vendor rankings would change, and (d) include a help article explaining how each scoring dimension is calculated and what constitutes a fair weight distribution.
+
+3. **Manual override allowance for automated scores.** Automated scoring is powerful, but builders must be able to add manual context that the data does not capture. Required behavior: (a) builders can add a manual adjustment of +/- 10 points to any vendor's composite score with a required written justification, (b) manual adjustments are displayed with a distinct badge so team members know the score has been overridden, (c) manual notes can be attached to any scoring dimension explaining context (e.g., "low timeliness score was due to material shortage, not vendor fault"), and (d) an audit log tracks all manual overrides with who, when, and why.
+
+4. **Builder-configurable scoring weights.** Different builders prioritize different performance dimensions. Required behavior:
+   - **Default weights** -- platform provides sensible defaults: Quality 25%, Timeliness 25%, Communication 15%, Budget 20%, Safety 15%.
+   - **Builder customization** -- each builder can adjust weights via a slider interface in Settings > Vendor Scoring. Weights must sum to 100%.
+   - **Weight presets** -- provide 3-4 presets:
+     - **Balanced** (default): 25/25/15/20/15
+     - **Quality-Focused**: 35/20/15/15/15
+     - **Budget-Focused**: 15/25/10/35/15
+     - **Safety-First**: 15/20/10/15/40
+   - **Per-trade overrides (Phase 2)** -- allow different weights per trade (e.g., safety weighted higher for roofing/framing, quality weighted higher for finish carpentry).
+   - **Score recalculation** -- changing weights triggers a background recalculation of all vendor composite scores for that builder. Historical snapshots are NOT recalculated (they reflect the weights at time of capture).
+
 ### 3. Historical Performance Data Aggregation
 
 - **Job history**: Every project the vendor has worked on with per-job performance breakdown (Gap 712).
@@ -112,7 +132,16 @@ The vendor performance score is a weighted composite of five dimensions. Weights
 - Callback resolution time and cost.
 - Warranty performance factors into the quality score.
 
-### 6. Automated Performance Reports
+### 6. Weekly Vendor Performance Review (Gap 1054)
+
+- Weekly performance alert report: automatically identify vendors who underperformed this week across all active projects
+- Underperformance criteria: missed scheduled start dates, late task completions, unresponsive to messages/RFIs, punch items created due to their work, safety observations logged
+- Per-vendor summary: what happened this week, which projects are affected, recommended action
+- Action options per vendor: send performance notice, schedule discussion, place on probation, reassign upcoming work
+- Week-over-week trend: is this vendor's performance declining, or was this week an anomaly?
+- Integration with daily log data: pull specific daily log entries that reference this vendor's work quality or schedule issues
+
+### 7. Automated Performance Reports
 
 - **Monthly vendor scorecard**: Auto-generated report showing all active vendors with scores, trends, and alerts.
 - **Project completion vendor review**: At project closeout, auto-generate a per-vendor performance summary.
@@ -284,3 +313,4 @@ PUT    /api/v2/settings/benchmarking                 # Opt in/out of benchmarkin
 4. How do we handle vendor succession (Gap 391) -- does the score transfer when a company is acquired or when a key person leaves? Is this manual or automated?
 5. Should scoring weight presets be provided (e.g., "quality-focused," "budget-focused," "balanced") or always fully custom per builder?
 6. How do we handle disputed scores -- can a vendor challenge a low rating on a specific project?
+

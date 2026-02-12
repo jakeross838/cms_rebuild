@@ -167,6 +167,14 @@ Priority order:
   - Overdue invoices prioritized
 - Batch review mode: quickly tab through multiple invoices
 
+### Edge Cases & What-If Scenarios (Extraction & Matching)
+
+1. **AI consistently misinterprets a specific vendor's invoices.** Some vendors use non-standard invoice formats (handwritten, unusual layouts, multi-language) that the AI extraction pipeline fails on repeatedly. Required behavior:
+   - The per-vendor accuracy metric (Section 5) must surface vendors with accuracy below a configurable threshold (default: 70% over the last 10 invoices).
+   - When a vendor's accuracy drops below threshold, the system must: alert the builder admin, offer to create a vendor-specific extraction template (override rules for that vendor's format), and fall back to "suggest only" mode for that vendor's invoices regardless of the builder's global automation level.
+   - The "vendor-specific extraction template" stores field positions, label patterns, and format hints that override the general OCR pipeline for invoices from that vendor.
+   - Vendor accuracy metrics must be visible on the vendor's profile page in the vendor management module.
+
 ### 5. Learning from Corrections
 
 - Every human correction is stored as training data
@@ -212,6 +220,20 @@ Priority order:
 - Flag unusual line items (new cost code never used with this vendor)
 - Alert on vendor invoicing frequency anomalies (vendor usually invoices monthly, submitted 3 this week)
 - Configurable alert thresholds per builder
+
+#### Edge Cases & What-If Scenarios
+
+1. **Anomaly detection false positives.** The AI flags a legitimate but unusual invoice (e.g., a large one-time material purchase, a vendor's annual price increase, or a new scope of work for an existing vendor). Required behavior:
+   - The user must be able to dismiss the anomaly flag with a reason (e.g., "approved by PM," "expected price increase," "new scope").
+   - Dismissed anomalies with reasons feed back into the anomaly model: if the same pattern is dismissed 3+ times, the system should learn to suppress that specific pattern for that builder/vendor combination.
+   - Anomaly alerts must have severity levels (low/medium/high) and the builder must be able to configure which severity levels trigger notifications vs. are silently logged.
+   - The system must never auto-reject or auto-hold an invoice based solely on anomaly detection. Anomalies are advisory warnings only -- the approval workflow controls hold/release decisions.
+
+2. **Confidence threshold tuning.** The default confidence thresholds (0.95 auto-approve, 0.80 human review, 0.70 needs attention, 0.50 reject) may not be appropriate for all builders. Required behavior:
+   - Thresholds must be independently configurable per builder via the AI settings panel.
+   - The system should provide a "threshold recommendation" based on the builder's correction history: "Based on your last 200 invoices, lowering auto-approve to 0.90 would auto-process 40% more invoices with an estimated 2% correction rate."
+   - A "threshold simulator" shows what would have happened to the last N invoices if different thresholds were applied (how many would have been auto-approved, how many would have needed review, how many corrections would have been missed).
+   - Threshold changes are logged with date and who changed them, and take effect only on new invoices (not retroactively).
 
 ---
 

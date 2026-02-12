@@ -111,6 +111,32 @@ The Customer Support System reduces churn by ensuring builders get help exactly 
 - Feature-specific micro-surveys ("How useful was this feature?" after first use)
 - Feedback aggregated in Module 49 Platform Analytics
 
+### Edge Cases & What-If Scenarios
+
+1. **Major platform outage causing support surge.** When a significant platform outage or degradation occurs, the support system will receive a massive spike in tickets and chat requests simultaneously. The system must handle this gracefully: auto-detect the surge pattern (10x normal ticket volume within 30 minutes) and trigger outage mode. In outage mode, the support system auto-responds to new tickets with a pre-written incident acknowledgment message (linked to the status page), consolidates duplicate tickets about the same issue into a single incident thread, and provides a real-time banner in the app and support portal directing users to the status page for updates. Support agents should be able to bulk-update all tickets related to the same incident when it is resolved. The support system itself must be hosted on infrastructure that is independent of the main platform so it remains available during outages.
+
+2. **Abusive users in support interactions.** When a builder or their team member is abusive toward support staff (profanity, threats, harassment, repeated unreasonable demands), the system must have a clear policy and workflow. Support agents can flag a conversation as "abusive" with a specific category (verbal abuse, threats, harassment). Flagged conversations are immediately escalated to a support manager for review. The system supports issuing formal warnings to the account (tracked in tenant records), temporary support restrictions (ticket-only, no live chat for a defined period), and in extreme cases, account review for terms-of-service violation. All flagged interactions are preserved with full context for dispute resolution. The policy must be documented in the platform's Terms of Service and communicated to builders during onboarding.
+
+3. **Tiered support structure must be clearly communicated.** Builders on different subscription plans receive different SLA response times and support channels (Free/Starter get email only; Professional adds chat; Business adds phone; Enterprise gets a dedicated CSM). If this tiered structure is not clearly communicated, it creates frustration when a Starter-tier builder expects the same response time as an Enterprise customer. The system must: display the builder's support tier and included channels prominently in the help panel, show expected response times before ticket submission ("Expected response: within 24 hours based on your plan"), include an upgrade prompt when a builder attempts to access a support channel not available on their plan (e.g., "Phone support is available on Business and Enterprise plans -- Upgrade"), and track satisfaction scores separately by tier to ensure every tier receives acceptable service within its defined SLA.
+
+### Public Product Roadmap (Gap #207)
+
+1. The platform must maintain a public product roadmap accessible to authenticated users and published on the marketing website.
+2. Roadmap items are organized into three columns: **Planned** (confirmed for development), **In Progress** (actively being built), and **Shipped** (recently released).
+3. Roadmap items include: title, brief description, category (module), and estimated timeframe (quarter, not specific dates).
+4. Strategic items that could reveal competitive advantages or pricing strategies are kept on an internal-only roadmap, not the public one.
+5. The roadmap must link to the feature request portal — builders can see when their requested features are planned or shipped.
+6. Shipped items link to the relevant "What's New" announcement and release notes.
+7. The platform team updates the public roadmap at least monthly.
+
+### Professional Services Referral from Support (Gap #210)
+
+1. When a support ticket involves a request that goes beyond standard support scope (complex custom training, custom report development, workflow optimization consulting, managed migration), the support agent must be able to escalate the ticket to the professional services team.
+2. The escalation creates a professional services lead with: the original ticket context, the builder's account details (plan tier, usage, company size), and the agent's assessment of the service needed.
+3. The professional services team follows up with the builder within 2 business days with a service proposal and pricing.
+4. Standard support agents must be trained to identify professional services opportunities and have clear criteria for when to suggest paid services vs. continuing self-service support.
+5. Professional services engagements are tracked in the billing system (Module 43) and their outcomes are measured (CSAT, retention impact) in platform analytics (Module 49).
+
 ### Support for Portal Users (Gaps #199, #200)
 
 - Client portal users see builder's support contact info (from Module 44 branding)

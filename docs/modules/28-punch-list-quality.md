@@ -26,6 +26,11 @@ Digital punch list management and quality inspection system covering the entire 
 | 418 | Client punch list submission (client walks through and submits items via portal) | Client portal punch submission with guided interface |
 | 419 | Vendor self-inspection checklists (vendor checks own work before requesting inspection) | Vendor self-inspection checklists required before builder inspection |
 | 420 | Punch list cost tracking (who pays for each fix? back-charge to responsible vendor?) | Cost assignment and back-charge tracking per item |
+| 1009 | Pre-final inspection walkthrough — builder's internal punch list BEFORE requesting CO inspection | Internal pre-final walkthrough workflow with auto-generated punch items |
+| 1013 | Final cleaning coordination — construction clean, detail clean, window clean | Final cleaning task sequence integrated with closeout schedule |
+| 1014 | Client orientation meeting — walk through entire home demonstrating all systems | Client orientation workflow with checklist, documentation, and sign-off |
+| 1015 | O&M manual assembly — all manuals, warranties, paint codes, material specs, as-builts for homeowner | Homeowner manual assembly checklist with document tracking |
+| 1017 | Key/access handover log — keys, garage remotes, gate codes, alarm codes, smart home credentials | Formal key and access credential handover log with sign-off |
 
 ---
 
@@ -64,6 +69,12 @@ Route punch items to responsible vendors with clear accountability and notificat
 - **Vendor Portal View:** Vendors see their assigned punch items in their portal, filterable by project and status. Each item shows photos, location, and scope description.
 - **Reassignment:** If vendor is unresponsive, reassign to a different vendor with full audit trail and back-charge notation.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor disputes a punch item.** When a vendor disagrees that a punch item is their responsibility (e.g., claims the defect was caused by another trade, was pre-existing, or is within acceptable tolerances), there must be a clear dispute resolution process. Required behavior: (a) vendor can flag an item as "disputed" with a written explanation and supporting photos through the vendor portal, (b) the disputed item is escalated to the PM for review and is not counted against the vendor's SLA while under review, (c) the PM can rule on the dispute: accept (reassign to another vendor or builder responsibility), reject (vendor remains responsible with written explanation), or split (shared responsibility), (d) all dispute communications and rulings are part of the permanent item record, and (e) dispute frequency per vendor feeds into the vendor performance scoring as a negative communication signal.
+
+2. **Punch item requires a new purchase order to fix.** When a punch item repair requires materials or labor beyond the original scope (e.g., replacement part, specialty subcontractor), the system must integrate with the purchasing module. Required behavior: (a) from the punch item detail view, the builder can generate a PO directly linked to the punch item, (b) the PO is pre-populated with the punch item description, vendor, and estimated cost, (c) the cost is tracked against the appropriate budget line (warranty reserve or vendor back-charge), and (d) the PO status is visible on the punch item timeline so the repair is not expected until materials arrive.
+
 ### 28.4 Completion Verification Workflow
 
 Multi-step workflow ensuring quality repairs are properly verified.
@@ -86,6 +97,10 @@ Proactive quality inspections throughout construction, not just final punch.
 - **Deficiency Auto-Creation:** Failed checklist items automatically generate punch list items with the checklist reference. Pre-populated with trade, location, and deficiency description.
 - **Vendor Self-Inspection:** Before requesting builder inspection, vendor completes a self-inspection checklist. Builder sees vendor's self-assessment alongside their own inspection.
 - **Historical Analytics:** Track pass rates by trade, by vendor, by inspector over time. Feed into vendor scoring (Module 22).
+
+#### Edge Cases & What-If Scenarios
+
+1. **Failed checklist item to punch item conversion reliability.** The automatic conversion of failed checklist items into actionable punch items must be seamless and reliable. Required behavior: (a) every failed checklist item generates a punch item with one click (not auto-created without review, to avoid noise from N/A items marked fail by mistake), (b) the generated punch item is pre-populated with: trade (from checklist), room/area (from checklist), description (from checklist item + acceptance criteria), photos (from inspection), and the checklist reference link, (c) the inspector can edit the generated punch item before saving (adjust description, add severity, assign vendor), (d) if multiple checklist items fail in the same area, the inspector can consolidate them into a single punch item with multiple deficiency references, and (e) the checklist completion report shows a clear count of "items failed -> punch items created" for accountability tracking.
 
 ### 28.6 Warranty Linkage
 
@@ -290,6 +305,85 @@ Track the financial impact of every punch item.
 - **Module 27: Warranty & Home Care** — Warranty item creation from unresolved punch
 - **Module 7: Scheduling** — Checklist auto-trigger from schedule task status
 - **Module 11: Basic Invoicing** — Back-charge generation from punch items
+
+---
+
+## Pre-Final Inspection Walkthrough (Gap 1009)
+
+Builder's internal quality walkthrough performed BEFORE requesting the final CO inspection from the building department.
+
+- Pre-final walkthrough template: configurable checklist covering all areas that will be inspected during the official final inspection
+- Triggered automatically when the schedule indicates the project is approaching final inspection readiness
+- Walkthrough conducted by superintendent with room-by-room, system-by-system review
+- All deficiencies found auto-create punch items assigned to responsible vendors with "pre-final priority"
+- Tracking dashboard: total items found, items resolved, remaining items blocking final inspection request
+- Gate logic: final building inspection request cannot be submitted until all pre-final punch items are resolved (or explicitly waived by PM)
+- Documentation serves as evidence of due diligence if inspection still reveals issues
+
+## Final Cleaning Coordination (Gap 1013)
+
+Multi-stage cleaning process tracked as sequential tasks in the closeout schedule.
+
+- Three-phase cleaning template: construction rough clean, detail clean, final window clean
+- Each phase is a separate task with vendor assignment, scheduled date, and completion verification
+- Cleaning scope varies by project: configurable checklist per phase (floors, surfaces, windows, fixtures, appliances, exterior, garage)
+- Cleaning must be completed before client orientation (dependency enforced in schedule)
+- Photo documentation of cleaned spaces for the handover record
+
+## Client Orientation Meeting (Gap 1014)
+
+Formal walkthrough with the client demonstrating all home systems, features, and maintenance requirements.
+
+- Orientation checklist template: configurable per builder and project type
+  - HVAC system operation (thermostat, filters, maintenance schedule)
+  - Plumbing system overview (main shutoff, water heater, garbage disposal, fixtures)
+  - Electrical panel and GFCI locations
+  - Security system operation (alarm, cameras, smart locks)
+  - Smart home system overview (if applicable)
+  - Appliance operation and warranty registration
+  - Exterior features (irrigation, landscape lighting, pool/spa operation)
+  - Maintenance responsibilities and schedules
+  - Emergency contacts and procedures
+- Each checklist item: demonstrated (yes/no), client questions noted, follow-up items flagged
+- Client sign-off: digital signature confirming orientation was completed
+- Orientation completion triggers: warranty start date, O&M manual delivery, key handover
+
+## O&M Manual Assembly (Gap 1015)
+
+Compilation of all manuals, warranties, and specifications into a homeowner operations and maintenance package.
+
+- O&M manual assembly checklist: track collection of all required documents
+  - Appliance manuals and warranty cards
+  - HVAC equipment manuals and maintenance schedules
+  - Paint codes by room (brand, color name, finish)
+  - Material specifications (flooring, tile, countertops, fixtures -- manufacturer, product, color/finish)
+  - As-built plans reflecting any field changes
+  - Plumbing fixture specifications and replacement part numbers
+  - Electrical panel schedule
+  - Landscape/irrigation as-installed plan
+  - Smart home system credentials and documentation
+  - Builder warranty terms and contact information
+- Document collection tracking: each item status (pending, received, verified, packaged)
+- Digital O&M package: compiled as searchable PDF or organized digital folder via client portal
+- Physical binder option: generate print-ready documents for builders who provide a physical binder
+- O&M delivery tracked as a closeout milestone
+
+## Key & Access Handover Log (Gap 1017)
+
+Formal documentation of all physical keys, access devices, and credentials transferred to the homeowner.
+
+- Handover inventory template:
+  - Physical keys: front door, back door, garage entry, storage, mailbox -- quantity of each
+  - Garage door remotes: quantity, programmed status
+  - Gate codes and remotes (if applicable)
+  - Alarm system codes: master code, installer code, monitoring company info
+  - Smart lock codes/credentials
+  - Smart home system login credentials (app, hub, cameras)
+  - Utility account numbers and transfer confirmation
+  - HOA contact information and registration confirmation
+- Each item: description, quantity, serial number (where applicable), handed to, date
+- Client sign-off: digital signature confirming receipt of all keys and credentials
+- Handover log stored in project record and client portal
 
 ---
 

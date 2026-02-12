@@ -76,6 +76,14 @@ safety documentation needs than a 50-person operation with a dedicated safety di
 - Training completion records with digital sign-in sheets
 - Auto-block: prevent uncertified workers from being assigned to tasks requiring certification
 
+### Edge Cases & What-If Scenarios
+
+1. **Major safety incident workflow.** When a serious injury, fatality, or major property damage event occurs, the system must support an accelerated, structured workflow that goes beyond the standard incident report. This includes: immediate lockdown mode (restrict who can edit the incident record to prevent tampering), automatic notification to the builder owner and designated safety officer, OSHA reporting deadline countdown (8 hours for fatality/hospitalization, 24 hours for amputation/eye loss) with escalating alerts, witness statement collection with tamper-evident digital signatures, investigation assignment with mandatory root cause analysis before the incident can be marked resolved, and a corrective action plan with follow-up verification. The incident record must be immutable once finalized (append-only amendments permitted) for legal defensibility.
+
+2. **Vendor with poor safety record visibility during hiring decisions.** When a builder is evaluating vendors for a new project or task, the vendor's safety history must be prominently visible -- not buried in a secondary tab. The system must surface safety metrics (incident count, incident severity, OSHA violation history, EMR rating, certification compliance status) directly in the vendor selection and bid comparison workflows (Module 22, Module 20). Vendors with active safety compliance issues (expired certifications, unresolved incidents, EMR above configurable threshold) must display a visible warning badge. Builders can configure whether a poor safety record blocks vendor assignment or is advisory only.
+
+3. **Proactive safety management beyond record-keeping.** The system must go beyond documenting incidents after they happen. Proactive safety features include: safety observation trend analysis that identifies emerging hazard patterns before they result in incidents (e.g., "Fall protection observations have increased 40% this month on Project X"), automated risk assessments based on project characteristics (multi-story, confined space, heavy equipment presence), pre-task safety planning integration with the scheduling module (high-risk tasks trigger safety checklist requirements), and periodic safety score reports that highlight projects or trades trending in the wrong direction. The goal is to shift the platform from reactive documentation to predictive safety intelligence.
+
 ### Integration with Vendor Performance
 - Safety violations by trade create negative marks on vendor scorecard
 - Vendor safety record visible during bid evaluation and vendor selection

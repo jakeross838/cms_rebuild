@@ -27,6 +27,17 @@ Digital daily log entries capturing weather, crew hours, work performed, materia
 | GAP-323 | Photo requirements (minimum X photos per log, configurable) | Medium |
 | GAP-324 | Log entries that trigger workflows (delay -> schedule impact analysis) | High |
 | GAP-325 | Daily logs as legal documents (immutable after submission, or editable with audit trail) | High |
+| 1036 | One-tap daily log start — auto-populates date, weather, project, yesterday's vendors | Enhanced auto-population including yesterday's vendor roster for quick confirmation |
+| 1037 | Quick photo capture — snap photo auto-tagged to project, date, location; optional voice note | One-tap photo with auto-tagging and voice note overlay |
+| 1038 | Quick issue reporting — photo + voice note + category + urgency → creates issue, assigns, notifies | Streamlined issue creation from photo with voice description |
+| 1039 | Material delivery verification — scan packing slip or take photo → match to PO → flag discrepancies | PO-matched delivery verification with photo/scan capture |
+| 1040 | Inspection result logging — pass/fail + inspector notes + photos → auto-updates schedule + daily log | Integrated inspection result capture feeding schedule and daily log |
+| 1041 | Vendor check-in/check-out — track who's on site and when (optional GPS verification) | Enhanced vendor presence tracking with GPS option |
+| 1042 | Quick measurement/note — capture field measurement or decision with photo context | Quick-capture measurement tool with photo and annotation |
+| 1043 | Safety observation — quick log of safety concern with photo → routes to safety manager | Safety observation quick-entry with auto-routing |
+| 1044 | Client site visit logging — document decisions, questions, concerns raised during client visit | Client visit record type in daily log with decision tracking |
+| 1045 | Change directive capture — field decision that will become a change order; document now, formalize later | Field change directive quick-capture linked to Module 17/38 |
+| 1046 | Daily log review and submission — review all logs submitted by field staff; approve or request edits | PM log review dashboard for end-of-day review workflow |
 
 ---
 
@@ -110,6 +121,10 @@ The superintendent taps "Start Log" and immediately sees a pre-filled form ready
   - "RFI Needed" issue -> auto-creates draft RFI on Module 21.
 - Issues tracked to resolution with status updates.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Field issue requiring multi-person escalation:** When a field issue is reported that requires immediate attention from multiple people (e.g., a structural concern requiring the PM, structural engineer, and building inspector), the workflow trigger must support multi-recipient escalation. Required behavior: (a) critical-severity issues automatically notify all project team members with PM role or above, (b) the issue reporter can tag multiple individuals and trades for notification beyond the automatic recipients, (c) each tagged individual receives a notification with a direct link to the issue and the ability to acknowledge or respond, (d) the issue tracks acknowledgment status per recipient (who has seen it, who has responded), (e) if no tagged recipient acknowledges within 1 hour for critical issues, the system escalates to the builder admin, and (f) the issue detail page shows a real-time activity feed of all responses and actions taken, visible to all tagged participants.
+
 ### 8.8 Submission & Review Workflow (GAP-320, GAP-321)
 
 **Submission Reminders** (GAP-320):
@@ -117,6 +132,10 @@ The superintendent taps "Start Log" and immediately sees a pre-filled form ready
 - Push notification and/or SMS to assigned log creator.
 - Escalation: if log not submitted by X time, notify PM's supervisor.
 - Reminder suppressed on non-work days (per work calendar from Module 7).
+
+#### Edge Cases & What-If Scenarios
+
+1. **Missed daily log — retroactive creation:** When a superintendent forgets to submit a daily log (no draft created, reminder ignored, or absent), the system must allow retroactive log creation with the following constraints: (a) the user can create a log for a past date (up to 7 days back by default, configurable by the builder), (b) retroactive logs are visually marked with a "Late Submission" badge showing the actual creation date vs. the log date, (c) the audit trail records the true creation timestamp, not the log date, (d) the PM and builder admin are notified when a retroactive log is submitted, (e) if the configurable backdating window has passed, only an admin can create the retroactive log, and (f) the daily log list view must show gaps (missing dates) with a visual indicator and a "Create Missing Log" quick action.
 
 **Review Workflow** (GAP-321):
 - Configurable per builder:
@@ -138,7 +157,80 @@ The superintendent taps "Start Log" and immediately sees a pre-filled form ready
 - **Export**: daily logs exportable as PDF with all photos, amendments, and signatures for legal proceedings.
 - **Retention**: configurable retention period per builder (default: 10 years for statute of limitations coverage).
 
-### 8.10 Superintendent Workflow (Mobile-First)
+#### Edge Cases & What-If Scenarios
+
+1. **Log immutability and amendment integrity:** Daily logs serve as legal documents in construction disputes and litigation. The amendment process must maintain absolute integrity. Required behavior: (a) after submission, the `is_immutable` flag is set at the database level and enforced by both application logic and a database trigger that rejects direct UPDATE statements on immutable rows, (b) amendments are stored as separate records in `daily_log_amendments` — the original row is never modified, (c) each amendment requires a mandatory `reason` field (cannot be blank), (d) amendments are attributed to the amending user, not the original submitter, (e) the PDF export must clearly distinguish original content from amendments with visual formatting (e.g., amendments shown in a different color with "AMENDED" label, date, and reason), (f) the system must prevent "amendment stacking" — amending an amendment creates a new amendment referencing the original value, not the previous amendment's value, and (g) an admin must not be able to delete or modify amendment records under any circumstance. If a builder requests amendment deletion for legal reasons, this requires platform admin intervention with a compliance audit trail entry.
+
+### 8.10 Field Quick-Actions (Gaps 1037-1045)
+
+Streamlined mobile-first actions for rapid field data capture during the workday.
+
+**Quick Photo Capture (Gap 1037):**
+- One-tap photo from any screen: snap photo, auto-tagged with project, date, GPS location, and current construction phase
+- Optional voice note overlay: hold to record voice annotation on the captured photo
+- Auto-file to current daily log and project photo gallery simultaneously
+- Tag suggestions: room/area, trade, issue type based on project phase and location
+
+**Quick Issue Reporting (Gap 1038):**
+- Streamlined issue creation: photo + voice note + category dropdown + urgency level
+- One-tap workflow: capture photo, dictate description, select category, assign urgency -> system auto-assigns to responsible party and sends notification
+- Categories: defect, delay, safety, material, weather, access, design conflict, other
+- Issue auto-creates the appropriate downstream record (punch item, schedule note, RFI, safety observation) based on category
+
+**Material Delivery Verification (Gap 1039):**
+- Scan packing slip (camera OCR) or take photo of delivery ticket
+- AI matches delivery to existing purchase order: vendor, items, quantities
+- Flag discrepancies: wrong items, short quantities, damaged materials, wrong project
+- Accept delivery with signature capture or reject with reason and photos
+- Accepted deliveries auto-update PO received quantities and trigger cost code booking
+- Rejected deliveries auto-notify vendor and purchasing manager
+
+**Inspection Result Logging (Gap 1040):**
+- Quick inspection result entry: select inspection from today's scheduled list, record pass/fail
+- Inspector name, notes, and photos captured in one flow
+- Pass result: auto-updates schedule (dependent tasks become eligible), auto-populates daily log
+- Fail result: deficiency list entry, re-inspection scheduling, notification to PM and responsible trade
+- Integration with Module 32 (Permitting & Inspections) for formal record keeping
+
+**Quick Measurement/Note (Gap 1042):**
+- Capture a field measurement or decision note with photo context
+- Annotate directly on the photo with measurements, dimensions, or notes
+- Tag to specific room/area and trade for searchability
+- Quick-capture notes feed into daily log and are searchable from project search
+
+**Safety Observation (Gap 1043):**
+- Quick safety concern entry: photo + description + severity + location
+- Auto-routes to designated safety manager or superintendent
+- Categories: fall hazard, electrical hazard, housekeeping, PPE violation, excavation, scaffolding, other
+- Positive observation option: log good safety practices for recognition
+- Safety observations feed into Module 33 (Safety & Compliance) tracking and reporting
+
+**Client Site Visit Logging (Gap 1044):**
+- Record when client visits the construction site
+- Capture: date/time, who was present, decisions made, questions asked, concerns raised
+- Any decisions made during the visit are flagged as requiring formal documentation (change directive, selection confirmation, or meeting minutes)
+- Client visit notes auto-populate in daily log and are visible to PM
+- Follow-up task auto-generation from client visit action items
+
+**Change Directive Capture (Gap 1045):**
+- Field decision quick-capture: when a field decision is made that will require formalization as a change order
+- Capture: description of change, who authorized it verbally, photos of conditions requiring change, estimated cost impact
+- Change directive saved as a draft linked to the project and daily log
+- "Formalize" workflow: one-click conversion to a formal change order in Module 17 or Module 38
+- All change directives tracked on a separate dashboard showing formalized vs. pending items
+
+### 8.11 End-of-Day Log Review (Gap 1046)
+
+PM review dashboard for consolidating and approving daily logs from field staff.
+
+- Review queue: all daily logs submitted today across all PM's active projects
+- Side-by-side view: daily log content alongside scheduled tasks for the day (verify work matches plan)
+- Bulk approval: approve multiple logs in one session
+- Edit request: return specific logs to field staff with comments on what needs updating
+- Cross-log consistency check: flag discrepancies between logs from the same project (different users logging conflicting information)
+- Summary generation: auto-generate end-of-day summary from all approved logs for PM's reference
+
+### 8.12 Superintendent Workflow (Mobile-First)
 
 The daily workflow for a construction superintendent:
 

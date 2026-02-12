@@ -30,6 +30,11 @@ critical for local SEO and reputation building.
 | 571 | Client testimonial/review collection (auto-send request at project completion) | Automated review request workflow at project completion; collection on Google, Houzz, platform |
 | 572 | Referral program management (track sources, manage fees/gifts) | Referral tracking with source attribution, fee/gift management, and referral conversion analytics |
 | 573 | Competitive win/loss analysis (why did you get/not get the job?) | Win/loss reason tracking integrated with Module 36 CRM, competitive intelligence dashboard |
+| 911 | Marketing campaign management — track ROI by channel (Houzz, website, social, referral, Parade of Homes, print) | Enhanced campaign tracking with per-channel ROI calculation and attribution |
+| 913 | SEO/content tracking — which blog posts, portfolio pages drive inquiries | Content performance tracking with page-level analytics linked to lead generation |
+| 916 | Builder reputation monitoring — track online reviews across Google, Houzz, BBB, Yelp; alert on new reviews | Multi-platform review aggregation with new review alerts and trend tracking |
+| 1018 | Final photography — professional photos for portfolio, marketing, and homeowner record | Final photography workflow triggered at project completion; auto-creates portfolio draft entry |
+| 1062 | Monthly marketing activity review — leads by source, conversion rates, marketing spend ROI | Monthly marketing performance dashboard with automated report generation |
 
 ---
 
@@ -46,6 +51,15 @@ critical for local SEO and reputation building.
 - Public portfolio URL per builder (subdomain or custom domain)
 - SEO-optimized portfolio pages with structured data markup
 - Responsive design: portfolio looks great on desktop, tablet, and mobile
+
+### Final Photography Workflow (Gap 1018)
+- Final photography task auto-generated at project substantial completion milestone
+- Photographer scheduling: contact management, session scheduling, shot list generation
+- Shot list template: configurable per project type (exteriors, interiors by room, details, aerials)
+- Photo delivery workflow: photographer uploads, builder reviews, selects for portfolio
+- Auto-create draft portfolio entry from final photography session
+- Dual-purpose delivery: high-res for marketing portfolio, standard-res for homeowner record
+- Before/after photo pairing: link final photos to construction-phase photos of the same areas
 
 ### Photo Curation & Media
 - Photo selection workflow: bulk select from project photo library
@@ -84,6 +98,14 @@ critical for local SEO and reputation building.
 - Review monitoring: aggregate review scores from Google, Houzz, Facebook (read-only)
 - Review response drafting assistance
 
+### Edge Cases & What-If Scenarios
+
+1. **Negative review response workflow.** When a client leaves a negative review (on Google, Houzz, Facebook, or the platform), the system must alert the builder immediately and provide a structured response workflow. The alert includes the review text, rating, source platform, and client project context. The workflow guides the builder through: acknowledge the review internally, draft a professional public response (with AI-assisted drafting available), assign a team member to follow up with the client privately, and track resolution status. If the negative review results from a legitimate issue, the system should link to the relevant project records (punch list, change orders, communication history) so the builder can address the root cause. Review response time is tracked as a metric.
+
+2. **Pre-platform portfolio projects.** Builders who join the platform likely have years of completed projects they want to showcase but that were not managed in the system. The system must support manually creating portfolio projects that are not linked to an active project record. Manual portfolio entries allow the builder to upload photos, enter project specs (square footage, type, location, completion date), write descriptions, and attach client testimonials -- all without requiring a full project record in the system. These manual entries should be visually indistinguishable from platform-managed portfolio entries in the public-facing portfolio. A bulk import option (CSV + photo upload) should support initial portfolio population during onboarding.
+
+3. **Marketing-to-sales attribution accuracy.** The connection between marketing efforts and actual signed contracts is notoriously difficult to track in residential construction, where sales cycles can span months and involve multiple touchpoints. The system must support multi-touch attribution: a lead can be attributed to multiple marketing campaigns and channels (first-touch source, last-touch source, and all intermediate touches). Lead source must be captured at every interaction point (website visit, phone call, referral, event, social media) and tracked through the full pipeline to contract signing. Campaign ROI calculations must account for the long sales cycle by supporting configurable attribution windows (e.g., attribute revenue to campaigns within 6 months of the lead's first touch). Without robust attribution, marketing spend optimization is impossible.
+
 ### Referral Tracking & Program
 - Referral source tracking on every lead (who referred them?)
 - Referral sources: past client, real estate agent, architect, vendor, friend/family
@@ -100,9 +122,27 @@ critical for local SEO and reputation building.
 - Campaign metrics: leads generated, consultations booked, proposals sent, contracts won
 - ROI calculation: campaign cost vs. contract value of won leads attributed to campaign
 - Channel comparison: which marketing channels produce the best ROI?
+- Per-channel ROI tracking (Gap 911): Houzz profile, website organic, social media (by platform), referral program, Parade of Homes, print advertising, yard signs — each tracked as a distinct channel with spend, leads generated, and revenue attributed
 - Integration with Google Analytics for website traffic attribution
 - Integration with ad platforms (Google Ads, Facebook Ads) for spend import (future)
 - Monthly/quarterly marketing performance report
+- Monthly marketing activity review (Gap 1062): automated monthly report summarizing leads by source, conversion rates by channel, marketing spend vs. revenue attributed, campaign performance ranking, and recommended budget reallocation based on ROI data
+
+### SEO & Content Performance Tracking (Gap 913)
+- Track which portfolio pages, blog posts, and content pages drive visitor traffic and lead inquiries
+- Page-level analytics: views, time on page, bounce rate, leads generated per page
+- Content attribution: when a lead submits an inquiry, capture the referring page/content
+- Portfolio page performance: which projects generate the most interest
+- SEO keyword tracking for portfolio pages (which search terms drive traffic)
+- Content ROI: time invested in content creation vs. leads generated
+
+### Reputation Monitoring (Gap 916)
+- Aggregate review tracking across Google Business, Houzz, BBB, Yelp, Facebook, and Angi
+- New review alerts: notify builder immediately when a new review is posted on any monitored platform
+- Review score trend dashboard: rolling average, score by platform, score over time
+- Review volume tracking: number of reviews per platform with goals
+- Competitor review benchmarking: compare builder's review scores against local competitors (manual entry)
+- Review response time tracking: time between review posted and builder response
 
 ### Social Media Content
 - Project completion auto-generates social media post drafts
@@ -211,6 +251,19 @@ GET    /api/v2/marketing/channels/performance     # Channel performance summary
 | Module 29: Full Client Portal | Review request delivery to clients |
 | Module 36: Lead Pipeline & CRM | Lead source attribution, win/loss analysis, campaign tracking |
 | Module 5: Notification Engine | Review request delivery, referral thank-you messages |
+
+---
+
+## Unusual Business Scenarios — Marketing Edge Cases
+
+### Project Featured on TV / Magazine (GAP-611)
+When a project is selected for media coverage (TV show, magazine feature, blog, social media influencer), the system must support the media management workflow that protects the builder's interests while maximizing exposure:
+- **Photo approval workflow:** Media outlets and producers will request project photos. The system must support a dedicated media approval workflow: select photos from the project gallery, add watermarks (configurable per media outlet), track which photos were released to whom, and require builder approval before any photo is shared externally. Photos must be exportable in high-resolution formats suitable for print publication.
+- **NDA and release management:** Media features often require NDAs (non-disclosure agreements), photo releases, and location releases from the client. The system must track: which documents are required per media engagement, their execution status, and expiration dates. Link NDAs to the project and the media contact record.
+- **Site visit scheduling:** Media visits to the construction site require coordination — scheduling around active work, safety briefings, approved access areas, and escort assignments. The system must support creating site visit events linked to the project calendar with: visitor details, purpose, approved areas, safety requirements, and assigned escort (superintendent or PM).
+- **Client privacy protection:** If the client has not consented to publicity, the system must enforce privacy controls: block the project from appearing in the portfolio, prevent photo sharing without explicit client release, and flag the project as "privacy restricted" so team members are aware.
+- **Marketing asset generation:** When a project is featured, the system should facilitate generating marketing assets: a case study page using the media coverage as a testimonial source, social media posts referencing the feature, and an update to the portfolio highlighting the media recognition.
+- **Media contact database:** Track media contacts (editors, producers, bloggers, influencers) as a contact type, with history of interactions and projects featured.
 
 ---
 

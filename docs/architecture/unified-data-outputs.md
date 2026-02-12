@@ -1631,6 +1631,420 @@ No page ever reads raw/unprocessed data. If a page needs data that hasn't been t
 
 ---
 
-*Document Version: 1.0*
+### Settings & Admin Page (`/skeleton/settings`)
+
+**Display Format:** Category-organized settings panels with admin-only sections
+
+| Section | Fields | Source |
+|---------|--------|--------|
+| Company Profile | name, logo, address, licenses, insurance | Manual entry — builder onboarding |
+| User Management | create, edit, deactivate users and roles | Admin CRUD |
+| Role/Permission Configuration | custom roles with granular permissions, system role inheritance | RBAC engine (Module 1) |
+| Cost Code Management | create, edit, organize cost code structure, import/export | Cost codes table (Module 9) |
+| Workflow Configuration | approval chains, thresholds, routing rules per entity type | Configuration engine (Module 2) |
+| Notification Preferences | what triggers notifications, for which roles, via which channels | Notification engine (Module 5) |
+| Integration Management | connect/disconnect integrations, monitor sync status, error logs | Integration framework |
+| Template Management | document templates, estimate templates, checklist templates, email templates | Template library |
+| Custom Field Management | create/edit custom fields on any entity, field types, validation | Configuration engine (Module 2) |
+| Billing / Subscription | plan, payment method, usage metrics, invoices (owner-only) | Stripe integration |
+| Data Import/Export Tools | CSV import, full data export, migration tools | Core data model (Module 3) |
+| API Key Management | create/revoke API keys for integrations, usage tracking | Auth module (Module 1) |
+| Audit Log Viewer | searchable history of all system actions, filterable by user/entity/date | entity_change_log table |
+| Branding Configuration | colors, logo, portal customization, email header/footer | Builder settings |
+| Regional Settings | timezone, date format, currency, tax configuration | Builder settings |
+| Module Enable/Disable | turn on/off optional modules (home care, HR, equipment tracking) | Feature flags / subscription tier |
+
+**Access control:**
+- Company Profile, Branding, Regional Settings: `admin` and above
+- User Management, Roles, Permissions: `admin` and above
+- Billing / Subscription: `owner` only
+- API Key Management: `admin` and above
+- All other settings: `admin` and above (configurable per builder)
+
+---
+
+## End-to-End Workflow Chains
+
+> Every piece of data should flow through the system without re-entry. These are the critical automated data flow chains that connect modules end-to-end. Each chain must be fully traceable — every step linked to the previous and next step with no manual re-keying.
+
+1. **Estimate-to-Payment Full Chain:** Estimate line item -> Budget line item -> PO -> Invoice -> Payment -> Lien waiver -> Draw request. The full financial lifecycle of every dollar must be traceable from the original estimate through to final payment and lien waiver collection. Every link in this chain is a foreign key relationship in the database.
+
+2. **Plan-to-Schedule Full Chain:** Plan upload -> AI takeoff (quantities + rooms) -> Estimate (line items with quantities) -> Bid package (scope from estimate) -> Vendor bid -> Bid comparison -> Contract (winning bid) -> PO -> Schedule task (from contracted scope). A set of construction plans should be able to flow through to a fully scheduled, contracted project with minimal manual intervention.
+
+3. **Delay-to-Notification Automated Chain:** Daily log "delay reported" -> Schedule impact calculation (critical path analysis) -> Revised completion date -> Client notification (via portal + email). When a superintendent logs a delay in the field, the system automatically calculates the schedule impact, updates the projected completion date, and notifies the client — no PM intervention required for the data flow (PM may still approve the notification).
+
+4. **Selection-to-Installation Automated Chain:** Selection made by client -> Budget impact calculated (allowance vs. actual) -> Change order generated (if over allowance) -> Client approval (e-sign) -> PO generated to vendor -> Delivery tracked -> Installation scheduled on project schedule. The entire selection lifecycle from client choice to installed product is automated.
+
+5. **Invoice-to-Draw Automated Chain:** Invoice received (email/upload/photo) -> AI extraction (vendor, amount, cost codes) -> Cost code suggestion -> Budget impact calculated -> Approval routed (based on threshold rules) -> Payment scheduled -> Lien waiver requested from vendor -> Draw request updated with approved invoices. Invoice processing triggers the full AP workflow automatically.
+
+6. **Punch-to-Closeout Full Workflow:** Punch item created (with photo) -> Assigned to responsible vendor -> Vendor notified (push + email) -> Vendor marks complete (with photo) -> Builder verifies (with photo) -> Photos documented (before/after) -> Item closed -> Closeout checklist updated. The complete punch list lifecycle with full photo documentation at each step.
+
+7. **Insurance Certificate Automated Chain:** Insurance certificate uploaded -> AI extracts expiration dates and coverage details -> Calendar reminder set for 30 days before expiration -> Renewal request auto-sent to vendor -> Vendor uploads new COI -> AI verifies coverage meets requirements -> Compliance status updated. No manual tracking of insurance expirations.
+
+8. **Bid Intelligence Automated Chain:** Vendor bid received (PDF/email) -> AI parses line items and totals -> Compares to estimate (scope coverage analysis) -> Compares to other bids (leveling) -> Compares to historical data (is this price reasonable?) -> Recommendation generated with confidence score. Bid analysis that would take a PM hours is automated.
+
+9. **RFI-to-Budget Full Chain:** RFI created -> Routed to architect/engineer -> Response received -> Cost impact assessed -> Change order created (if applicable) -> Budget updated with CO impact -> Schedule updated with time impact. Every RFI flows through to its financial and schedule consequences.
+
+10. **Selection-to-Order Automated Chain:** Client selection confirmed -> Lead time calculated from vendor/product data -> Order date calculated (installation date minus lead time) -> Schedule constraint created (selection must be ordered by X date) -> Order reminder triggered at deadline -> PO generated -> Delivery tracked to job site. Long-lead selections are automatically managed.
+
+11. **Failed Inspection Full Workflow:** Failed inspection logged -> Responsible trade identified (from schedule task assignment) -> Correction work order assigned to trade -> Re-inspection scheduled -> Inspection passed -> Schedule updated (actual completion) -> Daily log auto-populated with inspection result. Inspection failures flow through to corrective action and rescheduling.
+
+12. **Weather-to-Schedule Automated Chain:** Weather forecast retrieved (NOAA API) -> At-risk outdoor tasks identified (flagged in schedule) -> Team notified of weather risk -> Schedule auto-adjusted or suggestion generated for PM review -> Daily log auto-populated with weather data (conditions, temperature, precipitation). Weather intelligence is proactive, not reactive.
+
+13. **Certification Expiration Automated Chain:** Employee certification expiration date approaching -> Alert generated to HR/admin -> Training scheduled or renewal initiated -> Certification updated in system -> Compliance report updated across all active projects. No employee works with expired certifications.
+
+14. **Project Completion Automated Chain:** Project marked complete -> Warranty start dates set per contract terms -> Home care schedule generated (maintenance reminders) -> Client portal transitions from construction mode to warranty/home care mode -> Vendor warranty responsibilities documented per trade. The transition from construction to post-construction is seamless.
+
+15. **Change Order Cascade — All Simultaneous:** Change order approved -> Contract value updated -> Budget updated (new/adjusted lines) -> Schedule impact applied (if time extension) -> Draw request schedule adjusted -> Client portal updated with new contract amount and schedule. All downstream systems update atomically when a CO is approved — no manual propagation.
+
+---
+
+## Competitive Feature Parity Checklist
+
+> Features that Buildertrend, Procore, CoConstruct, BuildBook, Adaptive, Materio, and ReportandGo have that must be matched or exceeded. Each item maps to a module in the platform spec.
+
+### Buildertrend Feature Parity
+
+| # | Feature | RossOS Module | Status |
+|---|---------|---------------|--------|
+| 876 | To-do lists with assignment and due dates | Module 4: Task Management | Spec'd |
+| 877 | Warranty claim management | Module 31: Warranty & Home Care | Spec'd |
+| 878 | Internal messaging with job context | Module 36: Communication Hub | Spec'd |
+| 879 | Customer login/portal | Module 32: Client Portal | Spec'd |
+| 880 | Scheduling with Gantt and calendar | Module 7: Scheduling | Spec'd |
+| 881 | Budgeting with detailed cost tracking | Module 9: Budget & Cost Tracking | Spec'd |
+| 882 | Change order management | Module 17: Change Order Management | Spec'd |
+| 883 | Selection sheets | Module 21: Selection Management | Spec'd |
+| 884 | Photo management | Module 6: Document Storage (photos) | Spec'd |
+| 885 | Daily log with weather | Module 8: Daily Logs | Spec'd |
+| 886 | Bid requests to vendors | Module 15: Bid Management | Spec'd |
+| 887 | Time clock for employees and subs | Module 34: HR & Workforce | Spec'd |
+| 888 | Lead management CRM | Module 12: Lead CRM | Spec'd |
+| 889 | Proposals and contracts | Module 38: Contracts & E-Signature | Spec'd |
+| 890 | Financial reporting | Module 19: Financial Reporting | Spec'd |
+| 891 | Lien waiver tracking | Module 16: Lien Waiver Management | Spec'd |
+| 892 | Mobile app | Module 40: Mobile App | Spec'd |
+
+### Procore Feature Parity (Relevant for Residential)
+
+| # | Feature | RossOS Module | Status |
+|---|---------|---------------|--------|
+| 893 | Drawing management with version control and markup | Module 6: Document Storage + Plan AI | Spec'd |
+| 894 | Submittal management | Module 18: Submittals | Spec'd |
+| 895 | Meeting minutes | Module 36: Communication Hub | Spec'd |
+| 896 | Transmittals | Module 36: Communication Hub | Spec'd |
+| 897 | Correspondence logs | Module 36: Communication Hub | Spec'd |
+| 898 | Quality & Safety observations | Module 33: Safety & Compliance + Module 28: Punch List & Quality | Spec'd |
+| 899 | Commissioning workflows | Module 28: Punch List & Quality (closeout checklists) | Spec'd |
+| 900 | BIM coordination | Out of scope for V1 — evaluate for V2 if high-end custom demand warrants | Deferred |
+
+### Differentiating Features (No Competitor Does These Well)
+
+| # | Feature | RossOS Advantage | Module |
+|---|---------|-----------------|--------|
+| 901 | AI-powered invoice processing | Replaces manual data entry — Claude Vision extracts all fields with confidence scoring | AI Engine + Module 11 |
+| 902 | AI-powered estimate generation from plans | Upload plans, get a quantity takeoff and preliminary estimate — no other residential platform does this | AI Engine + Module 9 |
+| 903 | Vendor intelligence scoring | Composite score from on-time %, budget adherence, quality, safety across all projects | AI Engine + Module 10 |
+| 904 | Material price intelligence database | Every invoice feeds a pricing knowledge base — track material costs over time, by vendor, by region | AI Engine + Intelligence Layer |
+| 905 | Schedule intelligence from historical data | AI learns actual durations from daily logs and predicts future task durations with confidence intervals | AI Engine + Module 7 |
+| 906 | Integrated home care post-construction | Warranty tracking + maintenance scheduling + client portal — all in the same platform as construction management | Module 31: Warranty & Home Care |
+| 907 | True cost intelligence | Every document (invoice, bid, PO, CO) feeds a comprehensive cost database that powers estimating, benchmarking, and anomaly detection | AI Engine (cross-module) |
+| 908 | Client selection portal rivaling Materio | Room-by-room selections with product photos, comparisons, allowance tracking, and budget impact — integrated with the build platform | Module 21 + Client Portal |
+| 909 | Live field checklists rivaling ReportandGo | Mobile-first safety and quality checklists with photo documentation, GPS verification, and real-time reporting | Module 33 + Module 40 |
+| 910 | Invoice processing rivaling Adaptive.build | AI invoice extraction + 3-way matching + approval routing + lien waiver tracking — all in the same platform | AI Engine + Module 11 + Module 16 |
+
+---
+
+## Business Strategy Decisions (Appendix)
+
+> These are business decisions that affect what gets built, not feature specifications. They are listed here for tracking purposes and must be resolved by the founding team. They should NOT be converted to technical requirements until decisions are made.
+
+| # | Decision | Status |
+|---|----------|--------|
+| 846 | Target customer profile — revenue range, project count, team size, tech savviness | To be decided |
+| 847 | Competitive positioning — "Buildertrend but with AI" vs. "completely different approach" | To be decided |
+| 848 | MVP definition — minimum viable product that is useful enough to sell | To be decided |
+| 849 | Build order — which modules first, what can wait for V2/V3 | Partially decided (6-phase plan exists) |
+| 850 | Pricing strategy for early adopters — discount, free, beta access | To be decided |
+| 851 | Balancing Ross Built's needs vs. market-wide needs — avoid over-customizing for one builder | To be decided |
+| 852 | Go-to-market strategy — direct sales, partnerships, marketplace, word of mouth | To be decided |
+| 853 | Handling competitive feature gaps — how to communicate what is not yet built | To be decided |
+| 854 | Technology stack at scale — current stack (Next.js + Supabase) vs. alternatives at 1000+ tenants | Decided for V1 (Next.js 16 + Supabase) |
+| 855 | Prioritizing "need it now" vs. "nice to have" features — framework for saying no | To be decided |
+| 856 | Team composition — solo developer, hired team, agency, combination | To be decided |
+| 857 | Funding model — bootstrapped, investor-backed, revenue-funded from Ross Built | To be decided |
+| 858 | Timeline to first external customer — 6, 12, or 24 months | To be decided |
+| 859 | Managing customer expectations during active development — roadmap transparency | To be decided |
+| 860 | Support model at scale — cannot support 100+ customers personally | To be decided |
+
+---
+
+## PART 5: PER-PAGE INTERACTIVE FEATURE REQUIREMENTS
+
+> These are the specific interactive features that each screen/page in the application must support. Missing any of these results in a "why can't I just..." moment for users. These requirements complement the data schemas in Parts 1-3 and the consistency rules in Part 4 by specifying the interactive behaviors expected on each page.
+
+---
+
+### Dashboard Page — Interactive Features (GAP-621 through GAP-632)
+
+The company dashboard must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 621 | **Configurable widget layout** | Each user must be able to arrange their own dashboard layout — drag widgets to reposition, resize, show/hide. Layout is stored as a user preference (Module 2, user_preferences table) and persists across sessions. |
+| 622 | **Widget library** | A widget picker must be available with all available widgets: budget summary, schedule status, alerts, weather, photos, pending approvals, activity feed, KPI sparklines, cash position, etc. Users choose which widgets to display from the library. |
+| 623 | **Filtering across all widgets** | A global project filter at the top of the dashboard must allow the user to select a specific project (to filter all widgets to that project) or "All Projects" for a company-wide view. The filter state must persist within the session. |
+| 624 | **Drill-down from any number** | Every numeric value displayed on the dashboard (dollar amounts, counts, percentages) must be clickable. Clicking navigates to the underlying detail page with appropriate filters pre-applied (e.g., clicking the AP total navigates to the payables page filtered to outstanding invoices). |
+| 625 | **Date range selector** | A date range control must be available with presets: Today, This Week, This Month, This Quarter, This Year, and Custom Range. The selected range filters time-sensitive widgets (activity feed, financials, schedule). |
+| 626 | **Comparison toggle** | The dashboard must support a comparison mode: this period vs. last period, this year vs. last year. When enabled, KPI cards show the current value alongside the comparison value with a delta indicator (up/down arrow, percentage change, color-coded). |
+| 627 | **Refresh / auto-refresh** | A manual refresh button must be available. An auto-refresh interval must be configurable per user (off, 1 min, 5 min, 15 min, 30 min). The dashboard must display a "last updated" timestamp. |
+| 628 | **Export dashboard as PDF** | The current dashboard view (with all active widgets and current filter state) must be exportable as a PDF suitable for printing or emailing to stakeholders. The PDF must include the builder's branding (logo, colors). |
+| 629 | **"Needs attention" priority queue** | A dedicated widget must display items needing attention, prioritized by urgency and age: overdue approvals, expiring documents, past-due invoices, stalled RFIs, and AI-flagged anomalies. Each item must support dismiss (removes from queue) and snooze (reappears after configurable delay: 1 hour, 1 day, 1 week). |
+| 630 | **Quick action buttons** | The dashboard must provide quick action buttons for frequent tasks: Create Daily Log, Create RFI, Approve Invoice, Create Change Order, Upload Document. These actions open a modal or flyout panel — the user completes the action without navigating away from the dashboard. |
+| 631 | **Activity feed** | A real-time activity feed must display recent actions across all projects by the builder's team: invoice submissions, approvals, daily log entries, photo uploads, schedule changes, document uploads. Each entry shows: description, timestamp, user, project. The feed must support infinite scroll and filtering by project, user, or action type. |
+| 632 | **KPI sparklines** | Key performance indicator cards must include small sparkline charts showing the trend over the selected date range. Metrics include: revenue, costs, margin, AR, AP, cash position, active project count, and any builder-configured KPIs. Sparklines provide at-a-glance trend direction without requiring a separate report. |
+
+---
+
+### Project List Page — Interactive Features (GAP-633 through GAP-646)
+
+The project list page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 633 | **Sortable by any column** | Every column in the project list must be sortable (ascending/descending) by clicking the column header: name, status, PM, start date, budget, % complete, contract amount, predicted completion date, risk score. Multi-column sort must be supported (hold Shift + click for secondary sort). |
+| 634 | **Multi-criteria filtering** | The project list must support filtering by multiple criteria simultaneously: status (multi-select), PM (multi-select), location (city/state/subdivision), date range (start, completion), project type, budget range, and any custom fields. Active filters must be displayed as removable chips above the list. |
+| 635 | **Saveable filter presets** | Users must be able to save the current filter + sort + column configuration as a named preset (e.g., "My Active Projects," "Over Budget Projects," "AMI Projects"). Presets are stored per user and selectable from a dropdown. |
+| 636 | **Shareable filter presets** | Admin and PM roles must be able to create shared filter presets visible to the entire team. Shared presets appear in a "Team Views" section of the preset dropdown. Only the creator or an admin can edit or delete shared presets. |
+| 637 | **Bulk actions** | The project list must support selecting multiple projects (checkboxes) and performing bulk actions: archive, change status, reassign PM, reassign superintendent, add/remove tags. A confirmation dialog must show the count and action before executing. |
+| 638 | **Customizable columns** | A column picker must allow users to choose which columns are displayed from all available project fields (including custom fields). Column selection is saved as part of the user's view preference. |
+| 639 | **Column resize and reorder** | Users must be able to resize columns by dragging column borders and reorder columns by dragging column headers. The layout must persist across sessions. |
+| 640 | **View toggle: compact vs. card** | The project list must support at least two display modes: (a) compact table/list view with dense information, and (b) card view with project photo, key metrics, and status badges. The toggle must persist as a user preference. |
+| 641 | **Map view** | A map view must display all projects as pins on a map (using project latitude/longitude from the projects table). Clicking a pin shows a summary popup with project name, status, PM, and key metrics. The map must support filtering by the same criteria as the list view. This is especially useful for builders with geographically distributed projects. |
+| 642 | **Quick inline editing** | Users with appropriate permissions must be able to edit key fields directly in the list view without opening the project detail: status, PM, superintendent, tags, and priority. Inline editing uses a click-to-edit pattern with auto-save. |
+| 643 | **Color coding / tags** | Projects must support configurable color-coded tags (defined per builder in Module 2). Tags are displayed as colored badges on the list and card views. Tags can be used as filter criteria. Examples: "VIP Client," "Model Home," "Insurance Job," "Spec Home." |
+| 644 | **Favorite / pin projects** | Users must be able to favorite/pin projects for quick access. Favorited projects appear in a "Favorites" section at the top of the list and in a quick-access dropdown in the navigation bar. Favorites are per user. |
+| 645 | **Project health indicators** | Each project must display a composite health indicator using red/yellow/green badges for three dimensions: Budget (based on variance), Schedule (based on SPI), and Risk (based on AI risk score). The overall health color is the worst of the three. |
+| 646 | **Search within the project list** | A search box must filter the project list in real-time by project name, project number, address, client name, PM name, and tags. Search must be fast (< 200ms) and use trigram matching for partial/fuzzy results. |
+
+---
+
+### Project Detail / Overview Page — Interactive Features (GAP-647 through GAP-657)
+
+The project detail/overview page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 647 | **Summary cards** | The top of the project detail page must display summary cards for: Budget (contract, costs, variance), Schedule (% complete, days remaining, status), Documents (total, pending review), RFIs (open/total), Change Orders (pending/total, net value), and Punch List (open/total). Each card is clickable — navigates to the corresponding module page. |
+| 648 | **Project info section** | A structured project information section must display: address (with map link), client name (linked to client record), PM (linked), superintendent (linked), contract type, contract amount, current contract amount (with COs), key dates (contract date, start, estimated completion, actual completion). All fields must be editable inline by users with appropriate permissions. |
+| 649 | **Quick navigation** | A sidebar or tab bar must provide one-click navigation to every module within the project: Budget, Schedule, Invoices, POs, Change Orders, Selections, Daily Logs, Photos, Documents, RFIs, Submittals, Permits, Inspections, Punch List, Lien Waivers, Draws, Warranties, Communications, Reports. Module tabs must show badge counts for items needing attention. |
+| 650 | **Activity timeline** | A chronological activity timeline must display everything that has happened on the project: invoice submissions, approvals, daily log entries, photo uploads, schedule changes, change orders, RFI responses, document uploads, selection decisions. The timeline must support filtering by activity type, date range, and user. It must support infinite scroll for long project histories. |
+| 651 | **Project notes / journal** | A running notes/journal section must allow any team member to add timestamped notes about the project. Notes support rich text (bold, italic, lists, links) and can be tagged as "internal only" (hidden from client portal) or "client visible." Notes are distinct from daily logs — they are for ad-hoc project observations, decisions, and reminders. |
+| 652 | **Team roster** | A team roster section must display everyone assigned to the project: PM, superintendent, and all active subcontractors/vendors with their role/trade. Each entry shows name, company, phone, email, and current assignment status. The roster must link to the contact/vendor profile page. |
+| 653 | **Key milestone tracker** | A visual milestone tracker must display the project's major milestones with dates and completion status: Permit Issued, Breaking Ground, Foundation Complete, Framing Complete, Dry-In, Rough-In Complete, Drywall Complete, Finishes Start, Substantial Completion, CO Issued, Final Completion. Milestones pull from the schedule module. Completed milestones show actual date; future milestones show planned date with predicted date if AI predicts a variance. |
+| 654 | **Project risk register** | A risk register section must allow the PM to identify and track project risks: risk description, likelihood (low/medium/high), impact (low/medium/high), mitigation plan, risk owner, and status (open/mitigated/occurred/closed). AI must auto-suggest risks based on project attributes (e.g., coastal project = hurricane risk, luxury home = selection delay risk). The risk register feeds the project health score. |
+| 655 | **Project photo carousel** | A photo carousel must display the most recent photos from daily logs and direct uploads. The carousel must be filterable by phase (to show progress over time) and support full-screen viewing. A "View All Photos" link navigates to the full photo gallery. |
+| 656 | **Weather widget** | A weather widget must display current conditions and a 3-day forecast for the project's location (using latitude/longitude from the project record). The widget must flag days with adverse weather conditions that could impact outdoor work. Weather data is fetched from a weather API and cached. |
+| 657 | **Quick stats** | A quick stats section must display: Days Since Start (actual_start to today), Estimated Days Remaining (today to estimated_completion), Total Project Duration (actual_start to estimated_completion), and % Complete (from schedule). If AI predicts a different completion date than the plan, the variance must be shown. |
+
+---
+
+### Budget Page — Interactive Features (GAP-658 through GAP-672)
+
+The budget page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 658 | **Expandable/collapsible hierarchy** | The budget must display as an expandable tree: Division > Cost Code Category > Line Item. Users can expand/collapse individual nodes or use "Expand All" / "Collapse All" controls. The expansion state must persist within the session. |
+| 659 | **Multiple budget views** | The budget page must support multiple view modes, selectable via tabs or dropdown: (a) Original Budget, (b) Current Budget (with approved COs), (c) Committed (POs + subcontracts), (d) Actual (invoiced costs), (e) Projected Final Cost (AI cost-to-complete). Each view shows the relevant columns; a "Full View" shows all columns side by side. |
+| 660 | **Variance column with color coding** | The variance column (budget minus actual/projected) must use color coding: green for under budget, red for over budget, yellow for within a configurable warning threshold (default: 90-100% of budget). The color intensity must scale with the severity of the variance. |
+| 661 | **Percentage indicators** | Each budget line must show: % of budget consumed (actual / budget) and % of work complete (from schedule or manual override). A visual indicator must flag lines where % budget consumed significantly exceeds % work complete (early cost overrun warning). |
+| 662 | **Cost-to-complete column** | A cost-to-complete (CTC) column must be auto-calculated using: budget remaining minus committed costs, adjusted by AI intelligence (historical cost trends, similar project data). The CTC must be manually overridable by the PM — when overridden, the system stores both the AI-calculated and manual values with the override reason. |
+| 663 | **Budget line item notes** | Each budget line must support notes — a text field where the PM can explain variances, document decisions, or record context. Notes are visible on the budget page as an expandable row below the line item and are included in budget reports. |
+| 664 | **Attached documents per line** | Each budget line must support document attachments: linked invoices, POs, bids, contracts, and change orders. Attachments are displayed as a count badge on the line item; clicking opens a panel showing all linked documents with preview capability. |
+| 665 | **Filter by trade, phase, cost code, status** | The budget must be filterable by: trade/division, phase, cost code range, status (over budget, under budget, at risk, no activity), and vendor. Filters apply to the tree view, hiding non-matching branches. Active filters must be displayed as removable chips. |
+| 666 | **Budget history / snapshots** | The budget page must support viewing the budget at any previous point in time. Budget snapshots are taken automatically at key milestones (contract signing, each draw submission, each CO approval) and can be taken manually. A date slider or snapshot selector allows the user to see the budget as it was at any snapshot point. |
+| 667 | **Import/export to Excel** | The budget must support: (a) export to Excel (.xlsx) preserving the hierarchy, formatting, and all columns, and (b) import from Excel for initial budget creation or mass updates. The import must validate against the cost code structure and flag conflicts. |
+| 668 | **Benchmark comparison** | Each budget line must support comparison to platform benchmarks (if the builder has opted in to benchmarking in Module 3): "Your framing cost is $X/SF vs. platform average of $Y/SF for similar projects in your region." Benchmark data is displayed as a tooltip or inline indicator. |
+| 669 | **Forecast scenarios** | The budget must support "what-if" scenario modeling: the user can adjust assumptions (e.g., "concrete costs go up 10%," "add 2 weeks to schedule") and see the projected impact on total cost and margin without saving. Scenarios are displayed as a separate column alongside the actual budget. Scenarios can be saved for comparison. |
+| 670 | **Change order impact visualization** | The budget must visually distinguish between original budget amounts and CO-adjusted amounts. A "CO Impact" view or indicator shows the original budget, the net CO impact per line, and the resulting revised budget. This makes it easy to see which budget lines have been affected by change orders. |
+| 671 | **Locked/frozen lines** | Budget lines must support a "locked" or "frozen" status: locked lines cannot be edited (only unlocked by admin/owner). This is used for finalized cost codes where the builder has a firm subcontract and does not want accidental budget changes. Locked lines are visually indicated (lock icon) and excluded from mass-update operations. |
+| 672 | **Audit trail per line** | Each budget line must have an accessible audit trail: who changed what, when, and the previous value. The audit trail is viewable via a "History" button on each line item, showing a chronological list of changes. This uses the entity_change_log from Module 3. |
+
+---
+
+### Schedule Page — Interactive Features (GAP-673 through GAP-691)
+
+The schedule page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 673 | **Gantt chart with drag-and-drop** | The primary schedule view must be a Gantt chart where tasks can be repositioned by dragging (to change dates) and resized (to change duration). Dragging a task must automatically recalculate dependent tasks' dates. Changes must be saved with undo capability. |
+| 674 | **Calendar view toggle** | The schedule must support a calendar view showing tasks as events on a month/week calendar. Calendar view is useful for seeing daily workload and inspection scheduling. |
+| 675 | **List view toggle** | The schedule must support a flat list view with sortable columns: task name, start date, end date, duration, vendor, status, % complete. List view is useful for data-entry mode and bulk operations. |
+| 676 | **Kanban board toggle** | The schedule must support a Kanban board view with columns by status: Not Started, In Progress, Complete, Delayed, On Hold. Tasks are displayed as cards that can be dragged between status columns. |
+| 677 | **Two-week look-ahead view** | A dedicated "look-ahead" view must display only the tasks scheduled within the next N weeks (configurable, default: 2 weeks). This is the primary view used in weekly subcontractor coordination meetings. The look-ahead must be printable and exportable as PDF. |
+| 678 | **Filter by trade, phase, critical path, status** | The schedule must be filterable by: trade/vendor, phase, critical path (show only critical path tasks), status (not started, in progress, complete, delayed), and date range. Filters apply to all view modes (Gantt, calendar, list, Kanban). |
+| 679 | **Dependency arrows** | The Gantt chart must display dependency arrows showing predecessor/successor relationships between tasks. Arrow types must distinguish between: Finish-to-Start (FS), Start-to-Start (SS), Finish-to-Finish (FF), and Start-to-Finish (SF). Clicking a dependency arrow must show the lag/lead time and allow editing. |
+| 680 | **Resource assignment and leveling view** | The schedule must support a resource view showing: which vendors/trades are assigned to which tasks, when resource conflicts occur (same vendor assigned to overlapping tasks on different projects), and resource utilization over time. Resource leveling suggestions must flag over-allocated vendors. |
+| 681 | **Baseline comparison overlay** | The schedule must support overlaying the baseline schedule (as-planned) on top of the current schedule (as-built). The baseline appears as a shadow bar behind each task, making it easy to see which tasks are ahead or behind plan. Baseline is set at project start and can be updated at milestones. |
+| 682 | **Weather overlay** | The schedule must display weather forecast data on the calendar/Gantt view for the project's location. Weather icons appear on each day; days with adverse weather conditions (rain, extreme temperature, high wind) are highlighted. Outdoor tasks scheduled on adverse weather days are flagged with a warning. |
+| 683 | **Milestone markers** | The schedule must display milestone markers (diamond shapes on the Gantt chart) for key project milestones: permit issued, breaking ground, foundation complete, framing complete, dry-in, rough-in complete, substantial completion, CO, final completion. Milestones have labels and dates; completed milestones show a checkmark. |
+| 684 | **Progress indicators per task** | Each task must display a progress indicator: 0%, 25%, 50%, 75%, 100% (or finer granularity if configured). Progress is visually represented as a filled portion of the Gantt bar. Progress can be updated by: daily log AI extraction, manual entry, or drag on the progress bar. |
+| 685 | **Task detail panel** | Clicking a task must open a detail panel (slide-out or modal) showing: task name, description, dates (planned, actual, predicted), duration, predecessor/successor tasks, assigned vendor, crew size, % complete, notes, linked photos from daily logs, linked RFIs, and change history. All fields must be editable from the panel. |
+| 686 | **Print/export schedule** | The schedule must be exportable in multiple formats: (a) Gantt chart as PDF (landscape, tabloid size), (b) list view as Excel/CSV, (c) calendar view as PDF, (d) look-ahead as PDF. The print must include the builder's branding and current date. |
+| 687 | **Schedule health indicators** | The schedule must display health indicators: (a) critical path highlighted in red, (b) near-critical tasks (float < 3 days) highlighted in orange, (c) at-risk tasks (AI-predicted to miss their deadline) flagged with a warning icon. An overall schedule health score (SPI-based) must be displayed. |
+| 688 | **Vendor schedule view** | A filtered view must show only the tasks assigned to a specific vendor: "Show me only what ABC Electric needs to do." This view is shareable with the vendor via vendor portal or PDF export. It includes only their tasks with dates, dependencies, and predecessor completion status. |
+| 689 | **Client-friendly schedule view** | A simplified schedule view must be available for the client portal: showing only major milestones and high-level phases (not 500 individual tasks). The client view must be configurable — the builder selects which tasks/milestones are visible to the client. |
+| 690 | **Schedule conflict detection** | The system must detect and flag scheduling conflicts: (a) two tasks requiring the same physical space scheduled concurrently (e.g., flooring and painting in the same room), (b) resource over-allocation (same vendor assigned to overlapping tasks), (c) tasks scheduled on weekends/holidays without explicit override. Conflicts are displayed as warning indicators on the schedule. |
+| 691 | **Bulk schedule operations** | The schedule must support bulk operations: (a) shift all tasks by N days (for project-wide delay), (b) shift selected tasks by N days, (c) reassign trade/vendor on multiple tasks, (d) bulk status change (mark multiple tasks complete). Bulk operations must show a preview of the impact before applying. |
+
+---
+
+### Invoice / Billing Page — Interactive Features (GAP-692 through GAP-707)
+
+The invoice/billing page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 692 | **Invoice queue with status sorting** | Incoming invoices must be displayed as a queue sorted by status: New (unreviewed), Pending Review, Approved, Paid, Disputed. Each status is a tab or filter option. Within each status, invoices are sorted by date received (oldest first) to ensure FIFO processing. Badge counts must show the number of invoices in each status. |
+| 693 | **AI-extracted data with confidence indicators** | AI-extracted invoice data must display confidence scores per field. Fields with confidence below 0.95 must show a yellow or red warning indicator with the confidence percentage (e.g., "85% confident this is $4,250"). Low-confidence fields must be visually highlighted for human review. |
+| 694 | **Side-by-side view** | The invoice review interface must display the original invoice document (PDF/image) on the left and the extracted/editable data fields on the right. Fields on the right must highlight their corresponding location on the document image when focused. This enables efficient human verification of AI extraction. |
+| 695 | **One-click approval / rejection** | The invoice review interface must provide one-click "Approve" and "Reject" buttons. Approval requires no additional input (unless the invoice exceeds threshold amounts requiring multi-level approval per Module 2 workflow configuration). Rejection must require a comment explaining the reason. Rejection reasons must be selectable from a configurable list plus free text. |
+| 696 | **Cost code assignment with smart suggestions** | Each invoice line item must have a cost code assignment field. The AI must suggest cost codes based on: line item description, vendor's historical cost code assignments, and PO/contract linkage. Suggestions are displayed as a dropdown sorted by confidence. The user can accept the suggestion or select a different cost code. |
+| 697 | **Budget impact preview** | Before approving an invoice, the system must display a budget impact preview: "Approving this invoice will bring [Cost Code] to [X]% of budget" with a visual bar showing the budget consumption. If the invoice would cause a cost code to exceed budget, a prominent warning must be displayed. |
+| 698 | **Batch approval** | The invoice queue must support selecting multiple invoices (checkboxes) and approving them in batch. Batch approval must show a summary of: total amount, number of invoices, affected cost codes, and aggregate budget impact before confirming. Batch approval is only available for invoices that do not require additional review (below threshold, high AI confidence). |
+| 699 | **Invoice history per vendor** | The invoice detail view must include a "Vendor History" panel showing all past invoices from this vendor: invoice number, date, amount, status, payment date. This provides context for evaluating the current invoice (e.g., detecting if the vendor is accelerating billing frequency). |
+| 700 | **Duplicate detection alerts** | When the AI detects a potential duplicate invoice (same vendor, similar amount, similar date, similar invoice number), a prominent alert must be displayed: "This appears similar to Invoice #X from this vendor dated [date] for [amount]." The alert must link to the potential duplicate for side-by-side comparison. The user must explicitly dismiss the duplicate warning before approving. |
+| 701 | **Payment status tracking** | Each invoice must track its payment lifecycle: Approved > Payment Scheduled > Payment Sent > Payment Cleared. The current payment status must be visible on the invoice list and detail views. Integration with accounting systems (Module 14) updates payment status automatically. |
+| 702 | **Lien waiver status indicator** | Each invoice must display the lien waiver status for the corresponding vendor and draw period: Required (no waiver received), Received (waiver uploaded), Verified (AI-verified waiver matches invoice), and Not Required (below threshold or exempt). If a lien waiver is required but missing, a warning must block payment scheduling (configurable per builder). |
+| 703 | **Retainage auto-calculation** | When an invoice is associated with a contract that has retainage terms, the system must auto-calculate the retainage amount and display it separately: gross invoice amount, retainage held, and net payable amount. Retainage percentage is pulled from the contract record. The retainage calculation must be overridable for final invoices where retainage is released. |
+| 704 | **Link to PO and contract** | Each invoice must display links to the associated PO and/or contract. Clicking the link opens the PO or contract detail in a side panel for comparison. The system must highlight discrepancies between the invoice and the linked PO/contract (amount differences, scope differences, pricing differences). |
+| 705 | **Aging report** | An aging report view must display all invoices grouped by days outstanding: Current (0-30), 31-60, 61-90, 90+. The report must show totals per bucket and be filterable by vendor, project, and cost code. A chart visualization shows the aging distribution. |
+| 706 | **Payment run generation** | The system must support creating a "payment run": select approved invoices for batch payment, review the total, and generate a payment batch. The payment run exports to the accounting system (Module 14) or generates check/ACH payment instructions. Payment runs are logged with an audit trail. |
+| 707 | **Export to accounting system** | An "Export to Accounting" button must be available to push approved invoices (or payment runs) to the integrated accounting system (QuickBooks, Xero, etc.). The export must include: vendor name, invoice number, amount, cost codes mapped to GL accounts, project/job reference, and payment terms. Export status must be tracked per invoice. |
+
+---
+
+### Vendor Profile Page — Interactive Features (GAP-708 through GAP-723)
+
+The vendor profile page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 708 | **Contact information** | The vendor profile must display comprehensive contact information: company name, primary contact name, phone, mobile, email, address, website, and key personnel (with roles). All fields must be editable inline. Multiple contacts per vendor company must be supported. |
+| 709 | **Insurance status with expiration countdown** | The vendor profile must prominently display insurance status: each coverage type (GL, auto, workers comp, umbrella) with expiration date and a countdown indicator. Expired insurance must display a red warning. Insurance approaching expiration (within 30 days) must display a yellow warning. The status must link to the uploaded COI document. |
+| 710 | **License status with verification link** | The vendor profile must display license information: license number, state, type, expiration date, and a link to the state licensing board for online verification. Expired or soon-to-expire licenses must be flagged with warnings consistent with the insurance indicators. |
+| 711 | **Performance scorecard** | The vendor profile must display a visual performance dashboard: composite score (0-100), with breakdown by: On-Time Delivery %, Budget Adherence %, Quality Score (based on punch items and rework), Safety Record, and Communication Responsiveness. Scores are calculated from data across all projects the vendor has worked on. Historical trend charts show performance over time. |
+| 712 | **Job history** | The vendor profile must display a complete history of all projects the vendor has worked on: project name, dates, scope, contract amount, actual cost, performance rating per job, and any notable issues. The history is sortable by date, amount, and rating. Clicking a project navigates to the project detail. |
+| 713 | **Financial summary** | The vendor profile must display a financial summary: total spend to date (all time), total spend this year, average invoice amount, payment history (average days to pay), outstanding balance, and retainage held. A chart shows spending trend over time. |
+| 714 | **Active contracts and POs** | The vendor profile must display all active contracts and POs: contract/PO number, project, amount, invoiced to date, remaining balance, and status. Each entry links to the contract or PO detail page. |
+| 715 | **Open punch items across all jobs** | The vendor profile must display all open punch list items assigned to this vendor across all projects: item description, project, age (days since creation), priority, and status. This gives a complete view of the vendor's outstanding quality issues. |
+| 716 | **Schedule reliability metrics** | The vendor profile must display schedule reliability metrics: on-time start percentage, on-time completion percentage, average delay (days), and a comparison to the builder's average vendor performance. Data is aggregated from schedule task actual dates vs. planned dates across all projects. |
+| 717 | **Bid history** | The vendor profile must display all bids submitted by this vendor: project, scope, bid amount, competing bid count, won/lost status, and pricing trends over time. A chart shows the vendor's bid pricing trend for their trade category. |
+| 718 | **Communication log** | The vendor profile must display recent communications: messages, emails, phone call notes, and meeting notes — filtered to this vendor. Each entry shows date, subject, channel, and linked project. New messages can be initiated directly from the profile. |
+| 719 | **Document repository** | The vendor profile must display all documents associated with this vendor: certificates of insurance, W-9, contracts, lien waivers, licenses, and any other uploaded documents. Documents are organized by type with version history. Expired documents are flagged. |
+| 720 | **Notes and tags** | The vendor profile must support internal notes (visible only to the builder's team, never to the vendor) and configurable tags for categorization. Tags can be used for filtering in the vendor directory (e.g., "Preferred," "Backup," "New," "Do Not Use"). |
+| 721 | **Related vendors** | The vendor profile must support linking related vendors: parent/subsidiary relationships, alternate contacts for the same trade, and preferred partnerships (e.g., "this electrician works well with this HVAC contractor"). Related vendors are displayed as links on the profile. |
+| 722 | **Capacity indicator** | The vendor profile must display a capacity indicator: how many active jobs the vendor currently has with this builder, how many tasks are currently assigned, and an estimated workload assessment. This helps PMs assess whether the vendor can take on additional work. |
+| 723 | **Quick actions** | The vendor profile must provide quick action buttons: Create PO, Invite to Bid, Send Message, Schedule Meeting, Request Updated Insurance, and Request Lien Waiver. Each action opens a pre-populated form or workflow without navigating away from the vendor profile. |
+
+---
+
+### Selection Page (Client-Facing) — Interactive Features (GAP-724 through GAP-735)
+
+The selection page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 724 | **Room-by-room layout** | Selections must be organized by room: "Kitchen Selections," "Master Bath Selections," "Powder Room Selections," etc. Each room is a collapsible section showing all selection categories within that room. Room organization follows the spec book structure (from AI extraction) or manual configuration. General selections (exterior, roofing, windows) are displayed in a separate "Whole House" section. |
+| 725 | **Selection cards with rich content** | Each selection option must be displayed as a visual card containing: product photo, manufacturer, product name, model number, finish/color, dimensions, price (or price difference from allowance), lead time, and availability status. Cards must support image zoom on hover/click. |
+| 726 | **Comparison mode** | Within a selection category (e.g., "Kitchen Faucet"), the client must be able to select 2-3 options for side-by-side comparison. The comparison view shows all option details in columns for easy evaluation: price, features, lead time, manufacturer, and any notes from the designer or builder. |
+| 727 | **Budget impact real-time calculator** | As the client browses and selects options, a running budget impact calculator must display: allowance amount for this category, selected option price, variance (over/under allowance), and cumulative budget impact across all selections. The calculator must update in real-time as selections change. If the client's selections put them over the total allowance, a prominent alert must be displayed. |
+| 728 | **Approval button with e-signature** | When the client finalizes their selections for a category or room, an "Approve Selections" button must capture their electronic signature (integrated with the e-signature module). The approval is timestamped, logged, and triggers the downstream workflow (PO generation, schedule constraint updates). |
+| 729 | **Status indicators** | Each selection category must display its current status: Not Started, Options Presented, Client Reviewing, Selected, Ordered, Received, Installed. Status badges use the consistent color scheme from Part 4. A progress bar at the top shows overall selection completion (e.g., "23 of 47 selections made"). |
+| 730 | **Deadline countdown** | Each selection category must display its deadline with a countdown: "Selection needed by [date] to stay on schedule." Deadlines are calculated from the schedule module (installation date minus lead time minus order processing time). Overdue selections are highlighted in red with an alert. |
+| 731 | **Inspiration board** | The selection page must include an "Inspiration Board" section where the client can upload photos of what they like (from Pinterest, magazines, showrooms, etc.). The builder and designer can reference inspiration images when recommending options. Inspiration images are stored per room or per category. |
+| 732 | **Comment/question thread per selection** | Each selection category must support a threaded comment/question conversation between the client, builder, and designer. Comments are timestamped and attributed. The builder is notified when the client posts a question. This eliminates the need for email back-and-forth about selections. |
+| 733 | **Selection history** | The system must track all considered options for each selection category — not just the final selection. The history shows: which options were presented, when, by whom, which were considered, and the final choice. This provides a complete audit trail for selection decisions. |
+| 734 | **Print/export selection summary** | The client must be able to export a selection summary: a formatted PDF showing all selections by room, with photos, product details, prices, and total budget impact. The PDF must include the builder's branding and the approval signatures. |
+| 735 | **Designer view** | Interior designers must have a dedicated view where they can: add and recommend options within each selection category, attach mood boards, write notes, and mark their recommended option. The designer view is controlled by the designer portal access permissions. |
+
+---
+
+### Daily Log Page — Interactive Features (GAP-736 through GAP-753)
+
+The daily log page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 736 | **Date selector with calendar navigation** | The daily log page must have a date selector with calendar navigation: click to select any date, arrow buttons for previous/next day, and a "Today" quick button. The calendar must indicate which dates have existing log entries (dot indicators). |
+| 737 | **Auto-populated weather data** | Weather data for the project's location and the selected date must be auto-populated from the weather API: condition (sunny, cloudy, rain, snow), high/low temperature, precipitation, wind speed, humidity. The superintendent can override auto-populated weather if it does not match site conditions. |
+| 738 | **Workforce tracker** | A workforce tracking section must list which vendors/subcontractors were on site and how many workers each had. The section must support: adding vendors from a dropdown (filtered to project team), entering headcount per vendor, entering hours per vendor, and specifying the trade. A total headcount is auto-calculated. |
+| 739 | **Work performed narrative** | A work performed section must allow the superintendent to describe work completed that day. The system must support both free-text narrative and structured entry (by trade/area). AI assistance must be available: the superintendent can dictate via voice or type a rough narrative, and the AI structures it into trade-categorized work items with schedule task linkages. |
+| 740 | **Material delivery log** | A material delivery section must allow logging deliveries received: description, vendor, quantity, PO reference (auto-matched), and received-by signature. The delivery log must support attaching delivery ticket photos. Logged deliveries must auto-update PO received quantities. |
+| 741 | **Equipment on site** | An equipment tracking section must list equipment on site that day: equipment name/type, owned or rented, vendor (if rented), and hours used. Equipment entries can be carried forward from the previous day. |
+| 742 | **Visitor log** | A visitor log section must record all non-worker visitors to the site: name, company, purpose, time in, and time out. Common visitor types include: client, architect, inspector, delivery driver, real estate agent. The visitor log supports liability documentation. |
+| 743 | **Safety observations** | A safety section must allow logging safety observations: both positive observations (PPE compliance, clean site) and concerns (missing guardrails, exposed wiring). Safety observations can be linked to photos and assigned to responsible parties for corrective action. |
+| 744 | **Photo upload with drag-and-drop** | The daily log must support photo upload via drag-and-drop and bulk upload (select multiple files). Photos are auto-processed by the AI photo pipeline (trade classification, phase detection, room identification, quality scoring). Photos can be annotated with captions and linked to specific work-performed items. |
+| 745 | **Carry forward from yesterday** | A "Carry Forward" button must pre-populate today's log with yesterday's vendors, equipment, and recurring entries. The superintendent reviews and adjusts (add/remove vendors, update headcounts) rather than re-entering everything from scratch. |
+| 746 | **Linked schedule tasks** | Work performed entries must support linking to schedule tasks: "Work performed today relates to [Task X]." When linked, the daily log entry can trigger a schedule progress update. The AI must suggest task links based on the work description and the current schedule. |
+| 747 | **Issue/delay reporting** | The daily log must support structured issue/delay reporting: issue description, category (weather, material, labor, design, permitting, client, other), severity (low, medium, high, critical), schedule impact (estimated days), cost impact (estimated dollars), and action required. Issues are visible on the project dashboard and trigger notifications to the PM. |
+| 748 | **Voice-to-text entry** | The daily log must support voice-to-text entry: the superintendent speaks their daily log into a mobile device, the system transcribes the audio, and the AI extracts structured data (work performed, vendors, issues, deliveries) from the transcription. The original audio is stored for reference. |
+| 749 | **Preview mode** | Before submitting, the superintendent must be able to preview the daily log as it will appear to others: formatted view with all sections, photos, and linked data. The preview must also show the client-friendly version that will appear on the client portal (if enabled). |
+| 750 | **Edit history with audit trail** | After a daily log is submitted, edits must be tracked with an audit trail: who changed what, when, and the previous value. Submitted logs can be edited by the author or by PM/admin roles, but all changes are logged. An "Edit History" button shows the complete change history. |
+| 751 | **Daily log photo gallery** | A dedicated photo gallery view must display all photos from a specific daily log in a grid layout with lightbox viewing. Photos can be reordered, annotated, and selectively marked as "client suitable" for portal display. |
+| 752 | **Export daily log as PDF** | Each daily log must be exportable as a formatted PDF including: date, weather, workforce, work performed, deliveries, equipment, visitors, safety observations, issues, and photos. The PDF must include the builder's branding. PDF export is used for client updates, lender documentation, and project records. |
+| 753 | **Notification confirmation** | Upon submitting a daily log, the system must confirm which notifications were sent: "Daily log submitted. PM [name] notified. Client portal updated." The confirmation must list all notification recipients so the superintendent knows who was informed. |
+
+---
+
+### Document Management Page — Interactive Features (GAP-754 through GAP-768)
+
+The document management page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 754 | **Folder tree navigation** | Documents must be organized in a configurable folder tree per project. The default folder structure is configurable per builder (Module 2) with common folders: Plans, Contracts, Permits, Insurance, Invoices, Change Orders, Submittals, Photos, Correspondence, Closeout. Builders can add, rename, and reorganize folders. Folders support nesting. |
+| 755 | **Drag-and-drop upload with auto-categorization** | Uploading a document via drag-and-drop must trigger the AI document classification pipeline (Ingestion Point 4). The AI auto-categorizes the document type and suggests the appropriate folder. The user can accept the suggestion or manually assign a folder. |
+| 756 | **Bulk upload with progress indicator** | Multiple files must be uploadable simultaneously (drag multiple files or use a multi-file picker). A progress indicator must show: file name, upload progress %, AI processing status, and classification result for each file. Bulk upload must handle 50+ files without timeout. |
+| 757 | **Full-text search** | A search box must support full-text search across all documents: file name, AI-extracted text (OCR), tags, and metadata. Search results must display: file name, document type, date, matching text snippet, and relevance score. Results must be clickable to open the document preview. |
+| 758 | **Filter by type, trade, date, uploader** | The document list must be filterable by: document type (plan, contract, invoice, permit, photo, etc.), trade/cost code association, date range (uploaded or document date), and uploaded-by user. Filters can be combined and are displayed as removable chips. |
+| 759 | **Version history with comparison** | Each document must support version tracking: when a new version is uploaded, the system retains all previous versions. A version history panel shows: version number, date, uploaded by, and change notes. A comparison tool must allow viewing two versions side-by-side (for PDFs and images). The current/latest version is the default view. |
+| 760 | **Document preview without downloading** | Documents must be previewable in-browser without downloading: PDFs rendered in a viewer, images displayed directly, Office documents rendered via a preview service. The preview must support: zoom, page navigation (for multi-page documents), and rotation. |
+| 761 | **Annotation/markup tools** | The document viewer must support annotation and markup: text comments (sticky notes), drawing tools (lines, arrows, rectangles, circles), highlighter, text overlay, dimension measurement, and callout labels. Annotations are saved per user and can be shared with team members or vendors. Markup layers can be toggled on/off. |
+| 762 | **Sharing controls** | Each document must have configurable sharing controls: who can view this document (internal only, client portal visible, vendor portal visible, specific users). Sharing settings default to folder-level settings but can be overridden per document. A "Share" button generates a secure sharing link with optional expiration. |
+| 763 | **Expiration tracking with alerts** | Documents with expiration dates (insurance certificates, permits, licenses, bonds) must display expiration countdowns and trigger alerts at configurable intervals (30, 14, 7 days before expiration). Expired documents must be prominently flagged. An "Expiring Documents" dashboard widget shows all documents approaching expiration. |
+| 764 | **Download with watermark option** | When downloading documents, the system must support optional watermarking: builder logo overlay, "DRAFT" or "FOR REFERENCE ONLY" text, or a custom watermark. Watermark settings are configurable per document type. Watermarking is especially important for plans and specifications shared with vendors. |
+| 765 | **Batch operations** | The document list must support selecting multiple documents and performing batch operations: move to folder, add tags, delete, change sharing settings, and download as ZIP. Batch delete requires confirmation with a count of affected files. |
+| 766 | **Recent documents and favorites** | A "Recent" section must show the last 20 documents viewed or uploaded by the current user. A "Favorites" section must allow users to star/favorite documents for quick access. Recent and Favorites are displayed as a sidebar or tab alongside the folder tree. |
+| 767 | **Document status indicators** | Each document must display a status indicator: Draft, Pending Review, Approved, Expired, Superseded. Status badges use the consistent color scheme from Part 4. Documents pending review must be surfaced in the "Needs Attention" dashboard widget. |
+| 768 | **E-signature integration** | Documents that require signatures (contracts, change orders, lien waivers, selection approvals) must integrate with the e-signature module (Module 38). A "Send for Signature" button initiates the e-signature workflow directly from the document viewer. Signed documents are automatically filed and marked with a "Signed" status badge. |
+
+---
+
+### Reports Page — Interactive Features (GAP-769 through GAP-780)
+
+The reports page must support the following interactive capabilities:
+
+| # | Feature | Requirement |
+|---|---------|-------------|
+| 769 | **Report library** | The reports page must display a library of pre-built reports organized by category (Financial, Operational, Scheduling, Procurement, HR, Compliance, Client, Forecasting — as defined in Part 3). Each report shows: name, description, category, and a preview thumbnail. Reports are searchable by name and keyword. |
+| 770 | **Report builder** | A drag-and-drop custom report builder must be available for creating new reports (as specified in Part 3, Custom Report Builder section). Users can select data sources, drag fields to columns/rows/filters, configure grouping and aggregation, choose chart type, and apply conditional formatting. The builder must include a live preview that updates as the report is configured. |
+| 771 | **Report scheduling** | Any report (built-in or custom) must be schedulable for automatic generation and distribution: daily, weekly, monthly, or custom schedule. The scheduled report is generated as PDF and/or Excel and emailed to a configurable recipient list. Scheduled reports include the latest data at generation time. |
+| 772 | **Report favorites and recently run** | The reports page must display a "Favorites" section (user-starred reports) and a "Recently Run" section (last 10 reports run by the user) for quick access. Reports can be pinned to favorites with one click. |
+| 773 | **Parameter selection before running** | Before running a report, the system must present a parameter selection screen: date range, project (single, multiple, or all), vendor (single, multiple, or all), cost code range, and any report-specific parameters. Parameters must have sensible defaults (e.g., date range defaults to current month). |
+| 774 | **Multi-format export** | Every report must be exportable in multiple formats: PDF (formatted for print), Excel (.xlsx with data and formatting), Word (.docx for editable reports), and CSV (raw data). The export button must offer all format options. PDF exports must include the builder's branding. |
+| 775 | **Interactive charts** | Charts within reports must be interactive: hover shows data point details (value, label, percentage), click drills down to the underlying data rows, and charts can be toggled between chart types (bar, line, pie) without re-running the report. Charts must support zoom for large datasets. |
+| 776 | **Comparative reporting** | The system must support comparative reporting: select 2 or more projects, periods, or vendors to compare side-by-side. Comparative reports display: each entity in its own column, a variance column, and percentage change. This is useful for benchmarking projects, evaluating vendor performance, and period-over-period analysis. |
+| 777 | **Report templates** | Custom reports must be saveable as templates that are reusable and shareable within the builder's team. Templates include: data source configuration, field selection, filters, grouping, chart type, and formatting. Templates are organized in personal or shared folders. |
+| 778 | **Client-formatted reports** | The system must support generating reports in a client-friendly format: professional layout with builder branding (logo, colors, contact info), no internal cost data or margins, simplified language, and a polished PDF output suitable for lender or client distribution. Client-formatted versions must be selectable as an export option on applicable reports. |
+| 779 | **AI-generated narrative summaries** | Reports must support optional AI-generated narrative summaries: a plain-language paragraph summarizing the key findings, trends, and anomalies in the report data. The narrative is generated by the AI engine and displayed at the top of the report. The user can edit the narrative before exporting. Example: "The Johnson Residence is 4.2% over budget driven primarily by a $12,400 overrun in framing labor. Schedule is currently 3 days behind plan with the critical path running through electrical rough-in." |
+| 780 | **Report archiving** | The system must support saving a report as a point-in-time snapshot (archive). Archived reports preserve the exact data and formatting as of the archive date — they do not change when underlying data changes. Archived reports are stored with the archive date, generated-by user, and a label. This is used for historical reference, lender documentation, and audit compliance. |
+
+---
+
+*Document Version: 1.2*
 *Created: 2026-02-12*
-*Status: Complete — covers all 83 pages with structured output schemas for every data type*
+*Updated: 2026-02-12 — Added Part 5: Per-Page Interactive Feature Requirements (GAP-621 through GAP-780) covering Dashboard, Project List, Project Detail, Budget, Schedule, Invoice/Billing, Vendor Profile, Selection, Daily Log, Document Management, and Reports pages*
+*Status: Complete — covers all 83+ pages with structured output schemas for every data type, plus 160 per-page interactive feature requirements*

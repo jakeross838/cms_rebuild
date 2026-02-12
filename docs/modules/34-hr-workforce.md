@@ -59,6 +59,14 @@ certification tracking for trade licenses and safety training.
 - Batch approval for supervisors managing multiple crew members
 - Overtime flagging: highlight hours exceeding 40/week or 8/day (state-dependent)
 
+### Edge Cases & What-If Scenarios
+
+1. **Timesheet dispute process.** When an employee disputes a timesheet entry (e.g., disagrees with recorded hours, claims GPS was inaccurate, or disputes a supervisor's edit), the system must provide a formal dispute workflow. Employees can flag specific time entries with a dispute reason and supporting evidence (photos, notes). Disputed entries are highlighted in the approval queue and cannot be finalized until resolved. Resolution options include: supervisor adjusts the entry (with audit trail), employee accepts the original entry, or escalation to a designated arbitrator (owner/admin). The system must maintain a complete audit trail of all disputes -- who disputed, what was the original value, what was the resolution, and who approved it -- for labor compliance documentation.
+
+2. **Union and non-union employees on the same team.** Builders with both union and non-union employees face different labor rules for each group: different overtime calculations, different break requirements, different benefit structures, and different reporting obligations. The system must support tagging employees as union or non-union (and by specific local/trade union), with per-group configuration of overtime rules, break policies, burden rate components, and pay period structures. Union employees may have additional tracking requirements such as apprentice-to-journeyman ratios, union dues withholding, and pension fund contributions that must be captured in the labor burden calculation. Timesheet exports must support separate formatting for union vs. non-union payroll processing.
+
+3. **Labor burden calculation transparency and auditability.** The fully burdened hourly rate has significant financial implications -- it directly affects project profitability calculations, job costing accuracy, and bid pricing. The system must make the burden calculation fully transparent: every component (FICA, FUTA, SUTA, workers' comp, health insurance, retirement, PTO accrual, other benefits) must be individually visible with its rate and dollar amount per hour. A "Show Calculation" view must break down exactly how the burdened rate was derived for any employee at any point in time. Historical burden rates must be preserved (not overwritten) so that project labor costs can be accurately reconstructed during audits. When any burden rate component changes, the system must show the impact: "This change increases the burdened rate for [Employee] from $X/hr to $Y/hr, affecting N active projects."
+
 ### Labor Burden Calculation
 - Base wage rate per employee
 - Burden rate components (all configurable per builder):

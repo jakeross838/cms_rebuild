@@ -43,6 +43,10 @@ A client-facing portal that gives homeowners/clients controlled visibility into 
 - Footer text and links configurable (privacy policy, terms, contact info)
 - Mobile-responsive design inherits branding
 
+#### Edge Cases & What-If Scenarios
+
+1. **White-label branding leaks.** The system must ensure there are no "leaks" of the platform's branding in the client-facing portal. This includes: all email notifications using the builder's from address and branding (never the platform name), all error pages and system-generated messages displaying the builder's brand, no platform logos or links in the footer or metadata, custom domain SSL certificates showing the builder's domain (not the platform), and mobile browser tab titles and favicons using the builder's brand. A pre-launch branding audit checklist must verify zero platform branding is visible to clients.
+
 ### 2. Content Visibility Configuration
 
 Builder settings panel with toggles for each content section:
@@ -130,6 +134,10 @@ Builder settings panel with toggles for each content section:
 - Communication log includes: date, type (call/text/meeting/email), summary, logged by whom
 - Urgent message flagging with push notification
 
+#### Edge Cases & What-If Scenarios
+
+1. **Client disputes information shown in the portal.** When a client disagrees with data displayed in the portal (e.g., budget figures, schedule dates, selection records), there must be a clear communication channel for raising disputes. The portal messaging system must support a "dispute" message type that is flagged for priority review by the builder. The builder can then update the contested information, add an explanatory note visible to the client, or respond through the message thread. All disputes and resolutions are logged in the communication history for audit purposes.
+
 ### 8. Document Sharing
 
 - Builder controls which documents are visible to client per document and per category
@@ -140,6 +148,10 @@ Builder settings panel with toggles for each content section:
 - E-signature integration for contracts and change orders
 - Document version control visible to client (latest version highlighted)
 - Automatic document sharing rules (e.g., all signed change orders auto-shared)
+
+#### Edge Cases & What-If Scenarios (continued)
+
+2. **Client shares login credentials with a third party.** When a client shares their credentials with a designer, architect, or family member, the system should handle this gracefully. Rather than shared passwords, the system must support a "guest invite" feature where the client can invite additional users with view-only access to specific portal sections. Guests authenticate with their own credentials and have a limited permission set (view progress, view photos, view selections -- no approval or messaging capability). Builder controls whether guest invitations are allowed. If anomalous login patterns are detected (e.g., simultaneous sessions from different geolocations), the system should alert the builder rather than locking the client out.
 
 ### 9. Client Notifications
 
@@ -340,7 +352,7 @@ PUT    /api/v2/portal/notifications/preferences     # Client updates preferences
 
 ## Open Questions
 
-1. Should clients be able to invite additional users (e.g., spouse, designer, realtor) with the same or restricted access?
+1. Should clients be able to invite additional users (e.g., spouse, designer, realtor) with the same or restricted access? (Note: gap analysis identifies credential sharing as a risk -- if clients share their login with a designer or architect, the system should allow the client to invite guests with view-only access rather than sharing credentials. See Section 7 edge cases.)
 2. What is the authentication mechanism for clients? Same auth system as builder staff, or separate lighter-weight auth (magic link, social login)?
 3. Should the portal support a native mobile app wrapper, or is mobile-responsive web sufficient for V1?
 4. How do we handle the client whose project is complete -- do they retain portal access indefinitely, for a fixed period, or only during warranty?

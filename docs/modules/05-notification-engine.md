@@ -82,6 +82,10 @@ Also references:
 - Failed deliveries retry with exponential backoff (3 attempts, 1m / 5m / 30m).
 - Delivery status tracked per notification per channel: `pending`, `sent`, `delivered`, `failed`, `bounced`.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Incorrect email or phone number handling:** When a user's email address or phone number is incorrect, the system must handle bounces and delivery failures gracefully. Required behavior: (a) email bounces (hard bounce from SendGrid/SES webhook) must automatically mark the user's email as `undeliverable` after 2 consecutive hard bounces, (b) SMS delivery failures (invalid number from Twilio) must mark the phone as `undeliverable` after 3 consecutive failures, (c) users with undeliverable channels must see a banner in the app: "Your email/phone appears to be invalid — update it in Settings to receive notifications," (d) the builder admin must be able to see a report of users with undeliverable contact info, and (e) the system must fall back to in-app notifications for users whose external channels are all undeliverable.
+
 ### 5.3 User Preferences (Gap 482, 484)
 
 **Per-User Channel Preferences**
@@ -96,6 +100,12 @@ Also references:
 - In-app and email are unaffected (email is async by nature; in-app queues silently).
 - Critical-urgency notifications (e.g., safety incident) bypass quiet hours with a separate user opt-in.
 - Builder-level quiet hours can set a floor (e.g., no notifications before 6am or after 10pm regardless of user setting).
+
+**Quiet Hours Conflict Resolution:**
+- When user-level and builder-level quiet hours conflict, the MORE restrictive setting wins. For example, if the builder sets quiet hours 10pm-6am and a user sets 9pm-7am, the effective quiet hours are 9pm-7am (union of both ranges).
+- If a user sets NO quiet hours but the builder has quiet hours configured, the builder's quiet hours still apply as a floor.
+- If the builder explicitly disables quiet hours enforcement (e.g., for emergency response builders), user-level quiet hours still apply for that user.
+- Critical-urgency notifications bypass BOTH user and builder quiet hours (if the user has opted in to critical bypass).
 
 **Mute / Snooze**
 - Users can mute a specific project's notifications temporarily (1 hour, until tomorrow, until I turn back on).
@@ -116,6 +126,16 @@ Also references:
 **Cross-Project Summary (Gap 485)**
 - Users working on 5+ projects receive a daily summary email: key events per project, items needing attention, upcoming deadlines.
 - This is the email counterpart to the "My Day" dashboard view (Module 4, Gap 528).
+
+#### Edge Cases & What-If Scenarios
+
+1. **Notification storm from bulk operations:** Bulk operations (importing 500 invoices, mass status changes, batch vendor invitations) can generate hundreds or thousands of notifications simultaneously, flooding user inboxes and degrading system performance. Required behavior:
+   - **Bulk operation detection** — when more than N events of the same type are emitted within a T-second window by the same user/process (default: N=10, T=60), activate storm protection
+   - **Digest mode** — instead of N individual notifications, collapse into a single digest: "500 invoices were imported by [user] — [View Summary]"
+   - **Per-event-type throttling** — configurable max notifications per user per hour per event type (default: 50). Excess notifications are silently queued and delivered in the next digest cycle
+   - **Digest schedule** — when storm protection is active, queued notifications are delivered as a digest every 15 minutes (configurable)
+   - **Priority bypass** — certain notification types are NEVER throttled: security alerts (login from new device), payment failures, compliance deadlines, system outages
+   - **Background job awareness** — bulk import jobs, migration scripts, and scheduled tasks should emit a single "batch_complete" event rather than per-record events. This is an API contract: bulk endpoints must use `notification_mode: 'batch'` parameter
 
 ### 5.5 Notification Templates (Gap 483)
 
@@ -359,3 +379,4 @@ CREATE TABLE user_project_mutes (
 4. **Webhook for automation**: Should the webhook channel support outgoing webhooks to Zapier/Make/n8n for builders who want to build custom automations? This could be a powerful differentiator.
 5. **Notification retention**: How long are notifications kept? Suggested: 90 days in main table, then archived. Delivery logs kept 30 days.
 6. **Rate limiting**: Should there be a per-user notification rate limit to prevent notification fatigue from bulk operations (e.g., importing 500 invoices fires 500 "invoice created" notifications)?
+

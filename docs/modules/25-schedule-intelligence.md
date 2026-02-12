@@ -53,6 +53,14 @@ The system analyzes completed tasks across all finished projects for a builder t
 - **Cold Start:** New builders get industry-average durations by region until they accumulate 5+ completed projects per task type.
 - **Continuous Learning:** Models retrain nightly as new project data flows in. Builders can exclude outlier projects from training data.
 
+### Edge Cases & What-If Scenarios
+
+1. **Unique custom homes with little or no historical data.** When a builder's projects are predominantly one-of-a-kind custom homes with unique scopes, the AI has less historical data per task type for reliable duration predictions. The system must be transparent about confidence levels in these cases: display "Low confidence -- based on N data points" alongside any prediction where the sample size is below the minimum threshold. For builders with insufficient per-tenant data, the system should lean more heavily on cross-tenant anonymized benchmarks (with consent) and regional averages. The confidence scoring UI must make it obvious when a prediction is extrapolated rather than data-backed, so PMs adjust schedules accordingly.
+
+2. **Team consistently padding schedule estimates.** If a builder's team habitually adds buffer to their estimates (e.g., estimating 10 days for tasks that consistently complete in 7), the AI should detect this pattern over time. The system must track planned-vs-actual variance per task type and per estimator, and surface the pattern: "Your framing tasks are consistently completing 30% faster than estimated -- consider adjusting." The AI should offer an "auto-adjusted" duration suggestion that accounts for the historical padding, presented alongside the user's original estimate. This detection must be configurable: builders can opt out if they intentionally pad for risk management reasons.
+
+3. **Vendor availability data reliability.** The resource leveling engine depends on accurate vendor availability windows, but vendor-provided availability is often unreliable (vendors overcommit, do not update calendars, or no-show). The system must track vendor schedule reliability as a metric: what percentage of the time does a vendor show up on the scheduled date? This reliability score must factor into the risk scoring algorithm -- a vendor with 60% on-time reliability increases the task risk score. The system should also support fallback vendor suggestions when the primary vendor's reliability is below a configurable threshold, and integrate with Module 22 (Vendor Performance) to make scheduling reliability visible during vendor selection.
+
 ### 25.2 Weather-Adjusted Scheduling
 
 Integrate real-time and forecast weather data to proactively adjust schedules for weather-sensitive tasks.

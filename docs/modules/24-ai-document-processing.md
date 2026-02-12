@@ -62,6 +62,14 @@ The system automatically classifies incoming documents into categories (Gap 504)
 - Confidence score on classification: high (>90%), medium (70-90%), low (<70%).
 - Documents below the confidence threshold are queued for human review.
 
+### Edge Cases & What-If Scenarios
+
+1. **Document containing multiple invoices or mixed document types.** A single uploaded file (especially scanned PDFs from email) may contain multiple invoices, a combined invoice and lien waiver, or other mixed document types within one file. The system must detect page-level boundaries between distinct documents using layout analysis and classification confidence per page. When multiple documents are detected in a single file, the system splits them into separate processing records, each with its own classification and extraction. The user is notified of the split and can adjust boundaries if the AI got them wrong.
+
+2. **Mixed typed and handwritten text in a single document.** Field documents frequently combine printed forms with handwritten entries (e.g., a typed invoice with handwritten notes, or a daily report template filled in by hand). The OCR pipeline must support hybrid recognition: typed text processed via standard OCR, handwritten regions processed via handwriting recognition (HTR) models. Confidence scores for handwritten fields should be inherently lower, and the system should route these fields to the human review queue more aggressively. The extraction review UI must clearly indicate which fields came from handwritten vs. typed text.
+
+3. **AI correction feedback loop must be frictionless and effective.** The value of the AI document processing system depends on a virtuous cycle: users correct errors, corrections train the model, accuracy improves, and user trust grows. If corrections are difficult to make, users will stop correcting and lose trust in the system. Every extracted field must be correctable with a single click to edit. Corrections must include a "why this was wrong" optional tag (e.g., "wrong vendor," "misread amount," "wrong document type") to provide structured training signal. The system must track correction rates per document type and per field, display accuracy improvement trends to users ("Your invoice extraction accuracy improved from 82% to 94% over the last 3 months"), and surface a "why this suggestion" explanation (Gap 503) to build transparency and trust.
+
 ### 2. Data Extraction with Confidence Scoring
 
 - For each document type, the system extracts structured fields using OCR + NLP (Gap 498).

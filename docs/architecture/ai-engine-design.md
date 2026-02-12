@@ -977,6 +977,211 @@ This AI integration creates a platform that:
 
 ---
 
+## 14a. Competitive-Moat AI Features (Gaps 1070-1085)
+
+These are the AI intelligence features that differentiate RossOS from every competitor. They require accumulated builder data (minimum thresholds noted) and improve with every project completed on the platform.
+
+### 14a.1 Estimate Intelligence (Gap 1070)
+
+After a builder has completed 10+ projects on the platform, the AI can generate a preliminary estimate from floor plans + finish level within +/-15% accuracy.
+
+**How it works:**
+- Builder uploads floor plans and specifies finish level (builder-grade, mid-range, high-end, luxury)
+- AI extracts dimensions, room counts, and features from plans (Section 2.4)
+- Cross-references with the builder's own historical cost data per SF, per cost code, per finish level
+- Produces a preliminary estimate with line items, ranges (low/expected/high), and confidence scores per line
+- Highlights line items where builder's historical data is thin (fewer than 3 comparable projects) and falls back to platform benchmarks
+
+**Accuracy targets:**
+- 10-20 completed projects: +/-15% on total, +/-25% on line items
+- 20-50 completed projects: +/-10% on total, +/-18% on line items
+- 50+ completed projects: +/-7% on total, +/-12% on line items
+
+**Learning loop:** Every estimate vs. actual comparison (at project closeout) feeds back to improve future estimates for that builder.
+
+### 14a.2 Schedule Intelligence (Gap 1071)
+
+AI predicts realistic task durations based on project size, complexity, season, region, and the builder's own historical performance.
+
+**Inputs:**
+- Project square footage, story count, foundation type, roof complexity
+- Season and region (winter in northern climates = longer exterior work)
+- Builder's historical actual-vs-planned duration per task type
+- Vendor-specific performance data (some framers are faster than others)
+- Current vendor workload (overbooked vendors take longer)
+
+**Outputs:**
+- Suggested duration for each task with confidence interval
+- "Optimistic / Expected / Pessimistic" range for total project duration
+- Flags where the builder's entered duration is unrealistic compared to historical data
+- Seasonal adjustment warnings ("concrete work in January typically takes 40% longer for your region")
+
+### 14a.3 Vendor Matching (Gap 1072)
+
+"For this scope on this type of project, these 3 vendors historically perform best for you."
+
+**Matching criteria (weighted):**
+- Historical performance score for this trade (Module 22)
+- Price competitiveness for this scope size
+- Current availability / active job count with this builder
+- Geographic proximity to the project
+- Historical relationship with this builder (repeat vendor bonus)
+- Specialty match (not all electricians do high-end custom homes)
+
+**Output:** Ranked list of recommended vendors with: performance score, last project together, typical bid range for this scope size, current workload, and a "match confidence" score.
+
+### 14a.4 Price Anomaly Detection (Gap 1073)
+
+"This invoice is 40% higher than the last 5 similar invoices from this vendor -- review?"
+
+**Detection rules:**
+- Invoice amount vs. rolling average for this vendor + cost code (flag if >25% deviation)
+- Invoice amount vs. PO amount (flag if >5% over PO without approved CO)
+- Line item unit prices vs. historical range for this vendor
+- Total project cost per SF vs. historical average (flag if trending above 90th percentile)
+- Vendor-to-vendor comparison: this vendor's invoice for scope X is 30% higher than the average of other vendors for the same scope
+
+**Alert levels:**
+- Informational: 15-25% deviation ("FYI: slightly above typical range")
+- Warning: 25-50% deviation ("Review recommended before approval")
+- Critical: >50% deviation or match to known fraud patterns ("Approval blocked pending review")
+
+### 14a.5 Budget Forecasting (Gap 1074)
+
+"Based on current spending rate, this project will finish $23K over budget. Here are the 3 line items driving the overrun."
+
+**Forecasting model:**
+- Projects total cost-at-completion for every budget line using: committed costs (POs + approved COs) + actual costs to date + estimated remaining (based on % complete and historical cost curves)
+- Identifies the top 3-5 line items contributing most to the projected overrun
+- Provides specific recommendations: "Negotiate scope reduction on interior trim," "Defer landscaping upgrades to post-closeout," "Submit VE suggestion for cabinet hardware"
+- Updates daily as new invoices and POs are processed
+- Accuracy improves with builder's historical project data (more projects = better cost curves)
+
+### 14a.6 Change Order Prediction (Gap 1075)
+
+"Based on 50 similar projects, clients typically add a pool during framing. Proactively discuss?"
+
+**Pattern detection:**
+- Analyzes all historical change orders across the builder's completed projects
+- Identifies common CO patterns by: project phase, project type, client profile, and scope area
+- Triggers proactive alerts at the relevant project phase: "80% of your luxury custom clients add landscape lighting after framing — budget $12K-$18K contingency"
+- Helps builders set accurate allowances and manage client expectations early
+
+### 14a.7 Schedule Risk Prediction (Gap 1076)
+
+"Based on weather forecast and current pace, there's a 72% chance of missing the drywall deadline. Recommend: schedule 2-day buffer."
+
+**Risk factors analyzed:**
+- Weather forecast vs. remaining outdoor tasks (Section 4.1)
+- Current pace vs. planned pace (actual durations / planned durations ratio)
+- Vendor reliability scores for upcoming critical-path vendors
+- Historical slippage patterns for this project type and phase
+- Material lead times vs. scheduled need dates
+- Permit/inspection wait times for the jurisdiction
+
+**Output:** Probability of missing each upcoming milestone, specific risk drivers, and actionable recommendations (add buffer, pre-order materials, schedule backup vendor, etc.).
+
+### 14a.8 Scope Gap Detection (Gap 1081)
+
+Compare all vendor contracts / POs to the complete scope of work and identify items nobody is responsible for.
+
+**How it works:**
+- AI ingests the project's complete scope description (from contract, plans, and specifications)
+- Maps all active vendor contracts, POs, and subcontracts to scope items
+- Identifies scope items that are not covered by any vendor commitment
+- Identifies potential overlap (two vendors both covering the same scope item)
+- Generates a "Scope Coverage Report" showing: covered items (green), uncovered items (red), overlapping items (yellow)
+
+**Timing:** Run automatically at pre-construction kickoff (after contracts are entered) and re-run whenever a new contract or PO is added.
+
+### 14a.9 Photo-Based Progress Assessment (Gap 1082)
+
+AI analyzes site photos to estimate construction progress percentage.
+
+**Status:** Future feature, high R&D investment required. Phase 4+ implementation.
+
+**Concept:**
+- Builder takes regular site photos from consistent vantage points
+- AI compares current photos to expected construction state based on schedule
+- Estimates % complete per visible trade (framing, drywall, finishes)
+- Flags discrepancies between reported progress and visual evidence
+- Requires training data from hundreds of completed projects with photo timelines
+
+### 14a.10 Warranty Prediction (Gap 1083)
+
+"Based on historical warranty claims, homes with [this vendor's] plumbing rough-in have 3x more warranty calls. Consider additional inspection."
+
+**Analysis:**
+- Correlates warranty claims with: vendor who performed the work, inspector who passed it, time of year installed, material brands used, and project type
+- Identifies statistically significant predictors of warranty issues
+- Triggers proactive alerts during construction: "This vendor's HVAC installations have a 23% warranty callback rate vs. 8% average — consider third-party inspection before cover-up"
+- Helps builders make vendor selection decisions and inspection resource allocation
+
+### 14a.11 Seasonal Pattern Learning (Gap 1084)
+
+"October is historically your busiest month for permit delays in Manatee County. Submit permits 2 weeks earlier."
+
+**Patterns tracked:**
+- Permit processing times by jurisdiction and month
+- Material price fluctuations by season (lumber prices, concrete, etc.)
+- Vendor availability by season (everyone is busy in spring)
+- Weather impact on schedule by region and month
+- Client decision speed by season (holidays slow down selections)
+
+**Actionable output:** Calendar overlay showing seasonal risk factors for the builder's region and typical project timeline.
+
+### 14a.12 Profitability Pattern Analysis (Gap 1085)
+
+"Projects where selections are finalized before framing average 8% higher profit margin. Push for earlier selection deadlines."
+
+**Patterns analyzed:**
+- Profit margin correlation with: selection timing, contract type, client profile, project size, permitting timeline, vendor selection, and pre-construction duration
+- Identifies statistically significant profitability drivers for this specific builder
+- Generates quarterly "Profitability Insights" report with actionable recommendations
+- Tracks whether the builder acts on recommendations and whether outcomes improve
+
+### 14a.13 Document Auto-Classification (Gap 1077)
+
+Email attachment or file upload triggers AI to auto-identify the document type: invoice, bid, COI, lien waiver, plan set, permit, inspection report, contract, change order, W-9, or other.
+
+**How it works:**
+- AI analyzes document layout, header text, keywords, and structural patterns to classify the document type
+- Classification confidence score determines routing:
+  - High confidence (>90%): auto-route to the correct processing pipeline (e.g., invoice goes to invoice extraction, COI goes to compliance tracking)
+  - Medium confidence (70-90%): route with a suggested classification that the user confirms
+  - Low confidence (<70%): present classification options for user selection
+- Supports multi-document uploads: a batch of 20 files are each individually classified and routed
+- Learning loop: user corrections to misclassifications feed back to improve the model for this builder's specific document patterns
+
+**Integration with Section 0 (Unified AI Processing Layer):** Document auto-classification is the first step in the processing pipeline. Once classified, the document enters the type-specific extraction schema defined in Section 0.
+
+### 14a.14 Cash Flow Optimization (Gap 1079)
+
+"If you submit Draw #4 by Friday, you'll avoid a cash flow gap next Tuesday. Here's the package ready for review."
+
+**Proactive capabilities beyond Section 3.2 forecasting:**
+- Identifies upcoming cash flow gaps and recommends specific actions to prevent them
+- Draw timing optimization: analyzes lender processing times and recommends optimal draw submission dates
+- Invoice batching recommendations: "Pay these 3 vendors together next Thursday rather than separately this week to improve cash position by $15K through Friday"
+- Retainage release alerts: "Project X retainage of $42K is eligible for release — submit request to capture cash"
+- Client payment acceleration: "Client Y typically pays 5 days faster when draw requests include progress photos — include photos?"
+- Weekly cash flow action items integrated into the morning dashboard (Module 04)
+
+### 14a.15 Client Communication Drafting (Gap 1080)
+
+AI drafts weekly client updates from daily logs, photos, and schedule data. PM reviews and sends.
+
+**How it works:**
+- AI aggregates the past week's data: daily logs, schedule progress, photos, milestones achieved, issues resolved, upcoming activities
+- Generates a professional client update email including: summary of work completed, photos of notable progress, upcoming schedule items for next 2 weeks, any decisions needed from the client (selections, change orders), and current budget/schedule status
+- PM reviews the draft in the communication module, edits as needed, and sends via the client portal or email
+- Tone is configurable per builder: formal, conversational, or technical
+- Client communication frequency is configurable: weekly (default), bi-weekly, or on milestone completion
+
+**Integration with Module 29 (Client Portal):** AI-drafted updates can be sent as email or posted directly to the client portal as a project update.
+
+---
+
 ## Future AI Capabilities
 
 ### AI Code Compliance Check

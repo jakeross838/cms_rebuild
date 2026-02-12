@@ -50,6 +50,11 @@ Comprehensive financial reporting engine covering job-level profitability, portf
 | 456 | AI-generated narrative reports | LLM-powered report summaries |
 | 457 | Client-facing reports different from internal | Dual-audience report templates |
 | 458 | Report data from multiple modules | Cross-module data aggregation |
+| 1065 | Tax preparation support — 1099 generation, sales tax filing data, quarterly tax estimates | Tax preparation report package with 1099, sales tax, and estimated tax calculation |
+| 1066 | Insurance audit data preparation — payroll by class code, subcontractor spend by trade | Insurance audit data export with payroll and sub costs organized by class code |
+| 1067 | Business performance review — year-over-year comparison, trend analysis, KPI scorecards | Annual business performance report with YoY comparisons and KPI trending |
+| 1068 | Strategic planning data — pipeline forecast, capacity planning, market trends | Strategic planning dashboard with forward-looking business intelligence |
+| 1069 | Employee review data — PM profitability rankings, super quality metrics, admin efficiency | Employee performance data reports for annual reviews |
 
 ---
 
@@ -185,6 +190,51 @@ Comprehensive financial reporting engine covering job-level profitability, portf
 - Gap reasons: lender holdback, retainage, disputed items.
 - Reconciliation report shows all draws with submission-to-disbursement tracking.
 
+### 7a. Quarterly/Annual Tax & Audit Reporting (Gaps 1065, 1066)
+
+**Tax Preparation Support (Gap 1065):**
+- 1099 generation: enhanced with pre-validation (verify all vendors have W-9, flag missing TINs) before year-end
+- Sales tax filing data: per-project, per-jurisdiction sales tax collected and remitted; state-specific filing format support
+- Quarterly estimated tax calculation: revenue and expense data organized for quarterly tax estimate preparation
+- Tax preparation package export: consolidated PDF/Excel package for builder's accountant/CPA
+
+**Insurance Audit Data Preparation (Gap 1066):**
+- Auto-generated audit data report containing:
+  - Payroll by workers' comp class code (from Module 34 HR data)
+  - Subcontractor spend by trade and class code
+  - Project-level cost breakdowns by insurance classification
+  - Certificate of insurance status for all subcontractors used during audit period
+- Exportable in CSV and PDF formats for the builder's insurance auditor
+- Historical comparison: current year vs. prior year for variance explanation
+
+### 7b. Business Performance & Strategic Reporting (Gaps 1067, 1068, 1069)
+
+**Annual Business Performance Review (Gap 1067):**
+- Year-over-year comparison: revenue, costs, margin, project count, average project size
+- Trend analysis: 3-5 year trends in key metrics with trendlines
+- KPI scorecard: configurable set of business KPIs with actual vs. target
+  - Revenue per employee
+  - Average project margin
+  - Average project duration vs. estimate
+  - Client satisfaction scores (from Module 29)
+  - Warranty cost as % of revenue
+  - Lead conversion rate (from Module 36)
+- Exportable as a polished presentation-ready report for stakeholder meetings
+
+**Strategic Planning Data (Gap 1068):**
+- Pipeline forecast: expected revenue from leads at each pipeline stage (from Module 36)
+- Capacity planning: current active projects vs. capacity based on team size and historical throughput
+- Market trend data: average project size, frequency, type mix trends over time
+- Revenue backlog: total contracted but uncompleted work
+- Resource utilization: which PMs and supers have capacity for new projects
+
+**Employee Performance Data (Gap 1069):**
+- PM profitability ranking: projects managed, average margin achieved, budget accuracy
+- Superintendent quality metrics: punch item count per project, inspection pass rates, daily log compliance
+- Office staff efficiency: invoice processing time, document turnaround, response times
+- All metrics presented as data-only reports for manager review; not auto-shared with employees
+- Configurable time periods: quarterly, semi-annual, annual
+
 ### 8. Configurable Report Builder (Gap #450)
 
 **Visual report builder:**
@@ -201,6 +251,20 @@ Comprehensive financial reporting engine covering job-level profitability, portf
 - Reports can be marked: owner-only, management, full team, or specific roles.
 - Shared reports are visible in the team's report library.
 - Personal reports are visible only to the creator.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Report generated with incorrect data due to a bug.** A scheduled or manually-generated report is sent to stakeholders but contains incorrect data (e.g., a calculation error, stale cache, or missing transactions). Required behavior:
+   - Every report run must be versioned and stored with a snapshot of the parameters and data used. This allows regeneration of the same report with the same parameters at any time.
+   - A "regenerate and redistribute" action must be available: builder clicks "Regenerate" on a report run, the system re-queries current data, generates a new report, and offers to email it to the same recipients with a "corrected report" subject line.
+   - Report runs must include a "data freshness" indicator showing the timestamp of the most recent underlying transaction included (e.g., "Data current as of Feb 12, 2026 3:45 PM").
+   - If a report references locked-period data, the data is guaranteed immutable. If a report spans locked and unlocked periods, the report must clearly indicate which data is from locked (verified) periods and which is from open (potentially changing) periods.
+
+2. **Builder needs reports beyond the visual builder.** The drag-and-drop report builder is insufficient for a power user who needs complex cross-module joins, custom aggregations, or non-standard calculations. Required behavior:
+   - Phase 1: the visual builder handles 90% of use cases. For the remaining 10%, provide a "request custom report" workflow where the builder describes what they need and the platform team builds it.
+   - Phase 2: introduce a "SQL query mode" (gated behind pro/enterprise tier) where power users or their accountants/consultants can write custom queries against a read-only reporting view of their data.
+   - The SQL query mode must enforce row-level security (builder can only query their own data) and must have query timeout limits to prevent performance issues.
+   - Custom SQL reports can be saved, scheduled, and shared just like visual builder reports.
 
 ### 9. Report Branding (Gap #451)
 - Builder's logo in the report header.

@@ -50,6 +50,14 @@ Pre-built reports available to all builders (not customizable beyond filters):
 - **Company-Wide:** Project Pipeline Summary, Resource Utilization, Vendor Scorecard, Safety Dashboard, Revenue Forecast
 - Each standard report has configurable filters (date range, project, phase, vendor, etc.)
 
+#### Edge Cases & What-If Scenarios
+
+1. **Standard vs. advanced reporting distinction.** The boundary between standard reports (all plans) and the custom report builder (pro/enterprise) must be clear to users. If a builder hits the limits of standard reports, the upgrade path must be seamless. Required behavior:
+   - Standard reports are fully functional with configurable filters and export. The limitation is that builders cannot add/remove columns, change grouping, or create calculated fields.
+   - When a builder attempts an action available only in the custom builder (e.g., clicks "Add Column" on a standard report), the system shows a clear upsell message: "Custom report columns are available on Pro plans. [Preview what you could build] [Upgrade]."
+   - The upgrade must preserve all existing report schedules and saved filter configurations.
+   - A "preview" mode lets standard-tier builders use the custom report builder to design a report and see a preview with sample data, but they cannot save or schedule it until they upgrade.
+
 ### Custom Report Builder
 - Visual interface: select data sources from available modules
 - Available data entities: projects, budgets, invoices, change orders, schedules, daily logs, vendors, employees, leads, safety records
@@ -61,6 +69,20 @@ Pre-built reports available to all builders (not customizable beyond filters):
 - Visualization options: table, bar chart, line chart, pie chart, area chart, KPI card
 - Saved report templates: save configuration for reuse
 - Report sharing: share with team members by role or by name
+
+#### Edge Cases & What-If Scenarios
+
+1. **Report generated with incorrect data.** A report is distributed to stakeholders but the underlying data was incorrect due to a sync delay, stale cache, or unposted transactions. Required behavior:
+   - Every generated report must include a "data freshness" timestamp showing the most recent transaction included.
+   - A "regenerate" action must be available on any previously-generated report that re-runs the query against current data and produces an updated version.
+   - If the regenerated report differs from the original, the system highlights the differences for the builder's review before redistribution.
+   - Builders can optionally notify original recipients of the correction via a one-click "send correction" action that attaches the regenerated report with a "CORRECTED" label.
+
+2. **Builder needs reports beyond the visual report builder.** Some builders (or their CPAs/consultants) need report capabilities that exceed the drag-and-drop builder's flexibility. Required behavior:
+   - Provide a "custom SQL query" mode (gated to enterprise tier) that gives read-only access to a reporting data view with row-level security enforcing tenant isolation.
+   - SQL queries must have execution time limits (default: 30 seconds) and row count limits (default: 100,000 rows) to prevent performance issues.
+   - Saved SQL queries become report templates that can be scheduled, exported, and shared like visual builder reports.
+   - For builders who do not want SQL access, provide a "request custom report" workflow where they describe their need and the platform support team builds the report definition for them.
 
 ### Configurable Dashboards
 - Dashboard builder: arrange report widgets on a grid layout

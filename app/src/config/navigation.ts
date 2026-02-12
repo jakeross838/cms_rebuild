@@ -14,6 +14,13 @@ import {
   ArrowLeft,
   Home,
   BarChart3,
+  BookOpen,
+  TrendingUp,
+  Puzzle,
+  GraduationCap,
+  LifeBuoy,
+  Palette,
+  Brain,
 } from 'lucide-react'
 
 export interface NavSubItem {
@@ -57,6 +64,11 @@ export const companyNav: NavItem[] = [
     label: 'Reports',
     icon: BarChart3,
     href: '/skeleton/reports',
+  },
+  {
+    label: 'Docs',
+    icon: BookOpen,
+    href: '/skeleton/docs',
   },
 ]
 
@@ -113,6 +125,28 @@ export const companyRightNav: NavItem[] = [
       { name: 'Assemblies', href: '/skeleton/library/assemblies', description: 'Estimate templates' },
       { name: 'Cost Codes', href: '/skeleton/library/cost-codes', description: 'Budget categories' },
       { name: 'Templates', href: '/skeleton/library/templates', description: 'Standard forms' },
+    ],
+  },
+  {
+    label: 'Intelligence',
+    icon: Brain,
+    items: [
+      { name: 'Price Intelligence', href: '/skeleton/price-intelligence', description: 'Material & labor pricing' },
+      { name: 'Marketing', href: '/skeleton/marketing', description: 'Portfolio & reviews' },
+    ],
+  },
+  {
+    label: 'Platform',
+    icon: Puzzle,
+    items: [
+      { name: 'Integrations', href: '/skeleton/api-marketplace', description: 'API & marketplace' },
+      { name: 'Onboarding', href: '/skeleton/onboarding', description: 'Setup wizard' },
+      { name: 'Data Migration', href: '/skeleton/data-migration', description: 'Import from other tools' },
+      { name: 'Subscription', href: '/skeleton/subscription', description: 'Plan & billing' },
+      { name: 'White Label', href: '/skeleton/white-label', description: 'Branding & customization' },
+      { name: 'Training', href: '/skeleton/training', description: 'Courses & certification' },
+      { name: 'Support', href: '/skeleton/support', description: 'Help center & tickets' },
+      { name: 'Admin', href: '/skeleton/admin', description: 'Platform analytics' },
     ],
   },
   {

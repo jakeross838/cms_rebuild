@@ -32,6 +32,7 @@ End-to-end bid solicitation, collection, comparison, and award management. Enabl
 | 491 | AI per-tenant vs. cross-tenant learning | Cross-tenant bid intelligence (anonymized) |
 | 498 | AI-powered data entry (upload bid, AI extracts) | AI bid document parsing |
 | 502 | AI anomaly detection | Flag bid amounts that deviate significantly from expected range |
+| 939 | Plan set distribution management — track which plan version went to which vendors, with read receipts | Plan distribution tracker with version control, delivery receipts, and superseded-plan alerts |
 
 ---
 
@@ -47,6 +48,14 @@ Build structured bid packages from project scope, plans, and specifications.
 - **Bid Form Configuration:** Builder defines what information vendors must provide: lump sum, unit prices, line-item breakdown, alternates, payment terms, schedule requirements, exclusions.
 - **Scope Inclusion/Exclusion Checklist:** Explicit checklist of what is and is not included in scope. Vendors acknowledge each item.
 - **Template Library:** Save and reuse bid package templates by trade and project type. Builder-specific template libraries.
+
+### Plan Set Distribution Management (Gap 939)
+- Track which version of construction plans was sent to which vendors, with timestamps
+- Read receipt tracking: confirm vendor received and opened the plan set
+- Version control: when plans are revised, auto-notify all vendors who received the prior version
+- Superseded plan alert: clearly flag that a newer plan version is available and the old version is no longer current
+- Distribution log per plan set: who received it, when, via what channel, which version
+- Prevent bidding on outdated plans: bid submission form validates against the latest plan version and warns if the vendor's bid references an older set
 
 ### 26.2 Bid Invitation and Tracking
 
@@ -78,6 +87,14 @@ Leverage AI to analyze bids, detect anomalies, and recommend award decisions.
 - **Scope Gap Detection:** AI identifies scope items that no bidder or only one bidder included. Alerts builder to potential scope holes.
 - **Award Recommendation:** Weighted scoring algorithm considering: price (configurable weight), vendor past performance, scope completeness, schedule compatibility, payment terms. Builder configures scoring weights.
 - **Historical Accuracy Tracking:** Track how actual project costs compared to winning bids. Feed back into vendor reliability scoring.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor submits a bid that is wildly different from others.** The anomaly detection feature must handle extreme outliers gracefully. Required behavior: (a) flag bids that deviate more than a configurable threshold (default: 30%) from the median of all submitted bids, (b) distinguish between "suspiciously low" (may indicate scope misunderstanding or buying the job) and "suspiciously high" (may indicate the vendor is not interested or has capacity constraints), (c) present the anomaly flag to the builder with context ("This bid is 45% below the next lowest -- review scope coverage carefully"), and (d) do not auto-reject anomalous bids -- always surface them for builder review with the relevant warnings.
+
+2. **Vendor disputes the bid comparison.** When a vendor believes the bid comparison is unfair (e.g., their bid was normalized incorrectly, scope items were miscategorized, or their qualifications were not factored), there must be a dispute process. Required behavior: (a) vendors can submit a "bid clarification" through the portal referencing specific comparison items, (b) the builder receives the clarification and can adjust the normalized data with an audit trail, (c) the comparison matrix displays a "revised" indicator when adjustments have been made, and (d) all clarifications and adjustments are part of the permanent bid record.
+
+3. **Bid normalization from different formats.** Vendors submit bids in different formats (lump sum, unit price, per-SF, hourly estimates), and the AI-powered normalization must be accurate enough to make comparisons meaningful. Required behavior: (a) the normalization engine converts all pricing to a common basis using the bid package's defined unit of measure, (b) when normalization requires assumptions (e.g., converting lump sum to per-SF requires a scope area), the system documents the assumptions used, (c) items that cannot be confidently normalized are flagged as "manual review required" rather than silently estimated, and (d) the builder can override any normalized value with the original vendor number and a note explaining the discrepancy.
 
 ### 26.5 Vendor Bid History
 

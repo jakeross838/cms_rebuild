@@ -98,6 +98,14 @@ Builders can override default platform terms:
 
 Terminology overrides apply across the entire UI, all generated documents, all emails, and all portal interfaces for that builder.
 
+### Edge Cases & What-If Scenarios
+
+1. **Poor branding choices that harm accessibility or usability.** When a builder configures their branding with low-contrast color combinations (e.g., light yellow text on a white background), tiny font sizes, or illegible font choices, the resulting user experience degrades for their team, clients, and vendors. The system must include real-time accessibility validation during branding configuration: WCAG 2.1 AA contrast ratio checking for all text/background combinations, minimum font size enforcement, and a preview that simulates the full experience before saving. Non-compliant configurations should display a warning ("This color combination may be difficult to read for some users") but allow the builder to override if they explicitly acknowledge the risk. The system should suggest accessible alternatives when a conflict is detected.
+
+2. **Builder requests a font not in the curated list.** Standard and Business tier builders select from a curated font list, but Enterprise builders may request custom fonts. The system must support custom font upload (WOFF2 format) with validation: the font file must be a valid web font, must include the required character set (Latin extended at minimum), and must be licensed for web use (the builder attests to licensing via a checkbox). Custom fonts are stored per-tenant and served via the platform's CDN. If a custom font fails to load (corrupted file, CDN issue), the system must fall back gracefully to the default font family without breaking the layout. A font preview tool must show the custom font applied across key UI elements before the builder commits.
+
+3. **Branding "leaks" undermining white-label value.** For builders paying for white-label (zero platform branding), any accidental exposure of the platform's brand name destroys the value of the feature. The system must implement a comprehensive branding audit that checks every touchpoint: UI text, email templates, PDF headers/footers, error messages, browser tab titles, meta tags, API response headers, client/vendor portal footers, mobile app splash screens, push notification sender names, and support chat branding. A "Brand Leak Checker" tool (accessible to Enterprise admins) scans all tenant-facing surfaces and reports any instances where the platform's brand name, logo, or domain appears. This checker must run automatically after platform updates to catch regressions introduced by new features or templates.
+
 ### White-Label Tiers
 
 | Feature | Standard | Business | Enterprise/White-Label |

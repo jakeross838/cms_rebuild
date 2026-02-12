@@ -74,6 +74,20 @@ Audit endpoint checks for:
 | GAP-446 | Automated draw request generation from schedule progress | Medium |
 | GAP-447 | Multiple lenders with different draw requirements | Low |
 | GAP-448 | Draw request reconciliation (approved vs. disbursed) | Medium |
+| GAP-547 | Sales tax on construction varies by state (all 50 states) | Medium |
+| GAP-548 | Builders operating in multiple states (different tax rules per project) | Medium |
+| GAP-549 | Tax rate lookups by address (zip code or parcel level) | Medium |
+| GAP-550 | Tax exemption management (certificates on file, suppress tax) | Medium |
+| GAP-551 | 1099 reporting that varies by builder entity type | Medium |
+| GAP-552 | Payroll tax scope (platform vs. payroll system responsibility) | Low |
+| 1030 | Daily cash position — bank balance, due out today/this week, draws pending | Daily cash position widget on dashboard linking to cash flow detail |
+| 1047 | Invoice processing queue — review AI-extracted invoices; approve/code/dispute | End-of-day invoice review workflow with AI-assisted coding |
+| 1051 | Weekly cash flow projection review — updated projections for all active projects | Weekly cash flow review dashboard with project-level projections |
+| 1052 | Weekly budget variance review — line items trending over budget with action plans | Budget variance report highlighting at-risk line items with corrective action tracking |
+| 1055 | Weekly draw request preparation — compile approved invoices, lien waivers, photos for next draw | Draw request preparation workflow aggregating required supporting documents |
+| 1058 | Monthly WIP report generation — over/under billing analysis for accountant | WIP report generator with over/under billing analysis and export |
+| 1059 | Monthly profitability review by project — which jobs are making money, which aren't, why | Per-project profitability dashboard with root cause analysis |
+| 1064 | Vendor payment aging review — who are we behind on paying, cash flow implications | Vendor payment aging report with cash flow impact analysis |
 
 ---
 
@@ -92,6 +106,16 @@ Audit endpoint checks for:
 - Cost codes carry: code number, name, description, default unit of measure, typical unit cost.
 - Import/export cost code libraries (CSV).
 - Platform provides starter libraries that builders customize.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Cost code accidental deletion / orphan prevention.** When a cost code is deactivated or deleted, linked POs, invoices, budget lines, and change orders can become orphaned -- breaking financial reports and budget rollups. Required behavior:
+   - **Soft-delete only** -- cost codes are never physically deleted; they are marked `is_active = false`.
+   - **Pre-deactivation check** -- before deactivating, the system must scan for: open POs referencing this cost code, unpaid invoices allocated to this cost code, pending change orders modifying this cost code, and active budget lines with remaining commitment.
+   - **Block deactivation** if any open/pending records exist -- force the user to reassign or close them first.
+   - **Cascade display rules** -- deactivated cost codes still appear in historical reports but are hidden from new entry dropdowns.
+   - **Merge workflow** -- allow merging one cost code into another, reassigning all linked records atomically.
+   - **Database constraint:** Add a trigger or application-level check that prevents `is_active = false` when open/pending records reference the cost code.
 
 ### 9.2 Budget Creation (GAP-259, GAP-260, GAP-261, GAP-262, GAP-277)
 
@@ -130,6 +154,22 @@ Additional computed columns:
 - **Variance**: budgeted - projected final.
 - **% Complete**: actual / committed (or actual / budgeted if no commitment).
 - **Cost to Complete**: projected final - actual.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Three-column tracking clarity.** The three-column model (Budgeted, Committed, Actual) is powerful but can confuse users if the calculation behind each number is not transparent. Required behavior:
+   - Each column header must include a tooltip or expandable help text explaining exactly which transactions feed that column.
+   - **Budgeted** = original estimate line amount + approved CO adjustments.
+   - **Committed** = sum of signed subcontract values + approved PO amounts for this cost code (only active/open commitments).
+   - **Actual** = sum of paid invoice line items + direct cost entries posted against this cost code.
+   - When any computed column (Projected Final, Variance, % Complete, Cost to Complete) is displayed, a "show calculation" link reveals the formula and source data.
+   - If Committed > Budgeted on any line, the line must be visually flagged as over-committed even before actual costs are incurred.
+
+2. **Accounting practice misalignment.** A builder's existing accounting practices may not align with the platform's assumptions about cost categorization, accrual vs. cash basis, or overhead allocation. Required behavior:
+   - Chart of accounts mapping (Section 9.14) must be flexible enough to handle non-standard GL structures.
+   - The system must support both accrual and cash basis perspectives on cost data, configurable per builder.
+   - Budget reports must clearly label which accounting basis is being used.
+   - When a builder's accounting system classifies a transaction differently than the platform (e.g., a cost the platform calls "direct" that the builder's CPA calls "overhead"), the mapping layer must handle the translation without requiring the builder to change their practices.
 
 ### 9.4 Contract Type Support (GAP-267, GAP-272)
 
@@ -237,7 +277,80 @@ Budget behavior adapts to contract type:
 - **Bank accounts** (GAP-435): transactions can be tagged to specific bank accounts for reconciliation.
 - **Period close** (GAP-439): lock financial data for completed periods. No edits to prior period without admin override and audit trail.
 
-### 9.15 Financial Projections & KPIs (GAP-438, GAP-440)
+#### Edge Cases & What-If Scenarios
+
+1. **Period locking rules.** Accounting periods can be "closed" but rules for handling pending transactions, grace periods, and override authority must be explicit. Required behavior:
+   - **Soft lock (default)** -- period is locked for normal users; `owner` and `admin` roles can override with audit trail entry.
+   - **Grace period** -- configurable window (default: 3 business days after period close) where transactions dated in the closed period can still be posted.
+   - **Pending transaction handling** -- on period close, system alerts on any draft/pending transactions dated within the period; user must approve, backdate, or void them.
+   - **Lock cascade** -- locking a period also locks all draws, invoices, and journal entries dated within that period.
+   - **Unlock workflow** -- reopening a closed period requires `owner` approval and creates an audit log entry with reason.
+
+### 9.15 Daily & Weekly Financial Operations (Gaps 1030, 1047, 1051, 1052, 1055, 1064)
+
+**Daily Cash Position (Gap 1030):**
+- Real-time cash position summary: current bank balance (from bank feed or manual entry), committed outflows (approved invoices due today/this week), expected inflows (draws submitted and pending), net position
+- Dashboard widget for "My Day" view (Module 4) with drill-down to full detail
+- Cash flow alert: warn when projected balance drops below configurable threshold
+- Multi-bank account view: consolidated position across all builder bank accounts
+
+**Invoice Processing Queue (Gap 1047):**
+- End-of-day invoice review workflow for PMs and office staff
+- Queue shows all invoices received today: AI-extracted data, suggested cost code, confidence level
+- One-click approve for high-confidence AI extractions; manual review for low-confidence
+- Bulk processing: review and approve/code/dispute multiple invoices in one session
+- Dispute workflow: flag invoice with reason, auto-notify vendor, track resolution
+- Integration with Module 11 (Invoicing) and Module 13 (Invoice AI)
+
+**Weekly Cash Flow Projection (Gap 1051):**
+- Updated cash flow projections for all active projects refreshed weekly
+- Projection based on: scheduled draws, committed vendor payments, payment terms, historical collection patterns
+- Cross-project cash flow summary: aggregate all projects into one cash flow view
+- Scenario modeling: "What if Draw #4 is delayed two weeks?" impact on cash position
+- Exportable for lender or accountant review
+
+**Weekly Budget Variance Review (Gap 1052):**
+- Budget variance report highlighting line items trending over budget across all projects
+- Variance threshold alerts: configurable per cost code category (e.g., warn at 80%, alert at 95%)
+- Corrective action tracking: for each over-budget line item, document the cause and action plan
+- Trend analysis: is the variance growing or stabilizing?
+- Comparison to contingency: are variances consuming contingency reserves?
+
+**Weekly Draw Request Preparation (Gap 1055):**
+- Draw request preparation dashboard aggregating all required supporting documents:
+  - Approved invoices for the draw period
+  - Lien waivers collected (conditional and unconditional)
+  - Progress photos from daily logs
+  - Inspection results for completed milestones
+  - Schedule update showing percentage complete
+- Checklist view: green (complete), yellow (in progress), red (missing) for each required document
+- One-click package generation once all documents are assembled
+- Draw request draft review before submission to lender
+
+**Vendor Payment Aging (Gap 1064):**
+- Vendor payment aging report: invoices grouped by 0-30, 31-60, 61-90, 90+ days
+- Cash flow implications: total outstanding vendor payments vs. available cash
+- Priority flagging: critical vendors (on active job sites) highlighted
+- Payment scheduling: plan payment runs based on cash flow and vendor priority
+- Vendor relationship impact: flag vendors who may stop work due to non-payment
+
+### 9.16 Monthly Financial Operations (Gaps 1058, 1059)
+
+**WIP Report Generation (Gap 1058):**
+- Monthly WIP report auto-generated from current project data
+- Over/under billing analysis per project: compare billings to date vs. earned revenue
+- Export formats: PDF for accountant, Excel for analysis, direct integration with accounting system
+- WIP trend: month-over-month comparison showing billing position improvement or deterioration
+- Configurable WIP calculation method per builder/accountant preference (per section 9.11)
+
+**Profitability Review by Project (Gap 1059):**
+- Per-project profitability dashboard: contract value, costs to date, projected final cost, gross margin, net margin
+- Ranking: projects sorted by profitability (highest to lowest margin)
+- Root cause analysis for underperforming projects: which cost codes are over budget, which change orders eroded margin
+- PM performance attribution: profitability by PM for portfolio-level analysis
+- Profitability trend: month-over-month margin trend per project
+
+### 9.17 Financial Projections & KPIs (GAP-438, GAP-440)
 
 - **Revenue forecast** (GAP-440): projected billings across all active projects by month.
 - **Expense forecast**: projected costs by month based on schedule and commitments.
@@ -250,13 +363,71 @@ Budget behavior adapts to contract type:
   - Contingency remaining.
   - Cost performance index.
 
-### 9.16 Minimal Budget Mode (GAP-278)
+### 9.16 Tax Handling for Construction (GAP-547 through GAP-552)
+
+Tax rules for construction vary significantly by state and jurisdiction. The budget and cost tracking module must integrate with the Configuration Engine's jurisdiction database (Module 2, Section 14) to apply correct tax treatment on every transaction.
+
+- **Multi-state tax support** (GAP-547, GAP-548): sales tax on construction varies by state -- some states tax materials only, some tax labor, some tax neither. Each project inherits tax rules from its physical location, not the builder's home state. Builders operating in multiple states must have project-level tax rule resolution.
+- **Tax rate lookups by address** (GAP-549): the system must support tax rate resolution down to zip code or parcel level where state law requires it. Integration with a tax rate API (e.g., Avalara, TaxJar, or state tax authority APIs) is required for jurisdictions with sub-county rate variations. For jurisdictions without API support, manual tax rate entry per project is the fallback.
+- **Tax exemption management** (GAP-550): some clients have tax-exempt status (e.g., religious organizations, government entities). The system must track tax exemption certificates per client with: certificate number, issuing authority, expiration date, and a copy of the certificate on file. When a project is linked to a tax-exempt client, the system must suppress tax calculations on applicable line items and generate tax-exempt documentation for vendor invoices and material purchases.
+- **1099 reporting** (GAP-551): the system must track vendor payments to support year-end 1099-NEC reporting. Required data per vendor per tax year: total payments, vendor TIN/EIN (from W-9 on file), vendor legal name and address. The system must generate 1099-ready data exports (not necessarily the 1099 form itself, but all data needed for the builder's CPA or accounting software to produce filings). Builders who are S-corps, sole proprietors, or other entity types have different reporting thresholds; the system must support configurable 1099 reporting thresholds per builder.
+- **Payroll tax scope** (GAP-552): payroll tax calculation (FICA, FUTA, SUTA, state withholding) is the responsibility of the builder's payroll system (ADP, Gusto, etc.) or accounting software. The platform's responsibility is limited to: (a) tracking labor burden rates per employee that include payroll tax estimates for accurate job costing, (b) integrating with Module 34 (HR & Workforce) for hourly employee time data, and (c) providing labor cost exports that the payroll system can consume. The platform does not replace payroll software.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Tax rate changes mid-project.** When a jurisdiction changes its tax rate during an active project, the system must apply the new rate to new transactions while preserving the rate applied to historical transactions. Each transaction must record the tax rate used at the time of entry. Tax reports must be able to show transactions grouped by applicable tax rate for accurate filing. The Configuration Engine's jurisdiction versioning (effective dates) ensures that rate lookups return the correct rate for the transaction date, not the current date.
+
+### 9.17 Minimal Budget Mode (GAP-278)
 
 - For builders who do not want full budgeting, provide a simplified mode:
   - Track actual costs only (no budget lines, no projections).
   - Cost entries allocated to cost codes and projects.
   - Basic reporting: total cost per project, cost per cost code.
   - Upgrade path: builder can enable full budget mode later and retroactively create budgets.
+
+### 9.18 Financial Edge Cases
+
+These scenarios cover unusual but real financial situations that construction builders encounter. The system must handle each without requiring workarounds.
+
+1. **Client overpayment — refund processing and tracking (GAP-806).** When a client pays more than the amount due (e.g., overpays a draw request, pays before a credit is applied), the system must: (a) detect the overpayment by comparing payment received to amount invoiced/requested, (b) create a credit balance on the client's account, (c) allow the builder to apply the credit to the next draw or issue a refund, (d) track the refund process (approved, check issued, check cleared), and (e) reflect the overpayment and refund in AR reporting and cash flow. Overpayments must never silently disappear from the financial record.
+
+2. **Vendor credit underpayment — collection and dispute tracking (GAP-807).** When a vendor owes a credit (e.g., returned materials, defective work correction, overbilling) but does not apply it, the system must: (a) create a vendor credit record linked to the original invoice/PO, (b) track the credit status (requested, acknowledged, disputed, applied, collected), (c) allow the builder to offset the credit against future payments to that vendor, (d) alert when a credit has been outstanding for more than a configurable period (default: 30 days), and (e) support formal dispute escalation if the vendor does not honor the credit.
+
+3. **Construction loan with unusual draw structures (GAP-808).** Some lenders use non-standard draw schedules (e.g., front-loaded draws, milestone-based with non-standard milestones, draws tied to inspection milestones rather than cost completion). The system must: (a) support fully configurable draw schedules per lender — not just percentage-of-completion, (b) allow milestone-based draws where each milestone has a fixed amount and release conditions, (c) support hybrid draw structures (some lines % complete, some milestone-based), and (d) validate each draw request against the lender's specific structure before submission.
+
+4. **Multiple funding sources per project (GAP-809).** Some projects have multiple funding sources — client pays some, lender funds some, investor funds some, insurance covers some. The system must: (a) track multiple funding sources per project with their respective amounts and terms, (b) allocate draw requests to the correct funding source based on configurable rules, (c) track receivables separately per funding source (different AR aging per source), and (d) reconcile total funding against total contract amount. Each funding source may have different draw formats and documentation requirements.
+
+5. **Barter arrangements (GAP-810).** Occasionally a vendor trades work for other consideration (e.g., builder does renovation for the electrician, electrician does wiring for the builder). The system must: (a) allow recording barter transactions with fair market value for both sides, (b) track the barter as both a receivable (work the builder is owed) and a payable (work the builder owes), (c) reflect barter transactions in budget actuals at fair market value, and (d) flag barter transactions for 1099 reporting (IRS requires reporting barter income at fair market value).
+
+6. **Escrow requirements for deposits (GAP-811).** Some jurisdictions require client deposits to be held in escrow or trust accounts. The system must: (a) track which jurisdiction's escrow rules apply per project, (b) record deposits with trust account reference and escrow status, (c) enforce jurisdiction-specific deposit caps (e.g., some states limit deposits to a percentage of contract value), (d) track deposit application against draws with proper trust account accounting, and (e) alert when escrow handling does not comply with the applicable jurisdiction's rules. Integrates with the state_legal_requirements table in Module 38.
+
+7. **Insurance proceeds after damage (GAP-812).** When a project sustains damage (storm, fire, theft) and insurance covers reconstruction, the system must: (a) create a separate budget section or cost code category for insurance-funded reconstruction work, (b) track insurance claim amounts, deductibles, and proceeds received, (c) link insurance proceeds to specific reconstruction costs for auditing, (d) handle the timing gap between work performed and insurance payment (builder may fund reconstruction before reimbursement), and (e) report insurance-funded work separately from original contract work in profitability analysis.
+
+8. **Cost-plus client audit support (GAP-813).** Cost-plus contracts give clients the right to audit costs. The system must: (a) provide a client-accessible cost report showing every direct cost with supporting documentation (invoice image, PO, receipt), (b) support configurable transparency levels — some builders show vendor names and amounts, others show category totals only, (c) export audit packages with all supporting documentation organized by cost code, (d) track the audit process (requested, documentation provided, questions raised, resolved), and (e) maintain an immutable record of what was presented to the client at each audit.
+
+9. **Progress billing when work is complete but not inspected (GAP-814).** Work may be physically complete but not yet inspected and approved. The system must: (a) allow configurable billing rules — bill on completion, bill on inspection approval, or bill on a hybrid basis, (b) track the difference between "work complete" and "work inspected and approved" as separate status fields, (c) support lender requirements that may restrict billing uninspected work, and (d) alert when completed work has not been inspected within a configurable window (prevents billing delays).
+
+10. **Force majeure financial impact (GAP-815).** Force majeure events (hurricanes, pandemics, supply chain disruptions) create financial impacts beyond schedule delays. The system must track: (a) cost escalation due to the event (material price increases, labor rate changes), (b) extended general conditions costs (additional months of project overhead), (c) remobilization costs (getting crews back after a stoppage), (d) the financial documentation required to support a force majeure claim under the contract, and (e) the net financial impact compared to the original budget. Link to the contract's force majeure clause for reference.
+
+11. **Bonus/penalty clauses (GAP-816).** Some contracts include milestone bonuses (early completion) or penalties (late completion). The system must: (a) store bonus/penalty terms per contract milestone (milestone, target date, bonus amount or rate, penalty amount or rate), (b) track actual vs. target dates for each milestone, (c) calculate the financial impact automatically as milestones are completed, (d) include bonus/penalty projections in profitability forecasting, and (e) alert the PM when a milestone bonus is at risk or a penalty is accruing.
+
+12. **Liquidated damages calculation (GAP-817).** When a contract specifies liquidated damages (daily rate for exceeding the completion date), the system must: (a) store the LD rate and trigger conditions per contract, (b) calculate accruing liquidated damages daily once the completion date is exceeded, (c) display the LD exposure prominently on the project dashboard and financial reports, (d) include LD projections in cost-to-complete and profitability forecasts, and (e) track any LD waivers or reductions negotiated with the client.
+
+13. **Shared costs between projects (GAP-818).** Builders sometimes share costs across projects — bulk material purchases, shared equipment, or shared labor. The system must: (a) support configurable allocation methods (by percentage, by square footage, by project count, by actual usage), (b) create allocation records that split a single cost across multiple project budgets, (c) ensure the total allocations equal the original cost (no rounding errors that create phantom costs), and (d) provide audit trail showing the allocation method and calculation for each split. Extends the inter-job cost transfer feature (Section 9.9).
+
+14. **Year-end financial close processes (GAP-819).** At fiscal year-end, the system must support: (a) a year-end close process that prevents changes to the closed fiscal year's transactions, (b) accrual entries for work performed but not yet invoiced (and vice versa), (c) WIP schedule adjustments for year-end reporting, (d) a fiscal year rollover that carries forward open project balances, and (e) the ability to reopen a closed year (with owner approval) for audit adjustments. Extends the period locking feature (Section 9.14).
+
+15. **Multi-year project financial reporting (GAP-820).** Projects spanning multiple fiscal years require: (a) year-over-year cost reporting per project (costs incurred per fiscal year), (b) revenue recognition that allocates revenue to the correct fiscal year per ASC 606, (c) WIP schedule snapshots per fiscal year-end, and (d) budget-to-actual comparisons that account for cost escalation across years.
+
+16. **Currency conversion for imported materials (GAP-821).** Builders importing materials from overseas must track: (a) purchase amounts in the original currency and converted USD equivalent, (b) the exchange rate used at time of purchase and at time of payment (if different), (c) exchange rate gain/loss between commitment and payment, and (d) budget projections that factor in exchange rate risk. This is a Phase 3+ feature for builders with international procurement.
+
+17. **Contingency drawdown authorization (GAP-822).** The system must support configurable approval requirements for contingency use: (a) different approval thresholds (e.g., PM can approve up to $5K, director up to $25K, owner for any amount), (b) documentation requirements per drawdown (reason, supporting documents, related cost code), (c) remaining contingency balance prominently displayed after each draw, and (d) historical analysis of contingency usage patterns for future estimating. Extends Section 9.8.
+
+18. **Budget contingency reallocation (GAP-823).** When contingency funds need to be moved to specific cost codes, the system must: (a) create a formal reallocation record (from contingency to cost code X, amount, reason, approver), (b) update both the contingency balance and the destination cost code's budget, (c) maintain audit trail showing the reallocation chain, and (d) distinguish between contingency used for overruns (negative) vs. contingency released back to profit (positive). Extends Section 9.8.
+
+19. **Profit margin analysis with all factors (GAP-824).** True profitability requires accounting for more than just direct costs vs. contract amount. The system must calculate profit margin that includes: (a) change order impact (both revenue and cost side), (b) warranty costs incurred after project completion (charged back to the project), (c) general conditions overrun (actual overhead vs. budgeted), (d) punch list costs, and (e) callbacks and rework costs. This "true profit" metric should be available alongside the simpler "budget profit" metric for completed projects.
+
+20. **Cash-basis vs. accrual-basis reporting toggle (GAP-825).** Different builders and their accountants prefer different accounting bases. The system must: (a) store all transactions with both the transaction date (accrual) and the payment date (cash basis), (b) provide a reporting toggle that switches between cash-basis and accrual-basis views without duplicating data, (c) clearly label which basis is being displayed on every financial report, and (d) support builders who use cash basis internally but accrual basis for tax/banking purposes (dual reporting). Extends the accounting practice alignment in Section 9.3.
 
 ---
 
@@ -514,6 +685,28 @@ Budget behavior adapts to contract type:
 
 ---
 
+## Unusual Business Scenarios — Budget Edge Cases
+
+### Client Bankruptcy Mid-Construction (GAP-599)
+When a client goes bankrupt during an active construction project, the system must support:
+- **Lien filing documentation:** Generate lien-ready reports including all costs incurred, materials on site, work completed by trade, and supporting invoices/receipts. Reports formatted per state lien filing requirements.
+- **Project financial freeze:** Place the project budget in a "legal hold" state that preserves all current data, prevents new commitments (POs, subcontracts), and blocks draw request generation until the hold is lifted.
+- **Partial billing closeout:** Generate a partial final billing package showing: work completed to date, materials stored on site, retainage held, payments received, and balance due. Support both AIA G702 format and custom formats for bankruptcy court filing.
+- **Cost segregation:** Tag all costs as pre-bankruptcy vs. post-bankruptcy for legal proceedings. Track builder's protective costs (site securing, material protection) separately.
+- **Vendor notification workflow:** Generate bulk notifications to all project vendors informing them of the project hold, with instructions for lien filing and payment claim procedures.
+- **Project hold status:** Project enters a "bankruptcy hold" status distinct from normal pause — visible on all dashboards and reports.
+
+### Natural Disaster Damages In-Progress Project (GAP-613)
+When a natural disaster (hurricane, tornado, flood, fire) damages an in-progress project, the system must support:
+- **Insurance claim documentation:** Generate a comprehensive damage report including: pre-disaster project status (schedule %, budget committed/spent), pre-disaster photos (from daily logs), post-disaster documentation, scope of damage by trade/phase, and estimated reconstruction costs.
+- **Budget impact tracking:** Create a "disaster recovery" budget section that tracks reconstruction costs separately from original budget. Original budget is preserved as-is; reconstruction costs tracked in parallel.
+- **Schedule rebuild:** System supports creating a "post-disaster" schedule baseline. Original schedule preserved for insurance/contract time extension documentation. New schedule reflects reconstruction sequencing.
+- **Vendor re-engagement:** Track which vendors need to return for reconstruction work, which scopes need re-bidding, and which completed work was destroyed and must be redone.
+- **Client communication:** Generate client-facing disaster impact reports showing timeline extension, cost impact (covered by insurance vs. out-of-pocket), and reconstruction plan.
+- **Force majeure documentation:** Link disaster event to weather records, generate time extension documentation per contract requirements.
+
+---
+
 ## Open Questions
 
 1. Should the earned value management (GAP-275) be a standard feature or a premium/advanced tier feature? It adds complexity most small builders may not use.
@@ -523,3 +716,4 @@ Budget behavior adapts to contract type:
 5. For financial projections (GAP-440), how far out should the forecast extend? 3 months? 12 months? Configurable?
 6. Should period locking (GAP-439) be hard lock (no changes possible) or soft lock (admin override with audit trail)?
 7. What level of AIA G702/G703 compliance is needed? Pixel-perfect form reproduction or data-equivalent with custom formatting?
+

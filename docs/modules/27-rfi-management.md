@@ -53,6 +53,10 @@ Configurable routing rules that get RFIs to the right person with the right urge
 - **Escalation Path:** If no response within configurable SLA, escalate to next level. Example: 3 days to architect, then auto-CC builder principal.
 - **Forwarding:** Recipients can forward to another party with notes. Full routing history maintained.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Urgent RFI with unresponsive responsible party.** When a critical or urgent RFI receives no response and the escalation path is exhausted, the system must have a robust fallback. Required behavior: (a) multi-tier escalation: primary respondent -> secondary contact -> builder principal -> configurable final escalation (e.g., project owner), (b) each escalation tier has its own SLA (e.g., 24 hours per tier for critical RFIs), (c) when all escalation tiers are exhausted, the RFI is flagged as "blocked" on the project dashboard with a prominent alert, (d) the system sends a "work stoppage risk" notification to the PM and superintendent if the RFI is linked to a schedule task that is approaching its start date, and (e) the builder can reassign the RFI to an alternate respondent at any point during the escalation chain.
+
 ### 27.3 Response Tracking with Deadlines
 
 Track every RFI from creation to resolution with configurable SLAs and accountability.
@@ -74,6 +78,10 @@ Link RFIs to their financial and schedule consequences.
 - **Cumulative Impact Dashboard:** Roll up all RFI cost and schedule impacts per project. "RFIs have added $47,200 and 12 days to this project."
 - **No-Impact Tracking:** Explicitly track RFIs with no cost/schedule impact for the record. "Clarification only — no impact."
 
+#### Edge Cases & What-If Scenarios
+
+1. **RFI leads to a significant design change.** When an RFI response requires a design change (not just a clarification), the system must handle the cascading effects across multiple modules. Required behavior: (a) the RFI response includes a "design change" flag that triggers integration with the change order module (Module 17) and scheduling module (Module 7), (b) the system prompts the builder to create a change order from the RFI with pre-populated scope description and cost/schedule impact from the RFI assessment, (c) affected schedule tasks are automatically flagged for review, (d) other open RFIs that reference the same drawing sheet or specification section are flagged as potentially affected by the design change, and (e) the design change is tracked in the RFI log as a distinct category for analytics ("X% of RFIs resulted in design changes on this project").
+
 ### 27.5 RFI Log and Reporting
 
 Comprehensive RFI log with filtering, export, and analytics.
@@ -83,6 +91,10 @@ Comprehensive RFI log with filtering, export, and analytics.
 - **Export:** Export RFI log to PDF and Excel. PDF format suitable for owner/architect distribution.
 - **Analytics:** RFI metrics per project: total count, average response time, overdue percentage, cost impact total, by-trade breakdown. Cross-project analytics for builder-level insights.
 - **AI Insights:** "This project has 3x more electrical RFIs than similar projects — possible design quality issue."
+
+#### Edge Cases & What-If Scenarios
+
+1. **RFI process as a bottleneck.** The RFI process can become a major bottleneck in construction projects when volume is high or response times are slow. The system must be designed to streamline this process. Required behavior: (a) a dedicated "RFI Bottleneck Dashboard" showing: total open RFIs, average days open, number overdue, number blocking schedule tasks, and trending direction, (b) "fast-track" RFI workflow for simple clarifications: if the PM can answer from existing project documentation, allow immediate closure without external routing, (c) batch operations: route multiple RFIs to the same recipient in a single notification digest rather than individual emails, (d) AI-suggested responses by finding similar resolved RFIs in the builder's project history and presenting the previous answer as a starting point, and (e) weekly RFI status report auto-generated and sent to configurable recipients with actionable items highlighted.
 
 ---
 
@@ -229,6 +241,19 @@ Submittal tracking and approval workflows for structural engineering documents, 
 - **Review/Approval/Stamp Workflow:** Full lifecycle: Submit → Engineer Review → Comments → Revision → Approval → Stamped. Each stage tracked with timestamps, responsible party, and notes.
 - **Permitting Integration:** Link structural submittals to permitting requirements (Module 32). Flag when structural permits require stamped engineering documents before application.
 - **Engineer Tracking:** Record which engineer reviewed, approved, and stamped each document. Maintain engineer contact directory with license numbers and jurisdictional credentials.
+
+---
+
+## Unusual Business Scenarios — RFI Edge Cases
+
+### Architect Fired Mid-Project (GAP-604)
+When the architect or engineer of record is terminated mid-project, the system must support a design professional transition:
+- **New architect onboarding:** The outgoing architect's access is revoked. A new architect is added as an external user with access to all existing plans, specifications, RFIs, and submittals for the project.
+- **Plan revision management:** All existing plans and specifications are tagged with the originating architect. New plan revisions from the replacement architect are clearly distinguished as a new "design era." The system tracks which architect was responsible for which drawing revisions.
+- **RFI responsibility transition:** Open RFIs assigned to the outgoing architect are reassigned to the incoming architect (or to the builder PM as an intermediary until the new architect is engaged). The transition is documented with a bulk reassignment record.
+- **Submittal re-routing:** All pending submittals are re-routed to the new architect for review. The system alerts the PM to submittals that the outgoing architect had already reviewed but not yet approved — the new architect may need to re-review.
+- **Historical context preservation:** The new architect needs access to all prior RFI responses, submittal reviews, and design decisions made by the outgoing architect. These records are preserved and attributed to the outgoing architect but fully visible to the replacement.
+- **Liability documentation:** The system generates a "design transition report" documenting: all work designed by the outgoing architect, all open design issues at the time of transition, and all RFIs/submittals with the outgoing architect's responses — useful for liability allocation if design defects surface later.
 
 ---
 

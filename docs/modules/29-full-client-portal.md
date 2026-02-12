@@ -29,6 +29,10 @@ Comprehensive client-facing portal providing real-time project visibility, finan
 | 465 | Warranty as optional module | Warranty section in portal only visible when warranty module enabled |
 | 466 | Warranty terms configurable per builder | Warranty request form respects builder's warranty term configuration |
 | 467 | Warranty service request routing (builder-configurable) | Warranty requests route per builder's configured workflow |
+| 1019 | Client satisfaction survey — post-move-in feedback; configurable timing and questions | Automated satisfaction survey workflow triggered at configurable post-completion milestones |
+| 1034 | Client communication queue — client messages needing response, scheduled meetings | Client communication management with response tracking and meeting scheduling |
+| 1049 | Client update generation — AI drafts weekly/daily updates from daily logs and photos | AI-assisted client communication drafting from project data |
+| 1063 | Client satisfaction pulse — identify clients not communicated with recently | Client engagement monitoring with gap detection and proactive outreach prompts |
 
 ---
 
@@ -45,6 +49,12 @@ Enable clients to review and approve selections, change orders, and draw request
 - **Approval History:** Complete audit trail of all approvals with timestamps, signatures, and any comments.
 - **Batch Approvals:** Allow clients to approve multiple pending selections in a single session.
 - **Configurable Approval Types:** Builder configures which items require client approval and which are informational only.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Non-tech-savvy client struggles to use the portal.** The system must accommodate clients who are not comfortable with digital tools. Required behavior: (a) the builder can generate PDF reports of any portal content (progress, selections, budget, photos) and email or mail them to the client, (b) a "simple mode" portal view with reduced options and larger UI elements is available as a builder-configurable client preference, (c) the builder team can perform approvals on the client's behalf with a "proxy approval" workflow that logs who performed the action and captures verbal/written authorization separately, (d) phone/email-based approval flow: builder sends a summary email with a single "Approve" link that requires only one click and a name entry, and (e) the builder can toggle individual portal sections off for specific clients to reduce complexity.
+
+2. **Client loses access to their account.** The password reset and account recovery flows must be simple and reliable. Required behavior: (a) self-service password reset via email with a secure one-time link (standard flow), (b) if the client no longer has access to their email, the builder admin can initiate a manual account recovery: verify identity via phone, update the email address, and send a new invitation, (c) magic link login option (email a one-time login link instead of requiring a password), (d) account lockout after configurable failed login attempts with builder notification, and (e) the builder can view the client's last login date to proactively reach out if a client appears to have lost access while having pending actions.
 
 ### 29.2 Selection Management Interface
 
@@ -272,7 +282,53 @@ Each builder's client portal reflects their unique brand.
 - **Message Center** — Threaded messaging interface with topic organization, attachment support, and read receipts.
 - **Document Library** — Categorized document list with download buttons, version indicators, and upload capability for client documents.
 - **Warranty Portal** — Post-closeout view with warranty terms, service request form with photo upload, and request status tracker.
+- **Client Satisfaction Survey** — Configurable survey forms delivered at post-completion milestones.
 - **Client Engagement Dashboard** — Builder-facing analytics: login frequency, page views by section, approval response times, message activity.
+
+---
+
+## Client Satisfaction & Communication Features (Gaps 1019, 1034, 1049, 1063)
+
+### Client Satisfaction Survey (Gap 1019)
+- Automated survey delivery triggered at configurable post-completion milestones:
+  - At move-in (immediate experience feedback)
+  - 30 days after CO (settling-in feedback)
+  - 6 months post-completion (long-term satisfaction)
+  - 1 year post-completion (before warranty expiration)
+- Configurable survey questions per builder: overall satisfaction, communication quality, quality of work, would you recommend, specific area ratings
+- Rating scales: star rating (1-5), NPS (Net Promoter Score), free-text comments
+- Survey delivered via email with portal link; in-app notification in client portal
+- Response tracking: sent, opened, completed, partially completed
+- Survey results dashboard: average scores by question, trend over time, per-PM comparison
+- High-satisfaction responses auto-prompt for review on Google/Houzz (links to Module 37 testimonial workflow)
+- Low-satisfaction responses trigger alert to builder principal for immediate follow-up
+
+### Client Communication Queue (Gap 1034)
+- Morning dashboard widget showing client messages awaiting response, sorted by age
+- Response time tracking: time from client message to builder response
+- Scheduled client meetings for today/this week with agenda and project context
+- Unanswered message alerts: configurable threshold (e.g., warn at 24 hours, escalate at 48 hours)
+- Communication channel tracking: which clients prefer portal messages, email, phone, or text
+
+### AI Client Update Generation (Gap 1049)
+- AI drafts weekly or daily client updates from:
+  - Daily log entries and progress notes
+  - Photos tagged to the project this week
+  - Schedule milestones completed or upcoming
+  - Inspection results
+  - Selection deadlines approaching
+- Draft generated in builder's communication style (learns from previous sent messages)
+- PM reviews and edits before sending; one-click send via portal, email, or both
+- Photo selection: AI suggests best photos from the week; PM confirms or swaps
+- Configurable frequency: daily digest, weekly summary, or milestone-triggered only
+
+### Client Satisfaction Pulse (Gap 1063)
+- Proactive client engagement monitoring across all active projects
+- Flag clients who have not received a communication in a configurable period (default: 7 days during active construction, 30 days during warranty)
+- Dashboard widget: "Clients needing attention" with last communication date and project phase
+- Auto-generate suggested touchpoint: "Client X hasn't heard from you in 12 days — schedule progress update?"
+- Client engagement scoring: based on portal login frequency, message activity, approval response times
+- Low-engagement alerts: client who stops logging in or stops responding may be disengaged — alert PM
 
 ---
 
@@ -299,3 +355,4 @@ Each builder's client portal reflects their unique brand.
 6. How do we handle the transition from construction portal to warranty portal at project closeout?
 7. What analytics data is GDPR/CCPA compliant to collect about client portal usage?
 8. Should the portal support real-time video calling between client and builder? (Proposed: out of scope, use external tools.)
+9. The distinction between the "basic" (Module 12) and "full" (Module 29) client portals must be clearly communicated in marketing materials, pricing, and the upgrade path. The upgrade from basic to full should be seamless with no data loss or re-configuration required.

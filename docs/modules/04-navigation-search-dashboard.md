@@ -37,6 +37,22 @@ Also references from Section 35 (Data Integrity):
 | 537 | Tenant data isolation enforced at query level (search must respect builder_id) |
 | 545 | Performance at scale -- search and dashboard must remain fast with 500+ projects |
 | 546 | Database indexing strategy for search and dashboard queries |
+| 1028 | "My Day" dashboard — everything I need to address today across all projects, sorted by priority | Enhanced "My Day" view with cross-project priority aggregation |
+| 1029 | Overnight alert review — what happened since I left yesterday | Overnight event summary: emails, vendor messages, inspection results, weather changes |
+| 1030 | Daily cash position — what's in the bank, due out today/this week, draws pending | Cash position widget linking to Module 9 financial data |
+| 1034 | Client communication queue — messages needing response, scheduled meetings today | Client communication widget with response aging and meeting schedule |
+| 1035 | Vendor follow-up queue — outstanding bids, overdue invoices, unanswered RFIs, expired insurance | Vendor follow-up widget with categorized action items |
+| 1057 | Team meeting preparation — auto-generated agenda from project data | Meeting agenda generator pulling from active project data |
+
+Also references from UX Principles (Section 3.3):
+| -- | Progressive disclosure: simple by default, power when needed | Aligned with Gap 522 |
+| -- | Context-aware interface: show relevant content based on role, time, phase, device | Role-based and time-aware dashboard layout |
+| -- | Three-click rule: 20 most common tasks completable in 3 clicks or less | Quick-action design principle for all common workflows |
+| -- | Smart defaults: pre-fill everything possible | Intelligent default values on all data entry forms |
+| -- | Never lose work: auto-save, offline queue, undo, recycle bin | Data protection architecture across all modules |
+| -- | One place to look: global search finds anything, single-screen summaries | Unified search and summary views |
+| -- | Beautiful without trying: auto-formatted reports, professional portal | Design system delivering polished output without configuration |
+| -- | Inclusive design: works for all skill levels, devices, languages, abilities | WCAG 2.1 AA, responsive, multi-language architecture |
 
 ---
 
@@ -67,6 +83,10 @@ Also references from Section 35 (Data Integrity):
 - Advanced features (bulk actions, keyboard shortcuts, custom filters) revealed via "More options" or settings toggle.
 - Tooltip hints on first encounter of complex features, dismissible and tracked per user.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Large project count in project switcher:** When a builder has a very large number of projects (100+), the project switcher dropdown must not become unusable. Required behavior: (a) show only the 10 most recently accessed projects by default, (b) provide a search/filter input at the top of the dropdown for instant filtering by project name, address, or number, (c) group projects by status (Active, Pre-Construction, Warranty, Closed) with collapsible sections, (d) lazy-load additional projects as the user scrolls or types, and (e) ensure the dropdown renders in under 200ms regardless of total project count. The project list query must be indexed and paginated server-side.
+
 ### 4.2 Global Search (Gap 526, 537, 545, 546)
 
 **What Is Indexed**
@@ -94,6 +114,10 @@ Also references from Section 35 (Data Integrity):
 - Response target: < 200ms for typeahead, < 500ms for full results.
 - Pagination: 25 results per page with infinite scroll or explicit pagination.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Search must respect all permission levels:** Search results must be filtered based on the current user's role and permissions. A field worker must not see search results for financial data (budgets, invoices) they lack permission to view. A vendor must only see results from projects they are assigned to. In `open` permission mode, all internal users see all results; in `standard` and `strict` modes, the search query must join against the user's permission set. The `search_index` queries must include permission filtering as part of the database query (not post-query filtering, which would leak result counts). The search endpoint must never return a result the user cannot navigate to — if a result would lead to an access-denied page, it must be excluded from search results entirely.
+
 ### 4.3 Dashboard Framework (Gap 521, 528, 533, 534)
 
 **Widget System**
@@ -110,12 +134,57 @@ Also references from Section 35 (Data Integrity):
 - Client (portal): Project progress, recent photos, upcoming selections, next milestone.
 - Defaults are overridable per builder (`builder_dashboard_defaults` setting).
 
-**"My Day" View (Gap 528)**
+**"My Day" View (Gaps 528, 1028)**
 - Aggregated cross-project view of items needing the current user's attention today.
 - Sections: Overdue items, Due today, Upcoming (next 3 days), Recently assigned.
 - Pulls from: tasks, approvals, RFIs, inspections, selection deadlines, invoice approvals.
 - Each item links directly to its detail page with one click.
 - Configurable: user can hide sections or reorder priority.
+- Priority sorting: items ranked by urgency across all projects, not grouped by project (Gap 1028)
+- Time-of-day awareness: morning view emphasizes planning (schedule, inspections, deliveries); afternoon view emphasizes review (logs, invoices, updates)
+
+**Overnight Alert Review (Gap 1029)**
+- Summary widget showing all events that occurred since the user's last session:
+  - Emails received (linked to projects via AI classification)
+  - Vendor messages and portal activity
+  - Inspection results logged after hours
+  - Weather forecast changes affecting tomorrow's schedule
+  - System alerts: budget thresholds crossed, permits expiring, insurance certificates lapsing
+- Alert categorization: action required, informational, resolved
+- One-click acknowledge/dismiss for informational alerts; action required items link to their workflows
+
+**Daily Cash Position Widget (Gap 1030)**
+- Dashboard widget showing real-time financial snapshot (data from Module 9):
+  - Current bank balance (or last known balance from bank feed)
+  - Payments due out today and this week (approved invoices, scheduled payments)
+  - Draw requests submitted and pending funding
+  - Net cash position: balance minus committed outflows plus expected inflows
+- Drill-down to full cash flow detail in Module 9
+- Color-coded status: green (comfortable), yellow (tight), red (action needed)
+
+**Client Communication Queue (Gap 1034)**
+- Dashboard widget listing client messages awaiting response, sorted by wait time
+- Unread client portal messages with project context and preview
+- Scheduled client meetings for today with agenda and join links
+- Response time tracking: visual indicator of how long each message has been waiting
+- One-click navigate to message thread or meeting detail
+
+**Vendor Follow-Up Queue (Gap 1035)**
+- Dashboard widget aggregating vendor items needing attention:
+  - Outstanding bids past due date
+  - Overdue vendor invoices (received but not processed)
+  - Unanswered RFIs from vendors
+  - Expired or expiring insurance certificates
+  - Unacknowledged bid invitations
+- Each item shows vendor name, project, days overdue, and one-click action
+- Filterable by urgency level and category
+
+**Team Meeting Preparation (Gap 1057)**
+- Auto-generated meeting agenda from project data for weekly team meetings
+- Agenda sections: project status summary per active job, schedule health, budget alerts, pending decisions, upcoming milestones
+- Customizable agenda template: builder defines standard meeting topics
+- One-click generation: pull agenda data, format as a shareable document
+- Meeting minutes template pre-populated with agenda items for note-taking during meeting
 
 **Empty States (Gap 533)**
 - Every widget and every list page has a designed empty state.
@@ -127,6 +196,10 @@ Also references from Section 35 (Data Integrity):
 - Compact: smaller fonts, tighter row spacing, more data visible.
 - Comfortable: larger fonts, more whitespace, touch-friendly.
 - Tables, cards, and list views all respect the density setting.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Dashboard breakage from platform update:** When a platform update removes, renames, or changes a widget that a user has placed on their customized dashboard, the dashboard must not break or render a blank space. Required behavior: (a) each widget is rendered inside an error boundary that catches failures and displays a graceful fallback ("This widget is temporarily unavailable"), (b) when a widget is deprecated, the system migrates the user's `user_dashboard_config` to replace the old widget ID with its successor (or removes it if no successor exists), (c) after any platform update that affects widgets, a migration script must run to update all affected `user_dashboard_config` records, and (d) users are notified if their dashboard layout was automatically adjusted. Widget versioning must be tracked so that rollback is possible.
 
 ### 4.4 Command Palette & Keyboard Shortcuts (Gap 527, 532)
 
@@ -282,3 +355,33 @@ CREATE TABLE user_preferences (
 4. **Offline dashboard**: Should the dashboard have any offline capability (cached last-known state) for field users with poor connectivity, or is that deferred to the PWA/mobile module?
 5. **Command palette extensibility**: Should the command palette support builder-defined custom actions (e.g., "Run weekly report"), or only platform-defined actions?
 6. **Accessibility audit**: When should the formal WCAG 2.1 AA audit be conducted -- at end of Phase 1 or as a continuous process?
+
+---
+
+## UX Design Principles (Blueprint Section 3.3)
+
+These principles apply across the entire platform and are documented here as the module responsible for the primary user experience.
+
+### Principle 1: Progressive Disclosure
+Simple by default. Power when needed. New users see simplified views with guided workflows. As users learn, they unlock more detailed views. Power features are always available but never forced. Every screen must support a "simple" and "detailed" toggle where applicable.
+
+### Principle 2: Context-Aware Interface
+Show what is relevant NOW based on: user's role (PM sees different priorities than Owner), time of day (morning = planning view, afternoon = review view), project phase (preconstruction shows different tools than construction), device (desktop = full data, mobile = action-oriented), and usage patterns (frequently used features surface first).
+
+### Principle 3: Three-Click Rule for Common Tasks
+The 20 most common daily tasks must be completable in 3 clicks or less: create daily log, take/upload photo, approve invoice, check project budget, view today's schedule, send vendor message, create punch list item, log inspection result, check delivery status, create RFI, update task status, review client portal, generate report, check cash flow, view vendor compliance, create change order, log safety observation, schedule inspection, review/approve bid, send client update.
+
+### Principle 4: Smart Defaults
+Pre-fill everything possible: daily log auto-populates date, weather, and yesterday's vendors on site. New project auto-populates from project template. Invoice AI suggests cost codes from vendor history. Schedule auto-suggests durations from historical data. Change order auto-calculates markup from settings. PO auto-populates from contract terms. Lien waiver auto-fills from payment data.
+
+### Principle 5: Never Lose Work
+Auto-save every field change (no "save" button needed). Offline mode queues changes for sync. "Undo" available for every action for 30 days. Deleted items go to recycle bin, not permanent delete. Version history on every document and record.
+
+### Principle 6: One Place to Look
+Global search finds ANYTHING (vendor name, invoice number, address, document content). "What's happening on [project]?" produces a one-page comprehensive summary. "What do I need to do?" produces a priority-sorted action queue across all projects. "Where's my money?" produces cash position + pending draws + outstanding invoices on one screen.
+
+### Principle 7: Beautiful Without Trying
+Auto-formatted reports that look professional without configuration. Client portal that impresses without builder effort. Photo galleries that look curated automatically. Financial reports that are clear to non-accountants. Proposals that close deals with beautiful templates included.
+
+### Principle 8: Inclusive Design
+Works for tech-savvy PM AND technophobe superintendent. Works in English AND Spanish (field staff). Works on $200 Android AND $1,500 iPhone. Works on 5" phone AND 27" monitor. Works for 25-year-old AND 65-year-old. Works with slow rural internet AND fast city connection. WCAG 2.1 AA compliant (accessibility).

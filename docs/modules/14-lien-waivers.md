@@ -45,6 +45,15 @@ Manages the creation, tracking, collection, and compliance enforcement of lien w
 - Builder can customize non-statutory portions of forms (company info, additional terms)
 - Form output formats: PDF (fillable and flat), print-ready
 
+#### Edge Cases & What-If Scenarios
+
+1. **State lien waiver laws change.** When a state updates its lien waiver statutes (new required language, new form types, changed deadlines), the platform must respond quickly. Required behavior:
+   - The platform legal team monitors legislative changes and publishes updated form templates with a new version number and effective date.
+   - When a new form version is published, all builders operating in that state receive an in-app notification and email explaining what changed and when the new form takes effect.
+   - In-flight waiver requests (already sent but not yet signed) are not retroactively affected. New requests use the updated form automatically.
+   - The system must prevent builders from accidentally using an expired/superseded form template by hiding superseded templates from the selection UI and flagging any draft waivers that reference an old template.
+   - A "state rules changelog" is maintained and accessible from the StateRulesViewer component showing the history of changes per state.
+
 ### 2. Waiver Types and Classification
 
 - **By Condition:**
@@ -87,6 +96,14 @@ Manages the creation, tracking, collection, and compliance enforcement of lien w
   - Previously submitted waivers
   - Payment history tied to waivers
 - Mobile-optimized for field submission (take photo of signed waiver)
+
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor refuses to use the portal.** Some vendors (especially smaller trades) may refuse to use digital tools and will only submit paper waivers via mail or in person. Required behavior:
+   - The system must support a "manual receipt" workflow: builder staff can mark a waiver request as "received via mail/in-person" and upload a scan or photo of the signed paper waiver.
+   - Manual receipts carry a `submission_method = 'manual'` flag and still go through the same approval workflow as portal submissions.
+   - The reminder/escalation schedule must support a "paper vendor" override: longer reminder intervals and the option to send reminders via SMS text or phone call prompt (not just email/portal notification).
+   - Compliance reports must not penalize builders for having vendors who submit via paper -- the compliance status depends on whether the waiver is on file, not how it was submitted.
 
 ### 5. Multi-Tier Waiver Tracking
 
@@ -138,6 +155,14 @@ Manages the creation, tracking, collection, and compliance enforcement of lien w
   - Project closeout: are all final waivers on file?
 - Compliance dashboard: red/yellow/green status per vendor per project
 - Compliance report for draw packages showing waiver status for every vendor
+
+#### Edge Cases & What-If Scenarios
+
+1. **Lien waiver compliance risk.** Lien waiver compliance is a major legal risk for builders -- a missing or incorrect waiver can result in a mechanic's lien on the property. Required behavior:
+   - The compliance dashboard must prominently display a "risk score" per project based on: number of outstanding waivers, days overdue, number of vendors with no waiver on file, and proximity to lien filing deadlines.
+   - At draw request assembly time, if any required waivers are missing, the system must block draw submission (in "strict" mode) or display a prominent warning with a list of missing waivers and their associated risk (in "warn" mode).
+   - The system must provide a "compliance audit" report that can be generated at any time showing: every vendor on the project, their waiver status for every payment, and any gaps. This report is designed to be defensible in a legal proceeding.
+   - For projects with sub-tier waiver requirements, the compliance check must cascade: the prime sub's waiver is not considered "complete" unless their sub-tier vendors' waivers are also on file.
 
 ### 9. Lien Release and Satisfaction
 

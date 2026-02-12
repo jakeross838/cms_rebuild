@@ -60,6 +60,10 @@ Manages the entire client selection lifecycle for finishes, fixtures, appliances
 - Options can be added by the builder, the design team, or imported from vendor catalogs (future) (Gap 372).
 - Each option tracks its source (builder-added, designer-recommended, client-requested).
 
+#### Edge Cases & What-If Scenarios
+
+1. **Selected item is discontinued by the manufacturer.** When a previously selected item becomes unavailable (discontinued, backordered indefinitely, or no longer manufactured), the system must: (a) allow the builder or vendor to flag an option as "discontinued" with a reason code, (b) automatically notify the builder and client that the selection is no longer available, (c) present alternative options within the same category (builder pre-selects alternatives or AI suggests based on specs and price range), (d) track the original selection in history with a "discontinued" status, and (e) if a PO was already generated, trigger the change request workflow (Section 7) with the discontinuation as the reason.
+
 ### 3. Client Portal Selection Workflow
 
 - **Room-by-room layout**: Selections organized visually by room (Kitchen, Master Bath, Powder Room, etc.) with progress indicators per room (Gap 724, 376).
@@ -70,6 +74,10 @@ Manages the entire client selection lifecycle for finishes, fixtures, appliances
 - **Inspiration board**: Clients can upload photos, Pinterest links, or notes about their preferences for each category (Gap 731).
 - **Comment threads**: Per-category discussion between client, builder, and designer (Gap 732).
 - **Decision history**: All considered options are retained, not just the final selection, with timestamps of when each was viewed/considered (Gap 733).
+
+#### Edge Cases & What-If Scenarios
+
+1. **Budget impact calculator accuracy and transparency.** The real-time budget impact calculator must be accurate and transparent to build trust with the client. Required behavior: (a) clearly show the calculation methodology (allowance amount - selected option cost = overage/credit), (b) display cumulative impact across all categories with a breakdown per category, (c) handle pricing model differences correctly (allowance-based shows overage/credit, cost-plus shows actual cost + markup, fixed-price shows "included" vs "upgrade"), (d) update in real-time as selections are made but clearly label tentative vs. confirmed impacts, and (e) include a "what-if" mode where the client can explore options without committing, seeing the budget impact of different combinations before finalizing.
 
 ### 4. Status Tracking
 
@@ -104,6 +112,10 @@ Manages the entire client selection lifecycle for finishes, fixtures, appliances
 - Change request workflow: client requests change > builder evaluates impact > cancellation fee + restocking fee + delay impact calculated > client approves change order > original PO canceled, new PO issued (Gap 375).
 - All change costs are tracked and linked to a change order.
 - If the change affects the schedule, the schedule impact is shown before client confirms.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Client wants to change a selection after it has been ordered.** The change request workflow must clearly communicate all financial and schedule consequences before the client confirms. Required behavior: (a) system automatically calculates cancellation fees based on vendor return policies (stored per vendor), (b) restocking fees are displayed as a line item, (c) lead time impact for the new selection is calculated against the current schedule, showing the specific tasks that will be delayed, (d) the total cost of the change (cancellation fee + restocking fee + price difference + schedule impact cost) is presented as a single change order for client approval with e-signature, and (e) if the original item has already been delivered or installed, the system flags this and requires builder manual assessment of removal/replacement costs.
 
 ### 8. Design Team Collaboration
 

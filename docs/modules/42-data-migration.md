@@ -63,6 +63,10 @@ Each adapter handles the unique export format of its source system:
 - Unmapped source columns shown with "ignore" or "store as custom field" options
 - Mapping templates saveable and reusable for recurring imports
 
+#### Edge Cases & What-If Scenarios
+
+1. **Field mapping complexity across source systems:** Different source systems use fundamentally different data models, and the mapping interface must handle non-trivial transformations. Required behavior: (a) support many-to-one mapping (concatenate source "First Name" + "Last Name" into target "display_name"), (b) support one-to-many mapping (split source "Full Address" into target "address_line1", "city", "state", "zip"), (c) support value transformation with lookup tables (source status "Active" maps to target "in_progress", source status "On Hold" maps to target "paused"), (d) provide an expression builder for complex transforms (e.g., "if source.type == 'Sub' then 'vendor' else 'client'"), (e) show a live preview of the first 5 mapped rows so the builder can verify the transform is correct before committing, (f) warn when a required target field has no source mapping and no default value, and (g) support "store as custom field" for source columns that have no natural target field, preserving data that would otherwise be lost.
+
 ### Validation Engine
 
 Pre-import validation checks:
@@ -80,6 +84,12 @@ Pre-import validation checks:
 - **Progress Tracking**: Real-time progress bar with records processed / total / errors
 - **Error Handling**: Configurable per import -- skip, log, or abort on error
 - **Background Processing**: Large imports run as background jobs with email notification on completion
+
+#### Edge Cases & What-If Scenarios
+
+1. **Mid-process migration failure:** When a data migration fails mid-process (database timeout, network failure, source file corruption mid-read, or server restart), the system must handle the partial state gracefully. Required behavior: (a) each batch of 500 records is committed in its own database transaction — if a batch fails, previously committed batches remain intact, (b) the migration job status is updated to `failed` with a detailed error log indicating which batch failed and why, (c) the system records the last successfully processed row number so the migration can be resumed from that point (not restarted from the beginning), (d) a "Resume" action is available on failed jobs that picks up from the last successful batch, (e) if the failure is unrecoverable (source file corrupted), the admin can roll back all completed batches for that job, and (f) the builder is notified via email and in-app notification when a background migration fails, with a link to the job status page showing the error details and recommended next steps.
+
+2. **Corrupt or inconsistent source data:** When the data from the source system is corrupt or internally inconsistent (e.g., invoices referencing non-existent vendors, budgets with negative totals that should be positive, date fields in mixed formats, duplicate records with conflicting data), the validation engine must: (a) detect and categorize each issue by severity (error = blocks import, warning = allows import with flag, info = informational note), (b) present all issues in a review screen grouped by entity type and severity before the builder commits, (c) provide a suggested fix for each issue where possible (e.g., "Vendor 'ABC Plumbing' referenced in 12 invoices does not exist in the vendor import — create a placeholder vendor?"), (d) allow the builder to fix issues in the mapping UI without re-uploading the source file, (e) support a "best effort" import mode that imports clean records and quarantines problematic records for manual review, and (f) generate a downloadable error report (CSV) listing every skipped or quarantined record with the reason, so the builder can fix the source data and re-import.
 
 ### Rollback Capability
 
@@ -187,6 +197,28 @@ migration_reconciliation
 - **Module 6: Document Storage** -- photo and document import storage
 - **Module 41: Onboarding Wizard** -- import path triggered from wizard step 7
 - **Module 5: Notification Engine** -- completion/failure notifications
+
+---
+
+## Unusual Business Scenarios — Migration Edge Cases
+
+### Mid-Stream Project Acquisition (GAP-600)
+When a builder acquires another builder's in-progress project (not a full company acquisition), the system must support onboarding a project mid-stream:
+- **Project import without tenant merge:** The acquired project is imported into the acquiring builder's tenant as a new project. This is a data import, not a tenant merge.
+- **Source data flexibility:** The source data may come from another platform (Buildertrend, CoConstruct, spreadsheets), from the selling builder's RossOS export, or from a combination of paper records and digital files. The migration wizard must support importing partial data sets — whatever the acquiring builder can obtain.
+- **Mid-project state capture:** Unlike a new project import, a mid-stream acquisition requires capturing the current state: work completed to date, costs incurred, invoices paid, active subcontracts, pending change orders, active RFIs, permit status, inspection history, and schedule progress. The import wizard must support populating these "current state" fields, not just starting from zero.
+- **Vendor relationship onboarding:** Vendors from the acquired project may be new to the acquiring builder. The import process must create vendor records for unknown vendors and prompt the builder to verify and enrich them (compliance documents, payment terms, performance baseline).
+- **Budget reconciliation:** The acquiring builder needs to establish a new budget baseline reflecting: original contract value, approved changes to date, costs incurred by the previous builder, and remaining scope. The system must support creating a budget that starts from a mid-project snapshot rather than from an estimate.
+- **Document import:** All project documents (plans, contracts, permits, inspection records, photos, correspondence) must be importable and organized into the project's folder structure. AI classification assists with auto-filing.
+
+### Builder Sells the Business (GAP-615)
+When a builder decides to sell their entire business, the system must support comprehensive business documentation for due diligence:
+- **Business overview export:** Generate a complete business data package: total projects (active + completed), total revenue by year, client list, vendor relationships, employee roster, equipment inventory, and pipeline value.
+- **Financial history:** Export multi-year financial summaries: revenue, costs, margins by project and in aggregate. WIP schedules, backlog reports, and profitability trends. This data is critical for business valuation.
+- **Active project status:** Comprehensive status report for every active project: contract value, % complete, costs to date, projected final cost, projected margin, pending change orders, open RFIs, permit status, and schedule status.
+- **Relationship data:** Export vendor performance scores, client satisfaction scores, referral sources, and communication history — these represent business goodwill that a buyer values.
+- **Data portability guarantee:** The system must provide a full data export (per Module 3, GAP-012) in a format that allows the new owner to continue operations on the platform (with a new tenant) or migrate to another system. No data is held hostage.
+- **Tenant transfer:** If the buyer is also on the platform or plans to be, support a "tenant ownership transfer" that reassigns the builder tenant to the new owner's platform account without data loss.
 
 ---
 

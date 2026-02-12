@@ -37,6 +37,24 @@ The API and Integration Marketplace extends the platform's value through ecosyst
 | 152 | Vendor reviews/ratings visible across platform | Cross-tenant vendor ratings with builder-controlled visibility |
 | 153 | Material supplier exclusive pricing/deals | Supplier deals hub: platform-negotiated pricing for members |
 | 154 | Vendor disputes a builder's rating | Vendor dispute workflow: flag review, mediation, resolution |
+| 513 | Building department API integrations (auto-submit permits, check status) | Pre-built adapters for municipal permitting APIs (Accela, CityView, etc.) |
+| 516 | Construction camera integrations (EarthCam, OpenSpace, Sensera) | Camera platform connectors for auto-import of time-lapse and site photos |
+| 517 | Drone service integrations (DroneDeploy, Skydio) | Drone survey data import (orthomosaics, elevation models, progress photos) |
+| 519 | Equipment rental company integrations (auto-track rental billing) | Rental platform connectors for start/stop tracking and invoice automation |
+| 1086 | Bank feed integration — auto-import transactions for reconciliation | Bank Feed Integrations |
+| 1087 | Credit card feed — auto-capture receipts, match to cardholders, route for coding | Credit Card Feed Integrations |
+| 1091 | Appliance dealer integration (Ferguson, Yale) — selections, pricing, delivery | Appliance Dealer Integrations |
+| 1092 | Title company integration — draw docs, lien waivers, closing docs | Title Company Integrations |
+| 1093 | Surveyor integration — receive digital survey data directly | Surveyor Data Integrations |
+| 1094 | Energy modeling tools — HERS rating, Manual J/D calculations | Energy Modeling Integrations |
+| 1095 | Smart home platform integration (Savant, Control4, Crestron) — specs, pre-wire docs | Smart Home Platform Integrations |
+| 1096 | Dumpster/portable toilet vendor — automated scheduling by construction phase | Site Services Integrations |
+| 1098 | State contractor licensing databases — auto-verify vendor licenses | License Verification Integrations |
+| 1099 | FEMA flood map API — auto-determine flood zone from project address | Geospatial Data Integrations |
+| 1100 | NOAA weather API — historical weather for schedule intelligence, real-time forecasts | Weather API Integrations |
+| 1101 | Tide data API — for coastal builders, schedule work around tides | Weather API Integrations |
+| 1102 | Building code database — ICC codes with jurisdiction-specific amendments | Code Reference Integrations |
+| 1103 | Email integration — forward emails to system, auto-file to project/vendor via AI | Email Integration |
 
 ---
 
@@ -87,8 +105,140 @@ Pre-built integrations organized by category:
 | CRM | HubSpot, Salesforce |
 | Payment | Stripe, Square, ACH providers |
 | Inspection | third-party inspection platforms |
+| Banking | Plaid (bank feeds), credit card feeds |
+| Appliances | Ferguson, Yale Appliance, AJ Madison |
+| Title | title company document exchange portals |
+| Surveying | LandXML, DXF/DWG survey data import |
+| Energy | REM/Rate, EnergyGauge, Ekotrope, WUFI |
+| Smart Home | Savant, Control4, Crestron, Lutron |
+| Site Services | dumpster, portable toilet, temp power providers |
+| Licensing | state contractor licensing databases (all 50 states) |
+| Geospatial | FEMA flood maps, county GIS, Google Maps/Mapbox |
+| Weather | NOAA forecasts, tide data APIs |
+| Building Codes | ICC Digital Codes, UpCodes, MuniCode |
+| Email | project-specific inbound email routing (IMAP/SMTP) |
 
 Each integration listing includes: description, screenshots, setup guide, permissions required, pricing (free/paid), reviews, install count.
+
+### Financial Feed Integrations (Gaps 1086, 1087)
+
+**Bank Feed Integration (Gap 1086):**
+- Auto-import bank transactions for reconciliation against invoiced/paid items
+- Supported providers: Plaid (aggregator covering most US banks), MX, Yodlee
+- Two-way matching: imported transactions auto-matched to recorded payments by amount, date, and payee name
+- Unmatched transactions flagged for manual coding (job, cost code, vendor)
+- Builder configures which bank accounts to connect and which projects/cost codes to map
+- Daily auto-sync with manual refresh option
+- Security: bank credentials stored by the aggregator (Plaid), not by the platform; OAuth-based authentication
+
+**Credit Card Feed Integration (Gap 1087):**
+- Auto-capture transactions from company credit/debit cards
+- Match transactions to cardholders (each card linked to a platform user)
+- Route each transaction for job cost coding: AI suggests job and cost code based on merchant name, amount, and cardholder's active projects
+- Integrate with receipt capture (Module 13 Receipt Processing): match uploaded receipt photos to card transactions by amount and date
+- Support split coding: single transaction allocated across multiple jobs or cost codes
+- Monthly reconciliation report: all card transactions with coding status (coded, pending, disputed)
+
+### Appliance & Specialty Dealer Integrations (Gap 1091)
+
+- Connect to appliance dealer platforms (Ferguson, Yale Appliance, AJ Madison, Pacific Sales) for:
+  - Selection catalog browsing within the selections module (Module 21)
+  - Real-time pricing and availability lookup
+  - Delivery scheduling synced with the project schedule
+  - Order status tracking (ordered, shipped, delivered, installed)
+- Link appliance selections to budget allowance lines for automatic budget tracking
+- Auto-populate appliance specifications (dimensions, utility requirements, warranty info) into the project spec book
+
+### Title Company Integration (Gap 1092)
+
+- Share draw documentation and lien waiver packages with title companies electronically
+- Support common title company platforms and portals
+- Auto-format draw packages to meet title company requirements (varies by company)
+- Receive closing document packages from title companies into the project document repository
+- Track title insurance, closing dates, and document completeness status
+
+### Surveyor Data Integration (Gap 1093)
+
+- Receive digital survey data directly from surveyor platforms or standard file formats (DXF, DWG, CSV, LandXML)
+- Import boundary surveys, topographic surveys, ALTA surveys, and as-built surveys
+- Auto-link survey data to the project record and document repository
+- Extract key data points: lot dimensions, setback distances, elevation data, easements, utility locations
+- Display survey overlay on site plan within the project dashboard
+
+### Energy Modeling Integrations (Gap 1094)
+
+- Connect to energy modeling tools (REM/Rate, EnergyGauge, Ekotrope, WUFI) for:
+  - HERS rating data import (projected and tested ratings)
+  - Manual J (heating/cooling load) and Manual D (duct design) calculation results
+  - Blower door and duct leakage test results
+- Link energy performance data to the permit and inspection tracking module (Module 32)
+- Include energy compliance documentation in the O&M manual assembly (Module 28)
+
+### Smart Home Platform Integration (Gap 1095)
+
+- Connect to smart home platforms (Savant, Control4, Crestron, Lutron, Josh.ai) for:
+  - System specification documents imported into the project document repository
+  - Pre-wire documentation (wire schedules, outlet locations, conduit paths) linked to the electrical scope
+  - Equipment lists with pricing fed into the selections and budget modules
+  - Installation scheduling synced with the project schedule
+- Track smart home system scope as a distinct budget division with its own cost codes
+
+### Site Services Integration (Gap 1096)
+
+- Connect to dumpster and portable toilet providers for automated scheduling based on construction phase:
+  - Auto-request dumpster delivery at demolition, framing, drywall, and final clean phases
+  - Auto-request portable toilet delivery at project start and removal at substantial completion
+  - Track rental periods and auto-allocate costs to the appropriate project and cost code
+  - Schedule size changes based on phase (larger dumpster during framing, smaller during finish)
+- Support scheduling of other site services: temporary power, temporary fencing, site security
+
+### License & Compliance Verification Integrations (Gap 1098)
+
+- Connect to state contractor licensing databases for real-time license verification:
+  - Auto-verify vendor license numbers are active and in good standing
+  - Check for disciplinary actions, complaints, or bond claims
+  - Monitor license expiration dates and trigger renewal alerts
+  - Support all 50 states (licensing databases vary widely in API availability)
+- For states without API access: support manual verification with a link to the state licensing board website
+- Store verification results in the vendor compliance module (Module 10) with verification date and status
+
+### Geospatial Data Integrations (Gap 1099)
+
+- **FEMA Flood Map API**: auto-determine flood zone designation from project address
+  - Display flood zone on project summary (Zone X, AE, VE, etc.)
+  - Flag projects in high-risk zones requiring flood insurance and elevated construction
+  - Link to FEMA flood map viewer for detailed review
+- **County GIS systems**: where available, pull parcel data (lot dimensions, zoning, setbacks, land use)
+- **Google Maps / Mapbox**: project location mapping, driving directions for field staff, distance-based vendor search
+
+### Weather & Environmental API Integrations (Gaps 1100, 1101)
+
+- **NOAA Weather API (Gap 1100)**:
+  - Historical weather data for schedule intelligence (Section 4.1 of AI Engine Design)
+  - Real-time forecasts for daily operations (10-day forecast overlay on schedule)
+  - Severe weather alerts pushed to project teams
+  - Historical precipitation data for construction delay documentation
+- **Tide Data API (Gap 1101)**:
+  - For coastal builders: tide schedules integrated into the project schedule
+  - Auto-flag concrete pours, foundation work, and waterfront construction that must be scheduled around tidal cycles
+  - King tide and storm surge alerts for waterfront project sites
+
+### Building Code Reference Integration (Gap 1102)
+
+- Connect to building code databases (ICC Digital Codes, UpCodes, MuniCode) for:
+  - Jurisdiction-specific code lookup from project address
+  - Code section references linkable to inspection checklists and RFIs
+  - Automatic identification of applicable code amendments by jurisdiction
+  - Code change tracking: alert builders when jurisdictions adopt new code editions that affect active projects
+
+### Email Integration (Gap 1103)
+
+- Forward emails to the system via a project-specific email address (e.g., `AMI-103@inbox.rossos.com`)
+- AI auto-files emails to the correct project based on: project reference in subject/body, sender's email matched to a vendor or client, and content analysis
+- Extract attachments and route through the AI processing layer (invoices, plans, COIs, lien waivers auto-classified and processed)
+- Full email thread preserved in the project communication log
+- Reply from the platform maintains the email thread
+- Support for BCC-based email logging (builder BCCs the platform on outgoing emails)
 
 ### Zapier / Make Connector
 
@@ -105,6 +255,27 @@ Each integration listing includes: description, screenshots, setup guide, permis
 - App submission and review process for marketplace listing
 - Developer forum and support
 - Revenue sharing for paid integrations (70/30 developer/platform split)
+
+### Edge Cases & What-If Scenarios
+
+1. **Buggy third-party integration causing user problems.** When a third-party integration listed in the marketplace malfunctions (crashes, corrupts data, causes performance degradation, or sends incorrect data), the platform must be able to respond quickly to protect users. The system must support: automatic health monitoring for installed integrations (track error rates, response times, and failure patterns per integration), circuit-breaker pattern that auto-disables an integration after a configurable failure threshold (e.g., 5 consecutive failures), immediate admin kill-switch to disable a faulty integration across all tenants, automatic notification to all builders who have the integration installed ("Integration X has been temporarily disabled due to a known issue"), and a clear incident history per integration visible on its marketplace listing. The developer who built the integration must also be notified immediately to fix the issue.
+
+2. **Popular integration acquired or changes its API.** When a widely-used external service (e.g., an accounting platform, supplier portal, or scheduling tool) is acquired by another company, deprecates its API, or makes breaking changes, the platform must adapt quickly to prevent disruption for builders. The system must maintain an integration health dashboard that tracks API version compatibility and deprecation timelines for all active integrations. When a breaking change is detected or announced, the platform team must be alerted immediately, and affected builders must receive advance notice with a timeline for migration. The integration abstraction layer must support running two versions of an adapter simultaneously during transition periods (old API and new API) so builders can migrate at their own pace within a defined window.
+
+3. **Developer experience quality for ecosystem growth.** A thriving integration ecosystem depends on third-party developers being able to build, test, and publish integrations efficiently. The API and developer portal must provide: comprehensive OpenAPI 3.0 documentation with interactive "Try It" examples for every endpoint, sandbox environments where developers can test against realistic (but fake) data without affecting any tenant, clear and fast app review process with published review criteria and SLA (target: 5 business days from submission to approval/feedback), SDK libraries in popular languages (JavaScript, Python, C#) that are kept up-to-date with API changes, and a developer forum with active platform team participation. Developer satisfaction should be tracked as a metric, and documentation quality should be measured via "Was this helpful?" feedback on every page.
+
+### Construction-Specific Integrations (GAP-513, GAP-516, GAP-517, GAP-519)
+
+The following construction-industry-specific integrations must be prioritized in the integration directory:
+
+- **Building department API integrations** (GAP-513): where municipalities offer electronic permitting APIs (e.g., Accela, CityView, eTRAKiT, OpenGov), the platform must support auto-submission of permit applications and real-time status checking. Required behavior: (a) maintain a registry of known electronic permitting jurisdictions and their API endpoints, (b) support auto-population of permit application fields from project data, (c) poll for permit status updates and reflect them in the permitting module (Module 32), (d) for jurisdictions without APIs, the integration falls back to manual entry with optional email-based status tracking, and (e) the jurisdiction registry is community-maintained -- builders can report new electronic permitting jurisdictions for the platform team to add.
+- **Construction camera integrations** (GAP-516): integrate with job site camera systems (EarthCam, OpenSpace, Sensera, TrueLook, OxBlue) to: auto-import time-lapse photos into the project photo gallery, link camera footage to daily log entries by date, provide a live camera feed widget on the project dashboard (where the camera service offers a web embed), and auto-tag imported camera photos using the AI photo tagging engine (Module 24). Camera integrations are data consumers only -- the platform does not control camera hardware.
+- **Drone service integrations** (GAP-517): integrate with drone survey platforms (DroneDeploy, Skydio, Pix4D, Propeller Aero) to: auto-import site survey data (orthomosaic maps, elevation models, volumetric measurements) into the project document repository, link drone survey data to specific schedule milestones for progress tracking, overlay drone imagery on site plans for visual progress comparison, and import drone-captured photos into the photo gallery with automatic GPS-based location tagging.
+- **Equipment rental company integrations** (GAP-519): integrate with equipment rental platforms (United Rentals, Sunbelt Rentals, BlueLine Rental) to: auto-track rental start/stop dates and billing for cost allocation to projects, receive electronic invoices for rented equipment that feed into the invoice processing pipeline (Module 13), alert PMs when rental periods are approaching end dates to prevent unplanned extensions, and sync rental equipment data with the equipment tracking module (Module 35) for a unified view of owned and rented equipment.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Building department API availability and reliability.** Municipal APIs are notoriously unreliable -- they may go offline without notice, change data formats, or have long response times. The platform must not block the permit workflow when a building department API is unavailable. Required behavior: when an API call fails, the system must queue the request for retry (exponential backoff, max 24 hours), notify the user that the electronic submission failed and provide a manual fallback option, and log all API interactions for debugging jurisdiction-specific issues. The integration must be designed to gracefully degrade -- if the API is down for extended periods, the user can proceed with manual permit tracking without data loss.
 
 ### Vendor Network
 

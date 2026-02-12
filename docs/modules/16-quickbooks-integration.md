@@ -43,6 +43,15 @@ Bi-directional sync engine connecting the construction management platform to ex
 - Disconnect flow that revokes tokens and clears local mapping data.
 - Support for multiple simultaneous connections (e.g., QBO for accounting + a delivery tracking service).
 
+#### Edge Cases & What-If Scenarios
+
+1. **Connection to QuickBooks is lost.** The OAuth token expires, is revoked by the user in QBO, or QBO experiences an extended outage. Required behavior:
+   - The system must detect connection loss on the next sync attempt (token refresh failure, 401 response, or network timeout) and immediately set `status = 'error'` on the connection record.
+   - All pending sync operations are queued (not dropped) with a `connection_lost` status. The queue persists until connection is restored.
+   - The builder receives an in-app alert and email: "QuickBooks connection lost. X records are queued and will sync when connection is restored. Click here to reconnect."
+   - On reconnection (successful re-auth), the system automatically processes all queued records in chronological order. A "catch-up sync" report is generated showing what was synced during the recovery.
+   - If the connection is not restored within a configurable period (default: 7 days), escalate the alert to the builder owner and flag the sync queue as "stale -- manual review recommended."
+
 ### 2. Account Mapping Configuration
 - On first connection, pull the builder's chart of accounts from QBO/Xero.
 - Present a mapping UI: platform cost codes on the left, accounting accounts on the right.
@@ -80,6 +89,21 @@ Bi-directional sync engine connecting the construction management platform to ex
 - **Manual review:** Conflicts are queued for human review. Builder sees a conflict resolution UI showing both values side-by-side.
 - Conflict detection: compare checksums of key fields (amount, date, status) before write.
 - Per-entity conflict strategy: e.g., invoices use "platform-wins" but payments use "QBO-wins."
+
+#### Edge Cases & What-If Scenarios
+
+1. **Record deleted in QuickBooks.** When a record (invoice, vendor, payment) is deleted in QuickBooks Online, the platform has no automatic mechanism to detect and handle the deletion, leaving orphaned records that reference a non-existent QBO entity. Required behavior:
+   - **Deletion detection** -- during each sync cycle, compare platform records with `qbo_id` against QBO's current records. Any platform record whose `qbo_id` no longer exists in QBO is flagged as `externally_deleted`.
+   - **Soft-flag, don't auto-delete** -- platform records are NEVER auto-deleted by sync. Instead, set a `sync_status = 'external_delete_detected'` flag and surface in the sync dashboard.
+   - **User action required** -- builder sees "X records deleted in QuickBooks" alert with options: **Archive** (mark as archived in platform, preserves history), **Re-create in QBO** (push the platform record back to QBO), or **Delete in platform** (remove from platform to match QBO, with confirmation).
+   - **Webhook approach (preferred)** -- subscribe to QBO webhooks for `Delete` events to catch deletions in near-real-time rather than polling.
+   - **Audit log** -- every external deletion detection is logged with timestamp, record type, and user resolution action.
+
+2. **Conflict resolution clarity.** The available conflict resolution strategies (last-write-wins, platform-wins, QBO-wins, manual review) can confuse builders who do not understand the implications. Required behavior:
+   - During initial setup, the connection wizard must include a "conflict resolution" step with plain-language explanations and examples for each strategy.
+   - Each strategy must have a "preview" option: "If you choose Platform-wins, here's what would happen with your current data" showing a sample of recent records that would be affected.
+   - The per-entity configuration must be surfaced clearly: builders must understand that invoices and payments can use different strategies.
+   - When a conflict actually occurs, the notification must explain in plain language: "Invoice #1234 was changed in both RossOS and QuickBooks. The QuickBooks value ($5,200) was kept because your conflict rule is set to 'QBO-wins.' [View details] [Change rule]."
 
 ### 6. Xero Support
 - Same integration architecture with Xero-specific OAuth2 tenant flow.
@@ -242,3 +266,4 @@ CREATE TABLE v2_sync_records (
 4. Should bank feed reconciliation data be surfaced in the platform, or only in the accounting system?
 5. How do we handle builders who switch from QBO to Xero mid-project? (Re-mapping, historical data)
 6. What is the Zapier/Make trigger set for V1? (Invoice created, payment received, vendor added?)
+

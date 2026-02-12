@@ -43,6 +43,19 @@ Project scheduling with Gantt charts, calendar views, task dependencies, and res
 | GAP-042 | Weather patterns vary by region; scheduling must account for regional climate | Medium |
 | GAP-045 | Regional holidays affect scheduling | Medium |
 | GAP-046 | Work hour restrictions vary by municipality | Low |
+| 956-962 | Site preparation tracking: tree protection, erosion control, temp utilities, security, dumpsters, staging, neighbor notices | Construction phase task library: site prep checklist template |
+| 963-969 | Foundation tracking: type, inspection, concrete, piles, waterproofing, under-slab MEP, as-built survey | Construction phase task library: foundation checklist template |
+| 970-975 | Structural framing tracking: lumber delivery, framing progress, steel, window/door schedule, rough openings, structural inspection | Construction phase task library: framing checklist template |
+| 976-980 | Dry-in/envelope tracking: roofing, weather barrier, window install, cladding, flashing details | Construction phase task library: dry-in checklist template |
+| 981-988 | MEP rough-in tracking: plumbing, electrical, HVAC, low-voltage, fire sprinkler, MEP conflicts, insulation, inspections | Construction phase task library: MEP rough-in checklist template |
+| 989-998 | Interior finishes tracking: drywall, paint, tile, flooring, cabinets, countertops, trim, hardware, appliances, fixtures | Construction phase task library: interior finishes checklist template |
+| 999-1008 | Exterior finishes tracking: driveway, landscaping, pool, outdoor kitchen, fencing, garage door, accessories, paint, gutters, screen enclosure | Construction phase task library: exterior finishes checklist template |
+| 1031 | Schedule review across all jobs — who's going where today, conflicts, weather issues | Multi-project daily schedule dashboard |
+| 1032 | Material delivery schedule — what's arriving today on which job sites | Material delivery calendar view integrated with schedule |
+| 1033 | Inspection schedule — which inspections today, who's meeting the inspector | Inspection calendar integrated with Module 32 |
+| 1048 | Schedule updates — adjust based on today's progress, push notifications to affected trades | End-of-day schedule adjustment workflow with trade notifications |
+| 1050 | Tomorrow's plan — review schedule for tomorrow, confirm vendor starts, check material deliveries | Next-day preparation dashboard |
+| 1053 | Schedule health review — critical path analysis, at-risk projects | Weekly schedule health report across all projects |
 
 ---
 
@@ -68,6 +81,10 @@ Builder configures their default view. Each user can override with their own pre
 - Milestone tracking: zero-duration tasks marking key events (permit received, drywall complete, CO issued).
 - Task grouping by phase or trade (GAP-293). Builder configures hierarchy preference.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Critical path task is delayed.** When a critical path task slips, the system must immediately recalculate the project completion date and clearly communicate the cascading impact on all successor tasks. The schedule drift alert (Section 7.6) fires, and the system surfaces a notification to the PM and superintendent showing: original completion date, new projected completion date, list of impacted successor tasks, and suggested recovery options (Section 7.8).
+
 ### 7.3 Schedule Templates (GAP-292, GAP-277)
 
 - Builders create reusable templates from existing schedules or from scratch.
@@ -92,6 +109,10 @@ Builder configures their default view. Each user can override with their own pre
 - Drag-and-drop rescheduling with automatic conflict detection.
 - "Resource calendar" showing each vendor's workload across all builder's projects.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Multi-project resource conflicts with shared vendors.** When the same vendor has critical tasks scheduled simultaneously on multiple projects, the resource leveling engine must surface the conflict with enough context for the PM to make a priority decision. Required: show all conflicting tasks across projects, each task's critical path status, each project's priority level, and the vendor's stated availability. The system must not auto-resolve multi-project conflicts -- it presents options and the PM decides.
+
 ### 7.6 Baseline & Variance Tracking (GAP-298, GAP-299)
 
 - Save schedule baselines at any point (baseline 1, baseline 2, etc.).
@@ -106,7 +127,123 @@ Builder configures their default view. Each user can override with their own pre
 - Phase-level milestones that gate subsequent phases.
 - What-if analysis (GAP-302): clone current schedule, apply changes (delay start, add scope), compare impact. Save scenarios for discussion.
 
-### 7.8 Schedule Recovery & Look-Ahead (GAP-304, GAP-305)
+#### Edge Cases & What-If Scenarios
+
+1. **Scheduling methodology mismatch.** Some builders' planning processes do not fit cleanly into Gantt/Kanban/List views (e.g., relationship-based or constraint-based scheduling). The system must allow builders to use any combination of views for the same data and must not force a methodology. Platform documentation should provide guidance on mapping non-standard approaches to the available views.
+
+### 7.8 Construction Phase Task Libraries (Gaps 956-1008)
+
+Platform-provided construction phase task templates that builders can customize for their projects. Each phase template expands into detailed sub-tasks with recommended durations, dependencies, responsible trades, and inspection gates.
+
+**Phase 5 — Site Preparation (Gaps 956-962):**
+- Tree protection plan documentation: protected trees, fencing requirements, monitoring during construction (Gap 956)
+- Erosion control / SWPPP: installation, inspection schedule, maintenance log (Gap 957)
+- Temporary utilities setup: temporary power, water, portable toilet delivery and service schedule (Gap 958)
+- Site security: fencing, locks, camera installation, alarm system (Gap 959)
+- Dumpster/waste management: delivery, pickup schedule, recycling requirements (Gap 960)
+- Material staging plan: storage locations, delivery access routes, crane placement (Gap 961)
+- Neighbor notification: courtesy notices about construction start, hours, and contact info (Gap 962)
+
+**Phase 6 — Foundation (Gaps 963-969):**
+- Foundation type tracking: slab, crawlspace, basement, pilings, auger cast — configurable per project and region (Gap 963)
+- Foundation inspection checklist: configurable by foundation type and jurisdiction (Gap 964)
+- Concrete supplier coordination: mix design approval, delivery scheduling, testing requirements (Gap 965)
+- Pile driving/foundation subcontractor coordination: pile specifications, driving records, load testing (Gap 966)
+- Waterproofing/damp-proofing: material specifications, installation documentation, warranty registration (Gap 967)
+- Under-slab MEP rough-in coordination: plumbing, electrical, HVAC that must be in before slab pour (Gap 968)
+- Foundation survey/as-built: verify foundation matches plans; document deviations (Gap 969)
+
+**Phase 7 — Structural Framing (Gaps 970-975):**
+- Lumber/material delivery scheduling: coordinated with framing start; track multiple deliveries (Gap 970)
+- Framing progress tracking: wall framing, roof trusses, sheathing as sub-tasks (Gap 971)
+- Structural steel/engineered beam tracking: fabrication lead time, delivery date, installation sequence (Gap 972)
+- Window and door schedule management: order through fabrication, delivery, and installation (Gap 973)
+- Rough opening verification: confirm all openings match window/door order before closing walls (Gap 974)
+- Structural inspection coordination: schedule with building department, pre-inspection checklist (Gap 975)
+
+**Phase 8 — Dry-In / Building Envelope (Gaps 976-980):**
+- Roofing material and installation: underlayment, flashing, finish roofing material (Gap 976)
+- Exterior wall weather barrier/wrap: installation documentation and inspection (Gap 977)
+- Window and door installation: each unit tracked with quality checklist (Gap 978)
+- Exterior cladding coordination: siding, stucco, stone, brick — multiple trades managed simultaneously (Gap 979)
+- Flashing and waterproofing details: critical junction points documented with photos (Gap 980)
+
+**Phase 9 — MEP Rough-In (Gaps 981-988):**
+- Plumbing rough-in checklist: fixture locations, pipe sizing, water heater location, gas line routing (Gap 981)
+- Electrical rough-in checklist: panel location, circuit layout, fixture boxes, low-voltage pre-wire (Gap 982)
+- HVAC rough-in checklist: duct routing, equipment placement, return air, fresh air, exhaust fans (Gap 983)
+- Low-voltage/smart home pre-wire: network, audio, security, camera, motorized shades, lighting control (Gap 984)
+- Fire sprinkler rough-in: design, installation, inspection tracking (if required) (Gap 985)
+- MEP coordination conflicts: track and resolve conflicts between plumbing, electrical, HVAC, and structural (Gap 986)
+- Insulation inspection checklist: R-values by location, installation quality, vapor barrier (Gap 987)
+- MEP rough-in inspection coordination: schedule all trade inspections, track pass/fail, re-inspection (Gap 988)
+
+**Phase 10 — Interior Finishes (Gaps 989-998):**
+- Drywall tracking: hanging, taping, texture, by room/area (Gap 989)
+- Interior paint tracking: primer, color by room, sheen, touch-up tracking (Gap 990)
+- Tile installation tracking: by room, material, pattern, grout color (Gap 991)
+- Hardwood/flooring installation: material, direction, transition details (Gap 992)
+- Cabinet installation checklist: by room, verify against shop drawings, punch list (Gap 993)
+- Countertop fabrication and installation: template date, fabrication timeline, installation date (Gap 994)
+- Millwork/trim installation: crown, base, casing, built-ins by room (Gap 995)
+- Hardware installation: door hardware, cabinet hardware, bath accessories (Gap 996)
+- Appliance delivery and installation: model, serial number, delivery date, installation date, warranty registration (Gap 997)
+- Fixture installation: plumbing fixtures, light fixtures, ceiling fans — each tracked (Gap 998)
+
+**Phase 11 — Exterior Finishes (Gaps 999-1008):**
+- Driveway and walkway: concrete, pavers, or other; pour/install dates (Gap 999)
+- Landscaping coordination: grading, irrigation, planting, sod, mulch, lighting (Gap 1000)
+- Pool/spa construction: separate permit, contractor, and inspection sequence (if applicable) (Gap 1001)
+- Outdoor kitchen/living area: separate scope tracking (Gap 1002)
+- Fencing: permit, installation, inspection (Gap 1003)
+- Garage door installation: order, delivery, installation, programming (Gap 1004)
+- Mailbox, house numbers, exterior accessories (Gap 1005)
+- Exterior paint/stain: body, trim, accents, touch-up (Gap 1006)
+- Gutter and downspout installation (Gap 1007)
+- Screen enclosure: if applicable, common in Florida (Gap 1008)
+
+Each phase template is customizable per builder and per project type. Builders can add, remove, or reorder sub-tasks. Templates include recommended durations based on project size and historical data.
+
+### 7.9 Daily Schedule Operations (Gaps 1031-1033, 1048, 1050, 1053)
+
+**Morning Schedule Dashboard (Gap 1031):**
+- Multi-project daily view: who is going where today across all active projects
+- Conflict detection: same vendor scheduled on multiple jobs, overlapping inspections
+- Weather overlay: today's forecast impact on scheduled outdoor work
+- Red/yellow/green status per project based on schedule health
+
+**Material Delivery Calendar (Gap 1032):**
+- Integrated material delivery view showing all expected deliveries across all projects for today/this week
+- Delivery details: vendor, material, PO number, expected time, delivery location
+- Delivery confirmation workflow: mark as received, flag discrepancies
+- Link to purchase orders and vendor contacts for follow-up
+
+**Inspection Calendar (Gap 1033):**
+- Cross-project inspection calendar showing all scheduled inspections
+- Inspector contact info and preferred scheduling methods
+- Inspection preparation checklist per inspection type
+- Integration with Module 32 (Permitting & Inspections) for result logging
+
+**End-of-Day Schedule Updates (Gap 1048):**
+- Quick progress update: mark tasks as started, in progress, or complete
+- Auto-notification to affected trades when schedule changes
+- Drag-and-drop rescheduling with dependency cascade preview
+- Change reason documentation for schedule modifications
+
+**Tomorrow's Plan (Gap 1050):**
+- Next-day preparation dashboard: tasks starting tomorrow, vendor confirmations needed, material deliveries expected
+- Vendor start confirmations: send batch reminders to vendors scheduled for tomorrow
+- Pre-delivery check: confirm all materials needed for tomorrow's work are on site or en route
+- Weather check: tomorrow's forecast impact on scheduled work
+
+**Weekly Schedule Health Review (Gap 1053):**
+- Cross-project schedule health scorecard: on track, at risk, behind
+- Critical path analysis per project: which projects have critical path tasks this week
+- Schedule drift summary: tasks that slipped this week with days of variance
+- Recovery recommendations: suggested actions for behind-schedule projects
+
+### 7.10 Schedule Recovery & Look-Ahead (GAP-304, GAP-305)
+<!-- NOTE: Section numbers shifted from original due to inserted sections 7.8 and 7.9 -->
 
 - Two-week look-ahead report (GAP-305): auto-generated detailed plan for the next 14 days. Printable, shareable with trades.
 - Recovery options after delay (GAP-304): system suggests compression opportunities, parallel task options, overtime scenarios.
@@ -132,6 +269,15 @@ Builder configures their default view. Each user can override with their own pre
 - **Severe weather alerts** (GAP-310): push notifications for hurricane/tornado/severe storm warnings. Optional preparation checklists.
 - **Regional features** (GAP-311, GAP-313): tidal data, snow/ice day tracking -- enabled per builder based on region. Not shown for irrelevant regions.
 - Weather data displayed on daily schedule view and two-week look-ahead.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Weather API false positive handling.** Weather integration may flag a work day as a weather delay when conditions were actually workable (e.g., rain predicted but did not materialize, or light rain that did not prevent interior work). Required behavior:
+   - **Weather data is advisory, not authoritative** -- weather API data populates daily logs with suggested conditions but does NOT auto-delay tasks.
+   - **Superintendent override** -- the superintendent confirms or overrides weather conditions in the daily log. The confirmed value (not the API value) drives schedule adjustments.
+   - **Trade-specific weather rules** -- configurable per builder: define which weather conditions block which trades (e.g., rain blocks concrete but not interior finish). Default rules provided, builder can customize.
+   - **Retroactive correction** -- if a weather delay was recorded but work actually proceeded, allow superintendent to mark the day as "worked despite weather" which removes the delay from schedule variance calculations.
+   - **Accuracy tracking** -- track weather API prediction vs. actual conditions (from daily logs) over time to improve threshold calibration per region.
 
 ---
 
@@ -315,6 +461,19 @@ Track temporary utilities and site services throughout the project lifecycle.
 
 ---
 
+## Unusual Business Scenarios — Scheduling Edge Cases
+
+### Project Paused for Extended Period (GAP-602)
+When a project is paused for an extended period (12+ months due to financing issues, permitting delays, or other causes), the system must support:
+- **Schedule suspension:** All schedule tasks are frozen in their current state. A "paused" overlay is applied to the Gantt chart and all schedule views. No automatic recalculation of dates occurs during the pause.
+- **Vendor contract suspension tracking:** System flags all active vendor subcontracts and POs on the paused project. Builder can mark each as: suspended (vendor notified, work stopped), terminated (scope will be re-bid on restart), or completed (scope was finished before pause).
+- **Permit extension tracking:** System identifies all active permits on the project and calculates expiration dates relative to the pause duration. Alerts are generated for permits that will expire during the pause, requiring renewal before work can resume.
+- **Schedule restart workflow:** When the project resumes, system provides a "restart wizard" that: shifts all remaining tasks forward by the pause duration, prompts the builder to confirm vendor availability for the new dates, recalculates the critical path, identifies materials that may need re-ordering (price escalation check), and generates a new baseline from the restart point.
+- **Cost escalation recalculation:** On restart, the system flags all uncommitted budget lines for price review. If material cost indices are integrated, system can suggest updated pricing based on the time elapsed. Committed costs (signed subcontracts) are checked for price escalation clauses.
+- **Weathering/damage assessment:** On restart, system prompts for a site condition assessment — documenting any deterioration during the pause that requires remediation before work resumes.
+
+---
+
 ## Open Questions
 
 1. Which weather API service provides the best balance of accuracy, cost, and construction-relevant data (precipitation probability, wind speed, heat index)?
@@ -323,3 +482,4 @@ Track temporary utilities and site services throughout the project lifecycle.
 4. Should the what-if scenario feature (GAP-302) be deferred to Phase 3 or 4 as a "Schedule Intelligence" enhancement?
 5. How should vendor calendar sync work -- pull from Google Calendar, manual entry, or both?
 6. Should tidal data (GAP-311) be a separate microservice or bundled with weather integration?
+

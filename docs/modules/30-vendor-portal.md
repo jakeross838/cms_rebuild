@@ -124,6 +124,14 @@ Guided experience for new vendors joining the platform.
 - **Team Management:** Vendor company admin can add team members (foremen, office staff) with role-based access. Data belongs to the company, not individual users.
 - **Profile Updates:** Vendor updates their profile (contact info, trades, service area, insurance) in one place, visible to all connected builders.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor works for multiple builders on the platform.** Data must be properly segregated so vendors never accidentally see another builder's information. Required behavior: (a) the vendor dashboard clearly displays a builder selector or grouped view showing projects organized by builder, (b) bid invitations, POs, invoices, and punch items are always displayed with the builder name prominently visible, (c) when submitting a bid or invoice, the system confirms the target builder before submission ("You are submitting to Builder X -- confirm?"), (d) compliance documents uploaded once are shared across all builder relationships (with builder consent), but performance scores, payment terms, and internal notes are strictly isolated per builder, and (e) the vendor's global schedule view shows tasks from all builders with color-coding by builder to prevent confusion.
+
+2. **Vendor employee leaves the company.** The vendor admin must be able to manage team member departures without losing data. Required behavior: (a) vendor admin can deactivate a user account, which immediately revokes portal access but preserves all historical data (daily logs, photos, communications) attributed to that user, (b) deactivated users cannot be re-activated without vendor admin approval, (c) any in-progress items assigned to the departing employee are flagged for reassignment, (d) the system prompts the vendor admin to transfer any pending tasks or open items to another team member, and (e) if the departing employee was the sole admin, the system requires designation of a new admin before deactivation completes.
+
+3. **Portal intuitiveness and self-service design.** The vendor portal must be intuitive enough that vendors can use it without training or builder support. Required behavior: (a) the onboarding wizard covers all essential setup in under 10 minutes, (b) contextual help tooltips are available on every major action, (c) the portal supports both English and Spanish for all UI elements and system messages, (d) the most common actions (submit invoice, view schedule, complete punch item) are accessible within 2 clicks from the dashboard, and (e) a guided "first-time" experience highlights key features when a vendor first logs into each section.
+
 ---
 
 ## Database Tables

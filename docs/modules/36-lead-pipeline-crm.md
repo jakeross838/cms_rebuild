@@ -48,6 +48,24 @@ configurable per builder.
 | 254 | Design team communication during preconstruction | Meeting log, decision tracker, and direction change history per lead/prospect |
 | 255 | Long preconstruction phases (6-18 months for luxury custom) | Timeline tracking with milestone-based stage progression, not just date-based |
 | 256 | Preconstruction billing (monthly design fee, hourly consulting, flat fee) | Pre-con invoice generation with configurable billing types per agreement |
+| 914 | Networking/event tracking (industry events, builder association meetings, relationships) | Activity type for networking events with relationship tracking and follow-up reminders |
+| 915 | Strategic lot tracking (monitor lots for sale matching ideal build profile) | Lot watch list with alerts when matching lots hit the market; links to lot evaluation on lead creation |
+| 917 | Competitive intelligence (competitor pricing trends, new starts, marketing activity) | Manual-entry competitive intel log per market area; feeds win/loss analytics |
+| 920 | Lead scoring: budget realism (lot ownership, financing pre-approval, budget-to-wish alignment) | Enhanced scoring criteria with budget realism composite score |
+| 924 | Dream board capture (client inspiration images, must-have features, lifestyle needs) | Dream board attachment on lead record: images, notes, feature wish list captured during initial conversations |
+| 926 | Quick feasibility calculator (configurable formula: lot + wishes + current costs = rough range) | Configurable feasibility formula per builder producing rough cost range from lot, scope, and current cost data |
+| 927 | Design team assembly (architect, engineer, interior designer, landscape architect tracking) | Design team roster per lead with contact info, contracts, and deadline tracking |
+| 928 | Design milestone tracking (concept -> schematic -> DD -> CD with client review gates) | Design phase milestones with stage-gate client approvals at each transition |
+| 929 | Design meeting management (schedule, agenda, attendees, minutes, decisions, action items) | Formal meeting record type for design meetings linked to lead, with decision and action item tracking |
+| 930 | Preliminary budget tracking across design iterations | Estimate snapshots at each design milestone; budget delta display showing cost impact of design changes |
+| 931 | Preconstruction agreement management (paid planning phase, separate billing) | Enhanced pre-con agreement: separate billing tracking, milestone-based invoicing, scope limitations |
+| 932 | Geotechnical report tracking (soil boring results, foundation recommendations, cost implications) | Geotech report status field on lot evaluation with findings summary and cost impact notes |
+| 933 | Survey management (boundary, topographic, tree, elevation surveys; who ordered, when received) | Survey tracking per lot: type, ordered date, received date, surveyor contact, results/findings |
+| 934 | Environmental assessment tracking (wetlands, protected species, stormwater requirements) | Environmental assessment checklist on lot evaluation with status, findings, and mitigation requirements |
+| 935 | HOA/deed restriction checklist (architectural review board requirements, submission deadlines, approval status) | HOA/ARB submission workflow: requirements list, submission date, review period, approval status, conditions |
+| 936 | Utility coordination tracker (water, sewer, electric, gas, cable — application status, fees, timeline) | Utility availability and connection tracking per lot with application status, estimated fees, and timeline |
+| 937 | Impact fee calculator by jurisdiction (school, transportation, park, fire impact fees) | Impact fee estimator with configurable fee schedules per jurisdiction; auto-populates in feasibility estimate |
+| 938 | Design coordination issue log (conflicts between architectural, structural, MEP, interior design) | Design conflict tracker: log conflicts, assign resolution responsibility, track status, link to design revision |
 
 ---
 
@@ -63,6 +81,33 @@ configurable per builder.
 - Lead deduplication: check name, email, phone, address at entry; prompt for merge if match found
 - Lead assignment: auto-route to PM based on configurable rules or manual assignment
 
+#### Edge Cases & What-If Scenarios
+
+1. **Lead comes from an untracked source.** When a lead arrives through a channel not configured in the lead source list (e.g., a random phone call, a yard sign inquiry, or an informal referral at a social event), the system must handle ad-hoc sources gracefully. Required behavior: (a) an "Other / Manual Entry" source option is always available with a free-text description field, (b) when a new ad-hoc source is used more than a configurable threshold (default: 3 times), the system suggests adding it as a formal source category, (c) the lead source ROI reporting includes an "unattributed" category so builders can see how much pipeline value is not being tracked, and (d) the system allows retroactive source assignment when a lead's origin is discovered later.
+
+2. **Lead has multiple projects they are considering.** The data model must support a single lead contact being associated with multiple potential projects. Required behavior: (a) a lead record can have multiple "project interests" each with its own project type, budget range, timeline, and lot information, (b) each project interest can be at a different pipeline stage independently, (c) scoring applies per project interest (a lead may be hot for one project and cold for another), (d) when a lead converts to a project, only the specific project interest is converted -- other interests remain active in the pipeline, and (e) the pipeline kanban board can display either leads (one card per person) or project interests (one card per potential project) based on builder preference.
+
+### Networking & Event Tracking (Gap 914)
+- Track industry events, builder association meetings, Parade of Homes, trade shows
+- Log attendees, conversations, and relationships cultivated at each event
+- Follow-up task generation from event contacts
+- Link networking contacts to lead records when they become prospects
+- Event ROI: track which networking activities generate leads and conversions
+
+### Strategic Lot Tracking (Gap 915)
+- Lot watch list: define ideal lot criteria (location, size, zoning, price range, topography)
+- Alert when matching lots hit the market (MLS integration or manual entry)
+- Lot evaluation auto-populates when a watched lot is linked to a new lead
+- Track lot acquisition status: available, under contract, sold, off-market
+- Map view of watched lots overlaid with builder's current project locations
+
+### Competitive Intelligence (Gap 917)
+- Manual-entry competitive intelligence log per market area
+- Track competitor activity: new project starts, marketing campaigns, pricing trends, staffing changes
+- Competitor profiles: company name, typical project types, price range, reputation, strengths/weaknesses
+- Link competitive intel to specific leads where the competitor is also bidding (feeds Gap 249 tracking)
+- Quarterly competitive landscape summary report
+
 ### Lead Scoring & Qualification
 - Weighted scoring model with builder-defined criteria:
   - Budget range (realistic for what they want?)
@@ -72,9 +117,14 @@ configurable per builder.
   - Project type (new build, major renovation, addition)
   - Referral source (referred by past client scores higher)
   - Engagement level (responded to follow-up, attended consultation)
+  - Budget realism composite (Gap 920): does the client's budget align with what they want? Score based on: lot ownership status, financing pre-approval, budget-to-wish-list alignment, comparable project data
 - Score thresholds: hot / warm / cold (configurable per builder)
 - Auto-stage advancement when score crosses threshold
 - Score recalculation on data changes or engagement events
+
+#### Edge Cases & What-If Scenarios
+
+1. **Lead scoring bias.** The lead scoring model is powerful but could produce biased results if not implemented carefully. Required behavior: (a) the system provides a "scoring audit" view that shows how each lead's score was calculated, with per-criterion breakdowns, (b) builders can adjust scoring weights at any time, with a preview showing how the change would affect current lead rankings, (c) the system tracks scoring accuracy over time: compare scores at each stage to eventual win/loss outcomes, and flag when high-scored leads consistently lose or low-scored leads consistently win (indicating the model needs recalibration), (d) demographic or geographic criteria that could introduce unfair bias are flagged with a warning during scoring configuration, and (e) a periodic "scoring health check" report is available showing score distribution, correlation with conversion rates, and suggested weight adjustments.
 
 ### Pipeline Management
 - Builder-defined pipeline stages (default: Lead -> Qualified -> Consultation -> Proposal -> Negotiation -> Won/Lost)
@@ -84,6 +134,13 @@ configurable per builder.
 - Pipeline value tracking: expected contract value x probability at each stage
 - Pipeline velocity: average days in each stage, overall cycle time
 - Stale lead alerts: lead has not advanced stages in configurable number of days
+- **Competitive tracking (Gap 249):** When a prospective client is receiving bids from multiple builders, the system must support tracking the competitive landscape:
+  - Each lead record can list known competitors (other builders bidding on the same project) with name and any known details.
+  - Perceived competitive position: builder rates their position (strong, neutral, weak) with notes on differentiators.
+  - Competitive intelligence fields: competitor's estimated price range (if known), competitor's perceived strengths/weaknesses, client's stated decision criteria.
+  - Win/loss analysis links competitive data to outcomes: when a lead is marked lost, the winning competitor is recorded along with the reason.
+  - Reporting surfaces patterns: which competitors are you losing to most often, and on what criteria (price, schedule, reputation, scope).
+  - Competitive data is strictly private to the builder -- never shared across tenants or with any external party.
 
 ### Nurturing & Follow-Up
 - Automated nurturing sequences: series of emails/tasks triggered by stage or event
@@ -98,8 +155,10 @@ configurable per builder.
 - Pre-consultation checklist: information to gather before meeting
 - Consultation notes and outcomes capture
 - Site visit logging with photos and notes
+- Dream board capture (Gap 924): log client's inspiration images, must-have features, lifestyle needs, and design preferences during initial conversations; attach images, Pinterest links, and notes; reference during design and selection phases
 - Design meeting tracker: date, attendees, decisions made, action items
 - Decision log: key decisions during preconstruction with date and who approved
+- **Direction change tracking (Gap 254):** When the design team changes direction during preconstruction (e.g., client changes layout preference, architect revises structural approach), the system must capture direction changes as formal records with: the original direction, the new direction, who requested the change, the reason, the date, and the impact on scope/timeline/budget. Direction changes are linked to the relevant scope iteration and displayed in the lead's activity timeline. This history is critical for documenting scope evolution and justifying estimate changes.
 
 ### Preconstruction Workflows
 - Design-build track: architect selection, design milestones, design review cycles
@@ -108,7 +167,28 @@ configurable per builder.
 - Pre-con billing: generate invoices for preconstruction services
 - Lot evaluation checklist: soil report, survey, flood zone, setbacks, utilities, HOA restrictions
 - Feasibility analysis: preliminary budget range, go/no-go recommendation
+- Quick feasibility calculator (Gap 926): configurable formula per builder that takes lot characteristics, desired scope, and current cost data to produce a rough cost range (e.g., "$X-$Y") for early client conversations; formula inputs include: square footage, finish tier, lot complexity, region, and current cost indices
 - Scope iterations: V1/V2/V3 estimate versions linked to pipeline progression
+
+### Design Team & Preconstruction Coordination (Gaps 927-938)
+- Design team assembly (Gap 927): track architect, structural engineer, interior designer, landscape architect, and other consultants per lead with contact info, contract status, fee structure, and deliverable deadlines
+- Design milestone tracking (Gap 928): concept, schematic design, design development, construction documents — each with client review gate; track actual vs planned dates; cannot advance to next design phase without client sign-off
+- Design meeting management (Gap 929): formal meeting records with schedule, agenda, attendees, minutes, decisions made, and action items; auto-generate follow-up tasks from action items
+- Preliminary budget tracking across design iterations (Gap 930): estimate snapshot at each design milestone; visual display of budget delta between iterations so client sees cost impact of design changes in real time
+- Preconstruction agreement management (Gap 931): separate contract for paid design/planning phase with its own billing milestones, scope, and tracking independent from the construction contract
+- Geotechnical report tracking (Gap 932): soil boring results, foundation type recommendations, cost implications; linked to lot evaluation; status tracking (ordered, received, reviewed)
+- Survey management (Gap 933): boundary survey, topographic survey, tree survey, elevation certificate — each tracked with: surveyor contact, order date, received date, findings summary, document storage
+- Environmental assessment tracking (Gap 934): wetlands delineation, protected species surveys, stormwater management requirements, environmental permits; status and findings with mitigation requirements
+- HOA/architectural review board checklist (Gap 935): ARB requirements list, submission materials, submission date, review period, approval status, conditions of approval, required modifications
+- Utility coordination tracker (Gap 936): water, sewer, electric, gas, cable/internet — application status, connection fees, estimated availability timeline, utility company contacts per lot
+- Impact fee calculator (Gap 937): configurable fee schedules by jurisdiction; school impact, transportation impact, park impact, fire impact fees; auto-populates in feasibility estimate and preconstruction budget
+- Design coordination issue log (Gap 938): track conflicts between architectural, structural, MEP, and interior design disciplines; assign resolution responsibility; link to design revision when resolved; prevents scope gaps from falling through the cracks
+- **Long preconstruction phase support (Gap 255):** Luxury custom homes often have preconstruction phases lasting 6-18 months. The system must support long-duration preconstruction without leads going stale or falling out of tracking:
+  - Milestone-based stage progression: pipeline stages advance based on milestone completion (e.g., "Schematic Design Complete," "Design Development Approved," "Construction Documents Issued"), not just elapsed time.
+  - Stale lead alerts must be configurable per pipeline stage -- a lead in "Design Development" for 3 months is normal, but a lead in "Initial Consultation" for 3 months is stale.
+  - Preconstruction timeline view: Gantt-style visualization of preconstruction milestones with actual vs planned dates.
+  - Regular touchpoint reminders: configurable cadence for PM check-ins with the client during long preconstruction (e.g., monthly update meetings automatically scheduled).
+  - Activity gap detection: if no activity is recorded on a lead for a configurable period (default: 30 days), the system alerts the assigned PM.
 
 ### Conversion to Project
 - Won deal triggers project creation workflow
@@ -183,6 +263,69 @@ scope_iterations
 lead_source_costs
   id, builder_id, source, period_start, period_end,
   spend_amount, notes, created_at
+
+networking_events
+  id, builder_id, event_name, event_type, event_date, location,
+  contacts_made, notes, follow_up_tasks, lead_ids_generated, created_at
+
+watched_lots
+  id, builder_id, lot_address, criteria_match, price, zoning,
+  lot_size, topography, status (available|under_contract|sold|off_market),
+  alert_active, notes, created_at
+
+competitor_profiles
+  id, builder_id, name, market_area, project_types, price_range,
+  reputation_notes, strengths, weaknesses, created_at, updated_at
+
+competitive_intel_log
+  id, builder_id, competitor_id, entry_date, intel_type,
+  description, source, created_at
+
+dream_boards
+  id, lead_id, title, images, must_have_features, lifestyle_needs,
+  design_preferences, notes, created_at, updated_at
+
+design_team_members
+  id, lead_id, role (architect|engineer|interior_designer|landscape_architect|other),
+  contact_id, contract_status, fee_structure, deliverable_deadlines, notes
+
+design_milestones
+  id, lead_id, milestone_name, sequence_order, planned_date, actual_date,
+  client_approved, client_approved_date, notes, status
+
+design_meetings
+  id, lead_id, scheduled_date, location, attendees, agenda,
+  minutes, decisions, action_items, created_at
+
+geotech_reports
+  id, lot_evaluation_id, status (ordered|received|reviewed),
+  surveyor_contact, soil_type, foundation_recommendation,
+  cost_implications, document_url, created_at
+
+surveys
+  id, lot_evaluation_id, survey_type (boundary|topographic|tree|elevation),
+  surveyor_contact, ordered_date, received_date,
+  findings_summary, document_url, created_at
+
+environmental_assessments
+  id, lot_evaluation_id, assessment_type, status,
+  findings, mitigation_requirements, permit_status,
+  document_url, created_at
+
+hoa_submissions
+  id, lead_id, lot_evaluation_id, hoa_name, requirements,
+  submission_date, review_period_end, approval_status,
+  conditions, modifications_required, document_url, created_at
+
+utility_coordination
+  id, lot_evaluation_id, utility_type (water|sewer|electric|gas|cable),
+  provider_name, provider_contact, application_status,
+  connection_fee, estimated_timeline, notes, created_at
+
+design_conflicts
+  id, lead_id, conflict_description, disciplines_involved,
+  assigned_to, resolution, resolved_date, linked_design_revision,
+  status (open|in_progress|resolved), created_at
 ```
 
 ---
@@ -225,6 +368,30 @@ GET    /api/v2/leads/analytics/conversion         # Conversion funnel metrics
 
 POST   /api/v2/leads/nurturing/sequences          # Create nurturing sequence
 GET    /api/v2/leads/nurturing/sequences          # List sequences
+
+GET    /api/v2/networking-events                   # List networking events
+POST   /api/v2/networking-events                   # Log networking event
+GET    /api/v2/watched-lots                        # List watched lots
+POST   /api/v2/watched-lots                        # Add lot to watch list
+PATCH  /api/v2/watched-lots/:id                    # Update watched lot status
+GET    /api/v2/competitors                         # List competitor profiles
+POST   /api/v2/competitors                         # Create competitor profile
+POST   /api/v2/competitors/:id/intel               # Log competitive intelligence entry
+
+GET    /api/v2/leads/:id/dream-board               # Get dream board for lead
+PUT    /api/v2/leads/:id/dream-board               # Update dream board
+GET    /api/v2/leads/:id/design-team               # Design team roster for lead
+POST   /api/v2/leads/:id/design-team               # Add design team member
+GET    /api/v2/leads/:id/design-milestones         # Design milestones for lead
+POST   /api/v2/leads/:id/design-milestones         # Create design milestone
+PATCH  /api/v2/leads/:id/design-milestones/:mid    # Update milestone (approve, complete)
+GET    /api/v2/leads/:id/design-meetings           # Design meetings for lead
+POST   /api/v2/leads/:id/design-meetings           # Schedule design meeting
+GET    /api/v2/leads/:id/design-conflicts          # Design conflicts for lead
+POST   /api/v2/leads/:id/design-conflicts          # Log design conflict
+PATCH  /api/v2/leads/:id/design-conflicts/:cid     # Resolve design conflict
+GET    /api/v2/leads/:id/feasibility               # Quick feasibility estimate
+POST   /api/v2/leads/:id/feasibility               # Generate feasibility estimate
 ```
 
 ---

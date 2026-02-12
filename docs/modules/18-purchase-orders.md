@@ -123,11 +123,29 @@ Creates draft PO if no match found
 - Configurable tolerance: auto-approve variances under X% or $Y (e.g., 2% or $50).
 - Unmatched invoices go to a review queue for manual PO association or standalone processing.
 
+#### Edge Cases & What-If Scenarios
+
+1. **Three-way matching variance handling.** The PO says $10,000 for lumber, the receipt confirms full delivery, but the invoice is $10,800 due to a fuel surcharge or price increase. Required behavior:
+   - Variances within the auto-approve tolerance (configurable per builder, default: 2% or $50) are automatically accepted with an audit log entry noting "auto-approved variance."
+   - Variances above tolerance must be routed to a review queue with: PO amount, receipt amount, invoice amount, variance amount, variance percentage, and variance reason (if detectable from the invoice).
+   - The reviewer must be able to: approve the variance (with reason), reject the invoice back to the vendor, partially approve (accept some line variances, reject others), or create a PO amendment to match the invoice.
+   - Approved variances must update the PO committed amount and cascade to the budget, and the variance must be tracked as a "post-PO price adjustment" for vendor performance reporting.
+   - If the same vendor repeatedly invoices above PO amounts, the system should surface this pattern in vendor analytics.
+
 ### 8. Backorder Management
 - When partial receipt is recorded, unreceived line items are automatically flagged as backordered.
 - Backorder dashboard shows all outstanding items across all POs.
 - Builder can: contact vendor for updated ETA, cancel backordered items, or create a new PO for substitute materials.
 - Schedule impact alert: if backordered items affect scheduled tasks, a warning is surfaced.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Partial delivery and backorder management.** A vendor delivers only part of an order, with remaining items on backorder for an indefinite period. Required behavior:
+   - Partial receipt must update the PO status to `partial_delivery` and track received vs. outstanding quantities per line item.
+   - The backorder dashboard must show: item description, original quantity, received quantity, backordered quantity, original expected delivery date, and vendor-provided updated ETA (if available).
+   - If a backordered item is needed for a scheduled task, the system must cross-reference the project schedule and alert the PM with: "Backordered item X is needed for task Y starting on Z. Current ETA from vendor is W."
+   - The builder must be able to cancel individual backordered line items (partial cancellation) without affecting already-received items. Cancelled backorder items reduce the PO committed amount.
+   - If the vendor provides a substitute item, the PO amendment workflow (Section 10) must support changing the line item description and unit price while preserving the original item reference for audit.
 
 ### 9. Blanket Purchase Orders
 - Blanket POs are standing orders for recurring materials (e.g., monthly lumber delivery).
@@ -143,6 +161,15 @@ Creates draft PO if no match found
 - Each amendment increments the PO version number.
 - Amendments above the original approval threshold trigger re-approval.
 - Full version history is preserved and auditable.
+
+#### Edge Cases & What-If Scenarios
+
+1. **Vendor price changes after PO issuance.** A vendor notifies the builder that prices have increased after a PO was issued but before delivery. Required behavior:
+   - The system must support a "vendor-initiated price change" amendment that records: original unit price, new unit price, vendor's justification, and date of change.
+   - Price change amendments must go through the PO approval workflow if the new total exceeds the original approval threshold.
+   - The builder must be able to accept, reject, or negotiate the price change. If rejected, the PO remains at the original price and the builder can choose to cancel the PO or proceed at the original terms (with a note that the vendor may not honor it).
+   - Accepted price changes must cascade to the budget: the committed cost on the associated cost code is updated to reflect the new PO total.
+   - The price change history must be visible in the PO version history and in vendor performance analytics (tracking which vendors most frequently change prices post-PO).
 
 ### 11. Cross-Project Procurement Aggregation (Gap #398)
 - System analyzes open POs and budget needs across all active projects.
@@ -428,6 +455,19 @@ Track and optimize vendor payment terms to improve cash flow.
 - **Early-Pay Discount Dashboard:** Surface all invoices eligible for early-pay discounts with dollar savings if paid within the discount window.
 - **Cash Flow Impact Analysis:** Compare cost of paying early (lost float) versus discount captured; recommend optimal pay date.
 - **Per-Vendor Configuration:** Store default payment terms per vendor in vendor management; auto-populate on new POs.
+
+---
+
+## Unusual Business Scenarios — Procurement Edge Cases
+
+### Material Supplier Goes Bankrupt (GAP-607)
+When a material supplier goes bankrupt after receiving payment or with open POs, the system must support:
+- **Deposit recovery tracking:** For POs where deposits were paid but materials not yet delivered, the system tracks: PO number, deposit amount paid, deposit date, delivery status, and recovery status (claim filed, in arbitration, written off). A dedicated "deposit recovery" report aggregates all outstanding deposits with the bankrupt supplier across all projects.
+- **Alternative sourcing workflow:** For outstanding PO line items from the bankrupt supplier, system generates a "re-source" list that can be sent to alternative suppliers as a bid request. Original specifications, quantities, and required-by dates carry forward. The system tracks the price difference between original PO pricing and replacement pricing.
+- **Schedule impact analysis:** All schedule tasks dependent on materials from the bankrupt supplier are flagged. System calculates the delay impact based on lead times from alternative suppliers and surfaces the critical path impact on the project dashboard.
+- **Substitution approval workflow:** If alternative materials differ from the original specification, the system triggers the material substitution workflow (see Material Substitution Management section) requiring architect/owner approval before ordering.
+- **Budget impact:** The cost difference between original PO pricing and replacement pricing is tracked as a separate budget variance category: "supplier bankruptcy impact." Lost deposits that cannot be recovered are expensed to a designated cost code.
+- **PO status update:** Open POs with the bankrupt supplier are marked as "supplier_bankrupt" status — distinct from cancelled — preserving the financial record for insurance claims and tax purposes.
 
 ---
 

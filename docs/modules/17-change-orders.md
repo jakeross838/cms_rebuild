@@ -113,6 +113,21 @@ Each CO captures: originator, source type, description, affected scope areas, su
 - Version tracking: if the CO amount changes during negotiation, each version is preserved.
 - Negotiation history is visible to internal team but not to the client (client sees current version only).
 
+#### Edge Cases & What-If Scenarios
+
+1. **Negotiation thread visibility.** The negotiation communication thread contains messages between builder and client, but it also needs to support internal-only notes that the client must never see. Required behavior:
+   - Every message in the negotiation thread must have an `is_internal` flag (already in the schema). The UI must make this toggle prominent and defaulting to "internal" to prevent accidental disclosure.
+   - Internal messages must be visually distinct (different background color, "INTERNAL" badge) in the builder's view.
+   - The client portal view must filter out all `is_internal = true` messages with zero possibility of leakage.
+   - When a builder user switches from an internal note to a client-visible message, a confirmation dialog must appear: "This message will be visible to the client. Confirm?"
+
+2. **Client changes mind after CO approval.** After a client e-signs and approves a change order, they may want to reverse it. Required behavior:
+   - **Withdrawal window** -- configurable period (default: 48 hours) after client approval during which the client can request withdrawal through the client portal.
+   - **After withdrawal window** -- client must request a new CO to reverse the previous one (creates paper trail).
+   - **Builder override** -- builder/PM can void a client-approved CO at any time with reason (creates offsetting entry or reversal).
+   - **In-progress work guard** -- if work has already started on the CO scope, system warns before allowing withdrawal and requires builder confirmation.
+   - **Financial reversal** -- withdrawal reverses the budget cascade atomically (same transaction wrapping as approval).
+
 ### 8. Contract Value Update Chain (Gap #365)
 On CO approval:
 1. **Contract value** increases (or decreases) by the CO amount.
@@ -122,6 +137,21 @@ On CO approval:
 5. **Accounting sync** triggered if QuickBooks/Xero integration is active (Module 16).
 
 All cascading updates are atomic - if any step fails, the entire approval is rolled back.
+
+#### Edge Cases & What-If Scenarios
+
+1. **CO budget cascade atomicity.** When a change order is approved, it simultaneously modifies budget lines, contract total, schedule (if schedule impact), and potentially triggers PO amendments. If any step fails mid-cascade, the financial state becomes inconsistent. Required behavior:
+   - **Database transaction wrapping** -- all CO approval side effects must execute within a single database transaction: update budget line(s) with `approved_changes` amount, update `revised_budget` on affected cost codes, update contract total (original + sum of approved COs), if schedule impact update task durations/dates, if PO amendment needed create PO amendment draft (NOT auto-approved).
+   - **Rollback on failure** -- if any step fails, the entire approval is rolled back and the CO remains in `pending_approval` status.
+   - **Idempotency** -- re-approving an already-approved CO must be a no-op (not double-count the budget impact).
+   - **Audit trail** -- log each side effect with the CO approval event so the cascade is traceable.
+   - **Concurrent approval guard** -- prevent two users from approving the same CO simultaneously (optimistic locking via `updated_at` check).
+
+2. **Schedule impact from change order.** A change order adds significant scope that extends the project timeline, but the schedule impact is not automatically calculated. Required behavior:
+   - If the builder uses the scheduling module, the CO form must allow linking affected schedule tasks and specifying additional duration.
+   - On CO approval, the schedule must be updated atomically with the budget cascade (same transaction).
+   - The system must warn if the CO pushes the critical path past the target completion date and surface this on both the client-facing CO document and the internal approval screen.
+   - If no schedule tasks are linked, the system should prompt: "This CO has no schedule impact specified. Is that correct?" to prevent accidental omissions.
 
 ### 9. Budget and Draw Schedule Cascade
 - CO approval creates new budget line items tagged with the CO number.
@@ -361,3 +391,4 @@ CREATE TABLE v2_change_order_settings (
 4. How do we handle COs on cost-plus contracts where markup structure differs from fixed-price COs?
 5. Should allowance overage COs be batched (monthly) or generated individually per selection?
 6. What is the retention policy for CO version history and negotiation messages?
+
