@@ -70,8 +70,8 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500">Welcome back! Here&apos;s what&apos;s happening.</p>
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back! Here&apos;s what&apos;s happening.</p>
       </div>
 
       {/* Stats grid */}
@@ -82,8 +82,8 @@ export default async function DashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">{stat.name}</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm text-muted-foreground">{stat.name}</p>
+                    <p className="text-2xl font-bold text-foreground mt-1">
                       {stat.value}
                     </p>
                   </div>
@@ -108,7 +108,7 @@ export default async function DashboardPage() {
             </div>
             <Link
               href="/jobs"
-              className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
             >
               View all <ArrowRight className="h-4 w-4" />
             </Link>
@@ -120,26 +120,26 @@ export default async function DashboardPage() {
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900 truncate">
+                        <span className="font-medium text-foreground truncate">
                           {job.name}
                         </span>
                         <Badge className={getStatusColor(job.status)}>
                           {job.status.replace('_', ' ')}
                         </Badge>
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm text-muted-foreground mt-1">
                         {job.clients?.name || 'No client'} • {job.city}, {job.state}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-foreground">
                         {formatCurrency(job.contract_amount)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-muted-foreground">
                         {formatRelativeDate(job.updated_at)}
                       </div>
                     </div>
@@ -147,10 +147,10 @@ export default async function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <Briefcase className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="text-center py-8 text-muted-foreground">
+                <Briefcase className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
                 <p>No jobs yet</p>
-                <Link href="/jobs/new" className="text-blue-600 hover:underline text-sm">
+                <Link href="/jobs/new" className="text-primary hover:underline text-sm">
                   Create your first job
                 </Link>
               </div>
@@ -203,7 +203,7 @@ export default async function DashboardPage() {
               )}
 
               {(pendingInvoices || 0) === 0 && (pendingDraws || 0) === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <TrendingUp className="h-12 w-12 mx-auto mb-3 text-green-300" />
                   <p className="text-green-600 font-medium">All caught up!</p>
                   <p className="text-sm">No pending action items</p>

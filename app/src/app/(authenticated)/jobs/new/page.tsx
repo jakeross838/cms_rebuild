@@ -106,18 +106,18 @@ export default function NewJobPage() {
       <div className="mb-6">
         <Link
           href="/jobs"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to Jobs
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Create New Job</h1>
-        <p className="text-gray-500">Add a new construction project</p>
+        <h1 className="text-2xl font-bold text-foreground">Create New Job</h1>
+        <p className="text-muted-foreground">Add a new construction project</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
             {error}
           </div>
         )}
@@ -238,7 +238,7 @@ export default function NewJobPage() {
                   Contract Amount
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                   <Input
                     id="contract_amount"
                     name="contract_amount"
@@ -327,7 +327,7 @@ export default function NewJobPage() {
           </Link>
           <Button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700"
+            className=""
             disabled={loading}
           >
             {loading ? (

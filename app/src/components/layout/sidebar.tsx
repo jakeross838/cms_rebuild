@@ -124,17 +124,17 @@ export function Sidebar({ user }: SidebarProps) {
             onClick={() => toggleMenu(item.name)}
             className={cn(
               'w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors',
-              'text-gray-700 hover:bg-gray-100'
+              'text-sidebar-foreground hover:bg-sidebar-accent'
             )}
           >
             <span className="flex items-center gap-3">
-              <item.icon className="h-5 w-5 text-gray-500" />
+              <item.icon className="h-5 w-5 text-muted-foreground" />
               {item.name}
             </span>
             {isOpen ? (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
             )}
           </button>
           {isOpen && (
@@ -146,8 +146,8 @@ export function Sidebar({ user }: SidebarProps) {
                   className={cn(
                     'block px-3 py-2 text-sm rounded-md transition-colors',
                     isActive(child.href)
-                      ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                      : 'text-muted-foreground hover:bg-sidebar-accent'
                   )}
                 >
                   {child.name}
@@ -165,27 +165,27 @@ export function Sidebar({ user }: SidebarProps) {
         className={cn(
           'flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors',
           active
-            ? 'bg-blue-50 text-blue-700 font-medium'
-            : 'text-gray-700 hover:bg-gray-100'
+            ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent'
         )}
       >
-        <item.icon className={cn('h-5 w-5', active ? 'text-blue-600' : 'text-gray-500')} />
+        <item.icon className={cn('h-5 w-5', active ? 'text-sidebar-primary' : 'text-muted-foreground')} />
         {item.name}
       </Link>
     )
   }
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <aside className="w-64 bg-sidebar-background border-r border-sidebar-border flex flex-col">
       {/* Logo */}
-      <div className="h-16 flex items-center px-4 border-b border-gray-200">
+      <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-blue-600 flex items-center justify-center">
-            <Building2 className="h-5 w-5 text-white" />
+          <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center">
+            <Building2 className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
-            <div className="font-semibold text-gray-900">Ross Built</div>
-            <div className="text-xs text-gray-500">Construction CMS</div>
+            <div className="font-semibold text-sidebar-foreground">Ross Built</div>
+            <div className="text-xs text-muted-foreground">Construction CMS</div>
           </div>
         </Link>
       </div>
@@ -198,7 +198,7 @@ export function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* Bottom navigation */}
-      <div className="p-3 border-t border-gray-200 space-y-1">
+      <div className="p-3 border-t border-sidebar-border space-y-1">
         {bottomNav.map((item) => (
           <NavLink key={item.name} item={item} />
         ))}
@@ -206,18 +206,18 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* User info */}
       {user && (
-        <div className="p-3 border-t border-gray-200">
+        <div className="p-3 border-t border-sidebar-border">
           <div className="flex items-center gap-3 px-2">
-            <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
+            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+              <span className="text-sm font-medium text-muted-foreground">
                 {user.name?.charAt(0) || 'U'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-gray-900 truncate">
+              <div className="text-sm font-medium text-sidebar-foreground truncate">
                 {user.name}
               </div>
-              <div className="text-xs text-gray-500 capitalize">{user.role}</div>
+              <div className="text-xs text-muted-foreground capitalize">{user.role}</div>
             </div>
           </div>
         </div>

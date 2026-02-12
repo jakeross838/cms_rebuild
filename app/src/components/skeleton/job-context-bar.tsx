@@ -22,22 +22,22 @@ export function JobContextBar() {
   const jobId = params.id as string
 
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-3">
+    <div className="bg-card border-b border-border px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
             href="/skeleton/jobs"
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
           >
             <ChevronLeft className="h-4 w-4" />
             Jobs
           </Link>
 
-          <div className="h-6 w-px bg-gray-200" />
+          <div className="h-6 w-px bg-border" />
 
           <div>
-            <h1 className="font-semibold text-gray-900">{mockJob.name}</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="font-semibold text-foreground">{mockJob.name}</h1>
+            <p className="text-sm text-muted-foreground">
               {mockJob.client} &bull; {mockJob.address}
             </p>
           </div>
@@ -46,13 +46,13 @@ export function JobContextBar() {
         <div className="flex items-center gap-4">
           {/* Progress */}
           <div className="flex items-center gap-2">
-            <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-600 rounded-full"
+                className="h-full bg-primary rounded-full"
                 style={{ width: `${mockJob.percentComplete}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-foreground">
               {mockJob.percentComplete}%
             </span>
           </div>
@@ -70,7 +70,7 @@ export function JobContextBar() {
           </span>
 
           {/* Contract Value */}
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-foreground">
             ${(mockJob.contractValue / 1000000).toFixed(2)}M
           </span>
         </div>

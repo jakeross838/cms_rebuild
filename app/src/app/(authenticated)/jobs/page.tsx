@@ -49,11 +49,11 @@ export default async function JobsPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Jobs</h1>
-          <p className="text-gray-500">Manage your construction projects</p>
+          <h1 className="text-2xl font-bold text-foreground">Jobs</h1>
+          <p className="text-muted-foreground">Manage your construction projects</p>
         </div>
         <Link href="/jobs/new">
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button>
             <Plus className="h-4 w-4 mr-2" />
             New Job
           </Button>
@@ -63,7 +63,7 @@ export default async function JobsPage({
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <form>
             <Input
               type="search"
@@ -83,7 +83,7 @@ export default async function JobsPage({
               <Button
                 variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
                 size="sm"
-                className={params.status === filter.value || (!params.status && !filter.value) ? 'bg-blue-600' : ''}
+                className=""
               >
                 {filter.label}
               </Button>
@@ -93,46 +93,46 @@ export default async function JobsPage({
       </div>
 
       {/* Jobs list */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
         {jobs.length > 0 ? (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-border">
             {jobs.map((job) => (
               <Link
                 key={job.id}
                 href={`/jobs/${job.id}`}
-                className="block p-4 hover:bg-gray-50 transition-colors"
+                className="block p-4 hover:bg-accent transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <Building2 className="h-5 w-5 text-gray-500" />
+                      <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                        <Building2 className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
                           {job.job_number && (
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                               {job.job_number}
                             </span>
                           )}
-                          <span className="font-medium text-gray-900">
+                          <span className="font-medium text-foreground">
                             {job.name}
                           </span>
                           <Badge className={getStatusColor(job.status)}>
                             {job.status.replace('_', ' ')}
                           </Badge>
                         </div>
-                        <div className="text-sm text-gray-500 mt-0.5">
+                        <div className="text-sm text-muted-foreground mt-0.5">
                           {job.clients?.name || 'No client'} • {job.address ? `${job.city}, ${job.state}` : 'No address'}
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="text-right hidden sm:block">
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-foreground">
                       {formatCurrency(job.contract_amount)}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       {job.start_date ? `Started ${formatDate(job.start_date)}` : 'Not started'}
                     </div>
                   </div>
@@ -142,15 +142,15 @@ export default async function JobsPage({
           </div>
         ) : (
           <div className="text-center py-12">
-            <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-lg font-medium text-gray-900 mb-1">No jobs found</h3>
-            <p className="text-gray-500 mb-4">
+            <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+            <h3 className="text-lg font-medium text-foreground mb-1">No jobs found</h3>
+            <p className="text-muted-foreground mb-4">
               {params.search || params.status
                 ? 'Try adjusting your filters'
                 : 'Get started by creating your first job'}
             </p>
             <Link href="/jobs/new">
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Create Job
               </Button>

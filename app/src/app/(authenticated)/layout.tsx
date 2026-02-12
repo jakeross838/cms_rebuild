@@ -23,7 +23,7 @@ export default async function AuthenticatedLayout({
     .single()
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-muted">
       {/* Sidebar */}
       <Sidebar user={profile} />
 

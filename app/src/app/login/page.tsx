@@ -42,12 +42,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="h-12 w-12 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Building2 className="h-7 w-7 text-white" />
+            <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center">
+              <Building2 className="h-7 w-7 text-primary-foreground" />
             </div>
           </div>
           <CardTitle className="text-2xl font-bold">Ross Built CMS</CardTitle>
@@ -58,7 +58,7 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                 {error}
               </div>
             )}
@@ -95,7 +95,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full"
               disabled={loading}
             >
               {loading ? (

@@ -9,7 +9,7 @@ export default function SkeletonLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-muted">
       {children}
     </div>
   )

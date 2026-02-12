@@ -76,27 +76,27 @@ function Section({
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <div className="border border-border rounded-lg overflow-hidden bg-card">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+        className="w-full px-4 py-3 flex items-center justify-between bg-muted hover:bg-accent transition-colors"
       >
         <div className="flex items-center gap-2">
           <Icon className={cn('h-4 w-4', iconColor)} />
-          <span className="font-medium text-gray-900">{title}</span>
+          <span className="font-medium text-foreground">{title}</span>
           {count !== undefined && (
-            <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
               {count}
             </span>
           )}
         </div>
         {isOpen ? (
-          <ChevronDown className="h-4 w-4 text-gray-400" />
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
         ) : (
-          <ChevronRight className="h-4 w-4 text-gray-400" />
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         )}
       </button>
-      {isOpen && <div className="p-4 border-t border-gray-100">{children}</div>}
+      {isOpen && <div className="p-4 border-t border-border">{children}</div>}
     </div>
   )
 }
@@ -121,58 +121,58 @@ export function PageSpec({
   return (
     <div className="max-w-5xl mx-auto space-y-4">
       {/* Compact Header */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-card rounded-lg border border-border p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <span className={cn('h-2 w-2 rounded-full', phaseStyle.bg)} />
-              <span className="text-xs font-medium text-gray-500">{phase}</span>
+              <span className="text-xs font-medium text-muted-foreground">{phase}</span>
               {planFile && (
                 <>
                   <span className="text-gray-300">|</span>
-                  <span className="text-xs text-gray-400">{planFile}</span>
+                  <span className="text-xs text-muted-foreground">{planFile}</span>
                 </>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-            <p className="mt-1 text-gray-600">{description}</p>
+            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+            <p className="mt-1 text-muted-foreground">{description}</p>
           </div>
 
           {/* Quick Stats */}
           <div className="flex gap-3 text-center">
-            <div className="px-3 py-2 bg-gray-50 rounded-lg">
-              <div className="text-lg font-bold text-gray-900">{features.length}</div>
-              <div className="text-xs text-gray-500">Features</div>
+            <div className="px-3 py-2 bg-muted rounded-lg">
+              <div className="text-lg font-bold text-foreground">{features.length}</div>
+              <div className="text-xs text-muted-foreground">Features</div>
             </div>
-            <div className="px-3 py-2 bg-gray-50 rounded-lg">
-              <div className="text-lg font-bold text-gray-900">{aiFeatures.length}</div>
-              <div className="text-xs text-gray-500">AI Features</div>
+            <div className="px-3 py-2 bg-muted rounded-lg">
+              <div className="text-lg font-bold text-foreground">{aiFeatures.length}</div>
+              <div className="text-xs text-muted-foreground">AI Features</div>
             </div>
-            <div className="px-3 py-2 bg-gray-50 rounded-lg">
-              <div className="text-lg font-bold text-gray-900">{connections.length}</div>
-              <div className="text-xs text-gray-500">Connections</div>
+            <div className="px-3 py-2 bg-muted rounded-lg">
+              <div className="text-lg font-bold text-foreground">{connections.length}</div>
+              <div className="text-xs text-muted-foreground">Connections</div>
             </div>
           </div>
         </div>
 
         {/* Workflow Position - Inline */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-border">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            <span className="text-xs text-gray-500 mr-2 whitespace-nowrap">Workflow:</span>
+            <span className="text-xs text-muted-foreground mr-2 whitespace-nowrap">Workflow:</span>
             {workflow.map((step, index) => (
               <div key={step} className="flex items-center">
                 <span
                   className={cn(
                     'px-2 py-1 rounded text-xs whitespace-nowrap',
                     step === title
-                      ? 'bg-blue-600 text-white font-medium'
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-primary text-primary-foreground font-medium'
+                      : 'bg-muted text-muted-foreground'
                   )}
                 >
                   {step}
                 </span>
                 {index < workflow.length - 1 && (
-                  <ArrowRight className="w-3 h-3 text-gray-300 mx-1 flex-shrink-0" />
+                  <ArrowRight className="w-3 h-3 text-muted-foreground mx-1 flex-shrink-0" />
                 )}
               </div>
             ))}
@@ -194,7 +194,7 @@ export function PageSpec({
             {features.map((feature, index) => (
               <li key={index} className="flex items-start gap-2 text-sm">
                 <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">{feature}</span>
+                <span className="text-foreground">{feature}</span>
               </li>
             ))}
           </ul>
@@ -287,9 +287,9 @@ export function PageSpec({
               >
                 <div className="flex items-center gap-1.5 mb-1">
                   <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-                  <span className="font-medium text-sm text-gray-900">{feature.name}</span>
+                  <span className="font-medium text-sm text-foreground">{feature.name}</span>
                 </div>
-                <p className="text-xs text-gray-600 leading-relaxed">{feature.description}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{feature.description}</p>
                 {feature.trigger && (
                   <p className="mt-2 text-xs text-amber-700 font-medium">
                     Trigger: {feature.trigger}
@@ -312,18 +312,18 @@ export function PageSpec({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 text-left">
-                  <th className="py-2 pr-4 font-medium text-gray-500 text-xs">FIELD</th>
-                  <th className="py-2 pr-4 font-medium text-gray-500 text-xs">TYPE</th>
-                  <th className="py-2 pr-4 font-medium text-gray-500 text-xs">REQ</th>
-                  <th className="py-2 font-medium text-gray-500 text-xs">DESCRIPTION</th>
+                <tr className="border-b border-border text-left">
+                  <th className="py-2 pr-4 font-medium text-muted-foreground text-xs">FIELD</th>
+                  <th className="py-2 pr-4 font-medium text-muted-foreground text-xs">TYPE</th>
+                  <th className="py-2 pr-4 font-medium text-muted-foreground text-xs">REQ</th>
+                  <th className="py-2 font-medium text-muted-foreground text-xs">DESCRIPTION</th>
                 </tr>
               </thead>
               <tbody>
                 {dataFields.map((field, index) => (
-                  <tr key={index} className="border-b border-gray-50">
+                  <tr key={index} className="border-b border-border">
                     <td className="py-1.5 pr-4 font-mono text-blue-600 text-xs">{field.name}</td>
-                    <td className="py-1.5 pr-4 font-mono text-gray-500 text-xs">{field.type}</td>
+                    <td className="py-1.5 pr-4 font-mono text-muted-foreground text-xs">{field.type}</td>
                     <td className="py-1.5 pr-4">
                       {field.required ? (
                         <span className="text-red-500 text-xs">Yes</span>
@@ -331,7 +331,7 @@ export function PageSpec({
                         <span className="text-gray-300 text-xs">-</span>
                       )}
                     </td>
-                    <td className="py-1.5 text-gray-600 text-xs">{field.description}</td>
+                    <td className="py-1.5 text-muted-foreground text-xs">{field.description}</td>
                   </tr>
                 ))}
               </tbody>
