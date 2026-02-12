@@ -304,7 +304,53 @@ components/leads/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45: Per-Page Feature Requirements
+- No dedicated lead detail page in Section 45. Lead detail features are covered in Sections 10 and 39.
+
+### Cross-Section Gap Items (Section 10: Lead & Preconstruction Pipeline)
+- GAP-237: Lead source tracking — displayed on detail page for each lead
+- GAP-239: Lead nurturing — follow-up reminders and status tracking visible on detail
+- GAP-240: Lead qualification scoring — score and criteria should be visible and editable on detail
+- GAP-241: Lost lead analytics — reason for loss captured and displayed on detail
+- GAP-244: Lead source ROI tracking — conversion tracking per lead
+- GAP-245: Configurable stage transitions with custom stage names per builder
+- GAP-246: Estimates/proposals sent to this lead captured even if they don't convert
+- GAP-249: Multi-bid tracking — note if client is getting competing bids
+- GAP-250: Pre-construction agreement — ability to create a paid preconstruction engagement from lead
+- GAP-251: Lot evaluation checklist — soil conditions, flood zone, setbacks, utility availability
+- GAP-252: Feasibility study — preliminary analysis ("can we build this for your budget on this lot?")
+- GAP-253: Scope development iterations — V1 concept budget, V2 schematic estimate, V3 CD estimate
+- GAP-254: Design team communication tracking during preconstruction
+- GAP-255: Long preconstruction support — luxury custom homes with 6-18 month preconstruction
+- GAP-256: Preconstruction billing — monthly design management fee, hourly consulting
+
+### Additional Cross-Section Items
+- GAP-23: Custom fields on lead entity — builder-defined fields displayed on detail
+- GAP-429: Log external communication (calls, texts) for clients who don't use the portal
+- GAP-540: Audit trail — who changed what, when on the lead record
+- GAP-573: Competitive win/loss analysis data captured on lead detail
+- GAP-606: Complete documentation that someone else can pick up if lead owner changes
+
+## Additional Requirements from Gap Analysis
+- Lead qualification scoring display and criteria editing is not in the current spec (GAP-240)
+- Lot evaluation checklist (soil, flood zone, setbacks, utilities) is not covered (GAP-251)
+- Feasibility study section — preliminary budget analysis before full estimating (GAP-252)
+- Scope development iteration tracking — multiple estimate versions per lead (GAP-253)
+- Design team communication log during preconstruction is not specified (GAP-254)
+- Pre-construction agreement creation from lead detail (paid engagement) is missing (GAP-250, GAP-256)
+- Multi-bid scenario notation — tracking if client is receiving competing bids (GAP-249)
+- Custom fields per tenant on lead detail are not addressed (GAP-23)
+- Proposal/estimate documents attached to lead that persist for intelligence even if lead is lost (GAP-246)
+- Competitive analysis fields — why won or lost, competitor information (GAP-573)
+- External communication logging for calls and texts outside the system (GAP-429)
+- Long preconstruction timeline support with multiple phases of engagement (GAP-255)
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
 | Initial | Created from planning session |
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis |

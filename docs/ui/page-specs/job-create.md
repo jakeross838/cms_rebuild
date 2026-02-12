@@ -276,7 +276,49 @@ components/jobs/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45: Per-Page Feature Requirements
+- No dedicated "Job Create" page items in Section 45 — creation is triggered from Project List (GAP-637 bulk actions) and Lead conversion flows.
+
+### Cross-Section Gap Items
+- GAP-18: Configurable job phases and naming conventions — phase options on create should be builder-configurable
+- GAP-21: Configurable numbering conventions — job number format (e.g., "2024-001" vs. "RB-2024-AMI-001") must be per-builder
+- GAP-23: Custom fields on projects — create form must include any builder-defined custom fields
+- GAP-24: Custom dropdown values — project type options should be configurable per tenant
+- GAP-29: Configurable required fields — some builders want job number required, others do not
+- GAP-30: Conditional logic — e.g., "if project type = renovation, require asbestos survey field"
+- GAP-33: Out-of-box defaults for new customers — form should work on day 1 without configuration
+- GAP-245: Configurable stages for lead-to-project transition
+- GAP-247: Plan-bid-build workflow — client brings completed plans, not all jobs come from leads
+- GAP-248: Design-build workflow — builder manages design phase, needs tracking during creation
+- GAP-250: Pre-construction agreements — paid planning/design phase before construction contract
+- GAP-253: Scope development iterations — create may represent V1 concept that evolves
+- GAP-259: Estimate templates by project type — link template during job creation
+- GAP-277: Budget templates for different project types — attach budget template at creation
+- GAP-291: Support for different scheduling methods — option to attach schedule template
+- GAP-292: Schedule templates that builders create and reuse per project type
+- GAP-300: Phased projects — ability to define phases at creation (main house, pool, guest house)
+- GAP-487: Offline mode — queue job creation for sync when connected
+- GAP-533: Empty state guidance — first-time job creation with helpful prompts
+
+## Additional Requirements from Gap Analysis
+- Template-based job creation is not specified — ability to create a job from a project template that pre-populates budget lines, schedule tasks, and phase structure (GAP-259, GAP-277, GAP-292)
+- Custom fields per tenant are not shown in the create form (GAP-23)
+- Configurable required fields are not supported — the form hardcodes which fields are required (GAP-29)
+- Conditional field logic is missing — dynamic form fields based on project type or other selections (GAP-30)
+- Configurable job number format per builder is not specified beyond "YEAR-SEQUENCE" (GAP-21)
+- Pre-construction agreement option — ability to mark job as a pre-construction engagement with separate billing (GAP-250)
+- Phased project setup — ability to define multiple phases during creation (GAP-300)
+- Design-build vs. plan-bid-build workflow selection at creation time (GAP-247, GAP-248)
+- Contract type options should include GMP (Guaranteed Maximum Price) and Not-to-Exceed in addition to Fixed Price, Cost Plus, T&M (GAP-267)
+- Budget/schedule template attachment during job creation for rapid project setup (GAP-259, GAP-292)
+- Duplicate/clone existing job as a template for new job creation is not mentioned
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
 | Initial | Created from planning session |
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis |

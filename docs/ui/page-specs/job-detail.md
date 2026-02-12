@@ -380,7 +380,55 @@ components/jobs/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45: Per-Page Feature Requirements (Project Detail / Overview Page, items 647-657)
+- GAP-647: Summary cards — Budget, Schedule, Documents, RFIs, COs, Punch at a glance
+- GAP-648: Project info section — Address, client, PM, contract type, contract amount, key dates
+- GAP-649: Quick navigation to any module within the project
+- GAP-650: Activity timeline — chronological history of everything that happened on this project
+- GAP-651: Project notes / journal — running notes about the project
+- GAP-652: Team roster — who is assigned to this project and in what role
+- GAP-653: Key milestone tracker — permit, breaking ground, dry-in, CO — with dates
+- GAP-654: Project risk register — identified risks with mitigation plans
+- GAP-655: Project photo carousel — recent photos from daily logs
+- GAP-656: Weather widget for project location
+- GAP-657: Quick stats — Days since start, estimated days remaining, % complete
+
+### Cross-Section Gap Items
+- GAP-18: Configurable job phases and naming conventions per builder
+- GAP-23: Custom fields on projects — builder-specific data fields
+- GAP-212: Permissions that differ by project — role-based view access
+- GAP-224: Field-level permissions — user can see budget total but not individual line items
+- GAP-273: Tracking committed costs vs. budgeted costs vs. actual costs
+- GAP-274: Cost-to-complete projections on overview
+- GAP-275: Earned value management indicators
+- GAP-298: Schedule baselines — original plan vs. current plan tracking drift
+- GAP-306: Weather API integration for project location
+- GAP-421: Client portal must show a branded project overview
+- GAP-525: Multi-project context switching without losing context
+- GAP-531: Breadcrumb navigation — always know where you are
+- GAP-540: Data audit trails — who changed what, when
+- GAP-606: Complete project documentation that someone else can pick up and continue
+- GAP-861: Full chain traceability — estimate to budget to PO to invoice to payment to draw
+
+## Additional Requirements from Gap Analysis
+- Project notes / journal for running notes is not in the current spec (GAP-651)
+- Team roster section showing all assigned roles is implied but not explicitly detailed (GAP-652)
+- Key milestone tracker with specific construction milestones and dates is missing (GAP-653)
+- Project risk register with identified risks and mitigation plans is not specified (GAP-654)
+- Project photo carousel showing recent daily log photos is not in the spec (GAP-655)
+- Weather widget for the project location is missing (GAP-656)
+- RFI summary count and Punch List summary count are not shown on overview (GAP-647)
+- Document count summary is not on the overview page (GAP-647)
+- Cost-to-complete projection should be surfaced on the overview (GAP-274)
+- Earned value indicators (cost performance index, schedule performance index) are not shown (GAP-275)
+- Client portal branded version of this overview needs specification (GAP-421)
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
 | Initial | Created from planning session |
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis |

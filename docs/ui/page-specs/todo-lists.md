@@ -449,3 +449,56 @@ CREATE POLICY tasks_company_isolation ON tasks
 - Push notifications for reminders
 - Quick capture floating button
 - Offline task creation with sync
+
+---
+
+## Gap Items Addressed
+
+### From Section 45: Per-Page Feature Requirements — Dashboard (Items 621-632)
+| Gap # | Description | Relevance to Tasks |
+|-------|-------------|-------------------|
+| 629 | "Needs attention" priority queue with dismiss/snooze | My Tasks view has overdue grouping and snooze action — covers this pattern |
+| 630 | Quick action buttons (create daily log, RFI, approve invoice without navigating away) | Task categories (Financial, Document, Field, Approval) link to related entities for quick action |
+| 631 | Activity feed — recent actions across all projects | Task list can be filtered by job; Requires: cross-project activity integration |
+
+### From Section 34: Search, Navigation & UX (Items 521-536)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 525 | Multi-project context switching (PM working 5 jobs, quick-switch) | Tasks have job_id field and Job filter; Kanban board is per-job |
+| 528 | Personalized "My Day" view (what I need to do today across all projects) | My Tasks view with "Today" quick filter covers this |
+| 529 | Notification center / inbox (central place for items needing attention) | Tasks serve as the action inbox; Requires: integration with notification center for task-generating events |
+
+### From Competitive Parity (Section 51)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 876 | Buildertrend: To-do lists with assignment and due dates | Core spec: task list with assignment, due dates, priorities, and Kanban board |
+
+### From AI & Intelligence (Section 32)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 501 | AI suggestions vs. AI automation (configurable per builder) | AI Task Intelligence section covers auto-task generation and smart suggestions; Requires: builder toggle for auto-create vs. suggest-only |
+| 502 | AI anomaly detection | AI can detect overdue patterns and suggest follow-up tasks |
+| 505 | AI communication assistance | Requires: AI-drafted task descriptions from context (e.g., "Follow up on invoice #X from vendor Y") |
+
+### From Section 35: Data Integrity (Items 537-546)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 540 | Audit trails (who changed what, when, previous value) | Requires: task history log showing status changes, reassignments, and edits with timestamps |
+| 541 | Concurrent editing (optimistic locking) | Kanban drag-and-drop uses optimistic update with server sync; Requires: conflict resolution for simultaneous edits |
+
+### From Edge Cases (Sections 44, 48)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 602 | Project paused 12 months | Tasks linked to paused projects should auto-suspend with "Project Paused" status indicator |
+| 606 | Key employee incapacitated — continuity | All tasks must be visible to admin/PM roles, not locked to individual; bulk reassignment needed |
+| 620 | Owner's rep needs oversight access | Task visibility must respect role-based access — owner's rep sees all tasks read-only |
+| 838 | Session management across devices | Task state must sync in real-time across phone and desktop via SSE/WebSocket |
+| 839 | Deep linking — email link goes directly to specific task | Task URLs (/tasks/:id) support deep linking from notifications |
+
+---
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-11 | Added Gap Items Addressed section from gap analysis sections 32, 34, 35, 44-48, 51 |
+| Initial | Created from view planning |

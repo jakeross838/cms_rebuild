@@ -1629,8 +1629,78 @@ components/vendor-portal/
 
 ---
 
+## GAP ITEMS ADDRESSED
+
+### From Section 19: Vendor & Subcontractor Management (Items 593-612)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 593-612 | Vendor management workflows | Portal provides vendor self-service for bids, invoices, compliance docs, and daily logs |
+
+### From Section 45: Per-Page Feature Requirements — Vendor Profile (Items 708-723)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 708 | Contact information, addresses, key personnel | Vendor Portal profile page with contact details; multiple users per vendor company |
+| 709 | Insurance status with expiration countdown | Compliance Status section shows expiration dates with visual indicators and upload prompts |
+| 710 | License status with verification link | Compliance Documents table tracks license with expiration; Requires: auto-verification API integration |
+| 711 | Performance scorecard — visual dashboard of ratings | Requires: vendor-visible performance summary (on-time %, quality rating) on dashboard |
+| 712 | Job history — all projects worked on with performance per job | Active Jobs section shows current projects; Requires: historical jobs tab with performance data |
+| 713 | Financial summary — total spend, average invoice size, payment history | Financial Summary section on dashboard with PO values, invoiced amounts, payment history tab |
+| 714 | Active contracts and POs | POs & Invoices section with active PO listing and remaining amounts |
+| 715 | Open punch items across all jobs | Requires: punch item section in vendor portal showing items assigned to this vendor |
+| 716 | Schedule reliability metrics (on-time start %, completion %) | Requires: vendor-visible reliability score derived from schedule task completion data |
+| 717 | Bid history — all bids submitted, won/lost, pricing trends | Bids section with Submitted and Closed tabs; Requires: win/loss statistics and pricing trend chart |
+| 718 | Communication log — recent messages, calls, emails | Recent Activity feed on dashboard; Requires: dedicated communication log with full message history |
+| 719 | Document repository — COI, W-9, contracts, lien waivers | Compliance Documents section with doc_type categories (w9, insurance_coi, license, bond) |
+| 720 | Notes and tags — internal notes about the vendor | Requires: builder-side-only notes not visible in vendor portal; vendor sees their own notes |
+| 721 | Related vendors — subsidiary relationships | Requires: vendor company relationship field (parent/subsidiary) |
+| 722 | Capacity indicator — how many active jobs with you | Active Jobs section shows job count; Requires: capacity limit configuration and warning |
+| 723 | Quick actions (Create PO, Invite to Bid, Send Message, Schedule Meeting) | Dashboard quick actions: View All Bids, View Schedule, Submit Invoice, View POs |
+
+### From Section 20: Purchasing & Procurement
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 613-626 | PO workflows | PO Detail View with line items, invoice summary, and PDF download covers vendor-side PO access |
+
+### From Section 16: Invoice & Payment Processing (Items 341-358)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 345 | Builders who match every invoice to a PO vs. those who don't | Invoice submission links to PO; Requires: configurable "PO required" vs. "PO optional" per builder |
+| 347 | Retainage calculation varies by contract, vendor, project | Requires: retainage display on PO detail showing withheld amounts |
+| 348 | Conditional payment rules (no payment without current insurance + signed lien waiver) | Compliance Status blocks indicate missing docs; Requires: payment hold enforcement when compliance is incomplete |
+| 351-358 | Lien waiver management by state | Requires: lien waiver submission/signing workflow in vendor portal per invoice payment |
+
+### From Section 14: Daily Logs & Field Operations
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 495-511 | Daily log workflows | Vendor Daily Logs section with work performed, labor, materials, issues, and photos with AI analysis |
+
+### From AI & Intelligence (Section 32)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 498 | AI-powered data entry (upload bid -> AI extracts line items -> verify) | AI Bid Assistant analyzes scope, suggests pricing from history, checks for missing items |
+| 502 | AI anomaly detection | Invoice AI Matching with confidence scores and anomaly detection for amount/date/PO mismatches |
+| 504 | AI document classification | Compliance doc upload with auto-detect document type; AI photo analysis for daily logs |
+
+### From Edge Cases (Sections 44, 46, 47, 48)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 601 | Sub fired mid-scope — termination, scope reassignment | Vendor portal access must be revocable; open POs and tasks must transfer to replacement vendor |
+| 607 | Material supplier goes bankrupt — deposit recovery | Vendor portal should show deposit/payment history for dispute documentation |
+| 610 | Client self-performs work | Vendor portal N/A for self-performed work, but vendor scope reduction must be reflected in POs |
+| 616 | Multiple builders on same subdivision | Vendor may work for multiple builders; portal must show jobs grouped by builder |
+| 618 | Joint venture between two builders | Vendor may receive POs from either builder in a JV; requires multi-builder context |
+| 803 | Non-compete and non-solicitation tracking | Requires: vendor agreement acceptance tracking through portal terms of service |
+| 806 | Client overpays — refund processing | Vendor payment history must show credit memos and refund transactions |
+| 826 | Multi-day power outage — offline capability | Vendor portal daily logs support offline mode with sync; Requires: extended offline for bid preparation |
+| 829 | Field connectivity dead zones | Mobile-first design with offline daily log and photo queue addresses poor connectivity |
+| 830 | Device diversity (old iPads, cheap Android phones) | Design Principles: mobile-first, contractor-friendly; Requires: graceful degradation testing across device types |
+| 839 | Deep linking — email link to specific PO/bid/task | All views have URL-addressable routes for deep linking from notification emails |
+
+---
+
 ## REVISION HISTORY
 
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed section from gap analysis sections 14, 16, 19-20, 32, 44-48 |
 | Initial | Created vendor portal view plan |

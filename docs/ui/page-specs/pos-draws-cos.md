@@ -625,8 +625,84 @@ components/change-orders/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45: Per-Page Feature Requirements
+- Items 692-707 (Invoice/Billing Page) overlap with POs and Draws — see invoices.md for those items.
+- Items 658-672 (Budget Page) overlap with Change Orders that update budget — see job-budget.md.
+
+### Purchase Orders — Gap Items
+- GAP-395: PO approval thresholds must be configurable per builder ($500 auto-approve, $500-$5K PM, $5K+ Director)
+- GAP-396: PO templates — builder-specific formatting, terms, and conditions
+- GAP-397: Emergency procurement — skip PO process, log after the fact with override reason
+- GAP-398: Procurement aggregation across projects — auto-detect consolidation opportunities
+- GAP-399: Material receiving workflows — who confirms delivery, how, field or office
+- GAP-400: PO change orders — revising a PO after issuance with version tracking
+- GAP-401: Procurement lead time management — "order windows by X date or schedule slips"
+- GAP-402: Procurement status dashboards — all open POs, expected deliveries, past-due
+- GAP-498: AI-powered data entry — upload a bid, AI extracts all line items
+- GAP-502: AI anomaly detection — PO amount is 3x higher than previous from this vendor
+- GAP-704: Link invoices to PO and contract for comparison
+- GAP-861: Full chain — estimate to budget to PO to invoice to payment to draw
+- GAP-862: Full chain — plan upload to AI takeoff to estimate to bid package to vendor bid to comparison to contract to PO
+
+### Draws — Gap Items
+- GAP-441: Draw request format must be configurable (AIA G702/G703 is standard but not universal)
+- GAP-442: Draw request supporting documentation requirements configurable per builder or per lender
+- GAP-443: Draw requests for different contract types (fixed-price % complete, cost-plus actual costs + fee)
+- GAP-444: Stored materials billing — material on site but not installed
+- GAP-445: Draw request routing — generate, PM review, Director approve, send to client/lender
+- GAP-446: Automated draw request generation based on schedule progress
+- GAP-447: Multiple lenders with different draw requirements on same project
+- GAP-448: Draw request reconciliation — approved amount vs. actual disbursement tracking
+- GAP-808: Unusual draw structures — configurable draw schedules
+- GAP-809: Multiple funding sources — client, lender, investor each fund different portions
+
+### Change Orders — Gap Items
+- GAP-359: Change order approval chains must be configurable (PM to Director to Owner at thresholds)
+- GAP-360: Change order numbering formats configurable per builder
+- GAP-361: Change order templates — different format for client-facing vs. internal
+- GAP-362: Change order markup/fee calculation — flat %, tiered, per-line
+- GAP-363: Allowance change orders — auto-generated when selection exceeds allowance
+- GAP-364: Tracking change order causes — configurable categories (client request, design error, unforeseen condition)
+- GAP-365: CO impact on contract value, schedule, and budget simultaneously
+- GAP-366: Change order negotiation tracking — proposed, countered, accepted, rejected
+- GAP-367: COs that require design changes — RFI to design revision to CO workflow
+- GAP-368: Change order reporting — total COs by cause, by trade, by project for patterns
+- GAP-670: Visual indicator of original vs. CO-adjusted budget
+
+## Additional Requirements from Gap Analysis
+
+### Purchase Orders
+- Emergency procurement workflow (skip PO process, log retroactively) is not specified (GAP-397)
+- Procurement aggregation across projects for consolidated ordering is missing (GAP-398)
+- Material receiving confirmation workflow is not detailed (GAP-399)
+- PO change orders / revisions with version tracking are not specified (GAP-400)
+- Procurement lead time management tied to schedule is missing (GAP-401)
+- Procurement status dashboard (open POs, expected deliveries, past-due) is not covered (GAP-402)
+
+### Draws
+- Automated draw generation based on schedule progress is not specified (GAP-446)
+- Support for multiple lenders with different draw requirements is missing (GAP-447)
+- Draw reconciliation (approved vs. disbursed) is not tracked (GAP-448)
+- Stored materials billing option is not in the spec (GAP-444)
+- Multiple funding source tracking is not addressed (GAP-809)
+- Configurable draw format beyond AIA is not detailed (GAP-441)
+
+### Change Orders
+- Allowance-triggered auto-generated change orders are not specified (GAP-363)
+- Change order cause tracking with configurable categories is missing (GAP-364)
+- Change order negotiation tracking (proposed, countered, accepted) is not detailed (GAP-366)
+- CO-triggered design change workflow (RFI to revision to CO) is not covered (GAP-367)
+- Change order reporting by cause, trade, and project for pattern analysis is missing (GAP-368)
+- Configurable CO numbering formats per builder are not specified (GAP-360)
+- Configurable CO markup/fee calculation rules are not detailed (GAP-362)
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
 | Initial | Created from batch planning session |
 | Audit Fix | Added AI-Assisted PO Creation section (from vendor quotes) |
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis |

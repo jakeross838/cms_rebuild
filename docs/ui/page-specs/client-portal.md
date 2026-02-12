@@ -629,7 +629,82 @@ components/portal/
 
 ---
 
+## Gap Items Addressed
+
+### Section 23 — Client Portal & Communication
+- **#421** Client portal fully branded per builder (customizable layout)
+- **#422** Client portal content control (builder decides what client can see — configurable per builder)
+- **#423** Portal adapts to project stage (Preconstruction: estimate review; Construction: progress tracking; Warranty: service requests)
+- **#424** Client portal notifications configurable (what triggers a notification to the client)
+- **#425** Client approval workflows through portal (selections, change orders, draws — e-signature)
+- **#426** Curated client photo gallery (not raw daily log photos)
+- **#427** Client document access control (which documents are client-visible — configurable per builder)
+- **#428** Client messaging preferences (in-portal messaging vs email vs text — builder configurable)
+- **#429** Log external communication (phone calls, texts not made through portal)
+- **#430** Client portal analytics (login frequency, feature usage, engagement level)
+
+### Section 45 — Per-Page Feature Requirements (Selection Page, Client-Facing)
+- **#724** Visual room-by-room layout for selections
+- **#725** Selection cards with photos, descriptions, pricing, lead times
+- **#726** Side-by-side comparison mode within a category
+- **#727** Budget impact real-time calculator
+- **#728** Approval button with e-signature
+- **#729** Status indicators (Not Started through Installed)
+- **#730** Deadline countdown for selections
+- **#731** Inspiration board (client uploads photos of what they like)
+- **#732** Comment/question thread per selection category
+- **#733** History of all considered options
+- **#734** Print/export selection summary
+
+### Section 22 — Punch Lists & Checklists
+- **#418** Client punch list submission (client walks through and submits their own punch items via portal)
+
+### Section 27 — Warranty & Home Care
+- **#465** Optional home care module accessible through portal after project completion
+- **#467** Warranty service request routing through portal
+
+---
+
+## Additional Requirements from Gap Analysis
+
+### Portal Stage Adaptation (#423)
+The current spec covers Construction phase well (photos, selections, draws). Additional stages needed:
+1. **Preconstruction stage**: Estimate/proposal review and e-signature, selection browsing before construction starts, project timeline preview
+2. **Warranty stage**: Service request submission form, warranty claim status tracking, home care subscription management (if module enabled), maintenance schedule/reminders
+
+### Content Control Enhancements (#422, #427)
+1. **Per-builder visibility config**: Admin settings page to control which portal sections are visible (photos, selections, draws, documents, schedule, change orders)
+2. **Per-project overrides**: Override builder-level defaults on a per-project basis
+3. **Document sharing controls**: Fine-grained control over which document types are client-visible (plans, permits, inspection reports, but not vendor invoices or internal memos)
+
+### Communication Enhancements (#428, #429)
+1. **In-portal messaging**: Add a messaging/chat interface within the portal for client-builder communication (currently missing from spec)
+2. **External communication log**: Builder can log phone calls, texts, and in-person conversations with timestamps and notes
+3. **Communication preference setting**: Per-client setting for preferred contact method (email, portal notification, SMS)
+
+### Notification Enhancements (#424)
+1. **Configurable notification triggers**: Builder configures which events notify the client (new photos, draw submitted, selection needed, schedule milestone reached, change order for review)
+2. **Notification channel selection**: Email, SMS, push notification — configurable per event type
+3. **Digest option**: Daily or weekly summary email instead of per-event notifications
+
+### Client Engagement (#430)
+1. **Portal analytics dashboard** (builder-side): Show per-client engagement metrics — login count, last login, pages viewed, time to respond to draw requests
+2. **Engagement alerts**: Notify builder if client hasn't logged in for X days when there are pending items
+
+### Punch List Submission (#418)
+1. **Client punch list view**: After walkthrough, client can submit punch items with photos, descriptions, and room/location tags
+2. **Punch list status tracking**: Client sees status of each submitted item (Submitted, Assigned, In Progress, Complete, Verified)
+
+### Additional Portal Pages Needed
+1. **Schedule view**: Simplified milestone view (not full Gantt) showing major phases and estimated completion dates (referenced in gap #689 — client-friendly schedule)
+2. **Change order review**: View and approve/reject change orders with e-signature (referenced in #425)
+3. **Document library**: View and download shared project documents (plans, specs, permits)
+4. **Profile/settings**: Client can update contact info, change password, set notification preferences
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis sections 22, 23, 27, and 45 |
 | Initial | Created from batch planning |

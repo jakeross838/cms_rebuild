@@ -487,7 +487,100 @@ components/selections/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45 — Per-Page Feature Requirements (Selections Page)
+- **#724** Visual room-by-room layout — "Kitchen Selections," "Master Bath Selections"
+- **#725** Selection cards with photos, descriptions, pricing, lead times
+- **#726** Comparison mode — side-by-side options within a category
+- **#727** Budget impact real-time calculator — "choosing this option puts you $2,400 over allowance"
+- **#728** Approval button with e-signature
+- **#729** Status indicators — Not Started, Options Presented, Client Reviewing, Selected, Ordered, Received, Installed
+- **#730** Deadline countdown — "Selection needed by [date] to stay on schedule"
+- **#731** Inspiration board — client uploads photos of what they like
+- **#732** Comment/question thread per selection category
+- **#733** History — track all considered options, not just final selection
+- **#734** Print/export selection summary
+- **#735** Designer view — interior designer can add/recommend options
+
+### Section 11 — Estimating & Budgeting
+- **#257** Support for CSI MasterFormat, custom codes, and hybrid cost code systems
+- **#258** Configurable estimate hierarchy (Division > Code > Line Item vs Phase > Trade > Item)
+- **#259** Estimate templates by project type per builder
+- **#260** Estimating by assembly vs line-by-line
+- **#261** Unit pricing support ($/SF for everything)
+- **#262** Configurable markup structures (flat %, tiered, per-line, built-in)
+- **#263** Estimate formats configurable per audience (client sees summary, builder sees detail)
+- **#264** Configurable estimate approval workflows
+- **#265** Estimate versioning with comparison showing changes between versions
+- **#266** Presentation at different levels of detail per audience
+- **#267** Support for NTE, GMP, and cost-plus-with-estimate types
+- **#268** Placeholder/allowance amounts for work without bids yet
+- **#269** Scope exclusion tracking within estimates
+- **#270** Alternate/option pricing within estimates
+- **#271** Estimate expiration handling (valid for N days)
+
+### Section 12 — Contracts & Legal
+- **#281** Builder-uploadable contract templates
+- **#282** Support for AIA, custom, and state-specific contracts
+- **#283** Contract clause library (mix-and-match standard clauses)
+- **#284** Contract compliance tracking by contract type
+- **#285** Configurable retainage by builder, trade, and contract
+- **#286** Subcontract status tracking (Sent, Received, Reviewed, Countersigned, Executed, Insurance Verified)
+- **#287** Verbal change directive formalization workflow
+- **#288** Warranty obligation tracking per contract
+- **#289** Configurable contract closeout checklist
+- **#290** Client deposit tracking with jurisdiction-aware rules
+
+### Section 18 — Selections & Allowances
+- **#369** Support for allowance-based, fixed-price, and cost-plus selection workflows
+- **#370** Configurable selection categories per builder
+- **#371** Selection presentation modes (meeting-based vs online browsing)
+- **#372** Vendor catalog integration (future feature consideration)
+- **#373** Complex configuration selections (e.g. cabinetry with 50+ decision points)
+- **#374** Selection deadlines tied to construction schedule with lead time buffers
+- **#375** Selection change requests after ordering (cancellation/restocking fees, delay impact)
+- **#376** Selection rooms/boards — visual grouping by room
+- **#377** Selections for spec homes (builder makes selections, no client)
+- **#378** Model home selections with upgrade options for buyers
+- **#379** Multi-home selections (standard vs per-buyer)
+- **#380** Selection history for repeat clients (preferences carry forward)
+
+---
+
+## Additional Requirements from Gap Analysis
+
+### Estimate Builder Enhancements Needed
+1. **Assembly-based estimating** (#260): Add ability to define assemblies (groups of line items) that can be inserted as a unit (e.g., "Standard Kitchen" assembly includes cabinets, countertops, plumbing fixtures as a bundle)
+2. **Multi-format presentation** (#263, #266): Add a "Client View" toggle on estimate preview that collapses detail into summary categories; configurable per builder which lines are visible to clients
+3. **Version comparison** (#265): Side-by-side or diff view showing what changed between estimate versions (added lines, removed lines, price changes)
+4. **Scope exclusions** (#269): Add an "Exclusions" section to the estimate builder listing what is NOT included; these should print on proposals
+5. **Alternate pricing** (#270): Support "Option A / Option B" line items within an estimate that client can choose between before signing
+6. **Expiration tracking** (#271): Add `valid_until` date field to estimates and proposals with automatic status change when expired
+7. **Template library** (#259): Estimate templates per project type that pre-populate cost code groups and placeholder amounts
+
+### Contract View Enhancements Needed
+1. **Contract template upload** (#281): Settings page for uploading builder-specific contract templates (AIA, custom) that can be attached to proposals
+2. **Clause library** (#283): Reusable clause blocks (payment terms, CO policy, warranty terms) that can be mixed into proposals
+3. **Subcontract tracking** (#286): Status pipeline for subcontracts beyond just signed/unsigned
+4. **Deposit tracking** (#290): Track client deposits, how they are applied, jurisdiction rules for holding deposits
+5. **Retainage configuration** (#285): Per-vendor, per-contract retainage percentage (not just global default)
+
+### Selection Enhancements Needed
+1. **Room-based organization** (#724, #376): Group selections by room (Kitchen, Master Bath, etc.) instead of flat list
+2. **Comparison mode** (#726): Allow side-by-side comparison of 2-3 options within a category
+3. **Lead time display** (#725): Show lead time per selection option to help clients understand schedule impact
+4. **Status expansion** (#729): Expand status from current 4 states to 7: Not Started, Options Presented, Client Reviewing, Selected, Ordered, Received, Installed
+5. **Inspiration board** (#731): Allow clients to upload inspiration photos per selection category
+6. **Comment threads** (#732): Per-selection-category conversation thread between client and builder
+7. **Selection history** (#733): Track all options that were considered, not just the final pick
+8. **Designer role** (#735): Allow interior designers to log in and add/recommend options
+9. **Print/export** (#734): Export full selection summary as PDF with photos and pricing
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis sections 11, 12, 18, and 45 |
 | Initial | Created from batch planning session |

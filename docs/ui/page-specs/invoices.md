@@ -377,7 +377,70 @@ components/invoices/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45: Per-Page Feature Requirements (Invoice / Billing Page, items 692-707)
+- GAP-692: Invoice queue — incoming invoices sorted by status (New, Pending Review, Approved, Paid, Disputed)
+- GAP-693: AI-extracted data display with confidence indicators — "85% confident this is $4,250"
+- GAP-694: Side-by-side view — invoice image on left, extracted data on right
+- GAP-695: One-click approval / rejection with required comment on rejection
+- GAP-696: Cost code assignment with smart suggestions
+- GAP-697: Budget impact preview — "approving this invoice will bring Electrical to 87% of budget"
+- GAP-698: Batch approval capability
+- GAP-699: Invoice history per vendor
+- GAP-700: Duplicate detection alerts — "this appears similar to Invoice #X from this vendor"
+- GAP-701: Payment status tracking — approved to scheduled to paid to cleared
+- GAP-702: Lien waiver status indicator per invoice
+- GAP-703: Retainage auto-calculation
+- GAP-704: Link to PO and contract for comparison
+- GAP-705: Aging report — invoices by days outstanding
+- GAP-706: Payment run generation — select approved invoices for batch payment
+- GAP-707: Export to accounting system button
+
+### Cross-Section Gap Items
+- GAP-341: Fully configurable invoice approval workflows (1-step, 2-step, 3-step, threshold-based)
+- GAP-342: Invoice processing for different contract types (lump sum, T&M, unit price)
+- GAP-343: Invoice coding with different cost code structures per builder
+- GAP-344: AI that learns per-tenant patterns for invoice coding
+- GAP-345: Builders who match every invoice to PO vs. builders who do not use POs
+- GAP-346: Progress billing vs. final billing workflows with different approval criteria
+- GAP-347: Retainage calculation that varies by contract, vendor, project
+- GAP-348: Conditional payment rules — no payment without current insurance + signed lien waiver
+- GAP-349: Invoice dispute tracking — communication, resolution workflow
+- GAP-350: Batch payment recommendations for approved invoices due this week
+- GAP-351: State-specific lien waiver forms
+- GAP-353: Conditional vs. unconditional waiver tracking by state
+- GAP-355: Notice to Owner / Preliminary Notice requirements by state
+- GAP-356: Mechanic's lien filing deadline alerts by state
+- GAP-431: Chart of accounts mapping per builder for accounting sync
+- GAP-491: AI learning per-tenant vs. anonymized cross-tenant patterns
+- GAP-498: AI-powered data entry from uploaded documents
+- GAP-502: AI anomaly detection — invoice amount 3x higher than previous from same vendor
+- GAP-504: AI document classification — auto-sort incoming documents
+- GAP-807: Vendor underpays a credit — collection and dispute tracking
+- GAP-861: Full chain traceability from estimate to budget to PO to invoice to payment to lien waiver to draw
+
+## Additional Requirements from Gap Analysis
+- Budget impact preview before approval is not in the current spec (GAP-697)
+- Duplicate detection alerts for similar invoices are not specified (GAP-700)
+- Lien waiver status indicator per invoice is missing (GAP-702)
+- Retainage auto-calculation per invoice is not detailed (GAP-703)
+- Aging report view for invoices by days outstanding is not specified (GAP-705)
+- Payment run generation for batch payment of approved invoices is not covered (GAP-706)
+- Export to accounting system button is not specified (GAP-707)
+- Invoice processing rules per contract type (lump sum vs. T&M vs. unit price) are not differentiated (GAP-342)
+- Conditional payment rules (require insurance + lien waiver before payment) are not addressed (GAP-348)
+- Invoice dispute workflow with tracking and resolution is not specified (GAP-349)
+- State-specific lien waiver form management is not covered (GAP-351, GAP-353)
+- Mechanic's lien deadline alerts by state are missing (GAP-356)
+- AI anomaly detection for unusual invoice amounts is not specified (GAP-502)
+- Invoice history per vendor as a dedicated view is not explicitly called out (GAP-699)
+- Payment status tracking beyond "Paid" (scheduled, cleared) needs more detail (GAP-701)
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
 | Initial | Created from batch planning session |
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis |

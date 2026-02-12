@@ -127,3 +127,53 @@ warranty_claims:
 - resolution_notes TEXT
 - resolved_at TIMESTAMPTZ
 - created_at TIMESTAMPTZ
+
+---
+
+## Gap Items Addressed
+
+### From Section 27: Warranty & Home Care (Items 465-470)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 465 | Warranty/home care as optional module | Warranty Claims is a standalone view; Requires: module toggle so builders who do not offer home care can disable it |
+| 466 | Configurable warranty terms per builder | Warranty Detail shows coverage terms; Requires: builder-level default term templates (1yr workmanship, 2yr systems, 10yr structural, etc.) |
+| 467 | Warranty service request routing (builder-configurable) | Claim workflow (Submitted -> Vendor Contacted -> In Progress -> Resolved); Requires: configurable routing rules — who gets notified, who approves, escalation paths |
+| 468 | Home care subscription pricing varies by builder | Requires: pricing/subscription tier configuration for home care plans (not yet in spec) |
+| 469 | Manufacturer vs. builder warranty tracking | Warranty list filters by category; Requires: explicit warranty_source field distinguishing manufacturer, builder, and extended warranties |
+| 470 | Warranty reserve accounting | Requires: integration with Financial module to track warranty reserve fund per project (configurable % of project cost) |
+
+### From Section 45: Per-Page Feature Requirements (Items 769-780 — Reports)
+| Gap # | Description | Relevance to Warranty Claims |
+|-------|-------------|------------------------------|
+| 769 | Report library with pre-built reports | Warranty claims need a "Warranty Status Report" and "Claims by Vendor" report in the report library |
+| 771 | Report scheduling and auto-distribution | Auto-generate warranty expiration reports on a monthly schedule for builder review |
+
+### From Section 22: Punch Lists & Checklists (Item 416)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 416 | Unresolved punch items become warranty items | Requires: automated workflow to convert open punch items to warranty claims when project transitions to warranty phase |
+
+### From Edge Cases (Sections 44, 46, 47)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 601 | Sub fired mid-scope — warranty responsibility transfer | Claims must track which vendor is responsible even after vendor replacement |
+| 610 | Client self-performs work — warranty exclusions | Warranty records need exclusion flags for client-performed scope |
+| 800 | Construction defect claim workflows by state (FL 558, CA SB800) | Requires: state-specific defect claim workflow templates with statutory notice periods and response deadlines |
+| 801 | Warranty claim dispute resolution documentation | Claim form needs dispute status, resolution docs upload, and communication log |
+| 802 | Expert witness documentation support | Warranty claims must support organized export of all claim records, photos, and communication for legal proceedings |
+| 804 | Contract interpretation disputes | Warranty coverage_terms field must store original contract language for reference during disputes |
+| 874 | Project completion -> warranty start dates set automatically | Requires: trigger at project completion to create warranty records from templates with auto-calculated expiration dates |
+
+### AI Enhancement Gaps
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 502 | AI anomaly detection across platform | AI section includes "Predict expiration issues" and "Track vendor warranty performance" |
+| 505 | AI communication assistance | AI section includes "Suggest claim language" for drafting claim communications |
+
+---
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-11 | Added Gap Items Addressed section from gap analysis sections 22, 27, 44-48 |
+| Initial | Created from view planning |

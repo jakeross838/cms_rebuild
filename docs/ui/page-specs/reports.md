@@ -463,7 +463,104 @@ components/reports/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45 — Per-Page Feature Requirements (Reports Page)
+- **#769** Report library — pre-built reports organized by category
+- **#770** Report builder — drag-and-drop custom report creation
+- **#771** Report scheduling — auto-generate and email on a schedule
+- **#772** Report favorites and recently run
+- **#773** Parameter selection — date range, project, vendor, cost code filters before running
+- **#774** Export to PDF, Excel, Word, CSV
+- **#775** Interactive charts within reports — hover for detail, click to drill down
+- **#776** Comparative reporting — select 2+ projects or periods to compare
+- **#777** Report templates saveable and shareable within the builder's team
+- **#778** Client-formatted report generation — professional layout with builder branding
+- **#779** AI-generated narrative summaries within reports
+- **#780** Report archiving — save a report snapshot for historical reference
+
+### Section 25 — Reporting & Dashboards
+- **#449** Report templates customizable per builder (each builder wants different reports)
+- **#450** Report builder usable by non-technical users (drag-and-drop creation)
+- **#451** Report branding (builder's logo, colors, layout on every generated report)
+- **#452** Report scheduling and auto-distribution (weekly report emailed to owner every Monday at 7am)
+- **#453** Report access control (some reports are owner-only, some for the whole team)
+- **#454** Report export formats (PDF, Excel, CSV, Word)
+- **#455** Comparative reports across projects (benchmarking this project vs similar projects)
+- **#456** AI-generated narrative reports ("3 projects on track, 1 behind schedule due to weather...")
+- **#457** Client-facing reports different from internal reports (same data, different presentation)
+- **#458** Cross-module report data (budget + schedule + photo data = comprehensive project report)
+
+### Section 24 — Financial Management & Accounting
+- **#434** WIP schedule calculation methods (percentage of completion, cost-to-cost, completed contract)
+- **#438** Financial dashboard KPIs configurable per builder
+- **#440** Financial projections (revenue forecast, expense forecast, cash flow forecast)
+- **#441** Draw request format configurable (AIA G702/G703 standard vs custom)
+- **#446** Automated draw request generation based on schedule progress
+
+### Section 47 — Financial Edge Cases
+- **#820** Multi-year project financial reporting (costs spanning multiple fiscal years)
+- **#824** Profit margin analysis accounting for change orders, warranty costs, and GC overrun
+- **#825** Cash-basis vs accrual-basis reporting toggle
+
+---
+
+## Additional Requirements from Gap Analysis
+
+### Report Builder (#770, #450)
+The current spec shows pre-built reports only. Gap analysis requires:
+1. **Drag-and-drop report builder**: Non-technical users should be able to create custom reports by selecting data sources, choosing chart types, configuring filters, and arranging layout
+2. **Data source selection**: Choose from budget, invoices, schedule, daily logs, vendors, clients, change orders, etc.
+3. **Chart type options**: Bar, line, pie, table, gauge, sparkline — selectable per report section
+4. **Calculated fields**: Allow simple formulas (sum, average, percentage, variance)
+5. **Save as template** (#777): Save custom reports as templates that can be shared with team members
+
+### Report Scheduling (#771, #452)
+1. **Schedule configuration**: Set frequency (daily, weekly, monthly), day/time, recipient list
+2. **Auto-email delivery**: Generate report as PDF/Excel and email to configured recipients
+3. **Conditional scheduling**: Only send if data has changed or if thresholds are exceeded (e.g., "only send budget alert if any line is over 90%")
+
+### Report Branding (#451, #778)
+1. **Builder logo placement**: Logo on header of every generated report
+2. **Color scheme**: Apply builder's brand colors to charts and headers
+3. **Custom footer**: Builder-configurable footer with company info, license number, etc.
+4. **Client-formatted variants** (#457): Same report data rendered in a professional client-facing layout vs detailed internal layout
+
+### AI Narrative Reports (#779, #456)
+1. **Auto-generated summaries**: AI reads report data and generates plain-English summary paragraphs
+2. **Configurable tone**: Professional/formal for client reports, concise/direct for internal
+3. **Highlight anomalies**: AI calls out items that are significantly over/under budget or behind schedule
+4. **Trend commentary**: "Electrical costs are trending 12% above estimate; recommend reviewing scope"
+
+### Comparative Reporting (#776, #455)
+1. **Project comparison**: Select 2+ projects and compare budget, timeline, profitability side-by-side
+2. **Period comparison**: This quarter vs last quarter, this year vs last year
+3. **Benchmark comparisons**: Compare project performance to builder's historical averages
+
+### Report Access Control (#453)
+1. **Role-based report visibility**: Configure which roles can see which reports
+2. **Data-level filtering**: PM sees only their projects' data; Owner sees all projects
+3. **Sensitive report protection**: Financial reports (P&L, cash flow) restricted to Owner/Accountant roles
+
+### Report Favorites & History (#772)
+1. **Favorites**: Star reports for quick access on the Reports Hub
+2. **Recently run**: Show last 10 reports run with their parameters for one-click re-run
+3. **Report archiving** (#780): Save a point-in-time snapshot of any report for historical reference (e.g., "Q3 2025 P&L" frozen at close)
+
+### Additional Reports Needed
+1. **WIP Schedule Report** (#434): Work-in-progress schedule using configurable calculation method (% completion, cost-to-cost)
+2. **Aged AR/AP Report**: Receivables and payables aging by bucket (current, 30, 60, 90+)
+3. **Change Order Summary Report**: COs by cause, trade, project — to identify patterns
+4. **Vendor Performance Report**: Already in hub but needs scoring algorithm (on-time %, quality rating, cost accuracy)
+5. **Financial Projections Report** (#440): Forward-looking revenue, expense, and cash flow forecasts across all active projects
+6. **Multi-year Report** (#820): For projects spanning fiscal years, show costs allocated per year
+7. **Cash vs Accrual Toggle** (#825): Allow user to switch between cash-basis and accrual-basis views on financial reports
+8. **AIA G702/G703 Draw Report** (#441): Standard AIA format draw request generation with configurable line items
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis sections 24, 25, 45, and 47 |
 | Initial | Created from batch planning |

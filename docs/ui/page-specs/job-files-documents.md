@@ -527,7 +527,62 @@ components/files/
 
 ---
 
+## Gap Items Addressed
+
+### From Section 15: Document Management (Items 326-340)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 326 | Storage allocation per tenant (and overage handling) | Requires: storage quota display in settings, overage alerts, and upgrade prompts |
+| 327 | Platform-provided vs. builder-created document templates | System Folders are auto-created; Requires: platform-provided document templates (marked as is_system) distinct from builder-created |
+| 328 | Document sharing between tenants (builder shares spec with vendor on platform) | Share Modal with signed URLs and email; Requires: cross-tenant sharing when vendor is also a platform user |
+| 329 | Full-text search across all document types (PDFs via OCR, images) | Search section covers file name, description, folder name; Requires: full-text content search with OCR for scanned documents |
+| 330 | Builder-configurable document tagging/categorization | System folders + custom folders provide structure; Requires: tag/label system on files for flexible categorization |
+| 331 | Document retention policies (configurable per builder — 7 years, forever) | Requires: retention policy settings per document type with auto-archive and deletion scheduling |
+| 332 | Document redaction (redact pricing from plans before sharing) | Requires: in-browser redaction tool for PDFs before sharing with subcontractors |
+| 333 | Document version comparison (diff between plan revision A and B) | Version History section shows versions; Requires: visual diff/comparison tool highlighting changes between versions |
+| 334 | Document approval workflows (submittals: vendor -> builder -> architect) | entity_type field links files to submittals; Requires: approval workflow status on document-level |
+| 335 | Controlled document distribution (new revision -> auto-send, confirm receipt) | Share Modal supports email; Requires: distribution list with read-receipt tracking for plan revisions |
+| 336 | Document expiration tracking with auto-alerts (insurance, permits) | Requires: expiration_date field on files with configurable alert schedule (30d, 7d, expired) |
+| 337 | Documents requiring wet signatures (some jurisdictions) | Requires: wet signature requirement flag with workflow to track physical signature status |
+| 338 | E-signature platform integration (DocuSign, HelloSign) | Requires: e-signature integration category in integrations hub, triggered from document detail view |
+| 339 | Documents received via email (forward-to-system auto-filing) | Requires: dedicated email address per project that auto-files attachments into appropriate folders |
+| 340 | Folder structure templates (pre-built per new project, configurable) | System Folders section defines defaults; Requires: configurable folder templates in builder settings |
+
+### From Section 45: Per-Page Feature Requirements — Document Management (Items 754-768)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 754 | Folder tree navigation — configurable per project | Folder tree with system + custom folders, parent_folder_id for nesting |
+| 755 | Drag-and-drop upload with auto-categorization | Upload Modal supports drag-and-drop; Requires: AI auto-categorization of uploaded files into folders |
+| 756 | Bulk upload with progress indicator | Upload Modal shows per-file progress bars |
+| 757 | Full-text search across all documents | Requires: content-level search beyond just metadata (see item 329) |
+| 758 | Filter by document type, trade, date, uploaded by | Filter section covers file type, uploaded by, date range, portal visibility |
+| 759 | Version history per document with comparison tool | Version History in File Detail; Requires: side-by-side comparison viewer |
+| 760 | Document preview without downloading | File Preview section with PDF.js viewer and native image display |
+| 761 | Annotation/markup tools on documents | Requires: in-browser annotation overlay for PDFs and images |
+| 762 | Sharing controls — who can see this document | portal_visible flag and share links with password/expiration; Requires: granular per-user sharing controls |
+| 763 | Expiration tracking with alerts (insurance, permits) | Requires: expiration_date field and alert system (see item 336) |
+| 764 | Download with watermark option | Requires: dynamic watermark overlay (builder name + date) on download |
+| 765 | Batch operations — move, tag, delete, share | Bulk Operations API section covers bulk download, move, delete |
+| 766 | Recent documents and favorites | Requires: recently_viewed and is_favorite fields for quick access section |
+| 767 | Document status indicators (draft, pending review, approved, expired) | Requires: status field on files with visual badges |
+| 768 | Integration with e-signature platforms | See item 338 |
+
+### From Edge Cases (Sections 44, 46, 48)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 600 | Builder acquires in-progress project — onboard mid-stream | Document import must support bulk upload of existing project files with metadata |
+| 606 | Key employee incapacitated — complete documentation | All files must be accessible by role, not locked to uploader; admin override access |
+| 611 | Project featured on TV — photo approval workflows | Requires: approval status on photos/media before external sharing |
+| 798 | Litigation hold — prevent deletion during legal proceedings | Requires: legal hold flag that blocks all delete operations on project documents |
+| 802 | Expert witness documentation support | Requires: organized export of complete project file set with audit trail for legal proceedings |
+| 828 | Large plan set rendering on mobile — progressive loading | Mobile section mentions cached thumbnails; Requires: progressive tile loading for large PDFs |
+| 836 | File format handling (PDFs, DWGs, Excel, Word, images, videos) | File Preview Support table covers major formats; Requires: video playback support |
+| 841 | Search performance — full-text across millions of records | Requires: search indexing strategy (Elasticsearch or similar) for large document repositories |
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed section from gap analysis sections 15, 44-48 |
 | Initial | Created from audit finding - Files/Documents view was missing |

@@ -272,5 +272,59 @@
 
 ---
 
+## Gap Items Addressed
+
+> This section maps every gap analysis item from Section 39 (Marketing & Reputation, items 569-573) and Section 40 (Business Development & Owner Relations, items 569-573) to specific marketing features and platform capabilities described in this document. These items are grouped in the gap analysis under "36-40. BUSINESS OPERATIONS" subsection "Marketing & Business Development -- Optional Module."
+
+### Section 39: Marketing & Reputation (Items 569-573)
+
+| Gap Item | Gap Question | How This Document Addresses It | Related Feature |
+|----------|-------------|-------------------------------|-----------------|
+| **569** | Is marketing tracking part of the platform or handled by external tools? (HubSpot, Mailchimp integration?) | The platform includes a Marketing & Business Development optional module. External tool integration (HubSpot, Mailchimp) should be supported via the integration marketplace. Blueprint item 911 defines marketing campaign management with ROI tracking by channel. The platform tracks internal lead-to-close data; external marketing automation tools handle outbound campaigns. | Pre-Construction & Sales: Lead capture & qualification; Pipeline tracking & forecasting |
+| **570** | What about project portfolio/showcase for marketing purposes? (Curated photos, specs, testimonials) | The Client-Facing Differentiators section describes "Progress photo gallery" and "Showcase your work." Blueprint item 1018 (final photography) feeds the portfolio. The platform should support curated project portfolios with: selected photos, project specs (sqft, bed/bath, style), build timeline, and testimonials -- publishable to builder's website or shareable as PDF. | Industry-Specific Features: Luxury Custom Homes - Quality documentation; Post-Construction: Warranty portal |
+| **571** | How do you handle client testimonial/review collection? (Auto-send request at project completion) | Blueprint item 1019 defines "Client satisfaction survey -- post-move-in feedback; configurable timing." The platform should auto-trigger a review request at configurable intervals (e.g., 30 days post-CO, 6 months, 12 months). Results feed both internal quality metrics and, with client permission, external review profiles. Blueprint item 916 covers reputation monitoring across Google, Houzz, BBB, Yelp. | Testimonial-Ready Statements section; ROI Statements: Accuracy Improvements |
+| **572** | What about referral program management? (Track referral sources, manage referral fees/gifts) | Blueprint item 918 (multi-channel lead intake) includes referral as a lead source. The platform should track: referral source (past client, realtor, architect, vendor), referral fee/gift amount and status, conversion rate by referral source, and lifetime value of referred clients. This data feeds the Intelligence & Reporting: "Cross-project analytics" feature. | Pre-Construction & Sales: Pipeline tracking & forecasting |
+| **573** | How do you handle competitive win/loss analysis? (Why did you get the job? Why didn't you?) | Blueprint item 917 covers competitive intelligence (manual entry). The platform should capture: win/loss outcome on every lead, configurable win/loss reason categories (price, relationship, schedule, reputation, design capability, referral), competitor name (optional), and trend analysis over time. This feeds business development strategy and is reflected in the Intelligence & Reporting: "Profitability by job/trade/type" feature. | Hero Feature 2: AI-Powered Estimating (bias detection); Intelligence & Reporting section |
+
+### Section 40: Business Development & Owner Relations (Items 569-573)
+
+> Note: In the gap analysis, Sections 39 and 40 are merged under "Marketing & Business Development -- Optional Module" with items 569-573 covering both marketing/reputation and business development/owner relations. The items below address the owner relations and business development dimensions.
+
+| Gap Item | Business Development Dimension | Platform Feature Mapping |
+|----------|-------------------------------|-------------------------|
+| **569** | Integration with CRM tools for owner relationship management | The platform IS the CRM for builders. Lead pipeline (Blueprint 918-926) tracks every owner interaction from first contact through post-construction. External CRM integration (HubSpot) available for builders who want additional marketing automation, but the core relationship management lives in-platform. |
+| **570** | Portfolio as a sales tool for prospective owners | Curated project portfolios serve dual purpose: marketing collateral AND owner confidence building. During the sales process (Phase 1: Lead & Qualification), builders can share relevant past project portfolios with prospects to demonstrate capability for their specific project type (coastal, modern, traditional, etc.). |
+| **571** | Owner satisfaction tracking and Net Promoter Score | Post-construction surveys (1019) should include NPS question. Track NPS trends over time. Builders with high NPS can use this in marketing. Low NPS triggers internal improvement workflows. Configurable survey questions per builder. |
+| **572** | Owner referral pipeline management | Track which past owners refer new clients. Automated "thank you" workflow when referral converts. Referral source attribution on all leads. ROI calculation on referral program (gift cost vs. project value generated). |
+| **573** | Competitive positioning and sales enablement | Win/loss data over time builds competitive intelligence. "Why we win" report for sales training. Price positioning data (are we losing on price or winning on value?). Market share indicators by geography or project type. |
+
+### Related Blueprint Items (Phase 0: Business Development)
+
+These blueprint items (911-917) define the operational workflows that support the marketing and business development features:
+
+| Blueprint Item | Workflow | Marketing Feature Connection |
+|----------------|----------|------------------------------|
+| **911** | Marketing campaign management -- track ROI by channel | Feeds "Pipeline tracking & forecasting" in Pre-Construction table |
+| **912** | Website integration -- lead capture forms | Feeds "Lead capture & qualification" |
+| **913** | SEO/content tracking -- which content drives inquiries | Supports ROI analysis for marketing spend |
+| **914** | Networking/event tracking | Feeds referral source tracking (572) |
+| **915** | Strategic lot tracking | Unique differentiator -- no competitor tracks available lots |
+| **916** | Builder reputation monitoring | Supports testimonial collection (571) and online presence management |
+| **917** | Competitive intelligence | Supports win/loss analysis (573) |
+
+### Implementation Priority
+
+| Priority | Feature | Gap Items | Rationale |
+|----------|---------|-----------|-----------|
+| **P1 (Launch)** | Lead pipeline with source tracking | 569, 572 | Core CRM must work from day one |
+| **P1 (Launch)** | Client satisfaction survey automation | 571 | Low effort, high value for builder retention |
+| **P2 (Post-Launch)** | Project portfolio/showcase builder | 570 | Requires accumulated photo and project data |
+| **P2 (Post-Launch)** | Win/loss analysis reporting | 573 | Requires enough lead data for meaningful analysis |
+| **P2 (Post-Launch)** | Referral program management | 572 | Requires active client base |
+| **P3 (Future)** | HubSpot/Mailchimp integration | 569 | External tool integration; builders can use email independently initially |
+| **P3 (Future)** | Review monitoring aggregation | 571 (extension) | Nice-to-have; builders can monitor reviews manually |
+
+---
+
 *This document is for marketing planning purposes.*
 *Features subject to development prioritization.*

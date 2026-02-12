@@ -483,7 +483,163 @@ components/settings/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45 — Per-Page Feature Requirements (Settings / Admin Page)
+- **#781** Company profile — name, logo, address, licenses, insurance
+- **#782** User management — create, edit, deactivate users and roles
+- **#783** Role/permission configuration — custom roles with granular permissions
+- **#784** Cost code management — create, edit, organize cost code structure
+- **#785** Workflow configuration — approval chains, thresholds, routing rules
+- **#786** Notification preferences — what triggers notifications, for which roles, via which channels
+- **#787** Integration management — connect/disconnect integrations, monitor sync status
+- **#788** Template management — document templates, estimate templates, checklist templates, email templates
+- **#789** Custom field management — create/edit custom fields on any entity
+- **#790** Billing / subscription management — plan, payment method, usage, invoices
+- **#791** Data import/export tools
+- **#792** API key management for integrations
+- **#793** Audit log viewer — searchable history of all system actions
+- **#794** Branding configuration — colors, logo, portal customization
+- **#795** Regional settings — timezone, date format, currency, tax configuration
+- **#796** Module enable/disable — turn on/off optional modules (home care, HR, equipment)
+
+### Section 1 — SaaS Architecture & Multi-Tenancy
+- **#16** Configurable workflow engine (who approves what, at what thresholds, in what order)
+- **#17** Custom cost code hierarchies per builder (CSI, custom, hybrid)
+- **#18** Builder-defined phase structures
+- **#19** Customizable terminology per tenant ("trade partner" vs "subcontractor" vs "vendor")
+- **#20** Custom field support on all entities
+
+### Section 9 — User & Access Management
+- **#9** Tenant-specific customizations (custom fields, workflows, reports)
+
+### Section 4 — White-Labeling & Branding
+- **#794** Branding configuration (colors, logo, portal customization per builder)
+
+### Section 30 — Notifications & Alerts
+- **#481** Every notification type configurable per role per builder
+- **#482** Notification channels per user (in-app, email, SMS, push)
+- **#483** Notification templates customizable per builder
+- **#484** Notification quiet hours configurable
+
+### Section 34 — Search, Navigation & UX
+- **#524** Customizable navigation (builder rearranges modules in preferred order)
+- **#535** Accessibility (WCAG 2.1 AA compliance)
+- **#536** Localization architecture (English for V1, Spanish/French future)
+
+### Section 36 — Regulatory, Tax & Insurance
+- **#547** Sales tax by state (system must handle all 50 states)
+- **#548** Multi-state builders (different tax rules per project location)
+- **#549** Tax rate lookups by address (down to zip code level)
+- **#550** Tax exemption management (certificates on file)
+- **#551** 1099 reporting configuration
+- **#553** Insurance requirements by state (minimum coverage, required endorsements)
+- **#555** Builder's Risk insurance tracking per project
+
+### Section 41 — Multi-Entity & Company Scaling
+- **#574** Builder with multiple LLCs (different entities, related data)
+- **#577** Builders operating under different brand names
+- **#580** System grows with builder from small to large without platform change
+
+---
+
+## Additional Requirements from Gap Analysis
+
+### Workflow Configuration (#785, #16)
+The current spec has basic approval thresholds. Full requirements:
+1. **Workflow builder UI**: Visual workflow editor for configuring multi-step approval chains
+2. **Configurable triggers**: Set what triggers each workflow (invoice amount, PO value, change order, etc.)
+3. **Multi-level routing**: Support 1-step, 2-step, 3-step approval chains with conditional routing based on amount thresholds
+4. **Role-based routing**: Route to specific roles (PM > Director > Owner) or specific users
+5. **Escalation rules**: Auto-escalate if not approved within configurable time period
+6. **Workflow templates**: Pre-built common workflows (invoice approval, CO approval, draw approval)
+
+### Custom Roles & Permissions (#783)
+Current spec has fixed roles. Gap requires:
+1. **Custom role creation**: Builder creates their own roles beyond the 6 defaults
+2. **Granular permissions**: Permission grid with fine-grained control (view/create/edit/delete/approve per module)
+3. **Job-level permissions**: Different permissions per job assignment (PM on one job, read-only on another)
+4. **Permission inheritance**: Roles can inherit from other roles and add/remove specific permissions
+5. **Data-level access**: Control which financial data each role can see (hide profit margins from field staff, etc.)
+
+### Notification Preferences (#786, #481-484)
+1. **Notification matrix**: Grid showing notification types vs roles with checkboxes for enabled/disabled
+2. **Channel selection per type**: For each notification type, select channels (in-app, email, SMS, push)
+3. **Template customization** (#483): Edit notification message templates with variable placeholders
+4. **Quiet hours setting** (#484): Configurable per-user quiet hours (no notifications during specified times)
+5. **Digest preferences**: Daily/weekly digest option vs real-time per event
+
+### Template Management (#788)
+1. **Document templates**: Upload and manage contract templates, proposal templates, letter templates
+2. **Estimate templates**: Pre-built estimate structures by project type
+3. **Checklist templates**: Configurable checklists for punch lists, inspections, closeout
+4. **Email templates**: Customizable templates for automated emails (draw submission, proposal sent, etc.)
+5. **Template versioning**: Track changes to templates over time
+
+### Custom Field Management (#789, #20)
+1. **Custom field editor**: Create custom fields on any entity (jobs, vendors, clients, invoices)
+2. **Field types**: Text, number, date, dropdown, checkbox, file upload, multi-select
+3. **Required/optional**: Set whether custom fields are required or optional
+4. **Display configuration**: Choose where custom fields appear on forms and detail views
+5. **Reporting inclusion**: Custom fields available as columns in reports and exports
+
+### Subscription & Billing (#790)
+1. **Plan management**: View current subscription plan, features included, usage limits
+2. **Upgrade/downgrade**: Self-service plan changes
+3. **Payment method**: Manage credit card or bank account on file
+4. **Usage dashboard**: Show current usage vs limits (users, projects, storage, API calls)
+5. **Invoice history**: View and download past subscription invoices
+
+### Data Import/Export (#791)
+1. **Import wizard**: Step-by-step import for vendors, clients, cost codes, projects from CSV/Excel
+2. **Data mapping**: Map import columns to system fields with preview
+3. **Full data export**: Export all tenant data in standard formats (CSV, JSON)
+4. **Scheduled exports**: Auto-export on a schedule for backup or integration purposes
+
+### API Key Management (#792)
+1. **Key generation**: Generate API keys with configurable scope/permissions
+2. **Key listing**: View all active API keys with last-used timestamps
+3. **Key revocation**: Revoke keys immediately
+4. **Rate limit configuration**: Set rate limits per key
+
+### Audit Log (#793)
+1. **Searchable log viewer**: Search by user, action type, entity, date range
+2. **Action tracking**: Every create, update, delete, approve, reject action logged
+3. **Before/after values**: Show what changed (old value > new value)
+4. **Export capability**: Export audit log as CSV for compliance
+
+### Branding Configuration (#794)
+1. **Logo upload**: Logo for app header, portal, reports, and emails
+2. **Color scheme**: Primary and accent colors applied to portal and reports
+3. **Portal customization**: Custom welcome message, contact info display, footer text
+4. **Email branding**: Logo and colors in automated email notifications
+
+### Regional Settings (#795)
+1. **Timezone**: Company-level timezone setting (affects scheduling, notifications)
+2. **Date format**: MM/DD/YYYY vs DD/MM/YYYY
+3. **Currency**: Default currency (USD for V1, architecture supports others)
+4. **Tax configuration** (#547-550): Default tax rate, tax-by-address lookup, exemption certificate storage
+
+### Module Management (#796)
+1. **Module toggle**: Enable/disable optional modules (Home Care, HR, Equipment, Safety)
+2. **Module descriptions**: Explain what each module adds when considering enabling
+3. **Dependency alerts**: Warn if disabling a module affects active data or features
+4. **Plan-based availability**: Some modules only available on higher subscription tiers
+
+### Terminology Customization (#19)
+1. **Term mapping**: Configurable labels for key concepts (Vendor/Subcontractor/Trade Partner, Job/Project, etc.)
+2. **UI-wide application**: Custom terms apply across all screens, reports, and notifications
+3. **Default reset**: Option to reset to platform defaults
+
+### Navigation Customization (#524)
+1. **Module ordering**: Builder reorders navigation menu items based on their workflow
+2. **Pin/unpin modules**: Show or hide modules from main navigation
+3. **Quick links**: Configurable quick-access links on dashboard
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis sections 1, 4, 9, 30, 34, 36, 41, and 45 |
 | Initial | Created from batch planning |

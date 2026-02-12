@@ -435,7 +435,91 @@ lib/integrations/
 
 ---
 
+## Gap Items Addressed
+
+### Section 33 — Integrations & Data
+- **#506** Public API (REST and/or GraphQL)
+- **#507** Webhooks for real-time event notifications (invoice approved > trigger external system)
+- **#508** OAuth for third-party integrations (secure authentication)
+- **#509** Integration health monitoring (is the sync working? Last run? Errors?)
+- **#510** Integration data mapping per-tenant (each builder's QuickBooks is set up differently)
+- **#511** Integration marketplace (pre-built integrations builders can enable with a click)
+- **#512** Handling integrations that go down (queue data, retry, notify)
+- **#514** Bulk data import/export (CSV, Excel, JSON for any entity)
+- **#515** Zapier/Make integration for builders who want to connect unsupported tools
+- **#520** Integration with state licensing databases (auto-verify vendor licenses)
+
+### Section 24 — Financial Management & Accounting
+- **#431** Chart of accounts mapping configurable per builder (cost codes > QuickBooks accounts)
+- **#432** Support for multiple accounting systems (QuickBooks Desktop, QBO, Sage, Xero, Viewpoint)
+- **#433** Fiscal year configuration per builder
+- **#434** WIP schedule calculation methods
+- **#439** Financial data "accountant-locked" (month-end close synced with accounting system)
+- **#543** Data consistency during integration sync (QuickBooks says $10,000, CMS says $10,250 — reconciliation)
+
+### Section 45 — Per-Page Feature Requirements (Settings/Admin Page)
+- **#787** Integration management — connect/disconnect integrations, monitor sync status
+
+---
+
+## Additional Requirements from Gap Analysis
+
+### Multi-Accounting System Support (#432)
+The current spec covers QuickBooks Online only. Gap analysis requires architecture to support:
+1. **QuickBooks Desktop**: Different sync mechanism (Web Connector or middleware), not real-time API
+2. **Sage 100/300**: Common among larger builders; requires different field mapping
+3. **Xero**: REST API similar to QBO but different data model
+4. **Viewpoint/Spectrum**: Enterprise construction accounting; complex integration
+5. **Generic CSV export**: For accounting systems without API integration
+6. **Architecture note**: Integration layer should be abstracted so adding a new accounting system only requires a new mapper/adapter, not changes to the sync engine
+
+### Integration Health Monitoring (#509)
+1. **Dashboard widget**: Show sync status for all active integrations in a single view
+2. **Health indicators**: Green (syncing normally), Yellow (warnings/skipped items), Red (sync failing)
+3. **Last sync timestamp**: Per entity type (vendors, bills, invoices)
+4. **Error count badge**: Prominent count of unresolved errors requiring attention
+5. **Auto-notification**: Email admin when sync fails for more than N consecutive attempts
+
+### Data Reconciliation (#543)
+1. **Reconciliation view**: Side-by-side comparison of CMS data vs QuickBooks data per entity
+2. **Discrepancy highlighting**: Flag records where amounts, dates, or statuses differ
+3. **Resolution workflow**: For each discrepancy, options to: accept CMS value, accept QB value, or manually set correct value
+4. **Reconciliation report**: Summary of discrepancies found and resolved per sync period
+
+### Integration Resilience (#512)
+1. **Queue system**: When QuickBooks API is unavailable, queue outgoing data and retry automatically
+2. **Exponential backoff**: Retry with increasing delays (1 min, 5 min, 15 min, 1 hour)
+3. **Manual retry**: Allow admin to manually trigger retry of failed items
+4. **Failure notification**: Alert admin when sync items have been queued for more than configurable threshold
+5. **Partial sync**: If some items fail, continue syncing remaining items (don't fail entire batch)
+
+### Per-Tenant Data Mapping (#510)
+1. **Account mapping UI**: Each builder maps their CMS cost code categories to their specific QuickBooks accounts (already in spec — enhance with per-cost-code granularity, not just category-level)
+2. **Class/Location mapping**: Map CMS jobs to QuickBooks Classes or Locations (used for job costing in QB)
+3. **Custom field mapping**: Map CMS custom fields to QuickBooks custom fields where supported
+4. **Mapping templates**: Pre-built mapping templates for common QuickBooks setups
+
+### Webhook Support (#507)
+1. **Outbound webhooks**: Configurable webhooks that fire when events occur in CMS (invoice approved, payment processed, vendor created)
+2. **Webhook configuration UI**: Set URL, events to subscribe, authentication method
+3. **Delivery log**: Track webhook delivery attempts, successes, and failures
+4. **Retry logic**: Auto-retry failed webhook deliveries
+
+### Zapier/Make Integration (#515)
+1. **Zapier triggers**: Expose common CMS events as Zapier triggers (new invoice, invoice approved, new vendor, draw submitted)
+2. **Zapier actions**: Allow Zapier to create/update entities in CMS (create vendor, update invoice status)
+3. **API key management**: Generate API keys for third-party integrations with scope-limited permissions
+
+### Bulk Import/Export (#514)
+1. **Import wizard**: Step-by-step import for vendors, clients, cost codes, projects from CSV/Excel
+2. **Column mapping**: Map CSV columns to CMS fields during import
+3. **Validation preview**: Show preview of data to be imported with error highlighting before committing
+4. **Export all data**: Full data export in CSV/JSON for backup or migration purposes
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis sections 24, 33, and 45 |
 | Initial | Created from batch planning |

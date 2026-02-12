@@ -207,7 +207,48 @@ components/leads/
 
 ---
 
+## Gap Items Addressed
+
+### Section 45: Per-Page Feature Requirements
+- No dedicated lead create page in Section 45. Lead capture is covered in Section 10.
+
+### Cross-Section Gap Items (Section 10: Lead & Preconstruction Pipeline)
+- GAP-237: Lead source tracking — source field on create form must capture origin (website, referral, Houzz, social media, Parade of Homes, etc.)
+- GAP-238: Lead routing — auto-assignment based on rules (round-robin, geographic, project type)
+- GAP-240: Lead qualification scoring — initial score calculated at creation based on data provided
+- GAP-243: Lead deduplication — check for existing leads with same email/phone/name before creating
+- GAP-245: Configurable initial stage — not all leads start as "New" for every builder
+
+### Additional Cross-Section Items
+- GAP-23: Custom fields on lead entity — create form must include builder-defined custom fields
+- GAP-24: Custom dropdown values — source options, project type options configurable per builder
+- GAP-29: Configurable required fields — which fields are required may differ per builder
+- GAP-30: Conditional logic — dynamic fields based on selections (e.g., renovation requires existing home details)
+- GAP-33: Out-of-box defaults — form should work on day 1 without builder configuration
+- GAP-64: Import from CSV/Excel — bulk lead import for builders migrating from spreadsheets
+- GAP-65: Import from email — parse lead inquiries from email
+- GAP-237: Multiple lead sources need configurable options per builder
+- GAP-487: Offline mode — queue lead creation for sync when connected
+- GAP-488: Mobile-specific features — camera integration for site photos, GPS for location
+- GAP-533: Empty state guidance — helpful prompts for first-time lead creation
+
+## Additional Requirements from Gap Analysis
+- Lead deduplication check at creation time (warn if similar lead exists) is not specified (GAP-243)
+- Auto-assignment / lead routing rules based on builder configuration are missing (GAP-238)
+- Initial qualification score calculation at creation is not covered (GAP-240)
+- Custom fields per tenant on the create form are not addressed (GAP-23)
+- Configurable required fields per builder are not supported (GAP-29)
+- Conditional form logic (dynamic fields based on project type) is missing (GAP-30)
+- Configurable source dropdown values per builder are not specified (GAP-24)
+- Bulk lead import from CSV/Excel for migration scenarios is not covered (GAP-64)
+- Email-to-lead parsing capability is not mentioned (GAP-65)
+- Web form integration — leads auto-created from builder's website contact form (GAP-237)
+- GPS auto-fill for project address when creating lead on mobile at the lot (GAP-488)
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
 | Initial | Created from planning session |
+| 2026-02-11 | Added Gap Items Addressed and Additional Requirements from gap analysis |

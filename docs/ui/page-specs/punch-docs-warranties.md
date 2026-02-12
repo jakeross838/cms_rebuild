@@ -523,7 +523,51 @@ components/closeout/
 
 ---
 
+## Gap Items Addressed
+
+### From Section 22: Punch Lists & Checklists (Items 411-420)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 411 | Punch list categories configurable (by room, trade, severity) | Group-by toggle (Room/Area, Trade/Vendor, flat list) and Priority field (Low/Medium/High) |
+| 412 | Punch list templates by project type | Requires: template system for default punch checklists per project type in Settings |
+| 413 | Punch list assignment workflows (assign -> vendor completes -> builder verifies) | Status flow: Open -> Assigned -> In Progress -> Complete -> Verified with vendor notification |
+| 414 | Punch list SLAs (resolved within X days, configurable) | Due Date field present; Requires: configurable SLA rules and overdue alerting per builder |
+| 415 | Pre-punch / quality checklists during construction (ongoing quality gates) | Requires: separate Quality Checklist feature linked to schedule phases, not just final punch |
+| 416 | Punch list integration with warranty (unresolved punch -> warranty item) | Final Docs links to Warranties tab; Requires: automatic conversion of open punch items to warranty items at CO |
+| 417 | Punch list photo requirements (before, after, verification) | Photo upload on items with before/after pairing in mobile; Requires: enforced photo requirements per status change |
+| 418 | Client punch list submission via portal | Requires: Client Portal punch submission view with simplified form and photo upload |
+| 419 | Vendor self-inspection checklists | Requires: vendor-facing checklist templates accessible from Vendor Portal before requesting inspection |
+| 420 | Punch list cost tracking (back-charge to responsible vendor) | Requires: cost tracking fields per punch item linking to vendor back-charge invoices |
+
+### From Section 45: Per-Page Feature Requirements — Selections/Daily Log (Items 724-735)
+| Gap # | Description | Relevance to This Spec |
+|-------|-------------|------------------------|
+| 735 | Designer view for selections | N/A to punch, but warranty items may originate from selection defects |
+
+### From Section 27: Warranty & Home Care (Items 465-470)
+| Gap # | Description | How This Spec Addresses It |
+|-------|-------------|---------------------------|
+| 465 | Warranty/home care as optional module | Warranties tab exists under Closeout; Requires: module enable/disable toggle in builder settings |
+| 466 | Configurable warranty terms per builder (1yr, 2yr, 10yr structural) | Warranty form has duration_years and warranty_type fields; Requires: builder-configurable default terms |
+| 467 | Warranty service request routing (builder-configurable) | Service History section with "Log Service Call"; Requires: configurable routing rules for service requests |
+| 468 | Home care subscription pricing (varies by builder) | Requires: subscription pricing configuration in builder settings, not currently in spec |
+| 469 | Manufacturer vs. builder warranty distinction | Warranty Types include Manufacturer and Workmanship; covers this distinction |
+| 470 | Warranty reserve accounting (configurable % set aside) | Requires: financial integration to set aside reserve percentage per project cost in budget module |
+
+### From Edge Cases (Sections 44, 46, 47)
+| Gap # | Description | Relevance |
+|-------|-------------|-----------|
+| 599 | Client bankruptcy mid-construction (lien filing, partial billing, close-out) | Closeout docs must support partial close-out workflows and lien filing documentation |
+| 601 | Sub fired mid-scope (termination docs, scope reassignment) | Punch items must support vendor reassignment with history preserved |
+| 610 | Client self-performs work (warranty exclusions) | Warranty records need "excluded" or "client-responsible" coverage type |
+| 797 | Mechanic's lien documentation by state | Final Docs checklist should include state-specific lien waiver requirements |
+| 801 | Warranty claim dispute resolution documentation | Warranty Detail needs dispute tracking fields and resolution documentation |
+| 874 | Project completion -> warranty start dates set automatically | Requires: automated warranty creation from templates at project completion milestone |
+
+---
+
 ## Revision History
 | Date | Change |
 |------|--------|
+| 2026-02-11 | Added Gap Items Addressed section from gap analysis sections 22, 27, 44-48 |
 | Initial | Created from batch planning |
