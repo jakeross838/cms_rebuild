@@ -1,5 +1,12 @@
 # Ross Built CMS - Complete System Design
 
+## Proven Patterns from v1
+
+### v1 Reference
+The existing CMS at C:\Users\jaker\Construction-Management-Software has 105 route files (~1,581 endpoints), 199 database migrations, 59 client pages, 235 components, and 158 passing tests. Key services include: invoice-helpers.js (27KB), variance-detector.js (40KB), document-intelligence.js (24KB), proposal-generator.js (14KB), schedule-pdf-generator.js (15KB), contract-pdf-generator.js (14KB), notifications.js (17KB), reconciliation.js (17KB), weather.js (12KB), slack.js (17KB).
+
+---
+
 ## Overview
 
 This document defines the complete system architecture for the Ross Built Construction Management Software rebuild. Every entity, page, data flow, and API endpoint is documented here to ensure all features are properly connected from the start.

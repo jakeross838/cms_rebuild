@@ -10,6 +10,23 @@
 
 End-to-end purchase order lifecycle from creation through delivery, invoicing, and closeout. POs can be created manually, generated from bid awards, or triggered by approved change orders. The module supports material ordering workflows with delivery tracking, three-way matching (PO to receipt to invoice), backorder management, and blanket POs for recurring material needs. Approval thresholds, templates, and workflows are fully configurable per builder. Committed costs from open POs feed directly into budget forecasting and cash flow projections.
 
+## Proven Patterns from v1
+
+### PO-Invoice Integration (Proven)
+- PO line items track `invoiced_amount` — sum of approved/in_draw/paid invoice allocations
+- Direct `po_line_item_id` link takes priority over cost code matching
+- Proportional distribution for duplicate cost codes on same PO
+- Overage detection: soft-block requiring `overridePoOverage` flag
+- 39 endpoints in v1 covering full PO lifecycle
+
+### PO Matching from Invoices (Proven)
+Multi-signal strategy:
+1. PO number found in invoice text
+2. Vendor + Job combination match
+3. Trade type mapping
+
+Creates draft PO if no match found
+
 ---
 
 ## Gap Items Addressed

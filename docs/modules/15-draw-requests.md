@@ -12,6 +12,28 @@ Generates, manages, and tracks draw requests (payment applications) submitted to
 
 ---
 
+## Proven Patterns from v1
+
+The following patterns have been validated in the production v1 CMS application and should be carried forward into the rebuild.
+
+### Draw Composition (Proven)
+- v2_draw_invoices links invoices to draws
+- v2_draw_allocations mirrors invoice allocations
+- When invoice → in_draw: create link, copy allocations, update draw total
+
+### CO Billing Overlap Detection (Proven)
+Warns if CO has both:
+- Manual v2_job_co_draw_billings (client-billed CO work)
+- Invoice allocations (vendor-invoiced CO work)
+Prevents double-counting
+
+### Draw Allocation Validation (Proven)
+- Compares draw allocations to source invoice allocations
+- Detects drift by cost code
+- Returns mismatches for reconciliation
+
+---
+
 ## Gap Items Addressed
 
 | Gap # | Description | How Addressed |

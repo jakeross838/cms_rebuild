@@ -12,6 +12,63 @@ AI-powered invoice processing that automates data extraction from uploaded invoi
 
 ---
 
+## Proven Patterns from v1
+
+The following patterns have been validated in the production v1 CMS application and should be carried forward into the rebuild.
+
+### AI Extraction Pipeline (Proven)
+Two-stage pipeline:
+1. Stage 1 - Extraction: Claude Vision with company-specific system prompt
+2. Stage 2 - Validation: confidence scoring + auto-corrections
+3. Fallback: original single-stage if two-stage fails
+
+Confidence thresholds:
+- AUTO_APPROVE (0.95): minimal review
+- HUMAN_REVIEW (0.80): route to review queue
+- NEEDS_ATTENTION (0.70): flag for investigation
+- REJECT (0.50): likely extraction failure
+
+Multi-factor confidence: vendor (0-1), amount (0-1), invoiceNumber (0-1), date (0-1), job (0-1), combined/overall
+
+### Job Matching Algorithm (Proven)
+Strategies by decreasing confidence:
+1. Client name exact match (0.95)
+2. Full job name exact match (0.98)
+3. Address exact match (0.92)
+4. Street number + partial street name (0.88)
+5. Street number only (0.70)
+6. Client name variations (0.90)
+Filename used as hint (+0.05 boost)
+
+### Vendor Matching (Proven)
+- Normalized company name search
+- Auto-create if not found
+- Trade type detection from invoice description
+
+### PO Matching (Proven)
+Multi-signal: PO number in invoice → vendor+job combo → trade type mapping
+Creates draft PO if no match found
+
+### Allocation Suggestion (Proven)
+Priority order:
+1. AI suggested_allocations from trade type + line item analysis
+2. If amounts differ from total → normalize proportionally
+3. Adjust for rounding errors
+4. Fallback to line items with explicit cost codes
+5. If nothing → leave empty for manual entry
+
+### Dynamic System Prompt (Proven)
+`buildInvoiceSystemPrompt()` contextualizes with:
+- Builder's company name
+- Instructions for vendor vs GC identification
+- Extraction rules for invoice numbers, amounts, dates, line items
+- Job reference detection (PO#, Subject, Job:, address, client name)
+- Invoice type detection (standard, credit_memo, debit_memo)
+- Split invoice detection
+- Trade type identification
+
+---
+
 ## Gap Items Addressed
 
 | Gap # | Description | How Addressed |

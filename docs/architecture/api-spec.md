@@ -1,5 +1,44 @@
 # API Specification
 
+## Proven Patterns from v1
+
+### Middleware Stack (Proven)
+Applied in order:
+1. Security headers (CSP, HSTS, X-Frame-Options)
+2. Input sanitization (deep recursive HTML tag removal)
+3. SQL injection detection (blocks with 400)
+4. Body size limits (10MB JSON, 1MB text)
+5. Rate limiting per route type: apiLimiter (100/min), authLimiter (10/min), uploadLimiter (20/min), aiLimiter (10/min)
+6. Auth middleware (requireAuth / optionalAuth)
+7. Zod validation via validate(schemas) middleware
+8. asyncHandler wrapper on all async routes
+
+### Error Response Format (Proven)
+AppError class with: code, message, details, status, retry, retryAfter, timestamp
+~25 error types: UNAUTHORIZED, VALIDATION_FAILED, ENTITY_LOCKED, DUPLICATE_DETECTED, etc.
+Helper creators: validationError(), transitionError(), duplicateError(), lockedError(), notFoundError()
+Production: sanitizes 500-level errors (hides internal details)
+
+### Entity Locking (Proven)
+- acquireLock(entityType, entityId, lockedBy) - 5 min default
+- Owner can refresh their own lock
+- Realtime broadcast on lock changes
+- forceReleaseLock() for admin override
+
+### Undo/Redo (Proven)
+- createUndoSnapshot() before changes - 30 sec window
+- One active undo per entity
+- Approval undo reverses budget updates + clears PDF stamp
+- Side effects: restoreInvoice(), restoreAllocations(), reverseBudgetUpdates()
+
+### Realtime (Proven)
+- SSE with MAX_SSE_CLIENTS=4 (Chrome connection limit)
+- Heartbeat prevents browser timeout
+- Supabase Realtime subscriptions on key tables
+- broadcastExcept() excludes sender to avoid echo
+
+---
+
 ## Overview
 
 The Ross Built CMS exposes a RESTful JSON API for all client-server communication. Every request (except authentication routes) must include a valid Supabase JWT in the `Authorization` header as a Bearer token.

@@ -1,5 +1,17 @@
 # Multi-Tenancy Design
 
+## Proven Patterns from v1
+
+### getBuilderId Pattern (Proven)
+- `getBuilderId(req)` extracts builder_id from authenticated user, throws 401 if missing
+- `createBuilderQuery(tableName)` factory returns query helpers: .select(), .insert(), .update(), .softDelete(), .getById(), .exists()
+- All queries auto-filter by builder_id AND deleted_at IS NULL
+- Every route MUST call getBuilderId(req) first
+- Soft delete is default (use includeSoftDeleted: true to override)
+- 28+ routes already secured with this pattern in v1
+
+---
+
 ## Gap Coverage Index
 
 This document addresses the following gap analysis items:

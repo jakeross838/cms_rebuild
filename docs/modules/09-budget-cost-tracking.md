@@ -10,6 +10,24 @@
 
 Project budget creation and real-time cost tracking against budget lines. Tracks committed costs (signed subcontracts and POs), actual costs (paid invoices), and projected final costs with variance analysis. Supports multiple cost code systems, configurable budget hierarchies, change order impact tracking, budget contingency management, WIP reporting, and multi-audience budget views. Serves as the financial backbone connecting estimates, invoices, change orders, draw requests, and accounting.
 
+## Proven Patterns from v1
+
+### Variance Detection (Proven)
+- variance-detector.js (40KB) - largest service file in v1
+- Real-time check when linking invoice to PO
+- Compares invoice amounts to PO line item amounts
+- Returns warnings for significant variance (non-blocking)
+- Budget lines track: original_amount, revised_amount, committed (POs), invoiced, paid
+
+### Linkage Validation (Proven)
+Audit endpoint checks for:
+- Orphaned PO allocations (PO deleted)
+- Orphaned PO line item references
+- Orphaned CO allocations
+- Draw status mismatches
+- Allocation sum exceeds invoice
+- Invoices with PO but no allocations
+
 ---
 
 ## Gap Items Addressed

@@ -10,6 +10,14 @@
 
 Centralized directory of subcontractors, suppliers, clients, and other contacts with trade assignments, compliance tracking, performance scoring, communication history, and preferred vendor lists. Supports the multi-tenant SaaS model where vendors may work for multiple builders on the platform, maintaining both a vendor-owned profile and builder-specific data (rates, performance, compliance status). Includes vendor self-registration and onboarding, prequalification workflows, bid management integration, and platform-wide anonymous benchmarking.
 
+## Proven Patterns from v1
+
+### Vendor Auto-Creation (Proven)
+- findOrCreateVendor(): normalized company name search
+- Creates vendor record if not found during AI invoice processing
+- Trade type auto-detected from invoice description
+- v1 has 20+ vendor endpoints
+
 ---
 
 ## Gap Items Addressed

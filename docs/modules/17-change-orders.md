@@ -10,6 +10,14 @@
 
 Full lifecycle management of construction change orders from initiation through approval, execution, and financial cascade. Change orders can originate from field conditions, client requests, design changes, or code/regulatory requirements. Each CO calculates cost impact (materials, labor, overhead, profit markup), schedule impact, and cascades approved changes to the contract value, project budget, and draw schedule. Client-facing COs are presented through the client portal with e-signature approval. All workflows, numbering, markup rules, and approval chains are configurable per builder.
 
+## Proven Patterns from v1
+
+### CO-Invoice Integration (Proven)
+- CO auto-inheritance: if invoice's PO is linked to a CO, allocations auto-get change_order_id
+- Cost codes ending in 'C' flagged as CO-specific
+- recalculateCOInvoiced() sums all allocations linked to CO (approved+ only)
+- CO billing overlap detection: warns if CO has both manual draw billings AND vendor invoice allocations
+
 ---
 
 ## Gap Items Addressed

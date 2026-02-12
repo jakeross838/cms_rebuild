@@ -12,6 +12,143 @@ Core invoice management for receiving, coding, approving, and tracking vendor/su
 
 ---
 
+## Proven Patterns from v1
+
+The following patterns have been validated in the production v1 CMS application and should be carried forward into the rebuild.
+
+### Invoice State Machine (Proven)
+```
+needs_review → ready_for_approval → approved → in_draw → billed
+     ↓              ↓                    ↓
+   denied         denied             (can revert)
+     ↓
+   split (children processed independently)
+```
+
+Pre-transition requirements:
+- `ready_for_approval`: Must have job_id + vendor_id
+- `approved`: Must have job_id + vendor_id + balanced allocations (±$0.01 tolerance)
+- `in_draw`: Must specify draw_id
+- `billed`: Must be in a funded draw
+
+Locked statuses (require unlock to edit): ready_for_approval, approved, in_draw, billed, split
+
+### Allocation System (Proven)
+- Idempotent: POST /allocate replaces all allocations (not upsert)
+- Balance validation: allocations sum must equal invoice amount (±$0.01)
+- Credit memos: allocations must be negative
+- PO sync: on approval, recalculate PO line item invoiced_amount
+- CO auto-inheritance: if PO linked to CO, auto-set change_order_id on allocations
+
+### PDF Stamping (Proven)
+- Always stamps from ORIGINAL pdf_url (never accumulates stamps)
+- Fixed output path: {job_id}/{invoice_id}_stamped.pdf
+- Lock mechanism prevents concurrent stamps
+- Stamp format varies by status (Needs Review → Coded → Approved → In Draw → Paid)
+
+### Duplicate Detection (Proven)
+- Hash: vendor_id|invoice_number|amount (normalized)
+- Stored in v2_invoice_hashes
+- 409 Conflict on high-confidence match (>=0.95)
+
+### Multi-Invoice PDF Handling (Proven)
+- Analyze phase: OCR scans for page breaks, vendor headers, separate invoice sections
+- Split phase: PDF split by boundaries, each processed independently
+- Single invoice splitting: parent → children with split_index, parent status = "split"
+
+### Vendor Payment Tracking (Proven)
+- Separate from invoice status: paid_to_vendor, paid_to_vendor_date, paid_to_vendor_amount, paid_to_vendor_ref
+- Supports partial payments
+- Methods: check, ach, wire, credit_card, cash, other
+
+---
+
+## PDF Stamping System (Proven v1 — Key Differentiator)
+
+The PDF stamping system is a major differentiator of the platform. Every invoice PDF receives a dynamically generated visual stamp that reflects its current status, cost coding, PO billing progress, and approval metadata. The stamp is regenerated from the original PDF on every status change, ensuring accuracy and preventing stamp-on-stamp accumulation.
+
+### Stamp Architecture
+- **3 design versions exist:** v1 (legacy), v2 (professional with progress bars), v3 (active — clean, minimal Gemini-designed)
+- Uses **pdf-lib** with `StandardFonts` (Helvetica / Helvetica Bold)
+- Always stamps from **ORIGINAL** `pdf_url` (never accumulates stamps on stamps)
+- Fixed output path: `{job_id}/{invoice_id}_stamped.pdf`
+- Only stamps **first page** of multi-page PDFs
+- In-memory lock prevents concurrent stamping (60-sec auto-expiry, try-finally release)
+
+### V3 Design Specs (Active)
+
+Stamp dimensions: **220 x 115pt** with 12pt padding and 6pt left accent strip.
+
+**Color Palette:**
+
+| Name | Hex | Usage |
+|------|-----|-------|
+| Green | `#338855` | Approved |
+| Slate | `#4A6672` | Brand / secondary text |
+| Amber | `#B38C20` | Partial allocation |
+| Orange | `#D98C20` | Needs Review |
+| Blue | `#598BC0` | Pending / Ready for Approval |
+| Purple | `#664D99` | Split |
+
+**Layout (top to bottom):**
+
+1. **Left accent strip** — 6pt wide, color determined by status
+2. **Status + Amount** — Helvetica Bold 12pt (status left-aligned, amount right-aligned)
+3. **Job name** — Helvetica Bold 9pt, slate color, truncated to 28 chars
+4. **Horizontal divider** — 0.5pt light gray line
+5. **Cost codes** — max 3 shown, `+N more...` if overflow, 8pt font, code + name (15 chars) + amount right-aligned
+6. **PO reference** — `PO-XXXX`, progress: `85% billed ($12K of $14K)`, compact money format
+7. **CO reference** — `CO #123: Title` in slate (displayed if PO is linked to a CO)
+8. **Footer** — `Jan 15, 2025 • Jane Smith`, 7pt gray, centered
+
+### Rotation-Aware Positioning
+
+The stamp adapts its placement and text rotation to handle PDFs that have been scanned or saved in non-standard orientations:
+
+| Page Rotation | Stamp Position | Text Rotation |
+|---------------|---------------|---------------|
+| 0° (standard) | Top-right corner | None |
+| 90° | Left edge | Text rotated 90° |
+| 180° | Bottom-left corner | Text rotated 180° |
+| 270° | Right edge | Text rotated 270° |
+
+### Status-Specific Stamps
+
+| Status | Display Text | Accent Color | Content |
+|--------|-------------|-------------|---------|
+| needs_review | "NEEDS REVIEW" | Orange | Amount, Vendor, Invoice#, Review flags (max 2) |
+| ready_for_approval | "READY FOR APPROVAL" | Blue | Amount, Job, Cost codes (max 3), Coder name |
+| approved | "APPROVED" | Green | Amount, Job, Cost codes, PO info, CO info |
+| in_draw | "APPROVED" + "DRAW #X" badge | Green | Same as approved + IN DRAW badge (bottom-right, white on slate) |
+| paid | "APPROVED" + "PAID" watermark | Green | Same as approved + diagonal 72pt "PAID" at 15% opacity, -30° rotation |
+| split | "SPLIT" | Purple | Shows "SPLIT 2/5" indicator |
+| partial allocation | "PARTIAL" | Amber | Shows `$X remaining` |
+
+### PO Billing Calculation on Stamp
+
+The stamp includes a real-time PO billing progress indicator. The calculation logic:
+
+1. Get PO `total_amount`
+2. Sum **THIS** invoice's non-CO allocations (exclude cost codes ending in `'C'`)
+3. Sum **PRIOR** approved/in_draw/paid invoice allocations (non-CO only)
+4. `billedWithThis = prior + this`
+5. `percentage = (billedWithThis / poTotal) * 100`
+6. `remaining = poTotal - billedWithThis`
+
+> **Important:** CO work is explicitly excluded from PO capacity calculations. Cost codes ending in `'C'` are filtered out at both the current-invoice and prior-invoice summation steps.
+
+### Stamp Trigger Points
+
+The stamp is regenerated (not appended) at the following points in the invoice lifecycle:
+
+1. **After approval** → `restampInvoice()`
+2. **After allocation update** → `restampInvoice()`
+3. **During batch approval** → `stampInvoice()` per invoice
+4. **During draw assignment** → `restampInvoice()`
+5. **During split operation** → `restampInvoice()` for each child invoice
+
+---
+
 ## Gap Items Addressed
 
 | Gap # | Description | How Addressed |
