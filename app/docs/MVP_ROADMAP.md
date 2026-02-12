@@ -6,38 +6,220 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           MVP v1.0 ROADMAP                                   │
+│                      MVP v1.0 ROADMAP (Phases 1-8)                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│  Phase 1        Phase 2         Phase 3         Phase 4         Phase 5     │
+│  Phase 1        Phase 1.5 ⭐    Phase 2         Phase 3         Phase 4     │
 │  ────────       ────────        ────────        ────────        ────────    │
-│  Foundation     Financial       Field &         Selections      Vendors &   │
-│  & Core Data    Management      Schedule        & Design        Subs        │
+│  Foundation     DATA MIGRATION  Financial       Field &         Selections  │
+│  & Core Data    (CRITICAL)      Management      Schedule        & Design    │
 │                                                                              │
-│  • Auth         • Invoices      • Schedule      • Selections    • Sub DB    │
-│  • Companies    • Change Ords   • Daily Logs    • Allowances    • Bids      │
-│  • Users        • Budget Track  • Photos        • Deadlines     • Contracts │
-│  • Jobs         • Draws         • Inspections   • Designer      • Insurance │
-│  • Clients      • Pay Apps      • Punch Lists   • Approvals     • Payments  │
+│  • Auth         • Buildertrend  • Invoices      • Schedule      • Select    │
+│  • Companies    • CoConstruct   • Change Ords   • Daily Logs    • Allowance │
+│  • Users        • QuickBooks    • Budget Track  • Photos        • Deadlines │
+│  • Jobs         • Procore       • Draws         • Inspections   • Designer  │
+│  • Clients      • Excel/CSV     • Pay Apps      • Punch Lists   • Approvals │
+│                 • AI Mapping                    • SAFETY ⚠️                 │
 │                                                                              │
-│  Phase 6        Phase 7         Phase 8                                      │
+│  Phase 5        Phase 6         Phase 7         Phase 8                      │
+│  ────────       ────────        ────────        ────────                     │
+│  Vendors &      Client          Reports &       Documents &                  │
+│  Subs           Portal          Analytics       Communication                │
+│                                                                              │
+│  • Sub DB       • Dashboard     • Financials    • Drawing Mgmt              │
+│  • Bids         • Progress      • Portfolio     • RFIs                      │
+│  • Contracts    • Budget View   • KPIs          • Submittals                │
+│  • Insurance    • Approvals     • Trends        • Messaging                 │
+│  • Safety ⚠️                                                                │
+│                                                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│               ENTERPRISE INFRASTRUCTURE (Build During MVP) 🏢               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Phase 17 🔒    Phase 18 💳     Phase 19 📊     Phase 20 ⚖️                  │
+│  ────────       ────────        ────────        ────────                     │
+│  Enterprise     Billing &       Operations &    Legal &                      │
+│  Security       Subscriptions   Reliability     Compliance                   │
+│                                                                              │
+│  • MFA          • Stripe        • Sentry        • GDPR                      │
+│  • SSO/SAML     • Plans/Seats   • Health API    • ToS Track                 │
+│  • SCIM         • Invoicing     • Status Page   • Consent                   │
+│  • Security     • Usage-Based   • Backups       • Retention                 │
+│    Policies     • Dunning       • Feature Flags • Accessibility             │
+│                                                                              │
+│  Phase 21 🎧    Phase 22 ⚙️                                                  │
+│  ────────       ────────                                                     │
+│  Support        Admin                                                        │
+│  Infrastructure Back-Office                                                  │
+│                                                                              │
+│  • Help Desk    • Super Admin                                               │
+│  • Ticketing    • Impersonation                                             │
+│  • Knowledge    • Tenant Mgmt                                               │
+│    Base         • Analytics                                                 │
+│  • Status Page                                                              │
+│                                                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                    MOBILE & OFFLINE (Field Workers) 📱                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Phase 23 📱    Phase 24 📴     Phase 25 🔔                                  │
 │  ────────       ────────        ────────                                     │
-│  Client         Reports &       Documents &                                  │
-│  Portal         Analytics       Communication                                │
+│  Mobile App     Offline-First   Push                                         │
+│  Foundation     Architecture    Notifications                                │
 │                                                                              │
-│  • Dashboard    • Financials    • Drawing Mgmt                              │
-│  • Progress     • Portfolio     • RFIs                                      │
-│  • Budget View  • KPIs          • Submittals                                │
-│  • Approvals    • Trends        • Messaging                                 │
+│  • React Native • WatermelonDB  • FCM/APNs                                  │
+│  • iOS/Android  • Sync Engine   • Task Alerts                               │
+│  • Quick Photo  • Conflict Res  • Approvals                                 │
+│  • Daily Log    • Photo Upload  • Reminders                                 │
+│  • Punch List   • Background    • Schedule                                  │
+│  • Time Clock   • Queue         • Changes                                   │
 │                                                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                      POST-MVP PHASES (9-16)                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Phase 9        Phase 10 ⚠️     Phase 11        Phase 12                     │
+│  ────────       ────────        ────────        ────────                     │
+│  AI &           Safety &        Home Care &     Sales &                      │
+│  Automation     Compliance      Warranty        Pre-Con                      │
+│                                                                              │
+│  Phase 13       Phase 13.5 ⚠️   Phase 14 ⚠️     Phase 15         Phase 16 ⚠️│
+│  ────────       ────────        ────────        ────────        ────────    │
+│  Advanced       HR & Time       Lender          API & Dev       Platform    │
+│  Features       Management      Portal          Tools           Features    │
+│                                                                              │
+│  ⭐ = Critical for Customer Acquisition    ⚠️ = Added from Gap Analysis     │
+│  🏢 = Enterprise Infrastructure (Required for Scale)                        │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+## Enterprise Infrastructure Phases
+
+> **CRITICAL**: These phases are required for enterprise sales, compliance, and sustainable operations.
+> See `docs/ENTERPRISE_INFRASTRUCTURE.md` for complete specifications.
+
+| Phase | Name | Priority | Why Required |
+|-------|------|----------|--------------|
+| 17 | Enterprise Security | P0 | MFA/SSO required for enterprise sales |
+| 18 | Billing & Subscriptions | P0 | Generate revenue |
+| 19 | Operations & Reliability | P0 | Production stability |
+| 20 | Legal & Compliance | P0 (EU), P1 (US) | GDPR, accessibility |
+| 21 | Support Infrastructure | P1 | Customer success |
+| 22 | Admin Back-Office | P1 | Internal operations |
+
+### When to Build Enterprise Phases
+
+| Timeline | Build These | Reason |
+|----------|-------------|--------|
+| **During Phase 1** | 17.1 (MFA), 18.1 (Stripe), 19.1 (Sentry) | Day-1 requirements |
+| **During Phase 2** | 17.2 (SSO), 20.2 (ToS) | Enterprise readiness |
+| **Before Launch** | 19.2 (Status Page), 20.1 (GDPR basics) | Legal/trust |
+| **After Launch** | 21, 22 (Support, Admin) | Scale support |
+
+---
+
+## Mobile & Offline Phases
+
+> **CRITICAL**: Construction happens in the field with poor connectivity. Field workers need offline access.
+> See `docs/MOBILE_OFFLINE_STRATEGY.md` for complete specifications.
+
+| Phase | Name | Priority | Why Required |
+|-------|------|----------|--------------|
+| 23 | Mobile App Foundation | P1 | Field workers need mobile access |
+| 24 | Offline-First Architecture | P0 (mobile) | Job sites have poor connectivity |
+| 25 | Push Notifications | P0 (mobile) | Real-time alerts for field staff |
+
+### Mobile-Specific Features
+
+| Feature | Phase | Description |
+|---------|-------|-------------|
+| Quick Photo Capture | 23 | One-tap photo with auto-tagging |
+| Offline Daily Logs | 24 | Create logs without connectivity |
+| GPS Time Tracking | 23 | Clock in/out with location verification |
+| Punch List Walkthrough | 23 | Photo + annotation per item |
+| Voice Notes | 23 | Dictate and transcribe |
+| Push Notifications | 25 | Task assignments, approvals, schedule changes |
+
+### When to Build Mobile Phases
+
+| Timeline | Build These | Reason |
+|----------|-------------|--------|
+| **After Phase 8** | 23 (Mobile Foundation) | Core features first |
+| **With Phase 23** | 24 (Offline), 25 (Push) | Mobile requires offline |
+| **Or Parallel** | Start 23 during Phase 4+ | If resources allow |
 
 ---
 
 ## Phase 1: Foundation & Core Data
 
 **Objective**: Establish core entities and basic CRUD operations for the fundamental building blocks.
+
+---
+
+## Phase 1.5: Data Migration System ⚠️ CRITICAL
+
+> **Priority Elevated**: Migration is the #1 barrier to customer acquisition. Must be ready at MVP launch.
+> **Full Details**: See `docs/MIGRATION_STRATEGY.md`
+
+**Objective**: Enable painless data migration from competitor systems.
+
+### Pain Points Addressed
+- #1221-1230: Data portability and migration
+- Builders won't switch if they lose historical data
+- Manual re-entry = months of work = no sale
+
+### Database Schema
+
+```sql
+migrations              -- Migration job tracking
+migration_batches       -- Batch processing for large imports
+migration_staging       -- Staging area for validation
+migration_field_mappings -- Custom field mappings
+migration_cost_code_mappings -- Cost code translation
+migration_id_mappings   -- Maintain relationships between systems
+```
+
+### Features
+
+| Feature | Priority | Source Systems |
+|---------|----------|----------------|
+| Migration wizard UI | P0 | All |
+| CSV/Excel universal import | P0 | All |
+| Buildertrend adapter | P0 | Buildertrend exports |
+| CoConstruct adapter | P0 | CoConstruct exports |
+| QuickBooks Online API | P0 | QBO OAuth2 |
+| QuickBooks Desktop IIF | P0 | QB Desktop files |
+| AI-assisted field mapping | P0 | All |
+| Data validation & preview | P0 | All |
+| Rollback capability | P0 | All |
+| Procore API adapter | P1 | Procore API |
+| Document/photo migration | P1 | Dropbox, Drive |
+| Two-way QuickBooks sync | P1 | QBO |
+
+### API Endpoints
+
+```
+POST   /api/migrations                    -- Start migration
+GET    /api/migrations/:id                -- Get status
+POST   /api/migrations/:id/upload         -- Upload files
+POST   /api/migrations/:id/connect        -- API connection (QB, Procore)
+GET    /api/migrations/:id/mappings       -- Get field mappings
+PATCH  /api/migrations/:id/mappings       -- Update mappings
+POST   /api/migrations/:id/validate       -- Run validation
+GET    /api/migrations/:id/preview        -- Preview data
+POST   /api/migrations/:id/execute        -- Execute import
+POST   /api/migrations/:id/rollback       -- Rollback
+```
+
+### Success Criteria
+- [ ] Builder can import from Buildertrend in < 2 hours
+- [ ] Builder can import from CoConstruct in < 2 hours
+- [ ] QuickBooks Online connects via OAuth2
+- [ ] Financial totals match source system within 0.5%
+- [ ] Historical projects available for reporting
+- [ ] Self-service completion rate > 80%
+
+---
 
 ### Pain Points Addressed
 - #671: Project data lives in multiple systems that don't talk to each other
@@ -208,6 +390,7 @@ POST   /api/draws/:id/generate-aia
 - #171-190: PM daily operations
 - #561-600: Superintendent field operations
 - #236-250: Quality control
+- #246-250: Basic safety documentation ⚠️ GAP FILLED
 
 ### Database Schema
 
@@ -226,6 +409,10 @@ inspections          -- Inspection records
 inspection_items     -- Inspection checklist items
 punch_lists          -- Punch list records
 punch_list_items     -- Individual punch items
+
+-- Safety tables (basic - full system in Phase 10)
+safety_observations  -- Safety observation records
+safety_incidents     -- Incident/near-miss reports
 ```
 
 ### Features
@@ -245,6 +432,8 @@ punch_list_items     -- Individual punch items
 | Inspection checklists | P0 | #571-580 |
 | Punch list management | P0 | #89, #239, #971-980 |
 | Milestone tracking | P0 | #37, #163 |
+| **Basic safety observations** | P1 | #248, #933 ⚠️ GAP FILLED |
+| **Incident/near-miss logging** | P1 | #250, #178, #934 ⚠️ GAP FILLED |
 
 ### API Endpoints
 
@@ -364,6 +553,7 @@ POST   /api/jobs/:id/specifications
 - #251-265: Procurement
 - #601-640: Subcontractor issues
 - #341-350: Compliance
+- #202, #210: Sub safety compliance ⚠️ GAP FILLED
 
 ### Database Schema
 
@@ -373,7 +563,7 @@ vendors              -- Vendor/subcontractor master
 vendor_contacts      -- Vendor contact people
 vendor_categories    -- Trade categories
 vendor_ratings       -- Performance ratings
-vendor_documents     -- Insurance, licenses, W9s
+vendor_documents     -- Insurance, licenses, W9s, safety agreements
 
 -- Bidding tables
 bid_packages         -- Bid package definitions
@@ -388,6 +578,7 @@ contract_changes     -- Sub change orders
 -- Compliance tables
 insurance_policies   -- Insurance certificates
 lien_waivers         -- Lien waiver records
+safety_agreements    -- Signed sub safety agreements ⚠️ GAP FILLED
 ```
 
 ### Features
@@ -405,6 +596,8 @@ lien_waivers         -- Lien waiver records
 | Sub portal (invoice submission, payment status) | P1 | #209, #611-612 |
 | Vendor performance scoring | P1 | #191, #201 |
 | Back-charge tracking | P1 | #137, #618 |
+| **Sub safety agreement tracking** | P1 | #202, #210 ⚠️ GAP FILLED |
+| **Sub OSHA compliance status** | P2 | #210, #347 ⚠️ GAP FILLED |
 
 ### API Endpoints
 
@@ -633,23 +826,79 @@ POST   /api/messages/:threadId/reply
 - Smart schedule suggestions (#721)
 - Anomaly detection and alerts (#699, #1061-1070)
 
-### Phase 10: Home Care & Warranty
+### Phase 10: Safety & Compliance ⚠️ NEW
+> **Added from Gap Analysis**: Critical for liability and regulatory compliance
+- Site-specific safety plans (#931)
+- Toolbox talk documentation (#246, #581)
+- OSHA compliance tracking (#247, #347)
+- Safety observations and incident reporting (#248-250, #582-590)
+- Worker safety certifications (#249, #932-940)
+- SDS (Safety Data Sheet) management (#935)
+- Environmental compliance - SWPPP, erosion control (#941-950)
+
+### Phase 11: Home Care & Warranty
 - Warranty claim management (#816-840)
 - Home maintenance scheduling (#826-835)
 - Digital home manual (#1311)
 - Post-construction client portal (#106-120)
 
-### Phase 11: Sales & Pre-Construction
+### Phase 12: Sales & Pre-Construction
 - Lead/prospect pipeline (#311-325)
 - Preliminary budgeting (#318)
 - Proposal generation (#861-870)
 - Digital estimating (#526-560)
+- **Realtor/agent lot management** (#656-657) ⚠️ GAP FILLED
+- **Prospect preliminary budgets** (#657-658) ⚠️ GAP FILLED
+- **Builder capacity visibility for agents** (#658) ⚠️ GAP FILLED
+- **Commission agreement tracking** (#663) ⚠️ GAP FILLED
+- **Design configurator for prospects** (#660) ⚠️ GAP FILLED
 
-### Phase 12: Advanced Features
+### Phase 13: Advanced Features
 - Coastal/elevated construction compliance (#751-785)
 - Multi-entity/multi-office support (#1233, #1236)
 - Advanced procurement (#786-815)
-- Equipment management (#359, #896)
+- **Equipment & tool tracking by site** (#187, #600) ⚠️ GAP DETAILED
+- **Equipment scheduling across projects** (#896) ⚠️ GAP DETAILED
+- **Company vehicle assignments** (#359) ⚠️ GAP DETAILED
+- **Tool/equipment location tracking** (#600) ⚠️ GAP DETAILED
+
+### Phase 13.5: HR & Time Management ⚠️ NEW
+> **Added from Gap Analysis**: Critical for accurate job costing
+- Employee hours by project for cost allocation (#421)
+- Employee onboarding paperwork (#422)
+- Vehicle mileage and expense reports (#423)
+- Workers' comp classification tracking (#424)
+- Labor burden rates for estimating (#425)
+- Time and attendance integrated with costing (#357)
+
+### Phase 14: Lender Portal ⚠️ NEW
+> **Added from Gap Analysis**: Enables lender integration for draws
+- Lender-specific login with limited access (#641-655)
+- Draw verification dashboard (#641-643)
+- Progress photos tied to draws (#643)
+- Lien waiver status verification (#644)
+- Project financial summary for lenders (#645-647)
+- Insurance compliance dashboard (#648)
+- Risk indicator alerts (#651)
+
+### Phase 15: API & Developer Tools
+> **Note**: Core migration moved to Phase 1.5. This phase covers advanced API features.
+- Public API documentation (#1224, #1241)
+- Webhook system for integrations (#1244)
+- API rate limiting and quotas
+- Developer portal and sandbox
+- Third-party app marketplace preparation
+- Advanced data export (custom queries)
+
+### Phase 16: Advanced Platform Features ⚠️ NEW
+> **Added from Gap Analysis**: Enterprise scalability
+- White-label client portal (#1234)
+- Multi-office management (#1233)
+- Custom workflow builder (#1235, #1242)
+- Industry benchmarking (#1237, #309)
+- Advanced API and webhooks (#1241, #1244)
+- Custom dashboard builder (#1248)
+- Multi-language support (#1239)
 
 ---
 
@@ -659,15 +908,16 @@ POST   /api/messages/:threadId/reply
 | Phase | Features |
 |-------|----------|
 | 1 | Auth, Companies, Users, Clients, Jobs |
+| **1.5** | **DATA MIGRATION** ⭐ Buildertrend, CoConstruct, QuickBooks, Excel |
 | 2 | Budgets, Invoices, Change Orders, Draws, AIA Pay Apps |
-| 3 | Schedule, Daily Logs, Photos, Punch Lists |
+| 3 | Schedule, Daily Logs, Photos, Punch Lists, **Basic Safety** |
 | 6 | Client Portal (basic) |
 
 ### P1 — Should Ship for MVP
 | Phase | Features |
 |-------|----------|
 | 4 | Selections, Allowances |
-| 5 | Vendors, Contracts, Insurance, Lien Waivers |
+| 5 | Vendors, Contracts, Insurance, Lien Waivers, **Sub Safety Compliance** |
 | 7 | Core Reports (Financial, Portfolio, WIP) |
 | 8 | Documents, RFIs |
 
@@ -678,6 +928,21 @@ POST   /api/messages/:threadId/reply
 | 5 | Bid management, sub portal |
 | 7 | Custom reports, scheduled delivery |
 | 8 | Submittals, messaging |
+
+### Post-MVP Priority Order
+| Priority | Phase | Features |
+|----------|-------|----------|
+| 1 | 9 | AI & Automation |
+| 2 | 10 | **Safety & Compliance** ⚠️ |
+| 3 | 11 | Home Care & Warranty |
+| 4 | 12 | Sales & Pre-Construction (+Realtor features) |
+| 5 | 13 | Advanced Features (Coastal, Multi-entity, +Equipment) |
+| 6 | 13.5 | **HR & Time Management** ⚠️ |
+| 7 | 14 | **Lender Portal** ⚠️ |
+| 8 | 15 | API & Developer Tools |
+| 9 | 16 | **Advanced Platform Features** ⚠️ |
+
+> **Note**: Core Data Migration moved to **Phase 1.5** (MVP) - it's critical for customer acquisition.
 
 ---
 
@@ -752,5 +1017,25 @@ POST   /api/messages/:threadId/reply
 
 ---
 
+---
+
+## Gap Analysis Reference
+
+See `docs/requirements/GAP_ANALYSIS.md` for detailed analysis of all 1,320 pain points and coverage mapping.
+
+### Summary of Gap Analysis Results
+- **Total Pain Points**: 1,320
+- **Covered in MVP (Phases 1-8)**: ~1,100
+- **Covered in Post-MVP (Phases 9-16)**: ~126
+- **Identified Gaps Filled**: 94 (added to roadmap)
+
+### New Phases Added from Gap Analysis
+- Phase 10: Safety & Compliance (was missing entirely)
+- Phase 14: Lender Portal (was missing entirely)
+- Phase 15: Data & Migration Tools (was missing entirely)
+- Phase 16: Advanced Platform Features (was missing entirely)
+
+---
+
 *Last Updated: 2024-02-12*
-*Version: 1.0*
+*Version: 1.1 (Gap Analysis Update)*
