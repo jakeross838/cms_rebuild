@@ -119,6 +119,10 @@ describe('[Feature] Plan Adherence', () => {
 - **Unified AI Processing Layer** — ALL data entering the system (PDF, email, photo, manual entry, API) MUST pass through AI extraction/normalization before storage or downstream use. See `docs/architecture/ai-engine-design.md` Section 0 and `docs/architecture/unified-data-outputs.md` for every page's expected structured data.
 - **7 canonical roles** — `owner > admin > pm > superintendent > office > field > read_only`. Custom roles inherit from these. See `docs/modules/01-auth-and-access.md`.
 - **Permissions mode** — `open` (v1 default, everyone sees everything) → `standard` → `strict`. Infrastructure built from day 1.
+- **Full CRUD everywhere** — Every list view supports create, read, update, delete, sort, search, and bulk actions. No read-only lists except audit logs and system events. See `docs/architecture/normalization-and-crud.md`.
+- **Data normalization** — All external inputs (vendor names, material descriptions, cost codes, room names) go through a three-tier matching engine (exact cache → fuzzy match → AI classify) and resolve to user-controlled canonical names. Alias registry grows with every confirmed match.
+- **User-controlled taxonomy** — Categories, labels, and sort order are always user-defined. Never hardcode categories. They grow organically from real data with AI suggestions and human confirmation.
+- **Soft delete only** — Nothing is permanently deleted. All deletes are archive operations with restore capability.
 
 ## Do NOT
 
@@ -131,3 +135,7 @@ describe('[Feature] Plan Adherence', () => {
 - Over-abstract — three similar lines > a premature utility function
 - Build features that consume raw/unprocessed input directly — always go through the AI processing layer first
 - Add a new document type without defining its output schema and extraction rules first
+- Hardcode categories, labels, or taxonomy — users control their own naming
+- Build a list view without CRUD (add/edit/delete/sort/search) — see `docs/architecture/normalization-and-crud.md`
+- Accept external input without normalization — vendor names, material descriptions, cost codes all go through the matching engine
+- Hard delete anything — always soft delete (archive) with restore capability
