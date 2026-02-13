@@ -2,16 +2,12 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Download,
   Plus,
-  ChevronDown,
   Clock,
   AlertTriangle,
   CheckCircle,
   XCircle,
-  FileText,
   DollarSign,
   Calendar,
   Building2,
@@ -22,6 +18,8 @@ import {
   ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type WaiverStatus = 'pending' | 'requested' | 'received' | 'missing'
 type WaiverType = 'conditional' | 'unconditional'
@@ -254,19 +252,24 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
 }
 
 export function LienWaiversPreview() {
-  const [statusFilter, setStatusFilter] = useState<WaiverStatus | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [vendorFilter, setVendorFilter] = useState<string>('all')
   const [drawFilter, setDrawFilter] = useState<string>('all')
 
   const vendors = [...new Set(mockLienWaivers.map(w => w.vendorName))]
   const draws = [...new Set(mockLienWaivers.map(w => w.drawNumber))].sort((a, b) => a - b)
 
-  const filteredWaivers = mockLienWaivers.filter(w => {
-    if (statusFilter !== 'all' && w.status !== statusFilter) return false
-    if (vendorFilter !== 'all' && w.vendorName !== vendorFilter) return false
-    if (drawFilter !== 'all' && w.drawNumber !== parseInt(drawFilter)) return false
-    return true
-  })
+  const filteredWaivers = sortItems(
+    mockLienWaivers.filter(w => {
+      if (!matchesSearch(w, search, ['vendorName', 'jobName'])) return false
+      if (activeTab !== 'all' && w.status !== activeTab) return false
+      if (vendorFilter !== 'all' && w.vendorName !== vendorFilter) return false
+      if (drawFilter !== 'all' && w.drawNumber !== parseInt(drawFilter)) return false
+      return true
+    }),
+    activeSort as keyof LienWaiver | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const receivedCount = mockLienWaivers.filter(w => w.status === 'received').length
@@ -352,83 +355,46 @@ export function LienWaiversPreview() {
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Status Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Status:</span>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setStatusFilter('all')}
-                  className={cn(
-                    "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                    statusFilter === 'all'
-                      ? "bg-blue-100 text-blue-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  All
-                </button>
-                {Object.entries(statusConfig).map(([key, config]) => (
-                  <button
-                    key={key}
-                    onClick={() => setStatusFilter(key as WaiverStatus)}
-                    className={cn(
-                      "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                      statusFilter === key
-                        ? cn(config.bgColor, config.color, "font-medium")
-                        : "text-gray-600 hover:bg-gray-100"
-                    )}
-                  >
-                    {config.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Draw Filter */}
-            <div className="relative">
-              <select
-                value={drawFilter}
-                onChange={(e) => setDrawFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Draws</option>
-                {draws.map(draw => (
-                  <option key={draw} value={draw}>Draw #{draw}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
-
-            {/* Vendor Filter */}
-            <div className="relative">
-              <select
-                value={vendorFilter}
-                onChange={(e) => setVendorFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Vendors</option>
-                {vendors.map(vendor => (
-                  <option key={vendor} value={vendor}>{vendor}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search waivers..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-        </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search waivers..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockLienWaivers.length },
+            { key: 'pending', label: 'Pending', count: mockLienWaivers.filter(w => w.status === 'pending').length },
+            { key: 'requested', label: 'Requested', count: mockLienWaivers.filter(w => w.status === 'requested').length },
+            { key: 'received', label: 'Received', count: mockLienWaivers.filter(w => w.status === 'received').length },
+            { key: 'missing', label: 'Missing', count: mockLienWaivers.filter(w => w.status === 'missing').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Draws',
+              value: drawFilter,
+              options: draws.map(d => ({ value: String(d), label: `Draw #${d}` })),
+              onChange: setDrawFilter,
+            },
+            {
+              label: 'All Vendors',
+              value: vendorFilter,
+              options: vendors.map(v => ({ value: v, label: v })),
+              onChange: setVendorFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'vendorName', label: 'Vendor' },
+            { value: 'amount', label: 'Amount' },
+            { value: 'dateRequested', label: 'Date Requested' },
+            { value: 'drawNumber', label: 'Draw #' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredWaivers.length}
+          totalCount={mockLienWaivers.length}
+        />
       </div>
 
       {/* Waiver List */}

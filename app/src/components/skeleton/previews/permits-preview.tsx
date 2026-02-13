@@ -1,27 +1,22 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Plus,
-  Search,
-  Filter,
   Download,
   MoreHorizontal,
   FileText,
   Clock,
-  Calendar,
-  Building,
   MapPin,
   CheckCircle,
   XCircle,
   AlertTriangle,
   Sparkles,
-  ClipboardCheck,
   Timer,
-  ArrowRight,
   ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Permit {
   id: string
@@ -281,12 +276,17 @@ function TimelineStep({ step, isLast }: { step: typeof timelineSteps[0]; isLast:
 }
 
 export function PermitsPreview() {
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const filteredPermits = mockPermits.filter(permit => {
-    if (statusFilter !== 'all' && permit.status !== statusFilter) return false
-    return true
-  })
+  const filteredPermits = sortItems(
+    mockPermits.filter(permit => {
+      if (!matchesSearch(permit, search, ['permitType', 'jurisdiction', 'permitNumber', 'inspector'])) return false
+      if (activeTab !== 'all' && permit.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Permit | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const permitsNeeded = mockPermits.filter(p => p.status === 'not_applied').length
@@ -308,16 +308,6 @@ export function PermitsPreview() {
             <div className="text-sm text-gray-500 mt-0.5">
               {approvedCount} approved | {pendingApproval} pending | {permitsNeeded} not yet applied
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Permit
-            </button>
           </div>
         </div>
       </div>
@@ -390,46 +380,58 @@ export function PermitsPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Status:</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="not_applied">Not Applied</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="expired">Expired</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search permits..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            More Filters
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search permits..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockPermits.length },
+            { key: 'not_applied', label: 'Not Applied', count: permitsNeeded },
+            { key: 'pending', label: 'Pending', count: pendingApproval },
+            { key: 'approved', label: 'Approved', count: approvedCount },
+            { key: 'expired', label: 'Expired', count: expiredCount },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'permitType', label: 'Permit Type' },
+            { value: 'jurisdiction', label: 'Jurisdiction' },
+            { value: 'applicationDate', label: 'Application Date' },
+            { value: 'status', label: 'Status' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'Add Permit', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filteredPermits.length}
+          totalCount={mockPermits.length}
+        />
       </div>
 
       {/* Permits Grid */}
-      <div className="p-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-        {filteredPermits.map(permit => (
-          <PermitCard key={permit.id} permit={permit} />
-        ))}
+      <div className="p-4 max-h-96 overflow-y-auto">
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 gap-4">
+            {filteredPermits.map(permit => (
+              <PermitCard key={permit.id} permit={permit} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredPermits.map(permit => (
+              <PermitCard key={permit.id} permit={permit} />
+            ))}
+          </div>
+        )}
         {filteredPermits.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-gray-400">
             No permits match the selected filters
           </div>
         )}

@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Plus,
   Mail,
   Phone,
@@ -11,7 +9,6 @@ import {
   FileText,
   Calendar,
   User,
-  Building2,
   ChevronRight,
   Sparkles,
   Star,
@@ -22,6 +19,8 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type CommunicationType = 'email' | 'call' | 'meeting' | 'note' | 'sms'
 type CommunicationDirection = 'inbound' | 'outbound'
@@ -226,19 +225,24 @@ function CommunicationRow({ communication }: { communication: Communication }) {
 }
 
 export function CommunicationsPreview() {
-  const [typeFilter, setTypeFilter] = useState<CommunicationType | 'all'>('all')
   const [personFilter, setPersonFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const people = [...new Set([
     ...mockCommunications.map(c => c.from),
     ...mockCommunications.flatMap(c => c.to)
   ])].filter(Boolean)
 
-  const filteredCommunications = mockCommunications.filter(c => {
-    if (typeFilter !== 'all' && c.type !== typeFilter) return false
-    if (personFilter !== 'all' && c.from !== personFilter && !c.to.includes(personFilter)) return false
-    return true
-  })
+  const filteredCommunications = sortItems(
+    mockCommunications.filter(c => {
+      if (!matchesSearch(c, search, ['subject', 'preview', 'from'])) return false
+      if (activeTab !== 'all' && c.type !== activeTab) return false
+      if (personFilter !== 'all' && c.from !== personFilter && !c.to.includes(personFilter)) return false
+      return true
+    }),
+    activeSort as keyof Communication | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const emailCount = mockCommunications.filter(c => c.type === 'email').length
@@ -250,20 +254,46 @@ export function CommunicationsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Communications - Smith Residence</h3>
-              <span className="text-sm text-gray-500">47 this month</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Message
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Communications - Smith Residence</h3>
+          <span className="text-sm text-gray-500">47 this month</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search communications..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockCommunications.length },
+            { key: 'email', label: 'Email', count: emailCount },
+            { key: 'call', label: 'Call', count: callCount },
+            { key: 'meeting', label: 'Meeting', count: meetingCount },
+            { key: 'sms', label: 'SMS', count: mockCommunications.filter(c => c.type === 'sms').length },
+            { key: 'note', label: 'Note', count: mockCommunications.filter(c => c.type === 'note').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All People',
+              value: personFilter,
+              options: people.map(p => ({ value: p, label: p })),
+              onChange: setPersonFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'timestamp', label: 'Date' },
+            { value: 'subject', label: 'Subject' },
+            { value: 'from', label: 'From' },
+            { value: 'type', label: 'Type' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'New Message', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredCommunications.length}
+          totalCount={mockCommunications.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -295,64 +325,6 @@ export function CommunicationsPreview() {
             <div>
               <div className="text-lg font-semibold text-amber-700">{decisionsCount}</div>
               <div className="text-xs text-amber-600">Decisions</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Type:</span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setTypeFilter('all')}
-                className={cn(
-                  "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                  typeFilter === 'all'
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                All
-              </button>
-              {Object.entries(typeConfig).map(([key, config]) => (
-                <button
-                  key={key}
-                  onClick={() => setTypeFilter(key as CommunicationType)}
-                  className={cn(
-                    "px-2.5 py-1 text-xs rounded-lg transition-colors flex items-center gap-1",
-                    typeFilter === key
-                      ? cn(config.bgColor, config.color, "font-medium")
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  {config.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <select
-              value={personFilter}
-              onChange={(e) => setPersonFilter(e.target.value)}
-              className="appearance-none px-3 py-1.5 pr-8 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All People</option>
-              {people.map(person => (
-                <option key={person} value={person}>{person}</option>
-              ))}
-            </select>
-
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search communications..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
             </div>
           </div>
         </div>

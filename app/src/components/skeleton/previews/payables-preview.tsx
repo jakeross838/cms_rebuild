@@ -2,14 +2,10 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Download,
-  ChevronDown,
   Clock,
   AlertTriangle,
   CheckCircle,
-  XCircle,
   DollarSign,
   Calendar,
   Building2,
@@ -21,6 +17,8 @@ import {
   Send,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type PayableStatus = 'pending' | 'approved' | 'scheduled' | 'paid'
 
@@ -345,13 +343,18 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
 }
 
 export function PayablesPreview() {
-  const [statusFilter, setStatusFilter] = useState<PayableStatus | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
-  const filteredPayables = mockPayables.filter(p => {
-    if (statusFilter !== 'all' && p.status !== statusFilter) return false
-    return true
-  })
+  const filteredPayables = sortItems(
+    mockPayables.filter(p => {
+      if (!matchesSearch(p, search, ['invoiceNumber', 'vendorName', 'jobName'])) return false
+      if (activeTab !== 'all' && p.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Payable | '',
+    sortDirection,
+  )
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
@@ -485,49 +488,32 @@ export function PayablesPreview() {
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">Status:</span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setStatusFilter('all')}
-                className={cn(
-                  "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                  statusFilter === 'all'
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                All
-              </button>
-              {Object.entries(statusConfig).map(([key, config]) => (
-                <button
-                  key={key}
-                  onClick={() => setStatusFilter(key as PayableStatus)}
-                  className={cn(
-                    "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                    statusFilter === key
-                      ? cn(config.bgColor, config.color, "font-medium")
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  {config.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search payables..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-        </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search payables..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockPayables.length },
+            { key: 'pending', label: 'Pending Approval', count: mockPayables.filter(p => p.status === 'pending').length },
+            { key: 'approved', label: 'Approved', count: mockPayables.filter(p => p.status === 'approved').length },
+            { key: 'scheduled', label: 'Scheduled', count: mockPayables.filter(p => p.status === 'scheduled').length },
+            { key: 'paid', label: 'Paid', count: mockPayables.filter(p => p.status === 'paid').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'vendorName', label: 'Vendor' },
+            { value: 'amount', label: 'Amount' },
+            { value: 'dueDate', label: 'Due Date' },
+            { value: 'invoiceNumber', label: 'Invoice #' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredPayables.length}
+          totalCount={mockPayables.length}
+        />
       </div>
 
       {/* Selected Bar */}

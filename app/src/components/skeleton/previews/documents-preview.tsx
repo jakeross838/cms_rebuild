@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import {
   Upload,
-  Search,
-  Filter,
   Download,
   MoreHorizontal,
   Folder,
@@ -15,7 +13,6 @@ import {
   FileSpreadsheet,
   FileArchive,
   ChevronRight,
-  ChevronDown,
   Calendar,
   User,
   HardDrive,
@@ -24,10 +21,11 @@ import {
   Clock,
   Eye,
   Trash2,
-  Grid3X3,
-  List,
+  Plus,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface DocumentFile {
   id: string
@@ -164,9 +162,6 @@ const fileTypeColors: Record<string, string> = {
   other: 'text-gray-500',
 }
 
-const fileTypes = ['All Types', 'PDF', 'DOC', 'XLS', 'Images', 'Archives', 'CAD'] as const
-const categories = ['All Categories', ...mockFolders.map(f => f.name)]
-
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -247,27 +242,30 @@ function FileRow({ file }: { file: DocumentFile }) {
 export function DocumentsPreview() {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [typeFilter, setTypeFilter] = useState<string>('All Types')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
-  const [showFilters, setShowFilters] = useState(false)
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState()
 
-  const filteredFiles = mockFiles.filter(file => {
-    if (selectedFolder && file.category !== selectedFolder) return false
-    if (typeFilter !== 'All Types') {
-      const typeMap: Record<string, string[]> = {
-        'PDF': ['pdf'],
-        'DOC': ['doc'],
-        'XLS': ['xls'],
-        'Images': ['jpg', 'png'],
-        'Archives': ['zip'],
-        'CAD': ['dwg'],
+  const filteredFiles = sortItems(
+    mockFiles.filter(file => {
+      if (selectedFolder && file.category !== selectedFolder) return false
+      if (typeFilter !== 'All Types') {
+        const typeMap: Record<string, string[]> = {
+          'PDF': ['pdf'],
+          'DOC': ['doc'],
+          'XLS': ['xls'],
+          'Images': ['jpg', 'png'],
+          'Archives': ['zip'],
+          'CAD': ['dwg'],
+        }
+        const allowedTypes = typeMap[typeFilter] || []
+        if (!allowedTypes.includes(file.type)) return false
       }
-      const allowedTypes = typeMap[typeFilter] || []
-      if (!allowedTypes.includes(file.type)) return false
-    }
-    if (searchQuery && !file.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
-    return true
-  })
+      if (!matchesSearch(file, search, ['name', 'uploadedBy', 'category'])) return false
+      if (activeTab !== 'all' && file.category !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof DocumentFile | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const totalFiles = mockFiles.length
@@ -285,23 +283,55 @@ export function DocumentsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Documents & Files</h3>
-              <span className="text-sm text-gray-500">{totalFiles} files</span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              Smith Residence | {totalSizeFormatted} total
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Upload className="h-4 w-4" />
-              Upload Files
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Documents & Files</h3>
+          <span className="text-sm text-gray-500">{totalFiles} files | {totalSizeFormatted} total</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search files..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockFiles.length },
+            ...mockFolders.map(f => ({
+              key: f.name,
+              label: f.name,
+              count: mockFiles.filter(file => file.category === f.name).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Types',
+              value: typeFilter,
+              options: [
+                { value: 'PDF', label: 'PDF' },
+                { value: 'DOC', label: 'DOC' },
+                { value: 'XLS', label: 'XLS' },
+                { value: 'Images', label: 'Images' },
+                { value: 'Archives', label: 'Archives' },
+                { value: 'CAD', label: 'CAD' },
+              ],
+              onChange: setTypeFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'dateModified', label: 'Date Modified' },
+            { value: 'sizeBytes', label: 'Size' },
+            { value: 'uploadedBy', label: 'Uploaded By' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Upload, label: 'Upload Files', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredFiles.length}
+          totalCount={mockFiles.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -336,65 +366,6 @@ export function DocumentsPreview() {
               Categories
             </div>
             <div className="text-xl font-bold text-purple-700 mt-1">{mockFolders.length}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Search and Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search files..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {fileTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
-            ))}
-          </select>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg",
-              showFilters
-                ? "border-blue-200 text-blue-600 bg-blue-50"
-                : "border-gray-200 text-gray-600 hover:bg-gray-50"
-            )}
-          >
-            <Filter className="h-4 w-4" />
-            More Filters
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode('list')}
-              className={cn(
-                "p-1.5",
-                viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-              )}
-            >
-              <List className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('grid')}
-              className={cn(
-                "p-1.5",
-                viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-              )}
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>

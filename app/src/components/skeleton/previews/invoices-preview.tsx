@@ -2,11 +2,8 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Download,
   Plus,
-  ChevronDown,
   Clock,
   AlertTriangle,
   CheckCircle,
@@ -20,6 +17,8 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type InvoiceStatus = 'received' | 'under_review' | 'approved' | 'paid' | 'disputed'
 
@@ -229,19 +228,24 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
 }
 
 export function InvoicesPreview() {
-  const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [vendorFilter, setVendorFilter] = useState<string>('all')
   const [jobFilter, setJobFilter] = useState<string>('all')
 
   const vendors = [...new Set(mockInvoices.map(inv => inv.vendorName))]
   const jobs = [...new Set(mockInvoices.map(inv => inv.jobName))]
 
-  const filteredInvoices = mockInvoices.filter(inv => {
-    if (statusFilter !== 'all' && inv.status !== statusFilter) return false
-    if (vendorFilter !== 'all' && inv.vendorName !== vendorFilter) return false
-    if (jobFilter !== 'all' && inv.jobName !== jobFilter) return false
-    return true
-  })
+  const filtered = sortItems(
+    mockInvoices.filter(inv => {
+      if (!matchesSearch(inv, search, ['invoiceNumber', 'vendorName', 'jobName', 'description'])) return false
+      if (activeTab !== 'all' && inv.status !== activeTab) return false
+      if (vendorFilter !== 'all' && inv.vendorName !== vendorFilter) return false
+      if (jobFilter !== 'all' && inv.jobName !== jobFilter) return false
+      return true
+    }),
+    activeSort as keyof Invoice | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const pendingApproval = mockInvoices.filter(inv =>
@@ -274,16 +278,6 @@ export function InvoicesPreview() {
               <h3 className="font-semibold text-gray-900">Invoices</h3>
               <span className="text-sm text-gray-500">{mockInvoices.length} invoices | {formatCurrency(mockInvoices.reduce((sum, inv) => sum + inv.amount, 0))} total</span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Invoice
-            </button>
           </div>
         </div>
       </div>
@@ -328,91 +322,59 @@ export function InvoicesPreview() {
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Status Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Status:</span>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setStatusFilter('all')}
-                  className={cn(
-                    "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                    statusFilter === 'all'
-                      ? "bg-blue-100 text-blue-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  All
-                </button>
-                {Object.entries(statusConfig).map(([key, config]) => (
-                  <button
-                    key={key}
-                    onClick={() => setStatusFilter(key as InvoiceStatus)}
-                    className={cn(
-                      "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                      statusFilter === key
-                        ? cn(config.bgColor, config.color, "font-medium")
-                        : "text-gray-600 hover:bg-gray-100"
-                    )}
-                  >
-                    {config.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Vendor Filter */}
-            <div className="relative">
-              <select
-                value={vendorFilter}
-                onChange={(e) => setVendorFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Vendors</option>
-                {vendors.map(vendor => (
-                  <option key={vendor} value={vendor}>{vendor}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
-
-            {/* Job Filter */}
-            <div className="relative">
-              <select
-                value={jobFilter}
-                onChange={(e) => setJobFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Jobs</option>
-                {jobs.map(job => (
-                  <option key={job} value={job}>{job}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search invoices..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-        </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search invoices..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockInvoices.length },
+            ...Object.entries(statusConfig).map(([key, config]) => ({
+              key,
+              label: config.label,
+              count: mockInvoices.filter(inv => inv.status === key).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Vendors',
+              value: vendorFilter,
+              options: vendors.map(v => ({ value: v, label: v })),
+              onChange: setVendorFilter,
+            },
+            {
+              label: 'All Jobs',
+              value: jobFilter,
+              options: jobs.map(j => ({ value: j, label: j })),
+              onChange: setJobFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'amount', label: 'Amount' },
+            { value: 'dueDate', label: 'Due Date' },
+            { value: 'submittedDate', label: 'Submitted' },
+            { value: 'vendorName', label: 'Vendor' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'Add Invoice', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filtered.length}
+          totalCount={mockInvoices.length}
+        />
       </div>
 
       {/* Invoice List */}
       <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
-        {filteredInvoices.map(invoice => (
+        {filtered.map(invoice => (
           <InvoiceRow key={invoice.id} invoice={invoice} />
         ))}
-        {filteredInvoices.length === 0 && (
+        {filtered.length === 0 && (
           <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
             No invoices match your filters
           </div>

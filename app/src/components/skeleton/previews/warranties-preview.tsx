@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Plus,
   ShieldCheck,
   ShieldAlert,
@@ -24,6 +22,8 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Warranty {
   id: string
@@ -179,15 +179,6 @@ const coverageConfig = {
   limited: { label: 'Limited', color: 'bg-gray-100 text-gray-600' },
 }
 
-const categories = [
-  { id: 'all', label: 'All Categories', icon: Wrench },
-  { id: 'hvac', label: 'HVAC', icon: Thermometer },
-  { id: 'roofing', label: 'Roofing', icon: Building2 },
-  { id: 'plumbing', label: 'Plumbing', icon: Droplets },
-  { id: 'electrical', label: 'Electrical', icon: Zap },
-  { id: 'appliances', label: 'Appliances', icon: Home },
-]
-
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -314,56 +305,81 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
 
 export function WarrantiesPreview() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({})
 
-  const filteredWarranties = mockWarranties.filter(warranty => {
-    if (selectedCategory !== 'all' && warranty.category !== selectedCategory) return false
-    if (statusFilter !== 'all' && warranty.status !== statusFilter) return false
-    return true
-  })
+  const filteredWarranties = sortItems(
+    mockWarranties.filter(warranty => {
+      if (!matchesSearch(warranty, search, ['itemName', 'vendor', 'category'])) return false
+      if (selectedCategory !== 'all' && warranty.category !== selectedCategory) return false
+      if (activeTab !== 'all' && warranty.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Warranty | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const activeWarranties = mockWarranties.filter(w => w.status === 'active').length
   const expiringIn30Days = mockWarranties.filter(w =>
     w.status === 'expiring_soon' && w.daysUntilExpiry !== undefined && w.daysUntilExpiry <= 30
   ).length
-  const expiredWarranties = mockWarranties.filter(w => w.status === 'expired').length
-
-  // Calculate total coverage (count of active and expiring soon warranties)
   const totalCoverage = mockWarranties.filter(w => w.status !== 'expired').length
   const totalItems = mockWarranties.length
   const coveragePercentage = Math.round((totalCoverage / totalItems) * 100)
 
-  const statuses = ['all', 'active', 'expiring_soon', 'expired']
+  const categoryOptions = [
+    { value: 'all', label: 'All Categories' },
+    { value: 'hvac', label: 'HVAC' },
+    { value: 'roofing', label: 'Roofing' },
+    { value: 'plumbing', label: 'Plumbing' },
+    { value: 'electrical', label: 'Electrical' },
+    { value: 'appliances', label: 'Appliances' },
+    { value: 'structural', label: 'Structural' },
+    { value: 'windows', label: 'Windows' },
+  ]
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-900">Warranties</h3>
-            <p className="text-sm text-gray-500">{totalItems} items tracked | {coveragePercentage}% coverage active</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search warranties..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Warranty
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Warranties</h3>
+          <span className="text-sm text-gray-500">{totalItems} items tracked | {coveragePercentage}% coverage active</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search warranties..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockWarranties.length },
+            { key: 'active', label: 'Active', count: mockWarranties.filter(w => w.status === 'active').length },
+            { key: 'expiring_soon', label: 'Expiring Soon', count: mockWarranties.filter(w => w.status === 'expiring_soon').length },
+            { key: 'expired', label: 'Expired', count: mockWarranties.filter(w => w.status === 'expired').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Categories',
+              value: selectedCategory,
+              options: categoryOptions.filter(o => o.value !== 'all'),
+              onChange: (v) => setSelectedCategory(v),
+            },
+          ]}
+          sortOptions={[
+            { value: 'itemName', label: 'Item Name' },
+            { value: 'vendor', label: 'Vendor' },
+            { value: 'endDate', label: 'End Date' },
+            { value: 'category', label: 'Category' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'Add Warranty', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredWarranties.length}
+          totalCount={mockWarranties.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -394,59 +410,6 @@ export function WarrantiesPreview() {
             <div className="text-xs text-blue-600 mt-0.5">{totalCoverage} of {totalItems} items protected</div>
           </div>
         </div>
-      </div>
-
-      {/* Category Filter Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {categories.map(cat => {
-            const Icon = cat.icon
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
-                  selectedCategory === cat.id
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {cat.label}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Status Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2">
-        {statuses.map(status => {
-          const count = status === 'all'
-            ? mockWarranties.length
-            : mockWarranties.filter(w => w.status === status).length
-          const label = status === 'all' ? 'All' :
-            status === 'expiring_soon' ? 'Expiring Soon' :
-            status.charAt(0).toUpperCase() + status.slice(1)
-          return (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                statusFilter === status
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              {label}
-              <span className="ml-1.5 text-xs text-gray-400">
-                ({count})
-              </span>
-            </button>
-          )
-        })}
       </div>
 
       {/* Warranty Cards */}

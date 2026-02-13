@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import {
   Shield,
-  Plus,
   AlertTriangle,
   CheckCircle2,
   Clock,
   XCircle,
-  FileText,
-  Eye,
   MoreHorizontal,
   Sparkles,
   Building2,
@@ -21,15 +18,14 @@ import {
   TrendingUp,
   TrendingDown,
   HardHat,
-  Flame,
-  ThermometerSun,
   BookOpen,
   Printer,
-  Play,
   ChevronRight,
   MessageSquare,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface SafetyMetric {
   label: string
@@ -397,7 +393,17 @@ function InspectionItem({ inspection }: { inspection: SafetyInspection }) {
 }
 
 export function SafetyPreview() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'incidents' | 'training'>('dashboard')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'dashboard' })
+
+  // Filtered incidents for the incidents tab
+  const filteredIncidents = sortItems(
+    recentIncidents.filter(incident => {
+      if (!matchesSearch(incident, search, ['description', 'job', 'reportedBy', 'type'])) return false
+      return true
+    }),
+    activeSort as keyof SafetyIncident | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -421,32 +427,34 @@ export function SafetyPreview() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4">
-        <div className="flex items-center gap-4">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: Shield },
-            { id: 'incidents', label: 'Incidents & Near Misses', icon: AlertTriangle },
-            { id: 'training', label: 'Training & Compliance', icon: HardHat },
-          ].map(tab => {
-            const Icon = tab.icon
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={cn(
-                  "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
-                  activeTab === tab.id
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            )
-          })}
-        </div>
+      {/* Filter Bar with Search + Tabs */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search safety records..."
+          tabs={[
+            { key: 'dashboard', label: 'Dashboard' },
+            { key: 'incidents', label: 'Incidents & Near Misses', count: recentIncidents.length },
+            { key: 'training', label: 'Training & Compliance' },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={
+            activeTab === 'incidents'
+              ? [
+                  { value: 'date', label: 'Date' },
+                  { value: 'severity', label: 'Severity' },
+                  { value: 'status', label: 'Status' },
+                  { value: 'job', label: 'Job' },
+                ]
+              : []
+          }
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+        />
       </div>
 
       {/* Content */}
@@ -514,10 +522,16 @@ export function SafetyPreview() {
         {activeTab === 'incidents' && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              {recentIncidents.map(incident => (
+              {filteredIncidents.map(incident => (
                 <IncidentCard key={incident.id} incident={incident} />
               ))}
             </div>
+            {filteredIncidents.length === 0 && (
+              <div className="text-center py-12 text-gray-500">
+                <Shield className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p>No incidents found matching your search</p>
+              </div>
+            )}
           </div>
         )}
 

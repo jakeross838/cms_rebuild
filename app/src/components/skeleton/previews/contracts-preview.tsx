@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   FileText,
   Send,
@@ -12,14 +11,14 @@ import {
   AlertTriangle,
   MoreHorizontal,
   Plus,
-  Search,
-  Filter,
   User,
   Calendar,
   FileSignature,
   TrendingUp,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Contract {
   id: string
@@ -205,12 +204,19 @@ function ContractCard({ contract }: { contract: Contract }) {
 }
 
 export function ContractsPreview() {
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
-  const statuses = ['all', 'draft', 'sent', 'signed', 'active', 'complete']
-  const filteredContracts = statusFilter === 'all'
-    ? mockContracts
-    : mockContracts.filter(c => c.status === statusFilter)
+  const contractStatuses = ['all', 'draft', 'sent', 'signed', 'active', 'complete']
+
+  const filtered = sortItems(
+    mockContracts.filter(c => {
+      if (!matchesSearch(c, search, ['clientName', 'projectName'])) return false
+      if (activeTab !== 'all' && c.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Contract | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const pendingSignature = mockContracts.filter(c =>
@@ -228,29 +234,9 @@ export function ContractsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Contracts</h3>
-            <span className="text-sm text-gray-500">{mockContracts.length} contracts | {formatCurrency(totalContractValue)} total value</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search contracts..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Contract
-            </button>
-          </div>
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold text-gray-900">Contracts</h3>
+          <span className="text-sm text-gray-500">{mockContracts.length} contracts | {formatCurrency(totalContractValue)} total value</span>
         </div>
       </div>
 
@@ -309,35 +295,41 @@ export function ContractsPreview() {
         </div>
       </div>
 
-      {/* Status Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2">
-        {statuses.map(status => (
-          <button
-            key={status}
-            onClick={() => setStatusFilter(status)}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors capitalize",
-              statusFilter === status
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            {status}
-            {status !== 'all' && (
-              <span className="ml-1.5 text-xs text-gray-400">
-                ({mockContracts.filter(c => c.status === status).length})
-              </span>
-            )}
-          </button>
-        ))}
+      {/* Status Tabs + FilterBar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search contracts..."
+          tabs={contractStatuses.map(s => ({
+            key: s,
+            label: s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1),
+            count: s === 'all' ? undefined : mockContracts.filter(c => c.status === s).length,
+          }))}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'contractValue', label: 'Value' },
+            { value: 'date', label: 'Date' },
+            { value: 'clientName', label: 'Client' },
+            { value: 'projectName', label: 'Project' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'New Contract', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filtered.length}
+          totalCount={mockContracts.length}
+        />
       </div>
 
       {/* Contract Cards */}
       <div className="p-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-        {filteredContracts.map(contract => (
+        {filtered.map(contract => (
           <ContractCard key={contract.id} contract={contract} />
         ))}
-        {filteredContracts.length === 0 && (
+        {filtered.length === 0 && (
           <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
             No contracts found
           </div>

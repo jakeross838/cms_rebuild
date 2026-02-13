@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Plus,
   Star,
   Phone,
@@ -22,10 +20,10 @@ import {
   Droplets,
   Hammer,
   PaintBucket,
-  Grid3X3,
-  List,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Vendor {
   id: string
@@ -309,15 +307,19 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
 }
 
 export function VendorsPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [selectedTrade, setSelectedTrade] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
   const [ratingFilter, setRatingFilter] = useState<number>(0)
 
-  const filteredVendors = mockVendors.filter(vendor => {
-    if (selectedTrade !== 'all' && vendor.trade !== selectedTrade) return false
-    if (vendor.rating < ratingFilter) return false
-    return true
-  })
+  const filtered = sortItems(
+    mockVendors.filter(vendor => {
+      if (!matchesSearch(vendor, search, ['name', 'trade', 'email'])) return false
+      if (activeTab !== 'all' && vendor.trade !== activeTab) return false
+      if (vendor.rating < ratingFilter) return false
+      return true
+    }),
+    activeSort as keyof Vendor | '',
+    sortDirection,
+  )
 
   const totalVendors = mockVendors.length
   const subcontractors = mockVendors.filter(v => v.type === 'subcontractor').length
@@ -333,44 +335,6 @@ export function VendorsPreview() {
           <div>
             <h3 className="font-semibold text-gray-900">Vendor Directory</h3>
             <p className="text-sm text-gray-500">Subcontractors & Suppliers</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search vendors..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Vendor
-            </button>
           </div>
         </div>
       </div>
@@ -438,55 +402,64 @@ export function VendorsPreview() {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {trades.map(trade => {
-            const Icon = trade.icon
-            return (
-              <button
-                key={trade.id}
-                onClick={() => setSelectedTrade(trade.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
-                  selectedTrade === trade.id
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {trade.label}
-              </button>
-            )
-          })}
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Min Rating:</span>
-          <div className="flex items-center gap-1">
-            {[0, 3, 4, 4.5].map(rating => (
-              <button
-                key={rating}
-                onClick={() => setRatingFilter(rating)}
-                className={cn(
-                  "px-2 py-1 text-xs rounded",
-                  ratingFilter === rating
-                    ? "bg-amber-100 text-amber-700 font-medium"
-                    : "text-gray-500 hover:bg-gray-100"
-                )}
-              >
-                {rating === 0 ? 'Any' : `${rating}+`}
-              </button>
-            ))}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search vendors..."
+          tabs={trades.map(trade => ({
+            key: trade.id,
+            label: trade.label,
+            count: trade.id === 'all' ? mockVendors.length : mockVendors.filter(v => v.trade === trade.id).length,
+          }))}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'rating', label: 'Rating' },
+            { value: 'reliability', label: 'Reliability' },
+            { value: 'projectsCompleted', label: 'Projects' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'Add Vendor', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filtered.length}
+          totalCount={mockVendors.length}
+        >
+          {/* Rating filter in children slot */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">Min Rating:</span>
+            <div className="flex items-center gap-1">
+              {[0, 3, 4, 4.5].map(rating => (
+                <button
+                  key={rating}
+                  onClick={() => setRatingFilter(rating)}
+                  className={cn(
+                    "px-2 py-1 text-xs rounded",
+                    ratingFilter === rating
+                      ? "bg-amber-100 text-amber-700 font-medium"
+                      : "text-gray-500 hover:bg-gray-100"
+                  )}
+                >
+                  {rating === 0 ? 'Any' : `${rating}+`}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </FilterBar>
       </div>
 
       {/* Vendor Grid */}
       <div className="p-4">
         <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-          {filteredVendors.map(vendor => (
+          {filtered.map(vendor => (
             <VendorCard key={vendor.id} vendor={vendor} />
           ))}
-          {filteredVendors.length === 0 && (
+          {filtered.length === 0 && (
             <div className="col-span-2 text-center py-12 text-gray-500">
               No vendors match your filters
             </div>

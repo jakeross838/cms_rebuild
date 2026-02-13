@@ -5,8 +5,6 @@ import {
   ChevronDown,
   ChevronRight,
   Plus,
-  Search,
-  Filter,
   Download,
   CheckCircle2,
   Clock,
@@ -22,6 +20,8 @@ import {
   Send,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type TaskStatus = 'todo' | 'in_progress' | 'done' | 'cancelled'
 type Priority = 'high' | 'medium' | 'low'
@@ -290,8 +290,8 @@ function StatCard({
 }
 
 export function TodosPreview() {
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [filterCategory, setFilterCategory] = useState<TaskCategory | 'all'>('all')
-  const [filterStatus, setFilterStatus] = useState<TaskStatus | 'all'>('all')
   const [filterAssignee, setFilterAssignee] = useState<string | 'all'>('all')
   const [filterPriority, setFilterPriority] = useState<Priority | 'all'>('all')
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['job-related', 'admin']))
@@ -301,13 +301,18 @@ export function TodosPreview() {
   const assignees = [...new Set(mockTasks.map(task => task.assignedTo))]
 
   // Filter tasks
-  const filteredTasks = mockTasks.filter(task => {
-    if (filterCategory !== 'all' && task.category !== filterCategory) return false
-    if (filterStatus !== 'all' && task.status !== filterStatus) return false
-    if (filterAssignee !== 'all' && task.assignedTo !== filterAssignee) return false
-    if (filterPriority !== 'all' && task.priority !== filterPriority) return false
-    return true
-  })
+  const filteredTasks = sortItems(
+    mockTasks.filter(task => {
+      if (!matchesSearch(task, search, ['title', 'description', 'assignedTo', 'linkedJob'])) return false
+      if (activeTab !== 'all' && task.status !== activeTab) return false
+      if (filterCategory !== 'all' && task.category !== filterCategory) return false
+      if (filterAssignee !== 'all' && task.assignedTo !== filterAssignee) return false
+      if (filterPriority !== 'all' && task.priority !== filterPriority) return false
+      return true
+    }),
+    activeSort as keyof Task | '',
+    sortDirection,
+  )
 
   // Group tasks by category
   const tasksByCategory = filteredTasks.reduce((acc, task) => {
@@ -425,83 +430,52 @@ export function TodosPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Category Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Category:</span>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value as TaskCategory | 'all')}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{categoryConfig[cat].label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Status:</span>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as TaskStatus | 'all')}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Statuses</option>
-              {Object.entries(statusConfig).map(([key, config]) => (
-                <option key={key} value={key}>{config.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Priority Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Priority:</span>
-            <select
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value as Priority | 'all')}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Priorities</option>
-              {Object.entries(priorityConfig).map(([key, config]) => (
-                <option key={key} value={key}>{config.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Assignee Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Assignee:</span>
-            <select
-              value={filterAssignee}
-              onChange={(e) => setFilterAssignee(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Assignees</option>
-              {assignees.map(assignee => (
-                <option key={assignee} value={assignee}>{assignee}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search tasks..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            More Filters
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search tasks..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockTasks.length },
+            { key: 'todo', label: 'Todo', count: mockTasks.filter(t => t.status === 'todo').length },
+            { key: 'in_progress', label: 'In Progress', count: mockTasks.filter(t => t.status === 'in_progress').length },
+            { key: 'done', label: 'Done', count: mockTasks.filter(t => t.status === 'done').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Categories',
+              value: filterCategory,
+              options: categories.map(cat => ({ value: cat, label: categoryConfig[cat].label })),
+              onChange: (v) => setFilterCategory(v as TaskCategory | 'all'),
+            },
+            {
+              label: 'All Priorities',
+              value: filterPriority,
+              options: Object.entries(priorityConfig).map(([key, config]) => ({ value: key, label: config.label })),
+              onChange: (v) => setFilterPriority(v as Priority | 'all'),
+            },
+            {
+              label: 'All Assignees',
+              value: filterAssignee,
+              options: assignees.map(a => ({ value: a, label: a })),
+              onChange: (v) => setFilterAssignee(v),
+            },
+          ]}
+          sortOptions={[
+            { value: 'title', label: 'Title' },
+            { value: 'priority', label: 'Priority' },
+            { value: 'dueDate', label: 'Due Date' },
+            { value: 'assignedTo', label: 'Assignee' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredTasks.length}
+          totalCount={mockTasks.length}
+        />
       </div>
 
       {/* Tasks by Category */}

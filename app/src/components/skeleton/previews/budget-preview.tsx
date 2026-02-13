@@ -16,6 +16,8 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface BudgetLine {
   id: string
@@ -242,6 +244,7 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
 }
 
 export function BudgetPreview() {
+  const { search, setSearch, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set(['6']))
 
   const toggleRow = (id: string) => {
@@ -255,6 +258,15 @@ export function BudgetPreview() {
       return next
     })
   }
+
+  const filteredBudgetLines = sortItems(
+    mockBudgetLines.filter(line => {
+      if (!matchesSearch(line, search, ['name', 'code'])) return false
+      return true
+    }),
+    activeSort as keyof BudgetLine | '',
+    sortDirection,
+  )
 
   const totals = mockBudgetLines.reduce((acc, line) => ({
     originalBudget: acc.originalBudget + line.originalBudget,
@@ -273,12 +285,10 @@ export function BudgetPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Budget - Smith Residence</h3>
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Active</span>
-            </div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-gray-900">Budget - Smith Residence</h3>
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Active</span>
           </div>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
@@ -291,6 +301,24 @@ export function BudgetPreview() {
             </button>
           </div>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search cost codes..."
+          sortOptions={[
+            { value: 'code', label: 'Cost Code' },
+            { value: 'name', label: 'Name' },
+            { value: 'revisedBudget', label: 'Revised Budget' },
+            { value: 'projected', label: 'Projected' },
+            { value: 'percentComplete', label: 'Completion' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredBudgetLines.length}
+          totalCount={mockBudgetLines.length}
+        />
       </div>
 
       {/* Summary Cards */}
@@ -366,7 +394,7 @@ export function BudgetPreview() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
-            {mockBudgetLines.map(line => (
+            {filteredBudgetLines.map(line => (
               <BudgetRow
                 key={line.id}
                 line={line}

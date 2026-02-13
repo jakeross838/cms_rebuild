@@ -7,16 +7,16 @@ import {
   AlertTriangle,
   CheckCircle,
   AlertCircle,
-  Filter,
   Download,
   MoreVertical,
   Sparkles,
   TrendingUp,
   Users,
   Zap,
-  Eye,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface TimeEntry {
   id: string
@@ -228,12 +228,23 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
 }
 
 export function TimeClockPreview() {
-  const [activeTab, setActiveTab] = useState<'team' | 'pending' | 'insights'>('team')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'team' })
   const [selectedJob, setSelectedJob] = useState('all')
 
-  const filteredEntries = selectedJob === 'all'
-    ? mockTimeEntries
-    : mockTimeEntries.filter(e => e.jobSite === selectedJob)
+  const filteredEntries = sortItems(
+    mockTimeEntries.filter(e => {
+      if (!matchesSearch(e, search, ['employeeName', 'jobSite', 'costCode'])) return false
+      if (selectedJob !== 'all' && e.jobSite !== selectedJob) return false
+      return true
+    }),
+    activeSort as keyof TimeEntry | '',
+    sortDirection,
+  )
+
+  const filteredEmployees = mockEmployees.filter(e => {
+    if (!matchesSearch(e, search, ['name', 'role'])) return false
+    return true
+  })
 
   // Calculate stats
   const totalHoursToday = mockTimeEntries.reduce((sum, e) => sum + e.hoursWorked, 0)
@@ -251,16 +262,6 @@ export function TimeClockPreview() {
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Time Clock Management</h3>
             <p className="text-sm text-gray-500 mt-0.5">Week of February 10, 2026</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
           </div>
         </div>
       </div>
@@ -310,49 +311,59 @@ export function TimeClockPreview() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 bg-white">
-        {['team', 'pending', 'insights'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab as typeof activeTab)}
-            className={cn(
-              'px-6 py-3 text-sm font-medium border-b-2 transition-colors',
-              activeTab === tab
-                ? 'border-b-blue-600 text-blue-600'
-                : 'border-b-transparent text-gray-600 hover:text-gray-900'
-            )}
-          >
-            {tab === 'team' && 'Team Overview'}
-            {tab === 'pending' && 'Pending Review'}
-            {tab === 'insights' && 'AI Insights'}
-          </button>
-        ))}
+      {/* Filter Bar */}
+      <div className="bg-white border-b border-gray-200 px-6 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search employees, jobs..."
+          tabs={[
+            { key: 'team', label: 'Team Overview' },
+            { key: 'pending', label: 'Pending Review', count: mockTimeEntries.filter(e => e.status !== 'approved').length },
+            { key: 'insights', label: 'AI Insights' },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={
+            activeTab === 'team'
+              ? [
+                  {
+                    label: 'All Job Sites',
+                    value: selectedJob,
+                    options: jobSites.map(job => ({ value: job, label: job })),
+                    onChange: setSelectedJob,
+                  },
+                ]
+              : []
+          }
+          sortOptions={
+            activeTab === 'team'
+              ? [
+                  { value: 'employeeName', label: 'Employee' },
+                  { value: 'hoursWorked', label: 'Hours' },
+                  { value: 'status', label: 'Status' },
+                  { value: 'jobSite', label: 'Job Site' },
+                ]
+              : []
+          }
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {}, variant: 'primary' },
+          ]}
+        />
       </div>
 
       {/* Content */}
       <div className="bg-white">
         {activeTab === 'team' && (
           <div>
-            {/* Filter and Job Site Selector */}
-            <div className="border-b border-gray-200 px-6 py-3 flex items-center gap-4">
-              <span className="text-sm text-gray-600">Job Site:</span>
-              <select
-                value={selectedJob}
-                onChange={(e) => setSelectedJob(e.target.value)}
-                className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Job Sites</option>
-                {jobSites.map(job => (
-                  <option key={job} value={job}>{job}</option>
-                ))}
-              </select>
-            </div>
-
             {/* Employee Cards Grid */}
             <div className="p-6">
               <div className="grid grid-cols-2 gap-4 mb-6">
-                {mockEmployees.map(employee => (
+                {filteredEmployees.map(employee => (
                   <EmployeeCard key={employee.id} employee={employee} />
                 ))}
               </div>
@@ -525,11 +536,11 @@ export function TimeClockPreview() {
                 <div className="flex-1">
                   <h5 className="font-semibold text-blue-900 mb-2">AI-Powered Features</h5>
                   <ul className="space-y-1 text-sm text-blue-700">
-                    <li>• Location verification ensures all clock-ins match job site GPS</li>
-                    <li>• Anomaly detection flags unusual patterns (excessive hours, breaks, locations)</li>
-                    <li>• Automated break reminders based on state-specific labor laws</li>
-                    <li>• Cost code suggestions based on job phase and worker role</li>
-                    <li>• Payroll compliance monitoring with overtime calculations</li>
+                    <li>Location verification ensures all clock-ins match job site GPS</li>
+                    <li>Anomaly detection flags unusual patterns (excessive hours, breaks, locations)</li>
+                    <li>Automated break reminders based on state-specific labor laws</li>
+                    <li>Cost code suggestions based on job phase and worker role</li>
+                    <li>Payroll compliance monitoring with overtime calculations</li>
                   </ul>
                 </div>
               </div>

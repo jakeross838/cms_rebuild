@@ -3,10 +3,7 @@
 import { useState } from 'react'
 import {
   Plus,
-  Search,
-  Filter,
   Calendar,
-  List,
   ChevronRight,
   Clock,
   User,
@@ -21,6 +18,8 @@ import {
   ChevronLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type InspectionStatus = 'scheduled' | 'passed' | 'failed' | 'rescheduled'
 
@@ -288,8 +287,8 @@ function CalendarView() {
 }
 
 export function InspectionsPreview() {
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
-  const [statusFilter, setStatusFilter] = useState<'all' | InspectionStatus>('all')
 
   // Calculate stats
   const totalInspections = mockInspections.length
@@ -300,9 +299,15 @@ export function InspectionsPreview() {
   const passRate = completedCount > 0 ? Math.round((passedCount / completedCount) * 100) : 0
   const failedRequiringReinspection = mockInspections.filter(i => i.status === 'failed').length
 
-  const filteredInspections = statusFilter === 'all'
-    ? mockInspections
-    : mockInspections.filter(i => i.status === statusFilter)
+  const filteredInspections = sortItems(
+    mockInspections.filter(i => {
+      if (!matchesSearch(i, search, ['type', 'inspector', 'projectName', 'linkedPermit', 'notes'])) return false
+      if (activeTab !== 'all' && i.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Inspection | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -342,7 +347,7 @@ export function InspectionsPreview() {
                   viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
                 )}
               >
-                <List className="h-4 w-4" />
+                <ClipboardCheck className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setViewMode('calendar')}
@@ -354,10 +359,6 @@ export function InspectionsPreview() {
                 <Calendar className="h-4 w-4" />
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Schedule Inspection
-            </button>
           </div>
         </div>
       </div>
@@ -405,78 +406,36 @@ export function InspectionsPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setStatusFilter('all')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              statusFilter === 'all'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setStatusFilter('scheduled')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              statusFilter === 'scheduled'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            Scheduled
-          </button>
-          <button
-            onClick={() => setStatusFilter('passed')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              statusFilter === 'passed'
-                ? "bg-green-100 text-green-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            Passed
-          </button>
-          <button
-            onClick={() => setStatusFilter('failed')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              statusFilter === 'failed'
-                ? "bg-red-100 text-red-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            Failed
-          </button>
-          <button
-            onClick={() => setStatusFilter('rescheduled')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              statusFilter === 'rescheduled'
-                ? "bg-amber-100 text-amber-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            Rescheduled
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search inspections..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            Filter
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search inspections..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockInspections.length },
+            { key: 'scheduled', label: 'Scheduled', count: mockInspections.filter(i => i.status === 'scheduled').length },
+            { key: 'passed', label: 'Passed', count: passedCount },
+            { key: 'failed', label: 'Failed', count: failedCount },
+            { key: 'rescheduled', label: 'Rescheduled', count: mockInspections.filter(i => i.status === 'rescheduled').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'type', label: 'Type' },
+            { value: 'date', label: 'Date' },
+            { value: 'inspector', label: 'Inspector' },
+            { value: 'status', label: 'Status' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Plus, label: 'Schedule Inspection', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filteredInspections.length}
+          totalCount={mockInspections.length}
+        />
       </div>
 
       {/* Content Area */}
@@ -488,6 +447,12 @@ export function InspectionsPreview() {
             {filteredInspections.map(inspection => (
               <InspectionCard key={inspection.id} inspection={inspection} />
             ))}
+            {filteredInspections.length === 0 && (
+              <div className="text-center py-12 text-gray-500">
+                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p>No inspections found matching your criteria</p>
+              </div>
+            )}
           </div>
         )}
       </div>

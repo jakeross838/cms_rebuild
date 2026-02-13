@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import {
   MessageSquare,
-  Search,
-  Filter,
   Plus,
   MoreHorizontal,
   Clock,
@@ -13,11 +11,12 @@ import {
   User,
   Calendar,
   Sparkles,
-  ChevronDown,
   ArrowRight,
   Flag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface RFI {
   id: string
@@ -230,14 +229,19 @@ function RFICard({ rfi }: { rfi: RFI }) {
 }
 
 export function RFIsPreview() {
-  const [statusFilter, setStatusFilter] = useState<string>('all')
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
-  const filteredRFIs = mockRFIs.filter(rfi => {
-    if (statusFilter !== 'all' && rfi.status !== statusFilter) return false
-    if (priorityFilter !== 'all' && rfi.priority !== priorityFilter) return false
-    return true
-  })
+  const filteredRFIs = sortItems(
+    mockRFIs.filter(rfi => {
+      if (!matchesSearch(rfi, search, ['number', 'subject', 'category'])) return false
+      if (activeTab !== 'all' && rfi.status !== activeTab) return false
+      if (priorityFilter !== 'all' && rfi.priority !== priorityFilter) return false
+      return true
+    }),
+    activeSort as keyof RFI | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const openRFIs = mockRFIs.filter(r => r.status === 'open' || r.status === 'pending').length
@@ -254,28 +258,50 @@ export function RFIsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">RFIs - Smith Residence</h3>
-              <span className="text-sm text-gray-500">{mockRFIs.length} total</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search RFIs..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New RFI
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">RFIs - Smith Residence</h3>
+          <span className="text-sm text-gray-500">{mockRFIs.length} total</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search RFIs..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockRFIs.length },
+            { key: 'open', label: 'Open', count: mockRFIs.filter(r => r.status === 'open').length },
+            { key: 'pending', label: 'Pending', count: mockRFIs.filter(r => r.status === 'pending').length },
+            { key: 'answered', label: 'Answered', count: mockRFIs.filter(r => r.status === 'answered').length },
+            { key: 'closed', label: 'Closed', count: mockRFIs.filter(r => r.status === 'closed').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Priorities',
+              value: priorityFilter,
+              options: [
+                { value: 'critical', label: 'Critical' },
+                { value: 'high', label: 'High' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'low', label: 'Low' },
+              ],
+              onChange: setPriorityFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'number', label: 'RFI Number' },
+            { value: 'dateSubmitted', label: 'Date Submitted' },
+            { value: 'daysOpen', label: 'Days Open' },
+            { value: 'priority', label: 'Priority' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'New RFI', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredRFIs.length}
+          totalCount={mockRFIs.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -319,59 +345,6 @@ export function RFIsPreview() {
               Closed This Month
             </div>
             <div className="text-2xl font-bold text-green-700 mt-1">{closedThisMonth}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-500">Status:</span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setStatusFilter('all')}
-                className={cn(
-                  "px-2.5 py-1 text-sm rounded-lg transition-colors",
-                  statusFilter === 'all'
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                All
-              </button>
-              {Object.entries(statusConfig).map(([key, config]) => (
-                <button
-                  key={key}
-                  onClick={() => setStatusFilter(key)}
-                  className={cn(
-                    "px-2.5 py-1 text-sm rounded-lg transition-colors flex items-center gap-1.5",
-                    statusFilter === key
-                      ? "bg-blue-100 text-blue-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  <div className={cn("w-2 h-2 rounded-full", config.dotColor)} />
-                  {config.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="h-4 w-px bg-gray-200" />
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Priority:</span>
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Priorities</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
           </div>
         </div>
       </div>

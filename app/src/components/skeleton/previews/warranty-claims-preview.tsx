@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
   Plus,
   AlertCircle,
   Clock,
@@ -16,12 +14,13 @@ import {
   MapPin,
   Wrench,
   Camera,
-  FileText,
   User,
   TrendingUp,
   Badge,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type ClaimStatus = 'submitted' | 'evaluating' | 'in_progress' | 'resolved' | 'closed'
 type Priority = 'emergency' | 'high' | 'normal' | 'low'
@@ -260,68 +259,77 @@ function StatCard({
 }
 
 export function WarrantyClaimsPreview() {
-  const [statusFilter, setStatusFilter] = useState<ClaimStatus | 'all'>('all')
   const [priorityFilter, setPriorityFilter] = useState<Priority | 'all'>('all')
-  const [searchTerm, setSearchTerm] = useState('')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({})
 
   // Filter claims
-  const filteredClaims = mockClaims.filter(claim => {
-    if (statusFilter !== 'all' && claim.status !== statusFilter) return false
-    if (priorityFilter !== 'all' && claim.priority !== priorityFilter) return false
-    if (searchTerm && !claim.claimNumber.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !claim.issueTitle.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !claim.clientName.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false
-    }
-    return true
-  })
+  const filteredClaims = sortItems(
+    mockClaims.filter(claim => {
+      if (!matchesSearch(claim, search, ['claimNumber', 'issueTitle', 'clientName'])) return false
+      if (activeTab !== 'all' && claim.status !== activeTab) return false
+      if (priorityFilter !== 'all' && claim.priority !== priorityFilter) return false
+      return true
+    }),
+    activeSort as keyof WarrantyClaim | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalClaims = mockClaims.length
   const openClaims = mockClaims.filter(c => c.status === 'submitted' || c.status === 'evaluating').length
   const inProgressClaims = mockClaims.filter(c => c.status === 'in_progress').length
   const resolvedClaims = mockClaims.filter(c => c.status === 'resolved').length
-  const closedClaims = mockClaims.filter(c => c.status === 'closed').length
   const emergencyClaims = mockClaims.filter(c => c.priority === 'emergency').length
-  const highPriorityClaims = mockClaims.filter(c => c.priority === 'high').length
 
-  // Calculate average resolution time
   const avgResolutionDays = 4.2
   const avgSatisfaction = 92
 
-  const statuses: ClaimStatus[] = ['submitted', 'evaluating', 'in_progress', 'resolved', 'closed']
   const priorities: Priority[] = ['emergency', 'high', 'normal', 'low']
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-900">Warranty Claims</h3>
-            <p className="text-sm text-gray-500">{totalClaims} claims | {openClaims} open | {inProgressClaims} in progress</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search claims..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Claim
-            </button>
-          </div>
+        <div className="mb-3">
+          <h3 className="font-semibold text-gray-900">Warranty Claims</h3>
+          <p className="text-sm text-gray-500">{totalClaims} claims | {openClaims} open | {inProgressClaims} in progress</p>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search claims..."
+          tabs={[
+            { key: 'all', label: 'All', count: totalClaims },
+            { key: 'submitted', label: 'Submitted', count: mockClaims.filter(c => c.status === 'submitted').length },
+            { key: 'evaluating', label: 'Evaluating', count: mockClaims.filter(c => c.status === 'evaluating').length },
+            { key: 'in_progress', label: 'In Progress', count: mockClaims.filter(c => c.status === 'in_progress').length },
+            { key: 'resolved', label: 'Resolved', count: mockClaims.filter(c => c.status === 'resolved').length },
+            { key: 'closed', label: 'Closed', count: mockClaims.filter(c => c.status === 'closed').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Priorities',
+              value: priorityFilter,
+              options: priorities.map(p => ({ value: p, label: priorityConfig[p].label })),
+              onChange: (v) => setPriorityFilter(v as Priority | 'all'),
+            },
+          ]}
+          sortOptions={[
+            { value: 'claimNumber', label: 'Claim #' },
+            { value: 'clientName', label: 'Client' },
+            { value: 'priority', label: 'Priority' },
+            { value: 'reportedAt', label: 'Reported' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'New Claim', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredClaims.length}
+          totalCount={mockClaims.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -371,65 +379,6 @@ export function WarrantyClaimsPreview() {
             iconBg="bg-blue-50"
           />
         </div>
-      </div>
-
-      {/* Status Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2 overflow-x-auto">
-        <button
-          onClick={() => setStatusFilter('all')}
-          className={cn(
-            'px-3 py-1.5 text-sm rounded-lg transition-colors whitespace-nowrap',
-            statusFilter === 'all'
-              ? 'bg-blue-100 text-blue-700 font-medium'
-              : 'text-gray-600 hover:bg-gray-100'
-          )}
-        >
-          All ({totalClaims})
-        </button>
-        {statuses.map(status => {
-          const count = mockClaims.filter(c => c.status === status).length
-          const config = statusConfig[status]
-          return (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={cn(
-                'px-3 py-1.5 text-sm rounded-lg transition-colors whitespace-nowrap flex items-center gap-1',
-                statusFilter === status
-                  ? 'bg-blue-100 text-blue-700 font-medium'
-                  : 'text-gray-600 hover:bg-gray-100'
-              )}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-              <span className="text-xs text-gray-400">({count})</span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Priority Filter */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2 overflow-x-auto">
-        <span className="text-xs text-gray-500 font-medium">Priority:</span>
-        {priorities.map(priority => {
-          const count = mockClaims.filter(c => c.priority === priority).length
-          const config = priorityConfig[priority]
-          return (
-            <button
-              key={priority}
-              onClick={() => setPriorityFilter(priority)}
-              className={cn(
-                'px-3 py-1.5 text-sm rounded-lg transition-colors whitespace-nowrap flex items-center gap-1',
-                priorityFilter === priority
-                  ? 'bg-blue-100 text-blue-700 font-medium'
-                  : 'text-gray-600 hover:bg-gray-100'
-              )}
-            >
-              <span>{config.icon}</span>
-              {config.label}
-              <span className="text-xs text-gray-400">({count})</span>
-            </button>
-          )
-        })}
       </div>
 
       {/* Claims List */}

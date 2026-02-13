@@ -1,24 +1,20 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Building2,
-  User,
   MapPin,
   DollarSign,
   Sparkles,
   MoreHorizontal,
   Plus,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
   TrendingUp,
   Clock,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Job {
   id: string
@@ -230,12 +226,17 @@ function StatCard({
 }
 
 export function JobsListPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [filterStatus, setFilterStatus] = useState<string | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const filteredJobs = filterStatus === 'all'
-    ? mockJobs
-    : mockJobs.filter(job => job.status === filterStatus)
+  const filtered = sortItems(
+    mockJobs.filter(job => {
+      if (!matchesSearch(job, search, ['name', 'client', 'address', 'pmAssigned'])) return false
+      if (activeTab !== 'all' && job.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Job | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalJobs = mockJobs.length
@@ -249,50 +250,40 @@ export function JobsListPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Jobs</h3>
-            <span className="text-sm text-gray-500">{totalJobs} jobs | {formatCurrency(totalContractValue)} total value</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search jobs..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Job
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Jobs</h3>
+          <span className="text-sm text-gray-500">{totalJobs} jobs | {formatCurrency(totalContractValue)} total value</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search jobs..."
+          tabs={[
+            { key: 'all', label: 'All Jobs', count: mockJobs.length },
+            ...statuses.map(s => ({
+              key: s.id,
+              label: s.label,
+              count: mockJobs.filter(j => j.status === s.id).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'contractValue', label: 'Contract Value' },
+            { value: 'progress', label: 'Progress' },
+            { value: 'startDate', label: 'Start Date' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'New Job', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filtered.length}
+          totalCount={mockJobs.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -338,52 +329,14 @@ export function JobsListPreview() {
         </div>
       </div>
 
-      {/* Status Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setFilterStatus('all')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              filterStatus === 'all'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            All Jobs
-          </button>
-          {statuses.map(status => {
-            const count = mockJobs.filter(j => j.status === status.id).length
-            return (
-              <button
-                key={status.id}
-                onClick={() => setFilterStatus(status.id)}
-                className={cn(
-                  "px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center gap-2",
-                  filterStatus === status.id
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                <div className={cn("h-2 w-2 rounded-full", status.color)} />
-                {status.label}
-                <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
-                  {count}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
       {/* Jobs Grid */}
       <div className="p-4">
         <div className="grid grid-cols-3 gap-4">
-          {filteredJobs.map(job => (
+          {filtered.map(job => (
             <JobCard key={job.id} job={job} />
           ))}
         </div>
-        {filteredJobs.length === 0 && (
+        {filtered.length === 0 && (
           <div className="text-center py-12 text-gray-400">
             <Building2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p>No jobs found matching your criteria</p>

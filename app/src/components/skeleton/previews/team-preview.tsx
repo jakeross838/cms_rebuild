@@ -6,10 +6,6 @@ import {
   Mail,
   Phone,
   Briefcase,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
   Plus,
   MoreHorizontal,
   Sparkles,
@@ -21,6 +17,8 @@ import {
   ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface TeamMember {
   id: string
@@ -229,15 +227,19 @@ function StatCard({
 }
 
 export function TeamPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
   const [filterRole, setFilterRole] = useState<string | 'all'>('all')
-  const [filterStatus, setFilterStatus] = useState<string | 'all'>('all')
 
-  const filteredMembers = mockTeamMembers.filter(member => {
-    const roleMatch = filterRole === 'all' || member.role === filterRole
-    const statusMatch = filterStatus === 'all' || member.status === filterStatus
-    return roleMatch && statusMatch
-  })
+  const filteredMembers = sortItems(
+    mockTeamMembers.filter(member => {
+      if (!matchesSearch(member, search, ['name', 'email', 'role'])) return false
+      if (activeTab !== 'all' && member.status !== activeTab) return false
+      if (filterRole !== 'all' && member.role !== filterRole) return false
+      return true
+    }),
+    activeSort as keyof TeamMember | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalTeam = mockTeamMembers.length
@@ -253,50 +255,44 @@ export function TeamPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Team Directory</h3>
-            <span className="text-sm text-gray-500">{totalTeam} team members</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search team..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Member
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Team Directory</h3>
+          <span className="text-sm text-gray-500">{totalTeam} team members</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search team..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockTeamMembers.length },
+            { key: 'active', label: 'Active', count: mockTeamMembers.filter(m => m.status === 'active').length },
+            { key: 'on-leave', label: 'On Leave', count: mockTeamMembers.filter(m => m.status === 'on-leave').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Roles',
+              value: filterRole,
+              options: roles.map(r => ({ value: r.id, label: r.label })),
+              onChange: (v) => setFilterRole(v),
+            },
+          ]}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'role', label: 'Role' },
+            { value: 'activeJobs', label: 'Active Jobs' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'Add Member', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredMembers.length}
+          totalCount={mockTeamMembers.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -348,93 +344,22 @@ export function TeamPreview() {
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-6">
-          {/* Role Filter */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500 font-medium">Role:</span>
-            <button
-              onClick={() => setFilterRole('all')}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                filterRole === 'all'
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              All Roles
-            </button>
-            {roles.map(role => {
-              const count = mockTeamMembers.filter(m => m.role === role.id).length
-              const RoleIcon = role.icon
-              return (
-                <button
-                  key={role.id}
-                  onClick={() => setFilterRole(role.id)}
-                  className={cn(
-                    "px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center gap-1.5",
-                    filterRole === role.id
-                      ? "bg-blue-100 text-blue-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  <RoleIcon className="h-3.5 w-3.5" />
-                  {role.label}
-                  <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
-                    {count}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Status Filter */}
-          <div className="flex items-center gap-2 border-l border-gray-200 pl-6">
-            <span className="text-xs text-gray-500 font-medium">Status:</span>
-            <button
-              onClick={() => setFilterStatus('all')}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                filterStatus === 'all'
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              All
-            </button>
-            {statuses.map(status => {
-              const count = mockTeamMembers.filter(m => m.status === status.id).length
-              return (
-                <button
-                  key={status.id}
-                  onClick={() => setFilterStatus(status.id)}
-                  className={cn(
-                    "px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center gap-2",
-                    filterStatus === status.id
-                      ? "bg-blue-100 text-blue-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  <div className={cn("h-2 w-2 rounded-full", status.color)} />
-                  {status.label}
-                  <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
-                    {count}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      </div>
 
       {/* Team Grid */}
       <div className="p-4">
-        <div className="grid grid-cols-4 gap-4">
-          {filteredMembers.map(member => (
-            <TeamMemberCard key={member.id} member={member} />
-          ))}
-        </div>
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {filteredMembers.map(member => (
+              <TeamMemberCard key={member.id} member={member} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredMembers.map(member => (
+              <TeamMemberCard key={member.id} member={member} />
+            ))}
+          </div>
+        )}
         {filteredMembers.length === 0 && (
           <div className="text-center py-12 text-gray-400">
             <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />

@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import {
   Plus,
-  Search,
-  Filter,
   Download,
   MoreHorizontal,
   FileText,
@@ -15,13 +13,14 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  ChevronDown,
   Send,
   Eye,
   ClipboardList,
   Hash,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type SubmittalStatus = 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected'
 
@@ -208,14 +207,19 @@ function SubmittalCard({ submittal }: { submittal: Submittal }) {
 }
 
 export function SubmittalsPreview() {
-  const [statusFilter, setStatusFilter] = useState<SubmittalStatus | 'all'>('all')
   const [specFilter, setSpecFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
-  const filteredSubmittals = mockSubmittals.filter(s => {
-    if (statusFilter !== 'all' && s.status !== statusFilter) return false
-    if (specFilter !== 'all' && s.specSection !== specFilter) return false
-    return true
-  })
+  const filteredSubmittals = sortItems(
+    mockSubmittals.filter(s => {
+      if (!matchesSearch(s, search, ['number', 'description', 'vendor', 'specSection'])) return false
+      if (activeTab !== 'all' && s.status !== activeTab) return false
+      if (specFilter !== 'all' && s.specSection !== specFilter) return false
+      return true
+    }),
+    activeSort as keyof Submittal | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const totalSubmittals = mockSubmittals.length
@@ -234,27 +238,50 @@ export function SubmittalsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Submittals - Smith Residence</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{totalSubmittals} Total</span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              {approvedCount} approved | {pendingReview} pending review
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Submittal
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Submittals - Smith Residence</h3>
+          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{totalSubmittals} Total</span>
+          <span className="text-sm text-gray-500">{approvedCount} approved | {pendingReview} pending review</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search submittals..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockSubmittals.length },
+            { key: 'pending', label: 'Pending', count: mockSubmittals.filter(s => s.status === 'pending').length },
+            { key: 'submitted', label: 'Submitted', count: mockSubmittals.filter(s => s.status === 'submitted').length },
+            { key: 'under_review', label: 'Under Review', count: mockSubmittals.filter(s => s.status === 'under_review').length },
+            { key: 'approved', label: 'Approved', count: mockSubmittals.filter(s => s.status === 'approved').length },
+            { key: 'rejected', label: 'Rejected', count: mockSubmittals.filter(s => s.status === 'rejected').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Sections',
+              value: specFilter,
+              options: specSections.map(s => ({ value: s, label: s.split(' - ')[0] })),
+              onChange: setSpecFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'number', label: 'Submittal #' },
+            { value: 'dateSubmitted', label: 'Date Submitted' },
+            { value: 'daysInReview', label: 'Days in Review' },
+            { value: 'vendor', label: 'Vendor' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'New Submittal', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filteredSubmittals.length}
+          totalCount={mockSubmittals.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -299,57 +326,6 @@ export function SubmittalsPreview() {
               {overdueCount > 0 ? overdueCount : `${avgDaysInReview} days`}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Status:</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as SubmittalStatus | 'all')}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="submitted">Submitted</option>
-              <option value="under_review">Under Review</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Spec Section:</span>
-            <div className="relative">
-              <select
-                value={specFilter}
-                onChange={(e) => setSpecFilter(e.target.value)}
-                className="appearance-none text-sm border border-gray-200 rounded-lg pl-2 pr-7 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[180px]"
-              >
-                <option value="all">All Sections</option>
-                {specSections.map(section => (
-                  <option key={section} value={section}>{section.split(' - ')[0]}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search submittals..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            More Filters
-          </button>
         </div>
       </div>
 

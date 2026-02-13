@@ -1,30 +1,25 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Shield,
   Plus,
-  Search,
-  Filter,
-  AlertTriangle,
   CheckCircle2,
   Clock,
   XCircle,
-  FileText,
-  Mail,
   Eye,
   Download,
   MoreHorizontal,
   Sparkles,
   Building2,
   Users,
-  Calendar,
-  DollarSign,
   Upload,
   RefreshCw,
   Bell,
+  Mail,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface InsurancePolicy {
   id: string
@@ -323,11 +318,25 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
 }
 
 export function InsurancePreview() {
-  const [activeTab, setActiveTab] = useState<'company' | 'vendors' | 'expiring'>('expiring')
-  const [searchQuery, setSearchQuery] = useState('')
-
   const allPolicies = [...mockCompanyPolicies, ...mockVendorPolicies]
   const expiringPolicies = allPolicies.filter(p => p.status === 'expiring' || p.status === 'expired')
+
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'expiring' })
+
+  const filteredPolicies = sortItems(
+    (() => {
+      let policies: InsurancePolicy[]
+      if (activeTab === 'expiring') policies = expiringPolicies
+      else if (activeTab === 'company') policies = mockCompanyPolicies
+      else if (activeTab === 'vendors') policies = mockVendorPolicies
+      else policies = allPolicies
+
+      return policies.filter(p => matchesSearch(p, search, ['entityName', 'policyType', 'carrier', 'policyNumber']))
+    })(),
+    activeSort as keyof InsurancePolicy | '',
+    sortDirection,
+  )
+
   const vendorCount = mockVendorPolicies.length
   const compliantVendors = mockVendorPolicies.filter(p => p.status === 'active').length
   const expiringCount = expiringPolicies.length
@@ -337,7 +346,7 @@ export function InsurancePreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="font-semibold text-gray-900">Insurance Tracking</h3>
             <p className="text-sm text-gray-500">Monitor COIs for your company and vendors</p>
@@ -353,6 +362,30 @@ export function InsurancePreview() {
             </button>
           </div>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search policies..."
+          tabs={[
+            { key: 'expiring', label: 'Expiring / Expired', count: expiringPolicies.length },
+            { key: 'company', label: 'Company', count: mockCompanyPolicies.length },
+            { key: 'vendors', label: 'Vendors', count: mockVendorPolicies.length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'entityName', label: 'Name' },
+            { value: 'carrier', label: 'Carrier' },
+            { value: 'coverage', label: 'Coverage' },
+            { value: 'daysUntilExpiry', label: 'Expiration' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredPolicies.length}
+          totalCount={allPolicies.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -406,104 +439,32 @@ export function InsurancePreview() {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveTab('expiring')}
-              className={cn(
-                "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-                activeTab === 'expiring' ? "bg-amber-100 text-amber-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              <AlertTriangle className="h-4 w-4" />
-              Expiring / Expired
-              <span className="bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded text-xs">
-                {expiringPolicies.length}
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveTab('company')}
-              className={cn(
-                "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-                activeTab === 'company' ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              <Building2 className="h-4 w-4" />
-              Company
-            </button>
-            <button
-              onClick={() => setActiveTab('vendors')}
-              className={cn(
-                "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-                activeTab === 'vendors' ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              <Users className="h-4 w-4" />
-              Vendors
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search policies..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Content */}
       <div className="p-4">
-        {activeTab === 'expiring' && (
-          <div className="space-y-4">
-            {expiringPolicies.length > 0 && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3">
-                <Bell className="h-5 w-5 text-amber-600" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-amber-800">
-                    {expiringPolicies.length} policies need attention
-                  </p>
-                  <p className="text-xs text-amber-700">
-                    {expiredCount} expired, {expiringCount - expiredCount} expiring within 30 days
-                  </p>
-                </div>
-                <button className="px-3 py-1.5 text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700">
-                  Send Bulk Reminders
-                </button>
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              {expiringPolicies.map(policy => (
-                <PolicyCard key={policy.id} policy={policy} />
-              ))}
+        {activeTab === 'expiring' && filteredPolicies.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 mb-4">
+            <Bell className="h-5 w-5 text-amber-600" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-800">
+                {expiringPolicies.length} policies need attention
+              </p>
+              <p className="text-xs text-amber-700">
+                {expiredCount} expired, {expiringCount - expiredCount} expiring within 30 days
+              </p>
             </div>
+            <button className="px-3 py-1.5 text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+              Send Bulk Reminders
+            </button>
           </div>
         )}
-
-        {activeTab === 'company' && (
-          <div className="grid grid-cols-2 gap-4">
-            {mockCompanyPolicies.map(policy => (
-              <PolicyCard key={policy.id} policy={policy} />
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'vendors' && (
-          <div className="grid grid-cols-2 gap-4">
-            {mockVendorPolicies.map(policy => (
-              <PolicyCard key={policy.id} policy={policy} />
-            ))}
+        <div className="grid grid-cols-2 gap-4">
+          {filteredPolicies.map(policy => (
+            <PolicyCard key={policy.id} policy={policy} />
+          ))}
+        </div>
+        {filteredPolicies.length === 0 && (
+          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+            No policies found matching your criteria
           </div>
         )}
       </div>

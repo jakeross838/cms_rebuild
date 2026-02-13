@@ -13,9 +13,10 @@ import {
   DollarSign,
   BarChart3,
   Target,
-  Filter,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface JobProfitability {
   id: string
@@ -305,8 +306,8 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
 }
 
 export function ProfitabilityPreview() {
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set(['1']))
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'completed'>('all')
 
   const toggleJob = (id: string) => {
     setExpandedJobs(prev => {
@@ -320,10 +321,15 @@ export function ProfitabilityPreview() {
     })
   }
 
-  const filteredJobs = mockJobs.filter(job => {
-    if (statusFilter === 'all') return true
-    return job.status === statusFilter
-  })
+  const filteredJobs = sortItems(
+    mockJobs.filter(job => {
+      if (!matchesSearch(job, search, ['name'])) return false
+      if (activeTab !== 'all' && job.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof JobProfitability | '',
+    sortDirection,
+  )
 
   // Calculate totals
   const activeJobs = mockJobs.filter(j => j.status === 'active')
@@ -424,45 +430,32 @@ export function ProfitabilityPreview() {
       )}
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">View:</span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setStatusFilter('all')}
-              className={cn(
-                "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                statusFilter === 'all'
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              All Jobs
-            </button>
-            <button
-              onClick={() => setStatusFilter('active')}
-              className={cn(
-                "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                statusFilter === 'active'
-                  ? "bg-green-100 text-green-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              Active
-            </button>
-            <button
-              onClick={() => setStatusFilter('completed')}
-              className={cn(
-                "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                statusFilter === 'completed'
-                  ? "bg-gray-200 text-gray-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              Completed
-            </button>
-          </div>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search jobs..."
+          tabs={[
+            { key: 'all', label: 'All Jobs', count: mockJobs.length },
+            { key: 'active', label: 'Active', count: mockJobs.filter(j => j.status === 'active').length },
+            { key: 'completed', label: 'Completed', count: mockJobs.filter(j => j.status === 'completed').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'grossMargin', label: 'Margin' },
+            { value: 'revisedContract', label: 'Contract Value' },
+            { value: 'variance', label: 'Variance' },
+            { value: 'completionPct', label: 'Completion' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredJobs.length}
+          totalCount={mockJobs.length}
+        />
       </div>
 
       {/* Profitability Table */}

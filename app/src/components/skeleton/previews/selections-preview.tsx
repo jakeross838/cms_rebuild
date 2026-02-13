@@ -2,10 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
-  Grid3X3,
-  List,
   Plus,
   Sparkles,
   AlertTriangle,
@@ -15,9 +11,10 @@ import {
   Package,
   Calendar,
   MoreHorizontal,
-  ChevronDown,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Selection {
   id: string
@@ -181,7 +178,6 @@ const mockSelections: Selection[] = [
 ]
 
 const categories = ['All', 'Flooring', 'Fixtures', 'Appliances', 'Countertops', 'Lighting', 'Cabinetry']
-const statuses = ['All', 'Pending', 'Selected', 'Ordered', 'Installed']
 
 const statusConfig = {
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
@@ -370,15 +366,19 @@ function SelectionRow({ selection }: { selection: Selection }) {
 }
 
 export function SelectionsPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
-  const [selectedStatus, setSelectedStatus] = useState<string>('All')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const filteredSelections = mockSelections.filter(selection => {
-    const categoryMatch = selectedCategory === 'All' || selection.category === selectedCategory
-    const statusMatch = selectedStatus === 'All' || selection.status === selectedStatus.toLowerCase()
-    return categoryMatch && statusMatch
-  })
+  const filteredSelections = sortItems(
+    mockSelections.filter(selection => {
+      if (!matchesSearch(selection, search, ['itemName', 'selectedProduct', 'vendor', 'category'])) return false
+      const categoryMatch = selectedCategory === 'All' || selection.category === selectedCategory
+      const statusMatch = activeTab === 'all' || selection.status === activeTab
+      return categoryMatch && statusMatch
+    }),
+    activeSort as keyof Selection | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalSelections = mockSelections.length
@@ -388,7 +388,6 @@ export function SelectionsPreview() {
 
   const totalAllowance = mockSelections.reduce((sum, s) => sum + s.allowance, 0)
   const totalSelected = mockSelections.reduce((sum, s) => sum + s.price, 0)
-  const totalVariance = totalSelected - totalAllowance
   const selectionsWithPrices = mockSelections.filter(s => s.price > 0)
   const varianceFromSelected = selectionsWithPrices.reduce((sum, s) => sum + (s.price - s.allowance), 0)
 
@@ -396,51 +395,52 @@ export function SelectionsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Client Selections</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Smith Residence</span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              {selectionsMade} of {totalSelections} selections made | {pendingDecisions} pending
-            </div>
+        <div className="mb-3">
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-gray-900">Client Selections</h3>
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Smith Residence</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search selections..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Selection
-            </button>
+          <div className="text-sm text-gray-500 mt-0.5">
+            {selectionsMade} of {totalSelections} selections made | {pendingDecisions} pending
           </div>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search selections..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockSelections.length },
+            { key: 'pending', label: 'Pending', count: mockSelections.filter(s => s.status === 'pending').length },
+            { key: 'selected', label: 'Selected', count: mockSelections.filter(s => s.status === 'selected').length },
+            { key: 'ordered', label: 'Ordered', count: mockSelections.filter(s => s.status === 'ordered').length },
+            { key: 'installed', label: 'Installed', count: mockSelections.filter(s => s.status === 'installed').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Categories',
+              value: selectedCategory === 'All' ? 'all' : selectedCategory,
+              options: categories.filter(c => c !== 'All').map(cat => ({ value: cat, label: cat })),
+              onChange: (v) => setSelectedCategory(v === 'all' ? 'All' : v),
+            },
+          ]}
+          sortOptions={[
+            { value: 'itemName', label: 'Item Name' },
+            { value: 'price', label: 'Price' },
+            { value: 'allowance', label: 'Allowance' },
+            { value: 'daysUntilDeadline', label: 'Deadline' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'Add Selection', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredSelections.length}
+          totalCount={mockSelections.length}
+        />
       </div>
 
       {/* Stats Cards */}
@@ -500,45 +500,6 @@ export function SelectionsPreview() {
             )}>
               {varianceFromSelected > 0 ? '+' : ''}{formatCurrency(varianceFromSelected)}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-gray-400" />
-          <span className="text-sm text-gray-500">Category:</span>
-          <div className="flex items-center gap-1">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={cn(
-                  "px-2.5 py-1 text-sm rounded-lg transition-colors",
-                  selectedCategory === cat
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Status:</span>
-          <div className="relative">
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-            >
-              {statuses.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
           </div>
         </div>
       </div>

@@ -7,15 +7,13 @@ import {
   Phone,
   Mail,
   Star,
-  Search,
-  Filter,
   Plus,
   MoreHorizontal,
-  MapPin,
-  Briefcase,
   Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Contact {
   id: string
@@ -164,79 +162,78 @@ function ContactCard({ contact }: { contact: Contact }) {
 }
 
 export function ContactsPreview() {
-  const [categoryFilter, setCategoryFilter] = useState('All')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'All' })
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
 
-  const filteredContacts = mockContacts.filter(contact => {
-    if (categoryFilter !== 'All' && contact.category !== categoryFilter) return false
-    if (showFavoritesOnly && !contact.isFavorite) return false
-    return true
-  })
+  const filtered = sortItems(
+    mockContacts.filter(contact => {
+      if (!matchesSearch(contact, search, ['firstName', 'lastName', 'company', 'email', 'title'])) return false
+      if (activeTab !== 'All' && contact.category !== activeTab) return false
+      if (showFavoritesOnly && !contact.isFavorite) return false
+      return true
+    }),
+    activeSort as keyof Contact | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Contacts</h3>
-            <span className="text-sm text-gray-500">{mockContacts.length} contacts</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search contacts..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Contact
-            </button>
-          </div>
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold text-gray-900">Contacts</h3>
+          <span className="text-sm text-gray-500">{mockContacts.length} contacts</span>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => setCategoryFilter(category)}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                categoryFilter === category
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
-            showFavoritesOnly
-              ? "bg-amber-100 text-amber-700"
-              : "text-gray-600 hover:bg-gray-100"
-          )}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search contacts..."
+          tabs={categories.map(cat => ({
+            key: cat,
+            label: cat,
+            count: cat === 'All' ? mockContacts.length : mockContacts.filter(c => c.category === cat).length,
+          }))}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'lastName', label: 'Last Name' },
+            { value: 'company', label: 'Company' },
+            { value: 'projectCount', label: 'Projects' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'Add Contact', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filtered.length}
+          totalCount={mockContacts.length}
         >
-          <Star className={cn("h-4 w-4", showFavoritesOnly && "fill-amber-500")} />
-          Favorites Only
-        </button>
+          {/* Favorites toggle in children slot */}
+          <button
+            onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
+              showFavoritesOnly
+                ? "bg-amber-100 text-amber-700"
+                : "text-gray-600 hover:bg-gray-100"
+            )}
+          >
+            <Star className={cn("h-4 w-4", showFavoritesOnly && "fill-amber-500")} />
+            Favorites Only
+          </button>
+        </FilterBar>
       </div>
 
       {/* Contact Cards */}
       <div className="p-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-        {filteredContacts.map(contact => (
+        {filtered.map(contact => (
           <ContactCard key={contact.id} contact={contact} />
         ))}
-        {filteredContacts.length === 0 && (
+        {filtered.length === 0 && (
           <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
             No contacts found
           </div>

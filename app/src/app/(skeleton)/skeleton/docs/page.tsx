@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, FileText, BookOpen, ChevronRight, Layers } from 'lucide-react'
+import { FileText, BookOpen, ChevronRight, Layers } from 'lucide-react'
+import { FilterBar } from '@/components/skeleton/filter-bar'
 
 interface DocFile {
   slug: string
@@ -88,29 +89,20 @@ export default function DocsIndex() {
       </div>
 
       {/* Search + Filter */}
-      <div className="flex gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search docs by name or keyword..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-        <div className="flex border rounded-md overflow-hidden">
-          {(['all', 'modules', 'architecture'] as const).map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-2 text-sm capitalize ${activeCategory === cat ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'}`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
+      <FilterBar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search docs by name or keyword..."
+        tabs={[
+          { key: 'all', label: 'All', count: docs.length },
+          { key: 'modules', label: 'Modules', count: docs.filter(d => d.category === 'modules').length },
+          { key: 'architecture', label: 'Architecture', count: docs.filter(d => d.category === 'architecture').length },
+        ]}
+        activeTab={activeCategory}
+        onTabChange={(tab) => setActiveCategory(tab as 'all' | 'modules' | 'architecture')}
+        resultCount={filtered.length}
+        totalCount={docs.length}
+      />
 
       {/* Architecture Docs */}
       {architecture.length > 0 && (

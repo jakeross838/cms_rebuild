@@ -5,10 +5,7 @@ import {
   ChevronDown,
   ChevronRight,
   Plus,
-  Search,
-  Filter,
   Download,
-  User,
   MapPin,
   Camera,
   CheckCircle2,
@@ -19,6 +16,8 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type PunchItemStatus = 'open' | 'in_progress' | 'complete' | 'verified'
 type Priority = 'high' | 'medium' | 'low'
@@ -231,8 +230,8 @@ function StatCard({
 }
 
 export function PunchListPreview() {
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [filterRoom, setFilterRoom] = useState<string | 'all'>('all')
-  const [filterStatus, setFilterStatus] = useState<PunchItemStatus | 'all'>('all')
   const [filterAssignee, setFilterAssignee] = useState<string | 'all'>('all')
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set(['Master Bedroom', 'Kitchen', 'Living Room']))
 
@@ -241,12 +240,17 @@ export function PunchListPreview() {
   const assignees = [...new Set(mockPunchItems.map(item => item.assignedTo))]
 
   // Filter items
-  const filteredItems = mockPunchItems.filter(item => {
-    if (filterRoom !== 'all' && item.room !== filterRoom) return false
-    if (filterStatus !== 'all' && item.status !== filterStatus) return false
-    if (filterAssignee !== 'all' && item.assignedTo !== filterAssignee) return false
-    return true
-  })
+  const filteredItems = sortItems(
+    mockPunchItems.filter(item => {
+      if (!matchesSearch(item, search, ['description', 'room', 'assignedTo'])) return false
+      if (activeTab !== 'all' && item.status !== activeTab) return false
+      if (filterRoom !== 'all' && item.room !== filterRoom) return false
+      if (filterAssignee !== 'all' && item.assignedTo !== filterAssignee) return false
+      return true
+    }),
+    activeSort as keyof PunchItem | '',
+    sortDirection,
+  )
 
   // Group items by room
   const itemsByRoom = filteredItems.reduce((acc, item) => {
@@ -297,16 +301,6 @@ export function PunchListPreview() {
             <div className="text-sm text-gray-500 mt-0.5">
               {totalItems} total items | {openItems} open | {inProgressItems} in progress
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Item
-            </button>
           </div>
         </div>
       </div>
@@ -361,68 +355,51 @@ export function PunchListPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {/* Room Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Room:</span>
-            <select
-              value={filterRoom}
-              onChange={(e) => setFilterRoom(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Rooms</option>
-              {rooms.map(room => (
-                <option key={room} value={room}>{room}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Status:</span>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as PunchItemStatus | 'all')}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Statuses</option>
-              {Object.entries(statusConfig).map(([key, config]) => (
-                <option key={key} value={key}>{config.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Assignee Filter */}
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Assignee:</span>
-            <select
-              value={filterAssignee}
-              onChange={(e) => setFilterAssignee(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Assignees</option>
-              {assignees.map(assignee => (
-                <option key={assignee} value={assignee}>{assignee}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search items..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            More Filters
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search items..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockPunchItems.length },
+            { key: 'open', label: 'Open', count: mockPunchItems.filter(i => i.status === 'open').length },
+            { key: 'in_progress', label: 'In Progress', count: mockPunchItems.filter(i => i.status === 'in_progress').length },
+            { key: 'complete', label: 'Complete', count: mockPunchItems.filter(i => i.status === 'complete').length },
+            { key: 'verified', label: 'Verified', count: mockPunchItems.filter(i => i.status === 'verified').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Rooms',
+              value: filterRoom,
+              options: rooms.map(room => ({ value: room, label: room })),
+              onChange: setFilterRoom,
+            },
+            {
+              label: 'All Assignees',
+              value: filterAssignee,
+              options: assignees.map(a => ({ value: a, label: a })),
+              onChange: setFilterAssignee,
+            },
+          ]}
+          sortOptions={[
+            { value: 'description', label: 'Description' },
+            { value: 'room', label: 'Room' },
+            { value: 'priority', label: 'Priority' },
+            { value: 'assignedTo', label: 'Assignee' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'Add Item', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filteredItems.length}
+          totalCount={mockPunchItems.length}
+        />
       </div>
 
       {/* Punch Items by Room */}

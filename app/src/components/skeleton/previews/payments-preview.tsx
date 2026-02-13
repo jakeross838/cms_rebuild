@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   CreditCard,
   DollarSign,
@@ -8,16 +7,15 @@ import {
   CheckCircle2,
   AlertCircle,
   Send,
-  Search,
-  Filter,
   Plus,
   MoreHorizontal,
   Link2,
-  Building2,
   Sparkles,
   RefreshCw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Payment {
   id: string
@@ -175,29 +173,27 @@ function PaymentCard({ payment }: { payment: Payment }) {
 }
 
 export function PaymentsPreview() {
-  const [statusFilter, setStatusFilter] = useState('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const thisMonth = mockPayments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0)
   const pending = mockPayments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0)
 
-  const filteredPayments = statusFilter === 'all'
-    ? mockPayments
-    : mockPayments.filter(p => p.status === statusFilter)
+  const filteredPayments = sortItems(
+    mockPayments.filter(p => {
+      if (!matchesSearch(p, search, ['job'])) return false
+      if (activeTab !== 'all' && p.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Payment | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Payments</h3>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Payment Link
-            </button>
-          </div>
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold text-gray-900">Payments</h3>
         </div>
       </div>
 
@@ -221,22 +217,33 @@ export function PaymentsPreview() {
         </div>
       </div>
 
-      {/* Status Filter */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2">
-        {['all', 'pending', 'processing', 'completed'].map(status => (
-          <button
-            key={status}
-            onClick={() => setStatusFilter(status)}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors capitalize",
-              statusFilter === status
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            {status === 'all' ? 'All' : status}
-          </button>
-        ))}
+      {/* Filters */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search payments..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockPayments.length },
+            { key: 'pending', label: 'Pending', count: mockPayments.filter(p => p.status === 'pending').length },
+            { key: 'processing', label: 'Processing', count: mockPayments.filter(p => p.status === 'processing').length },
+            { key: 'completed', label: 'Completed', count: mockPayments.filter(p => p.status === 'completed').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'job', label: 'Job' },
+            { value: 'amount', label: 'Amount' },
+            { value: 'drawNumber', label: 'Draw #' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'New Payment Link', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredPayments.length}
+          totalCount={mockPayments.length}
+        />
       </div>
 
       {/* Payments Grid */}

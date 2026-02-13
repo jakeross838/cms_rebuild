@@ -2,10 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Filter,
-  Grid3X3,
-  List,
   Plus,
   Sparkles,
   DollarSign,
@@ -17,13 +13,14 @@ import {
   Package,
   TrendingUp,
   TrendingDown,
-  AlertTriangle,
   Star,
   Truck,
   Building2,
   Tag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface SelectionItem {
   id: string
@@ -362,17 +359,22 @@ function CategorySidebar({
 }
 
 export function SelectionsCatalogPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedCategory, setSelectedCategory] = useState<string>('Finishes')
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('Porch Ceiling')
   const [selectedTier, setSelectedTier] = useState<string>('All')
+  const { search, setSearch, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const filteredSelections = mockSelections.filter(selection => {
-    const tierMatch = selectedTier === 'All' || selection.tier === selectedTier
-    const categoryMatch = !selectedCategory || selection.category === selectedCategory
-    const subcategoryMatch = !selectedSubcategory || selection.subcategory === selectedSubcategory
-    return tierMatch && categoryMatch && subcategoryMatch
-  })
+  const filteredSelections = sortItems(
+    mockSelections.filter(selection => {
+      if (!matchesSearch(selection, search, ['name', 'manufacturer', 'model', 'vendor'])) return false
+      const tierMatch = selectedTier === 'All' || selection.tier === selectedTier
+      const categoryMatch = !selectedCategory || selection.category === selectedCategory
+      const subcategoryMatch = !selectedSubcategory || selection.subcategory === selectedSubcategory
+      return tierMatch && categoryMatch && subcategoryMatch
+    }),
+    activeSort as keyof SelectionItem | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalSelections = mockSelections.length
@@ -384,53 +386,44 @@ export function SelectionsCatalogPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Selections Catalog</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                {totalSelections} selections
-              </span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              Master library of products, materials, and finishes
-            </div>
+        <div className="mb-3">
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-gray-900">Selections Catalog</h3>
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              {totalSelections} selections
+            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search selections..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Selection
-            </button>
+          <div className="text-sm text-gray-500 mt-0.5">
+            Master library of products, materials, and finishes
           </div>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search selections..."
+          tabs={tiers.map(tier => ({
+            key: tier === 'All' ? 'all' : tier,
+            label: tier,
+            count: tier === 'All' ? mockSelections.length : mockSelections.filter(s => s.tier === tier).length,
+          }))}
+          activeTab={selectedTier === 'All' ? 'all' : selectedTier}
+          onTabChange={(tab) => setSelectedTier(tab === 'all' ? 'All' : tab)}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'materialCost', label: 'Material Cost' },
+            { value: 'leadTimeDays', label: 'Lead Time' },
+            { value: 'manufacturer', label: 'Manufacturer' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'Add Selection', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredSelections.length}
+          totalCount={mockSelections.length}
+        />
       </div>
 
       {/* Stats Cards */}
@@ -481,30 +474,6 @@ export function SelectionsCatalogPreview() {
               Vendors
             </div>
             <div className="text-xl font-bold text-gray-900 mt-1">12</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tier Filter */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-gray-400" />
-          <span className="text-sm text-gray-500">Tier:</span>
-          <div className="flex items-center gap-1">
-            {tiers.map(tier => (
-              <button
-                key={tier}
-                onClick={() => setSelectedTier(tier)}
-                className={cn(
-                  "px-2.5 py-1 text-sm rounded-lg transition-colors",
-                  selectedTier === tier
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                {tier}
-              </button>
-            ))}
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   FileText,
   Download,
@@ -21,6 +20,8 @@ import {
   History,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type ReportType = 'wip' | 'job_cost_summary' | 'job_cost_detail' | 'ap_aging' | 'ar_aging' | 'income_statement' | 'cash_flow'
 
@@ -291,7 +292,24 @@ function RecentReportRow({ report }: { report: RecentReport }) {
 }
 
 export function ReportsPreview() {
-  const [activeCategory, setActiveCategory] = useState<'standard' | 'scheduled' | 'recent'>('standard')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'standard' })
+
+  const filteredStandardReports = sortItems(
+    standardReports.filter(report => {
+      if (!matchesSearch(report, search, ['name', 'description'])) return false
+      return true
+    }),
+    activeSort as keyof Report | '',
+    sortDirection,
+  )
+
+  const filteredScheduledReports = scheduledReports.filter(report =>
+    matchesSearch(report, search, ['reportName', 'frequency']),
+  )
+
+  const filteredRecentReports = recentReports.filter(report =>
+    matchesSearch(report, search, ['reportName', 'generatedBy']),
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -324,58 +342,47 @@ export function ReportsPreview() {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+      {/* Navigation Tabs + Search */}
       <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setActiveCategory('standard')}
-            className={cn(
-              "px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-              activeCategory === 'standard'
-                ? "bg-blue-100 text-blue-700"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            Standard Reports
-          </button>
-          <button
-            onClick={() => setActiveCategory('scheduled')}
-            className={cn(
-              "px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2",
-              activeCategory === 'scheduled'
-                ? "bg-blue-100 text-blue-700"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            <Calendar className="h-4 w-4" />
-            Scheduled ({scheduledReports.length})
-          </button>
-          <button
-            onClick={() => setActiveCategory('recent')}
-            className={cn(
-              "px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2",
-              activeCategory === 'recent'
-                ? "bg-blue-100 text-blue-700"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            <History className="h-4 w-4" />
-            Recent ({recentReports.length})
-          </button>
-        </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search reports..."
+          tabs={[
+            { key: 'standard', label: 'Standard Reports', count: standardReports.length },
+            { key: 'scheduled', label: 'Scheduled', count: scheduledReports.length },
+            { key: 'recent', label: 'Recent', count: recentReports.length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={activeTab === 'standard' ? [
+            { value: 'name', label: 'Name' },
+            { value: 'lastRun', label: 'Last Run' },
+            { value: 'type', label: 'Type' },
+          ] : []}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+        />
       </div>
 
       {/* Content */}
       <div className="p-4">
-        {activeCategory === 'standard' && (
+        {activeTab === 'standard' && (
           <div className="grid grid-cols-2 gap-4">
-            {standardReports.map(report => (
+            {filteredStandardReports.map(report => (
               <ReportCard key={report.id} report={report} />
             ))}
+            {filteredStandardReports.length === 0 && (
+              <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                No reports match your search
+              </div>
+            )}
           </div>
         )}
 
-        {activeCategory === 'scheduled' && (
+        {activeTab === 'scheduled' && (
           <div className="bg-white rounded-lg border border-gray-200">
             <div className="px-4 py-3 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -386,14 +393,19 @@ export function ReportsPreview() {
               </div>
             </div>
             <div className="p-2">
-              {scheduledReports.map(report => (
+              {filteredScheduledReports.map(report => (
                 <ScheduledReportRow key={report.id} report={report} />
               ))}
+              {filteredScheduledReports.length === 0 && (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  No scheduled reports match your search
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {activeCategory === 'recent' && (
+        {activeTab === 'recent' && (
           <div className="bg-white rounded-lg border border-gray-200">
             <div className="px-4 py-3 border-b border-gray-200">
               <div className="flex items-center justify-between">
@@ -402,9 +414,14 @@ export function ReportsPreview() {
               </div>
             </div>
             <div className="p-2">
-              {recentReports.map(report => (
+              {filteredRecentReports.map(report => (
                 <RecentReportRow key={report.id} report={report} />
               ))}
+              {filteredRecentReports.length === 0 && (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  No recent reports match your search
+                </div>
+              )}
             </div>
           </div>
         )}

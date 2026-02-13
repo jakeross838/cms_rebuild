@@ -1,10 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import {
-  Search,
   Download,
-  ChevronDown,
   Clock,
   AlertTriangle,
   CheckCircle,
@@ -22,6 +19,8 @@ import {
   TrendingDown,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type AgingBucket = 'current' | '1-30' | '31-60' | '61-90' | '90+'
 
@@ -315,12 +314,17 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
 }
 
 export function ReceivablesPreview() {
-  const [agingFilter, setAgingFilter] = useState<AgingBucket | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
-  const filteredReceivables = mockReceivables.filter(r => {
-    if (agingFilter === 'all') return true
-    return r.agingBucket === agingFilter
-  })
+  const filteredReceivables = sortItems(
+    mockReceivables.filter(r => {
+      if (!matchesSearch(r, search, ['invoiceNumber', 'clientName', 'jobName'])) return false
+      if (activeTab !== 'all' && r.agingBucket !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Receivable | '',
+    sortDirection,
+  )
 
   // Calculate aging buckets
   const agingSummary = {
@@ -457,49 +461,33 @@ export function ReceivablesPreview() {
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">Filter:</span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setAgingFilter('all')}
-                className={cn(
-                  "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                  agingFilter === 'all'
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                All
-              </button>
-              {Object.entries(agingConfig).map(([key, config]) => (
-                <button
-                  key={key}
-                  onClick={() => setAgingFilter(key as AgingBucket)}
-                  className={cn(
-                    "px-2.5 py-1 text-xs rounded-lg transition-colors",
-                    agingFilter === key
-                      ? cn(config.bgColor, config.color, "font-medium")
-                      : "text-gray-600 hover:bg-gray-100"
-                  )}
-                >
-                  {config.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search receivables..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-        </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search receivables..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockReceivables.length },
+            { key: 'current', label: 'Current', count: mockReceivables.filter(r => r.agingBucket === 'current').length },
+            { key: '1-30', label: '1-30 Days', count: mockReceivables.filter(r => r.agingBucket === '1-30').length },
+            { key: '31-60', label: '31-60 Days', count: mockReceivables.filter(r => r.agingBucket === '31-60').length },
+            { key: '61-90', label: '61-90 Days', count: mockReceivables.filter(r => r.agingBucket === '61-90').length },
+            { key: '90+', label: '90+ Days', count: mockReceivables.filter(r => r.agingBucket === '90+').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'clientName', label: 'Client' },
+            { value: 'amount', label: 'Amount' },
+            { value: 'daysOutstanding', label: 'Days Outstanding' },
+            { value: 'dueDate', label: 'Due Date' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredReceivables.length}
+          totalCount={mockReceivables.length}
+        />
       </div>
 
       {/* Receivable List */}

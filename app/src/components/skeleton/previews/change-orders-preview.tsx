@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import {
   Plus,
-  Search,
-  Filter,
   Download,
   MoreHorizontal,
   FileText,
@@ -17,11 +15,12 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  ChevronDown,
   DollarSign,
   ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface ChangeOrder {
   id: string
@@ -126,7 +125,7 @@ const mockChangeOrders: ChangeOrder[] = [
   },
 ]
 
-const statusConfig = {
+const statusConfigMap = {
   draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
   pending_approval: { label: 'Pending Approval', color: 'bg-amber-100 text-amber-700', icon: Clock },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle },
@@ -154,7 +153,7 @@ function formatDate(dateStr: string): string {
 }
 
 function ChangeOrderCard({ co }: { co: ChangeOrder }) {
-  const statusInfo = statusConfig[co.status]
+  const statusInfo = statusConfigMap[co.status]
   const typeInfo = typeConfig[co.type]
   const StatusIcon = statusInfo.icon
 
@@ -221,14 +220,19 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
 }
 
 export function ChangeOrdersPreview() {
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [typeFilter, setTypeFilter] = useState<string>('all')
 
-  const filteredOrders = mockChangeOrders.filter(co => {
-    if (statusFilter !== 'all' && co.status !== statusFilter) return false
-    if (typeFilter !== 'all' && co.type !== typeFilter) return false
-    return true
-  })
+  const filtered = sortItems(
+    mockChangeOrders.filter(co => {
+      if (!matchesSearch(co, search, ['coNumber', 'description', 'requestedBy', 'costCode'])) return false
+      if (activeTab !== 'all' && co.status !== activeTab) return false
+      if (typeFilter !== 'all' && co.type !== typeFilter) return false
+      return true
+    }),
+    activeSort as keyof ChangeOrder | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const totalCOs = mockChangeOrders.length
@@ -253,16 +257,6 @@ export function ChangeOrdersPreview() {
             <div className="text-sm text-gray-500 mt-0.5">
               Contract: $2.45M | {approvedCOs.length} approved changes
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New CO
-            </button>
           </div>
         </div>
       </div>
@@ -326,60 +320,59 @@ export function ChangeOrdersPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Status:</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="draft">Draft</option>
-              <option value="pending_approval">Pending Approval</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Type:</span>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Types</option>
-              <option value="owner_requested">Owner Requested</option>
-              <option value="field_condition">Field Condition</option>
-              <option value="design_change">Design Change</option>
-              <option value="code_compliance">Code Compliance</option>
-              <option value="allowance_adjustment">Allowance Adjustment</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search COs..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            More Filters
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search COs..."
+          tabs={[
+            { key: 'all', label: 'All Status', count: mockChangeOrders.length },
+            { key: 'draft', label: 'Draft', count: mockChangeOrders.filter(co => co.status === 'draft').length },
+            { key: 'pending_approval', label: 'Pending Approval', count: mockChangeOrders.filter(co => co.status === 'pending_approval').length },
+            { key: 'approved', label: 'Approved', count: mockChangeOrders.filter(co => co.status === 'approved').length },
+            { key: 'rejected', label: 'Rejected', count: mockChangeOrders.filter(co => co.status === 'rejected').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Types',
+              value: typeFilter,
+              options: [
+                { value: 'owner_requested', label: 'Owner Requested' },
+                { value: 'field_condition', label: 'Field Condition' },
+                { value: 'design_change', label: 'Design Change' },
+                { value: 'code_compliance', label: 'Code Compliance' },
+                { value: 'allowance_adjustment', label: 'Allowance Adjustment' },
+              ],
+              onChange: setTypeFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'amount', label: 'Amount' },
+            { value: 'date', label: 'Date' },
+            { value: 'scheduleImpact', label: 'Schedule Impact' },
+            { value: 'coNumber', label: 'CO Number' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'New CO', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filtered.length}
+          totalCount={mockChangeOrders.length}
+        />
       </div>
 
       {/* Change Orders Grid */}
       <div className="p-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-        {filteredOrders.map(co => (
+        {filtered.map(co => (
           <ChangeOrderCard key={co.id} co={co} />
         ))}
-        {filteredOrders.length === 0 && (
+        {filtered.length === 0 && (
           <div className="col-span-2 text-center py-8 text-gray-400">
             No change orders match the selected filters
           </div>

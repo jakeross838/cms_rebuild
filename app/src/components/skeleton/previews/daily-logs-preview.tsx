@@ -5,8 +5,6 @@ import {
   Plus,
   Mic,
   Calendar,
-  Filter,
-  Search,
   Sun,
   Cloud,
   CloudRain,
@@ -21,6 +19,8 @@ import {
   Thermometer,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface DailyLog {
   id: string
@@ -182,8 +182,18 @@ function DailyLogCard({ log }: { log: DailyLog }) {
 }
 
 export function DailyLogsPreview() {
-  const [dateRange, setDateRange] = useState<'week' | 'month' | 'all'>('week')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'week' })
   const [isRecording, setIsRecording] = useState(false)
+
+  const filteredLogs = sortItems(
+    mockDailyLogs.filter(log => {
+      if (!matchesSearch(log, search, ['workCompleted', 'notes', 'dayOfWeek', 'date'])) return false
+      // Date range tabs are cosmetic in skeleton mode — all mock data is "this week"
+      return true
+    }),
+    activeSort as keyof DailyLog | '',
+    sortDirection,
+  )
 
   const totalHours = mockDailyLogs.reduce((sum, log) => sum + log.hoursWorked, 0)
   const totalPhotos = mockDailyLogs.reduce((sum, log) => sum + log.photosCount, 0)
@@ -213,16 +223,6 @@ export function DailyLogsPreview() {
                 {totalPhotos} photos
               </span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Calendar className="h-4 w-4" />
-              Date Range
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Entry
-            </button>
           </div>
         </div>
       </div>
@@ -272,63 +272,48 @@ export function DailyLogsPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setDateRange('week')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              dateRange === 'week'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            This Week
-          </button>
-          <button
-            onClick={() => setDateRange('month')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              dateRange === 'month'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            This Month
-          </button>
-          <button
-            onClick={() => setDateRange('all')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              dateRange === 'all'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            All Logs
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search logs..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            Filter
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search logs..."
+          tabs={[
+            { key: 'week', label: 'This Week', count: mockDailyLogs.length },
+            { key: 'month', label: 'This Month' },
+            { key: 'all', label: 'All Logs' },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'date', label: 'Date' },
+            { value: 'crewCount', label: 'Crew Size' },
+            { value: 'hoursWorked', label: 'Hours Worked' },
+            { value: 'photosCount', label: 'Photos' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Calendar, label: 'Date Range', onClick: () => {} },
+            { icon: Plus, label: 'New Entry', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filteredLogs.length}
+          totalCount={mockDailyLogs.length}
+        />
       </div>
 
       {/* Timeline / Log List */}
       <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
-        {mockDailyLogs.map(log => (
+        {filteredLogs.map(log => (
           <DailyLogCard key={log.id} log={log} />
         ))}
+        {filteredLogs.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+            <p>No daily logs found matching your criteria</p>
+          </div>
+        )}
       </div>
 
       {/* AI Insights Bar */}

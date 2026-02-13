@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import {
-  Search,
   Plus,
   Sparkles,
   ChevronRight,
@@ -20,6 +19,9 @@ import {
   Building2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
+import React from 'react'
 
 interface CostCode {
   id: string
@@ -234,7 +236,7 @@ function CostCodeRow({
 
 export function CostCodesPreview() {
   const [expandedCodes, setExpandedCodes] = useState<Set<string>>(new Set(['1', '2', '5']))
-  const [searchTerm, setSearchTerm] = useState('')
+  const { search, setSearch, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({})
 
   const toggleCode = (id: string) => {
     const newExpanded = new Set(expandedCodes)
@@ -256,64 +258,41 @@ export function CostCodesPreview() {
   const totalUsage = mockCostCodes.reduce((sum, c) => sum + c.usageCount, 0)
   const divisions = mockCostCodes.length
 
-  const renderCodes = (codes: CostCode[], level: number = 0) => {
-    return codes.map(code => {
-      const isExpanded = expandedCodes.has(code.id)
-      return (
-        <React.Fragment key={code.id}>
-          <CostCodeRow
-            code={code}
-            level={level}
-            expanded={isExpanded}
-            onToggle={() => toggleCode(code.id)}
-          />
-          {isExpanded && code.children && renderCodes(code.children, level + 1)}
-        </React.Fragment>
-      )
-    })
-  }
-
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Cost Codes</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                CSI MasterFormat
-              </span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              Hierarchical cost code structure with QuickBooks mapping
-            </div>
+        <div className="mb-3">
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-gray-900">Cost Codes</h3>
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              CSI MasterFormat
+            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search codes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Upload className="h-4 w-4" />
-              Import
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Code
-            </button>
+          <div className="text-sm text-gray-500 mt-0.5">
+            Hierarchical cost code structure with QuickBooks mapping
           </div>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search codes..."
+          sortOptions={[
+            { value: 'code', label: 'Code' },
+            { value: 'name', label: 'Name' },
+            { value: 'usageCount', label: 'Usage' },
+            { value: 'defaultMarkup', label: 'Markup' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Upload, label: 'Import', onClick: () => {} },
+            { icon: Plus, label: 'Add Code', onClick: () => {}, variant: 'primary' },
+          ]}
+        />
       </div>
 
       {/* Stats Cards */}
@@ -454,6 +433,3 @@ export function CostCodesPreview() {
     </div>
   )
 }
-
-// Need to import React for Fragment
-import React from 'react'

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   FileText,
   Send,
@@ -10,16 +9,15 @@ import {
   Sparkles,
   MoreHorizontal,
   Plus,
-  Search,
-  Filter,
   User,
-  Calendar,
   TrendingDown,
   Building2,
   AlertCircle,
   Award,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface BidRequest {
   id: string
@@ -224,12 +222,17 @@ function BidCard({ bid }: { bid: BidRequest }) {
 }
 
 export function BidsPreview() {
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const statuses = ['all', 'draft', 'sent', 'closed', 'awarded']
-  const filteredBids = statusFilter === 'all'
-    ? mockBids
-    : mockBids.filter(b => b.status === statusFilter)
+  const filteredBids = sortItems(
+    mockBids.filter(bid => {
+      if (!matchesSearch(bid, search, ['title', 'jobName', 'costCode'])) return false
+      if (activeTab !== 'all' && bid.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof BidRequest | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const openBids = mockBids.filter(b => b.status === 'sent' || b.status === 'closed').length
@@ -244,30 +247,39 @@ export function BidsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Bid Requests</h3>
-            <span className="text-sm text-gray-500">{mockBids.length} bid packages</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search bids..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Bid
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Bid Requests</h3>
+          <span className="text-sm text-gray-500">{mockBids.length} bid packages</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search bids..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockBids.length },
+            { key: 'draft', label: 'Draft', count: mockBids.filter(b => b.status === 'draft').length },
+            { key: 'sent', label: 'Awaiting', count: mockBids.filter(b => b.status === 'sent').length },
+            { key: 'closed', label: 'Ready', count: mockBids.filter(b => b.status === 'closed').length },
+            { key: 'awarded', label: 'Awarded', count: mockBids.filter(b => b.status === 'awarded').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'title', label: 'Title' },
+            { value: 'budgetAmount', label: 'Budget' },
+            { value: 'dueDate', label: 'Due Date' },
+            { value: 'bidsReceived', label: 'Bids Received' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'New Bid', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredBids.length}
+          totalCount={mockBids.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -300,36 +312,23 @@ export function BidsPreview() {
         </div>
       </div>
 
-      {/* Status Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2">
-        {statuses.map(status => (
-          <button
-            key={status}
-            onClick={() => setStatusFilter(status)}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors capitalize",
-              statusFilter === status
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            {status === 'all' ? 'All' : statusConfig[status as keyof typeof statusConfig].label}
-            {status !== 'all' && (
-              <span className="ml-1.5 text-xs text-gray-400">
-                ({mockBids.filter(b => b.status === status).length})
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
       {/* Bid Cards */}
-      <div className="p-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-        {filteredBids.map(bid => (
-          <BidCard key={bid.id} bid={bid} />
-        ))}
+      <div className="p-4">
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+            {filteredBids.map(bid => (
+              <BidCard key={bid.id} bid={bid} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {filteredBids.map(bid => (
+              <BidCard key={bid.id} bid={bid} />
+            ))}
+          </div>
+        )}
         {filteredBids.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
             No bid requests found
           </div>
         )}

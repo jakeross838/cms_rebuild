@@ -1,22 +1,16 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Bell,
   AlertTriangle,
-  DollarSign,
-  Calendar,
-  FileText,
-  CheckCircle2,
   Clock,
   Sparkles,
   Settings,
-  Search,
-  Filter,
-  MoreHorizontal,
   ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Notification {
   id: string
@@ -169,42 +163,71 @@ function NotificationCard({ notification }: { notification: Notification }) {
 }
 
 export function NotificationsPreview() {
-  const [priorityFilter, setPriorityFilter] = useState('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const unreadCount = mockNotifications.filter(n => !n.isRead).length
   const urgentCount = mockNotifications.filter(n => n.priority === 'urgent' || n.priority === 'high').length
 
-  const filteredNotifications = priorityFilter === 'all'
-    ? mockNotifications
-    : mockNotifications.filter(n => n.priority === priorityFilter)
+  const filteredNotifications = sortItems(
+    mockNotifications.filter(n => {
+      if (!matchesSearch(n, search, ['title', 'message', 'source', 'job'])) return false
+      if (activeTab !== 'all' && n.priority !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Notification | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Notifications</h3>
-            {unreadCount > 0 && (
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
-                {unreadCount} unread
-              </span>
-            )}
-            {urgentCount > 0 && (
-              <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
-                {urgentCount} urgent
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="text-sm text-blue-600 hover:text-blue-700">
-              Mark All Read
-            </button>
-            <button className="p-1.5 hover:bg-gray-100 rounded">
-              <Settings className="h-4 w-4 text-gray-400" />
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Notifications</h3>
+          {unreadCount > 0 && (
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+              {unreadCount} unread
+            </span>
+          )}
+          {urgentCount > 0 && (
+            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+              {urgentCount} urgent
+            </span>
+          )}
+          <div className="flex-1" />
+          <button className="text-sm text-blue-600 hover:text-blue-700">
+            Mark All Read
+          </button>
+          <button className="p-1.5 hover:bg-gray-100 rounded">
+            <Settings className="h-4 w-4 text-gray-400" />
+          </button>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search notifications..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockNotifications.length },
+            { key: 'urgent', label: 'Urgent', count: mockNotifications.filter(n => n.priority === 'urgent').length },
+            { key: 'high', label: 'High', count: mockNotifications.filter(n => n.priority === 'high').length },
+            { key: 'normal', label: 'Normal', count: mockNotifications.filter(n => n.priority === 'normal').length },
+            { key: 'low', label: 'Low', count: mockNotifications.filter(n => n.priority === 'low').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'time', label: 'Time' },
+            { value: 'priority', label: 'Priority' },
+            { value: 'source', label: 'Source' },
+            { value: 'title', label: 'Title' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredNotifications.length}
+          totalCount={mockNotifications.length}
+        />
       </div>
 
       {/* Stats */}
@@ -216,24 +239,6 @@ export function NotificationsPreview() {
           <span className="text-gray-300">|</span>
           <span className="text-gray-500">This Week: {mockNotifications.length}</span>
         </div>
-      </div>
-
-      {/* Priority Filter */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2">
-        {['all', 'urgent', 'high', 'normal', 'low'].map(priority => (
-          <button
-            key={priority}
-            onClick={() => setPriorityFilter(priority)}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors capitalize",
-              priorityFilter === priority
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            {priority === 'all' ? 'All' : priority}
-          </button>
-        ))}
       </div>
 
       {/* Notifications List */}

@@ -1,27 +1,22 @@
 'use client'
 
-import { useState } from 'react'
 import {
-  Search,
-  Filter,
-  Grid3X3,
-  List,
   Plus,
   Sparkles,
   FileText,
-  Copy,
   Eye,
   Edit,
   MoreHorizontal,
   Star,
   Clock,
-  AlertTriangle,
   TrendingUp,
   ChevronRight,
   Download,
   Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Template {
   id: string
@@ -193,26 +188,12 @@ const categories: ('Contracts' | 'Proposals' | 'Purchase Orders' | 'Change Order
   'Letters',
 ]
 
-const categoryIcons: Record<string, typeof FileText> = {
-  Contracts: FileText,
-  Proposals: FileText,
-  'Purchase Orders': FileText,
-  'Change Orders': FileText,
-  Letters: FileText,
-}
-
 const categoryColors: Record<string, string> = {
   Contracts: 'bg-purple-100 text-purple-700',
   Proposals: 'bg-blue-100 text-blue-700',
   'Purchase Orders': 'bg-green-100 text-green-700',
   'Change Orders': 'bg-orange-100 text-orange-700',
   Letters: 'bg-gray-100 text-gray-700',
-}
-
-function formatCurrency(value: number): string {
-  if (value >= 1000000) return '$' + (value / 1000000).toFixed(2) + 'M'
-  if (value >= 1000) return '$' + (value / 1000).toFixed(1) + 'K'
-  return '$' + value.toFixed(0)
 }
 
 function TemplateCard({ template }: { template: Template }) {
@@ -252,7 +233,7 @@ function TemplateCard({ template }: { template: Template }) {
           <span className="text-gray-600">{template.variables} vars</span>
         </div>
         <div className="flex items-center gap-1.5 text-gray-600">
-          <span className="h-4 w-4 text-gray-400">✎</span>
+          <span className="h-4 w-4 text-gray-400">&#x270E;</span>
           <span className="text-gray-600">{template.signatureFields} sig</span>
         </div>
       </div>
@@ -332,15 +313,17 @@ function TemplateRow({ template }: { template: Template }) {
 }
 
 export function TemplatesPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [selectedCategory, setSelectedCategory] = useState<string>('Contracts')
-  const [searchQuery, setSearchQuery] = useState('')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const filteredTemplates = mockTemplates.filter(template => {
-    if (selectedCategory !== 'All' && template.category !== selectedCategory) return false
-    if (searchQuery && !template.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
-    return true
-  })
+  const filteredTemplates = sortItems(
+    mockTemplates.filter(template => {
+      if (!matchesSearch(template, search, ['name', 'description', 'category'])) return false
+      if (activeTab !== 'all' && template.category !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Template | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalTemplates = mockTemplates.length
@@ -349,34 +332,47 @@ export function TemplatesPreview() {
   const totalUsage = mockTemplates.reduce((sum, t) => sum + t.usageCount, 0)
   const withAISuggestions = mockTemplates.filter(t => t.aiSuggestion).length
 
-  const categoryStats = categories.map(cat => ({
-    name: cat,
-    count: mockTemplates.filter(t => t.category === cat).length,
-  }))
-
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Document Templates</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                {totalTemplates} templates
-              </span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              Business forms with smart variables and branding
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New Template
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Document Templates</h3>
+          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+            {totalTemplates} templates
+          </span>
+          <span className="text-sm text-gray-500">Business forms with smart variables and branding</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search templates..."
+          tabs={[
+            { key: 'all', label: 'All', count: totalTemplates },
+            ...categories.map(cat => ({
+              key: cat,
+              label: cat,
+              count: mockTemplates.filter(t => t.category === cat).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'usageCount', label: 'Usage' },
+            { value: 'pages', label: 'Pages' },
+            { value: 'lastUpdated', label: 'Last Updated' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'New Template', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredTemplates.length}
+          totalCount={mockTemplates.length}
+        />
       </div>
 
       {/* Stats Cards */}
@@ -427,65 +423,6 @@ export function TemplatesPreview() {
             )}>
               {withAISuggestions}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Filter className="h-4 w-4 text-gray-400" />
-          <span className="text-sm text-gray-500">Category:</span>
-          <div className="flex items-center gap-1">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={cn(
-                  'px-2.5 py-1 text-sm rounded-lg transition-colors',
-                  selectedCategory === cat
-                    ? 'bg-blue-100 text-blue-700 font-medium'
-                    : 'text-gray-600 hover:bg-gray-100'
-                )}
-              >
-                {cat}
-                <span className="ml-1 text-xs text-gray-400">
-                  ({categoryStats.find(c => c.name === cat)?.count || 0})
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search templates..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={cn(
-                'p-1.5',
-                viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:bg-gray-50'
-              )}
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={cn(
-                'p-1.5',
-                viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:bg-gray-50'
-              )}
-            >
-              <List className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>

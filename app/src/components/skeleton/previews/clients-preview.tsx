@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   User,
   Building2,
@@ -9,8 +8,6 @@ import {
   DollarSign,
   FolderOpen,
   Sparkles,
-  Search,
-  Filter,
   Plus,
   MoreHorizontal,
   MessageSquare,
@@ -19,10 +16,10 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Grid3X3,
-  List,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Client {
   id: string
@@ -235,17 +232,17 @@ function ClientCard({ client }: { client: Client }) {
 }
 
 export function ClientsPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
-  const filteredClients = mockClients.filter(client => {
-    const matchesSearch = client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (client.company?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
-    const matchesStatus = statusFilter === 'all' || client.currentProjectStatus === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  const filteredClients = sortItems(
+    mockClients.filter(client => {
+      if (!matchesSearch(client, search, ['name', 'email', 'company'])) return false
+      if (activeTab !== 'all' && client.currentProjectStatus !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Client | '',
+    sortDirection,
+  )
 
   const totalClients = mockClients.length
   const activeProjects = mockClients.reduce((sum, c) => sum + c.activeProjects, 0)
@@ -255,63 +252,39 @@ export function ClientsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Clients</h3>
-            <span className="text-sm text-gray-500">{totalClients} clients | {activeProjects} active projects</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search clients..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="completed">Completed</option>
-              <option value="on-hold">On Hold</option>
-            </select>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Client
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Clients</h3>
+          <span className="text-sm text-gray-500">{totalClients} clients | {activeProjects} active projects</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search clients..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockClients.length },
+            { key: 'active', label: 'Active', count: mockClients.filter(c => c.currentProjectStatus === 'active').length },
+            { key: 'pending', label: 'Pending', count: mockClients.filter(c => c.currentProjectStatus === 'pending').length },
+            { key: 'completed', label: 'Completed', count: mockClients.filter(c => c.currentProjectStatus === 'completed').length },
+            { key: 'on-hold', label: 'On Hold', count: mockClients.filter(c => c.currentProjectStatus === 'on-hold').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'totalContractValue', label: 'Contract Value' },
+            { value: 'totalProjects', label: 'Projects' },
+            { value: 'clientSince', label: 'Client Since' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'Add Client', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredClients.length}
+          totalCount={mockClients.length}
+        />
       </div>
 
       {/* Quick Stats */}

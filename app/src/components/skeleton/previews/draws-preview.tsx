@@ -12,12 +12,13 @@ import {
   DollarSign,
   FileText,
   Sparkles,
-  AlertCircle,
   Calendar,
   TrendingUp,
   Percent,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Draw {
   id: string
@@ -244,6 +245,7 @@ function ProgressBar({ draws }: { draws: Draw[] }) {
 }
 
 export function DrawsPreview() {
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set(['4']))
 
   const toggleRow = (id: string) => {
@@ -270,6 +272,16 @@ export function DrawsPreview() {
   const amountPaid = paidDraws.reduce((sum, d) => sum + d.amount, 0)
   const amountRemaining = contractAmount - amountPaid
   const percentComplete = (amountPaid / contractAmount) * 100
+
+  const filteredDraws = sortItems(
+    mockDraws.filter(draw => {
+      if (!matchesSearch(draw, search, ['milestone', 'description'])) return false
+      if (activeTab !== 'all' && draw.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Draw | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -341,6 +353,36 @@ export function DrawsPreview() {
         </div>
       </div>
 
+      {/* FilterBar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search draws..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockDraws.length },
+            { key: 'Scheduled', label: 'Scheduled', count: mockDraws.filter(d => d.status === 'Scheduled').length },
+            { key: 'Submitted', label: 'Submitted', count: mockDraws.filter(d => d.status === 'Submitted').length },
+            { key: 'Approved', label: 'Approved', count: mockDraws.filter(d => d.status === 'Approved').length },
+            { key: 'Paid', label: 'Paid', count: mockDraws.filter(d => d.status === 'Paid').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'drawNumber', label: 'Draw #' },
+            { value: 'amount', label: 'Amount' },
+            { value: 'milestone', label: 'Milestone' },
+            { value: 'date', label: 'Date' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredDraws.length}
+          totalCount={mockDraws.length}
+        />
+      </div>
+
       {/* Progress Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="flex items-center gap-4 mb-3">
@@ -380,7 +422,7 @@ export function DrawsPreview() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
-            {mockDraws.map(draw => (
+            {filteredDraws.map(draw => (
               <DrawRow
                 key={draw.id}
                 draw={draw}

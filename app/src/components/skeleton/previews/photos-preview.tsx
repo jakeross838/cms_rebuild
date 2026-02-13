@@ -3,22 +3,20 @@
 import { useState } from 'react'
 import {
   Upload,
-  Filter,
   Calendar,
-  Grid3X3,
-  List,
   CheckSquare,
   Square,
   Sparkles,
-  Search,
-  ChevronDown,
-  Image,
   Tag,
   Home,
   Download,
   Trash2,
+  Image,
+  Plus,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Photo {
   id: string
@@ -44,9 +42,8 @@ const mockPhotos: Photo[] = [
   { id: '12', date: '2024-01-25', phase: 'Drywall', room: 'Master Bedroom', color: 'bg-purple-300' },
 ]
 
-const phases = ['All Phases', 'Foundation', 'Framing', 'Electrical', 'Plumbing', 'Drywall', 'Finish']
-const rooms = ['All Rooms', 'Exterior - Front', 'Exterior - Side', 'Exterior - Rear', 'Living Room', 'Master Bedroom', 'Kitchen', 'Bathroom']
-const dateRanges = ['All Dates', 'Today', 'This Week', 'This Month', 'Custom Range']
+const phases = ['Foundation', 'Framing', 'Electrical', 'Plumbing', 'Drywall', 'Finish']
+const rooms = ['Exterior - Front', 'Exterior - Side', 'Exterior - Rear', 'Living Room', 'Master Bedroom', 'Kitchen', 'Bathroom']
 
 const phaseColors: Record<string, string> = {
   'Foundation': 'bg-gray-100 text-gray-700',
@@ -126,12 +123,11 @@ function PhotoCard({
 }
 
 export function PhotosPreview() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [bulkSelectMode, setBulkSelectMode] = useState(false)
   const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set())
-  const [selectedPhase, setSelectedPhase] = useState('All Phases')
-  const [selectedRoom, setSelectedRoom] = useState('All Rooms')
-  const [selectedDate, setSelectedDate] = useState('All Dates')
+  const [selectedPhase, setSelectedPhase] = useState('all')
+  const [selectedRoom, setSelectedRoom] = useState('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
   const togglePhotoSelect = (photoId: string) => {
     setSelectedPhotos(prev => {
@@ -153,128 +149,90 @@ export function PhotosPreview() {
     setSelectedPhotos(new Set())
   }
 
-  const filteredPhotos = mockPhotos.filter(photo => {
-    if (selectedPhase !== 'All Phases' && photo.phase !== selectedPhase) return false
-    if (selectedRoom !== 'All Rooms' && photo.room !== selectedRoom) return false
-    return true
-  })
+  const filteredPhotos = sortItems(
+    mockPhotos.filter(photo => {
+      if (!matchesSearch(photo, search, ['phase', 'room'])) return false
+      if (selectedPhase !== 'all' && photo.phase !== selectedPhase) return false
+      if (selectedRoom !== 'all' && photo.room !== selectedRoom) return false
+      if (activeTab !== 'all' && photo.phase !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Photo | '',
+    sortDirection,
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Project Photos</h3>
-              <span className="text-sm text-gray-500">145 photos</span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              Smith Residence | Last upload: Jan 25, 2024
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Upload className="h-4 w-4" />
-              Upload Photos
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Project Photos</h3>
+          <span className="text-sm text-gray-500">145 photos | Last upload: Jan 25, 2024</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search photos..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockPhotos.length },
+            ...phases.map(phase => ({
+              key: phase,
+              label: phase,
+              count: mockPhotos.filter(p => p.phase === phase).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Phases',
+              value: selectedPhase,
+              options: phases.map(p => ({ value: p, label: p })),
+              onChange: setSelectedPhase,
+            },
+            {
+              label: 'All Rooms',
+              value: selectedRoom,
+              options: rooms.map(r => ({ value: r, label: r })),
+              onChange: setSelectedRoom,
+            },
+          ]}
+          sortOptions={[
+            { value: 'date', label: 'Date' },
+            { value: 'phase', label: 'Phase' },
+            { value: 'room', label: 'Room' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Upload, label: 'Upload Photos', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredPhotos.length}
+          totalCount={mockPhotos.length}
+        />
       </div>
 
-      {/* Filters Toolbar */}
+      {/* Bulk Select Toggle Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {/* Date Filter */}
-          <div className="relative">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Calendar className="h-4 w-4" />
-              {selectedDate}
-              <ChevronDown className="h-3 w-3" />
-            </button>
-          </div>
-
-          {/* Phase Filter */}
-          <div className="relative">
-            <select
-              value={selectedPhase}
-              onChange={(e) => setSelectedPhase(e.target.value)}
-              className="appearance-none flex items-center gap-1.5 px-3 py-1.5 pr-8 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              {phases.map(phase => (
-                <option key={phase} value={phase}>{phase}</option>
-              ))}
-            </select>
-            <Tag className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
-          </div>
-
-          {/* Room Filter */}
-          <div className="relative">
-            <select
-              value={selectedRoom}
-              onChange={(e) => setSelectedRoom(e.target.value)}
-              className="appearance-none flex items-center gap-1.5 px-3 py-1.5 pr-8 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              {rooms.map(room => (
-                <option key={room} value={room}>{room}</option>
-              ))}
-            </select>
-            <Home className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
-          </div>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search photos..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Bulk Select Toggle */}
-          <button
-            onClick={() => {
-              setBulkSelectMode(!bulkSelectMode)
-              if (bulkSelectMode) {
-                deselectAll()
-              }
-            }}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
-              bulkSelectMode
-                ? "bg-blue-100 text-blue-700 border border-blue-200"
-                : "text-gray-600 border border-gray-200 hover:bg-gray-50"
-            )}
-          >
-            <CheckSquare className="h-4 w-4" />
-            Bulk Select
-          </button>
-
-          {/* View Mode Toggle */}
-          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={cn(
-                "p-1.5",
-                viewMode === 'grid' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-              )}
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={cn(
-                "p-1.5",
-                viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-              )}
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={() => {
+            setBulkSelectMode(!bulkSelectMode)
+            if (bulkSelectMode) {
+              deselectAll()
+            }
+          }}
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
+            bulkSelectMode
+              ? "bg-blue-100 text-blue-700 border border-blue-200"
+              : "text-gray-600 border border-gray-200 hover:bg-gray-50"
+          )}
+        >
+          <CheckSquare className="h-4 w-4" />
+          Bulk Select
+        </button>
       </div>
 
       {/* Bulk Actions Bar (when in bulk select mode) */}

@@ -13,9 +13,10 @@ import {
   Clock,
   DollarSign,
   Package,
-  Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface LineItem {
   id: string
@@ -236,12 +237,18 @@ function LineItemCard({ item }: { item: LineItem }) {
 }
 
 export function EstimatesPreview() {
-  const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const categories = [...new Set(mockLineItems.map(item => item.category))]
-  const filteredItems = selectedCategory === 'all'
-    ? mockLineItems
-    : mockLineItems.filter(item => item.category === selectedCategory)
+  const filteredItems = sortItems(
+    mockLineItems.filter(item => {
+      if (!matchesSearch(item, search, ['name', 'category'])) return false
+      if (activeTab !== 'all' && item.category !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof LineItem | '',
+    sortDirection,
+  )
 
   const subtotal = mockLineItems.reduce((sum, item) => {
     const total = (item.selection.materialCost + item.selection.laborCost) * item.quantity
@@ -281,48 +288,34 @@ export function EstimatesPreview() {
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              selectedCategory === 'all'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            All
-          </button>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                selectedCategory === cat
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search items..."
-              className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50">
-            <Plus className="h-4 w-4" />
-            Add Line Item
-          </button>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search items..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockLineItems.length },
+            ...categories.map(cat => ({
+              key: cat,
+              label: cat,
+              count: mockLineItems.filter(item => item.category === cat).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'category', label: 'Category' },
+            { value: 'quantity', label: 'Quantity' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'Add Line Item', onClick: () => {} }]}
+          resultCount={filteredItems.length}
+          totalCount={mockLineItems.length}
+        />
       </div>
 
       {/* Line Items */}

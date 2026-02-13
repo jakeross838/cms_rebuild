@@ -1,16 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import {
-  Award,
   Plus,
-  Search,
-  Filter,
   AlertTriangle,
   CheckCircle2,
   Clock,
   XCircle,
-  FileText,
   Eye,
   Download,
   MoreHorizontal,
@@ -18,14 +13,14 @@ import {
   Building2,
   Users,
   User,
-  Calendar,
   MapPin,
   GraduationCap,
-  RefreshCw,
   ExternalLink,
   BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface License {
   id: string
@@ -427,8 +422,6 @@ function CourseCard({ course }: { course: TrainingCourse }) {
 }
 
 export function LicensesPreview() {
-  const [activeTab, setActiveTab] = useState<'company' | 'employees' | 'vendors' | 'action'>('action')
-
   const allLicenses = [...mockCompanyLicenses, ...mockEmployeeCertifications, ...mockVendorLicenses]
   const actionNeeded = allLicenses.filter(l =>
     l.status === 'expiring' ||
@@ -436,20 +429,59 @@ export function LicensesPreview() {
     (l.ceuRequired && l.ceuCompleted && l.ceuCompleted < l.ceuRequired)
   )
 
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'action' })
+
+  const filteredLicenses = sortItems(
+    (() => {
+      let licenses: License[]
+      if (activeTab === 'action') licenses = actionNeeded
+      else if (activeTab === 'company') licenses = mockCompanyLicenses
+      else if (activeTab === 'employees') licenses = mockEmployeeCertifications
+      else if (activeTab === 'vendors') licenses = mockVendorLicenses
+      else licenses = allLicenses
+
+      return licenses.filter(l => matchesSearch(l, search, ['entityName', 'licenseType', 'licenseNumber', 'issuingAuthority']))
+    })(),
+    activeSort as keyof License | '',
+    sortDirection,
+  )
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="font-semibold text-gray-900">Licenses & Certifications</h3>
             <p className="text-sm text-gray-500">Track contractor licenses and professional credentials</p>
           </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            <Plus className="h-4 w-4" />
-            Add License
-          </button>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search licenses..."
+          tabs={[
+            { key: 'action', label: 'Action Needed', count: actionNeeded.length },
+            { key: 'company', label: 'Company', count: mockCompanyLicenses.length },
+            { key: 'employees', label: 'Employees', count: mockEmployeeCertifications.length },
+            { key: 'vendors', label: 'Vendors', count: mockVendorLicenses.length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'entityName', label: 'Name' },
+            { value: 'licenseType', label: 'License Type' },
+            { value: 'daysUntilExpiry', label: 'Expiration' },
+            { value: 'issuingAuthority', label: 'Authority' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'Add License', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredLicenses.length}
+          totalCount={allLicenses.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -505,101 +537,32 @@ export function LicensesPreview() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveTab('action')}
-            className={cn(
-              "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-              activeTab === 'action' ? "bg-amber-100 text-amber-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            <AlertTriangle className="h-4 w-4" />
-            Action Needed
-            <span className="bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded text-xs">
-              {actionNeeded.length}
-            </span>
-          </button>
-          <button
-            onClick={() => setActiveTab('company')}
-            className={cn(
-              "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-              activeTab === 'company' ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            <Building2 className="h-4 w-4" />
-            Company
-          </button>
-          <button
-            onClick={() => setActiveTab('employees')}
-            className={cn(
-              "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-              activeTab === 'employees' ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            <User className="h-4 w-4" />
-            Employees
-          </button>
-          <button
-            onClick={() => setActiveTab('vendors')}
-            className={cn(
-              "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors",
-              activeTab === 'vendors' ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            <Users className="h-4 w-4" />
-            Vendors
-          </button>
-        </div>
-      </div>
-
       {/* Content */}
       <div className="p-4">
+        <div className="grid grid-cols-2 gap-4">
+          {filteredLicenses.map(license => (
+            <LicenseCard key={license.id} license={license} />
+          ))}
+        </div>
+
+        {filteredLicenses.length === 0 && (
+          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+            No licenses found matching your criteria
+          </div>
+        )}
+
+        {/* Recommended Training (only on action tab) */}
         {activeTab === 'action' && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {actionNeeded.map(license => (
-                <LicenseCard key={license.id} license={license} />
+          <div className="bg-white rounded-lg border border-gray-200 p-4 mt-4">
+            <div className="flex items-center gap-2 mb-3">
+              <GraduationCap className="h-5 w-5 text-blue-600" />
+              <h4 className="font-medium text-gray-900">Recommended Training</h4>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {recommendedCourses.map(course => (
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
-
-            {/* Recommended Training */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <GraduationCap className="h-5 w-5 text-blue-600" />
-                <h4 className="font-medium text-gray-900">Recommended Training</h4>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {recommendedCourses.map(course => (
-                  <CourseCard key={course.id} course={course} />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'company' && (
-          <div className="grid grid-cols-2 gap-4">
-            {mockCompanyLicenses.map(license => (
-              <LicenseCard key={license.id} license={license} />
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'employees' && (
-          <div className="grid grid-cols-2 gap-4">
-            {mockEmployeeCertifications.map(license => (
-              <LicenseCard key={license.id} license={license} />
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'vendors' && (
-          <div className="grid grid-cols-2 gap-4">
-            {mockVendorLicenses.map(license => (
-              <LicenseCard key={license.id} license={license} />
-            ))}
           </div>
         )}
       </div>

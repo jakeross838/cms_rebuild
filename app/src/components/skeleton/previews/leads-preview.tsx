@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   User,
   DollarSign,
@@ -8,12 +7,10 @@ import {
   AlertTriangle,
   MoreHorizontal,
   Plus,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
 
 const mockLeads = [
   {
@@ -165,64 +162,54 @@ function LeadCard({ lead }: { lead: Lead }) {
 }
 
 export function LeadsPipelinePreview() {
-  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
+  const { search, setSearch, activeTab, setActiveTab, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
+
+  const searchedLeads = mockLeads.filter(lead =>
+    matchesSearch(lead, search, ['name', 'contact', 'projectType', 'assignedTo'])
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Leads Pipeline</h3>
-            <span className="text-sm text-gray-500">5 leads | $3.54M pipeline</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search leads..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('kanban')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'kanban' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Add Lead
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Leads Pipeline</h3>
+          <span className="text-sm text-gray-500">5 leads | $3.54M pipeline</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search leads..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockLeads.length },
+            ...stages.map(s => ({
+              key: s.id,
+              label: s.label,
+              count: mockLeads.filter(l => l.stage === s.id).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[{ icon: Plus, label: 'Add Lead', onClick: () => {}, variant: 'primary' }]}
+          resultCount={searchedLeads.length}
+          totalCount={mockLeads.length}
+        />
       </div>
 
       {/* Kanban Board */}
       <div className="p-4 overflow-x-auto">
         <div className="flex gap-4 min-w-max">
           {stages.map((stage) => {
-            const stageLeads = mockLeads.filter(l => l.stage === stage.id)
+            const stageLeads = searchedLeads.filter(l => {
+              if (activeTab !== 'all' && l.stage !== activeTab) return false
+              return l.stage === stage.id
+            })
             const stageTotal = stageLeads.reduce((sum, l) => sum + l.estimatedValue, 0)
+
+            // If filtering by tab and this isn't the selected stage, skip rendering
+            if (activeTab !== 'all' && activeTab !== stage.id) return null
 
             return (
               <div key={stage.id} className="w-72 flex-shrink-0">

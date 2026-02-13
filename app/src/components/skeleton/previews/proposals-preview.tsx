@@ -1,15 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Plus,
   Send,
   Eye,
-  FileText,
   Sparkles,
   MoreHorizontal,
-  Search,
-  Filter,
   Clock,
   TrendingUp,
   CheckCircle,
@@ -21,6 +17,8 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Proposal {
   id: string
@@ -188,11 +186,17 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
 }
 
 export function ProposalsPreview() {
-  const [selectedStatus, setSelectedStatus] = useState<string | 'all'>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
-  const filteredProposals = selectedStatus === 'all'
-    ? mockProposals
-    : mockProposals.filter(p => p.status === selectedStatus)
+  const filteredProposals = sortItems(
+    mockProposals.filter(p => {
+      if (!matchesSearch(p, search, ['clientName', 'projectName'])) return false
+      if (activeTab !== 'all' && p.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Proposal | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const proposalsSentThisMonth = mockProposals.filter(
@@ -212,30 +216,38 @@ export function ProposalsPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Proposals</h3>
-            <span className="text-sm text-gray-500">{mockProposals.length} proposals | {formatCurrency(totalPipeline)} pipeline</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search proposals..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Create New
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Proposals</h3>
+          <span className="text-sm text-gray-500">{mockProposals.length} proposals | {formatCurrency(totalPipeline)} pipeline</span>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search proposals..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockProposals.length },
+            { key: 'draft', label: 'Draft', count: mockProposals.filter(p => p.status === 'draft').length },
+            { key: 'sent', label: 'Sent', count: mockProposals.filter(p => p.status === 'sent').length },
+            { key: 'viewed', label: 'Viewed', count: mockProposals.filter(p => p.status === 'viewed').length },
+            { key: 'accepted', label: 'Accepted', count: mockProposals.filter(p => p.status === 'accepted').length },
+            { key: 'declined', label: 'Declined', count: mockProposals.filter(p => p.status === 'declined').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'clientName', label: 'Client' },
+            { value: 'amount', label: 'Amount' },
+            { value: 'dateSent', label: 'Date Sent' },
+            { value: 'viewCount', label: 'Views' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[{ icon: Plus, label: 'Create New', onClick: () => {}, variant: 'primary' }]}
+          resultCount={filteredProposals.length}
+          totalCount={mockProposals.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -274,41 +286,6 @@ export function ProposalsPreview() {
             </div>
             <div className="text-xl font-bold text-blue-600 mt-1">{formatCurrency(totalPipeline)}</div>
           </div>
-        </div>
-      </div>
-
-      {/* Status Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setSelectedStatus('all')}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              selectedStatus === 'all'
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            All ({mockProposals.length})
-          </button>
-          {stages.map(stage => {
-            const count = mockProposals.filter(p => p.status === stage.id).length
-            return (
-              <button
-                key={stage.id}
-                onClick={() => setSelectedStatus(stage.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
-                  selectedStatus === stage.id
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                <div className={cn("h-2 w-2 rounded-full", stage.color)} />
-                {stage.label} ({count})
-              </button>
-            )
-          })}
         </div>
       </div>
 

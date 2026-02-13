@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import {
   Plus,
-  Search,
-  Filter,
   Download,
   MoreHorizontal,
   Package,
@@ -23,6 +21,8 @@ import {
   Receipt,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface PurchaseOrder {
   id: string
@@ -156,7 +156,7 @@ const statusConfig = {
 
 const vendors = [...new Set(mockPurchaseOrders.map(po => po.vendorName))]
 const jobs = [...new Set(mockPurchaseOrders.map(po => po.jobName))]
-const statuses = ['draft', 'sent', 'acknowledged', 'received', 'invoiced'] as const
+const poStatuses = ['draft', 'sent', 'acknowledged', 'received', 'invoiced'] as const
 
 function formatCurrency(value: number): string {
   if (value >= 1000000) return '$' + (value / 1000000).toFixed(2) + 'M'
@@ -247,17 +247,21 @@ function POCard({ po }: { po: PurchaseOrder }) {
 }
 
 export function PurchaseOrdersPreview() {
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [vendorFilter, setVendorFilter] = useState<string>('all')
   const [jobFilter, setJobFilter] = useState<string>('all')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [showFilters, setShowFilters] = useState(false)
 
-  const filteredPOs = mockPurchaseOrders.filter(po => {
-    if (vendorFilter !== 'all' && po.vendorName !== vendorFilter) return false
-    if (jobFilter !== 'all' && po.jobName !== jobFilter) return false
-    if (statusFilter !== 'all' && po.status !== statusFilter) return false
-    return true
-  })
+  const filtered = sortItems(
+    mockPurchaseOrders.filter(po => {
+      if (!matchesSearch(po, search, ['poNumber', 'vendorName', 'jobName'])) return false
+      if (activeTab !== 'all' && po.status !== activeTab) return false
+      if (vendorFilter !== 'all' && po.vendorName !== vendorFilter) return false
+      if (jobFilter !== 'all' && po.jobName !== jobFilter) return false
+      return true
+    }),
+    activeSort as keyof PurchaseOrder | '',
+    sortDirection,
+  )
 
   // Calculate quick stats
   const thisMonth = new Date().getMonth()
@@ -275,110 +279,59 @@ export function PurchaseOrdersPreview() {
     .filter(po => po.status === 'sent' || po.status === 'acknowledged')
     .reduce((sum, po) => sum + po.amount, 0)
 
-  const activeFiltersCount = [vendorFilter, jobFilter, statusFilter].filter(f => f !== 'all').length
-
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Purchase Orders</h3>
-            <span className="text-sm text-gray-500">{mockPurchaseOrders.length} total</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search POs..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg",
-                showFilters || activeFiltersCount > 0
-                  ? "border-blue-200 text-blue-600 bg-blue-50"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
-              )}
-            >
-              <Filter className="h-4 w-4" />
-              Filter
-              {activeFiltersCount > 0 && (
-                <span className="bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-                  {activeFiltersCount}
-                </span>
-              )}
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              New PO
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-semibold text-gray-900">Purchase Orders</h3>
+          <span className="text-sm text-gray-500">{mockPurchaseOrders.length} total</span>
         </div>
-
-        {/* Filter Panel */}
-        {showFilters && (
-          <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Vendor:</label>
-              <select
-                value={vendorFilter}
-                onChange={(e) => setVendorFilter(e.target.value)}
-                className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Vendors</option>
-                {vendors.map(vendor => (
-                  <option key={vendor} value={vendor}>{vendor}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Job:</label>
-              <select
-                value={jobFilter}
-                onChange={(e) => setJobFilter(e.target.value)}
-                className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Jobs</option>
-                {jobs.map(job => (
-                  <option key={job} value={job}>{job}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Status:</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Statuses</option>
-                {statuses.map(status => (
-                  <option key={status} value={status}>{statusConfig[status].label}</option>
-                ))}
-              </select>
-            </div>
-            {activeFiltersCount > 0 && (
-              <button
-                onClick={() => {
-                  setVendorFilter('all')
-                  setJobFilter('all')
-                  setStatusFilter('all')
-                }}
-                className="text-sm text-blue-600 hover:text-blue-700"
-              >
-                Clear filters
-              </button>
-            )}
-          </div>
-        )}
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search POs..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockPurchaseOrders.length },
+            ...poStatuses.map(s => ({
+              key: s,
+              label: statusConfig[s].label,
+              count: mockPurchaseOrders.filter(po => po.status === s).length,
+            })),
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Vendors',
+              value: vendorFilter,
+              options: vendors.map(v => ({ value: v, label: v })),
+              onChange: setVendorFilter,
+            },
+            {
+              label: 'All Jobs',
+              value: jobFilter,
+              options: jobs.map(j => ({ value: j, label: j })),
+              onChange: setJobFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'amount', label: 'Amount' },
+            { value: 'date', label: 'Date' },
+            { value: 'vendorName', label: 'Vendor' },
+            { value: 'jobName', label: 'Job' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          actions={[
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'New PO', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filtered.length}
+          totalCount={mockPurchaseOrders.length}
+        />
       </div>
 
       {/* Quick Stats */}
@@ -413,10 +366,10 @@ export function PurchaseOrdersPreview() {
 
       {/* PO List */}
       <div className="p-4 grid grid-cols-2 gap-4 max-h-[480px] overflow-y-auto">
-        {filteredPOs.map(po => (
+        {filtered.map(po => (
           <POCard key={po.id} po={po} />
         ))}
-        {filteredPOs.length === 0 && (
+        {filtered.length === 0 && (
           <div className="col-span-2 text-center py-12 text-gray-500">
             <Package className="h-12 w-12 mx-auto text-gray-300 mb-3" />
             <p>No purchase orders match your filters</p>

@@ -1,8 +1,6 @@
 'use client'
 
-import { useState } from 'react'
 import {
-  Search,
   Plus,
   Mail,
   Send,
@@ -21,6 +19,8 @@ import {
   Target,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type CampaignStatus = 'draft' | 'scheduled' | 'sent' | 'automated'
 type CampaignType = 'one-time' | 'automated' | 'drip'
@@ -223,15 +223,17 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
 }
 
 export function EmailMarketingPreview() {
-  const [activeTab, setActiveTab] = useState<'all' | 'drafts' | 'scheduled' | 'sent' | 'automated'>('all')
-  const [searchQuery, setSearchQuery] = useState('')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
-  const filteredCampaigns = mockCampaigns.filter(campaign => {
-    const matchesTab = activeTab === 'all' || campaign.status === activeTab
-    const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         campaign.subject.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesTab && matchesSearch
-  })
+  const filteredCampaigns = sortItems(
+    mockCampaigns.filter(campaign => {
+      if (!matchesSearch(campaign, search, ['name', 'subject', 'audienceLabel'])) return false
+      if (activeTab !== 'all' && campaign.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Campaign | '',
+    sortDirection,
+  )
 
   // Calculate stats
   const totalSent = mockCampaigns.filter(c => c.status === 'sent').length
@@ -298,35 +300,31 @@ export function EmailMarketingPreview() {
 
       {/* Tabs and Search */}
       <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-1">
-            {(['all', 'drafts', 'scheduled', 'sent', 'automated'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={cn(
-                  "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                  activeTab === tab
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search campaigns..."
-              className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search campaigns..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockCampaigns.length },
+            { key: 'draft', label: 'Drafts', count: mockCampaigns.filter(c => c.status === 'draft').length },
+            { key: 'scheduled', label: 'Scheduled', count: mockCampaigns.filter(c => c.status === 'scheduled').length },
+            { key: 'sent', label: 'Sent', count: mockCampaigns.filter(c => c.status === 'sent').length },
+            { key: 'automated', label: 'Automated', count: mockCampaigns.filter(c => c.status === 'automated').length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'recipientCount', label: 'Recipients' },
+            { value: 'status', label: 'Status' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredCampaigns.length}
+          totalCount={mockCampaigns.length}
+        />
       </div>
 
       {/* Campaign List */}

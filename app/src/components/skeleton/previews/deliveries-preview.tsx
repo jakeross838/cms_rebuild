@@ -1,11 +1,6 @@
 'use client'
 
-import { useState } from 'react'
 import {
-  Search,
-  Filter,
-  Calendar,
-  List,
   Plus,
   Sparkles,
   Truck,
@@ -13,16 +8,15 @@ import {
   AlertTriangle,
   CheckCircle,
   Package,
-  MapPin,
   User,
-  Phone,
   MoreHorizontal,
-  ChevronRight,
   Camera,
   AlertCircle,
   CalendarDays,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Delivery {
   id: string
@@ -270,13 +264,17 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
 }
 
 export function DeliveriesPreview() {
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState()
 
-  const filteredDeliveries = mockDeliveries.filter(delivery => {
-    if (filterStatus === 'all') return true
-    return delivery.status === filterStatus
-  })
+  const filteredDeliveries = sortItems(
+    mockDeliveries.filter(delivery => {
+      if (!matchesSearch(delivery, search, ['description', 'poNumber', 'jobName', 'vendor', 'siteContact'])) return false
+      if (activeTab !== 'all' && delivery.status !== activeTab) return false
+      return true
+    }),
+    activeSort as keyof Delivery | '',
+    sortDirection,
+  )
 
   // Group deliveries by date
   const todayDeliveries = filteredDeliveries.filter(d => d.daysUntil === 0)
@@ -307,40 +305,6 @@ export function DeliveriesPreview() {
             <div className="text-sm text-gray-500 mt-0.5">
               Track incoming material deliveries across all jobs
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search deliveries..."
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('calendar')}
-                className={cn(
-                  "p-1.5",
-                  viewMode === 'calendar' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Calendar className="h-4 w-4" />
-              </button>
-            </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              Manual Delivery
-            </button>
           </div>
         </div>
       </div>
@@ -398,33 +362,45 @@ export function DeliveriesPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-gray-400" />
-          <span className="text-sm text-gray-500">Status:</span>
-          <div className="flex items-center gap-1">
-            {['all', 'scheduled', 'in-transit', 'delayed', 'delivered'].map(status => (
-              <button
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={cn(
-                  "px-2.5 py-1 text-sm rounded-lg transition-colors capitalize",
-                  filterStatus === status
-                    ? "bg-blue-100 text-blue-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
-              >
-                {status === 'all' ? 'All' : status.replace('-', ' ')}
-              </button>
-            ))}
-          </div>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search deliveries..."
+          tabs={[
+            { key: 'all', label: 'All', count: mockDeliveries.length },
+            { key: 'scheduled', label: 'Scheduled', count: scheduledCount },
+            { key: 'in-transit', label: 'In Transit', count: inTransitCount },
+            { key: 'delayed', label: 'Delayed', count: delayedCount },
+            { key: 'delivered', label: 'Delivered', count: deliveredCount },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'daysUntil', label: 'Date' },
+            { value: 'description', label: 'Description' },
+            { value: 'vendor', label: 'Vendor' },
+            { value: 'jobName', label: 'Job' },
+            { value: 'items', label: 'Item Count' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          actions={[
+            { icon: Plus, label: 'Manual Delivery', onClick: () => {}, variant: 'primary' },
+          ]}
+          resultCount={filteredDeliveries.length}
+          totalCount={mockDeliveries.length}
+        />
       </div>
 
       {/* Delivery List */}
       <div className="p-4 max-h-[500px] overflow-y-auto">
         {/* Delayed Section */}
-        {delayedDeliveries.length > 0 && filterStatus !== 'delivered' && (
+        {delayedDeliveries.length > 0 && activeTab !== 'delivered' && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="h-4 w-4 text-red-500" />
@@ -488,7 +464,7 @@ export function DeliveriesPreview() {
         )}
 
         {/* Recently Delivered */}
-        {deliveredRecently.length > 0 && filterStatus !== 'scheduled' && filterStatus !== 'delayed' && (
+        {deliveredRecently.length > 0 && activeTab !== 'scheduled' && activeTab !== 'delayed' && (
           <div>
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="h-4 w-4 text-green-500" />
@@ -500,6 +476,13 @@ export function DeliveriesPreview() {
                 <DeliveryCard key={delivery.id} delivery={delivery} />
               ))}
             </div>
+          </div>
+        )}
+
+        {filteredDeliveries.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            <Truck className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+            <p>No deliveries found matching your criteria</p>
           </div>
         )}
       </div>
