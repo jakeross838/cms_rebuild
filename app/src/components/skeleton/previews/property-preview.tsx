@@ -522,29 +522,24 @@ export function PropertyPreview() {
           className="mt-4"
           features={[
             {
-              id: 'lot-analysis',
-              name: 'Lot Analysis',
-              description: 'AI analysis of lot characteristics',
+              feature: 'Lot Analysis',
+              insight: 'AI analysis of lot characteristics',
             },
             {
-              id: 'permit-research',
-              name: 'Permit Research',
-              description: 'Identifies required permits for location',
+              feature: 'Permit Research',
+              insight: 'Identifies required permits for location',
             },
             {
-              id: 'market-valuation',
-              name: 'Market Valuation',
-              description: 'Estimates property value',
+              feature: 'Market Valuation',
+              insight: 'Estimates property value',
             },
             {
-              id: 'utility-research',
-              name: 'Utility Research',
-              description: 'Identifies available utilities',
+              feature: 'Utility Research',
+              insight: 'Identifies available utilities',
             },
             {
-              id: 'risk-assessment',
-              name: 'Risk Assessment',
-              description: 'Environmental and location risks',
+              feature: 'Risk Assessment',
+              insight: 'Environmental and location risks',
             },
           ]}
         />

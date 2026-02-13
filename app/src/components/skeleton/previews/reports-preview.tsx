@@ -873,24 +873,24 @@ export function ReportsPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Report Recommendations',
-            description: 'Suggests relevant reports',
+            feature: 'Report Recommendations',
+            insight: 'Suggests relevant reports',
           },
           {
-            title: 'Anomaly Detection',
-            description: 'Highlights unusual data patterns',
+            feature: 'Anomaly Detection',
+            insight: 'Highlights unusual data patterns',
           },
           {
-            title: 'Trend Analysis',
-            description: 'Identifies key trends',
+            feature: 'Trend Analysis',
+            insight: 'Identifies key trends',
           },
           {
-            title: 'Scheduled Delivery',
-            description: 'Automates report distribution',
+            feature: 'Scheduled Delivery',
+            insight: 'Automates report distribution',
           },
           {
-            title: 'Custom Insights',
-            description: 'AI-generated report summaries',
+            feature: 'Custom Insights',
+            insight: 'AI-generated report summaries',
           },
         ]}
       />

@@ -544,24 +544,24 @@ export function SettingsPreview() {
         <AIFeaturesPanel
           features={[
             {
-              title: 'Configuration Audit',
-              description: 'Reviews settings for issues',
+              feature: 'Configuration Audit',
+              insight: 'Reviews settings for issues',
             },
             {
-              title: 'Best Practices',
-              description: 'Suggests optimal configurations',
+              feature: 'Best Practices',
+              insight: 'Suggests optimal configurations',
             },
             {
-              title: 'Security Scan',
-              description: 'Identifies security gaps',
+              feature: 'Security Scan',
+              insight: 'Identifies security gaps',
             },
             {
-              title: 'Usage Analytics',
-              description: 'Shows feature adoption',
+              feature: 'Usage Analytics',
+              insight: 'Shows feature adoption',
             },
             {
-              title: 'Optimization Tips',
-              description: 'Recommends improvements',
+              feature: 'Optimization Tips',
+              insight: 'Recommends improvements',
             },
           ]}
         />

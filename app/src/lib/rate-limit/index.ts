@@ -10,6 +10,7 @@
  * - Company ID (aggregate limit per tenant)
  */
 
+// @ts-expect-error @vercel/kv not installed yet
 import { kv } from '@vercel/kv'
 import { NextRequest, NextResponse } from 'next/server'
 

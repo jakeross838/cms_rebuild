@@ -477,12 +477,14 @@ function StageGateValidation({ lead, targetStage }: { lead: Lead; targetStage: s
           <span>Complete all requirements before advancing to {stages.find((s) => s.id === targetStage)?.label}</span>
         </div>
       )}
-      <StatusTransition
-        currentStatus={lead.stage}
-        targetStatus={targetStage}
-        canTransition={allPassed}
-        className="mt-2"
-      />
+      <div className="mt-2">
+        <StatusTransition
+          currentStatus={lead.stage}
+          nextStatus={targetStage}
+          onTransition={() => {}}
+          disabled={!allPassed}
+        />
+      </div>
     </div>
   )
 }
@@ -689,42 +691,37 @@ function LeadAIInsights({ lead }: { lead: Lead }) {
     (new Date().getTime() - new Date('2026-02-12').getTime()) / (1000 * 60 * 60 * 24)
   )
 
-  const insights = [
+  const features = [
     {
-      title: 'Lead Scoring',
-      content: `Score: ${lead.aiScore}/100. Factors: Budget ${lead.budgetRealismScore >= 75 ? 'realistic (+20)' : 'questionable (-10)'}, Timeline ${lead.timeline.includes('6+') ? '6+ months (+15)' : lead.timeline.includes('3-6') ? '3-6 months (+10)' : '1-3 months (+5)'}, Lot ${lead.lotStatus === 'owned' ? 'owned (+25)' : lead.lotStatus === 'under_contract' ? 'under contract (+15)' : 'looking (-10)'}, ${lead.source === 'Referral' ? 'Referral source (+15)' : 'Direct inquiry (+5)'}`,
-      type: 'score' as const,
+      feature: 'Lead Scoring',
+      insight: `Score: ${lead.aiScore}/100. Factors: Budget ${lead.budgetRealismScore >= 75 ? 'realistic (+20)' : 'questionable (-10)'}, Timeline ${lead.timeline.includes('6+') ? '6+ months (+15)' : lead.timeline.includes('3-6') ? '3-6 months (+10)' : '1-3 months (+5)'}, Lot ${lead.lotStatus === 'owned' ? 'owned (+25)' : lead.lotStatus === 'under_contract' ? 'under contract (+15)' : 'looking (-10)'}, ${lead.source === 'Referral' ? 'Referral source (+15)' : 'Direct inquiry (+5)'}`,
     },
     {
-      title: 'Win Probability',
-      content: `${lead.winProbability}% win probability. Similar leads: ${Math.round(lead.winProbability * 0.18)} of ${Math.round(lead.winProbability * 0.18 / (lead.winProbability / 100))} converted (${lead.winProbability}%)`,
-      type: 'prediction' as const,
+      feature: 'Win Probability',
+      insight: `${lead.winProbability}% win probability. Similar leads: ${Math.round(lead.winProbability * 0.18)} of ${Math.round(lead.winProbability * 0.18 / (lead.winProbability / 100))} converted (${lead.winProbability}%)`,
     },
     {
-      title: 'Budget Realism',
-      content: `Budget ${formatCurrency(lead.estimatedValue)} for ${lead.projectType.toLowerCase()} is ${lead.budgetRealismScore >= 75 ? 'realistic' : lead.budgetRealismScore >= 50 ? 'potentially tight' : 'likely unrealistic'} for this market. Avg similar: ${formatCurrency(lead.estimatedValue * 0.95)}. $${Math.round(costPerSqFt)}/SF vs market avg $${Math.round(costPerSqFt * 0.98)}/SF.`,
-      type: 'analysis' as const,
+      feature: 'Budget Realism',
+      insight: `Budget ${formatCurrency(lead.estimatedValue)} for ${lead.projectType.toLowerCase()} is ${lead.budgetRealismScore >= 75 ? 'realistic' : lead.budgetRealismScore >= 50 ? 'potentially tight' : 'likely unrealistic'} for this market. Avg similar: ${formatCurrency(lead.estimatedValue * 0.95)}. $${Math.round(costPerSqFt)}/SF vs market avg $${Math.round(costPerSqFt * 0.98)}/SF.`,
     },
     {
-      title: 'Follow-up Intelligence',
-      content:
+      feature: 'Follow-up Intelligence',
+      insight:
         lead.daysInStage > 5
           ? `No contact in ${lead.daysInStage} days. Recommend: Call tomorrow AM. Best response rate: Tue-Thu 10am-12pm for this lead type.`
           : `Recent contact ${lead.daysInStage} days ago. Next touchpoint recommended in ${Math.max(1, 5 - lead.daysInStage)} days.`,
-      type: 'recommendation' as const,
     },
   ]
 
   if (lead.competitor) {
-    insights.push({
-      title: 'Competitive Intelligence',
-      content: `Competing with ${lead.competitor}. ${lead.competitivePosition === 'strong' ? 'You have competitive advantage - emphasize your unique value.' : lead.competitivePosition === 'neutral' ? 'Position is neutral - differentiate on service and quality.' : 'They typically quote lower but have longer timelines and mixed reviews.'}`,
-      type: 'competitive' as const,
+    features.push({
+      feature: 'Competitive Intelligence',
+      insight: `Competing with ${lead.competitor}. ${lead.competitivePosition === 'strong' ? 'You have competitive advantage - emphasize your unique value.' : lead.competitivePosition === 'neutral' ? 'Position is neutral - differentiate on service and quality.' : 'They typically quote lower but have longer timelines and mixed reviews.'}`,
     })
   }
 
   return (
-    <AIFeaturesPanel title="AI Lead Intelligence" insights={insights} className="mt-3" />
+    <AIFeaturesPanel title="AI Lead Intelligence" features={features} className="mt-3" />
   )
 }
 
@@ -980,10 +977,10 @@ function ExtendedFilterBar({
   aiScoreRange,
   setAiScoreRange,
 }: {
-  projectTypeFilter: string
-  setProjectTypeFilter: (value: string) => void
-  lotStatusFilter: string
-  setLotStatusFilter: (value: string) => void
+  projectTypeFilter: string[]
+  setProjectTypeFilter: (value: string[]) => void
+  lotStatusFilter: string[]
+  setLotStatusFilter: (value: string[]) => void
   financingFilter: string
   setFinancingFilter: (value: string) => void
   sourceFilter: string
@@ -993,8 +990,18 @@ function ExtendedFilterBar({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-200">
-      <PriorityFilter value={projectTypeFilter} onChange={setProjectTypeFilter} label="Project Type" />
-      <StatusFilter value={lotStatusFilter} onChange={setLotStatusFilter} label="Lot Status" />
+      <PriorityFilter value={projectTypeFilter} onChange={setProjectTypeFilter} />
+      <StatusFilter
+        value={lotStatusFilter}
+        onChange={setLotStatusFilter}
+        label="Lot Status"
+        options={[
+          { id: 'owned', label: 'Lot Owned', color: 'bg-green-500' },
+          { id: 'under_contract', label: 'Under Contract', color: 'bg-blue-500' },
+          { id: 'looking', label: 'Lot Shopping', color: 'bg-amber-500' },
+          { id: 'unknown', label: 'Unknown', color: 'bg-gray-400' },
+        ]}
+      />
 
       <select
         value={financingFilter}
@@ -1060,8 +1067,9 @@ export function LeadsPipelinePreview() {
   } = useFilterState({ defaultView: 'grid' })
 
   // Extended filter states
-  const [projectTypeFilter, setProjectTypeFilter] = useState('')
-  const [lotStatusFilter, setLotStatusFilter] = useState('')
+  const [projectTypeFilter, setProjectTypeFilter] = useState<string[]>([])
+  const [lotStatusFilter, setLotStatusFilter] = useState<string[]>([])
+
   const [financingFilter, setFinancingFilter] = useState('')
   const [sourceFilter, setSourceFilter] = useState('')
   const [aiScoreRange, setAiScoreRange] = useState<[number, number]>([0, 100])
@@ -1075,8 +1083,8 @@ export function LeadsPipelinePreview() {
         return false
 
       // Extended filters
-      if (projectTypeFilter && lead.projectType !== projectTypeFilter) return false
-      if (lotStatusFilter && lead.lotStatus !== lotStatusFilter) return false
+      if (projectTypeFilter.length > 0 && !projectTypeFilter.includes(lead.projectType)) return false
+      if (lotStatusFilter.length > 0 && !lotStatusFilter.includes(lead.lotStatus)) return false
       if (financingFilter && lead.financingStatus !== financingFilter) return false
       if (sourceFilter && lead.source !== sourceFilter) return false
       if (lead.aiScore < aiScoreRange[0] || lead.aiScore > aiScoreRange[1]) return false

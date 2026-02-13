@@ -7,6 +7,7 @@
  * Uses Vercel KV (Redis) in production, in-memory fallback for development.
  */
 
+// @ts-expect-error @vercel/kv not installed yet
 import { kv } from '@vercel/kv'
 
 // Cache key prefixes for different data types

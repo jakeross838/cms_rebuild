@@ -364,24 +364,24 @@ export function JobsListPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Portfolio Health',
-            description: 'Overall job portfolio status',
+            feature: 'Portfolio Health',
+            insight: 'Overall job portfolio status',
           },
           {
-            title: 'Resource Allocation',
-            description: 'Suggests resource balancing',
+            feature: 'Resource Allocation',
+            insight: 'Suggests resource balancing',
           },
           {
-            title: 'Timeline Risks',
-            description: 'Flags at-risk projects',
+            feature: 'Timeline Risks',
+            insight: 'Flags at-risk projects',
           },
           {
-            title: 'Profitability Ranking',
-            description: 'Ranks jobs by profit margin',
+            feature: 'Profitability Ranking',
+            insight: 'Ranks jobs by profit margin',
           },
           {
-            title: 'Capacity Planning',
-            description: 'Projects future workload',
+            feature: 'Capacity Planning',
+            insight: 'Projects future workload',
           },
         ]}
       />

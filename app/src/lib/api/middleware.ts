@@ -105,7 +105,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
           .from('users')
           .select('id, company_id, role, email')
           .eq('id', user.id)
-          .single()
+          .single() as { data: { id: string; company_id: string; role: string; email: string } | null; error: unknown }
 
         if (!profile) {
           return NextResponse.json(

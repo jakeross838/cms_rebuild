@@ -1158,24 +1158,24 @@ export function TodosPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Priority Scoring',
-            description: 'AI ranks tasks by urgency and impact',
+            feature: 'Priority Scoring',
+            insight: 'AI ranks tasks by urgency and impact',
           },
           {
-            title: 'Due Date Suggestions',
-            description: 'Recommends realistic due dates',
+            feature: 'Due Date Suggestions',
+            insight: 'Recommends realistic due dates',
           },
           {
-            title: 'Assignment Optimization',
-            description: 'Suggests best person for each task',
+            feature: 'Assignment Optimization',
+            insight: 'Suggests best person for each task',
           },
           {
-            title: 'Dependency Detection',
-            description: 'Identifies task dependencies',
+            feature: 'Dependency Detection',
+            insight: 'Identifies task dependencies',
           },
           {
-            title: 'Overdue Prediction',
-            description: 'Predicts tasks likely to miss deadlines',
+            feature: 'Overdue Prediction',
+            insight: 'Predicts tasks likely to miss deadlines',
           },
         ]}
       />

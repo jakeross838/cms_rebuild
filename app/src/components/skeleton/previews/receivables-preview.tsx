@@ -30,12 +30,10 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
-import { SubmissionForm } from '@/components/skeleton/ui'
-import { ViewModeToggle } from '@/components/skeleton/ui'
-import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { SubmissionForm, ViewModeToggle, AIFeaturesPanel, type ViewMode } from '@/components/skeleton/ui'
 
 type AgingBucket = 'current' | '1-30' | '31-60' | '61-90' | '90+'
-type ViewMode = 'aging' | 'client' | 'job'
+type LocalViewMode = 'list' | 'grid' | 'table'
 
 interface PaymentLinkTracking {
   sentAt?: string
@@ -481,37 +479,33 @@ function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
           Invoice: {receivable.invoiceNumber} | Balance: {formatCurrency(balance)}
         </p>
         <SubmissionForm
+          isOpen={true}
+          onClose={onClose}
+          title="Write-off Details"
           fields={[
             {
-              name: 'amount',
+              id: 'amount',
               label: 'Write-off Amount',
-              type: 'currency',
-              value: amount,
-              onChange: setAmount,
+              type: 'text',
               placeholder: 'Enter amount to write off',
-              max: balance,
             },
             {
-              name: 'reason',
+              id: 'reason',
               label: 'Reason for Write-off',
               type: 'textarea',
-              value: reason,
-              onChange: setReason,
               placeholder: 'Enter reason for write-off (e.g., uncollectable, disputed work, bankruptcy)',
             },
             {
-              name: 'approvalRequired',
+              id: 'approvalRequired',
               label: 'Requires Management Approval',
-              type: 'checkbox',
-              checked: approvalRequired,
-              onChange: setApprovalRequired,
+              type: 'text',
+              placeholder: 'Yes or No',
             },
           ]}
           onSubmit={() => {
             console.log('Write-off submitted:', { amount, reason, approvalRequired })
             onClose()
           }}
-          onCancel={onClose}
           submitLabel="Submit Write-off"
         />
         {receivable.writeOffHistory && receivable.writeOffHistory.length > 0 && (
@@ -545,36 +539,32 @@ function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
           Invoice: {receivable.invoiceNumber} | Client: {receivable.clientName}
         </p>
         <SubmissionForm
+          isOpen={true}
+          onClose={onClose}
+          title="Log Email Follow-up"
           fields={[
             {
-              name: 'subject',
+              id: 'subject',
               label: 'Email Subject',
               type: 'text',
-              value: subject,
-              onChange: setSubject,
               placeholder: 'Enter email subject',
             },
             {
-              name: 'recipient',
+              id: 'recipient',
               label: 'Recipient Email',
-              type: 'email',
-              value: recipient,
-              onChange: setRecipient,
+              type: 'text',
               placeholder: 'recipient@example.com',
             },
             {
-              name: 'date',
+              id: 'date',
               label: 'Date Sent',
               type: 'date',
-              value: date,
-              onChange: setDate,
             },
           ]}
           onSubmit={() => {
             console.log('Email logged:', { subject, recipient, date })
             onClose()
           }}
-          onCancel={onClose}
           submitLabel="Log Email"
         />
         {receivable.emailFollowUps && receivable.emailFollowUps.length > 0 && (
@@ -808,7 +798,7 @@ function groupReceivablesByJob(receivables: Receivable[]): Record<string, Receiv
 
 export function ReceivablesPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
-  const [viewMode, setViewMode] = useState<ViewMode>('aging')
+  const [viewMode, setViewMode] = useState<LocalViewMode>('list')
   const [writeOffModal, setWriteOffModal] = useState<{ isOpen: boolean; receivable: Receivable | null }>({ isOpen: false, receivable: null })
   const [emailLogModal, setEmailLogModal] = useState<{ isOpen: boolean; receivable: Receivable | null }>({ isOpen: false, receivable: null })
 
@@ -856,7 +846,7 @@ export function ReceivablesPreview() {
   }
 
   const renderReceivables = () => {
-    if (viewMode === 'client') {
+    if (viewMode === 'grid') {
       const grouped = groupReceivablesByClient(filteredReceivables)
       return Object.entries(grouped).map(([clientName, receivables]) => (
         <div key={clientName} className="mb-6">
@@ -881,7 +871,7 @@ export function ReceivablesPreview() {
       ))
     }
 
-    if (viewMode === 'job') {
+    if (viewMode === 'table') {
       const grouped = groupReceivablesByJob(filteredReceivables)
       return Object.entries(grouped).map(([jobName, receivables]) => (
         <div key={jobName} className="mb-6">
@@ -920,28 +910,20 @@ export function ReceivablesPreview() {
   // AI Feature configurations
   const aiFeatures = [
     {
-      id: 'collection-priority',
-      title: 'Collection Priority',
-      content: 'Priority collection: 1) Smith $12,400 (45 days, responds to calls), 2) Johnson $8,200 (30 days, prefers email)',
-      icon: TrendingUp,
+      feature: 'Collection Priority',
+      insight: 'Priority collection: 1) Smith $12,400 (45 days, responds to calls), 2) Johnson $8,200 (30 days, prefers email)',
     },
     {
-      id: 'payment-prediction',
-      title: 'Payment Prediction',
-      content: 'Smith likely to pay within 7 days based on past pattern. Johnson may need escalation - slow payer historically.',
-      icon: Sparkles,
+      feature: 'Payment Prediction',
+      insight: 'Smith likely to pay within 7 days based on past pattern. Johnson may need escalation - slow payer historically.',
     },
     {
-      id: 'lien-waiver-impact',
-      title: 'Lien Waiver Impact',
-      content: 'Coastal Plumbing lien waiver pending. Blocking: Draw #4 submission ($18,400)',
-      icon: Shield,
+      feature: 'Lien Waiver Impact',
+      insight: 'Coastal Plumbing lien waiver pending. Blocking: Draw #4 submission ($18,400)',
     },
     {
-      id: 'dso-trend',
-      title: 'DSO Trend',
-      content: `DSO trending ${dsoTrend === 'up' ? 'up' : 'down'}: ${dso} days this month vs ${lastMonthDSO} last month. 3 accounts driving ${dsoTrend === 'up' ? 'increase' : 'improvement'}.`,
-      icon: dsoTrend === 'up' ? TrendingUp : TrendingDown,
+      feature: 'DSO Trend',
+      insight: `DSO trending ${dsoTrend === 'up' ? 'up' : 'down'}: ${dso} days this month vs ${lastMonthDSO} last month. 3 accounts driving ${dsoTrend === 'up' ? 'increase' : 'improvement'}.`,
     },
   ]
 
@@ -1128,13 +1110,9 @@ export function ReceivablesPreview() {
             totalCount={mockReceivables.length}
           />
           <ViewModeToggle
-            modes={[
-              { key: 'aging', label: 'Aging' },
-              { key: 'client', label: 'By Client' },
-              { key: 'job', label: 'By Job' },
-            ]}
-            activeMode={viewMode}
-            onModeChange={(mode) => setViewMode(mode as ViewMode)}
+            value={viewMode}
+            onChange={(mode: ViewMode) => setViewMode(mode as LocalViewMode)}
+            options={['list', 'grid', 'table']}
           />
         </div>
       </div>

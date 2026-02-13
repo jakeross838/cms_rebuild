@@ -737,24 +737,24 @@ export function VendorsPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Performance Scoring',
-            description: 'Rates vendors on quality, timeliness, pricing',
+            feature: 'Performance Scoring',
+            insight: 'Rates vendors on quality, timeliness, pricing',
           },
           {
-            title: 'Price Trend Analysis',
-            description: 'Tracks vendor pricing changes over time',
+            feature: 'Price Trend Analysis',
+            insight: 'Tracks vendor pricing changes over time',
           },
           {
-            title: 'Capacity Planning',
-            description: 'Identifies vendors with available capacity',
+            feature: 'Capacity Planning',
+            insight: 'Identifies vendors with available capacity',
           },
           {
-            title: 'Risk Assessment',
-            description: 'Flags vendors with insurance/license issues',
+            feature: 'Risk Assessment',
+            insight: 'Flags vendors with insurance/license issues',
           },
           {
-            title: 'Recommendation Engine',
-            description: 'Suggests vendors for specific trade needs',
+            feature: 'Recommendation Engine',
+            insight: 'Suggests vendors for specific trade needs',
           },
         ]}
       />

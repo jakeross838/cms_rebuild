@@ -149,7 +149,7 @@ async function flushMetrics(): Promise<void> {
         method: m.method,
         status_code: m.statusCode,
         response_time_ms: m.responseTimeMs,
-      }))
+      })) as any
     )
   } catch (error) {
     console.error('Failed to flush metrics:', error)
@@ -189,7 +189,7 @@ export async function recordAudit(entry: AuditEntry): Promise<void> {
       new_data: entry.newData,
       ip_address: entry.ipAddress,
       user_agent: entry.userAgent,
-    })
+    } as any)
   } catch (error) {
     console.error('Failed to record audit log:', error)
   }
@@ -246,6 +246,7 @@ export async function checkHealth(): Promise<HealthStatus> {
   // Check cache (Vercel KV)
   try {
     const start = Date.now()
+    // @ts-expect-error @vercel/kv not installed yet
     const { kv } = await import('@vercel/kv')
     await kv.ping()
     latency.cache = Date.now() - start

@@ -1122,29 +1122,24 @@ export function PermitsPreview() {
         <AIFeaturesPanel
           features={[
             {
-              name: 'Permit Timeline',
-              description: 'Predicts approval timing',
-              status: 'active',
+              feature: 'Permit Timeline',
+              insight: 'Predicts approval timing',
             },
             {
-              name: 'Requirement Checking',
-              description: 'Validates permit requirements',
-              status: 'active',
+              feature: 'Requirement Checking',
+              insight: 'Validates permit requirements',
             },
             {
-              name: 'Inspector Insights',
-              description: 'Tracks inspector patterns',
-              status: 'active',
+              feature: 'Inspector Insights',
+              insight: 'Tracks inspector patterns',
             },
             {
-              name: 'Deadline Alerts',
-              description: 'Proactive deadline warnings',
-              status: 'active',
+              feature: 'Deadline Alerts',
+              insight: 'Proactive deadline warnings',
             },
             {
-              name: 'Document Completeness',
-              description: 'Checks required documents',
-              status: 'active',
+              feature: 'Document Completeness',
+              insight: 'Checks required documents',
             },
           ]}
         />

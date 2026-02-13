@@ -680,24 +680,24 @@ export function ProposalsPreview() {
       <AIFeaturesPanel
         features={[
           {
-            name: 'Win Rate Analysis',
-            description: 'Tracks proposal success patterns',
+            feature: 'Win Rate Analysis',
+            insight: 'Tracks proposal success patterns',
           },
           {
-            name: 'Competitive Pricing',
-            description: 'Compares pricing to market',
+            feature: 'Competitive Pricing',
+            insight: 'Compares pricing to market',
           },
           {
-            name: 'Content Optimization',
-            description: 'Suggests improvements to proposal text',
+            feature: 'Content Optimization',
+            insight: 'Suggests improvements to proposal text',
           },
           {
-            name: 'Follow-up Timing',
-            description: 'Optimal timing for proposal follow-ups',
+            feature: 'Follow-up Timing',
+            insight: 'Optimal timing for proposal follow-ups',
           },
           {
-            name: 'Scope Clarity',
-            description: 'Identifies ambiguous scope items',
+            feature: 'Scope Clarity',
+            insight: 'Identifies ambiguous scope items',
           },
         ]}
       />

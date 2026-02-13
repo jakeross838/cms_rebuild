@@ -599,24 +599,24 @@ export function NotificationsPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Priority Scoring',
-            description: 'Ranks notifications by importance',
+            feature: 'Priority Scoring',
+            insight: 'Ranks notifications by importance',
           },
           {
-            title: 'Smart Grouping',
-            description: 'Groups related notifications',
+            feature: 'Smart Grouping',
+            insight: 'Groups related notifications',
           },
           {
-            title: 'Delivery Optimization',
-            description: 'Chooses best delivery channel',
+            feature: 'Delivery Optimization',
+            insight: 'Chooses best delivery channel',
           },
           {
-            title: 'Noise Reduction',
-            description: 'Filters low-value notifications',
+            feature: 'Noise Reduction',
+            insight: 'Filters low-value notifications',
           },
           {
-            title: 'Action Suggestions',
-            description: 'Recommends next actions',
+            feature: 'Action Suggestions',
+            insight: 'Recommends next actions',
           },
         ]}
       />

@@ -763,24 +763,24 @@ export function BidsPreview() {
       <AIFeaturesPanel
         features={[
           {
-            name: 'Bid Comparison',
-            description: 'Compares vendor bids side-by-side',
+            feature: 'Bid Comparison',
+            insight: 'Compares vendor bids side-by-side',
           },
           {
-            name: 'Scope Alignment',
-            description: 'Validates bids cover full scope',
+            feature: 'Scope Alignment',
+            insight: 'Validates bids cover full scope',
           },
           {
-            name: 'Price Anomaly Detection',
-            description: 'Flags unusually high/low bids',
+            feature: 'Price Anomaly Detection',
+            insight: 'Flags unusually high/low bids',
           },
           {
-            name: 'Vendor History',
-            description: 'Shows past performance of bidders',
+            feature: 'Vendor History',
+            insight: 'Shows past performance of bidders',
           },
           {
-            name: 'Negotiation Insights',
-            description: 'Suggests negotiation opportunities',
+            feature: 'Negotiation Insights',
+            insight: 'Suggests negotiation opportunities',
           },
         ]}
       />

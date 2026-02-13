@@ -454,24 +454,24 @@ export function PortalPreview() {
         <AIFeaturesPanel
           features={[
             {
-              title: 'Engagement Analytics',
-              description: 'Tracks portal usage',
+              feature: 'Engagement Analytics',
+              insight: 'Tracks portal usage',
             },
             {
-              title: 'Content Recommendations',
-              description: 'Suggests relevant content',
+              feature: 'Content Recommendations',
+              insight: 'Suggests relevant content',
             },
             {
-              title: 'Response Tracking',
-              description: 'Monitors client responses',
+              feature: 'Response Tracking',
+              insight: 'Monitors client responses',
             },
             {
-              title: 'Satisfaction Scoring',
-              description: 'Predicts client satisfaction',
+              feature: 'Satisfaction Scoring',
+              insight: 'Predicts client satisfaction',
             },
             {
-              title: 'Communication Insights',
-              description: 'Analyzes communication patterns',
+              feature: 'Communication Insights',
+              insight: 'Analyzes communication patterns',
             },
           ]}
         />

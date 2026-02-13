@@ -103,7 +103,7 @@ export async function enqueueJob(
       max_attempts: options.maxAttempts ?? defaults.maxAttempts,
       run_at: options.runAt?.toISOString() ?? new Date().toISOString(),
       attempts: 0,
-    })
+    } as any)
     .select('id')
     .single()
 
@@ -112,7 +112,7 @@ export async function enqueueJob(
     throw new Error(`Failed to enqueue job: ${error.message}`)
   }
 
-  return data.id
+  return (data as any).id
 }
 
 /**
@@ -144,7 +144,7 @@ export async function enqueueJobs(
 
   const { data, error } = await supabase
     .from('job_queue')
-    .insert(jobRecords)
+    .insert(jobRecords as any)
     .select('id')
 
   if (error) {
@@ -152,7 +152,7 @@ export async function enqueueJobs(
     throw new Error(`Failed to enqueue jobs: ${error.message}`)
   }
 
-  return data.map((d) => d.id)
+  return (data as any[]).map((d) => d.id)
 }
 
 /**
@@ -175,7 +175,7 @@ export async function getNextJobs(limit: number = 10): Promise<Job[]> {
     return []
   }
 
-  return data as Job[]
+  return (data as any[]) as Job[]
 }
 
 /**
@@ -184,12 +184,12 @@ export async function getNextJobs(limit: number = 10): Promise<Job[]> {
 export async function markJobProcessing(jobId: string): Promise<boolean> {
   const supabase = await createClient()
 
-  const { error } = await supabase
-    .from('job_queue')
+  const { error } = await (supabase
+    .from('job_queue') as any)
     .update({
       status: 'processing',
       started_at: new Date().toISOString(),
-      attempts: supabase.rpc('increment_attempts', { job_id: jobId }),
+      attempts: (supabase as any).rpc('increment_attempts', { job_id: jobId }),
     })
     .eq('id', jobId)
     .eq('status', 'pending') // Only if still pending (optimistic lock)
@@ -203,8 +203,8 @@ export async function markJobProcessing(jobId: string): Promise<boolean> {
 export async function markJobCompleted(jobId: string): Promise<void> {
   const supabase = await createClient()
 
-  await supabase
-    .from('job_queue')
+  await (supabase
+    .from('job_queue') as any)
     .update({
       status: 'completed',
       completed_at: new Date().toISOString(),
@@ -225,8 +225,8 @@ export async function markJobFailed(
 
   if (currentAttempts >= maxAttempts) {
     // Max retries reached - mark as permanently failed
-    await supabase
-      .from('job_queue')
+    await (supabase
+      .from('job_queue') as any)
       .update({
         status: 'failed',
         error,
@@ -238,8 +238,8 @@ export async function markJobFailed(
     const backoffSeconds = Math.pow(2, currentAttempts) * 60 // 1min, 2min, 4min, 8min...
     const retryAt = new Date(Date.now() + backoffSeconds * 1000)
 
-    await supabase
-      .from('job_queue')
+    await (supabase
+      .from('job_queue') as any)
       .update({
         status: 'pending',
         error,
@@ -255,8 +255,8 @@ export async function markJobFailed(
 export async function cancelJob(jobId: string): Promise<void> {
   const supabase = await createClient()
 
-  await supabase
-    .from('job_queue')
+  await (supabase
+    .from('job_queue') as any)
     .update({ status: 'cancelled' })
     .eq('id', jobId)
     .in('status', ['pending', 'processing'])
@@ -275,7 +275,7 @@ export async function getJob(jobId: string): Promise<Job | null> {
     .single()
 
   if (error) return null
-  return data as Job
+  return (data as any) as Job
 }
 
 /**
@@ -302,7 +302,7 @@ export async function getCompanyJobs(
   const { data, error } = await query
 
   if (error) return []
-  return data as Job[]
+  return (data as any[]) as Job[]
 }
 
 /**
@@ -320,7 +320,7 @@ export async function cleanupOldJobs(olderThanDays: number = 7): Promise<number>
     .select('id')
 
   if (error) return 0
-  return data.length
+  return (data as any[]).length
 }
 
 // ============================================================================

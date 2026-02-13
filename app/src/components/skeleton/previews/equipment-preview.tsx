@@ -888,20 +888,20 @@ function BreakdownModal({
 
   const breakdownFields: FormField[] = [
     {
-      name: 'issueDescription',
+      id: 'issueDescription',
       label: 'Issue Description',
       type: 'textarea',
       required: true,
       placeholder: 'Describe the breakdown or malfunction...',
     },
     {
-      name: 'photos',
+      id: 'photos',
       label: 'Photos',
       type: 'file',
       placeholder: 'Upload photos of the issue',
     },
     {
-      name: 'urgency',
+      id: 'urgency',
       label: 'Urgency Level',
       type: 'select',
       required: true,
@@ -934,6 +934,9 @@ function BreakdownModal({
         {!submitted ? (
           <>
             <SubmissionForm
+              isOpen={true}
+              onClose={onClose}
+              title="Report Breakdown"
               fields={breakdownFields}
               submitLabel="Report Breakdown"
               onSubmit={handleSubmit}
@@ -1368,39 +1371,23 @@ export function EquipmentPreview() {
   // AI Features
   const aiFeatures = [
     {
-      id: 'maintenance-prediction',
-      title: 'Maintenance Prediction',
-      description: 'Generator approaching 500 hours. Oil change due in ~50 operating hours based on 250-hour interval.',
-      icon: Clock,
-      iconBg: 'bg-amber-100',
-      iconColor: 'text-amber-600',
+      feature: 'Maintenance Prediction',
+      insight: 'Generator approaching 500 hours. Oil change due in ~50 operating hours based on 250-hour interval.',
       action: { label: 'Schedule Maintenance', onClick: () => {} },
     },
     {
-      id: 'utilization-analysis',
-      title: 'Utilization Analysis',
-      description: 'Bobcat S650 at 40% utilization this month. Consider: Rent out idle days or reassign to Johnson project.',
-      icon: Gauge,
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
+      feature: 'Utilization Analysis',
+      insight: 'Bobcat S650 at 40% utilization this month. Consider: Rent out idle days or reassign to Johnson project.',
       action: { label: 'View Report', onClick: () => {} },
     },
     {
-      id: 'rent-vs-own',
-      title: 'Rent vs Own Analysis',
-      description: '12-month excavator rental spend: $24,800. Purchase price: $85,000. Break-even: 41 months. Recommend: Continue renting.',
-      icon: CircleDollarSign,
-      iconBg: 'bg-green-100',
-      iconColor: 'text-green-600',
+      feature: 'Rent vs Own Analysis',
+      insight: '12-month excavator rental spend: $24,800. Purchase price: $85,000. Break-even: 41 months. Recommend: Continue renting.',
       action: { label: 'Full Analysis', onClick: () => {} },
     },
     {
-      id: 'location-intelligence',
-      title: 'Location Intelligence',
-      description: 'Compactor left Harbor View at 11:47 PM Saturday. Unusual - verify with site super Monday AM.',
-      icon: MapPinned,
-      iconBg: 'bg-red-100',
-      iconColor: 'text-red-600',
+      feature: 'Location Intelligence',
+      insight: 'Compactor left Harbor View at 11:47 PM Saturday. Unusual - verify with site super Monday AM.',
       action: { label: 'View Location', onClick: () => {} },
     },
   ]
@@ -1773,8 +1760,6 @@ export function EquipmentPreview() {
         <AIFeaturesPanel
           title="Equipment Intelligence"
           features={aiFeatures}
-          collapsible
-          defaultExpanded={false}
         />
       </div>
 

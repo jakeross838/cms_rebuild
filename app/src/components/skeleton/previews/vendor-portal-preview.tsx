@@ -1412,24 +1412,24 @@ export function VendorPortalPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Engagement Tracking',
-            description: 'Monitors vendor portal usage',
+            feature: 'Engagement Tracking',
+            insight: 'Monitors vendor portal usage',
           },
           {
-            title: 'Document Status',
-            description: 'Tracks document submissions',
+            feature: 'Document Status',
+            insight: 'Tracks document submissions',
           },
           {
-            title: 'Compliance Alerts',
-            description: 'Flags compliance issues',
+            feature: 'Compliance Alerts',
+            insight: 'Flags compliance issues',
           },
           {
-            title: 'Communication Analysis',
-            description: 'Tracks vendor responsiveness',
+            feature: 'Communication Analysis',
+            insight: 'Tracks vendor responsiveness',
           },
           {
-            title: 'Onboarding Progress',
-            description: 'Monitors vendor onboarding completion',
+            feature: 'Onboarding Progress',
+            insight: 'Monitors vendor onboarding completion',
           },
         ]}
       />

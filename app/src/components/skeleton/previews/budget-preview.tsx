@@ -752,24 +752,24 @@ export function BudgetPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Budget Forecasting',
-            description: 'Predicts budget trends and variances',
+            feature: 'Budget Forecasting',
+            insight: 'Predicts budget trends and variances',
           },
           {
-            title: 'Cost Code Analysis',
-            description: 'Identifies over/under budget categories',
+            feature: 'Cost Code Analysis',
+            insight: 'Identifies over/under budget categories',
           },
           {
-            title: 'Change Order Impact',
-            description: 'Shows CO effect on budget',
+            feature: 'Change Order Impact',
+            insight: 'Shows CO effect on budget',
           },
           {
-            title: 'Contingency Tracking',
-            description: 'Monitors contingency utilization',
+            feature: 'Contingency Tracking',
+            insight: 'Monitors contingency utilization',
           },
           {
-            title: 'Vendor Cost Trends',
-            description: 'Tracks vendor pricing patterns',
+            feature: 'Vendor Cost Trends',
+            insight: 'Tracks vendor pricing patterns',
           },
         ]}
       />

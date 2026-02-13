@@ -679,11 +679,11 @@ export function WarrantyClaimsPreview() {
       {/* AI Features Panel */}
       <AIFeaturesPanel
         features={[
-          { name: 'Claim Validation', description: 'Validates warranty coverage' },
-          { name: 'Pattern Detection', description: 'Identifies recurring issues' },
-          { name: 'Resolution Tracking', description: 'Tracks claim resolution' },
-          { name: 'Cost Analysis', description: 'Analyzes claim costs' },
-          { name: 'Vendor Attribution', description: 'Assigns responsibility' },
+          { feature: 'Claim Validation', insight: 'Validates warranty coverage' },
+          { feature: 'Pattern Detection', insight: 'Identifies recurring issues' },
+          { feature: 'Resolution Tracking', insight: 'Tracks claim resolution' },
+          { feature: 'Cost Analysis', insight: 'Analyzes claim costs' },
+          { feature: 'Vendor Attribution', insight: 'Assigns responsibility' },
         ]}
       />
     </div>

@@ -864,24 +864,24 @@ export function InsurancePreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Expiration Alerts',
-            description: 'Proactive certificate expiration warnings',
+            feature: 'Expiration Alerts',
+            insight: 'Proactive certificate expiration warnings',
           },
           {
-            title: 'Coverage Gap Analysis',
-            description: 'Identifies insufficient coverage',
+            feature: 'Coverage Gap Analysis',
+            insight: 'Identifies insufficient coverage',
           },
           {
-            title: 'Auto-Verification',
-            description: 'Validates certificates against requirements',
+            feature: 'Auto-Verification',
+            insight: 'Validates certificates against requirements',
           },
           {
-            title: 'Compliance Scoring',
-            description: 'Rates vendor insurance compliance',
+            feature: 'Compliance Scoring',
+            insight: 'Rates vendor insurance compliance',
           },
           {
-            title: 'Renewal Tracking',
-            description: 'Tracks renewal status and follow-ups',
+            feature: 'Renewal Tracking',
+            insight: 'Tracks renewal status and follow-ups',
           },
         ]}
       />

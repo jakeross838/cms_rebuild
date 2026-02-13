@@ -599,24 +599,24 @@ export function CalendarPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Conflict Detection',
-            description: 'Identifies scheduling conflicts',
+            feature: 'Conflict Detection',
+            insight: 'Identifies scheduling conflicts',
           },
           {
-            title: 'Optimal Timing',
-            description: 'Suggests best times for inspections/meetings',
+            feature: 'Optimal Timing',
+            insight: 'Suggests best times for inspections/meetings',
           },
           {
-            title: 'Travel Optimization',
-            description: 'Groups appointments by location',
+            feature: 'Travel Optimization',
+            insight: 'Groups appointments by location',
           },
           {
-            title: 'Resource Balancing',
-            description: 'Identifies over/under scheduled days',
+            feature: 'Resource Balancing',
+            insight: 'Identifies over/under scheduled days',
           },
           {
-            title: 'Weather Awareness',
-            description: 'Flags outdoor activities on bad weather days',
+            feature: 'Weather Awareness',
+            insight: 'Flags outdoor activities on bad weather days',
           },
         ]}
       />

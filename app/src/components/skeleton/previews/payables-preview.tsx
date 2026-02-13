@@ -908,24 +908,24 @@ export function PayablesPreview() {
       <AIFeaturesPanel
         features={[
           {
-            title: 'Payment Prioritization',
-            description: 'AI ranks payments by vendor importance and discount opportunity',
+            feature: 'Payment Prioritization',
+            insight: 'AI ranks payments by vendor importance and discount opportunity',
           },
           {
-            title: 'Cash Flow Impact',
-            description: 'Shows effect of payment on cash position',
+            feature: 'Cash Flow Impact',
+            insight: 'Shows effect of payment on cash position',
           },
           {
-            title: 'Discount Capture',
-            description: 'Highlights available early payment discounts',
+            feature: 'Discount Capture',
+            insight: 'Highlights available early payment discounts',
           },
           {
-            title: 'Batch Optimization',
-            description: 'Groups payments for efficient processing',
+            feature: 'Batch Optimization',
+            insight: 'Groups payments for efficient processing',
           },
           {
-            title: 'Vendor Relationship',
-            description: 'Tracks payment history and vendor health',
+            feature: 'Vendor Relationship',
+            insight: 'Tracks payment history and vendor health',
           },
         ]}
       />
