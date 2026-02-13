@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   User,
   Building2,
@@ -16,10 +17,25 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  Star,
+  Globe,
+  ArrowUpRight,
+  Shield,
+  UserPlus,
+  Download,
+  Upload,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+
+type ClientStatus = 'active' | 'pending' | 'completed' | 'on-hold' | 'warranty'
+
+type CommunicationPref = 'email' | 'phone' | 'text' | 'in-person'
+
+type ClientSource = 'referral' | 'website' | 'realtor' | 'repeat' | 'social_media' | 'other'
+
+type ClientTier = 'standard' | 'premium' | 'luxury'
 
 interface Client {
   id: string
@@ -27,13 +43,29 @@ interface Client {
   company?: string
   email: string
   phone: string
+  mobile?: string
+  address?: string
   totalProjects: number
   activeProjects: number
   totalContractValue: number
-  currentProjectStatus: 'active' | 'pending' | 'completed' | 'on-hold'
-  communicationPreference: 'email' | 'phone' | 'text' | 'in-person'
+  currentProjectStatus: ClientStatus
+  currentProjectName?: string
+  communicationPreference: CommunicationPref
   lastContact: string
   clientSince: string
+  source: ClientSource
+  referredBy?: string
+  referralsGiven: number
+  portalEnabled: boolean
+  portalLastLogin?: string
+  tier: ClientTier
+  tags: string[]
+  pendingSelections: number
+  pendingActions: number
+  satisfactionScore?: number
+  aiDecisionSpeed?: 'fast' | 'moderate' | 'deliberate'
+  aiBudgetSensitivity?: 'low' | 'moderate' | 'high'
+  aiStylePreferences?: string[]
   aiInsight?: string
 }
 
@@ -43,14 +75,30 @@ const mockClients: Client[] = [
     name: 'John & Sarah Smith',
     email: 'jsmith@email.com',
     phone: '(843) 555-0123',
+    mobile: '(843) 555-0124',
+    address: '456 Main St, Bradenton, FL',
     totalProjects: 3,
     activeProjects: 1,
     totalContractValue: 2450000,
     currentProjectStatus: 'active',
-    communicationPreference: 'email',
+    currentProjectName: 'Smith Residence',
+    communicationPreference: 'text',
     lastContact: '2 days ago',
     clientSince: '2022',
-    aiInsight: 'High engagement - responds within 24hrs avg',
+    source: 'referral',
+    referredBy: 'Robert Johnson',
+    referralsGiven: 2,
+    portalEnabled: true,
+    portalLastLogin: '2 hours ago',
+    tier: 'luxury',
+    tags: ['VIP', 'Repeat Client'],
+    pendingSelections: 3,
+    pendingActions: 4,
+    satisfactionScore: 92,
+    aiDecisionSpeed: 'fast',
+    aiBudgetSensitivity: 'low',
+    aiStylePreferences: ['Modern', 'White/Gray Palette', 'Premium Brands'],
+    aiInsight: 'High engagement -- responds within 24hrs avg. Sarah is primary decision-maker. Text preferred.',
   },
   {
     id: '2',
@@ -62,10 +110,23 @@ const mockClients: Client[] = [
     activeProjects: 2,
     totalContractValue: 4200000,
     currentProjectStatus: 'active',
+    currentProjectName: 'Johnson Beach House',
     communicationPreference: 'phone',
     lastContact: '1 week ago',
     clientSince: '2019',
-    aiInsight: 'Repeat client - 67% referral source',
+    source: 'repeat',
+    referralsGiven: 3,
+    portalEnabled: true,
+    portalLastLogin: '3 days ago',
+    tier: 'luxury',
+    tags: ['Top Client', 'Developer'],
+    pendingSelections: 0,
+    pendingActions: 1,
+    satisfactionScore: 88,
+    aiDecisionSpeed: 'fast',
+    aiBudgetSensitivity: 'low',
+    aiStylePreferences: ['Coastal', 'Traditional', 'Natural Materials'],
+    aiInsight: 'Top repeat client -- 67% referral source. Schedule quarterly review.',
   },
   {
     id: '3',
@@ -76,9 +137,22 @@ const mockClients: Client[] = [
     activeProjects: 0,
     totalContractValue: 320000,
     currentProjectStatus: 'completed',
+    currentProjectName: 'Miller Addition',
     communicationPreference: 'text',
     lastContact: '3 weeks ago',
     clientSince: '2024',
+    source: 'website',
+    referralsGiven: 0,
+    portalEnabled: true,
+    portalLastLogin: '2 weeks ago',
+    tier: 'standard',
+    tags: [],
+    pendingSelections: 0,
+    pendingActions: 0,
+    satisfactionScore: 78,
+    aiDecisionSpeed: 'deliberate',
+    aiBudgetSensitivity: 'high',
+    aiInsight: 'Project complete. Warranty phase. Consider 6-month follow-up for referral request.',
   },
   {
     id: '4',
@@ -90,10 +164,23 @@ const mockClients: Client[] = [
     activeProjects: 3,
     totalContractValue: 12500000,
     currentProjectStatus: 'active',
+    currentProjectName: 'Wilson Custom',
     communicationPreference: 'in-person',
     lastContact: '3 days ago',
     clientSince: '2018',
-    aiInsight: 'Top client - schedule quarterly review',
+    source: 'repeat',
+    referralsGiven: 5,
+    portalEnabled: true,
+    portalLastLogin: '1 day ago',
+    tier: 'luxury',
+    tags: ['Top Client', 'VIP', 'Developer'],
+    pendingSelections: 2,
+    pendingActions: 2,
+    satisfactionScore: 95,
+    aiDecisionSpeed: 'fast',
+    aiBudgetSensitivity: 'low',
+    aiStylePreferences: ['Contemporary', 'High-End Finishes', 'Smart Home'],
+    aiInsight: 'Top client by lifetime value ($12.5M). 5 referrals given. Schedule quarterly review.',
   },
   {
     id: '5',
@@ -104,10 +191,21 @@ const mockClients: Client[] = [
     activeProjects: 1,
     totalContractValue: 1850000,
     currentProjectStatus: 'pending',
+    currentProjectName: 'Davis Coastal Home',
     communicationPreference: 'email',
     lastContact: '5 days ago',
     clientSince: '2023',
-    aiInsight: 'Awaiting decision - follow up recommended',
+    source: 'realtor',
+    referredBy: 'Jane Doe Realty',
+    referralsGiven: 0,
+    portalEnabled: false,
+    tier: 'premium',
+    tags: [],
+    pendingSelections: 0,
+    pendingActions: 1,
+    aiDecisionSpeed: 'moderate',
+    aiBudgetSensitivity: 'moderate',
+    aiInsight: 'Awaiting contract decision -- 5 days. Similar clients decide within 7 days avg. Follow up recommended.',
   },
   {
     id: '6',
@@ -121,22 +219,75 @@ const mockClients: Client[] = [
     communicationPreference: 'phone',
     lastContact: '2 weeks ago',
     clientSince: '2024',
-    aiInsight: 'Project on hold - financing pending',
+    source: 'social_media',
+    referralsGiven: 0,
+    portalEnabled: true,
+    portalLastLogin: '10 days ago',
+    tier: 'standard',
+    tags: [],
+    pendingSelections: 0,
+    pendingActions: 0,
+    aiDecisionSpeed: 'deliberate',
+    aiBudgetSensitivity: 'high',
+    aiInsight: 'Project on hold -- financing pending. No portal login in 10 days. Proactive outreach recommended.',
+  },
+  {
+    id: '7',
+    name: 'Patricia & Mark Thompson',
+    email: 'pthompson@email.com',
+    phone: '(843) 555-1234',
+    totalProjects: 1,
+    activeProjects: 0,
+    totalContractValue: 890000,
+    currentProjectStatus: 'warranty',
+    currentProjectName: 'Thompson Renovation',
+    communicationPreference: 'email',
+    lastContact: '1 month ago',
+    clientSince: '2023',
+    source: 'referral',
+    referredBy: 'John & Sarah Smith',
+    referralsGiven: 1,
+    portalEnabled: true,
+    portalLastLogin: '3 weeks ago',
+    tier: 'premium',
+    tags: ['Warranty'],
+    pendingSelections: 0,
+    pendingActions: 0,
+    satisfactionScore: 85,
+    aiDecisionSpeed: 'moderate',
+    aiBudgetSensitivity: 'moderate',
+    aiInsight: 'Warranty period active. HVAC service call predicted within 6 months based on system age.',
   },
 ]
 
-const statusConfig = {
+const statusConfig: Record<ClientStatus, { label: string; color: string; icon: typeof CheckCircle }> = {
   active: { label: 'Active', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
   completed: { label: 'Completed', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
   'on-hold': { label: 'On Hold', color: 'bg-gray-100 text-gray-700', icon: AlertCircle },
+  warranty: { label: 'Warranty', color: 'bg-purple-100 text-purple-700', icon: Shield },
 }
 
-const communicationConfig = {
+const communicationConfig: Record<CommunicationPref, { label: string; icon: typeof Mail }> = {
   email: { label: 'Email', icon: Mail },
   phone: { label: 'Phone', icon: Phone },
   text: { label: 'Text', icon: MessageSquare },
   'in-person': { label: 'In-Person', icon: Users },
+}
+
+const tierConfig: Record<ClientTier, { label: string; color: string }> = {
+  standard: { label: 'Standard', color: 'bg-gray-100 text-gray-600' },
+  premium: { label: 'Premium', color: 'bg-blue-100 text-blue-600' },
+  luxury: { label: 'Luxury', color: 'bg-amber-100 text-amber-700' },
+}
+
+const sourceLabels: Record<ClientSource, string> = {
+  referral: 'Referral',
+  website: 'Website',
+  realtor: 'Realtor',
+  repeat: 'Repeat Client',
+  social_media: 'Social Media',
+  other: 'Other',
 }
 
 function formatCurrency(value: number): string {
@@ -148,6 +299,7 @@ function formatCurrency(value: number): string {
 function ClientCard({ client }: { client: Client }) {
   const status = statusConfig[client.currentProjectStatus]
   const commPref = communicationConfig[client.communicationPreference]
+  const tier = tierConfig[client.tier]
   const StatusIcon = status.icon
   const CommIcon = commPref.icon
 
@@ -159,12 +311,20 @@ function ClientCard({ client }: { client: Client }) {
             <User className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900">{client.name}</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-gray-900">{client.name}</h4>
+              {client.tags.includes('VIP') && (
+                <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+              )}
+            </div>
             {client.company && (
               <div className="flex items-center gap-1 text-sm text-gray-500">
                 <Building2 className="h-3 w-3" />
                 <span>{client.company}</span>
               </div>
+            )}
+            {client.currentProjectName && (
+              <div className="text-xs text-gray-400 mt-0.5">Current: {client.currentProjectName}</div>
             )}
           </div>
         </div>
@@ -173,7 +333,7 @@ function ClientCard({ client }: { client: Client }) {
         </button>
       </div>
 
-      <div className="space-y-2 mb-3">
+      <div className="space-y-1.5 mb-3">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Mail className="h-3.5 w-3.5 text-gray-400" />
           <span>{client.email}</span>
@@ -181,6 +341,10 @@ function ClientCard({ client }: { client: Client }) {
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Phone className="h-3.5 w-3.5 text-gray-400" />
           <span>{client.phone}</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-gray-400">
+          <Clock className="h-3 w-3" />
+          <span>Last contact: {client.lastContact} | Since {client.clientSince}</span>
         </div>
       </div>
 
@@ -202,23 +366,88 @@ function ClientCard({ client }: { client: Client }) {
         <div className="bg-gray-50 rounded-lg p-2">
           <div className="text-xs text-gray-500 flex items-center gap-1">
             <DollarSign className="h-3 w-3" />
-            Total Value
+            Lifetime Value
           </div>
           <div className="font-semibold text-gray-900">{formatCurrency(client.totalContractValue)}</div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-2">
-          <span className={cn("text-xs px-2 py-1 rounded-full flex items-center gap-1", status.color)}>
-            <StatusIcon className="h-3 w-3" />
-            {status.label}
+      {/* Cross-module connection badges */}
+      <div className="flex items-center gap-1.5 flex-wrap mb-3">
+        <span className={cn("text-xs px-2 py-0.5 rounded-full flex items-center gap-1", status.color)}>
+          <StatusIcon className="h-3 w-3" />
+          {status.label}
+        </span>
+        <span className={cn("text-xs px-1.5 py-0.5 rounded", tier.color)}>
+          {tier.label}
+        </span>
+        {client.portalEnabled && (
+          <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            <Globe className="h-3 w-3" />Portal
           </span>
+        )}
+        {!client.portalEnabled && (
+          <span className="text-xs bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded">No Portal</span>
+        )}
+        {client.referralsGiven > 0 && (
+          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            <ArrowUpRight className="h-3 w-3" />
+            {client.referralsGiven} referral{client.referralsGiven > 1 ? 's' : ''}
+          </span>
+        )}
+        {client.pendingSelections > 0 && (
+          <span className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded">
+            {client.pendingSelections} selections due
+          </span>
+        )}
+        {client.source !== 'other' && (
+          <span className="text-xs bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded">
+            via {sourceLabels[client.source]}
+          </span>
+        )}
+      </div>
+
+      {/* AI Profile row */}
+      {(client.aiDecisionSpeed || client.aiBudgetSensitivity || client.aiStylePreferences) && (
+        <div className="flex items-center gap-1.5 flex-wrap mb-3 pt-2 border-t border-gray-100">
+          <Sparkles className="h-3 w-3 text-blue-500" />
+          {client.aiDecisionSpeed && (
+            <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
+              {client.aiDecisionSpeed} decisions
+            </span>
+          )}
+          {client.aiBudgetSensitivity && (
+            <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
+              {client.aiBudgetSensitivity} budget sensitivity
+            </span>
+          )}
+          {client.aiStylePreferences?.slice(0, 2).map(pref => (
+            <span key={pref} className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
+              {pref}
+            </span>
+          ))}
+          {(client.aiStylePreferences?.length ?? 0) > 2 && (
+            <span className="text-xs text-gray-400">+{(client.aiStylePreferences?.length ?? 0) - 2} more</span>
+          )}
         </div>
+      )}
+
+      {/* Footer row */}
+      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
         <div className="flex items-center gap-1 text-xs text-gray-500">
           <CommIcon className="h-3 w-3" />
-          <span>{commPref.label}</span>
+          <span>Prefers {commPref.label}</span>
         </div>
+        {client.satisfactionScore !== undefined && (
+          <div className={cn(
+            "text-xs px-1.5 py-0.5 rounded font-medium",
+            client.satisfactionScore >= 90 ? "bg-green-50 text-green-700" :
+            client.satisfactionScore >= 75 ? "bg-blue-50 text-blue-700" :
+            "bg-amber-50 text-amber-700"
+          )}>
+            Satisfaction: {client.satisfactionScore}%
+          </div>
+        )}
       </div>
 
       {client.aiInsight && (
@@ -233,11 +462,15 @@ function ClientCard({ client }: { client: Client }) {
 
 export function ClientsPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
+  const [tierFilter, setTierFilter] = useState<string>('all')
+  const [sourceFilter, setSourceFilter] = useState<string>('all')
 
   const filteredClients = sortItems(
     mockClients.filter(client => {
-      if (!matchesSearch(client, search, ['name', 'email', 'company'])) return false
+      if (!matchesSearch(client, search, ['name', 'email', 'company', 'currentProjectName'])) return false
       if (activeTab !== 'all' && client.currentProjectStatus !== activeTab) return false
+      if (tierFilter !== 'all' && client.tier !== tierFilter) return false
+      if (sourceFilter !== 'all' && client.source !== sourceFilter) return false
       return true
     }),
     activeSort as keyof Client | '',
@@ -247,6 +480,9 @@ export function ClientsPreview() {
   const totalClients = mockClients.length
   const activeProjects = mockClients.reduce((sum, c) => sum + c.activeProjects, 0)
   const lifetimeValue = mockClients.reduce((sum, c) => sum + c.totalContractValue, 0)
+  const totalReferrals = mockClients.reduce((sum, c) => sum + c.referralsGiven, 0)
+  const portalActive = mockClients.filter(c => c.portalEnabled).length
+  const pendingActions = mockClients.reduce((sum, c) => sum + c.pendingActions, 0)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -259,21 +495,40 @@ export function ClientsPreview() {
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search clients..."
+          searchPlaceholder="Search clients, projects, companies..."
           tabs={[
             { key: 'all', label: 'All', count: mockClients.length },
-            { key: 'active', label: 'Active', count: mockClients.filter(c => c.currentProjectStatus === 'active').length },
-            { key: 'pending', label: 'Pending', count: mockClients.filter(c => c.currentProjectStatus === 'pending').length },
-            { key: 'completed', label: 'Completed', count: mockClients.filter(c => c.currentProjectStatus === 'completed').length },
-            { key: 'on-hold', label: 'On Hold', count: mockClients.filter(c => c.currentProjectStatus === 'on-hold').length },
+            ...Object.entries(statusConfig)
+              .filter(([key]) => mockClients.some(c => c.currentProjectStatus === key))
+              .map(([key, config]) => ({
+                key,
+                label: config.label,
+                count: mockClients.filter(c => c.currentProjectStatus === key).length,
+              })),
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Tiers',
+              value: tierFilter,
+              options: Object.entries(tierConfig).map(([key, val]) => ({ value: key, label: val.label })),
+              onChange: setTierFilter,
+            },
+            {
+              label: 'All Sources',
+              value: sourceFilter,
+              options: Object.entries(sourceLabels).map(([key, label]) => ({ value: key, label })),
+              onChange: setSourceFilter,
+            },
+          ]}
           sortOptions={[
             { value: 'name', label: 'Name' },
-            { value: 'totalContractValue', label: 'Contract Value' },
+            { value: 'totalContractValue', label: 'Lifetime Value' },
             { value: 'totalProjects', label: 'Projects' },
             { value: 'clientSince', label: 'Client Since' },
+            { value: 'lastContact', label: 'Last Contact' },
+            { value: 'referralsGiven', label: 'Referrals' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -281,7 +536,11 @@ export function ClientsPreview() {
           onSortDirectionChange={toggleSortDirection}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
-          actions={[{ icon: Plus, label: 'Add Client', onClick: () => {}, variant: 'primary' }]}
+          actions={[
+            { icon: Upload, label: 'Import', onClick: () => {} },
+            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Plus, label: 'Add Client', onClick: () => {}, variant: 'primary' },
+          ]}
           resultCount={filteredClients.length}
           totalCount={mockClients.length}
         />
@@ -289,27 +548,48 @@ export function ClientsPreview() {
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-6 gap-3">
           <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Users className="h-4 w-4" />
-              Total Clients
+            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+              <Users className="h-3.5 w-3.5" />
+              Clients
             </div>
-            <div className="text-2xl font-bold text-gray-900 mt-1">{totalClients}</div>
+            <div className="text-xl font-bold text-gray-900 mt-1">{totalClients}</div>
           </div>
           <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <FolderOpen className="h-4 w-4" />
+            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+              <FolderOpen className="h-3.5 w-3.5" />
               Active Projects
             </div>
-            <div className="text-2xl font-bold text-gray-900 mt-1">{activeProjects}</div>
+            <div className="text-xl font-bold text-gray-900 mt-1">{activeProjects}</div>
           </div>
           <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <TrendingUp className="h-4 w-4" />
+            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+              <TrendingUp className="h-3.5 w-3.5" />
               Lifetime Value
             </div>
-            <div className="text-2xl font-bold text-blue-600 mt-1">{formatCurrency(lifetimeValue)}</div>
+            <div className="text-xl font-bold text-blue-600 mt-1">{formatCurrency(lifetimeValue)}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              Referrals Given
+            </div>
+            <div className="text-xl font-bold text-green-600 mt-1">{totalReferrals}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+              <Globe className="h-3.5 w-3.5" />
+              Portal Active
+            </div>
+            <div className="text-xl font-bold text-gray-900 mt-1">{portalActive}</div>
+          </div>
+          <div className={cn("rounded-lg p-3", pendingActions > 0 ? "bg-red-50" : "bg-gray-50")}>
+            <div className={cn("flex items-center gap-1 text-xs font-medium", pendingActions > 0 ? "text-red-600" : "text-gray-500")}>
+              <AlertCircle className="h-3.5 w-3.5" />
+              Pending Actions
+            </div>
+            <div className={cn("text-xl font-bold mt-1", pendingActions > 0 ? "text-red-700" : "text-gray-900")}>{pendingActions}</div>
           </div>
         </div>
       </div>
@@ -342,12 +622,19 @@ export function ClientsPreview() {
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">AI Insights:</span>
+            <span className="font-medium text-sm text-amber-800">AI Client Intelligence:</span>
           </div>
-          <p className="text-sm text-amber-700">
-            Thomas Wilson accounts for 57% of lifetime value. Michael Davis awaiting decision for 5 days - similar clients decide within 7 days avg.
-            2 clients due for quarterly check-in based on communication patterns.
-          </p>
+          <div className="text-sm text-amber-700 space-y-1">
+            <p>
+              Thomas Wilson accounts for 57% of lifetime value ($12.5M) -- top referral source with 5 referrals.
+              Michael Davis awaiting decision for 5 days -- similar clients decide within 7 days avg. Follow up today.
+            </p>
+            <p>
+              Emily Anderson has not logged into portal in 10 days during on-hold status -- proactive outreach recommended.
+              Patricia Thompson entering warranty period -- predict HVAC service call within 6 months.
+              2 clients due for quarterly check-in based on communication patterns.
+            </p>
+          </div>
         </div>
       </div>
     </div>

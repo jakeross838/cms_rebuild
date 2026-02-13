@@ -20,65 +20,101 @@ export default function JobSubmittalsPage() {
       </div>
       {activeTab === 'preview' ? <SubmittalsPreview /> : <PageSpec
       title="Submittals"
-      phase="Phase 1 - Project Management"
-      planFile="views/jobs/SUBMITTALS.md"
-      description="Track product submittals for architect/engineer approval. Manage the submittal workflow from vendor to design team and back. Ensure all products are approved before ordering."
-      workflow={['Request from Vendor', 'Review Internally', 'Submit for Approval', 'Revise if Needed', 'Approved']}
+      phase="Phase 4 - Intelligence"
+      planFile="docs/modules/27-rfi-management.md"
+      description="Track product submittals through the full approval lifecycle: from vendor submission through internal review, architect/engineer routing, stamp workflow (approved, approved as noted, revise and resubmit, rejected), and revision management. Integrates with purchase orders (hold until approved), selections (linked product choices), schedule (lead time and dependency tracking), and permitting (structural submittals require engineer stamp). AI predicts approval timelines and flags overdue reviews."
+      workflow={['Request from Vendor', 'Receive Documents', 'Internal Review', 'Route to A/E', 'Engineer Review + Stamp', 'Revise if Needed', 'Approved — Release PO']}
       features={[
-        'Submittal log',
-        'Submittal schedule',
-        'Vendor submittal requests',
-        'Internal review',
-        'Route to design team',
-        'Approval status tracking',
-        'Revision management',
-        'Due date tracking',
-        'Spec section reference',
-        'Related POs (hold until approved)',
-        'Bulk approval',
-        'Digital stamps',
-        'Submittal packages',
-        'Export submittal log',
+        'Submittal log with sequential numbering',
+        'Submittal schedule with required dates and lead times',
+        'Vendor submittal requests and document receipt tracking',
+        'Internal review before routing to design team',
+        'Route to architect, engineer, or owner with distribution tracking',
+        'Distribution status (sent, viewed, responded) per recipient',
+        'Ball-in-court indicator showing current responsible party',
+        'Review stamp workflow (Approved, Approved as Noted, No Exceptions, Revise & Resubmit, Rejected)',
+        'Engineer license number tracking on stamps',
+        'Revision management with full version history',
+        'Spec section reference linking',
+        'Trade category classification',
+        'Document attachment count and management',
+        'Selection link — connects submittal to product selection',
+        'Schedule dependency — warns when submittal delays impact schedule tasks',
+        'Lead time tracking (days from approval to delivery)',
+        'PO hold integration — PO on hold until submittal approved, auto-release on approval',
+        'Permit requirement flag for structural submittals needing engineer stamp',
+        'Due date tracking with overdue alerts',
+        'Bulk approval for simple submittals',
+        'Digital stamps with reviewer signature',
+        'Submittal packages for grouped items',
+        'Export submittal log with stamp history',
+        'AI-predicted approval timeline per submittal',
       ]}
       connections={[
-        { name: 'Vendors', type: 'input', description: 'Request submittals' },
-        { name: 'Specifications', type: 'input', description: 'Spec requirements' },
-        { name: 'Purchase Orders', type: 'bidirectional', description: 'Hold PO until approved' },
-        { name: 'Schedule', type: 'bidirectional', description: 'Lead time planning' },
-        { name: 'Architect/Engineer', type: 'bidirectional', description: 'Route for approval' },
+        { name: 'Vendors (M10)', type: 'input', description: 'Vendor provides submittal documents' },
+        { name: 'Specifications (M6)', type: 'input', description: 'Spec section requirements drive submittal list' },
+        { name: 'Purchase Orders (M18)', type: 'bidirectional', description: 'PO held until submittal approved; approval releases PO' },
+        { name: 'Schedule (M7)', type: 'bidirectional', description: 'Lead time planning and schedule dependency warnings' },
+        { name: 'Architect/Engineer', type: 'bidirectional', description: 'Route for review and stamp; engineer tracking with license numbers' },
+        { name: 'Selections (M21)', type: 'input', description: 'Product selections drive submittal requirements' },
+        { name: 'Permitting (M32)', type: 'output', description: 'Structural submittals link to permit applications requiring stamped docs' },
+        { name: 'RFIs (M27)', type: 'bidirectional', description: 'Submittal reviews may generate RFIs; RFIs may reference submittals' },
+        { name: 'Budget (M9)', type: 'input', description: 'Budget context for lead time and ordering decisions' },
+        { name: 'Notifications (M5)', type: 'output', description: 'Overdue alerts, distribution notifications, stamp notifications' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'job_id', type: 'uuid', required: true, description: 'This job' },
-        { name: 'submittal_number', type: 'string', required: true, description: 'Submittal ID' },
-        { name: 'spec_section', type: 'string', description: 'Specification section' },
+        { name: 'job_id', type: 'uuid', required: true, description: 'FK to jobs' },
+        { name: 'submittal_number', type: 'string', required: true, description: 'Sequential submittal ID (SUB-NNN)' },
+        { name: 'spec_section', type: 'string', description: 'Specification section reference' },
+        { name: 'trade_category', type: 'string', description: 'Trade classification' },
         { name: 'description', type: 'string', required: true, description: 'Item description' },
         { name: 'vendor_id', type: 'uuid', description: 'Providing vendor' },
-        { name: 'submitted_date', type: 'date', description: 'When submitted' },
-        { name: 'required_date', type: 'date', description: 'Need approval by' },
-        { name: 'lead_time', type: 'integer', description: 'Days after approval' },
-        { name: 'status', type: 'string', required: true, description: 'Pending, Submitted, Approved, Revise and Resubmit, Rejected' },
-        { name: 'revision', type: 'integer', description: 'Revision number' },
-        { name: 'reviewer', type: 'string', description: 'Who reviews' },
-        { name: 'review_date', type: 'date', description: 'When reviewed' },
-        { name: 'comments', type: 'text', description: 'Review comments' },
-        { name: 'documents', type: 'jsonb', description: 'Attached files' },
+        { name: 'submitted_date', type: 'date', description: 'When submittal documents received' },
+        { name: 'required_date', type: 'date', description: 'Approval needed by this date' },
+        { name: 'lead_time_days', type: 'integer', description: 'Days from approval to delivery' },
+        { name: 'status', type: 'string', required: true, description: 'pending, submitted, under_review, approved, approved_as_noted, revise_resubmit, rejected' },
+        { name: 'revision', type: 'integer', description: 'Current revision number' },
+        { name: 'document_count', type: 'integer', description: 'Number of attached documents' },
+        { name: 'distribution', type: 'jsonb', description: 'Routing list with sent/viewed/responded tracking' },
+        { name: 'stamps', type: 'jsonb', description: 'Review stamps with action, reviewer, license number, comments, timestamp' },
+        { name: 'selection_link', type: 'jsonb', description: 'Link to selections module (selection name, room)' },
+        { name: 'schedule_dependency', type: 'jsonb', description: 'Linked schedule task with impact days and critical flag' },
+        { name: 'linked_po', type: 'jsonb', description: 'Linked PO with hold status (on_hold or released)' },
+        { name: 'permit_required', type: 'boolean', description: 'Requires engineer stamp for permitting' },
+        { name: 'ai_predicted_approval_days', type: 'integer', description: 'AI-predicted days to approval' },
+        { name: 'comments', type: 'text', description: 'General notes and review comments' },
       ]}
       aiFeatures={[
         {
-          name: 'Schedule Integration',
-          description: 'Manages timing.',
-          trigger: 'On schedule update'
+          name: 'Approval Timeline Prediction',
+          description: 'Predicts days to approval based on reviewer response patterns, submittal complexity, vendor revision history, and trade-specific approval rates.',
+          trigger: 'On submission and daily recalculation'
         },
         {
-          name: 'Vendor Follow-up',
-          description: 'Tracks requests.',
+          name: 'Schedule Impact Analysis',
+          description: 'Calculates downstream schedule impact when submittal reviews are delayed. Alerts PM when lead time plus remaining review time threatens installation dates.',
+          trigger: 'On schedule update and daily check'
+        },
+        {
+          name: 'Vendor Follow-up Intelligence',
+          description: 'Tracks vendor resubmission patterns. Predicts how many revision cycles each vendor typically needs. Auto-generates follow-up reminders for overdue resubmissions.',
           trigger: 'Daily check'
         },
         {
-          name: 'Approval Prediction',
-          description: 'Estimates timelines.',
-          trigger: 'On submission'
+          name: 'Distribution Monitoring',
+          description: 'Monitors reviewer engagement: flags submittals that have been sent but not viewed, or viewed but not responded to beyond typical response window.',
+          trigger: 'Real-time tracking'
+        },
+        {
+          name: 'PO Release Automation',
+          description: 'Automatically triggers PO release notification when submittal is approved. Alerts PM if lead time means ordering deadline has passed.',
+          trigger: 'On stamp action'
+        },
+        {
+          name: 'Permit Coordination',
+          description: 'Identifies submittals requiring engineer stamps for permit applications. Coordinates submittal approval with permit submission timeline.',
+          trigger: 'On permit-required submittal creation'
         },
       ]}
       mockupAscii=""

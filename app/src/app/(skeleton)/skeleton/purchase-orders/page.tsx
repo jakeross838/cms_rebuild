@@ -25,9 +25,9 @@ export default function PurchaseOrdersSkeleton() {
       {activeTab === 'preview' ? <PurchaseOrdersPreview /> : <PageSpec
       title="Purchase Orders"
       phase="Phase 0 - Foundation"
-      planFile="views/financial/POS_DRAWS_COS.md"
-      description="Create and manage purchase orders with AI-powered vendor selection and price intelligence. The system recommends vendors based on historical performance and pricing, then compares PO pricing to your cost database to catch above-market rates before commitment."
-      workflow={constructionWorkflow}
+      planFile="docs/modules/18-purchase-orders.md"
+      description="Company-wide procurement hub. Create and manage purchase orders with AI-powered vendor selection and price intelligence. Supports standard, blanket, and emergency POs. Three-way matching (PO-receipt-invoice), backorder management, cross-project aggregation, schedule-driven lead time alerts, and payment term optimization. All PO types configurable per builder."
+      workflow={['Budget/Schedule', 'Create PO', 'Approve (Threshold)', 'Send to Vendor', 'Track Delivery', 'Receive', '3-Way Match Invoice', 'Close']}
       features={[
         'PO list with filtering by status, vendor, job',
         'PO creation with line items and cost code assignment',

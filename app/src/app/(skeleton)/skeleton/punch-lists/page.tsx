@@ -7,7 +7,7 @@ import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
-  'Construction', 'Punch List', 'Final Inspection', 'Closeout', 'Warranty'
+  'Identify Item', 'Photo + Pin', 'Assign to Trade', 'Vendor Repair', 'Verify', 'Close / Warranty'
 ]
 
 export default function PunchListsSkeleton() {
@@ -23,114 +23,106 @@ export default function PunchListsSkeleton() {
         </button>
       </div>
       {activeTab === 'preview' ? <PunchListPreview /> : <PageSpec
-      title="Punch Lists"
-      phase="Phase 0 - Foundation"
-      planFile="views/closeout/PUNCH_LISTS.md"
-      description="Track and resolve punch list items before project closeout. Capture items via mobile with photo markup, assign to vendors, track completion status, and get client sign-off. Integrates with warranty tracking for post-completion issues."
+      title="Punch List & Quality Control"
+      phase="Phase 4 - Intelligence"
+      planFile="docs/modules/28-punch-list-quality.md"
+      description="Photo-documented punch list management with floor plan pin locations, vendor assignment and notification, 7-step completion verification workflow, quality checklists by trade/phase, warranty linkage, and cost tracking for back-charges. Supports pre-final inspection, client walkthrough, and closeout documentation."
       workflow={constructionWorkflow}
       features={[
-        'Punch list organized by location/room',
-        'Mobile capture with photo and markup',
-        'Voice-to-text item description',
-        'Assign items to vendors/trades',
-        'Priority levels: Critical, Major, Minor, Cosmetic',
-        'Due date tracking',
-        'Photo before/after comparison',
-        'Vendor notification via email/portal',
-        'Bulk status updates',
-        'Client walkthrough mode',
-        'Client sign-off on completed items',
-        'Export punch list to PDF',
-        'Link to warranty items if not resolved',
-        'Statistics: Items by trade, completion rate',
-        'Historical punch data for vendor scorecards',
+        'Punch item list with sequential numbering (PL-NNN)',
+        'Room/area and floor level organization',
+        'Photo documentation with 4 stages (issue, repair, verification, rejection)',
+        'Floor plan pin location for spatial reference',
+        'Assign to trade and specific vendor/subcontractor',
+        '5 priority levels (critical, high, medium, low, cosmetic)',
+        '7 status workflow (open, assigned, in_progress, completed, rejected, verified, closed)',
+        'Rejection tracking with count, reason, and re-assignment',
+        'Before/after photo comparison for verification',
+        'Client walkthrough mode for joint inspection',
+        'Voice-to-text item description capture',
+        'Bulk item entry from walkthroughs',
+        'Quality checklists by trade and phase',
+        'Item source tracking (walkthrough, checklist, client portal, daily log)',
+        'Cost responsibility (vendor backcharge, builder warranty, shared, none)',
+        'Estimated and actual cost tracking per item',
+        'Warranty conversion flag for recurring items',
+        'Trade, room, vendor, and priority filter dimensions',
+        'Progress dashboard with completion percentage',
+        'Export filtered list per trade for vendor distribution',
+        'Print punch list with photos',
+        'Historical punch data feeds vendor scorecards',
       ]}
       connections={[
-        { name: 'Jobs', type: 'input', description: 'Punch list scoped to job' },
-        { name: 'Vendors', type: 'bidirectional', description: 'Items assigned to vendors' },
-        { name: 'Photos', type: 'input', description: 'Photo documentation of items' },
-        { name: 'Vendor Portal', type: 'output', description: 'Vendors see assigned items' },
-        { name: 'Client Portal', type: 'output', description: 'Client can view and sign off' },
-        { name: 'Warranties', type: 'output', description: 'Unresolved items become warranty' },
-        { name: 'Vendor Intelligence', type: 'output', description: 'Punch data feeds vendor scores' },
+        { name: 'Photos (M6)', type: 'bidirectional', description: 'Multi-stage photo documentation (issue, repair, verification, rejection)' },
+        { name: 'Vendors (M10)', type: 'bidirectional', description: 'Items assigned to vendors; vendor notification via portal' },
+        { name: 'Vendor Performance (M22)', type: 'output', description: 'Punch counts and rejection rates feed vendor scorecards' },
+        { name: 'Vendor Portal (M30)', type: 'output', description: 'Vendors see assigned items and update status' },
+        { name: 'Client Portal (M29)', type: 'bidirectional', description: 'Client-reported items; client walkthrough participation' },
+        { name: 'Warranty (M31)', type: 'output', description: 'Unresolved items convert to warranty claims' },
+        { name: 'Draw Requests (M15)', type: 'output', description: 'Final draw hold until punch list completion' },
+        { name: 'Daily Logs (M8)', type: 'input', description: 'Field observations generate punch items' },
+        { name: 'Budget (M9)', type: 'output', description: 'Back-charge costs tracked against vendor budget' },
+        { name: 'Schedule (M7)', type: 'bidirectional', description: 'Closeout schedule task dependencies' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
         { name: 'job_id', type: 'uuid', required: true, description: 'FK to jobs' },
-        { name: 'location', type: 'string', required: true, description: 'Room/area' },
-        { name: 'description', type: 'text', required: true, description: 'Item description' },
-        { name: 'priority', type: 'string', required: true, description: 'Critical, Major, Minor, Cosmetic' },
-        { name: 'status', type: 'string', required: true, description: 'Open, In Progress, Complete, Verified' },
-        { name: 'assigned_vendor_id', type: 'uuid', description: 'FK to vendors' },
-        { name: 'assigned_trade', type: 'string', description: 'Trade responsible' },
-        { name: 'due_date', type: 'date', description: 'Target completion date' },
-        { name: 'photo_before', type: 'string', description: 'Photo URL before fix' },
-        { name: 'photo_after', type: 'string', description: 'Photo URL after fix' },
-        { name: 'markup_data', type: 'jsonb', description: 'Photo markup annotations' },
-        { name: 'created_at', type: 'timestamp', required: true, description: 'When created' },
-        { name: 'created_by', type: 'uuid', description: 'User who created' },
-        { name: 'completed_at', type: 'timestamp', description: 'When marked complete' },
-        { name: 'verified_at', type: 'timestamp', description: 'When client verified' },
-        { name: 'notes', type: 'text', description: 'Additional notes' },
+        { name: 'item_number', type: 'string', required: true, description: 'Sequential (PL-NNN)' },
+        { name: 'location', type: 'string', required: true, description: 'Room or area' },
+        { name: 'floor', type: 'string', description: 'Floor level' },
+        { name: 'description', type: 'text', required: true, description: 'Deficiency description' },
+        { name: 'trade', type: 'string', required: true, description: 'Responsible trade' },
+        { name: 'vendor_id', type: 'uuid', description: 'Assigned vendor' },
+        { name: 'vendor_name', type: 'string', description: 'Vendor display name' },
+        { name: 'priority', type: 'string', required: true, description: 'critical, high, medium, low, cosmetic' },
+        { name: 'status', type: 'string', required: true, description: 'open, assigned, in_progress, completed, rejected, verified, closed' },
+        { name: 'source', type: 'string', description: 'walkthrough, checklist, client_portal, daily_log' },
+        { name: 'due_date', type: 'date', description: 'Completion deadline' },
+        { name: 'photos', type: 'jsonb', description: 'Photos with stage tracking' },
+        { name: 'plan_pin', type: 'boolean', description: 'Has floor plan pin' },
+        { name: 'cost_responsibility', type: 'string', description: 'vendor_backcharge, builder_warranty, shared, none' },
+        { name: 'estimated_cost', type: 'decimal', description: 'Estimated repair cost' },
+        { name: 'actual_cost', type: 'decimal', description: 'Actual repair cost' },
+        { name: 'rejection_count', type: 'integer', description: 'Times rejected' },
+        { name: 'rejection_reason', type: 'text', description: 'Latest rejection reason' },
+        { name: 'checklist_ref', type: 'string', description: 'Source quality checklist' },
+        { name: 'warranty_item', type: 'boolean', description: 'Converted to warranty' },
+        { name: 'completed_at', type: 'timestamp', description: 'When completed' },
+        { name: 'verified_at', type: 'timestamp', description: 'When verified' },
       ]}
       aiFeatures={[
         {
-          name: 'Voice Capture',
-          description: 'Convert voice descriptions to punch items: "Scratch on master bath vanity near the left sink" becomes structured punch item with location auto-detected.',
-          trigger: 'On voice input'
-        },
-        {
-          name: 'Trade Assignment',
-          description: 'Automatically suggests responsible trade: "Paint scratch on wall" → Assigned to Painter. "Loose outlet cover" → Assigned to Electrician.',
+          name: 'Smart Trade Assignment',
+          description: 'Auto-assigns items to correct trade and vendor based on description analysis.',
           trigger: 'On item creation'
         },
         {
-          name: 'Similar Item Detection',
-          description: 'Groups similar items for efficient resolution: "5 similar drywall touch-up items in upstairs bedrooms. Assign all to drywall contractor?"',
-          trigger: 'On punch list review'
+          name: 'Completion Rate Prediction',
+          description: 'Monitors velocity and predicts total completion date. Alerts if pace will miss closeout deadline.',
+          trigger: 'Daily update'
         },
         {
-          name: 'Vendor Performance Tracking',
-          description: 'Tracks punch item patterns by vendor: "ABC Drywall has 40% more punch items than average. Most common: Nail pops, corner bead issues."',
-          trigger: 'On punch list completion'
+          name: 'Vendor Pattern Analysis',
+          description: 'Identifies vendors with high punch counts or rejection rates. Flags repeat offenders.',
+          trigger: 'On list analysis'
         },
         {
-          name: 'Completion Prediction',
-          description: 'Predicts punch list completion timeline: "32 items remaining. Based on current pace and vendor schedules, estimated completion: 5 business days."',
-          trigger: 'Real-time calculation'
+          name: 'Photo Verification',
+          description: 'Compares issue photo to completion photo to verify deficiency was addressed.',
+          trigger: 'On completion photo upload'
+        },
+        {
+          name: 'Back-Charge Calculation',
+          description: 'Estimates back-charge amounts by item type and trade rates. Generates vendor documentation.',
+          trigger: 'On cost responsibility assignment'
+        },
+        {
+          name: 'Warranty Risk Assessment',
+          description: 'Identifies items likely to recur as warranty claims based on deficiency type and vendor history.',
+          trigger: 'On item verification'
         },
       ]}
-      mockupAscii={`
-┌─────────────────────────────────────────────────────────────────────┐
-│ Punch List - Smith Residence                [+ Add Item] [Export]   │
-├─────────────────────────────────────────────────────────────────────┤
-│ Progress: ████████████░░░░░░░░ 62% (31/50 complete)                │
-│ Filter: [All ▾] Location: [All ▾] Trade: [All ▾] Status: [All ▾]  │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📍 MASTER BATHROOM (8 items - 5 complete)                          │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ [📷] Scratch on vanity countertop          ⚠ Major   ● Open    │ │
-│ │      Assigned: Stone Solutions | Due: Jan 30                    │ │
-│ │      [View Photo] [Reassign] [Mark Complete]                    │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ [📷] Grout haze on floor tile              ○ Minor   ✓ Complete │ │
-│ │      Completed by: ABC Tile | Jan 28                            │ │
-│ │      [Before/After] [Verify]                                    │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ 📍 KITCHEN (6 items - 4 complete)                                  │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ [📷] Cabinet door alignment                ○ Minor   ● In Prog  │ │
-│ │      Assigned: Cabinet Pros | Scheduled: Tomorrow               │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ AI: "19 items remaining. Drywall (8), Paint (6), Trim (3), Other   │
-│ (2). Recommend scheduling drywall first—others depend on it."      │
-└─────────────────────────────────────────────────────────────────────┘
-`}
+      mockupAscii=""
     />}
     </div>
   )

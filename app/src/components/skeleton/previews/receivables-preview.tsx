@@ -17,6 +17,10 @@ import {
   ExternalLink,
   TrendingUp,
   TrendingDown,
+  Shield,
+  FileWarning,
+  Percent,
+  Receipt,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
@@ -32,13 +36,18 @@ interface Receivable {
   drawNumber: number
   amount: number
   amountPaid: number
+  retainageAmount: number
+  retainageReleaseDate?: string
   dueDate: string
   agingBucket: AgingBucket
   daysOutstanding: number
-  collectionStatus: 'none' | 'reminder_sent' | 'called' | 'escalated'
+  collectionStatus: 'none' | 'reminder_sent' | 'called' | 'escalated' | 'lien_notice'
   lastContact?: string
   paymentHistory: 'good' | 'slow' | 'poor'
+  paymentMethod?: string
+  lienWaiverStatus?: 'not_required' | 'pending' | 'received'
   aiNote?: string
+  aiCollectionProbability?: number
 }
 
 const mockReceivables: Receivable[] = [
@@ -50,12 +59,17 @@ const mockReceivables: Receivable[] = [
     drawNumber: 5,
     amount: 185000,
     amountPaid: 0,
+    retainageAmount: 18500,
+    retainageReleaseDate: '2026-06-15',
     dueDate: '2026-02-07',
     agingBucket: '1-30',
     daysOutstanding: 5,
     collectionStatus: 'reminder_sent',
     lastContact: '2026-02-10',
     paymentHistory: 'good',
+    paymentMethod: 'ACH',
+    lienWaiverStatus: 'received',
+    aiCollectionProbability: 92,
     aiNote: 'Client usually pays within 7 days of reminder. Expected payment: Feb 14.',
   },
   {
@@ -66,12 +80,15 @@ const mockReceivables: Receivable[] = [
     drawNumber: 3,
     amount: 45000,
     amountPaid: 0,
+    retainageAmount: 4500,
     dueDate: '2026-01-12',
     agingBucket: '31-60',
     daysOutstanding: 31,
     collectionStatus: 'called',
     lastContact: '2026-02-05',
     paymentHistory: 'slow',
+    lienWaiverStatus: 'pending',
+    aiCollectionProbability: 68,
     aiNote: 'Client has history of 45-day payments. Consider escalation if no payment by Feb 20.',
   },
   {
@@ -81,12 +98,16 @@ const mockReceivables: Receivable[] = [
     jobName: 'Williams Remodel',
     drawNumber: 4,
     amount: 28500,
-    amountPaid: 0,
+    amountPaid: 15000,
+    retainageAmount: 2850,
     dueDate: '2026-02-10',
     agingBucket: 'current',
     daysOutstanding: 2,
     collectionStatus: 'none',
     paymentHistory: 'good',
+    paymentMethod: 'Credit Card',
+    lienWaiverStatus: 'received',
+    aiCollectionProbability: 97,
   },
   {
     id: '4',
@@ -96,12 +117,17 @@ const mockReceivables: Receivable[] = [
     drawNumber: 8,
     amount: 95000,
     amountPaid: 0,
+    retainageAmount: 9500,
+    retainageReleaseDate: '2026-08-01',
     dueDate: '2026-02-05',
     agingBucket: '1-30',
     daysOutstanding: 7,
     collectionStatus: 'reminder_sent',
     lastContact: '2026-02-08',
     paymentHistory: 'good',
+    paymentMethod: 'ACH',
+    lienWaiverStatus: 'received',
+    aiCollectionProbability: 88,
   },
   {
     id: '5',
@@ -111,12 +137,16 @@ const mockReceivables: Receivable[] = [
     drawNumber: 3,
     amount: 42000,
     amountPaid: 0,
+    retainageAmount: 4200,
     dueDate: '2026-01-28',
     agingBucket: '1-30',
     daysOutstanding: 15,
     collectionStatus: 'called',
     lastContact: '2026-02-06',
     paymentHistory: 'slow',
+    lienWaiverStatus: 'pending',
+    aiCollectionProbability: 72,
+    aiNote: 'Lien waiver not yet received. Payment may be delayed until waiver is provided.',
   },
   {
     id: '6',
@@ -126,13 +156,15 @@ const mockReceivables: Receivable[] = [
     drawNumber: 4,
     amount: 60000,
     amountPaid: 0,
+    retainageAmount: 6000,
     dueDate: '2026-01-05',
     agingBucket: '31-60',
     daysOutstanding: 38,
-    collectionStatus: 'escalated',
+    collectionStatus: 'lien_notice',
     lastContact: '2026-02-10',
     paymentHistory: 'poor',
-    aiNote: 'Escalated to lien notice. Historical: Client paid 3 days after notice on previous project.',
+    aiCollectionProbability: 45,
+    aiNote: 'Lien notice sent Feb 8. Historical: Client paid 3 days after notice on previous project.',
   },
   {
     id: '7',
@@ -142,12 +174,14 @@ const mockReceivables: Receivable[] = [
     drawNumber: 6,
     amount: 18750,
     amountPaid: 0,
+    retainageAmount: 1875,
     dueDate: '2026-01-01',
     agingBucket: '31-60',
     daysOutstanding: 42,
     collectionStatus: 'called',
     lastContact: '2026-02-01',
     paymentHistory: 'slow',
+    aiCollectionProbability: 55,
   },
   {
     id: '8',
@@ -157,13 +191,15 @@ const mockReceivables: Receivable[] = [
     drawNumber: 2,
     amount: 15000,
     amountPaid: 0,
+    retainageAmount: 1500,
     dueDate: '2025-12-15',
     agingBucket: '61-90',
     daysOutstanding: 59,
     collectionStatus: 'escalated',
     lastContact: '2026-02-05',
     paymentHistory: 'poor',
-    aiNote: 'High risk. Consider filing mechanics lien within 30 days.',
+    aiCollectionProbability: 30,
+    aiNote: 'High risk. Consider filing mechanics lien within 30 days. Lien deadline: Mar 15.',
   },
 ]
 
@@ -180,6 +216,7 @@ const collectionStatusConfig: Record<string, { label: string; icon: typeof Check
   'reminder_sent': { label: 'Reminder sent', icon: Mail },
   'called': { label: 'Called', icon: Phone },
   'escalated': { label: 'Escalated', icon: AlertTriangle },
+  'lien_notice': { label: 'Lien notice sent', icon: FileWarning },
 }
 
 function formatCurrency(value: number): string {
@@ -204,11 +241,39 @@ function PaymentHistoryBadge({ history }: { history: Receivable['paymentHistory'
   }
 }
 
+function LienWaiverBadge({ status }: { status?: Receivable['lienWaiverStatus'] }) {
+  if (!status || status === 'not_required') return null
+  return (
+    <span className={cn(
+      "text-xs px-1.5 py-0.5 rounded flex items-center gap-1",
+      status === 'received' ? "bg-green-50 text-green-600" : "bg-amber-50 text-amber-600"
+    )}>
+      <Shield className="h-3 w-3" />
+      {status === 'received' ? 'Waiver received' : 'Waiver pending'}
+    </span>
+  )
+}
+
+function CollectionProbabilityBadge({ probability }: { probability?: number }) {
+  if (probability === undefined) return null
+  return (
+    <span className={cn(
+      "text-xs px-1.5 py-0.5 rounded flex items-center gap-1",
+      probability >= 80 ? "bg-green-50 text-green-700" :
+      probability >= 50 ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"
+    )}>
+      <Percent className="h-3 w-3" />
+      {probability}% likely
+    </span>
+  )
+}
+
 function ReceivableRow({ receivable }: { receivable: Receivable }) {
   const aging = agingConfig[receivable.agingBucket]
   const collectionStatus = collectionStatusConfig[receivable.collectionStatus]
   const StatusIcon = collectionStatus.icon
   const balance = receivable.amount - receivable.amountPaid
+  const isHighRisk = receivable.paymentHistory === 'poor' || receivable.collectionStatus === 'escalated' || receivable.collectionStatus === 'lien_notice'
 
   return (
     <div className={cn(
@@ -218,12 +283,14 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
     )}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-2 flex-wrap">
             <span className="font-mono text-sm font-medium text-gray-900">{receivable.invoiceNumber}</span>
             <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium", aging.bgColor, aging.color)}>
-              {receivable.daysOutstanding} days overdue
+              {receivable.agingBucket === 'current' ? 'Current' : `${receivable.daysOutstanding} days overdue`}
             </span>
             <PaymentHistoryBadge history={receivable.paymentHistory} />
+            <LienWaiverBadge status={receivable.lienWaiverStatus} />
+            <CollectionProbabilityBadge probability={receivable.aiCollectionProbability} />
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
@@ -237,7 +304,26 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
             </div>
           </div>
 
-          <div className="mt-2 flex items-center gap-4 text-sm">
+          {/* Partial payment progress */}
+          {receivable.amountPaid > 0 && (
+            <div className="mt-2">
+              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                <span className="flex items-center gap-1">
+                  <Receipt className="h-3 w-3" />
+                  Partial payment: {formatCurrency(receivable.amountPaid)} of {formatCurrency(receivable.amount)}
+                </span>
+                <span>{((receivable.amountPaid / receivable.amount) * 100).toFixed(0)}% paid</span>
+              </div>
+              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 rounded-full"
+                  style={{ width: `${(receivable.amountPaid / receivable.amount) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="mt-2 flex items-center gap-4 text-sm flex-wrap">
             <div className="flex items-center gap-1 text-gray-500">
               <StatusIcon className="h-3.5 w-3.5" />
               <span>{collectionStatus.label}</span>
@@ -247,18 +333,34 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
                 Last contact: {formatDate(receivable.lastContact)}
               </span>
             )}
+            {receivable.paymentMethod && (
+              <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                Preferred: {receivable.paymentMethod}
+              </span>
+            )}
           </div>
+
+          {/* Retainage info */}
+          {receivable.retainageAmount > 0 && (
+            <div className="mt-2 flex items-center gap-2 text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
+              <DollarSign className="h-3 w-3" />
+              <span>Retainage held: {formatCurrency(receivable.retainageAmount)}</span>
+              {receivable.retainageReleaseDate && (
+                <span className="text-purple-400">| Release: {formatDate(receivable.retainageReleaseDate)}</span>
+              )}
+            </div>
+          )}
 
           {receivable.aiNote && (
             <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-              receivable.paymentHistory === 'poor' || receivable.collectionStatus === 'escalated' ? "bg-red-50" : "bg-blue-50"
+              isHighRisk ? "bg-red-50" : "bg-blue-50"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 mt-0.5 flex-shrink-0",
-                receivable.paymentHistory === 'poor' || receivable.collectionStatus === 'escalated' ? "text-red-500" : "text-blue-500"
+                isHighRisk ? "text-red-500" : "text-blue-500"
               )} />
-              <span className={receivable.paymentHistory === 'poor' || receivable.collectionStatus === 'escalated' ? "text-red-700" : "text-blue-700"}>
+              <span className={isHighRisk ? "text-red-700" : "text-blue-700"}>
                 {receivable.aiNote}
               </span>
             </div>
@@ -268,6 +370,9 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
         <div className="flex items-start gap-4 ml-4">
           <div className="text-right">
             <div className="text-lg font-semibold text-gray-900">{formatCurrency(balance)}</div>
+            {receivable.amountPaid > 0 && (
+              <div className="text-xs text-gray-400">of {formatCurrency(receivable.amount)}</div>
+            )}
             <div className="flex items-center gap-2 text-sm mt-1">
               <Calendar className="h-3.5 w-3.5 text-gray-400" />
               <span className="text-gray-500">Due {formatDate(receivable.dueDate)}</span>
@@ -279,7 +384,7 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
         </div>
       </div>
 
-      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-end gap-2 flex-wrap">
         {receivable.collectionStatus === 'none' && (
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50">
             <Send className="h-3.5 w-3.5" />
@@ -298,10 +403,16 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
             Log Call
           </button>
         )}
-        {receivable.collectionStatus !== 'escalated' && receivable.daysOutstanding > 30 && (
+        {receivable.collectionStatus !== 'escalated' && receivable.collectionStatus !== 'lien_notice' && receivable.daysOutstanding > 30 && (
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-700 border border-red-200 rounded-lg hover:bg-red-50">
             <AlertTriangle className="h-3.5 w-3.5" />
             Escalate
+          </button>
+        )}
+        {receivable.collectionStatus === 'escalated' && (
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-700 border border-red-200 rounded-lg hover:bg-red-50">
+            <FileWarning className="h-3.5 w-3.5" />
+            Send Lien Notice
           </button>
         )}
         <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
@@ -339,6 +450,12 @@ export function ReceivablesPreview() {
   const totalOverdue = agingSummary['1-30'] + agingSummary['31-60'] + agingSummary['61-90'] + agingSummary['90+']
   const actionNeeded = mockReceivables.filter(r => r.daysOutstanding > 7).length
   const dso = 28 // Days Sales Outstanding
+  const totalRetainage = mockReceivables.reduce((sum, r) => sum + r.retainageAmount, 0)
+  const pendingLienWaivers = mockReceivables.filter(r => r.lienWaiverStatus === 'pending').length
+  const avgCollectionProbability = Math.round(
+    mockReceivables.filter(r => r.aiCollectionProbability !== undefined).reduce((sum, r) => sum + (r.aiCollectionProbability ?? 0), 0) /
+    mockReceivables.filter(r => r.aiCollectionProbability !== undefined).length
+  )
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -362,7 +479,7 @@ export function ReceivablesPreview() {
 
       {/* Summary Cards */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4 mb-3">
           <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-blue-600 text-sm">
               <DollarSign className="h-4 w-4" />
@@ -406,6 +523,8 @@ export function ReceivablesPreview() {
               {actionNeeded} items
             </div>
           </div>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
           <div className={cn(
             "rounded-lg p-3",
             dso <= 30 ? "bg-green-50" : dso <= 45 ? "bg-amber-50" : "bg-red-50"
@@ -424,6 +543,33 @@ export function ReceivablesPreview() {
               {dso} days
             </div>
             <div className="text-xs text-gray-500 mt-0.5">Industry avg: 35 days</div>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-purple-600 text-sm">
+              <DollarSign className="h-4 w-4" />
+              Retainage Held
+            </div>
+            <div className="text-xl font-bold text-purple-700 mt-1">{formatCurrency(totalRetainage)}</div>
+            <div className="text-xs text-gray-500 mt-0.5">Across {mockReceivables.filter(r => r.retainageAmount > 0).length} draws</div>
+          </div>
+          <div className={cn(
+            "rounded-lg p-3",
+            pendingLienWaivers > 0 ? "bg-amber-50" : "bg-green-50"
+          )}>
+            <div className={cn(
+              "flex items-center gap-2 text-sm",
+              pendingLienWaivers > 0 ? "text-amber-600" : "text-green-600"
+            )}>
+              <Shield className="h-4 w-4" />
+              Lien Waivers
+            </div>
+            <div className={cn(
+              "text-xl font-bold mt-1",
+              pendingLienWaivers > 0 ? "text-amber-700" : "text-green-700"
+            )}>
+              {pendingLienWaivers > 0 ? `${pendingLienWaivers} pending` : 'All received'}
+            </div>
+            <div className="text-xs text-gray-500 mt-0.5">Avg collection: {avgCollectionProbability}% probability</div>
           </div>
         </div>
       </div>
@@ -480,6 +626,8 @@ export function ReceivablesPreview() {
             { value: 'amount', label: 'Amount' },
             { value: 'daysOutstanding', label: 'Days Outstanding' },
             { value: 'dueDate', label: 'Due Date' },
+            { value: 'retainageAmount', label: 'Retainage' },
+            { value: 'aiCollectionProbability', label: 'Collection Probability' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -502,6 +650,22 @@ export function ReceivablesPreview() {
         )}
       </div>
 
+      {/* Retainage Summary */}
+      <div className="bg-purple-50 border-t border-purple-200 px-4 py-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 text-sm">
+            <DollarSign className="h-4 w-4 text-purple-600" />
+            <span className="font-medium text-purple-800">Retainage Summary:</span>
+            <span className="text-purple-700">{formatCurrency(totalRetainage)} held across all active draws</span>
+          </div>
+          <div className="flex items-center gap-4 text-xs text-purple-600">
+            {mockReceivables.filter(r => r.retainageReleaseDate).map(r => (
+              <span key={r.id}>{r.jobName}: {formatCurrency(r.retainageAmount)} release {formatDate(r.retainageReleaseDate!)}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
@@ -510,10 +674,11 @@ export function ReceivablesPreview() {
             <span className="font-medium text-sm text-amber-800">Collection Priority:</span>
           </div>
           <p className="text-sm text-amber-700">
-            Focus on Smith Family Trust ($185K, 5 days over) - historically pays quickly after reminder.
-            Wilson Custom ($60K, 38 days) has been escalated - expect payment within 3-5 days based on history.
-            Parker Developments ($15K, 59 days) is high risk - recommend filing mechanics lien within 30 days to protect rights.
-            Collection rate this month: 94% (above 90% target).
+            Focus on Smith Family Trust ($185K, 92% likely, 5 days over) - historically pays quickly after reminder.
+            Wilson Custom ($60K, 45% likely) has lien notice sent - expect payment within 3-5 days based on history.
+            Parker Developments ($15K, 30% likely) is high risk - recommend filing mechanics lien by Mar 15.
+            {pendingLienWaivers > 0 && ` ${pendingLienWaivers} lien waivers pending - may delay collections.`}
+            {' '}Collection rate this month: 94% (above 90% target). DSO trending down from 32 to {dso} days.
           </p>
         </div>
       </div>

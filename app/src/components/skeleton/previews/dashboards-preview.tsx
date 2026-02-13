@@ -19,11 +19,29 @@ import {
   Settings,
   Share2,
   Copy,
-  Trash2,
   Eye,
   Edit,
+  Trash2,
+  Download,
+  Mail,
+  Shield,
+  Gauge,
+  CloudRain,
+  Camera,
+  CheckCircle2,
+  ClipboardCheck,
+  Calendar,
+  Wallet,
+  Bell,
+  RefreshCw,
+  Lock,
+  Smartphone,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface Dashboard {
   id: string
@@ -35,6 +53,10 @@ interface Dashboard {
   lastViewed: string
   widgets: number
   role?: string
+  autoRefresh?: number
+  sharedWith?: string[]
+  embedInPortal?: boolean
+  createdAt: string
 }
 
 interface DashboardTemplate {
@@ -42,60 +64,97 @@ interface DashboardTemplate {
   name: string
   description: string
   widgets: string[]
+  role: string
+  icon: React.ElementType
 }
+
+interface WidgetPreview {
+  id: string
+  name: string
+  type: 'kpi' | 'chart' | 'list' | 'table' | 'gauge' | 'feed'
+  icon: React.ElementType
+  category: string
+  size: '1x1' | '2x1' | '2x2'
+  requiredPermission?: string
+}
+
+// ---------------------------------------------------------------------------
+// Mock Data
+// ---------------------------------------------------------------------------
 
 const mockDashboards: Dashboard[] = [
   {
     id: '1',
     name: 'Executive Overview',
-    description: 'Revenue, margins, cash position, active jobs',
-    owner: 'Jake',
+    description: 'Revenue, margins, cash position, active jobs, AI insights',
+    owner: 'Jake Ross',
     visibility: 'personal',
     isDefault: true,
     lastViewed: 'Today 8:00 AM',
     widgets: 8,
     role: 'Owner',
+    autoRefresh: 300,
+    createdAt: 'Jan 15, 2026',
   },
   {
     id: '2',
     name: 'Operations Daily',
-    description: "Today's schedule, crew assignments, deliveries",
-    owner: 'Jake',
+    description: "Today's schedule, crew assignments, deliveries, inspections",
+    owner: 'Jake Ross',
     visibility: 'personal',
     isDefault: false,
     lastViewed: 'Yesterday',
     widgets: 6,
     role: 'Operations',
+    autoRefresh: 60,
+    createdAt: 'Jan 20, 2026',
   },
   {
     id: '3',
     name: 'Financial Dashboard',
-    description: 'AR/AP aging, cash flow, profitability by job',
-    owner: 'Jake',
+    description: 'AR/AP aging, cash flow, profitability by job, draw status',
+    owner: 'Jake Ross',
     visibility: 'company',
     isDefault: false,
     lastViewed: '2 days ago',
     widgets: 10,
+    sharedWith: ['Sarah Chen', 'Lisa Martinez'],
+    createdAt: 'Jan 18, 2026',
   },
   {
     id: '4',
     name: 'Sales Pipeline',
-    description: 'Leads, estimates, proposals, conversion rates',
-    owner: 'Jake',
+    description: 'Leads, estimates, proposals, conversion rates, win probability',
+    owner: 'Jake Ross',
     visibility: 'company',
     isDefault: false,
     lastViewed: '3 days ago',
     widgets: 7,
+    createdAt: 'Feb 1, 2026',
   },
   {
     id: '5',
     name: 'Project Status Board',
-    description: 'All active jobs with progress and health',
-    owner: 'Mike',
+    description: 'All active jobs with progress, health, and risk scores',
+    owner: 'Mike Thompson',
     visibility: 'company',
     isDefault: false,
     lastViewed: 'Today 9:30 AM',
     widgets: 5,
+    embedInPortal: false,
+    createdAt: 'Feb 5, 2026',
+  },
+  {
+    id: '6',
+    name: 'Client Portal View',
+    description: 'Project progress, photos, milestones for client embedding',
+    owner: 'Jake Ross',
+    visibility: 'company',
+    isDefault: false,
+    lastViewed: '1 week ago',
+    widgets: 4,
+    embedInPortal: true,
+    createdAt: 'Feb 8, 2026',
   },
 ]
 
@@ -103,58 +162,75 @@ const dashboardTemplates: DashboardTemplate[] = [
   {
     id: '1',
     name: 'Owner/Builder',
-    description: 'High-level business metrics',
-    widgets: ['Revenue', 'Profit Margin', 'Cash Flow', 'Active Jobs'],
+    description: 'High-level business metrics and cash position',
+    widgets: ['Revenue KPI', 'Profit Margin', 'Cash Flow', 'Active Jobs', 'Approval Queue', 'AI Insights'],
+    role: 'owner',
+    icon: Shield,
   },
   {
     id: '2',
     name: 'Project Manager',
-    description: 'Job tracking and tasks',
-    widgets: ['My Jobs', 'Tasks Due', 'Schedule', 'Budget Health'],
+    description: 'Job tracking, tasks, and pending RFIs',
+    widgets: ['My Jobs', 'Tasks Due', 'Schedule Health', 'Budget Health', 'Pending RFIs', 'Daily Logs'],
+    role: 'pm',
+    icon: ClipboardCheck,
   },
   {
     id: '3',
     name: 'Superintendent',
-    description: 'Field operations view',
-    widgets: ['Daily Schedule', 'Inspections', 'Deliveries', 'Crew'],
+    description: 'Field operations, weather, and inspections',
+    widgets: ['Daily Schedule', 'Inspections', 'Deliveries', 'Weather', 'Punch Items', 'Safety'],
+    role: 'superintendent',
+    icon: Building2,
   },
   {
     id: '4',
     name: 'Sales',
-    description: 'Lead and estimate tracking',
-    widgets: ['Leads', 'Estimates', 'Pipeline Value', 'Win Rate'],
+    description: 'Lead and estimate tracking with AI scoring',
+    widgets: ['Leads Pipeline', 'Estimates', 'Pipeline Value', 'Win Rate', 'Follow-ups'],
+    role: 'pm',
+    icon: TrendingUp,
   },
   {
     id: '5',
     name: 'Accounting',
-    description: 'Financial operations',
-    widgets: ['AR Aging', 'AP Aging', 'Draws', 'Invoices'],
+    description: 'Financial operations and collection tracking',
+    widgets: ['AR Aging', 'AP Aging', 'Draws Pending', 'Invoice Queue', 'QB Sync'],
+    role: 'office',
+    icon: Wallet,
   },
   {
     id: '6',
     name: 'Field Team',
-    description: 'Daily work focus',
-    widgets: ['Today Tasks', 'Site Photos', 'Daily Log', 'Safety'],
+    description: 'Daily work focus with voice log entry',
+    widgets: ['Today Tasks', 'Site Photos', 'Daily Log Entry', 'Safety Checklist'],
+    role: 'field',
+    icon: Camera,
   },
 ]
 
-interface WidgetPreview {
-  id: string
-  name: string
-  type: 'kpi' | 'chart' | 'list' | 'table'
-  icon: React.ElementType
-}
-
 const availableWidgets: WidgetPreview[] = [
-  { id: '1', name: 'Revenue KPI', type: 'kpi', icon: DollarSign },
-  { id: '2', name: 'Active Jobs', type: 'kpi', icon: Building2 },
-  { id: '3', name: 'Profit Margin', type: 'kpi', icon: TrendingUp },
-  { id: '4', name: 'Tasks Due', type: 'kpi', icon: Clock },
-  { id: '5', name: 'Revenue Trend', type: 'chart', icon: LineChart },
-  { id: '6', name: 'Job Breakdown', type: 'chart', icon: PieChart },
-  { id: '7', name: 'Cash Flow', type: 'chart', icon: BarChart3 },
-  { id: '8', name: 'Team Activity', type: 'list', icon: Users },
+  { id: '1', name: 'Revenue KPI', type: 'kpi', icon: DollarSign, category: 'Financial', size: '1x1' },
+  { id: '2', name: 'Active Jobs', type: 'kpi', icon: Building2, category: 'Jobs', size: '1x1' },
+  { id: '3', name: 'Profit Margin', type: 'kpi', icon: TrendingUp, category: 'Financial', size: '1x1' },
+  { id: '4', name: 'Tasks Due', type: 'kpi', icon: Clock, category: 'Tasks', size: '1x1' },
+  { id: '5', name: 'Revenue Trend', type: 'chart', icon: LineChart, category: 'Financial', size: '2x1' },
+  { id: '6', name: 'Job Breakdown', type: 'chart', icon: PieChart, category: 'Jobs', size: '2x1' },
+  { id: '7', name: 'Cash Flow', type: 'chart', icon: BarChart3, category: 'Financial', size: '2x1' },
+  { id: '8', name: 'Team Activity', type: 'feed', icon: Users, category: 'Team', size: '2x1' },
+  { id: '9', name: 'Cash Position', type: 'gauge', icon: Wallet, category: 'Financial', size: '1x1', requiredPermission: 'view_financials' },
+  { id: '10', name: 'Weather', type: 'kpi', icon: CloudRain, category: 'Operations', size: '1x1' },
+  { id: '11', name: 'Pending Approvals', type: 'list', icon: CheckCircle2, category: 'Approvals', size: '2x1' },
+  { id: '12', name: 'Inspection Calendar', type: 'chart', icon: Calendar, category: 'Operations', size: '2x1' },
+  { id: '13', name: 'AR Aging', type: 'chart', icon: BarChart3, category: 'Financial', size: '2x1', requiredPermission: 'view_financials' },
+  { id: '14', name: 'Alerts Feed', type: 'feed', icon: Bell, category: 'Notifications', size: '2x2' },
+  { id: '15', name: 'Schedule Health', type: 'gauge', icon: Gauge, category: 'Operations', size: '1x1' },
+  { id: '16', name: 'Photo Feed', type: 'feed', icon: Camera, category: 'Media', size: '2x2' },
 ]
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
 
 function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboard; isSelected: boolean; onClick: () => void }) {
   return (
@@ -171,6 +247,9 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
           <h4 className="font-medium text-gray-900">{dashboard.name}</h4>
           {dashboard.isDefault && (
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+          )}
+          {dashboard.embedInPortal && (
+            <span className="text-xs bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded font-medium">Portal</span>
           )}
         </div>
         <button className="p-1 hover:bg-gray-100 rounded">
@@ -189,54 +268,90 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
             {dashboard.visibility}
           </span>
           <span>{dashboard.widgets} widgets</span>
+          {dashboard.autoRefresh && (
+            <span className="flex items-center gap-1 text-gray-400">
+              <RefreshCw className="h-3 w-3" />
+              {dashboard.autoRefresh < 60 ? `${dashboard.autoRefresh}s` : `${dashboard.autoRefresh / 60}m`}
+            </span>
+          )}
         </div>
         <span>Last viewed: {dashboard.lastViewed}</span>
       </div>
+      {dashboard.sharedWith && dashboard.sharedWith.length > 0 && (
+        <div className="mt-2 flex items-center gap-1 text-xs text-gray-400">
+          <Share2 className="h-3 w-3" />
+          Shared with {dashboard.sharedWith.join(', ')}
+        </div>
+      )}
       {dashboard.role && (
-        <div className="mt-2 text-xs text-gray-400">Role: {dashboard.role}</div>
+        <div className="mt-2 text-xs text-gray-400">
+          <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">Role: {dashboard.role}</span>
+        </div>
       )}
     </div>
   )
 }
 
 function TemplateCard({ template }: { template: DashboardTemplate }) {
+  const Icon = template.icon
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer">
       <div className="flex items-center gap-2 mb-1">
-        <LayoutDashboard className="h-4 w-4 text-gray-400" />
+        <div className="p-1.5 rounded-lg bg-gray-100">
+          <Icon className="h-4 w-4 text-gray-600" />
+        </div>
         <h5 className="font-medium text-gray-900 text-sm">{template.name}</h5>
       </div>
       <p className="text-xs text-gray-500 mb-2">{template.description}</p>
       <div className="flex flex-wrap gap-1">
-        {template.widgets.slice(0, 3).map((widget, i) => (
+        {template.widgets.slice(0, 4).map((widget, i) => (
           <span key={i} className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
             {widget}
           </span>
         ))}
-        {template.widgets.length > 3 && (
-          <span className="text-xs text-gray-400">+{template.widgets.length - 3}</span>
+        {template.widgets.length > 4 && (
+          <span className="text-xs text-gray-400">+{template.widgets.length - 4}</span>
         )}
+      </div>
+      <div className="mt-2 text-xs text-gray-400">
+        Default for: <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{template.role}</span>
       </div>
     </div>
   )
 }
 
 function WidgetLibrary() {
+  const categories = [...new Set(availableWidgets.map(w => w.category))]
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h4 className="font-medium text-gray-900 mb-3">Widget Library</h4>
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="font-medium text-gray-900">Widget Library</h4>
+        <span className="text-xs text-gray-400">{availableWidgets.length} available</span>
+      </div>
+      <div className="flex flex-wrap gap-1 mb-3">
+        {categories.map(cat => (
+          <span key={cat} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded cursor-pointer hover:bg-blue-100 hover:text-blue-700">
+            {cat}
+          </span>
+        ))}
+      </div>
       <div className="grid grid-cols-4 gap-2">
         {availableWidgets.map(widget => {
           const Icon = widget.icon
           return (
             <div
               key={widget.id}
-              className="flex flex-col items-center gap-1 p-2 bg-gray-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent cursor-move transition-colors"
+              className="flex flex-col items-center gap-1 p-2 bg-gray-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent cursor-move transition-colors relative"
             >
               <div className="p-2 bg-white rounded-lg shadow-sm">
                 <Icon className="h-4 w-4 text-gray-600" />
               </div>
-              <span className="text-xs text-gray-600 text-center">{widget.name}</span>
+              <span className="text-xs text-gray-600 text-center leading-tight">{widget.name}</span>
+              <span className="text-xs text-gray-400">{widget.size}</span>
+              {widget.requiredPermission && (
+                <Lock className="h-2.5 w-2.5 text-gray-400 absolute top-1 right-1" />
+              )}
             </div>
           )
         })}
@@ -260,6 +375,12 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
           )}>
             {dashboard.visibility}
           </span>
+          {dashboard.autoRefresh && (
+            <span className="flex items-center gap-1 text-xs text-gray-400">
+              <RefreshCw className="h-3 w-3" />
+              Auto-refresh: {dashboard.autoRefresh / 60}m
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
@@ -267,8 +388,16 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
             Preview
           </button>
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <Smartphone className="h-4 w-4" />
+            Mobile
+          </button>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
             <Share2 className="h-4 w-4" />
             Share
+          </button>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <Download className="h-4 w-4" />
+            PDF
           </button>
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
             <Settings className="h-4 w-4" />
@@ -282,10 +411,10 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
         <div className="grid grid-cols-4 gap-3">
           {/* KPI Widgets Row */}
           {[
-            { label: 'Revenue MTD', value: '$892K', change: '+8.5%', color: 'green' },
-            { label: 'Active Jobs', value: '12', change: '+2', color: 'blue' },
-            { label: 'Profit Margin', value: '14.2%', change: '-0.8%', color: 'amber' },
-            { label: 'Tasks Due Today', value: '8', change: '3 high', color: 'red' },
+            { label: 'Revenue MTD', value: '$892K', change: '+8.5%', color: 'green', size: '1x1' },
+            { label: 'Active Jobs', value: '12', change: '+2', color: 'blue', size: '1x1' },
+            { label: 'Profit Margin', value: '14.2%', change: '-0.8%', color: 'amber', size: '1x1' },
+            { label: 'Tasks Due Today', value: '8', change: '3 high', color: 'red', size: '1x1' },
           ].map((kpi, i) => (
             <div key={i} className="bg-white rounded-lg p-3 shadow-sm relative group">
               <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
@@ -302,6 +431,11 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
               )}>
                 {kpi.change}
               </div>
+              <div className="mt-1">
+                <svg viewBox="0 0 60 16" className="w-full h-3">
+                  <polyline fill="none" stroke={kpi.color === 'green' ? '#22c55e' : kpi.color === 'blue' ? '#3b82f6' : kpi.color === 'amber' ? '#f59e0b' : '#ef4444'} strokeWidth="1.5" points="0,12 10,10 20,8 30,11 40,6 50,4 60,2" />
+                </svg>
+              </div>
             </div>
           ))}
 
@@ -312,7 +446,10 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
             </div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-900">Revenue Trend</span>
-              <LineChart className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-1">
+                <span className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded">2x1</span>
+                <LineChart className="h-4 w-4 text-gray-400" />
+              </div>
             </div>
             <div className="h-24 bg-gray-50 rounded flex items-end justify-center gap-1 p-2">
               {[40, 55, 45, 60, 50, 70, 65, 80, 75, 85, 90, 95].map((h, i) => (
@@ -331,7 +468,10 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
             </div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-900">Job Status</span>
-              <PieChart className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-1">
+                <span className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded">2x1</span>
+                <PieChart className="h-4 w-4 text-gray-400" />
+              </div>
             </div>
             <div className="h-24 flex items-center justify-center">
               <div className="relative w-20 h-20">
@@ -346,6 +486,7 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
                 <div className="flex items-center gap-2"><div className="w-2 h-2 bg-green-500 rounded-full" />Active (5)</div>
                 <div className="flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full" />Pre-Con (3)</div>
                 <div className="flex items-center gap-2"><div className="w-2 h-2 bg-amber-500 rounded-full" />Closeout (2)</div>
+                <div className="flex items-center gap-2"><div className="w-2 h-2 bg-gray-400 rounded-full" />Warranty (2)</div>
               </div>
             </div>
           </div>
@@ -353,7 +494,7 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
 
         {/* Drop Zone Hint */}
         <div className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-400 text-sm">
-          Drag widgets here to add to dashboard
+          Drag widgets here to add to dashboard - widgets occupy 1x1, 2x1, or 2x2 grid cells
         </div>
       </div>
 
@@ -362,6 +503,10 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
     </div>
   )
 }
+
+// ---------------------------------------------------------------------------
+// Main Component
+// ---------------------------------------------------------------------------
 
 export function DashboardsPreview() {
   const [selectedDashboard, setSelectedDashboard] = useState<Dashboard | null>(mockDashboards[0])
@@ -377,7 +522,7 @@ export function DashboardsPreview() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-gray-900">Custom Dashboards</h3>
-            <p className="text-sm text-gray-500">Create personalized views of your business data</p>
+            <p className="text-sm text-gray-500">Create personalized views of your business data - drag-and-drop widgets from any module</p>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex border border-gray-200 rounded-lg overflow-hidden">
@@ -406,6 +551,19 @@ export function DashboardsPreview() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-4 text-xs text-gray-500">
+        <span>{mockDashboards.length} dashboards</span>
+        <span className="text-gray-300">|</span>
+        <span>{myDashboards.length} personal</span>
+        <span className="text-gray-300">|</span>
+        <span>{companyDashboards.length} shared</span>
+        <span className="text-gray-300">|</span>
+        <span>{availableWidgets.length} widgets available</span>
+        <span className="text-gray-300">|</span>
+        <span>{dashboardTemplates.length} templates</span>
       </div>
 
       {view === 'list' ? (
@@ -450,7 +608,8 @@ export function DashboardsPreview() {
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4 text-blue-500" />
-              TEMPLATES
+              ROLE-BASED TEMPLATES
+              <span className="text-xs text-gray-400 font-normal">Defaults provided per role - configurable per builder</span>
             </h4>
             <div className="grid grid-cols-3 gap-3">
               {dashboardTemplates.map(template => (
@@ -466,6 +625,7 @@ export function DashboardsPreview() {
                 <div>
                   <h4 className="font-medium text-gray-900">{selectedDashboard.name}</h4>
                   <p className="text-sm text-gray-500">{selectedDashboard.description}</p>
+                  <p className="text-xs text-gray-400 mt-1">Created: {selectedDashboard.createdAt} by {selectedDashboard.owner}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
@@ -483,6 +643,14 @@ export function DashboardsPreview() {
                   <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
                     <Copy className="h-4 w-4" />
                     Duplicate
+                  </button>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <Download className="h-4 w-4" />
+                    PDF
+                  </button>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <Mail className="h-4 w-4" />
+                    Schedule
                   </button>
                   {!selectedDashboard.isDefault && (
                     <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-600 border border-gray-200 rounded-lg hover:bg-amber-50">
@@ -510,8 +678,10 @@ export function DashboardsPreview() {
           </div>
           <p className="text-sm text-amber-700">
             Based on your role as Owner/Builder, consider adding a Cash Flow Forecast widget.
-            Your Executive Overview dashboard is missing AR Aging which shows 3 overdue invoices.
-            Team members have viewed the Project Status Board 12 times this week - consider adding it to company defaults.
+            Your Executive Overview dashboard is missing AR Aging which shows 3 overdue invoices ($96K).
+            Team members have viewed the Project Status Board 12 times this week - consider promoting to company default.
+            The Superintendent template would benefit from a Punch Items widget - 8 open items across active jobs.
+            <span className="ml-1 text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-medium">AI-generated</span>
           </p>
         </div>
       </div>

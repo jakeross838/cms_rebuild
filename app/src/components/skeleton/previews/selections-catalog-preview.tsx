@@ -17,10 +17,24 @@ import {
   Truck,
   Building2,
   Tag,
+  Upload,
+  FileText,
+  BarChart3,
+  CheckCircle,
+  XCircle,
+  ShoppingCart,
+  AlertTriangle,
+  Eye,
+  Paperclip,
+  History,
+  Download,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+
+type AvailabilityStatus = 'in_stock' | 'low_stock' | 'backordered' | 'discontinued' | 'special_order'
+type ItemSource = 'builder' | 'designer' | 'client' | 'catalog'
 
 interface SelectionItem {
   id: string
@@ -29,6 +43,7 @@ interface SelectionItem {
   subcategory: string
   manufacturer: string
   model: string
+  sku: string
   tier: 'Builder' | 'Standard' | 'Premium' | 'Luxury'
   materialCost: number
   laborCost: number
@@ -37,8 +52,17 @@ interface SelectionItem {
   vendor: string
   isCoastalRated: boolean
   isActive: boolean
-  priceChange?: number
-  aiNote?: string
+  isDefaultForTier: boolean
+  isAllowanceItem: boolean
+  allowanceAmount: number | null
+  availabilityStatus: AvailabilityStatus
+  source: ItemSource
+  usageCount: number
+  specCount: number
+  priceChange: number | null
+  priceChangeDirection: 'up' | 'down' | null
+  lastPriceUpdate: string
+  aiNote: string | null
 }
 
 interface Category {
@@ -63,6 +87,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Porch Ceiling',
     manufacturer: 'Southern Pine',
     model: 'CYP-TG-1X6',
+    sku: 'FIN-PC-001',
     tier: 'Premium',
     materialCost: 8.50,
     laborCost: 4.00,
@@ -71,8 +96,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'ABC Lumber',
     isCoastalRated: true,
     isActive: true,
+    isDefaultForTier: true,
+    isAllowanceItem: false,
+    allowanceAmount: null,
+    availabilityStatus: 'in_stock',
+    source: 'builder',
+    usageCount: 34,
+    specCount: 2,
     priceChange: 18,
-    aiNote: 'Price increased 18% in 6 months - consider alternatives',
+    priceChangeDirection: 'up',
+    lastPriceUpdate: '2 weeks ago',
+    aiNote: 'Price increased 18% in 6 months -- consider Hardie alternative',
   },
   {
     id: '2',
@@ -81,6 +115,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Porch Ceiling',
     manufacturer: 'James Hardie',
     model: 'HSP-12',
+    sku: 'FIN-PC-002',
     tier: 'Standard',
     materialCost: 4.25,
     laborCost: 3.50,
@@ -89,6 +124,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'ABC Lumber',
     isCoastalRated: true,
     isActive: true,
+    isDefaultForTier: true,
+    isAllowanceItem: false,
+    allowanceAmount: null,
+    availabilityStatus: 'in_stock',
+    source: 'builder',
+    usageCount: 28,
+    specCount: 1,
+    priceChange: null,
+    priceChangeDirection: null,
+    lastPriceUpdate: '1 month ago',
+    aiNote: null,
   },
   {
     id: '3',
@@ -97,6 +143,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Flooring',
     manufacturer: 'Mohawk',
     model: 'WO-ENG-5',
+    sku: 'FIN-FL-001',
     tier: 'Premium',
     materialCost: 12.00,
     laborCost: 4.50,
@@ -105,6 +152,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'Flooring Warehouse',
     isCoastalRated: false,
     isActive: true,
+    isDefaultForTier: true,
+    isAllowanceItem: true,
+    allowanceAmount: 14.00,
+    availabilityStatus: 'in_stock',
+    source: 'builder',
+    usageCount: 41,
+    specCount: 3,
+    priceChange: null,
+    priceChangeDirection: null,
+    lastPriceUpdate: '3 weeks ago',
+    aiNote: null,
   },
   {
     id: '4',
@@ -113,6 +171,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Tile',
     manufacturer: 'Daltile',
     model: 'DT-2424-GR',
+    sku: 'FIN-TL-001',
     tier: 'Standard',
     materialCost: 6.50,
     laborCost: 8.00,
@@ -121,7 +180,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'Tile World',
     isCoastalRated: true,
     isActive: true,
+    isDefaultForTier: false,
+    isAllowanceItem: true,
+    allowanceAmount: 12.00,
+    availabilityStatus: 'low_stock',
+    source: 'designer',
+    usageCount: 22,
+    specCount: 1,
     priceChange: -5,
+    priceChangeDirection: 'down',
+    lastPriceUpdate: '1 week ago',
+    aiNote: null,
   },
   {
     id: '5',
@@ -130,6 +199,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Windows',
     manufacturer: 'PGT',
     model: 'WG-2448',
+    sku: 'WD-WN-001',
     tier: 'Premium',
     materialCost: 450.00,
     laborCost: 85.00,
@@ -138,7 +208,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'PGT Industries',
     isCoastalRated: true,
     isActive: true,
-    aiNote: 'Lead time averaging 6 weeks - catalog says 4',
+    isDefaultForTier: true,
+    isAllowanceItem: false,
+    allowanceAmount: null,
+    availabilityStatus: 'special_order',
+    source: 'builder',
+    usageCount: 19,
+    specCount: 2,
+    priceChange: null,
+    priceChangeDirection: null,
+    lastPriceUpdate: '2 months ago',
+    aiNote: 'Actual lead time averaging 6 weeks vs catalog 4 weeks',
   },
   {
     id: '6',
@@ -147,6 +227,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Plumbing',
     manufacturer: 'Kohler',
     model: 'K-5827-0',
+    sku: 'FIX-PL-001',
     tier: 'Premium',
     materialCost: 850.00,
     laborCost: 150.00,
@@ -155,6 +236,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'Plumbing Supply Co',
     isCoastalRated: false,
     isActive: true,
+    isDefaultForTier: true,
+    isAllowanceItem: true,
+    allowanceAmount: 800.00,
+    availabilityStatus: 'in_stock',
+    source: 'builder',
+    usageCount: 38,
+    specCount: 1,
+    priceChange: null,
+    priceChangeDirection: null,
+    lastPriceUpdate: '3 weeks ago',
+    aiNote: null,
   },
   {
     id: '7',
@@ -163,6 +255,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Plumbing',
     manufacturer: 'Delta',
     model: '9159-DST',
+    sku: 'FIX-PL-002',
     tier: 'Standard',
     materialCost: 385.00,
     laborCost: 75.00,
@@ -171,6 +264,17 @@ const mockSelections: SelectionItem[] = [
     vendor: 'Plumbing Supply Co',
     isCoastalRated: false,
     isActive: true,
+    isDefaultForTier: false,
+    isAllowanceItem: false,
+    allowanceAmount: null,
+    availabilityStatus: 'in_stock',
+    source: 'builder',
+    usageCount: 45,
+    specCount: 0,
+    priceChange: null,
+    priceChangeDirection: null,
+    lastPriceUpdate: '1 month ago',
+    aiNote: null,
   },
   {
     id: '8',
@@ -179,6 +283,7 @@ const mockSelections: SelectionItem[] = [
     subcategory: 'Kitchen',
     manufacturer: 'Sub-Zero',
     model: 'BI-48S',
+    sku: 'APP-KT-001',
     tier: 'Luxury',
     materialCost: 12500.00,
     laborCost: 450.00,
@@ -187,16 +292,70 @@ const mockSelections: SelectionItem[] = [
     vendor: 'Elite Appliances',
     isCoastalRated: false,
     isActive: true,
+    isDefaultForTier: true,
+    isAllowanceItem: true,
+    allowanceAmount: 8000.00,
+    availabilityStatus: 'special_order',
+    source: 'builder',
+    usageCount: 8,
+    specCount: 1,
+    priceChange: 5,
+    priceChangeDirection: 'up',
+    lastPriceUpdate: '1 month ago',
+    aiNote: null,
+  },
+  {
+    id: '9',
+    name: 'GE Profile Range (Discontinued)',
+    category: 'Appliances',
+    subcategory: 'Kitchen',
+    manufacturer: 'GE',
+    model: 'PGS960-OLD',
+    sku: 'APP-KT-005',
+    tier: 'Standard',
+    materialCost: 2200.00,
+    laborCost: 200.00,
+    unit: 'EA',
+    leadTimeDays: 0,
+    vendor: 'N/A',
+    isCoastalRated: false,
+    isActive: false,
+    isDefaultForTier: false,
+    isAllowanceItem: false,
+    allowanceAmount: null,
+    availabilityStatus: 'discontinued',
+    source: 'builder',
+    usageCount: 15,
+    specCount: 0,
+    priceChange: null,
+    priceChangeDirection: null,
+    lastPriceUpdate: '3 months ago',
+    aiNote: 'Discontinued by manufacturer. Suggest GE Profile PGS960-NEW as replacement.',
   },
 ]
 
 const tiers = ['All', 'Builder', 'Standard', 'Premium', 'Luxury']
 
-const tierConfig = {
+const tierConfig: Record<string, { color: string }> = {
   Builder: { color: 'bg-gray-100 text-gray-700' },
   Standard: { color: 'bg-blue-100 text-blue-700' },
   Premium: { color: 'bg-purple-100 text-purple-700' },
   Luxury: { color: 'bg-amber-100 text-amber-700' },
+}
+
+const availabilityConfig: Record<AvailabilityStatus, { label: string; color: string }> = {
+  in_stock: { label: 'In Stock', color: 'text-green-600' },
+  low_stock: { label: 'Low Stock', color: 'text-amber-600' },
+  backordered: { label: 'Backordered', color: 'text-red-600' },
+  discontinued: { label: 'Discontinued', color: 'text-red-700' },
+  special_order: { label: 'Special Order', color: 'text-blue-600' },
+}
+
+const sourceConfig: Record<ItemSource, { label: string; color: string }> = {
+  builder: { label: 'Builder', color: 'bg-gray-100 text-gray-600' },
+  designer: { label: 'Designer', color: 'bg-pink-100 text-pink-600' },
+  client: { label: 'Client', color: 'bg-blue-100 text-blue-600' },
+  catalog: { label: 'Catalog', color: 'bg-indigo-100 text-indigo-600' },
 }
 
 function formatCurrency(value: number): string {
@@ -206,41 +365,65 @@ function formatCurrency(value: number): string {
 
 function SelectionCard({ selection }: { selection: SelectionItem }) {
   const tierCfg = tierConfig[selection.tier]
+  const availCfg = availabilityConfig[selection.availabilityStatus]
+  const srcCfg = sourceConfig[selection.source]
   const totalCost = selection.materialCost + selection.laborCost
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <div className={cn(
+      "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      !selection.isActive && "opacity-60 border-dashed border-gray-300",
+      selection.availabilityStatus === 'discontinued' && "border-red-200",
+    )}>
       <div className="flex items-start gap-3 mb-3">
         <div className="h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
           <Image className="h-8 w-8 text-gray-300" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
             {selection.isCoastalRated && (
               <span className="text-xs bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">Coastal</span>
             )}
-            {selection.priceChange && selection.priceChange > 0 && (
+            {selection.isDefaultForTier && (
+              <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <Star className="h-3 w-3" />
+                Default
+              </span>
+            )}
+            {selection.isAllowanceItem && (
+              <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
+                Allow: {formatCurrency(selection.allowanceAmount ?? 0)}
+              </span>
+            )}
+            <span className={cn("text-xs px-1.5 py-0.5 rounded", srcCfg.color)}>
+              {srcCfg.label}
+            </span>
+            {selection.priceChange !== null && selection.priceChangeDirection === 'up' && (
               <span className="flex items-center gap-0.5 text-xs text-red-600">
                 <TrendingUp className="h-3 w-3" />
                 +{selection.priceChange}%
               </span>
             )}
-            {selection.priceChange && selection.priceChange < 0 && (
+            {selection.priceChange !== null && selection.priceChangeDirection === 'down' && (
               <span className="flex items-center gap-0.5 text-xs text-green-600">
                 <TrendingDown className="h-3 w-3" />
                 {selection.priceChange}%
               </span>
             )}
           </div>
-          <h4 className="font-medium text-gray-900 truncate">{selection.name}</h4>
+          <h4 className={cn(
+            "font-medium truncate",
+            selection.isActive ? "text-gray-900" : "text-gray-500 line-through"
+          )}>{selection.name}</h4>
           <p className="text-sm text-gray-500">{selection.manufacturer} | {selection.model}</p>
+          <p className="text-xs text-gray-400 font-mono">{selection.sku}</p>
         </div>
         <button className="p-1 hover:bg-gray-100 rounded">
           <MoreHorizontal className="h-4 w-4 text-gray-400" />
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+      <div className="grid grid-cols-3 gap-2 mb-3 text-sm">
         <div>
           <span className="text-gray-500">Material:</span>
           <span className="ml-1 font-medium text-gray-900">${selection.materialCost.toFixed(2)}/{selection.unit}</span>
@@ -249,6 +432,10 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
           <span className="text-gray-500">Labor:</span>
           <span className="ml-1 font-medium text-gray-900">${selection.laborCost.toFixed(2)}/{selection.unit}</span>
         </div>
+        <div>
+          <span className="text-gray-500">Total:</span>
+          <span className="ml-1 font-semibold text-gray-900">${totalCost.toFixed(2)}/{selection.unit}</span>
+        </div>
       </div>
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
@@ -256,11 +443,14 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
           <span className={cn("text-xs px-2 py-1 rounded font-medium", tierCfg.color)}>
             {selection.tier}
           </span>
+          <span className={cn("text-xs font-medium", availCfg.color)}>
+            {availCfg.label}
+          </span>
         </div>
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
-            {selection.leadTimeDays}d lead
+            {selection.leadTimeDays}d
           </span>
           <span className="flex items-center gap-1">
             <Truck className="h-3.5 w-3.5" />
@@ -269,10 +459,36 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
         </div>
       </div>
 
+      {/* Usage & specs indicators */}
+      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+        <span className="flex items-center gap-1" title="Used in estimates/jobs">
+          <BarChart3 className="h-3 w-3" />
+          Used {selection.usageCount}x
+        </span>
+        {selection.specCount > 0 && (
+          <span className="flex items-center gap-1" title="Specification documents">
+            <Paperclip className="h-3 w-3" />
+            {selection.specCount} spec{selection.specCount !== 1 ? 's' : ''}
+          </span>
+        )}
+        <span className="flex items-center gap-1" title="Last price update">
+          <History className="h-3 w-3" />
+          {selection.lastPriceUpdate}
+        </span>
+      </div>
+
       {selection.aiNote && (
-        <div className="mt-3 p-2 rounded-md bg-amber-50 flex items-start gap-2 text-xs">
-          <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
-          <span className="text-amber-700">{selection.aiNote}</span>
+        <div className={cn(
+          "mt-3 p-2 rounded-md flex items-start gap-2 text-xs",
+          selection.availabilityStatus === 'discontinued' ? "bg-red-50" : "bg-amber-50"
+        )}>
+          <Sparkles className={cn(
+            "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
+            selection.availabilityStatus === 'discontinued' ? "text-red-500" : "text-amber-500"
+          )} />
+          <span className={selection.availabilityStatus === 'discontinued' ? "text-red-700" : "text-amber-700"}>
+            {selection.aiNote}
+          </span>
         </div>
       )}
     </div>
@@ -366,7 +582,7 @@ export function SelectionsCatalogPreview() {
 
   const filteredSelections = sortItems(
     mockSelections.filter(selection => {
-      if (!matchesSearch(selection, search, ['name', 'manufacturer', 'model', 'vendor'])) return false
+      if (!matchesSearch(selection, search, ['name', 'manufacturer', 'model', 'vendor', 'sku'])) return false
       const tierMatch = selectedTier === 'All' || selection.tier === selectedTier
       const categoryMatch = !selectedCategory || selection.category === selectedCategory
       const subcategoryMatch = !selectedSubcategory || selection.subcategory === selectedSubcategory
@@ -377,10 +593,16 @@ export function SelectionsCatalogPreview() {
   )
 
   // Calculate stats
-  const totalSelections = mockSelections.length
+  const activeSelections = mockSelections.filter(s => s.isActive)
+  const totalSelections = activeSelections.length
   const totalCategories = mockCategories.length
-  const coastalRated = mockSelections.filter(s => s.isCoastalRated).length
-  const priceChanges = mockSelections.filter(s => s.priceChange && s.priceChange > 0).length
+  const coastalRated = activeSelections.filter(s => s.isCoastalRated).length
+  const priceIncreases = activeSelections.filter(s => s.priceChangeDirection === 'up').length
+  const priceDecreases = activeSelections.filter(s => s.priceChangeDirection === 'down').length
+  const uniqueVendors = [...new Set(activeSelections.map(s => s.vendor))].length
+  const discontinuedCount = mockSelections.filter(s => s.availabilityStatus === 'discontinued').length
+  const allowanceItems = activeSelections.filter(s => s.isAllowanceItem).length
+  const defaultItems = activeSelections.filter(s => s.isDefaultForTier).length
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -390,17 +612,23 @@ export function SelectionsCatalogPreview() {
           <div className="flex items-center gap-3">
             <h3 className="font-semibold text-gray-900">Selections Catalog</h3>
             <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-              {totalSelections} selections
+              {totalSelections} active
             </span>
+            {discontinuedCount > 0 && (
+              <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded flex items-center gap-1">
+                <XCircle className="h-3 w-3" />
+                {discontinuedCount} discontinued
+              </span>
+            )}
           </div>
           <div className="text-sm text-gray-500 mt-0.5">
-            Master library of products, materials, and finishes
+            Master library of products, materials, and finishes with pricing tiers and vendor sources
           </div>
         </div>
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search selections..."
+          searchPlaceholder="Search by name, SKU, manufacturer, vendor..."
           tabs={tiers.map(tier => ({
             key: tier === 'All' ? 'all' : tier,
             label: tier,
@@ -413,6 +641,7 @@ export function SelectionsCatalogPreview() {
             { value: 'materialCost', label: 'Material Cost' },
             { value: 'leadTimeDays', label: 'Lead Time' },
             { value: 'manufacturer', label: 'Manufacturer' },
+            { value: 'usageCount', label: 'Usage' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -420,7 +649,11 @@ export function SelectionsCatalogPreview() {
           onSortDirectionChange={toggleSortDirection}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
-          actions={[{ icon: Plus, label: 'Add Selection', onClick: () => {}, variant: 'primary' }]}
+          actions={[
+            { icon: Plus, label: 'Add Selection', onClick: () => {}, variant: 'primary' },
+            { icon: Upload, label: 'Bulk Import', onClick: () => {} },
+            { icon: Download, label: 'Export', onClick: () => {} },
+          ]}
           resultCount={filteredSelections.length}
           totalCount={mockSelections.length}
         />
@@ -428,52 +661,84 @@ export function SelectionsCatalogPreview() {
 
       {/* Stats Cards */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-5 gap-4">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Package className="h-4 w-4" />
-              Total Selections
+        <div className="grid grid-cols-8 gap-3">
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <Package className="h-3.5 w-3.5" />
+              Active
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalSelections}</div>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{totalSelections}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Tag className="h-4 w-4" />
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <Tag className="h-3.5 w-3.5" />
               Categories
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalCategories}</div>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{totalCategories}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Building2 className="h-4 w-4" />
-              Coastal Rated
+          <div className="bg-cyan-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-cyan-600 text-xs">
+              <Building2 className="h-3.5 w-3.5" />
+              Coastal
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{coastalRated}</div>
+            <div className="text-lg font-bold text-cyan-700 mt-0.5">{coastalRated}</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-green-600 text-xs">
+              <Star className="h-3.5 w-3.5" />
+              Defaults
+            </div>
+            <div className="text-lg font-bold text-green-700 mt-0.5">{defaultItems}</div>
+          </div>
+          <div className="bg-amber-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-amber-600 text-xs">
+              <DollarSign className="h-3.5 w-3.5" />
+              Allowances
+            </div>
+            <div className="text-lg font-bold text-amber-700 mt-0.5">{allowanceItems}</div>
           </div>
           <div className={cn(
-            "rounded-lg p-3",
-            priceChanges > 0 ? "bg-amber-50" : "bg-gray-50"
+            "rounded-lg p-2.5",
+            priceIncreases > 0 ? "bg-red-50" : "bg-gray-50"
           )}>
             <div className={cn(
-              "flex items-center gap-2 text-sm",
-              priceChanges > 0 ? "text-amber-600" : "text-gray-500"
+              "flex items-center gap-1.5 text-xs",
+              priceIncreases > 0 ? "text-red-600" : "text-gray-500"
             )}>
-              <TrendingUp className="h-4 w-4" />
-              Price Increases
+              <TrendingUp className="h-3.5 w-3.5" />
+              Price Up
             </div>
             <div className={cn(
-              "text-xl font-bold mt-1",
-              priceChanges > 0 ? "text-amber-700" : "text-gray-900"
+              "text-lg font-bold mt-0.5",
+              priceIncreases > 0 ? "text-red-700" : "text-gray-900"
             )}>
-              {priceChanges}
+              {priceIncreases}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Truck className="h-4 w-4" />
+          <div className={cn(
+            "rounded-lg p-2.5",
+            priceDecreases > 0 ? "bg-green-50" : "bg-gray-50"
+          )}>
+            <div className={cn(
+              "flex items-center gap-1.5 text-xs",
+              priceDecreases > 0 ? "text-green-600" : "text-gray-500"
+            )}>
+              <TrendingDown className="h-3.5 w-3.5" />
+              Price Down
+            </div>
+            <div className={cn(
+              "text-lg font-bold mt-0.5",
+              priceDecreases > 0 ? "text-green-700" : "text-gray-900"
+            )}>
+              {priceDecreases}
+            </div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <Truck className="h-3.5 w-3.5" />
               Vendors
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">12</div>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{uniqueVendors}</div>
           </div>
         </div>
       </div>
@@ -509,6 +774,41 @@ export function SelectionsCatalogPreview() {
         </div>
       </div>
 
+      {/* Cross-Module Connection Badges */}
+      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-500 font-medium">Connected:</span>
+          <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <FileText className="h-3 w-3" />
+            Estimates
+          </span>
+          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Eye className="h-3 w-3" />
+            Job Selections
+          </span>
+          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <FileText className="h-3 w-3" />
+            Proposals
+          </span>
+          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <ShoppingCart className="h-3 w-3" />
+            Purchase Orders
+          </span>
+          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Truck className="h-3 w-3" />
+            Vendors
+          </span>
+          <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <TrendingUp className="h-3 w-3" />
+            Price Intelligence
+          </span>
+          <span className="bg-pink-50 text-pink-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            Assemblies
+          </span>
+        </div>
+      </div>
+
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
@@ -517,11 +817,14 @@ export function SelectionsCatalogPreview() {
             <span className="font-medium text-sm text-amber-800">Price Intelligence:</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-amber-700">
-            <span>Cypress T&G increased 18% in 6 months - consider Hardie alternative</span>
+            <span className="flex items-center gap-1">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              Cypress T&G increased 18% -- Hardie alternative saves 40%
+            </span>
             <span>|</span>
-            <span>PGT lead time averaging 6 weeks vs catalog 4 weeks</span>
+            <span>PGT actual lead time 6 weeks vs catalog 4 weeks</span>
             <span>|</span>
-            <span>ABC Supply offering 5% discount on tile orders over $5K</span>
+            <span>GE Profile range discontinued -- replacement available</span>
           </div>
         </div>
       </div>

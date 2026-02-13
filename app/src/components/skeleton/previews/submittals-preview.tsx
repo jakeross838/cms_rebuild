@@ -17,137 +17,451 @@ import {
   Eye,
   ClipboardList,
   Hash,
+  RotateCcw,
+  User,
+  Paperclip,
+  Link2,
+  ShoppingCart,
+  Truck,
+  Stamp,
+  CalendarClock,
+  Package,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
-type SubmittalStatus = 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected'
+// ── Types ────────────────────────────────────────────────────
+
+type SubmittalStatus =
+  | 'pending'
+  | 'submitted'
+  | 'under_review'
+  | 'approved'
+  | 'approved_as_noted'
+  | 'revise_resubmit'
+  | 'rejected'
+
+type ResponseAction = 'approved' | 'approved_as_noted' | 'revise_and_resubmit' | 'rejected' | 'no_exceptions'
+
+interface ReviewStamp {
+  action: ResponseAction
+  reviewerName: string
+  reviewerCompany: string
+  reviewerRole: string
+  stampedAt: string
+  comments?: string
+  licenseNumber?: string
+}
+
+interface SubmittalDistribution {
+  recipientName: string
+  recipientCompany: string
+  recipientRole: string
+  sentAt: string
+  viewedAt?: string
+  responded: boolean
+}
 
 interface Submittal {
   id: string
   number: string
   description: string
   specSection: string
+  tradeCategory: string
   vendor: string
   dateSubmitted: string
+  requiredDate: string
   daysInReview: number
   status: SubmittalStatus
+  revision: number
+  leadTimeDays?: number
+  documentCount: number
+  distribution: SubmittalDistribution[]
+  stamps: ReviewStamp[]
+  selectionLink?: { selectionName: string; room: string }
+  scheduleDependency?: { taskName: string; impactDays: number; critical: boolean }
+  linkedPO?: { poNumber: string; holdStatus: 'on_hold' | 'released' }
+  permitRequired: boolean
   aiNote?: string
+  aiPredictedApprovalDays?: number
 }
+
+// ── Mock Data ────────────────────────────────────────────────
 
 const mockSubmittals: Submittal[] = [
   {
     id: '1',
     number: 'SUB-001',
-    description: 'Impact-rated aluminum storefront system',
+    description: 'Impact-rated aluminum storefront system — shop drawings and product data',
     specSection: '08 41 13 - Aluminum Storefronts',
+    tradeCategory: 'Openings',
     vendor: 'PGT Industries',
     dateSubmitted: '2024-11-28',
+    requiredDate: '2024-12-10',
     daysInReview: 14,
     status: 'under_review',
-    aiNote: 'Review exceeds typical 10-day cycle - follow up recommended',
+    revision: 1,
+    leadTimeDays: 42,
+    documentCount: 3,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-11-28', viewedAt: '2024-11-29', responded: false },
+      { recipientName: 'Dan Ross', recipientCompany: 'Ross Custom Homes', recipientRole: 'PM (CC)', sentAt: '2024-11-28', viewedAt: '2024-11-28', responded: false },
+    ],
+    stamps: [],
+    scheduleDependency: { taskName: 'Storefront installation', impactDays: 4, critical: true },
+    linkedPO: { poNumber: 'PO-2024-038', holdStatus: 'on_hold' },
+    permitRequired: false,
+    aiNote: 'Review exceeds typical 10-day cycle — follow up recommended. Architect has not opened since Nov 29.',
+    aiPredictedApprovalDays: 3,
   },
   {
     id: '2',
     number: 'SUB-002',
-    description: 'Structural steel shop drawings',
+    description: 'Structural steel shop drawings — connections and erection plan',
     specSection: '05 12 00 - Structural Steel',
+    tradeCategory: 'Structural',
     vendor: 'Gulf Coast Steel',
     dateSubmitted: '2024-11-25',
+    requiredDate: '2024-12-05',
     daysInReview: 17,
     status: 'approved',
+    revision: 2,
+    leadTimeDays: 28,
+    documentCount: 8,
+    distribution: [
+      { recipientName: 'Mark Thompson', recipientCompany: 'Bay Engineering', recipientRole: 'Structural Engineer', sentAt: '2024-11-25', viewedAt: '2024-11-25', responded: true },
+    ],
+    stamps: [
+      { action: 'revise_and_resubmit', reviewerName: 'Mark Thompson', reviewerCompany: 'Bay Engineering', reviewerRole: 'Structural Engineer', stampedAt: '2024-11-30', comments: 'Connection details at grid B-4 need revision per updated soils report', licenseNumber: 'PE-48291-FL' },
+      { action: 'approved', reviewerName: 'Mark Thompson', reviewerCompany: 'Bay Engineering', reviewerRole: 'Structural Engineer', stampedAt: '2024-12-08', comments: 'Approved. Revised connections acceptable.', licenseNumber: 'PE-48291-FL' },
+    ],
+    linkedPO: { poNumber: 'PO-2024-022', holdStatus: 'released' },
+    permitRequired: true,
+    scheduleDependency: { taskName: 'Steel erection', impactDays: 0, critical: false },
   },
   {
     id: '3',
     number: 'SUB-003',
-    description: 'Kitchen cabinet elevations and materials',
+    description: 'Kitchen cabinet elevations, materials, and hardware selections',
     specSection: '06 41 00 - Custom Casework',
+    tradeCategory: 'Finishes',
     vendor: 'Custom Cabinet Co',
     dateSubmitted: '2024-12-02',
+    requiredDate: '2024-12-12',
     daysInReview: 10,
     status: 'under_review',
-    aiNote: 'Vendor historically requires 2 revision cycles',
+    revision: 1,
+    leadTimeDays: 56,
+    documentCount: 5,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-02', viewedAt: '2024-12-03', responded: false },
+      { recipientName: 'Lisa Anderson', recipientCompany: 'Client', recipientRole: 'Owner', sentAt: '2024-12-02', viewedAt: '2024-12-04', responded: false },
+    ],
+    stamps: [],
+    selectionLink: { selectionName: 'Kitchen Cabinetry Package', room: 'Kitchen' },
+    scheduleDependency: { taskName: 'Cabinet installation', impactDays: 8, critical: true },
+    linkedPO: { poNumber: 'PO-2024-041', holdStatus: 'on_hold' },
+    permitRequired: false,
+    aiNote: 'Vendor historically requires 2 revision cycles. 56-day lead time — order by Jan 10 to meet install date.',
+    aiPredictedApprovalDays: 18,
   },
   {
     id: '4',
     number: 'SUB-004',
-    description: 'HVAC equipment cut sheets and specs',
+    description: 'HVAC equipment cut sheets, specs, and energy calculations',
     specSection: '23 05 00 - HVAC',
+    tradeCategory: 'MEP',
     vendor: 'Cool Air HVAC',
     dateSubmitted: '2024-12-05',
+    requiredDate: '2024-12-19',
     daysInReview: 7,
     status: 'submitted',
+    revision: 1,
+    leadTimeDays: 35,
+    documentCount: 4,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Mechanical Engineer', sentAt: '2024-12-05', viewedAt: undefined, responded: false },
+    ],
+    stamps: [],
+    permitRequired: true,
+    scheduleDependency: { taskName: 'Mechanical rough-in', impactDays: 2, critical: false },
+    aiNote: 'Engineer has not yet viewed. 35-day lead time requires approval by Dec 19.',
+    aiPredictedApprovalDays: 8,
   },
   {
     id: '5',
     number: 'SUB-005',
-    description: 'Roofing system and underlayment details',
+    description: 'Roofing system — underlayment, flashing, and shingle details',
     specSection: '07 31 00 - Shingles',
+    tradeCategory: 'Exterior',
     vendor: 'ABC Roofing Supply',
     dateSubmitted: '2024-12-08',
+    requiredDate: '2024-12-22',
     daysInReview: 4,
-    status: 'approved',
+    status: 'approved_as_noted',
+    revision: 1,
+    leadTimeDays: 7,
+    documentCount: 2,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-08', viewedAt: '2024-12-08', responded: true },
+    ],
+    stamps: [
+      { action: 'approved_as_noted', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-12-11', comments: 'Approved — use ice & water shield at all valleys per local code' },
+    ],
+    linkedPO: { poNumber: 'PO-2024-045', holdStatus: 'released' },
+    permitRequired: false,
   },
   {
     id: '6',
     number: 'SUB-006',
-    description: 'Plumbing fixtures and trim selections',
+    description: 'Plumbing fixtures and trim selections — master bath and powder room',
     specSection: '22 40 00 - Plumbing Fixtures',
+    tradeCategory: 'MEP',
     vendor: 'Jones Plumbing Supply',
     dateSubmitted: '2024-12-10',
+    requiredDate: '2024-12-24',
     daysInReview: 2,
     status: 'pending',
-    aiNote: 'Owner selection meeting scheduled for Dec 15',
+    revision: 1,
+    documentCount: 3,
+    distribution: [],
+    stamps: [],
+    selectionLink: { selectionName: 'Master Bath Fixtures', room: 'Master Bathroom' },
+    permitRequired: false,
+    aiNote: 'Owner selection meeting scheduled for Dec 15 — submittal pending owner decisions',
+    aiPredictedApprovalDays: 12,
   },
   {
     id: '7',
     number: 'SUB-007',
     description: 'Exterior paint colors and finish schedule',
     specSection: '09 91 00 - Painting',
+    tradeCategory: 'Finishes',
     vendor: 'Sherwin-Williams',
     dateSubmitted: '2024-11-20',
+    requiredDate: '2024-12-04',
     daysInReview: 22,
-    status: 'rejected',
-    aiNote: 'Rejected: Colors do not match HOA requirements',
+    status: 'revise_resubmit',
+    revision: 2,
+    documentCount: 1,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-11-20', viewedAt: '2024-11-21', responded: true },
+      { recipientName: 'Lisa Anderson', recipientCompany: 'Client', recipientRole: 'Owner', sentAt: '2024-11-20', viewedAt: '2024-11-22', responded: true },
+    ],
+    stamps: [
+      { action: 'rejected', reviewerName: 'Lisa Anderson', reviewerCompany: 'Client', reviewerRole: 'Owner', stampedAt: '2024-11-24', comments: 'Colors do not match HOA requirements — need earth tones per HOA covenant Section 4.2' },
+      { action: 'revise_and_resubmit', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-11-25', comments: 'New colors must comply with HOA palette. Please resubmit with 3 compliant options.' },
+    ],
+    permitRequired: false,
+    aiNote: 'Rev 2 pending resubmission. HOA palette restrictions noted. Vendor notified Dec 1.',
   },
   {
     id: '8',
     number: 'SUB-008',
-    description: 'Electrical panel schedules',
+    description: 'Electrical panel schedules and circuit layout',
     specSection: '26 24 00 - Switchboards',
+    tradeCategory: 'MEP',
     vendor: 'Smith Electric',
     dateSubmitted: '2024-12-01',
+    requiredDate: '2024-12-15',
     daysInReview: 11,
     status: 'under_review',
+    revision: 1,
+    leadTimeDays: 21,
+    documentCount: 6,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Electrical Engineer', sentAt: '2024-12-01', viewedAt: '2024-12-02', responded: false },
+    ],
+    stamps: [],
+    permitRequired: true,
+    scheduleDependency: { taskName: 'Electrical rough-in', impactDays: 3, critical: false },
+    aiPredictedApprovalDays: 5,
+  },
+  {
+    id: '9',
+    number: 'SUB-009',
+    description: 'Window schedule — impact-rated units with NOA documentation',
+    specSection: '08 51 13 - Aluminum Windows',
+    tradeCategory: 'Openings',
+    vendor: 'PGT Industries',
+    dateSubmitted: '2024-12-12',
+    requiredDate: '2024-12-26',
+    daysInReview: 0,
+    status: 'approved',
+    revision: 1,
+    leadTimeDays: 49,
+    documentCount: 4,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-12', viewedAt: '2024-12-12', responded: true },
+    ],
+    stamps: [
+      { action: 'no_exceptions', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-12-12', comments: 'All units match spec. NOA documentation verified.' },
+    ],
+    linkedPO: { poNumber: 'PO-2024-050', holdStatus: 'released' },
+    permitRequired: true,
+    scheduleDependency: { taskName: 'Window installation', impactDays: 0, critical: false },
+  },
+  {
+    id: '10',
+    number: 'SUB-010',
+    description: 'Tile selections — floor and wall for all bathrooms',
+    specSection: '09 30 00 - Tiling',
+    tradeCategory: 'Finishes',
+    vendor: 'Florida Tile Distributors',
+    dateSubmitted: '2024-12-14',
+    requiredDate: '2024-12-28',
+    daysInReview: 1,
+    status: 'pending',
+    revision: 1,
+    documentCount: 2,
+    distribution: [],
+    stamps: [],
+    selectionLink: { selectionName: 'Bathroom Tile Package', room: 'Master Bathroom' },
+    permitRequired: false,
+    aiNote: 'Awaiting owner selection confirmation. 3 options under review by client.',
+    aiPredictedApprovalDays: 14,
   },
 ]
+
+// ── Config ────────────────────────────────────────────────────
 
 const statusConfig: Record<SubmittalStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
   pending: { label: 'Pending', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: FileText },
   submitted: { label: 'Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: Send },
   under_review: { label: 'Under Review', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: Eye },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
+  approved_as_noted: { label: 'Approved as Noted', color: 'text-emerald-700', bgColor: 'bg-emerald-100', icon: CheckCircle },
+  revise_resubmit: { label: 'Revise & Resubmit', color: 'text-orange-700', bgColor: 'bg-orange-100', icon: RotateCcw },
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
 }
 
+const actionConfig: Record<ResponseAction, { label: string; color: string; bgColor: string }> = {
+  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100' },
+  approved_as_noted: { label: 'Approved as Noted', color: 'text-emerald-700', bgColor: 'bg-emerald-100' },
+  no_exceptions: { label: 'No Exceptions Taken', color: 'text-green-700', bgColor: 'bg-green-50' },
+  revise_and_resubmit: { label: 'Revise & Resubmit', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100' },
+}
+
 const specSections = [...new Set(mockSubmittals.map(s => s.specSection))]
+const tradeCategories = [...new Set(mockSubmittals.map(s => s.tradeCategory))]
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+// ── Sub-Components ────────────────────────────────────────────
+
+function ReviewStampBadge({ stamp }: { stamp: ReviewStamp }) {
+  const config = actionConfig[stamp.action]
+  return (
+    <div className={cn('text-xs px-2 py-1 rounded flex items-center gap-1.5', config.bgColor)}>
+      <Stamp className="h-3 w-3" />
+      <span className={cn('font-medium', config.color)}>{config.label}</span>
+      <span className="text-gray-500">by {stamp.reviewerName}</span>
+      {stamp.licenseNumber && (
+        <span className="text-gray-400 font-mono text-[10px]">({stamp.licenseNumber})</span>
+      )}
+    </div>
+  )
+}
+
+function DistributionIndicator({ distribution }: { distribution: SubmittalDistribution[] }) {
+  if (distribution.length === 0) return (
+    <span className="text-xs text-gray-400 italic">Not yet distributed</span>
+  )
+
+  const viewed = distribution.filter(d => d.viewedAt).length
+  const responded = distribution.filter(d => d.responded).length
+  const ballInCourt = distribution.find(d => !d.responded && d.viewedAt)
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 text-xs text-gray-500">
+        <Eye className="h-3 w-3" />
+        <span>{viewed}/{distribution.length} viewed</span>
+      </div>
+      {responded > 0 && (
+        <div className="flex items-center gap-1 text-xs text-green-600">
+          <CheckCircle className="h-3 w-3" />
+          <span>{responded} responded</span>
+        </div>
+      )}
+      {ballInCourt && (
+        <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+          Ball: {ballInCourt.recipientName}
+        </span>
+      )}
+    </div>
+  )
+}
+
+function ConnectionBadges({ submittal }: { submittal: Submittal }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {submittal.selectionLink && (
+        <span className="text-[10px] bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+          <Link2 className="h-2.5 w-2.5" />
+          {submittal.selectionLink.selectionName} ({submittal.selectionLink.room})
+        </span>
+      )}
+      {submittal.linkedPO && (
+        <span className={cn(
+          'text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1',
+          submittal.linkedPO.holdStatus === 'on_hold'
+            ? 'bg-amber-50 text-amber-700'
+            : 'bg-green-50 text-green-700'
+        )}>
+          <ShoppingCart className="h-2.5 w-2.5" />
+          {submittal.linkedPO.poNumber}
+          {submittal.linkedPO.holdStatus === 'on_hold' ? ' (HOLD)' : ' (Released)'}
+        </span>
+      )}
+      {submittal.scheduleDependency && (
+        <span className={cn(
+          'text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1',
+          submittal.scheduleDependency.critical
+            ? 'bg-red-50 text-red-700'
+            : 'bg-blue-50 text-blue-700'
+        )}>
+          <CalendarClock className="h-2.5 w-2.5" />
+          {submittal.scheduleDependency.taskName}
+          {submittal.scheduleDependency.impactDays > 0 && (
+            <span className="font-medium">+{submittal.scheduleDependency.impactDays}d</span>
+          )}
+        </span>
+      )}
+      {submittal.permitRequired && (
+        <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+          <FileText className="h-2.5 w-2.5" />
+          Permit Req
+        </span>
+      )}
+    </div>
+  )
+}
+
+// ── Main Card ────────────────────────────────────────────────
+
 function SubmittalCard({ submittal }: { submittal: Submittal }) {
   const statusInfo = statusConfig[submittal.status]
   const StatusIcon = statusInfo.icon
+  const latestStamp = submittal.stamps.length > 0 ? submittal.stamps[submittal.stamps.length - 1] : null
+  const isOverdue = submittal.daysInReview > 14 && !['approved', 'approved_as_noted', 'rejected'].includes(submittal.status)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+    <div className={cn(
+      'bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer',
+      isOverdue ? 'border-red-200' : 'border-gray-200'
+    )}>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-mono font-semibold text-gray-900">{submittal.number}</span>
-          <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1", statusInfo.bgColor, statusInfo.color)}>
+          <span className="text-xs text-gray-400">Rev {submittal.revision}</span>
+          <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1', statusInfo.bgColor, statusInfo.color)}>
             <StatusIcon className="h-3 w-3" />
             {statusInfo.label}
           </span>
@@ -157,48 +471,97 @@ function SubmittalCard({ submittal }: { submittal: Submittal }) {
         </button>
       </div>
 
-      <p className="text-sm text-gray-700 mb-3 line-clamp-2">{submittal.description}</p>
+      {/* Description */}
+      <p className="text-sm text-gray-700 mb-2 line-clamp-2">{submittal.description}</p>
 
-      <div className="space-y-2 mb-3">
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <Hash className="h-3.5 w-3.5 text-gray-400" />
-          <span className="text-xs">{submittal.specSection}</span>
+      {/* Spec + Vendor + Trade */}
+      <div className="space-y-1.5 mb-2">
+        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+          <Hash className="h-3 w-3 text-gray-400" />
+          <span>{submittal.specSection}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <Building2 className="h-3.5 w-3.5 text-gray-400" />
-          <span>{submittal.vendor}</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs text-gray-600">
+            <Building2 className="h-3 w-3 text-gray-400" />
+            <span>{submittal.vendor}</span>
+          </div>
+          <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{submittal.tradeCategory}</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 pt-3 border-t border-gray-100 text-xs text-gray-600">
-        <div className="flex items-center gap-1.5">
+      {/* Cross-module connections */}
+      <div className="mb-2">
+        <ConnectionBadges submittal={submittal} />
+      </div>
+
+      {/* Distribution / Ball-in-court */}
+      <div className="mb-2">
+        <DistributionIndicator distribution={submittal.distribution} />
+      </div>
+
+      {/* Latest stamp */}
+      {latestStamp && (
+        <div className="mb-2">
+          <ReviewStampBadge stamp={latestStamp} />
+          {latestStamp.comments && (
+            <p className="text-[11px] text-gray-500 mt-1 ml-5 italic line-clamp-2">"{latestStamp.comments}"</p>
+          )}
+        </div>
+      )}
+
+      {/* Footer: dates, docs, lead time */}
+      <div className="flex items-center gap-3 pt-2 border-t border-gray-100 text-xs text-gray-600 flex-wrap">
+        <div className="flex items-center gap-1">
           <Calendar className="h-3 w-3" />
           <span>{formatDate(submittal.dateSubmitted)}</span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <Clock className="h-3 w-3" />
           <span className={cn(
-            submittal.daysInReview > 14 ? "text-red-600 font-medium" :
-            submittal.daysInReview > 10 ? "text-amber-600 font-medium" :
-            "text-gray-500"
+            isOverdue ? 'text-red-600 font-medium' :
+            submittal.daysInReview > 10 ? 'text-amber-600 font-medium' :
+            'text-gray-500'
           )}>
-            {submittal.daysInReview} days in review
+            {submittal.daysInReview}d in review
           </span>
         </div>
+        {submittal.leadTimeDays && (
+          <div className="flex items-center gap-1">
+            <Truck className="h-3 w-3" />
+            <span>{submittal.leadTimeDays}d lead</span>
+          </div>
+        )}
+        <div className="flex items-center gap-1">
+          <Paperclip className="h-3 w-3" />
+          <span>{submittal.documentCount}</span>
+        </div>
+        {submittal.aiPredictedApprovalDays !== undefined && (
+          <div className="flex items-center gap-1 text-amber-600">
+            <Sparkles className="h-3 w-3" />
+            <span>~{submittal.aiPredictedApprovalDays}d to approve</span>
+          </div>
+        )}
       </div>
 
+      {/* AI Note */}
       {submittal.aiNote && (
         <div className={cn(
-          "mt-3 p-2 rounded-md flex items-start gap-2",
-          submittal.status === 'rejected' ? "bg-red-50" : "bg-amber-50"
+          'mt-2 p-2 rounded-md flex items-start gap-2',
+          submittal.status === 'rejected' ? 'bg-red-50' :
+          submittal.status === 'revise_resubmit' ? 'bg-orange-50' :
+          'bg-amber-50'
         )}>
           <Sparkles className={cn(
-            "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
-            submittal.status === 'rejected' ? "text-red-500" : "text-amber-500"
+            'h-3.5 w-3.5 mt-0.5 flex-shrink-0',
+            submittal.status === 'rejected' ? 'text-red-500' :
+            submittal.status === 'revise_resubmit' ? 'text-orange-500' :
+            'text-amber-500'
           )} />
           <span className={cn(
-            "text-xs",
-            submittal.status === 'rejected' ? "text-red-700" : "text-amber-700"
+            'text-xs',
+            submittal.status === 'rejected' ? 'text-red-700' :
+            submittal.status === 'revise_resubmit' ? 'text-orange-700' :
+            'text-amber-700'
           )}>{submittal.aiNote}</span>
         </div>
       )}
@@ -206,33 +569,43 @@ function SubmittalCard({ submittal }: { submittal: Submittal }) {
   )
 }
 
+// ── Main Component ────────────────────────────────────────────
+
 export function SubmittalsPreview() {
   const [specFilter, setSpecFilter] = useState<string>('all')
+  const [tradeFilter, setTradeFilter] = useState<string>('all')
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const filteredSubmittals = sortItems(
     mockSubmittals.filter(s => {
-      if (!matchesSearch(s, search, ['number', 'description', 'vendor', 'specSection'])) return false
+      if (!matchesSearch(s, search, ['number', 'description', 'vendor', 'specSection', 'tradeCategory'])) return false
       if (activeTab !== 'all' && s.status !== activeTab) return false
       if (specFilter !== 'all' && s.specSection !== specFilter) return false
+      if (tradeFilter !== 'all' && s.tradeCategory !== tradeFilter) return false
       return true
     }),
     activeSort as keyof Submittal | '',
     sortDirection,
   )
 
-  // Calculate quick stats
+  // ── Stats ────────────────────────────────────────────────────
   const totalSubmittals = mockSubmittals.length
   const pendingReview = mockSubmittals.filter(s =>
     s.status === 'pending' || s.status === 'submitted' || s.status === 'under_review'
   ).length
-  const approvedCount = mockSubmittals.filter(s => s.status === 'approved').length
+  const approvedCount = mockSubmittals.filter(s =>
+    s.status === 'approved' || s.status === 'approved_as_noted'
+  ).length
+  const reviseCount = mockSubmittals.filter(s => s.status === 'revise_resubmit').length
+  const rejectedCount = mockSubmittals.filter(s => s.status === 'rejected').length
+  const overdueCount = mockSubmittals.filter(s =>
+    s.daysInReview > 14 && !['approved', 'approved_as_noted', 'rejected'].includes(s.status)
+  ).length
   const avgDaysInReview = Math.round(
     mockSubmittals.reduce((sum, s) => sum + s.daysInReview, 0) / mockSubmittals.length
   )
-  const overdueCount = mockSubmittals.filter(s =>
-    s.daysInReview > 14 && s.status !== 'approved' && s.status !== 'rejected'
-  ).length
+  const posOnHold = mockSubmittals.filter(s => s.linkedPO?.holdStatus === 'on_hold').length
+  const criticalPathItems = mockSubmittals.filter(s => s.scheduleDependency?.critical).length
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -253,7 +626,9 @@ export function SubmittalsPreview() {
             { key: 'submitted', label: 'Submitted', count: mockSubmittals.filter(s => s.status === 'submitted').length },
             { key: 'under_review', label: 'Under Review', count: mockSubmittals.filter(s => s.status === 'under_review').length },
             { key: 'approved', label: 'Approved', count: mockSubmittals.filter(s => s.status === 'approved').length },
-            { key: 'rejected', label: 'Rejected', count: mockSubmittals.filter(s => s.status === 'rejected').length },
+            { key: 'approved_as_noted', label: 'As Noted', count: mockSubmittals.filter(s => s.status === 'approved_as_noted').length },
+            { key: 'revise_resubmit', label: 'Revise', count: reviseCount },
+            { key: 'rejected', label: 'Rejected', count: rejectedCount },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -264,19 +639,28 @@ export function SubmittalsPreview() {
               options: specSections.map(s => ({ value: s, label: s.split(' - ')[0] })),
               onChange: setSpecFilter,
             },
+            {
+              label: 'All Trades',
+              value: tradeFilter,
+              options: tradeCategories.map(t => ({ value: t, label: t })),
+              onChange: setTradeFilter,
+            },
           ]}
           sortOptions={[
             { value: 'number', label: 'Submittal #' },
             { value: 'dateSubmitted', label: 'Date Submitted' },
+            { value: 'requiredDate', label: 'Required Date' },
             { value: 'daysInReview', label: 'Days in Review' },
             { value: 'vendor', label: 'Vendor' },
+            { value: 'leadTimeDays', label: 'Lead Time' },
+            { value: 'revision', label: 'Revision #' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
           sortDirection={sortDirection}
           onSortDirectionChange={toggleSortDirection}
           actions={[
-            { icon: Download, label: 'Export', onClick: () => {} },
+            { icon: Download, label: 'Export Log', onClick: () => {} },
             { icon: Plus, label: 'New Submittal', onClick: () => {}, variant: 'primary' },
           ]}
           resultCount={filteredSubmittals.length}
@@ -286,51 +670,87 @@ export function SubmittalsPreview() {
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-6 gap-3">
           <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <ClipboardList className="h-4 w-4" />
-              Total Submittals
+            <div className="flex items-center gap-2 text-gray-500 text-xs">
+              <ClipboardList className="h-3.5 w-3.5" />
+              Total
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalSubmittals}</div>
+            <div className="text-lg font-bold text-gray-900 mt-1">{totalSubmittals}</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-amber-600 text-sm">
-              <Clock className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-amber-600 text-xs">
+              <Clock className="h-3.5 w-3.5" />
               Pending Review
             </div>
-            <div className="text-xl font-bold text-amber-700 mt-1">{pendingReview}</div>
+            <div className="text-lg font-bold text-amber-700 mt-1">{pendingReview}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-green-600 text-sm">
-              <CheckCircle className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-green-600 text-xs">
+              <CheckCircle className="h-3.5 w-3.5" />
               Approved
             </div>
-            <div className="text-xl font-bold text-green-700 mt-1">{approvedCount}</div>
+            <div className="text-lg font-bold text-green-700 mt-1">{approvedCount}</div>
           </div>
           <div className={cn(
-            "rounded-lg p-3",
-            overdueCount > 0 ? "bg-red-50" : "bg-blue-50"
+            'rounded-lg p-3',
+            overdueCount > 0 ? 'bg-red-50' : 'bg-blue-50'
           )}>
             <div className={cn(
-              "flex items-center gap-2 text-sm",
-              overdueCount > 0 ? "text-red-600" : "text-blue-600"
+              'flex items-center gap-2 text-xs',
+              overdueCount > 0 ? 'text-red-600' : 'text-blue-600'
             )}>
-              {overdueCount > 0 ? <AlertTriangle className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              {overdueCount > 0 ? 'Overdue (>14 days)' : 'Avg Review Time'}
+              {overdueCount > 0 ? <AlertTriangle className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              {overdueCount > 0 ? 'Overdue (>14d)' : 'Avg Review'}
             </div>
             <div className={cn(
-              "text-xl font-bold mt-1",
-              overdueCount > 0 ? "text-red-700" : "text-blue-700"
+              'text-lg font-bold mt-1',
+              overdueCount > 0 ? 'text-red-700' : 'text-blue-700'
             )}>
-              {overdueCount > 0 ? overdueCount : `${avgDaysInReview} days`}
+              {overdueCount > 0 ? overdueCount : `${avgDaysInReview}d`}
+            </div>
+          </div>
+          <div className={cn(
+            'rounded-lg p-3',
+            posOnHold > 0 ? 'bg-amber-50' : 'bg-gray-50'
+          )}>
+            <div className={cn(
+              'flex items-center gap-2 text-xs',
+              posOnHold > 0 ? 'text-amber-600' : 'text-gray-500'
+            )}>
+              <ShoppingCart className="h-3.5 w-3.5" />
+              POs on Hold
+            </div>
+            <div className={cn(
+              'text-lg font-bold mt-1',
+              posOnHold > 0 ? 'text-amber-700' : 'text-gray-900'
+            )}>
+              {posOnHold}
+            </div>
+          </div>
+          <div className={cn(
+            'rounded-lg p-3',
+            criticalPathItems > 0 ? 'bg-red-50' : 'bg-gray-50'
+          )}>
+            <div className={cn(
+              'flex items-center gap-2 text-xs',
+              criticalPathItems > 0 ? 'text-red-600' : 'text-gray-500'
+            )}>
+              <CalendarClock className="h-3.5 w-3.5" />
+              Critical Path
+            </div>
+            <div className={cn(
+              'text-lg font-bold mt-1',
+              criticalPathItems > 0 ? 'text-red-700' : 'text-gray-900'
+            )}>
+              {criticalPathItems}
             </div>
           </div>
         </div>
       </div>
 
       {/* Submittals Grid */}
-      <div className="p-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+      <div className="p-4 grid grid-cols-2 gap-4 max-h-[480px] overflow-y-auto">
         {filteredSubmittals.map(submittal => (
           <SubmittalCard key={submittal.id} submittal={submittal} />
         ))}
@@ -346,17 +766,25 @@ export function SubmittalsPreview() {
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">Review Patterns:</span>
+            <span className="font-medium text-sm text-amber-800">Submittal Intelligence:</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-amber-700 flex-wrap">
             <span className="flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              {overdueCount} submittal{overdueCount !== 1 ? 's' : ''} exceeding 14-day review cycle
+              {overdueCount} overdue ({'>'}14d review cycle)
+            </span>
+            <span>|</span>
+            <span className="flex items-center gap-1">
+              <ShoppingCart className="h-3.5 w-3.5" />
+              {posOnHold} PO{posOnHold !== 1 ? 's' : ''} held pending approval
             </span>
             <span>|</span>
             <span>Architect avg response: 8.5 days</span>
             <span>|</span>
-            <span>Custom Cabinet Co typically needs 2 revision cycles</span>
+            <span className="flex items-center gap-1">
+              <Package className="h-3.5 w-3.5" />
+              SUB-003 (cabinets): 56d lead — order deadline approaching
+            </span>
           </div>
         </div>
       </div>

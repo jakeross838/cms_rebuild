@@ -47,54 +47,110 @@ export default function JobPurchaseOrdersPage() {
         <PageSpec
       title="Job Purchase Orders"
       phase="Phase 0 - Foundation"
-      planFile="views/jobs/PURCHASE_ORDERS.md"
-      description="All purchase orders for this job. Track what's been ordered, delivery status, and costs against budget. Approve new POs and manage vendor relationships at the job level."
-      workflow={['Create PO', 'Approve', 'Send to Vendor', 'Track Delivery', 'Receive & Close']}
+      planFile="docs/modules/18-purchase-orders.md"
+      description="End-to-end purchase order lifecycle for this job. POs created manually, from bid awards, change orders, budget lines, or schedule-driven procurement. Supports delivery tracking, three-way matching (PO to receipt to invoice), backorder management, blanket POs, emergency procurement, and PO amendments. Committed costs feed budget forecasting and cash flow projections."
+      workflow={['Create PO', 'Approve (Threshold)', 'Send to Vendor', 'Vendor Acknowledges', 'Track Delivery', 'Receive & Inspect', '3-Way Match', 'Close']}
       features={[
-        'Job PO list',
-        'PO status tracking',
-        'Cost code assignment',
-        'Budget impact view',
-        'Delivery tracking',
-        'Vendor performance',
-        'PO approval workflow',
-        'Quick PO from budget',
-        'Material receipts',
-        'Back-order tracking',
-        'PO change orders',
-        'Document attachments',
+        'Filterable PO list with all 10 statuses (draft through closed/cancelled)',
+        'PO creation from budget line, bid award, change order, or schedule alert',
+        'Line item editor with cost code picker, quantity, unit price, tax rate',
+        'Configurable approval workflow with dollar thresholds',
+        'Emergency PO bypass with reason and after-the-fact review',
+        'Email/portal PO delivery to vendors',
+        'Vendor acknowledgment tracking',
+        'Mobile-friendly receiving form with photo capture',
+        'Partial receipt and backorder management',
+        'Damaged item reporting with auto-vendor notification',
+        'Three-way matching: PO vs receipt vs invoice',
+        'Configurable variance tolerance (auto-approve under threshold)',
+        'PO amendments with version history',
+        'Blanket PO with release tracking and usage gauge',
+        'Budget impact preview before approval',
+        'Cost code assignment and budget commitment tracking',
+        'Tracking number and carrier link',
+        'Selection-linked line items from catalog',
+        'Cross-project procurement aggregation alerts',
+        'Schedule-driven lead time alerts',
+        'Payment term optimization (early-pay discount)',
+        'Material substitution workflow',
+        'PDF generation with builder branding',
       ]}
       connections={[
-        { name: 'Budget', type: 'bidirectional', description: 'Cost tracking' },
-        { name: 'Vendors', type: 'input', description: 'Vendor info' },
-        { name: 'Deliveries', type: 'output', description: 'Schedule deliveries' },
-        { name: 'Invoices', type: 'output', description: 'Match invoices' },
-        { name: 'Selections', type: 'input', description: 'Selected items' },
+        { name: 'Budget', type: 'bidirectional', description: 'Committed cost tracking, budget impact on approval' },
+        { name: 'Vendors', type: 'input', description: 'Vendor directory, payment terms, rate sheets' },
+        { name: 'Vendor Portal', type: 'output', description: 'Vendor views/acknowledges POs' },
+        { name: 'Deliveries', type: 'output', description: 'Delivery tracking from POs' },
+        { name: 'Invoices', type: 'bidirectional', description: 'Three-way matching (PO-receipt-invoice)' },
+        { name: 'Selections', type: 'input', description: 'PO line items reference catalog selections' },
+        { name: 'Change Orders', type: 'input', description: 'CO-triggered PO creation' },
+        { name: 'Bids', type: 'input', description: 'PO auto-generated from bid award' },
+        { name: 'Schedule', type: 'input', description: 'Lead time alerts, delivery impact on schedule' },
+        { name: 'QuickBooks', type: 'output', description: 'Sync POs as Bills to accounting' },
+        { name: 'Notifications', type: 'output', description: 'Approval alerts, delivery reminders' },
+        { name: 'Price Intelligence', type: 'bidirectional', description: 'PO costs update pricing database' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'job_id', type: 'uuid', required: true, description: 'This job' },
-        { name: 'po_number', type: 'string', required: true, description: 'PO number' },
-        { name: 'vendor_id', type: 'uuid', required: true, description: 'Vendor' },
-        { name: 'description', type: 'text', description: 'What is being ordered' },
-        { name: 'amount', type: 'decimal', required: true, description: 'Total amount' },
-        { name: 'cost_code', type: 'string', description: 'Budget category' },
-        { name: 'status', type: 'string', required: true, description: 'Draft, Sent, Partial, Complete' },
-        { name: 'expected_delivery', type: 'date', description: 'Expected date' },
-        { name: 'actual_delivery', type: 'date', description: 'Actual date' },
+        { name: 'builder_id', type: 'uuid', required: true, description: 'Tenant isolation' },
+        { name: 'project_id', type: 'uuid', required: true, description: 'This project' },
+        { name: 'vendor_id', type: 'uuid', required: true, description: 'FK to vendors' },
+        { name: 'po_number', type: 'string', required: true, description: 'Formatted per builder template' },
+        { name: 'status', type: 'string', required: true, description: 'draft | pending_approval | approved | sent | acknowledged | partial_delivery | fully_received | invoiced | closed | cancelled' },
+        { name: 'po_type', type: 'string', required: true, description: 'standard | blanket | emergency' },
+        { name: 'issue_date', type: 'date', description: 'Date PO issued' },
+        { name: 'required_by_date', type: 'date', description: 'Date materials needed' },
+        { name: 'expected_delivery_date', type: 'date', description: 'Vendor-confirmed delivery' },
+        { name: 'subtotal', type: 'decimal', description: 'Sum of line items' },
+        { name: 'tax_amount', type: 'decimal', description: 'Tax' },
+        { name: 'shipping_amount', type: 'decimal', description: 'Shipping charges' },
+        { name: 'total_amount', type: 'decimal', description: 'Final PO total' },
+        { name: 'blanket_limit', type: 'decimal', description: 'Max for blanket POs' },
+        { name: 'blanket_used', type: 'decimal', description: 'Amount released against blanket' },
+        { name: 'payment_terms', type: 'string', description: 'Net 30, 2/10 Net 30, etc.' },
+        { name: 'tracking_number', type: 'string', description: 'Carrier tracking number' },
+        { name: 'change_order_id', type: 'uuid', description: 'Linked CO if PO from change order' },
+        { name: 'bid_id', type: 'uuid', description: 'Linked bid if PO from bid award' },
+        { name: 'is_emergency', type: 'boolean', description: 'Emergency PO flag' },
+        { name: 'emergency_reason', type: 'text', description: 'Reason for emergency bypass' },
+        { name: 'version_number', type: 'integer', description: 'Amendment version tracking' },
+        { name: 'approved_at', type: 'timestamp', description: 'Approval timestamp' },
         { name: 'approved_by', type: 'uuid', description: 'Approver' },
-        { name: 'approved_at', type: 'timestamp', description: 'Approval date' },
       ]}
       aiFeatures={[
         {
-          name: 'Budget Check',
-          description: 'Validates against budget. "This PO would put Framing Materials 15% over budget. Remaining: $2,400. PO: $5,000."',
+          name: 'Budget Impact Analysis',
+          description: 'Shows full impact before approval. "This PO commits $12,450 to 16-Electrical. Current: $36,550. After: $49,000 (100% of budget). No remaining budget."',
+          trigger: 'Before PO approval'
+        },
+        {
+          name: 'Vendor Recommendation',
+          description: 'Suggests best vendor by trade, pricing, and performance. "For drywall: ABC Supply ($4.35/SF, 98% on-time, 4.5 quality). DEF Supply ($4.10/SF, 85% on-time, 3.8 quality)."',
           trigger: 'On PO creation'
         },
         {
-          name: 'Vendor Suggestion',
-          description: 'Recommends vendors. "For drywall: ABC Supply has best price history. 98% on-time delivery."',
-          trigger: 'On material selection'
+          name: 'Price Intelligence Check',
+          description: 'Compares line items to historical costs. "12 outlets @ $185/ea is 8% above avg ($172/ea). Market trend: +5%. Slightly high but within range."',
+          trigger: 'On line item entry'
+        },
+        {
+          name: 'Procurement Aggregation',
+          description: 'Identifies consolidation opportunities across projects. "3 jobs need 2x4 lumber this month. Consolidate for volume discount. Est. savings: $2,800 (8%)."',
+          trigger: 'On similar POs'
+        },
+        {
+          name: 'Lead Time Alert',
+          description: 'Warns when order timing conflicts with schedule. "Windows needed Mar 1. Vendor lead time: 16 weeks. Must order by Nov 8. Order immediately."',
+          trigger: 'On PO creation for long-lead items'
+        },
+        {
+          name: 'Three-Way Match',
+          description: 'Auto-matches invoices to POs and receipts. Flags variances above tolerance. "Invoice $10,800 vs PO $10,000. Variance: $800 (8%) exceeds 2% tolerance. Review required."',
+          trigger: 'On invoice receipt'
+        },
+        {
+          name: 'Backorder Schedule Impact',
+          description: 'Cross-references backorders with schedule. "HVAC condensing unit backordered. Needed for task HVAC Install starting Feb 10. Current vendor ETA: Feb 25. 15-day schedule risk."',
+          trigger: 'On partial delivery'
         },
       ]}
       mockupAscii={`

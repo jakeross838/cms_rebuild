@@ -15,91 +15,248 @@ import {
   DollarSign,
   Calendar,
   BarChart3,
+  FileText,
+  FileSignature,
+  Timer,
+  AlertTriangle,
+  Palette,
+  Link,
+  Download,
+  Copy,
+  Package,
+  Shield,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
+type ProposalStatus = 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined' | 'expired'
+type ContractType = 'nte' | 'gmp' | 'cost_plus' | 'fixed'
+type EsignStatus = 'not_sent' | 'sent' | 'viewed' | 'signed' | 'declined'
+
 interface Proposal {
   id: string
   clientName: string
   projectName: string
+  projectAddress: string
+  estimateRef: string
+  version: number
   amount: number
-  dateSent: string
+  allowancesTotal: number
+  defaultTier: string
+  tierComparison: {
+    builder: number
+    standard: number
+    premium: number
+    luxury: number
+  }
+  contractType: ContractType
+  templateName: string
+  dateSent: string | null
   viewCount: number
-  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined'
-  lastViewed?: string
-  aiNote?: string
+  timeSpentMinutes: number
+  lastViewed: string | null
+  expiresAt: string | null
+  daysUntilExpiry: number | null
+  status: ProposalStatus
+  esignStatus: EsignStatus
+  hasPhotos: boolean
+  aiNote: string | null
 }
 
 const mockProposals: Proposal[] = [
   {
     id: '1',
-    clientName: 'John Smith',
+    clientName: 'John & Sarah Smith',
     projectName: 'Smith Residence - New Construction',
+    projectAddress: '1234 Coastal Drive, Charleston SC',
+    estimateRef: 'EST-2026-0042 v2',
+    version: 2,
     amount: 850000,
-    dateSent: '',
+    allowancesTotal: 68000,
+    defaultTier: 'Premium',
+    tierComparison: { builder: 680000, standard: 740000, premium: 850000, luxury: 1050000 },
+    contractType: 'gmp',
+    templateName: 'Coastal Custom Home',
+    dateSent: null,
     viewCount: 0,
+    timeSpentMinutes: 0,
+    lastViewed: null,
+    expiresAt: null,
+    daysUntilExpiry: null,
     status: 'draft',
+    esignStatus: 'not_sent',
+    hasPhotos: true,
+    aiNote: null,
   },
   {
     id: '2',
-    clientName: 'Robert Johnson',
+    clientName: 'Robert & Linda Johnson',
     projectName: 'Johnson Beach House Renovation',
+    projectAddress: '567 Ocean Blvd, Folly Beach SC',
+    estimateRef: 'EST-2026-0038 v1',
+    version: 1,
     amount: 320000,
-    dateSent: 'Feb 8, 2024',
+    allowancesTotal: 42000,
+    defaultTier: 'Standard',
+    tierComparison: { builder: 260000, standard: 320000, premium: 385000, luxury: 0 },
+    contractType: 'fixed',
+    templateName: 'Renovation Standard',
+    dateSent: 'Feb 8, 2026',
     viewCount: 0,
+    timeSpentMinutes: 0,
+    lastViewed: null,
+    expiresAt: 'Mar 10, 2026',
+    daysUntilExpiry: 26,
     status: 'sent',
+    esignStatus: 'sent',
+    hasPhotos: true,
+    aiNote: 'No views after 4 days -- consider a follow-up call',
   },
   {
     id: '3',
-    clientName: 'David Miller',
-    projectName: 'Miller Addition',
+    clientName: 'David & Amy Miller',
+    projectName: 'Miller Addition & Remodel',
+    projectAddress: '890 Live Oak Lane, Mt Pleasant SC',
+    estimateRef: 'EST-2026-0035 v3',
+    version: 3,
     amount: 250000,
-    dateSent: 'Feb 5, 2024',
+    allowancesTotal: 28000,
+    defaultTier: 'Premium',
+    tierComparison: { builder: 195000, standard: 220000, premium: 250000, luxury: 310000 },
+    contractType: 'cost_plus',
+    templateName: 'Addition Standard',
+    dateSent: 'Feb 5, 2026',
     viewCount: 4,
-    status: 'viewed',
+    timeSpentMinutes: 38,
     lastViewed: '2 hours ago',
-    aiNote: 'Viewed 4 times in 2 days - high engagement suggests interest',
+    expiresAt: 'Mar 7, 2026',
+    daysUntilExpiry: 23,
+    status: 'viewed',
+    esignStatus: 'viewed',
+    hasPhotos: true,
+    aiNote: 'Viewed 4 times in 2 days, 38 min total -- high engagement. Client spent 12 min on kitchen. Consider follow-up today.',
   },
   {
     id: '4',
-    clientName: 'Thomas Wilson',
+    clientName: 'Thomas & Rachel Wilson',
     projectName: 'Wilson Custom Home',
+    projectAddress: '2100 Marsh View Court, Kiawah SC',
+    estimateRef: 'EST-2026-0029 v2',
+    version: 2,
     amount: 1200000,
-    dateSent: 'Jan 28, 2024',
+    allowancesTotal: 95000,
+    defaultTier: 'Premium',
+    tierComparison: { builder: 950000, standard: 1050000, premium: 1200000, luxury: 1520000 },
+    contractType: 'gmp',
+    templateName: 'Luxury Custom Home',
+    dateSent: 'Jan 28, 2026',
     viewCount: 6,
+    timeSpentMinutes: 52,
+    lastViewed: 'Jan 30, 2026',
+    expiresAt: null,
+    daysUntilExpiry: null,
     status: 'accepted',
-    lastViewed: 'Jan 30, 2024',
+    esignStatus: 'signed',
+    hasPhotos: true,
+    aiNote: null,
   },
   {
     id: '5',
-    clientName: 'Michael Davis',
+    clientName: 'Michael & Karen Davis',
     projectName: 'Davis Coastal Remodel',
+    projectAddress: '345 Palm Row, Sullivan\'s Island SC',
+    estimateRef: 'EST-2026-0031 v1',
+    version: 1,
     amount: 180000,
-    dateSent: 'Jan 25, 2024',
+    allowancesTotal: 22000,
+    defaultTier: 'Standard',
+    tierComparison: { builder: 145000, standard: 180000, premium: 215000, luxury: 0 },
+    contractType: 'fixed',
+    templateName: 'Renovation Standard',
+    dateSent: 'Jan 25, 2026',
     viewCount: 2,
+    timeSpentMinutes: 8,
+    lastViewed: 'Jan 27, 2026',
+    expiresAt: 'Feb 24, 2026',
+    daysUntilExpiry: -12,
     status: 'declined',
-    lastViewed: 'Jan 27, 2024',
+    esignStatus: 'declined',
+    hasPhotos: false,
+    aiNote: 'Low engagement (8 min). No photos included -- proposals with photos have 40% higher acceptance.',
   },
   {
     id: '6',
-    clientName: 'Sarah Thompson',
+    clientName: 'Sarah & James Thompson',
     projectName: 'Thompson Kitchen & Bath',
+    projectAddress: '678 Ashley Ave, Charleston SC',
+    estimateRef: 'EST-2026-0044 v1',
+    version: 1,
     amount: 95000,
-    dateSent: 'Feb 10, 2024',
+    allowancesTotal: 18000,
+    defaultTier: 'Premium',
+    tierComparison: { builder: 72000, standard: 82000, premium: 95000, luxury: 120000 },
+    contractType: 'fixed',
+    templateName: 'Kitchen & Bath Reno',
+    dateSent: 'Feb 10, 2026',
     viewCount: 1,
-    status: 'viewed',
+    timeSpentMinutes: 15,
     lastViewed: '30 minutes ago',
+    expiresAt: 'Mar 12, 2026',
+    daysUntilExpiry: 28,
+    status: 'viewed',
+    esignStatus: 'viewed',
+    hasPhotos: true,
+    aiNote: 'Client viewing now -- spent 15 min focused on cabinet selections',
+  },
+  {
+    id: '7',
+    clientName: 'Mark & Julie Roberts',
+    projectName: 'Roberts Pool House',
+    projectAddress: '432 Tradd St, Charleston SC',
+    estimateRef: 'EST-2026-0025 v2',
+    version: 2,
+    amount: 145000,
+    allowancesTotal: 12000,
+    defaultTier: 'Standard',
+    tierComparison: { builder: 118000, standard: 145000, premium: 175000, luxury: 0 },
+    contractType: 'nte',
+    templateName: 'Accessory Structure',
+    dateSent: 'Jan 15, 2026',
+    viewCount: 3,
+    timeSpentMinutes: 22,
+    lastViewed: 'Jan 20, 2026',
+    expiresAt: 'Feb 14, 2026',
+    daysUntilExpiry: -1,
+    status: 'expired',
+    esignStatus: 'not_sent',
+    hasPhotos: true,
+    aiNote: 'Expired yesterday. Client viewed 3 times (22 min) but did not respond. Recommend resending with updated pricing.',
   },
 ]
 
-const statusConfig = {
+const statusConfig: Record<ProposalStatus, { label: string; color: string; dotColor: string }> = {
   draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', dotColor: 'bg-gray-400' },
   sent: { label: 'Sent', color: 'bg-blue-100 text-blue-700', dotColor: 'bg-blue-500' },
   viewed: { label: 'Viewed', color: 'bg-purple-100 text-purple-700', dotColor: 'bg-purple-500' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700', dotColor: 'bg-green-500' },
   declined: { label: 'Declined', color: 'bg-red-100 text-red-700', dotColor: 'bg-red-500' },
+  expired: { label: 'Expired', color: 'bg-orange-100 text-orange-700', dotColor: 'bg-orange-500' },
+}
+
+const contractTypeLabels: Record<ContractType, string> = {
+  nte: 'NTE',
+  gmp: 'GMP',
+  cost_plus: 'Cost+',
+  fixed: 'Fixed',
+}
+
+const esignIcons: Record<EsignStatus, { label: string; color: string }> = {
+  not_sent: { label: 'Not Sent', color: 'text-gray-400' },
+  sent: { label: 'Awaiting Signature', color: 'text-blue-500' },
+  viewed: { label: 'Viewed', color: 'text-purple-500' },
+  signed: { label: 'Signed', color: 'text-green-500' },
+  declined: { label: 'Declined', color: 'text-red-500' },
 }
 
 const stages = [
@@ -108,6 +265,7 @@ const stages = [
   { id: 'viewed', label: 'Viewed', color: 'bg-purple-500' },
   { id: 'accepted', label: 'Accepted', color: 'bg-green-500' },
   { id: 'declined', label: 'Declined', color: 'bg-red-500' },
+  { id: 'expired', label: 'Expired', color: 'bg-orange-500' },
 ]
 
 function formatCurrency(value: number): string {
@@ -118,9 +276,14 @@ function formatCurrency(value: number): string {
 
 function ProposalCard({ proposal }: { proposal: Proposal }) {
   const config = statusConfig[proposal.status]
+  const esign = esignIcons[proposal.esignStatus]
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <div className={cn(
+      "bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      proposal.status === 'expired' && "border-orange-200",
+      proposal.status === 'accepted' && "border-green-200",
+    )}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <h4 className="font-medium text-gray-900 text-sm">{proposal.projectName}</h4>
@@ -128,6 +291,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
             <User className="h-3 w-3" />
             <span>{proposal.clientName}</span>
           </div>
+          <div className="text-xs text-gray-400 mt-0.5">{proposal.projectAddress}</div>
         </div>
         <button className="p-1 hover:bg-gray-100 rounded">
           <MoreHorizontal className="h-4 w-4 text-gray-400" />
@@ -135,10 +299,35 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
       </div>
 
       <div className="space-y-1.5 mb-3">
-        <div className="flex items-center gap-1.5 text-xs text-gray-600">
-          <DollarSign className="h-3 w-3" />
-          <span className="font-semibold text-gray-900">{formatCurrency(proposal.amount)}</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs text-gray-600">
+            <DollarSign className="h-3 w-3" />
+            <span className="font-semibold text-gray-900">{formatCurrency(proposal.amount)}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+              {contractTypeLabels[proposal.contractType]}
+            </span>
+            <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+              v{proposal.version}
+            </span>
+          </div>
         </div>
+        <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span className="flex items-center gap-1">
+            <Link className="h-3 w-3" />
+            {proposal.estimateRef}
+          </span>
+          <span className="flex items-center gap-1">
+            <Palette className="h-3 w-3" />
+            {proposal.defaultTier}
+          </span>
+        </div>
+        {proposal.allowancesTotal > 0 && (
+          <div className="text-xs text-gray-500">
+            Allowances: {formatCurrency(proposal.allowancesTotal)}
+          </div>
+        )}
         {proposal.dateSent && (
           <div className="flex items-center gap-1.5 text-xs text-gray-600">
             <Calendar className="h-3 w-3" />
@@ -149,36 +338,84 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
           <div className="flex items-center gap-1.5 text-xs text-gray-600">
             <Eye className="h-3 w-3" />
             <span>{proposal.viewCount} view{proposal.viewCount !== 1 ? 's' : ''}</span>
+            {proposal.timeSpentMinutes > 0 && (
+              <>
+                <span className="text-gray-300">|</span>
+                <Timer className="h-3 w-3" />
+                <span>{proposal.timeSpentMinutes} min</span>
+              </>
+            )}
             {proposal.lastViewed && (
               <>
-                <span className="text-gray-400">|</span>
+                <span className="text-gray-300">|</span>
                 <span>Last: {proposal.lastViewed}</span>
               </>
             )}
           </div>
         )}
+        {proposal.expiresAt && (
+          <div className={cn(
+            "flex items-center gap-1.5 text-xs",
+            proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 0 ? "text-orange-600 font-medium" :
+            proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 7 ? "text-amber-600" : "text-gray-500"
+          )}>
+            <Clock className="h-3 w-3" />
+            <span>
+              Expires {proposal.expiresAt}
+              {proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry > 0 && ` (${proposal.daysUntilExpiry}d)`}
+              {proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 0 && ' (expired)'}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-        <span className={cn("text-xs px-2 py-0.5 rounded font-medium", config.color)}>
-          {config.label}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className={cn("text-xs px-2 py-0.5 rounded font-medium", config.color)}>
+            {config.label}
+          </span>
+          <span className={cn("text-xs", esign.color)} title={esign.label}>
+            <FileSignature className="h-3.5 w-3.5" />
+          </span>
+          {!proposal.hasPhotos && (
+            <span className="text-xs text-gray-400" title="No photos">
+              <AlertTriangle className="h-3.5 w-3.5" />
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-1">
           {proposal.status === 'draft' && (
             <button className="p-1.5 text-blue-600 hover:bg-blue-50 rounded" title="Send">
               <Send className="h-3.5 w-3.5" />
             </button>
           )}
+          {proposal.status === 'expired' && (
+            <button className="p-1.5 text-orange-600 hover:bg-orange-50 rounded" title="Resend">
+              <Copy className="h-3.5 w-3.5" />
+            </button>
+          )}
           <button className="p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded" title="Preview">
             <Eye className="h-3.5 w-3.5" />
+          </button>
+          <button className="p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded" title="Download PDF">
+            <Download className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
       {proposal.aiNote && (
-        <div className="mt-2 p-2 bg-blue-50 rounded-md flex items-start gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-          <span className="text-xs text-blue-700">{proposal.aiNote}</span>
+        <div className={cn(
+          "mt-2 p-2 rounded-md flex items-start gap-2",
+          proposal.status === 'expired' ? "bg-orange-50" : "bg-blue-50"
+        )}>
+          <Sparkles className={cn(
+            "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
+            proposal.status === 'expired' ? "text-orange-500" : "text-blue-500"
+          )} />
+          <span className={cn(
+            "text-xs",
+            proposal.status === 'expired' ? "text-orange-700" : "text-blue-700"
+          )}>{proposal.aiNote}</span>
         </div>
       )}
     </div>
@@ -190,7 +427,7 @@ export function ProposalsPreview() {
 
   const filteredProposals = sortItems(
     mockProposals.filter(p => {
-      if (!matchesSearch(p, search, ['clientName', 'projectName'])) return false
+      if (!matchesSearch(p, search, ['clientName', 'projectName', 'projectAddress'])) return false
       if (activeTab !== 'all' && p.status !== activeTab) return false
       return true
     }),
@@ -200,17 +437,25 @@ export function ProposalsPreview() {
 
   // Calculate stats
   const proposalsSentThisMonth = mockProposals.filter(
-    p => p.status !== 'draft' && p.dateSent.includes('Feb')
+    p => p.status !== 'draft' && p.dateSent?.includes('Feb')
   ).length
   const acceptedCount = mockProposals.filter(p => p.status === 'accepted').length
   const declinedCount = mockProposals.filter(p => p.status === 'declined').length
+  const expiredCount = mockProposals.filter(p => p.status === 'expired').length
   const decidedCount = acceptedCount + declinedCount
   const acceptanceRate = decidedCount > 0 ? Math.round((acceptedCount / decidedCount) * 100) : 0
+
+  const totalViews = mockProposals.reduce((sum, p) => sum + p.viewCount, 0)
+  const totalTimeSpent = mockProposals.reduce((sum, p) => sum + p.timeSpentMinutes, 0)
   const avgResponseTime = '4.2 days'
 
   const totalPipeline = mockProposals
-    .filter(p => p.status !== 'declined' && p.status !== 'accepted')
+    .filter(p => !['declined', 'accepted', 'expired'].includes(p.status))
     .reduce((sum, p) => sum + p.amount, 0)
+  const totalAcceptedValue = mockProposals
+    .filter(p => p.status === 'accepted')
+    .reduce((sum, p) => sum + p.amount, 0)
+  const totalAllowances = mockProposals.reduce((sum, p) => sum + p.allowancesTotal, 0)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -218,12 +463,20 @@ export function ProposalsPreview() {
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
           <h3 className="font-semibold text-gray-900">Proposals</h3>
-          <span className="text-sm text-gray-500">{mockProposals.length} proposals | {formatCurrency(totalPipeline)} pipeline</span>
+          <span className="text-sm text-gray-500">
+            {mockProposals.length} proposals | {formatCurrency(totalPipeline)} pipeline
+          </span>
+          {expiredCount > 0 && (
+            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" />
+              {expiredCount} expired
+            </span>
+          )}
         </div>
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search proposals..."
+          searchPlaceholder="Search proposals, clients, addresses..."
           tabs={[
             { key: 'all', label: 'All', count: mockProposals.length },
             { key: 'draft', label: 'Draft', count: mockProposals.filter(p => p.status === 'draft').length },
@@ -231,6 +484,7 @@ export function ProposalsPreview() {
             { key: 'viewed', label: 'Viewed', count: mockProposals.filter(p => p.status === 'viewed').length },
             { key: 'accepted', label: 'Accepted', count: mockProposals.filter(p => p.status === 'accepted').length },
             { key: 'declined', label: 'Declined', count: mockProposals.filter(p => p.status === 'declined').length },
+            { key: 'expired', label: 'Expired', count: mockProposals.filter(p => p.status === 'expired').length },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -239,6 +493,7 @@ export function ProposalsPreview() {
             { value: 'amount', label: 'Amount' },
             { value: 'dateSent', label: 'Date Sent' },
             { value: 'viewCount', label: 'Views' },
+            { value: 'timeSpentMinutes', label: 'Time Spent' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -252,39 +507,56 @@ export function ProposalsPreview() {
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="grid grid-cols-4 gap-4">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Mail className="h-4 w-4" />
-              Sent This Month
+        <div className="grid grid-cols-6 gap-3">
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <Mail className="h-3.5 w-3.5" />
+              Sent (Month)
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{proposalsSentThisMonth}</div>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{proposalsSentThisMonth}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <TrendingUp className="h-4 w-4" />
-              Acceptance Rate
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <TrendingUp className="h-3.5 w-3.5" />
+              Win Rate
             </div>
             <div className={cn(
-              "text-xl font-bold mt-1",
+              "text-lg font-bold mt-0.5",
               acceptanceRate >= 60 ? "text-green-600" : acceptanceRate >= 40 ? "text-amber-600" : "text-red-600"
             )}>
               {acceptanceRate}%
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Clock className="h-4 w-4" />
-              Avg Response Time
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <Clock className="h-3.5 w-3.5" />
+              Avg Response
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{avgResponseTime}</div>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{avgResponseTime}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <BarChart3 className="h-4 w-4" />
-              Pipeline Value
+          <div className="bg-blue-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-blue-600 text-xs">
+              <BarChart3 className="h-3.5 w-3.5" />
+              Pipeline
             </div>
-            <div className="text-xl font-bold text-blue-600 mt-1">{formatCurrency(totalPipeline)}</div>
+            <div className="text-lg font-bold text-blue-700 mt-0.5">{formatCurrency(totalPipeline)}</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-green-600 text-xs">
+              <CheckCircle className="h-3.5 w-3.5" />
+              Won Value
+            </div>
+            <div className="text-lg font-bold text-green-700 mt-0.5">{formatCurrency(totalAcceptedValue)}</div>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-purple-600 text-xs">
+              <Eye className="h-3.5 w-3.5" />
+              Engagement
+            </div>
+            <div className="text-lg font-bold text-purple-700 mt-0.5">
+              {totalViews} <span className="text-xs font-normal">views</span>
+            </div>
+            <div className="text-xs text-purple-500">{totalTimeSpent} min total</div>
           </div>
         </div>
       </div>
@@ -324,6 +596,37 @@ export function ProposalsPreview() {
         </div>
       </div>
 
+      {/* Cross-Module Connection Badges */}
+      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-500 font-medium">Connected:</span>
+          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <FileText className="h-3 w-3" />
+            Estimates
+          </span>
+          <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            Selections Catalog
+          </span>
+          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Shield className="h-3 w-3" />
+            Contracts
+          </span>
+          <span className="bg-pink-50 text-pink-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Eye className="h-3 w-3" />
+            Client Portal
+          </span>
+          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <User className="h-3 w-3" />
+            Leads / CRM
+          </span>
+          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <FileSignature className="h-3 w-3" />
+            E-Signature
+          </span>
+        </div>
+      </div>
+
       {/* Action Buttons Bar */}
       <div className="bg-white border-t border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
@@ -335,21 +638,25 @@ export function ProposalsPreview() {
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Send className="h-4 w-4" />
-              Send
+              Bulk Send
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Eye className="h-4 w-4" />
-              Preview
+              <Download className="h-4 w-4" />
+              Export PDF
             </button>
           </div>
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5 text-green-600">
               <CheckCircle className="h-4 w-4" />
-              <span>{acceptedCount} accepted</span>
+              <span>{acceptedCount} won</span>
             </div>
             <div className="flex items-center gap-1.5 text-red-600">
               <XCircle className="h-4 w-4" />
               <span>{declinedCount} declined</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-orange-600">
+              <AlertTriangle className="h-4 w-4" />
+              <span>{expiredCount} expired</span>
             </div>
           </div>
         </div>
@@ -363,7 +670,7 @@ export function ProposalsPreview() {
             <span className="font-medium text-sm text-amber-800">AI Insight:</span>
           </div>
           <p className="text-sm text-amber-700">
-            Proposals with photos have 40% higher acceptance. Miller Addition has been viewed 4 times - consider a follow-up call today.
+            Proposals with photos have 40% higher acceptance. Miller Addition highly engaged (38 min, 4 views) -- follow up today. Roberts Pool House expired -- resend with fresh pricing.
           </p>
         </div>
       </div>

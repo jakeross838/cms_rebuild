@@ -5,7 +5,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Filter,
   Calendar,
   List,
   ClipboardCheck,
@@ -17,64 +16,101 @@ import {
   Clock,
   AlertTriangle,
   Eye,
+  Cloud,
+  CloudRain,
+  Sun,
+  Wind,
+  Flag,
+  Target,
+  Zap,
+  Users,
+  ThermometerSun,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
 
 interface CalendarTask {
   id: string
   jobName: string
-  taskType: 'inspection' | 'delivery' | 'work' | 'meeting'
+  taskType: 'inspection' | 'delivery' | 'work' | 'meeting' | 'milestone' | 'deadline'
   vendor?: string
   time?: string
-  status: 'scheduled' | 'in-progress' | 'completed'
+  status: 'scheduled' | 'in-progress' | 'completed' | 'blocked' | 'overdue'
   day: number
+  isCriticalPath?: boolean
+  phase?: string
+  dependencyCount?: number
+  weatherSensitive?: boolean
+  notes?: string
 }
 
 interface Job {
   id: string
   name: string
   color: string
+  scheduleHealth: 'on-track' | 'at-risk' | 'behind'
+  percentComplete: number
+}
+
+interface WeatherDay {
+  day: number
+  high: number
+  low: number
+  condition: 'sunny' | 'partly-cloudy' | 'cloudy' | 'rain' | 'storm'
+  precipitation: number
+  windMph: number
+  impactsOutdoorWork: boolean
 }
 
 const mockJobs: Job[] = [
-  { id: '1', name: 'Smith Residence', color: 'blue' },
-  { id: '2', name: 'Johnson Remodel', color: 'green' },
-  { id: '3', name: 'Harbor View Custom', color: 'purple' },
-  { id: '4', name: 'Coastal Retreat', color: 'amber' },
+  { id: '1', name: 'Smith Residence', color: 'blue', scheduleHealth: 'on-track', percentComplete: 62 },
+  { id: '2', name: 'Johnson Remodel', color: 'green', scheduleHealth: 'at-risk', percentComplete: 45 },
+  { id: '3', name: 'Harbor View Custom', color: 'purple', scheduleHealth: 'on-track', percentComplete: 28 },
+  { id: '4', name: 'Coastal Retreat', color: 'amber', scheduleHealth: 'behind', percentComplete: 15 },
 ]
 
 const mockTasks: CalendarTask[] = [
   // Week 1
-  { id: '1', jobName: 'Smith Residence', taskType: 'work', vendor: 'ABC Framing', time: '8:00 AM', status: 'completed', day: 3 },
+  { id: '1', jobName: 'Smith Residence', taskType: 'work', vendor: 'ABC Framing', time: '8:00 AM', status: 'completed', day: 3, phase: 'Framing' },
   { id: '2', jobName: 'Johnson Remodel', taskType: 'inspection', vendor: 'County Inspector', time: '10:00 AM', status: 'completed', day: 3 },
-  { id: '3', jobName: 'Smith Residence', taskType: 'delivery', vendor: 'ABC Lumber', time: '7:30 AM', status: 'completed', day: 4 },
-  { id: '4', jobName: 'Harbor View Custom', taskType: 'work', vendor: 'Smith Electric', time: '9:00 AM', status: 'completed', day: 4 },
+  { id: '3', jobName: 'Smith Residence', taskType: 'delivery', vendor: 'ABC Lumber', time: '7:30 AM', status: 'completed', day: 4, notes: 'Trusses - 2nd delivery' },
+  { id: '4', jobName: 'Harbor View Custom', taskType: 'work', vendor: 'Smith Electric', time: '9:00 AM', status: 'completed', day: 4, phase: 'Rough-In', isCriticalPath: true },
   { id: '5', jobName: 'Coastal Retreat', taskType: 'meeting', vendor: 'Owner', time: '2:00 PM', status: 'completed', day: 5 },
-  { id: '6', jobName: 'Smith Residence', taskType: 'work', vendor: 'ABC Framing', time: '8:00 AM', status: 'completed', day: 6 },
-  { id: '7', jobName: 'Johnson Remodel', taskType: 'work', vendor: 'Jones Plumbing', time: '8:00 AM', status: 'completed', day: 7 },
+  { id: '6', jobName: 'Smith Residence', taskType: 'milestone', time: '5:00 PM', status: 'completed', day: 6, notes: 'Framing complete' },
+  { id: '7', jobName: 'Johnson Remodel', taskType: 'work', vendor: 'Jones Plumbing', time: '8:00 AM', status: 'completed', day: 7, phase: 'Rough-In' },
   // Week 2
-  { id: '8', jobName: 'Smith Residence', taskType: 'inspection', vendor: 'County Inspector', time: '9:00 AM', status: 'scheduled', day: 10 },
-  { id: '9', jobName: 'Harbor View Custom', taskType: 'delivery', vendor: 'PGT Industries', time: '10:00 AM', status: 'scheduled', day: 10 },
-  { id: '10', jobName: 'Johnson Remodel', taskType: 'work', vendor: 'Cool Air HVAC', time: '8:00 AM', status: 'scheduled', day: 11 },
-  { id: '11', jobName: 'Smith Residence', taskType: 'work', vendor: 'Smith Electric', time: '8:00 AM', status: 'in-progress', day: 12 },
+  { id: '8', jobName: 'Smith Residence', taskType: 'inspection', vendor: 'County Inspector', time: '9:00 AM', status: 'scheduled', day: 10, notes: 'Framing inspection' },
+  { id: '9', jobName: 'Harbor View Custom', taskType: 'delivery', vendor: 'PGT Industries', time: '10:00 AM', status: 'scheduled', day: 10, notes: 'Impact windows - 24 units' },
+  { id: '10', jobName: 'Johnson Remodel', taskType: 'work', vendor: 'Cool Air HVAC', time: '8:00 AM', status: 'scheduled', day: 11, phase: 'MEP Rough-In', isCriticalPath: true },
+  { id: '11', jobName: 'Smith Residence', taskType: 'work', vendor: 'Smith Electric', time: '8:00 AM', status: 'in-progress', day: 12, phase: 'Rough-In', isCriticalPath: true, weatherSensitive: false },
   { id: '12', jobName: 'Coastal Retreat', taskType: 'inspection', vendor: 'County Inspector', time: '11:00 AM', status: 'scheduled', day: 12 },
-  { id: '13', jobName: 'Harbor View Custom', taskType: 'work', vendor: 'Gulf Coast Concrete', time: '7:00 AM', status: 'scheduled', day: 13 },
-  { id: '14', jobName: 'Smith Residence', taskType: 'delivery', vendor: 'ABC Lumber', time: '8:00 AM', status: 'scheduled', day: 14 },
+  { id: '25', jobName: 'Coastal Retreat', taskType: 'deadline', time: '5:00 PM', status: 'overdue', day: 12, notes: 'Permit application deadline - OVERDUE' },
+  { id: '13', jobName: 'Harbor View Custom', taskType: 'work', vendor: 'Gulf Coast Concrete', time: '7:00 AM', status: 'blocked', day: 13, phase: 'Foundation', weatherSensitive: true, notes: 'Rain forecasted - concrete pour blocked' },
+  { id: '14', jobName: 'Smith Residence', taskType: 'delivery', vendor: 'ABC Lumber', time: '8:00 AM', status: 'scheduled', day: 14, notes: 'Finish lumber package' },
   // Week 3
   { id: '15', jobName: 'Johnson Remodel', taskType: 'inspection', vendor: 'County Inspector', time: '10:00 AM', status: 'scheduled', day: 17 },
-  { id: '16', jobName: 'Smith Residence', taskType: 'work', vendor: 'Jones Plumbing', time: '8:00 AM', status: 'scheduled', day: 18 },
-  { id: '17', jobName: 'Harbor View Custom', taskType: 'meeting', vendor: 'Owner', time: '3:00 PM', status: 'scheduled', day: 19 },
-  { id: '18', jobName: 'Coastal Retreat', taskType: 'delivery', vendor: 'PGT Industries', time: '9:00 AM', status: 'scheduled', day: 20 },
-  { id: '19', jobName: 'Smith Residence', taskType: 'inspection', vendor: 'County Inspector', time: '2:00 PM', status: 'scheduled', day: 21 },
+  { id: '16', jobName: 'Smith Residence', taskType: 'work', vendor: 'Jones Plumbing', time: '8:00 AM', status: 'scheduled', day: 18, phase: 'Rough-In', isCriticalPath: true },
+  { id: '17', jobName: 'Harbor View Custom', taskType: 'meeting', vendor: 'Owner', time: '3:00 PM', status: 'scheduled', day: 19, notes: 'Selection review meeting' },
+  { id: '18', jobName: 'Coastal Retreat', taskType: 'delivery', vendor: 'PGT Industries', time: '9:00 AM', status: 'scheduled', day: 20, notes: 'Windows - 8 units' },
+  { id: '19', jobName: 'Smith Residence', taskType: 'milestone', time: '5:00 PM', status: 'scheduled', day: 21, notes: 'Rough-in complete / inspection ready' },
   // Week 4
-  { id: '20', jobName: 'Johnson Remodel', taskType: 'work', vendor: 'Coastal Paint Pros', time: '8:00 AM', status: 'scheduled', day: 24 },
+  { id: '20', jobName: 'Johnson Remodel', taskType: 'work', vendor: 'Coastal Paint Pros', time: '8:00 AM', status: 'scheduled', day: 24, phase: 'Finishes' },
   { id: '21', jobName: 'Harbor View Custom', taskType: 'inspection', vendor: 'County Inspector', time: '9:00 AM', status: 'scheduled', day: 25 },
-  { id: '22', jobName: 'Smith Residence', taskType: 'work', vendor: 'Cool Air HVAC', time: '8:00 AM', status: 'scheduled', day: 26 },
-  { id: '23', jobName: 'Coastal Retreat', taskType: 'work', vendor: 'ABC Framing', time: '8:00 AM', status: 'scheduled', day: 27 },
-  { id: '24', jobName: 'Smith Residence', taskType: 'meeting', vendor: 'Owner', time: '4:00 PM', status: 'scheduled', day: 28 },
+  { id: '22', jobName: 'Smith Residence', taskType: 'work', vendor: 'Cool Air HVAC', time: '8:00 AM', status: 'scheduled', day: 26, phase: 'MEP Rough-In', weatherSensitive: false },
+  { id: '23', jobName: 'Coastal Retreat', taskType: 'work', vendor: 'ABC Framing', time: '8:00 AM', status: 'scheduled', day: 27, phase: 'Framing', weatherSensitive: true },
+  { id: '24', jobName: 'Smith Residence', taskType: 'meeting', vendor: 'Owner', time: '4:00 PM', status: 'scheduled', day: 28, notes: 'Pre-drywall walkthrough' },
 ]
 
-const taskTypeConfig = {
+const mockWeather: WeatherDay[] = [
+  { day: 10, high: 78, low: 62, condition: 'sunny', precipitation: 0, windMph: 8, impactsOutdoorWork: false },
+  { day: 11, high: 80, low: 64, condition: 'partly-cloudy', precipitation: 0, windMph: 12, impactsOutdoorWork: false },
+  { day: 12, high: 76, low: 60, condition: 'cloudy', precipitation: 0.1, windMph: 15, impactsOutdoorWork: false },
+  { day: 13, high: 72, low: 58, condition: 'rain', precipitation: 1.5, windMph: 20, impactsOutdoorWork: true },
+  { day: 14, high: 74, low: 59, condition: 'partly-cloudy', precipitation: 0.05, windMph: 10, impactsOutdoorWork: false },
+]
+
+const taskTypeConfig: Record<string, { icon: typeof Wrench; label: string; color: string }> = {
   inspection: {
     icon: ClipboardCheck,
     label: 'Inspection',
@@ -95,6 +131,16 @@ const taskTypeConfig = {
     label: 'Meeting',
     color: 'bg-green-100 text-green-700 border-green-200',
   },
+  milestone: {
+    icon: Flag,
+    label: 'Milestone',
+    color: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+  },
+  deadline: {
+    icon: Target,
+    label: 'Deadline',
+    color: 'bg-red-100 text-red-700 border-red-200',
+  },
 }
 
 const jobColors: Record<string, string> = {
@@ -102,6 +148,17 @@ const jobColors: Record<string, string> = {
   'Johnson Remodel': 'border-l-green-500',
   'Harbor View Custom': 'border-l-purple-500',
   'Coastal Retreat': 'border-l-amber-500',
+}
+
+function WeatherIcon({ condition }: { condition: string }) {
+  switch (condition) {
+    case 'sunny': return <Sun className="h-3.5 w-3.5 text-amber-500" />
+    case 'partly-cloudy': return <Cloud className="h-3.5 w-3.5 text-gray-400" />
+    case 'cloudy': return <Cloud className="h-3.5 w-3.5 text-gray-500" />
+    case 'rain': return <CloudRain className="h-3.5 w-3.5 text-blue-500" />
+    case 'storm': return <Zap className="h-3.5 w-3.5 text-red-500" />
+    default: return <Sun className="h-3.5 w-3.5 text-amber-500" />
+  }
 }
 
 function TaskCard({ task }: { task: CalendarTask }) {
@@ -113,12 +170,17 @@ function TaskCard({ task }: { task: CalendarTask }) {
       className={cn(
         "text-xs p-1.5 rounded border-l-2 bg-white border border-gray-100 hover:shadow-sm transition-shadow cursor-pointer",
         jobColors[task.jobName],
-        task.status === 'completed' && "opacity-60"
+        task.status === 'completed' && "opacity-60",
+        task.status === 'blocked' && "bg-red-50 border-red-200",
+        task.status === 'overdue' && "bg-red-50 border-red-300",
       )}
     >
       <div className="flex items-center gap-1 mb-0.5">
         <Icon className="h-3 w-3 flex-shrink-0" />
         <span className="font-medium truncate">{task.jobName}</span>
+        {task.isCriticalPath && <Zap className="h-2.5 w-2.5 text-red-500 flex-shrink-0" />}
+        {task.status === 'overdue' && <AlertTriangle className="h-2.5 w-2.5 text-red-600 flex-shrink-0" />}
+        {task.status === 'blocked' && <CloudRain className="h-2.5 w-2.5 text-blue-600 flex-shrink-0" />}
       </div>
       {task.vendor && (
         <div className="text-gray-500 truncate">{task.vendor}</div>
@@ -134,12 +196,14 @@ function CalendarDay({
   day,
   tasks,
   isToday,
-  isCurrentMonth
+  isCurrentMonth,
+  weather,
 }: {
   day: number
   tasks: CalendarTask[]
   isToday: boolean
   isCurrentMonth: boolean
+  weather?: WeatherDay
 }) {
   const maxVisibleTasks = 3
   const visibleTasks = tasks.slice(0, maxVisibleTasks)
@@ -150,18 +214,30 @@ function CalendarDay({
       className={cn(
         "min-h-[120px] p-1 border-r border-b border-gray-100",
         !isCurrentMonth && "bg-gray-50",
-        isToday && "bg-blue-50"
+        isToday && "bg-blue-50",
+        weather?.impactsOutdoorWork && isCurrentMonth && "bg-red-50/30",
       )}
     >
-      <div
-        className={cn(
-          "text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full",
-          isToday && "bg-blue-600 text-white",
-          !isToday && isCurrentMonth && "text-gray-900",
-          !isCurrentMonth && "text-gray-400"
+      <div className="flex items-center justify-between mb-0.5">
+        <div
+          className={cn(
+            "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full",
+            isToday && "bg-blue-600 text-white",
+            !isToday && isCurrentMonth && "text-gray-900",
+            !isCurrentMonth && "text-gray-400"
+          )}
+        >
+          {day}
+        </div>
+        {weather && isCurrentMonth && (
+          <div className="flex items-center gap-0.5" title={`${weather.high}F / ${weather.low}F, ${weather.condition}, Wind: ${weather.windMph}mph`}>
+            <WeatherIcon condition={weather.condition} />
+            <span className="text-[10px] text-gray-400">{weather.high}°</span>
+            {weather.impactsOutdoorWork && (
+              <AlertTriangle className="h-2.5 w-2.5 text-red-400" />
+            )}
+          </div>
         )}
-      >
-        {day}
       </div>
       <div className="space-y-1">
         {visibleTasks.map(task => (
@@ -179,14 +255,17 @@ function CalendarDay({
 
 export function CalendarPreview() {
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar')
-  const [selectedJob, setSelectedJob] = useState<string>('all')
-  const [selectedTaskType, setSelectedTaskType] = useState<string>('all')
-  const [currentMonth] = useState('February 2026')
+
+  const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'all' })
 
   // Filter tasks
   const filteredTasks = mockTasks.filter(task => {
-    if (selectedJob !== 'all' && task.jobName !== selectedJob) return false
-    if (selectedTaskType !== 'all' && task.taskType !== selectedTaskType) return false
+    if (activeTab === 'work' && task.taskType !== 'work') return false
+    if (activeTab === 'inspections' && task.taskType !== 'inspection') return false
+    if (activeTab === 'deliveries' && task.taskType !== 'delivery') return false
+    if (activeTab === 'milestones' && task.taskType !== 'milestone' && task.taskType !== 'deadline') return false
+    if (activeTab === 'critical' && !task.isCriticalPath) return false
+    if (search && !matchesSearch(task, search, ['jobName', 'vendor', 'notes', 'phase'])) return false
     return true
   })
 
@@ -195,33 +274,28 @@ export function CalendarPreview() {
   const tasksThisWeek = filteredTasks.filter(t => t.day >= 10 && t.day <= 14).length
   const inspectionsScheduled = filteredTasks.filter(t => t.taskType === 'inspection' && t.status === 'scheduled').length
   const deliveriesExpected = filteredTasks.filter(t => t.taskType === 'delivery' && t.status === 'scheduled').length
+  const criticalPathTasks = filteredTasks.filter(t => t.isCriticalPath).length
+  const blockedTasks = filteredTasks.filter(t => t.status === 'blocked').length
+  const overdueTasks = filteredTasks.filter(t => t.status === 'overdue').length
+  const weatherImpactDays = mockWeather.filter(w => w.impactsOutdoorWork).length
 
   // Group tasks by day
   const tasksByDay: Record<number, CalendarTask[]> = {}
   filteredTasks.forEach(task => {
-    if (!tasksByDay[task.day]) {
-      tasksByDay[task.day] = []
-    }
+    if (!tasksByDay[task.day]) tasksByDay[task.day] = []
     tasksByDay[task.day].push(task)
   })
 
+  // Weather by day
+  const weatherByDay: Record<number, WeatherDay> = {}
+  mockWeather.forEach(w => { weatherByDay[w.day] = w })
+
   // Generate calendar days (Feb 2026 starts on Sunday)
   const daysInMonth = 28
-  const startDay = 0 // Sunday
-  const prevMonthDays = startDay
   const calendarDays: { day: number; isCurrentMonth: boolean }[] = []
-
-  // Previous month days (Jan 2026 has 31 days)
-  for (let i = prevMonthDays - 1; i >= 0; i--) {
-    calendarDays.push({ day: 31 - i, isCurrentMonth: false })
-  }
-
-  // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
     calendarDays.push({ day: i, isCurrentMonth: true })
   }
-
-  // Next month days to fill the grid
   const remainingDays = 35 - calendarDays.length
   for (let i = 1; i <= remainingDays; i++) {
     calendarDays.push({ day: i, isCurrentMonth: false })
@@ -233,27 +307,23 @@ export function CalendarPreview() {
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div>
             <div className="flex items-center gap-3">
               <h3 className="font-semibold text-gray-900">Operations Calendar</h3>
               <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                {filteredTasks.length} tasks scheduled
+                {filteredTasks.length} events
               </span>
-            </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                {tasksThisWeek} tasks this week
-              </span>
-              <span className="flex items-center gap-1">
-                <ClipboardCheck className="h-4 w-4" />
-                {inspectionsScheduled} inspections
-              </span>
-              <span className="flex items-center gap-1">
-                <Truck className="h-4 w-4" />
-                {deliveriesExpected} deliveries
-              </span>
+              {overdueTasks > 0 && (
+                <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded flex items-center gap-1">
+                  <AlertTriangle className="h-3 w-3" />{overdueTasks} overdue
+                </span>
+              )}
+              {blockedTasks > 0 && (
+                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
+                  <CloudRain className="h-3 w-3" />{blockedTasks} weather blocked
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -277,28 +347,51 @@ export function CalendarPreview() {
                 <List className="h-4 w-4" />
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Filter className="h-4 w-4" />
-              Filter
-            </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               <Plus className="h-4 w-4" />
-              Add Task
+              Add Event
             </button>
           </div>
         </div>
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search events, jobs, vendors..."
+          tabs={[
+            { key: 'all', label: 'All Events', count: mockTasks.length },
+            { key: 'work', label: 'Work', count: mockTasks.filter(t => t.taskType === 'work').length },
+            { key: 'inspections', label: 'Inspections', count: mockTasks.filter(t => t.taskType === 'inspection').length },
+            { key: 'deliveries', label: 'Deliveries', count: mockTasks.filter(t => t.taskType === 'delivery').length },
+            { key: 'milestones', label: 'Milestones', count: mockTasks.filter(t => t.taskType === 'milestone' || t.taskType === 'deadline').length },
+            { key: 'critical', label: 'Critical Path', count: mockTasks.filter(t => t.isCriticalPath).length },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          sortOptions={[
+            { value: 'day', label: 'Date' },
+            { value: 'jobName', label: 'Job' },
+            { value: 'taskType', label: 'Type' },
+            { value: 'status', label: 'Status' },
+          ]}
+          activeSort={activeSort}
+          onSortChange={setActiveSort}
+          sortDirection={sortDirection}
+          onSortDirectionChange={toggleSortDirection}
+          resultCount={filteredTasks.length}
+          totalCount={mockTasks.length}
+        />
       </div>
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-7 gap-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
               <Clock className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900">{tasksThisWeek}</div>
-              <div className="text-xs text-gray-500">Tasks This Week</div>
+              <div className="text-xs text-gray-500">This Week</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -307,7 +400,7 @@ export function CalendarPreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900">{inspectionsScheduled}</div>
-              <div className="text-xs text-gray-500">Inspections Scheduled</div>
+              <div className="text-xs text-gray-500">Inspections</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -316,7 +409,7 @@ export function CalendarPreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900">{deliveriesExpected}</div>
-              <div className="text-xs text-gray-500">Deliveries Expected</div>
+              <div className="text-xs text-gray-500">Deliveries</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -328,53 +421,57 @@ export function CalendarPreview() {
               <div className="text-xs text-gray-500">Active Jobs</div>
             </div>
           </div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
+              <Zap className="h-5 w-5 text-red-600" />
+            </div>
+            <div>
+              <div className="text-xl font-bold text-red-600">{criticalPathTasks}</div>
+              <div className="text-xs text-gray-500">Critical Path</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center", weatherImpactDays > 0 ? "bg-red-100" : "bg-green-100")}>
+              <ThermometerSun className={cn("h-5 w-5", weatherImpactDays > 0 ? "text-red-600" : "text-green-600")} />
+            </div>
+            <div>
+              <div className={cn("text-xl font-bold", weatherImpactDays > 0 ? "text-red-600" : "text-gray-900")}>{weatherImpactDays}</div>
+              <div className="text-xs text-gray-500">Weather Days</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <div className="text-xl font-bold text-gray-900">{mockTasks.filter(t => t.taskType === 'meeting').length}</div>
+              <div className="text-xs text-gray-500">Meetings</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Job:</span>
-          <select
-            value={selectedJob}
-            onChange={(e) => setSelectedJob(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Jobs</option>
-            {mockJobs.map(job => (
-              <option key={job.id} value={job.name}>{job.name}</option>
-            ))}
-          </select>
-          <span className="text-sm text-gray-500 ml-4">Task Type:</span>
-          <select
-            value={selectedTaskType}
-            onChange={(e) => setSelectedTaskType(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Types</option>
-            <option value="work">Work</option>
-            <option value="inspection">Inspection</option>
-            <option value="delivery">Delivery</option>
-            <option value="meeting">Meeting</option>
-          </select>
-        </div>
+      {/* Schedule Health Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
         <div className="flex items-center gap-4 text-xs">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded border-l-2 border-l-blue-500 border border-gray-200" />
-            <span className="text-gray-600">Smith Residence</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded border-l-2 border-l-green-500 border border-gray-200" />
-            <span className="text-gray-600">Johnson Remodel</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded border-l-2 border-l-purple-500 border border-gray-200" />
-            <span className="text-gray-600">Harbor View</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded border-l-2 border-l-amber-500 border border-gray-200" />
-            <span className="text-gray-600">Coastal Retreat</span>
-          </div>
+          <span className="text-gray-500 font-medium">Schedule Health:</span>
+          {mockJobs.map(job => (
+            <div key={job.id} className="flex items-center gap-1.5">
+              <div className={cn(
+                "w-2 h-2 rounded-full",
+                job.scheduleHealth === 'on-track' ? 'bg-green-500' :
+                job.scheduleHealth === 'at-risk' ? 'bg-amber-500' : 'bg-red-500'
+              )} />
+              <span className="text-gray-600">{job.name}</span>
+              <span className={cn(
+                "font-medium",
+                job.scheduleHealth === 'on-track' ? 'text-green-600' :
+                job.scheduleHealth === 'at-risk' ? 'text-amber-600' : 'text-red-600'
+              )}>
+                {job.percentComplete}%
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -387,11 +484,23 @@ export function CalendarPreview() {
           <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
             <ChevronRight className="h-5 w-5 text-gray-600" />
           </button>
-          <h4 className="font-semibold text-gray-900 ml-2">{currentMonth}</h4>
+          <h4 className="font-semibold text-gray-900 ml-2">February 2026</h4>
         </div>
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-          Today
-        </button>
+        <div className="flex items-center gap-3">
+          <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            Today
+          </button>
+          <span className="text-gray-300">|</span>
+          <button className="text-sm text-gray-600 hover:text-blue-600 flex items-center gap-1">
+            <Eye className="h-3.5 w-3.5" />
+            2-Week Look-Ahead
+          </button>
+          <span className="text-gray-300">|</span>
+          <button className="text-sm text-gray-600 hover:text-blue-600 flex items-center gap-1">
+            <Wind className="h-3.5 w-3.5" />
+            Weather Overlay
+          </button>
+        </div>
       </div>
 
       {/* Calendar Grid */}
@@ -417,6 +526,7 @@ export function CalendarPreview() {
               tasks={dayInfo.isCurrentMonth ? (tasksByDay[dayInfo.day] || []) : []}
               isToday={dayInfo.isCurrentMonth && dayInfo.day === today}
               isCurrentMonth={dayInfo.isCurrentMonth}
+              weather={dayInfo.isCurrentMonth ? weatherByDay[dayInfo.day] : undefined}
             />
           ))}
         </div>
@@ -441,9 +551,21 @@ export function CalendarPreview() {
             <HardHat className="h-3.5 w-3.5 text-green-600" />
             <span>Meeting</span>
           </div>
-          <div className="flex items-center gap-1.5 ml-4">
+          <div className="flex items-center gap-1.5">
+            <Flag className="h-3.5 w-3.5 text-indigo-600" />
+            <span>Milestone</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Target className="h-3.5 w-3.5 text-red-600" />
+            <span>Deadline</span>
+          </div>
+          <div className="flex items-center gap-1.5 ml-2">
+            <Zap className="h-3.5 w-3.5 text-red-500" />
+            <span className="text-red-500">Critical Path</span>
+          </div>
+          <div className="flex items-center gap-1.5">
             <Eye className="h-3.5 w-3.5 text-gray-400" />
-            <span className="text-gray-400">Completed tasks are dimmed</span>
+            <span className="text-gray-400">Completed dimmed</span>
           </div>
         </div>
       </div>
@@ -453,17 +575,21 @@ export function CalendarPreview() {
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">Scheduling Suggestions:</span>
+            <span className="font-medium text-sm text-amber-800">Schedule Intelligence:</span>
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-amber-700">
-            <span className="flex items-center gap-1">
-              <AlertTriangle className="h-3.5 w-3.5" />
-              Move Smith inspection to AM - inspector typically unavailable after 2pm
-            </span>
-            <span className="text-amber-400">|</span>
-            <span>PGT delivery on Feb 10 may conflict with concrete pour - consider rescheduling</span>
-            <span className="text-amber-400">|</span>
-            <span>ABC Framing available Feb 15-16 if needed</span>
+          <div className="text-sm text-amber-700 space-y-1">
+            <p>
+              <span className="font-medium">Weather Impact:</span> Rain forecasted Thu Feb 13 (1.5&quot; precip, 20mph wind). Harbor View concrete pour blocked — reschedule to Mon Feb 17. Coastal Retreat framing unaffected (interior work).
+            </p>
+            <p>
+              <span className="font-medium">Conflict:</span> County Inspector scheduled at Smith (9 AM) and Coastal Retreat (11 AM) on Wed Feb 12. Confirm inspector availability for both.
+            </p>
+            <p>
+              <span className="font-medium">Critical Path:</span> Smith Residence electrical rough-in (critical path) on track. If delayed, project completion shifts by equal days. Jones Plumbing available Feb 18 as scheduled.
+            </p>
+            <p>
+              <span className="font-medium">Overdue:</span> Coastal Retreat permit application deadline passed. Escalate to PM immediately.
+            </p>
           </div>
         </div>
       </div>

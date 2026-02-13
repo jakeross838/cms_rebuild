@@ -21,137 +21,203 @@ import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-sta
 interface JobProfitability {
   id: string
   name: string
+  pm: string
   status: 'active' | 'completed'
   contractAmount: number
   changeOrders: number
   revisedContract: number
   estimatedCost: number
   actualCost: number
+  committedCost: number
   projectedCost: number
+  revenueRecognized: number
   grossProfit: number
   grossMargin: number
+  netProfit: number
+  overheadAllocation: number
+  overheadMethod: 'pct_direct_cost' | 'fixed' | 'pro_rata'
   variance: number
   completionPct: number
   targetMargin: number
+  costPerSqFt?: number
+  sqFt?: number
   costBreakdown?: CostCodeVariance[]
   aiNote?: string
+  marginTrend: 'improving' | 'declining' | 'stable'
 }
 
 interface CostCodeVariance {
   code: string
   name: string
   budget: number
+  committed: number
   actual: number
+  projected: number
   variance: number
   isOver: boolean
+  earnedValue?: number
 }
 
 const mockJobs: JobProfitability[] = [
   {
     id: '1',
     name: 'Smith Residence',
+    pm: 'Mike Torres',
     status: 'active',
     contractAmount: 2400000,
     changeOrders: 150000,
     revisedContract: 2550000,
     estimatedCost: 1970000,
     actualCost: 985000,
+    committedCost: 245000,
     projectedCost: 2188000,
+    revenueRecognized: 1275000,
     grossProfit: 362000,
     grossMargin: 14.2,
+    netProfit: 143200,
+    overheadAllocation: 218800,
+    overheadMethod: 'pct_direct_cost',
     variance: -68000,
     completionPct: 50,
     targetMargin: 18,
+    sqFt: 4800,
+    costPerSqFt: 456,
+    marginTrend: 'declining',
     aiNote: 'Margin dropped from 18% to 14.2%. Primary driver: Framing labor 40% over budget due to tray ceiling complexity.',
     costBreakdown: [
-      { code: '06', name: 'Framing Labor', budget: 85000, actual: 119000, variance: -34000, isOver: true },
-      { code: '06', name: 'Framing Material', budget: 124000, actual: 131000, variance: -7000, isOver: true },
-      { code: '16', name: 'Electrical', budget: 95000, actual: 92000, variance: 3000, isOver: false },
-      { code: '15', name: 'Plumbing', budget: 78000, actual: 76500, variance: 1500, isOver: false },
-      { code: '03', name: 'Concrete', budget: 125000, actual: 128000, variance: -3000, isOver: true },
+      { code: '06', name: 'Framing Labor', budget: 85000, committed: 0, actual: 119000, projected: 119000, variance: -34000, isOver: true, earnedValue: 85000 },
+      { code: '06', name: 'Framing Material', budget: 124000, committed: 8500, actual: 131000, projected: 139500, variance: -15500, isOver: true },
+      { code: '16', name: 'Electrical', budget: 95000, committed: 48000, actual: 44000, projected: 92000, variance: 3000, isOver: false, earnedValue: 47500 },
+      { code: '15', name: 'Plumbing', budget: 78000, committed: 38000, actual: 38500, projected: 76500, variance: 1500, isOver: false },
+      { code: '03', name: 'Concrete', budget: 125000, committed: 0, actual: 128000, projected: 128000, variance: -3000, isOver: true },
     ],
   },
   {
     id: '2',
     name: 'Johnson Beach House',
+    pm: 'Sarah Chen',
     status: 'active',
     contractAmount: 1800000,
     changeOrders: 45000,
     revisedContract: 1845000,
     estimatedCost: 1470000,
     actualCost: 420000,
+    committedCost: 185000,
     projectedCost: 1503000,
+    revenueRecognized: 516600,
     grossProfit: 342000,
     grossMargin: 18.5,
+    netProfit: 191700,
+    overheadAllocation: 150300,
+    overheadMethod: 'pct_direct_cost',
     variance: 33000,
     completionPct: 28,
     targetMargin: 18,
+    sqFt: 3200,
+    costPerSqFt: 470,
+    marginTrend: 'stable',
   },
   {
     id: '3',
     name: 'Williams Remodel',
+    pm: 'Mike Torres',
     status: 'active',
     contractAmount: 450000,
     changeOrders: 25000,
     revisedContract: 475000,
     estimatedCost: 360000,
     actualCost: 290000,
+    committedCost: 35000,
     projectedCost: 381000,
+    revenueRecognized: 361000,
     grossProfit: 94000,
+    netProfit: 55900,
+    overheadAllocation: 38100,
+    overheadMethod: 'pct_direct_cost',
     grossMargin: 19.8,
     variance: -21000,
     completionPct: 76,
     targetMargin: 18,
+    sqFt: 1800,
+    costPerSqFt: 212,
+    marginTrend: 'stable',
   },
   {
     id: '4',
     name: 'Miller Addition',
+    pm: 'Mike Torres',
     status: 'active',
     contractAmount: 425000,
     changeOrders: 0,
     revisedContract: 425000,
     estimatedCost: 340000,
     actualCost: 285000,
+    committedCost: 42000,
     projectedCost: 382500,
+    revenueRecognized: 318750,
     grossProfit: 42500,
     grossMargin: 10.0,
+    netProfit: 4250,
+    overheadAllocation: 38250,
+    overheadMethod: 'pct_direct_cost',
     variance: -42500,
     completionPct: 75,
     targetMargin: 18,
+    sqFt: 800,
+    costPerSqFt: 478,
+    marginTrend: 'declining',
     aiNote: 'Cabinet installation delay increased labor costs. Consider change order for scope creep in custom shelving.',
   },
   {
     id: '5',
     name: 'Davis Coastal Home',
+    pm: 'Sarah Chen',
     status: 'active',
     contractAmount: 1850000,
     changeOrders: 95000,
     revisedContract: 1945000,
     estimatedCost: 1620000,
     actualCost: 1580000,
+    committedCost: 85000,
     projectedCost: 1810000,
+    revenueRecognized: 1789400,
     grossProfit: 135000,
     grossMargin: 6.9,
+    netProfit: -46000,
+    overheadAllocation: 181000,
+    overheadMethod: 'pct_direct_cost',
     variance: -190000,
     completionPct: 92,
     targetMargin: 18,
+    sqFt: 5200,
+    costPerSqFt: 348,
+    marginTrend: 'declining',
     aiNote: 'Over budget primarily due to foundation complications (elevated coastal). Recommend adjusting future coastal estimates +12%.',
   },
   {
     id: '6',
     name: 'Thompson Renovation',
+    pm: 'Mike Torres',
     status: 'completed',
     contractAmount: 320000,
     changeOrders: 28000,
     revisedContract: 348000,
     estimatedCost: 268000,
     actualCost: 279000,
+    committedCost: 0,
     projectedCost: 279000,
+    revenueRecognized: 348000,
     grossProfit: 69000,
     grossMargin: 19.8,
+    netProfit: 41100,
+    overheadAllocation: 27900,
+    overheadMethod: 'pct_direct_cost',
     variance: -11000,
     completionPct: 100,
     targetMargin: 18,
+    sqFt: 1200,
+    costPerSqFt: 233,
+    marginTrend: 'stable',
   },
 ]
 
@@ -224,14 +290,20 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
               <ChevronRight className="h-4 w-4 text-gray-400" />
             )}
             <div>
-              <span className="font-medium text-gray-900">{job.name}</span>
-              {job.aiNote && <Sparkles className="h-3 w-3 text-amber-500 inline ml-2" />}
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-gray-900">{job.name}</span>
+                {job.aiNote && <Sparkles className="h-3 w-3 text-amber-500" />}
+                {job.marginTrend === 'declining' && <TrendingDown className="h-3 w-3 text-red-500" />}
+                {job.marginTrend === 'improving' && <TrendingUp className="h-3 w-3 text-green-500" />}
+              </div>
+              <span className="text-xs text-gray-500">PM: {job.pm}</span>
             </div>
           </div>
         </td>
         <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.revisedContract)}</td>
         <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.estimatedCost)}</td>
         <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.actualCost)}</td>
+        <td className="py-3 px-3 text-right text-gray-500">{formatCurrency(job.committedCost)}</td>
         <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(job.projectedCost)}</td>
         <td className="py-3 px-3 text-right">
           <VarianceDisplay variance={job.variance} />
@@ -255,7 +327,33 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
       </tr>
       {expanded && (
         <tr className="bg-blue-50/50">
-          <td colSpan={8} className="py-4 px-8">
+          <td colSpan={9} className="py-4 px-8">
+            {/* Overhead + Net Profit Summary */}
+            <div className="mb-4 grid grid-cols-5 gap-3">
+              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+                <div className="text-xs text-gray-500">Revenue Recognized</div>
+                <div className="text-sm font-semibold text-gray-900">{formatCurrency(job.revenueRecognized)}</div>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+                <div className="text-xs text-gray-500">Gross Profit</div>
+                <div className={cn("text-sm font-semibold", job.grossProfit >= 0 ? "text-green-600" : "text-red-600")}>{formatCurrency(job.grossProfit)}</div>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+                <div className="text-xs text-gray-500">Overhead (10% direct)</div>
+                <div className="text-sm font-semibold text-gray-700">{formatCurrency(job.overheadAllocation)}</div>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+                <div className="text-xs text-gray-500">Net Profit</div>
+                <div className={cn("text-sm font-semibold", job.netProfit >= 0 ? "text-green-600" : "text-red-600")}>{formatCurrency(job.netProfit)}</div>
+              </div>
+              {job.costPerSqFt && (
+                <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+                  <div className="text-xs text-gray-500">Cost/SF ({job.sqFt?.toLocaleString()} SF)</div>
+                  <div className="text-sm font-semibold text-gray-900">${job.costPerSqFt}/SF</div>
+                </div>
+              )}
+            </div>
+
             {job.costBreakdown && (
               <div className="mb-4">
                 <h5 className="text-sm font-medium text-gray-700 mb-2">Variance by Cost Code</h5>
@@ -265,7 +363,9 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
                       <tr>
                         <th className="text-left py-2 px-3 font-medium text-gray-600">Cost Code</th>
                         <th className="text-right py-2 px-3 font-medium text-gray-600">Budget</th>
+                        <th className="text-right py-2 px-3 font-medium text-gray-600">Committed</th>
                         <th className="text-right py-2 px-3 font-medium text-gray-600">Actual</th>
+                        <th className="text-right py-2 px-3 font-medium text-gray-600">Projected</th>
                         <th className="text-right py-2 px-3 font-medium text-gray-600">Variance</th>
                       </tr>
                     </thead>
@@ -277,7 +377,9 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
                             {item.name}
                           </td>
                           <td className="py-2 px-3 text-right text-gray-600">{formatCurrency(item.budget)}</td>
+                          <td className="py-2 px-3 text-right text-gray-500">{formatCurrency(item.committed)}</td>
                           <td className="py-2 px-3 text-right text-gray-600">{formatCurrency(item.actual)}</td>
+                          <td className="py-2 px-3 text-right text-gray-900 font-medium">{formatCurrency(item.projected)}</td>
                           <td className={cn(
                             "py-2 px-3 text-right font-medium",
                             item.isOver ? "text-red-600" : "text-green-600"
@@ -444,10 +546,12 @@ export function ProfitabilityPreview() {
           onTabChange={setActiveTab}
           sortOptions={[
             { value: 'name', label: 'Name' },
+            { value: 'pm', label: 'Project Manager' },
             { value: 'grossMargin', label: 'Margin' },
             { value: 'revisedContract', label: 'Contract Value' },
             { value: 'variance', label: 'Variance' },
             { value: 'completionPct', label: 'Completion' },
+            { value: 'netProfit', label: 'Net Profit' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -463,10 +567,11 @@ export function ProfitabilityPreview() {
         <table className="w-full text-sm">
           <thead className="bg-gray-100 border-b border-gray-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Job</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600">Job / PM</th>
               <th className="text-right py-3 px-3 font-medium text-gray-600">Contract</th>
               <th className="text-right py-3 px-3 font-medium text-gray-600">Est. Cost</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Actual Cost</th>
+              <th className="text-right py-3 px-3 font-medium text-gray-600">Actual</th>
+              <th className="text-right py-3 px-3 font-medium text-gray-600">Committed</th>
               <th className="text-right py-3 px-3 font-medium text-gray-600">Projected</th>
               <th className="text-right py-3 px-3 font-medium text-gray-600">Variance</th>
               <th className="text-right py-3 px-3 font-medium text-gray-600">Margin</th>
@@ -486,6 +591,41 @@ export function ProfitabilityPreview() {
         </table>
       </div>
 
+      {/* Profitability Heat Map */}
+      <div className="px-4 pb-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <h4 className="font-medium text-gray-900 text-sm mb-3">Margin Health Map</h4>
+          <div className="flex items-center gap-2">
+            {mockJobs.filter(j => j.status === 'active').map(job => (
+              <div
+                key={job.id}
+                className={cn(
+                  "flex-1 rounded-lg p-3 text-center cursor-pointer hover:ring-2 hover:ring-blue-300 transition-all",
+                  job.grossMargin >= job.targetMargin ? "bg-green-100" :
+                  job.grossMargin >= job.targetMargin - 5 ? "bg-amber-100" : "bg-red-100"
+                )}
+                title={`${job.name}: ${job.grossMargin}% margin`}
+              >
+                <div className="text-xs font-medium text-gray-700 truncate">{job.name.split(' ')[0]}</div>
+                <div className={cn(
+                  "text-lg font-bold",
+                  job.grossMargin >= job.targetMargin ? "text-green-700" :
+                  job.grossMargin >= job.targetMargin - 5 ? "text-amber-700" : "text-red-700"
+                )}>
+                  {job.grossMargin.toFixed(1)}%
+                </div>
+                <div className="text-xs text-gray-500">{job.completionPct}% done</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center justify-end gap-4 mt-2 text-xs text-gray-500">
+            <span className="flex items-center gap-1"><span className="w-3 h-3 bg-green-100 rounded" /> Above target</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 bg-amber-100 rounded" /> At risk</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 bg-red-100 rounded" /> Below target</span>
+          </div>
+        </div>
+      </div>
+
       {/* YTD Summary */}
       <div className="bg-gray-100 border-t border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between text-sm">
@@ -498,11 +638,29 @@ export function ProfitabilityPreview() {
               Cost: <span className="font-semibold text-gray-900">{formatCurrency(6900000)}</span>
             </span>
             <span className="text-gray-600">
-              Profit: <span className="font-semibold text-green-600">{formatCurrency(1500000)}</span>
+              Overhead: <span className="font-semibold text-gray-700">{formatCurrency(690000)}</span>
             </span>
             <span className="text-gray-600">
-              Margin: <span className="font-semibold text-green-600">17.9%</span>
+              Net Profit: <span className="font-semibold text-green-600">{formatCurrency(810000)}</span>
             </span>
+            <span className="text-gray-600">
+              Net Margin: <span className="font-semibold text-green-600">9.6%</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Benchmarking Bar */}
+      <div className="bg-blue-50 border-t border-blue-200 px-4 py-2">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <Target className="h-4 w-4 text-blue-500" />
+            <span className="text-blue-700 font-medium">Benchmarking:</span>
+          </div>
+          <div className="flex items-center gap-6 text-blue-600">
+            <span>Avg cost/SF: <span className="font-semibold">$385</span> (industry: $410)</span>
+            <span>Avg margin: <span className="font-semibold">14.8%</span> (industry: 16%)</span>
+            <span>CO rate: <span className="font-semibold">5.2%</span> of contract</span>
           </div>
         </div>
       </div>

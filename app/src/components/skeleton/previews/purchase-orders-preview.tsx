@@ -19,6 +19,16 @@ import {
   Inbox,
   Truck,
   Receipt,
+  ShieldAlert,
+  Link2,
+  GitBranch,
+  Layers,
+  BarChart3,
+  XCircle,
+  ShieldCheck,
+  CircleDot,
+  AlertCircle,
+  Gauge,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
@@ -29,139 +39,343 @@ interface PurchaseOrder {
   poNumber: string
   vendorName: string
   jobName: string
-  amount: number
-  date: string
+  // Amounts
+  subtotal: number
+  taxAmount: number
+  shippingAmount: number
+  totalAmount: number
+  invoicedAmount: number
+  remainingAmount: number
+  // PO metadata
+  poType: 'standard' | 'blanket' | 'emergency'
+  costCode: string
+  paymentTerms: string
   itemsCount: number
-  status: 'draft' | 'sent' | 'acknowledged' | 'received' | 'invoiced'
+  // Dates
+  issueDate: string
+  requiredByDate?: string
   expectedDelivery?: string
+  // Status & workflow
+  status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'acknowledged' | 'partial_delivery' | 'fully_received' | 'invoiced' | 'closed' | 'cancelled'
+  approvalProgress?: { completed: number; total: number }
+  versionNumber: number
+  // Receiving
+  receivedPct: number
+  backorderedItems: number
+  // Three-way match
+  threeWayMatchStatus?: 'full_match' | 'partial_match' | 'variance' | 'pending'
+  varianceAmount?: number
+  variancePct?: number
+  // Emergency
+  isEmergency: boolean
+  emergencyReason?: string
+  // Blanket
+  blanketLimit?: number
+  blanketUsed?: number
+  // Cross-module links
+  changeOrderId?: string
+  changeOrderNumber?: string
+  bidId?: string
+  bidReference?: string
+  selectionId?: string
+  selectionName?: string
+  // AI
   aiNote?: string
+  aiPriceAssessment?: string
 }
 
 const mockPurchaseOrders: PurchaseOrder[] = [
   {
     id: '1',
-    poNumber: 'PO-2024-0142',
-    vendorName: 'ABC Lumber',
+    poNumber: 'PO-2026-0142',
+    vendorName: 'ABC Lumber Supply',
     jobName: 'Smith Residence',
-    amount: 24500,
-    date: '2024-11-08',
+    subtotal: 23200,
+    taxAmount: 1160,
+    shippingAmount: 140,
+    totalAmount: 24500,
+    invoicedAmount: 0,
+    remainingAmount: 24500,
+    poType: 'standard',
+    costCode: '06 - Carpentry',
+    paymentTerms: 'Net 30',
     itemsCount: 12,
+    issueDate: '2026-01-08',
+    requiredByDate: '2026-01-20',
+    expectedDelivery: '2026-01-15',
     status: 'acknowledged',
-    expectedDelivery: '2024-11-15',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: false,
+    aiPriceAssessment: 'Within market range (+2.1%)',
   },
   {
     id: '2',
-    poNumber: 'PO-2024-0141',
+    poNumber: 'PO-2026-0141',
     vendorName: 'PGT Industries',
     jobName: 'Smith Residence',
-    amount: 45000,
-    date: '2024-11-06',
+    subtotal: 42500,
+    taxAmount: 2125,
+    shippingAmount: 375,
+    totalAmount: 45000,
+    invoicedAmount: 0,
+    remainingAmount: 45000,
+    poType: 'standard',
+    costCode: '08 - Doors & Windows',
+    paymentTerms: 'Net 45',
     itemsCount: 24,
+    issueDate: '2026-01-06',
+    requiredByDate: '2026-02-15',
+    expectedDelivery: '2026-02-20',
     status: 'acknowledged',
-    expectedDelivery: '2024-12-20',
-    aiNote: 'Lead time 6+ weeks - order early for next job',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: false,
+    selectionId: 'sel-012',
+    selectionName: 'Impact Windows',
+    aiNote: 'Lead time 6+ weeks. Order for Johnson job by Jan 20 or framing schedule slips.',
+    aiPriceAssessment: 'Negotiated rate, 5% below list',
   },
   {
     id: '3',
-    poNumber: 'PO-2024-0140',
+    poNumber: 'PO-2026-0140',
     vendorName: 'Custom Cabinet Co',
     jobName: 'Johnson Beach House',
-    amount: 18500,
-    date: '2024-11-05',
+    subtotal: 17800,
+    taxAmount: 0,
+    shippingAmount: 700,
+    totalAmount: 18500,
+    invoicedAmount: 0,
+    remainingAmount: 18500,
+    poType: 'standard',
+    costCode: '06 - Carpentry',
+    paymentTerms: '50% deposit, balance on delivery',
     itemsCount: 8,
+    issueDate: '2026-01-05',
     status: 'sent',
-    aiNote: 'No acknowledgment in 3 days - follow up recommended',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: false,
+    selectionId: 'sel-028',
+    selectionName: 'Kitchen Cabinets',
+    aiNote: 'No vendor acknowledgment in 3 days. Follow up recommended. This vendor avg 1.2 day response.',
   },
   {
     id: '4',
-    poNumber: 'PO-2024-0139',
+    poNumber: 'PO-2026-0139',
     vendorName: 'Sherwin-Williams',
     jobName: 'Miller Addition',
-    amount: 3200,
-    date: '2024-11-04',
+    subtotal: 2900,
+    taxAmount: 203,
+    shippingAmount: 97,
+    totalAmount: 3200,
+    invoicedAmount: 3200,
+    remainingAmount: 0,
+    poType: 'standard',
+    costCode: '09 - Finishes',
+    paymentTerms: 'Net 30',
     itemsCount: 6,
-    status: 'received',
+    issueDate: '2026-01-04',
+    status: 'invoiced',
+    versionNumber: 1,
+    receivedPct: 100,
+    backorderedItems: 0,
+    threeWayMatchStatus: 'full_match',
+    isEmergency: false,
+    aiPriceAssessment: 'At contract rate',
   },
   {
     id: '5',
-    poNumber: 'PO-2024-0138',
+    poNumber: 'PO-2026-0138',
     vendorName: 'Jones Plumbing Supply',
     jobName: 'Smith Residence',
-    amount: 12800,
-    date: '2024-11-02',
+    subtotal: 11900,
+    taxAmount: 595,
+    shippingAmount: 305,
+    totalAmount: 12800,
+    invoicedAmount: 13100,
+    remainingAmount: -300,
+    poType: 'standard',
+    costCode: '15 - Plumbing',
+    paymentTerms: 'Net 30',
     itemsCount: 15,
+    issueDate: '2026-01-02',
     status: 'invoiced',
+    versionNumber: 1,
+    receivedPct: 100,
+    backorderedItems: 0,
+    threeWayMatchStatus: 'variance',
+    varianceAmount: 300,
+    variancePct: 2.3,
+    isEmergency: false,
+    aiNote: 'Invoice $300 over PO (2.3%). Within auto-approve tolerance (2%). Auto-approved with audit log.',
   },
   {
     id: '6',
-    poNumber: 'PO-2024-0143',
-    vendorName: 'ABC Lumber',
-    jobName: 'Wilson Custom',
-    amount: 8500,
-    date: '2024-11-09',
+    poNumber: 'PO-2026-0143',
+    vendorName: 'ABC Lumber Supply',
+    jobName: 'Wilson Custom Home',
+    subtotal: 8100,
+    taxAmount: 400,
+    shippingAmount: 0,
+    totalAmount: 8500,
+    invoicedAmount: 0,
+    remainingAmount: 8500,
+    poType: 'standard',
+    costCode: '06 - Carpentry',
+    paymentTerms: 'Net 30',
     itemsCount: 5,
+    issueDate: '2026-01-09',
     status: 'draft',
-    aiNote: 'Combine with PO-0142 for volume discount',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: false,
+    aiNote: 'Consolidation opportunity: Combine with PO-0142 (ABC Lumber, same materials). Est. savings: $850 (volume discount).',
+    aiPriceAssessment: '8% above your avg. for framing lumber',
   },
   {
     id: '7',
-    poNumber: 'PO-2024-0137',
+    poNumber: 'PO-2026-0137',
     vendorName: 'Cool Air HVAC',
     jobName: 'Johnson Beach House',
-    amount: 28000,
-    date: '2024-10-30',
+    subtotal: 26500,
+    taxAmount: 0,
+    shippingAmount: 1500,
+    totalAmount: 28000,
+    invoicedAmount: 14000,
+    remainingAmount: 14000,
+    poType: 'standard',
+    costCode: '23 - HVAC',
+    paymentTerms: 'Net 30',
     itemsCount: 4,
-    status: 'received',
-    expectedDelivery: '2024-11-10',
+    issueDate: '2025-12-30',
+    expectedDelivery: '2026-01-10',
+    status: 'partial_delivery',
+    versionNumber: 1,
+    receivedPct: 50,
+    backorderedItems: 2,
+    threeWayMatchStatus: 'partial_match',
+    isEmergency: false,
+    changeOrderId: 'co-002',
+    changeOrderNumber: 'CO-002',
+    aiNote: '2 items backordered: condensing unit (ETA Jan 25) and handler (ETA Feb 3). Schedule task "HVAC Install" may slip.',
   },
   {
     id: '8',
-    poNumber: 'PO-2024-0136',
+    poNumber: 'PO-2026-0136',
     vendorName: 'Smith Electric Supply',
     jobName: 'Miller Addition',
-    amount: 9200,
-    date: '2024-10-28',
+    subtotal: 8700,
+    taxAmount: 435,
+    shippingAmount: 65,
+    totalAmount: 9200,
+    invoicedAmount: 9200,
+    remainingAmount: 0,
+    poType: 'standard',
+    costCode: '16 - Electrical',
+    paymentTerms: '2/10 Net 30',
     itemsCount: 22,
-    status: 'invoiced',
+    issueDate: '2025-12-28',
+    status: 'closed',
+    versionNumber: 1,
+    receivedPct: 100,
+    backorderedItems: 0,
+    threeWayMatchStatus: 'full_match',
+    isEmergency: false,
+    aiPriceAssessment: 'Early pay discount captured: $184 savings',
+  },
+  {
+    id: '9',
+    poNumber: 'PO-2026-0144',
+    vendorName: 'Coastal Concrete',
+    jobName: 'Smith Residence',
+    subtotal: 6800,
+    taxAmount: 0,
+    shippingAmount: 0,
+    totalAmount: 6800,
+    invoicedAmount: 0,
+    remainingAmount: 6800,
+    poType: 'emergency',
+    costCode: '03 - Concrete',
+    paymentTerms: 'Due on Delivery',
+    itemsCount: 3,
+    issueDate: '2026-01-12',
+    status: 'approved',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: true,
+    emergencyReason: 'Foundation pour scheduled tomorrow, original supplier cancelled delivery',
+    changeOrderId: 'co-002',
+    changeOrderNumber: 'CO-002',
+    aiNote: 'Emergency PO bypassed normal approval. After-the-fact review required by owner within 48 hours.',
+  },
+  {
+    id: '10',
+    poNumber: 'PO-2026-BPO-001',
+    vendorName: 'ABC Lumber Supply',
+    jobName: 'All Projects',
+    subtotal: 0,
+    taxAmount: 0,
+    shippingAmount: 0,
+    totalAmount: 0,
+    invoicedAmount: 28500,
+    remainingAmount: 21500,
+    poType: 'blanket',
+    costCode: '06 - Carpentry',
+    paymentTerms: 'Net 30',
+    itemsCount: 0,
+    issueDate: '2026-01-01',
+    status: 'approved',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: false,
+    blanketLimit: 50000,
+    blanketUsed: 28500,
+    aiNote: 'Blanket PO 57% utilized. 3 releases issued. At current rate, limit reached by mid-March.',
   },
 ]
 
-const statusConfig = {
-  draft: {
-    label: 'Draft',
-    color: 'bg-gray-100 text-gray-700',
-    icon: FileText,
-  },
-  sent: {
-    label: 'Sent',
-    color: 'bg-blue-100 text-blue-700',
-    icon: Send,
-  },
-  acknowledged: {
-    label: 'Acknowledged',
-    color: 'bg-purple-100 text-purple-700',
-    icon: Inbox,
-  },
-  received: {
-    label: 'Received',
-    color: 'bg-green-100 text-green-700',
-    icon: Truck,
-  },
-  invoiced: {
-    label: 'Invoiced',
-    color: 'bg-amber-100 text-amber-700',
-    icon: Receipt,
-  },
+const statusConfig: Record<PurchaseOrder['status'], { label: string; color: string; icon: typeof FileText }> = {
+  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
+  pending_approval: { label: 'Pending Approval', color: 'bg-amber-100 text-amber-700', icon: Clock },
+  approved: { label: 'Approved', color: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
+  sent: { label: 'Sent', color: 'bg-indigo-100 text-indigo-700', icon: Send },
+  acknowledged: { label: 'Acknowledged', color: 'bg-purple-100 text-purple-700', icon: Inbox },
+  partial_delivery: { label: 'Partial Delivery', color: 'bg-orange-100 text-orange-700', icon: Package },
+  fully_received: { label: 'Fully Received', color: 'bg-emerald-100 text-emerald-700', icon: Truck },
+  invoiced: { label: 'Invoiced', color: 'bg-teal-100 text-teal-700', icon: Receipt },
+  closed: { label: 'Closed', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
+  cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-700', icon: XCircle },
+}
+
+const poTypeConfig: Record<PurchaseOrder['poType'], { label: string; color: string }> = {
+  standard: { label: 'Standard', color: 'bg-gray-50 text-gray-600' },
+  blanket: { label: 'Blanket', color: 'bg-blue-50 text-blue-600' },
+  emergency: { label: 'Emergency', color: 'bg-red-50 text-red-600' },
+}
+
+const matchStatusConfig: Record<string, { label: string; color: string }> = {
+  full_match: { label: 'Matched', color: 'text-green-600' },
+  partial_match: { label: 'Partial', color: 'text-amber-600' },
+  variance: { label: 'Variance', color: 'text-red-600' },
+  pending: { label: 'Pending', color: 'text-gray-500' },
 }
 
 const vendors = [...new Set(mockPurchaseOrders.map(po => po.vendorName))]
 const jobs = [...new Set(mockPurchaseOrders.map(po => po.jobName))]
-const poStatuses = ['draft', 'sent', 'acknowledged', 'received', 'invoiced'] as const
+const poTypes: PurchaseOrder['poType'][] = ['standard', 'blanket', 'emergency']
 
 function formatCurrency(value: number): string {
-  if (value >= 1000000) return '$' + (value / 1000000).toFixed(2) + 'M'
-  if (value >= 1000) return '$' + (value / 1000).toFixed(1) + 'K'
-  return '$' + value.toFixed(0)
+  const absValue = Math.abs(value)
+  if (absValue >= 1000000) return '$' + (absValue / 1000000).toFixed(2) + 'M'
+  if (absValue >= 1000) return '$' + (absValue / 1000).toFixed(1) + 'K'
+  return '$' + absValue.toFixed(0)
 }
 
 function formatDate(dateStr: string): string {
@@ -171,18 +385,37 @@ function formatDate(dateStr: string): string {
 
 function POCard({ po }: { po: PurchaseOrder }) {
   const config = statusConfig[po.status]
+  const typeInfo = poTypeConfig[po.poType]
   const StatusIcon = config.icon
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-      <div className="flex items-start justify-between mb-3">
+    <div className={cn(
+      "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      po.isEmergency && "border-l-4 border-l-red-400",
+      po.poType === 'blanket' && "border-l-4 border-l-blue-400",
+      po.status === 'cancelled' && "opacity-60",
+    )}>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-2">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h4 className="font-semibold text-gray-900">{po.poNumber}</h4>
             <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1", config.color)}>
               <StatusIcon className="h-3 w-3" />
               {config.label}
             </span>
+            {po.poType !== 'standard' && (
+              <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", typeInfo.color)}>
+                {po.poType === 'emergency' && <ShieldAlert className="h-3 w-3 inline mr-0.5" />}
+                {typeInfo.label}
+              </span>
+            )}
+            {po.versionNumber > 1 && (
+              <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                <GitBranch className="h-3 w-3" />
+                v{po.versionNumber}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
             <Building2 className="h-3.5 w-3.5" />
@@ -194,7 +427,8 @@ function POCard({ po }: { po: PurchaseOrder }) {
         </button>
       </div>
 
-      <div className="space-y-2 mb-3">
+      {/* Job & Details */}
+      <div className="space-y-1.5 mb-3">
         <div className="flex items-center gap-1.5 text-sm text-gray-600">
           <Briefcase className="h-3.5 w-3.5" />
           <span>{po.jobName}</span>
@@ -202,42 +436,163 @@ function POCard({ po }: { po: PurchaseOrder }) {
         <div className="flex items-center gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />
-            <span>{formatDate(po.date)}</span>
+            <span>{formatDate(po.issueDate)}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Package className="h-3.5 w-3.5" />
-            <span>{po.itemsCount} items</span>
-          </div>
+          {po.itemsCount > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Package className="h-3.5 w-3.5" />
+              <span>{po.itemsCount} items</span>
+            </div>
+          )}
+          <span className="text-xs text-gray-400">{po.paymentTerms}</span>
         </div>
-        {po.expectedDelivery && po.status !== 'received' && po.status !== 'invoiced' && (
+        {po.expectedDelivery && po.status !== 'fully_received' && po.status !== 'invoiced' && po.status !== 'closed' && (
           <div className="flex items-center gap-1.5 text-sm text-gray-600">
             <Truck className="h-3.5 w-3.5" />
             <span>Expected: {formatDate(po.expectedDelivery)}</span>
+            {po.requiredByDate && (
+              <span className="text-xs text-gray-400">(Need by: {formatDate(po.requiredByDate)})</span>
+            )}
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1.5 text-lg font-semibold text-gray-900">
-          <DollarSign className="h-4 w-4 text-gray-500" />
-          {formatCurrency(po.amount)}
+      {/* Receiving progress for partial/received */}
+      {(po.status === 'partial_delivery' || po.status === 'fully_received') && (
+        <div className="mb-3">
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+            <span>Received</span>
+            <span>{po.receivedPct}%{po.backorderedItems > 0 && ` (${po.backorderedItems} backordered)`}</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
+            <div
+              className={cn(
+                "h-1.5 rounded-full transition-all",
+                po.receivedPct === 100 ? "bg-green-500" : "bg-amber-500"
+              )}
+              style={{ width: `${po.receivedPct}%` }}
+            />
+          </div>
+          {po.backorderedItems > 0 && (
+            <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+              <AlertCircle className="h-3 w-3" />
+              <span>{po.backorderedItems} items on backorder</span>
+            </div>
+          )}
         </div>
-        {po.status === 'draft' && (
-          <button className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
-            <Send className="h-3 w-3" />
-            Send PO
-          </button>
+      )}
+
+      {/* Blanket PO gauge */}
+      {po.poType === 'blanket' && po.blanketLimit && po.blanketUsed !== undefined && (
+        <div className="mb-3 p-2 bg-blue-50 rounded">
+          <div className="flex items-center justify-between text-xs text-blue-700 mb-1">
+            <span className="flex items-center gap-1">
+              <Gauge className="h-3 w-3" />
+              Blanket Usage
+            </span>
+            <span>{formatCurrency(po.blanketUsed)} / {formatCurrency(po.blanketLimit)}</span>
+          </div>
+          <div className="w-full bg-blue-200 rounded-full h-2">
+            <div
+              className={cn(
+                "h-2 rounded-full transition-all",
+                (po.blanketUsed / po.blanketLimit) > 0.8 ? "bg-red-500" :
+                (po.blanketUsed / po.blanketLimit) > 0.6 ? "bg-amber-500" : "bg-blue-500"
+              )}
+              style={{ width: `${Math.min((po.blanketUsed / po.blanketLimit) * 100, 100)}%` }}
+            />
+          </div>
+          <div className="text-xs text-blue-600 mt-1">
+            {formatCurrency(po.blanketLimit - po.blanketUsed)} remaining
+          </div>
+        </div>
+      )}
+
+      {/* Emergency reason */}
+      {po.isEmergency && po.emergencyReason && (
+        <div className="mb-3 p-2 bg-red-50 rounded flex items-start gap-2 text-xs">
+          <ShieldAlert className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
+          <span className="text-red-700">{po.emergencyReason}</span>
+        </div>
+      )}
+
+      {/* Amount section */}
+      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div>
+          <div className="flex items-center gap-1.5 text-lg font-semibold text-gray-900">
+            <DollarSign className="h-4 w-4 text-gray-500" />
+            {formatCurrency(po.totalAmount)}
+          </div>
+          {po.invoicedAmount > 0 && (
+            <div className="text-xs text-gray-500">
+              Invoiced: {formatCurrency(po.invoicedAmount)}
+              {po.remainingAmount > 0 && ` | Remaining: ${formatCurrency(po.remainingAmount)}`}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {po.threeWayMatchStatus && (
+            <span className={cn(
+              "text-xs font-medium flex items-center gap-0.5",
+              matchStatusConfig[po.threeWayMatchStatus].color
+            )}>
+              <CircleDot className="h-3 w-3" />
+              {matchStatusConfig[po.threeWayMatchStatus].label}
+              {po.variancePct !== undefined && po.variancePct > 0 && (
+                <span className="text-red-500 ml-0.5">(+{po.variancePct}%)</span>
+              )}
+            </span>
+          )}
+          {po.status === 'draft' && (
+            <button className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
+              <Send className="h-3 w-3" />
+              Submit
+            </button>
+          )}
+          {po.status === 'approved' && !po.isEmergency && (
+            <button className="text-xs text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+              <Send className="h-3 w-3" />
+              Send to Vendor
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Cross-module badges */}
+      <div className="flex items-center gap-2 flex-wrap mt-2">
+        <span className="text-xs bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">{po.costCode}</span>
+        {po.changeOrderNumber && (
+          <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+            <Link2 className="h-3 w-3" />
+            {po.changeOrderNumber}
+          </span>
         )}
-        {po.status === 'received' && (
-          <button className="text-xs text-green-600 font-medium hover:text-green-700 flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" />
-            Mark Invoiced
-          </button>
+        {po.bidReference && (
+          <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+            <FileText className="h-3 w-3" />
+            {po.bidReference}
+          </span>
+        )}
+        {po.selectionName && (
+          <span className="text-xs bg-teal-50 text-teal-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+            <Layers className="h-3 w-3" />
+            {po.selectionName}
+          </span>
+        )}
+        {po.aiPriceAssessment && (
+          <span className={cn(
+            "text-xs px-1.5 py-0.5 rounded inline-flex items-center gap-0.5",
+            po.aiPriceAssessment.includes('above') ? "bg-amber-50 text-amber-600" : "bg-green-50 text-green-600"
+          )}>
+            <BarChart3 className="h-3 w-3" />
+            {po.aiPriceAssessment}
+          </span>
         )}
       </div>
 
+      {/* AI Note */}
       {po.aiNote && (
-        <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+        <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-amber-700">{po.aiNote}</span>
         </div>
@@ -250,54 +605,131 @@ export function PurchaseOrdersPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
   const [vendorFilter, setVendorFilter] = useState<string>('all')
   const [jobFilter, setJobFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
 
   const filtered = sortItems(
     mockPurchaseOrders.filter(po => {
-      if (!matchesSearch(po, search, ['poNumber', 'vendorName', 'jobName'])) return false
+      if (!matchesSearch(po, search, ['poNumber', 'vendorName', 'jobName', 'costCode'])) return false
       if (activeTab !== 'all' && po.status !== activeTab) return false
       if (vendorFilter !== 'all' && po.vendorName !== vendorFilter) return false
       if (jobFilter !== 'all' && po.jobName !== jobFilter) return false
+      if (typeFilter !== 'all' && po.poType !== typeFilter) return false
       return true
     }),
     activeSort as keyof PurchaseOrder | '',
     sortDirection,
   )
 
-  // Calculate quick stats
-  const thisMonth = new Date().getMonth()
-  const thisYear = new Date().getFullYear()
-  const posThisMonth = mockPurchaseOrders.filter(po => {
-    const date = new Date(po.date)
-    return date.getMonth() === thisMonth && date.getFullYear() === thisYear
-  })
+  // Calculate stats
+  const activePOs = mockPurchaseOrders.filter(po => po.status !== 'draft' && po.status !== 'cancelled' && po.status !== 'closed')
+  const totalCommitted = activePOs.reduce((sum, po) => sum + po.totalAmount, 0)
+  const pendingDelivery = mockPurchaseOrders.filter(po =>
+    po.status === 'sent' || po.status === 'acknowledged' || po.status === 'approved'
+  )
+  const pendingDeliveryAmount = pendingDelivery.reduce((sum, po) => sum + po.totalAmount, 0)
+  const totalInvoiced = mockPurchaseOrders.reduce((sum, po) => sum + po.invoicedAmount, 0)
+  const backorderedTotal = mockPurchaseOrders.reduce((sum, po) => sum + po.backorderedItems, 0)
+  const matchedCount = mockPurchaseOrders.filter(po => po.threeWayMatchStatus === 'full_match').length
+  const varianceCount = mockPurchaseOrders.filter(po => po.threeWayMatchStatus === 'variance').length
+  const emergencyCount = mockPurchaseOrders.filter(po => po.isEmergency).length
 
-  const totalCommitted = mockPurchaseOrders
-    .filter(po => po.status !== 'draft')
-    .reduce((sum, po) => sum + po.amount, 0)
-
-  const pendingDelivery = mockPurchaseOrders
-    .filter(po => po.status === 'sent' || po.status === 'acknowledged')
-    .reduce((sum, po) => sum + po.amount, 0)
+  // Budget context
+  const projectBudget = 2450000
+  const commitmentPct = ((totalCommitted / projectBudget) * 100).toFixed(1)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Purchase Orders</h3>
-          <span className="text-sm text-gray-500">{mockPurchaseOrders.length} total</span>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-gray-900">Purchase Orders</h3>
+            <span className="text-sm text-gray-500">{mockPurchaseOrders.length} total</span>
+            {emergencyCount > 0 && (
+              <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded inline-flex items-center gap-1">
+                <ShieldAlert className="h-3 w-3" />
+                {emergencyCount} emergency
+              </span>
+            )}
+          </div>
         </div>
+        <div className="text-sm text-gray-500">
+          Committed: {formatCurrency(totalCommitted)} of {formatCurrency(projectBudget)} budget ({commitmentPct}%)
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="grid grid-cols-5 gap-3">
+          <div className="bg-blue-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-blue-600 text-xs">
+              <DollarSign className="h-3.5 w-3.5" />
+              Total Committed
+            </div>
+            <div className="text-lg font-bold text-blue-700 mt-1">{formatCurrency(totalCommitted)}</div>
+            <div className="text-xs text-blue-500">{activePOs.length} active POs</div>
+          </div>
+          <div className="bg-amber-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-amber-600 text-xs">
+              <Truck className="h-3.5 w-3.5" />
+              Pending Delivery
+            </div>
+            <div className="text-lg font-bold text-amber-700 mt-1">{formatCurrency(pendingDeliveryAmount)}</div>
+            <div className="text-xs text-amber-500">{pendingDelivery.length} awaiting</div>
+          </div>
+          <div className="bg-teal-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-teal-600 text-xs">
+              <Receipt className="h-3.5 w-3.5" />
+              Total Invoiced
+            </div>
+            <div className="text-lg font-bold text-teal-700 mt-1">{formatCurrency(totalInvoiced)}</div>
+            <div className="text-xs text-teal-500">{matchedCount} matched, {varianceCount} variance</div>
+          </div>
+          <div className={cn(
+            "rounded-lg p-3",
+            backorderedTotal > 0 ? "bg-orange-50" : "bg-gray-50"
+          )}>
+            <div className={cn(
+              "flex items-center gap-2 text-xs",
+              backorderedTotal > 0 ? "text-orange-600" : "text-gray-500"
+            )}>
+              <AlertCircle className="h-3.5 w-3.5" />
+              Backordered
+            </div>
+            <div className={cn(
+              "text-lg font-bold mt-1",
+              backorderedTotal > 0 ? "text-orange-700" : "text-gray-900"
+            )}>
+              {backorderedTotal} items
+            </div>
+            <div className="text-xs text-gray-400">across {mockPurchaseOrders.filter(po => po.backorderedItems > 0).length} POs</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-green-600 text-xs">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              3-Way Match
+            </div>
+            <div className="text-lg font-bold text-green-700 mt-1">{matchedCount}/{matchedCount + varianceCount}</div>
+            <div className="text-xs text-green-500">fully matched</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search POs..."
+          searchPlaceholder="Search POs by number, vendor, job, cost code..."
           tabs={[
             { key: 'all', label: 'All', count: mockPurchaseOrders.length },
-            ...poStatuses.map(s => ({
-              key: s,
-              label: statusConfig[s].label,
-              count: mockPurchaseOrders.filter(po => po.status === s).length,
-            })),
+            { key: 'draft', label: 'Draft', count: mockPurchaseOrders.filter(po => po.status === 'draft').length },
+            { key: 'pending_approval', label: 'Pending', count: mockPurchaseOrders.filter(po => po.status === 'pending_approval').length },
+            { key: 'sent', label: 'Sent', count: mockPurchaseOrders.filter(po => po.status === 'sent').length },
+            { key: 'acknowledged', label: 'Ack\'d', count: mockPurchaseOrders.filter(po => po.status === 'acknowledged').length },
+            { key: 'partial_delivery', label: 'Partial', count: mockPurchaseOrders.filter(po => po.status === 'partial_delivery').length },
+            { key: 'invoiced', label: 'Invoiced', count: mockPurchaseOrders.filter(po => po.status === 'invoiced').length },
+            { key: 'closed', label: 'Closed', count: mockPurchaseOrders.filter(po => po.status === 'closed').length },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -314,12 +746,21 @@ export function PurchaseOrdersPreview() {
               options: jobs.map(j => ({ value: j, label: j })),
               onChange: setJobFilter,
             },
+            {
+              label: 'All Types',
+              value: typeFilter,
+              options: poTypes.map(t => ({ value: t, label: poTypeConfig[t].label })),
+              onChange: setTypeFilter,
+            },
           ]}
           sortOptions={[
-            { value: 'amount', label: 'Amount' },
-            { value: 'date', label: 'Date' },
+            { value: 'totalAmount', label: 'Amount' },
+            { value: 'issueDate', label: 'Issue Date' },
+            { value: 'expectedDelivery', label: 'Delivery Date' },
             { value: 'vendorName', label: 'Vendor' },
             { value: 'jobName', label: 'Job' },
+            { value: 'costCode', label: 'Cost Code' },
+            { value: 'status', label: 'Status' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -334,38 +775,8 @@ export function PurchaseOrdersPreview() {
         />
       </div>
 
-      {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Calendar className="h-4 w-4" />
-              POs This Month
-            </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{posThisMonth.length}</div>
-            <div className="text-xs text-gray-500">{formatCurrency(posThisMonth.reduce((sum, po) => sum + po.amount, 0))} total</div>
-          </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
-              <DollarSign className="h-4 w-4" />
-              Total Committed
-            </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{formatCurrency(totalCommitted)}</div>
-            <div className="text-xs text-blue-600">{mockPurchaseOrders.filter(po => po.status !== 'draft').length} active POs</div>
-          </div>
-          <div className="bg-amber-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-amber-600 text-sm">
-              <Truck className="h-4 w-4" />
-              Pending Delivery
-            </div>
-            <div className="text-xl font-bold text-amber-700 mt-1">{formatCurrency(pendingDelivery)}</div>
-            <div className="text-xs text-amber-600">{mockPurchaseOrders.filter(po => po.status === 'sent' || po.status === 'acknowledged').length} awaiting</div>
-          </div>
-        </div>
-      </div>
-
       {/* PO List */}
-      <div className="p-4 grid grid-cols-2 gap-4 max-h-[480px] overflow-y-auto">
+      <div className="p-4 grid grid-cols-2 gap-4 max-h-[520px] overflow-y-auto">
         {filtered.map(po => (
           <POCard key={po.id} po={po} />
         ))}
@@ -384,18 +795,23 @@ export function PurchaseOrdersPreview() {
             <Sparkles className="h-4 w-4 text-amber-600" />
             <span className="font-medium text-sm text-amber-800">Procurement Insights:</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-amber-700">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-amber-700">
             <span className="flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              1 PO awaiting vendor acknowledgment
+              Custom Cabinet Co: no acknowledgment in 3 days (avg response: 1.2 days)
             </span>
-            <span>|</span>
+            <span className="text-amber-400">|</span>
+            <span className="flex items-center gap-1">
+              <DollarSign className="h-3.5 w-3.5" />
+              Consolidate ABC Lumber POs to save ~$850 (volume discount)
+            </span>
+            <span className="text-amber-400">|</span>
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              PGT order on track for Dec 20
+              PGT windows on track for Feb 20. Order Johnson job windows by Jan 20.
             </span>
-            <span>|</span>
-            <span>Combine ABC Lumber orders to save ~$850</span>
+            <span className="text-amber-400">|</span>
+            <span>Smith Electric early-pay discount captured: $184 saved</span>
           </div>
         </div>
       </div>

@@ -13,15 +13,33 @@ import {
   Clock,
   DollarSign,
   Package,
+  Shield,
+  GitBranch,
+  CheckCircle,
+  XCircle,
+  BarChart3,
+  TrendingUp,
+  Layers,
+  Target,
+  Calculator,
+  Send,
+  Calendar,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
+type ItemType = 'line' | 'allowance' | 'exclusion' | 'alternate'
+type ContractType = 'nte' | 'gmp' | 'cost_plus' | 'fixed'
+type EstimateStatus = 'draft' | 'pending_approval' | 'approved' | 'sent' | 'expired' | 'converted'
+type MarkupType = 'flat' | 'tiered' | 'per_line' | 'built_in'
+
 interface LineItem {
   id: string
   category: string
+  costCode: string
   name: string
+  itemType: ItemType
   selection: {
     name: string
     tier: 'builder' | 'standard' | 'premium' | 'luxury'
@@ -32,15 +50,57 @@ interface LineItem {
   }
   quantity: number
   unit: string
-  isAllowance?: boolean
+  wasteFactor: number
+  markupPct: number
+  altGroup?: string
+  aiSuggested: boolean
+  aiConfidence: number
   aiNote?: string
+}
+
+interface EstimateHeader {
+  name: string
+  status: EstimateStatus
+  contractType: ContractType
+  markupType: MarkupType
+  version: number
+  validUntil: string
+  daysUntilExpiry: number
+  projectSf: number
+  projectType: string
+  defaultTier: string
+  createdBy: string
+  approvedBy: string | null
+  overheadPct: number
+  profitPct: number
+  contingencyPct: number
+}
+
+const mockHeader: EstimateHeader = {
+  name: 'Smith Residence Estimate',
+  status: 'pending_approval',
+  contractType: 'gmp',
+  markupType: 'flat',
+  version: 2,
+  validUntil: 'Mar 15, 2026',
+  daysUntilExpiry: 31,
+  projectSf: 3500,
+  projectType: 'Coastal Elevated',
+  defaultTier: 'Premium',
+  createdBy: 'Jake Ross',
+  approvedBy: null,
+  overheadPct: 10,
+  profitPct: 8,
+  contingencyPct: 5,
 }
 
 const mockLineItems: LineItem[] = [
   {
     id: '1',
     category: 'Exterior',
+    costCode: '07-200',
     name: 'Porch Ceiling',
+    itemType: 'line',
     selection: {
       name: 'Cypress T&G 1x6',
       tier: 'premium',
@@ -51,12 +111,18 @@ const mockLineItems: LineItem[] = [
     },
     quantity: 450,
     unit: 'SF',
+    wasteFactor: 10,
+    markupPct: 0,
+    aiSuggested: true,
+    aiConfidence: 0.92,
     aiNote: 'Your most common choice for coastal homes (67%)',
   },
   {
     id: '2',
     category: 'Exterior',
+    costCode: '09-900',
     name: 'Exterior Paint',
+    itemType: 'line',
     selection: {
       name: 'Sherwin-Williams Duration',
       tier: 'premium',
@@ -67,11 +133,17 @@ const mockLineItems: LineItem[] = [
     },
     quantity: 3500,
     unit: 'SF',
+    wasteFactor: 8,
+    markupPct: 0,
+    aiSuggested: false,
+    aiConfidence: 0.95,
   },
   {
     id: '3',
     category: 'Exterior',
+    costCode: '08-500',
     name: 'Impact Windows',
+    itemType: 'line',
     selection: {
       name: 'PGT WinGuard',
       tier: 'premium',
@@ -82,12 +154,18 @@ const mockLineItems: LineItem[] = [
     },
     quantity: 24,
     unit: 'EA',
-    aiNote: '⚠️ Lead time concern: 8 weeks vs. 4 week start',
+    wasteFactor: 0,
+    markupPct: 0,
+    aiSuggested: false,
+    aiConfidence: 0.88,
+    aiNote: 'Lead time concern: 8 weeks vs. 4 week project start',
   },
   {
     id: '4',
     category: 'Interior',
+    costCode: '09-300',
     name: 'Master Bath Tile',
+    itemType: 'allowance',
     selection: {
       name: 'Client Selection Pending',
       tier: 'standard',
@@ -98,13 +176,18 @@ const mockLineItems: LineItem[] = [
     },
     quantity: 120,
     unit: 'SF',
-    isAllowance: true,
+    wasteFactor: 15,
+    markupPct: 0,
+    aiSuggested: true,
+    aiConfidence: 0.75,
     aiNote: 'Client likely to upgrade +$600 based on profile',
   },
   {
     id: '5',
     category: 'Interior',
+    costCode: '06-400',
     name: 'Kitchen Cabinets',
+    itemType: 'line',
     selection: {
       name: 'Shaker Style Maple',
       tier: 'premium',
@@ -115,8 +198,101 @@ const mockLineItems: LineItem[] = [
     },
     quantity: 28,
     unit: 'LF',
+    wasteFactor: 0,
+    markupPct: 0,
+    aiSuggested: false,
+    aiConfidence: 0.90,
+  },
+  {
+    id: '6',
+    category: 'Interior',
+    costCode: '09-300',
+    name: 'Landscaping',
+    itemType: 'exclusion',
+    selection: {
+      name: 'EXCLUDED — By Owner',
+      tier: 'standard',
+      materialCost: 0,
+      laborCost: 0,
+      leadTime: 'N/A',
+      vendor: 'N/A',
+    },
+    quantity: 1,
+    unit: 'LS',
+    wasteFactor: 0,
+    markupPct: 0,
+    aiSuggested: false,
+    aiConfidence: 1.0,
+  },
+  {
+    id: '7',
+    category: 'Interior',
+    costCode: '09-650',
+    name: 'Living Room Flooring',
+    itemType: 'alternate',
+    altGroup: 'flooring-a',
+    selection: {
+      name: 'Option A: White Oak Hardwood',
+      tier: 'premium',
+      materialCost: 12.00,
+      laborCost: 4.50,
+      leadTime: '3 weeks',
+      vendor: 'Flooring Warehouse',
+    },
+    quantity: 800,
+    unit: 'SF',
+    wasteFactor: 10,
+    markupPct: 0,
+    aiSuggested: false,
+    aiConfidence: 0.85,
+    aiNote: 'Alt B saves $3,200; Alt A is 78% client preference',
+  },
+  {
+    id: '8',
+    category: 'Interior',
+    costCode: '09-650',
+    name: 'Living Room Flooring',
+    itemType: 'alternate',
+    altGroup: 'flooring-b',
+    selection: {
+      name: 'Option B: LVP Luxury Vinyl',
+      tier: 'standard',
+      materialCost: 6.50,
+      laborCost: 3.00,
+      leadTime: '1 week',
+      vendor: 'Flooring Warehouse',
+    },
+    quantity: 800,
+    unit: 'SF',
+    wasteFactor: 10,
+    markupPct: 0,
+    aiSuggested: false,
+    aiConfidence: 0.85,
   },
 ]
+
+const statusConfig: Record<EstimateStatus, { label: string; color: string }> = {
+  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700' },
+  pending_approval: { label: 'Pending Approval', color: 'bg-amber-100 text-amber-700' },
+  approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
+  sent: { label: 'Sent to Client', color: 'bg-blue-100 text-blue-700' },
+  expired: { label: 'Expired', color: 'bg-red-100 text-red-700' },
+  converted: { label: 'Converted', color: 'bg-purple-100 text-purple-700' },
+}
+
+const contractTypeLabels: Record<ContractType, string> = {
+  nte: 'Not-to-Exceed',
+  gmp: 'Guaranteed Max Price',
+  cost_plus: 'Cost-Plus',
+  fixed: 'Fixed Price',
+}
+
+const itemTypeConfig: Record<ItemType, { label: string; color: string }> = {
+  line: { label: 'LINE', color: 'bg-blue-50 text-blue-700' },
+  allowance: { label: 'ALLOWANCE', color: 'bg-amber-100 text-amber-700' },
+  exclusion: { label: 'EXCLUDED', color: 'bg-red-100 text-red-700' },
+  alternate: { label: 'ALTERNATE', color: 'bg-purple-100 text-purple-700' },
+}
 
 const tierColors = {
   builder: 'bg-gray-100 text-gray-700',
@@ -131,15 +307,36 @@ function formatCurrency(value: number): string {
   return '$' + value.toFixed(2)
 }
 
+function ConfidenceBadge({ confidence }: { confidence: number }) {
+  const level = confidence >= 0.9 ? 'high' : confidence >= 0.7 ? 'medium' : 'low'
+  const colors = {
+    high: 'text-green-600 bg-green-50',
+    medium: 'text-amber-600 bg-amber-50',
+    low: 'text-red-600 bg-red-50',
+  }
+  return (
+    <span className={cn('text-xs px-1.5 py-0.5 rounded flex items-center gap-1', colors[level])}>
+      <Target className="h-3 w-3" />
+      {Math.round(confidence * 100)}%
+    </span>
+  )
+}
+
 function LineItemCard({ item }: { item: LineItem }) {
   const [expanded, setExpanded] = useState(false)
   const totalPerUnit = item.selection.materialCost + item.selection.laborCost
-  const lineTotal = totalPerUnit * item.quantity
+  const wasteAdjustedQty = item.quantity * (1 + item.wasteFactor / 100)
+  const lineTotal = totalPerUnit * wasteAdjustedQty
+  const isExclusion = item.itemType === 'exclusion'
+  const typeConfig = itemTypeConfig[item.itemType]
 
   return (
     <div className={cn(
       "border rounded-lg bg-white overflow-hidden",
-      item.isAllowance ? "border-amber-200" : "border-gray-200"
+      item.itemType === 'allowance' && "border-amber-200",
+      item.itemType === 'exclusion' && "border-red-200 bg-red-50/30",
+      item.itemType === 'alternate' && "border-purple-200",
+      item.itemType === 'line' && "border-gray-200",
     )}>
       <button
         onClick={() => setExpanded(!expanded)}
@@ -153,25 +350,44 @@ function LineItemCard({ item }: { item: LineItem }) {
           )}
           <div className="text-left">
             <div className="flex items-center gap-2">
-              {item.isAllowance && (
-                <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
-                  ALLOWANCE
+              <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", typeConfig.color)}>
+                {typeConfig.label}
+              </span>
+              <span className="font-medium text-gray-900">{item.name}</span>
+              {item.aiSuggested && (
+                <span title="AI-suggested pricing"><Sparkles className="h-3.5 w-3.5 text-blue-500" /></span>
+              )}
+              {item.altGroup && (
+                <span className="text-xs text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">
+                  {item.altGroup}
                 </span>
               )}
-              <span className="font-medium text-gray-900">{item.name}</span>
             </div>
-            <div className="text-sm text-gray-500">{item.selection.name}</div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="font-mono text-xs">{item.costCode}</span>
+              <span>-</span>
+              <span>{item.selection.name}</span>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <ConfidenceBadge confidence={item.aiConfidence} />
           <span className={cn("text-xs px-2 py-1 rounded font-medium", tierColors[item.selection.tier])}>
             {item.selection.tier.charAt(0).toUpperCase() + item.selection.tier.slice(1)}
           </span>
-          <span className="text-sm text-gray-600">
-            {item.quantity} {item.unit} × ${totalPerUnit.toFixed(2)}
-          </span>
-          <span className="font-semibold text-gray-900 w-24 text-right">
-            {formatCurrency(lineTotal)}
+          {!isExclusion && (
+            <span className="text-sm text-gray-600">
+              {item.quantity} {item.unit} x ${totalPerUnit.toFixed(2)}
+              {item.wasteFactor > 0 && (
+                <span className="text-xs text-gray-400 ml-1">(+{item.wasteFactor}% waste)</span>
+              )}
+            </span>
+          )}
+          <span className={cn(
+            "font-semibold w-24 text-right",
+            isExclusion ? "text-red-500 line-through" : "text-gray-900"
+          )}>
+            {isExclusion ? '$0' : formatCurrency(lineTotal)}
           </span>
         </div>
       </button>
@@ -193,7 +409,7 @@ function LineItemCard({ item }: { item: LineItem }) {
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className="text-xs font-medium text-gray-500 uppercase">Material</label>
                 <div className="mt-1 text-sm">${item.selection.materialCost.toFixed(2)}/{item.unit}</div>
@@ -201,6 +417,10 @@ function LineItemCard({ item }: { item: LineItem }) {
               <div>
                 <label className="text-xs font-medium text-gray-500 uppercase">Labor</label>
                 <div className="mt-1 text-sm">${item.selection.laborCost.toFixed(2)}/{item.unit}</div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 uppercase">Waste</label>
+                <div className="mt-1 text-sm">{item.wasteFactor}%</div>
               </div>
             </div>
           </div>
@@ -214,19 +434,23 @@ function LineItemCard({ item }: { item: LineItem }) {
               <Package className="h-4 w-4" />
               <span>{item.selection.vendor}</span>
             </div>
+            <div className="flex items-center gap-1.5 text-gray-500">
+              <Layers className="h-4 w-4" />
+              <span className="font-mono text-xs">{item.costCode}</span>
+            </div>
           </div>
 
           {item.aiNote && (
             <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-              item.aiNote.includes('⚠️') ? "bg-amber-50" : "bg-blue-50"
+              item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "bg-amber-50" : "bg-blue-50"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 mt-0.5 flex-shrink-0",
-                item.aiNote.includes('⚠️') ? "text-amber-500" : "text-blue-500"
+                item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-500" : "text-blue-500"
               )} />
-              <span className={item.aiNote.includes('⚠️') ? "text-amber-700" : "text-blue-700"}>
-                {item.aiNote.replace('⚠️ ', '')}
+              <span className={item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-700" : "text-blue-700"}>
+                {item.aiNote}
               </span>
             </div>
           )}
@@ -237,28 +461,43 @@ function LineItemCard({ item }: { item: LineItem }) {
 }
 
 export function EstimatesPreview() {
+  const [selectedItemType, setSelectedItemType] = useState<string>('all')
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const categories = [...new Set(mockLineItems.map(item => item.category))]
   const filteredItems = sortItems(
     mockLineItems.filter(item => {
-      if (!matchesSearch(item, search, ['name', 'category'])) return false
+      if (!matchesSearch(item, search, ['name', 'category', 'costCode'])) return false
       if (activeTab !== 'all' && item.category !== activeTab) return false
+      if (selectedItemType !== 'all' && item.itemType !== selectedItemType) return false
       return true
     }),
     activeSort as keyof LineItem | '',
     sortDirection,
   )
 
-  const subtotal = mockLineItems.reduce((sum, item) => {
-    const total = (item.selection.materialCost + item.selection.laborCost) * item.quantity
+  // Exclude exclusions and only include first alternate from budget calcs
+  const budgetItems = mockLineItems.filter(i => i.itemType !== 'exclusion' && !(i.itemType === 'alternate' && i.altGroup?.endsWith('-b')))
+  const subtotal = budgetItems.reduce((sum, item) => {
+    const total = (item.selection.materialCost + item.selection.laborCost) * item.quantity * (1 + item.wasteFactor / 100)
     return sum + total
   }, 0)
-  const markupAmount = subtotal * 0.18
-  const contingency = subtotal * 0.05
-  const grandTotal = subtotal + markupAmount + contingency
-  const totalSf = 3500
-  const costPerSf = grandTotal / totalSf
+  const overheadAmount = subtotal * (mockHeader.overheadPct / 100)
+  const profitAmount = subtotal * (mockHeader.profitPct / 100)
+  const contingency = subtotal * (mockHeader.contingencyPct / 100)
+  const grandTotal = subtotal + overheadAmount + profitAmount + contingency
+  const costPerSf = grandTotal / mockHeader.projectSf
+
+  // Stats
+  const totalLineItems = mockLineItems.filter(i => i.itemType === 'line').length
+  const allowanceItems = mockLineItems.filter(i => i.itemType === 'allowance').length
+  const exclusionItems = mockLineItems.filter(i => i.itemType === 'exclusion').length
+  const alternateItems = mockLineItems.filter(i => i.itemType === 'alternate').length
+  const aiSuggestedCount = mockLineItems.filter(i => i.aiSuggested).length
+  const avgConfidence = mockLineItems.reduce((sum, i) => sum + i.aiConfidence, 0) / mockLineItems.length
+  const leadTimeConcerns = mockLineItems.filter(i => i.aiNote?.toLowerCase().includes('lead time')).length
+
+  const statusCfg = statusConfig[mockHeader.status]
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -267,17 +506,39 @@ export function EstimatesPreview() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Smith Residence Estimate</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">v2 Draft</span>
+              <h3 className="font-semibold text-gray-900">{mockHeader.name}</h3>
+              <span className={cn("text-xs px-2 py-0.5 rounded font-medium", statusCfg.color)}>
+                {statusCfg.label}
+              </span>
+              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded flex items-center gap-1">
+                <GitBranch className="h-3 w-3" />
+                v{mockHeader.version}
+              </span>
+              <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
+                {contractTypeLabels[mockHeader.contractType]}
+              </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
-              3,500 SF | Coastal Elevated | Default Tier: Premium
+            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-3">
+              <span>{mockHeader.projectSf.toLocaleString()} SF | {mockHeader.projectType} | Default: {mockHeader.defaultTier}</span>
+              <span className="text-gray-300">|</span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                Valid until {mockHeader.validUntil} ({mockHeader.daysUntilExpiry}d)
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <GitBranch className="h-4 w-4" />
+              Compare Versions
+            </button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Copy className="h-4 w-4" />
               Clone
+            </button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100">
+              <Send className="h-4 w-4" />
+              Submit for Approval
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               <FileText className="h-4 w-4" />
@@ -287,12 +548,76 @@ export function EstimatesPreview() {
         </div>
       </div>
 
+      {/* Stats Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="grid grid-cols-7 gap-3">
+          <div className="bg-gray-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+              <Layers className="h-3.5 w-3.5" />
+              Line Items
+            </div>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{totalLineItems}</div>
+          </div>
+          <div className="bg-amber-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-amber-600 text-xs">
+              <DollarSign className="h-3.5 w-3.5" />
+              Allowances
+            </div>
+            <div className="text-lg font-bold text-amber-700 mt-0.5">{allowanceItems}</div>
+          </div>
+          <div className="bg-red-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-red-600 text-xs">
+              <XCircle className="h-3.5 w-3.5" />
+              Exclusions
+            </div>
+            <div className="text-lg font-bold text-red-700 mt-0.5">{exclusionItems}</div>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-purple-600 text-xs">
+              <GitBranch className="h-3.5 w-3.5" />
+              Alternates
+            </div>
+            <div className="text-lg font-bold text-purple-700 mt-0.5">{alternateItems / 2}</div>
+          </div>
+          <div className="bg-blue-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-blue-600 text-xs">
+              <Sparkles className="h-3.5 w-3.5" />
+              AI-Suggested
+            </div>
+            <div className="text-lg font-bold text-blue-700 mt-0.5">{aiSuggestedCount}</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-green-600 text-xs">
+              <Target className="h-3.5 w-3.5" />
+              Avg Confidence
+            </div>
+            <div className="text-lg font-bold text-green-700 mt-0.5">{Math.round(avgConfidence * 100)}%</div>
+          </div>
+          <div className={cn(
+            "rounded-lg p-2.5",
+            leadTimeConcerns > 0 ? "bg-amber-50" : "bg-gray-50"
+          )}>
+            <div className={cn(
+              "flex items-center gap-1.5 text-xs",
+              leadTimeConcerns > 0 ? "text-amber-600" : "text-gray-500"
+            )}>
+              <AlertTriangle className="h-3.5 w-3.5" />
+              Lead Time Flags
+            </div>
+            <div className={cn(
+              "text-lg font-bold mt-0.5",
+              leadTimeConcerns > 0 ? "text-amber-700" : "text-gray-900"
+            )}>{leadTimeConcerns}</div>
+          </div>
+        </div>
+      </div>
+
       {/* Toolbar */}
       <div className="bg-white border-b border-gray-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search items..."
+          searchPlaceholder="Search line items, cost codes..."
           tabs={[
             { key: 'all', label: 'All', count: mockLineItems.length },
             ...categories.map(cat => ({
@@ -303,16 +628,35 @@ export function EstimatesPreview() {
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          dropdowns={[
+            {
+              label: 'All Types',
+              value: selectedItemType,
+              options: [
+                { value: 'line', label: `Lines (${totalLineItems})` },
+                { value: 'allowance', label: `Allowances (${allowanceItems})` },
+                { value: 'exclusion', label: `Exclusions (${exclusionItems})` },
+                { value: 'alternate', label: `Alternates (${alternateItems})` },
+              ],
+              onChange: setSelectedItemType,
+            },
+          ]}
           sortOptions={[
             { value: 'name', label: 'Name' },
             { value: 'category', label: 'Category' },
             { value: 'quantity', label: 'Quantity' },
+            { value: 'costCode', label: 'Cost Code' },
+            { value: 'aiConfidence', label: 'AI Confidence' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
           sortDirection={sortDirection}
           onSortDirectionChange={toggleSortDirection}
-          actions={[{ icon: Plus, label: 'Add Line Item', onClick: () => {} }]}
+          actions={[
+            { icon: Plus, label: 'Add Line Item', onClick: () => {} },
+            { icon: Package, label: 'Insert Assembly', onClick: () => {} },
+            { icon: Calculator, label: 'AI Suggest Pricing', onClick: () => {}, variant: 'primary' },
+          ]}
           resultCount={filteredItems.length}
           totalCount={mockLineItems.length}
         />
@@ -327,23 +671,62 @@ export function EstimatesPreview() {
 
       {/* Summary */}
       <div className="bg-white border-t border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-4 gap-4 text-sm">
+        <div className="grid grid-cols-6 gap-4 text-sm">
           <div>
             <div className="text-gray-500">Subtotal</div>
             <div className="text-lg font-semibold text-gray-900">{formatCurrency(subtotal)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Markup (18%)</div>
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(markupAmount)}</div>
+            <div className="text-gray-500">Overhead ({mockHeader.overheadPct}%)</div>
+            <div className="text-lg font-semibold text-gray-900">{formatCurrency(overheadAmount)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Contingency (5%)</div>
+            <div className="text-gray-500">Profit ({mockHeader.profitPct}%)</div>
+            <div className="text-lg font-semibold text-gray-900">{formatCurrency(profitAmount)}</div>
+          </div>
+          <div>
+            <div className="text-gray-500">Contingency ({mockHeader.contingencyPct}%)</div>
             <div className="text-lg font-semibold text-gray-900">{formatCurrency(contingency)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Total ({formatCurrency(costPerSf)}/SF)</div>
+            <div className="text-gray-500">$/SF</div>
+            <div className="text-lg font-semibold text-gray-900">{formatCurrency(costPerSf)}</div>
+          </div>
+          <div>
+            <div className="text-gray-500">Grand Total</div>
             <div className="text-xl font-bold text-blue-600">{formatCurrency(grandTotal)}</div>
           </div>
+        </div>
+      </div>
+
+      {/* Cross-Module Connection Badges */}
+      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-500 font-medium">Connected:</span>
+          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            Selections Catalog
+          </span>
+          <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <BarChart3 className="h-3 w-3" />
+            Budget Tracking
+          </span>
+          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <FileText className="h-3 w-3" />
+            Proposals
+          </span>
+          <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <TrendingUp className="h-3 w-3" />
+            Price Intelligence
+          </span>
+          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Shield className="h-3 w-3" />
+            Bid Management
+          </span>
+          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            Schedule
+          </span>
         </div>
       </div>
 
@@ -357,12 +740,17 @@ export function EstimatesPreview() {
           <div className="flex items-center gap-4 text-sm text-amber-700">
             <span className="flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              1 lead time concern
+              {leadTimeConcerns} lead time concern{leadTimeConcerns !== 1 ? 's' : ''}
             </span>
             <span>|</span>
-            <span>1 allowance likely to upgrade</span>
+            <span>{allowanceItems} allowance{allowanceItems !== 1 ? 's' : ''} likely to upgrade</span>
             <span>|</span>
-            <span>95% confidence on pricing</span>
+            <span>{Math.round(avgConfidence * 100)}% avg pricing confidence</span>
+            <span>|</span>
+            <span className="flex items-center gap-1">
+              <TrendingUp className="h-3.5 w-3.5" />
+              Escalation: +2.1% if delayed 3 months
+            </span>
           </div>
         </div>
       </div>

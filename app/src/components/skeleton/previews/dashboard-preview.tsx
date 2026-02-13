@@ -20,8 +20,26 @@ import {
   AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
+  Bell,
+  Banknote,
+  MessageSquare,
+  Truck,
+  ShieldAlert,
+  Eye,
+  Sun,
+  Moon,
+  CloudRain,
+  RefreshCw,
+  Wallet,
+  FileWarning,
+  Mail,
+  Phone,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface SummaryCard {
   id: string
@@ -32,24 +50,31 @@ interface SummaryCard {
   icon: React.ElementType
   trend: 'up' | 'down' | 'neutral'
   color: 'blue' | 'green' | 'amber' | 'purple'
+  sparkline?: number[]
 }
 
 interface TaskDue {
   id: string
   title: string
   job: string
+  jobId: string
   assignee: string
   dueTime: string
   priority: 'high' | 'medium' | 'low'
+  sourceModule: string
+  type: 'approval' | 'task' | 'rfi' | 'inspection' | 'selection' | 'invoice'
 }
 
 interface UpcomingInspection {
   id: string
   type: string
   job: string
+  jobId: string
   date: string
   time: string
-  status: 'scheduled' | 'pending-confirmation'
+  status: 'scheduled' | 'pending-confirmation' | 'confirmed'
+  inspector?: string
+  permitRef?: string
 }
 
 interface RecentActivity {
@@ -58,8 +83,50 @@ interface RecentActivity {
   subject: string
   user: string
   timestamp: string
-  type: 'job' | 'invoice' | 'change-order' | 'document'
+  type: 'job' | 'invoice' | 'change-order' | 'document' | 'daily-log' | 'approval' | 'selection'
+  jobRef?: string
 }
+
+interface OvernightAlert {
+  id: string
+  message: string
+  category: 'action_required' | 'informational' | 'resolved'
+  source: string
+  timestamp: string
+  jobRef?: string
+}
+
+interface CashPosition {
+  bankBalance: number
+  dueOutToday: number
+  dueOutThisWeek: number
+  drawsPending: number
+  netPosition: number
+  status: 'green' | 'yellow' | 'red'
+}
+
+interface VendorFollowUp {
+  id: string
+  vendorName: string
+  job: string
+  category: 'overdue_bid' | 'overdue_invoice' | 'unanswered_rfi' | 'expired_insurance' | 'unacknowledged_bid'
+  daysOverdue: number
+  description: string
+}
+
+interface ClientMessage {
+  id: string
+  clientName: string
+  job: string
+  preview: string
+  waitTime: string
+  waitMinutes: number
+  type: 'portal_message' | 'meeting'
+}
+
+// ---------------------------------------------------------------------------
+// Mock Data
+// ---------------------------------------------------------------------------
 
 const summaryCards: SummaryCard[] = [
   {
@@ -71,6 +138,7 @@ const summaryCards: SummaryCard[] = [
     icon: Briefcase,
     trend: 'up',
     color: 'blue',
+    sparkline: [8, 9, 9, 10, 10, 11, 10, 11, 12, 12, 12, 12],
   },
   {
     id: '2',
@@ -81,6 +149,7 @@ const summaryCards: SummaryCard[] = [
     icon: DollarSign,
     trend: 'up',
     color: 'green',
+    sparkline: [3200, 3400, 3600, 3500, 3800, 3900, 4000, 3800, 4100, 4000, 4200, 4200],
   },
   {
     id: '3',
@@ -91,6 +160,7 @@ const summaryCards: SummaryCard[] = [
     icon: TrendingUp,
     trend: 'up',
     color: 'amber',
+    sparkline: [650, 700, 720, 780, 810, 830, 850, 860, 870, 880, 890, 892],
   },
   {
     id: '4',
@@ -101,6 +171,7 @@ const summaryCards: SummaryCard[] = [
     icon: Percent,
     trend: 'down',
     color: 'purple',
+    sparkline: [16, 15.8, 15.5, 15.2, 15, 14.8, 14.5, 14.6, 14.4, 14.3, 14.2, 14.2],
   },
 ]
 
@@ -109,33 +180,56 @@ const tasksDueToday: TaskDue[] = [
     id: '1',
     title: 'Review framing inspection report',
     job: 'Smith Residence',
+    jobId: 'J-2026-001',
     assignee: 'Jake',
     dueTime: '10:00 AM',
     priority: 'high',
+    sourceModule: 'Inspections',
+    type: 'inspection',
   },
   {
     id: '2',
-    title: 'Send draw request to client',
+    title: 'Approve draw request #4 - $125,000',
     job: 'Johnson Beach House',
+    jobId: 'J-2026-003',
     assignee: 'Sarah',
     dueTime: '12:00 PM',
     priority: 'high',
+    sourceModule: 'Draws',
+    type: 'approval',
   },
   {
     id: '3',
-    title: 'Approve PO for windows',
+    title: 'Approve PO for impact windows',
     job: 'Miller Addition',
+    jobId: 'J-2025-012',
     assignee: 'Jake',
     dueTime: '2:00 PM',
     priority: 'medium',
+    sourceModule: 'Purchase Orders',
+    type: 'approval',
   },
   {
     id: '4',
+    title: 'Respond to RFI #8 - foundation detail',
+    job: 'Wilson Custom Home',
+    jobId: 'J-2026-005',
+    assignee: 'Mike',
+    dueTime: '3:00 PM',
+    priority: 'medium',
+    sourceModule: 'RFIs',
+    type: 'rfi',
+  },
+  {
+    id: '5',
     title: 'Schedule final walkthrough',
     job: 'Davis Coastal Home',
+    jobId: 'J-2025-008',
     assignee: 'Mike',
     dueTime: '4:00 PM',
     priority: 'low',
+    sourceModule: 'Tasks',
+    type: 'task',
   },
 ]
 
@@ -144,78 +238,199 @@ const upcomingInspections: UpcomingInspection[] = [
     id: '1',
     type: 'Framing Inspection',
     job: 'Smith Residence',
+    jobId: 'J-2026-001',
     date: 'Tomorrow',
     time: '9:00 AM',
-    status: 'scheduled',
+    status: 'confirmed',
+    inspector: 'County Bldg Dept',
+    permitRef: 'BLD-2026-0045',
   },
   {
     id: '2',
     type: 'Electrical Rough-In',
     job: 'Wilson Custom Home',
+    jobId: 'J-2026-005',
     date: 'Feb 14',
     time: '10:30 AM',
     status: 'scheduled',
+    inspector: 'County Bldg Dept',
+    permitRef: 'BLD-2026-0052',
   },
   {
     id: '3',
     type: 'Final Inspection',
     job: 'Miller Addition',
+    jobId: 'J-2025-012',
     date: 'Feb 15',
     time: '2:00 PM',
     status: 'pending-confirmation',
+    permitRef: 'BLD-2025-0198',
   },
   {
     id: '4',
     type: 'Foundation Inspection',
     job: 'Anderson Pool House',
+    jobId: 'J-2026-007',
     date: 'Feb 16',
     time: '8:30 AM',
     status: 'scheduled',
+    inspector: 'County Bldg Dept',
+    permitRef: 'BLD-2026-0061',
   },
 ]
 
 const recentActivity: RecentActivity[] = [
   {
     id: '1',
-    action: 'Invoice sent',
+    action: 'Invoice approved',
     subject: 'Draw #4 - $125,000',
     user: 'Sarah',
     timestamp: '15 min ago',
-    type: 'invoice',
+    type: 'approval',
+    jobRef: 'J-2026-003',
   },
   {
     id: '2',
     action: 'Change order approved',
-    subject: 'CO-003: Kitchen upgrade',
+    subject: 'CO-003: Kitchen upgrade (+$18,500)',
     user: 'Jake',
     timestamp: '45 min ago',
     type: 'change-order',
+    jobRef: 'J-2026-001',
   },
   {
     id: '3',
     action: 'Daily log submitted',
-    subject: 'Smith Residence',
+    subject: 'Smith Residence - Framing progress 85%',
     user: 'Mike',
     timestamp: '1 hour ago',
-    type: 'document',
+    type: 'daily-log',
+    jobRef: 'J-2026-001',
   },
   {
     id: '4',
-    action: 'Job status updated',
-    subject: 'Miller Addition to Closeout',
-    user: 'Jake',
+    action: 'Selection finalized',
+    subject: 'Master bath tile - Porcelain Marble Look',
+    user: 'Sarah Smith (Client)',
     timestamp: '2 hours ago',
-    type: 'job',
+    type: 'selection',
+    jobRef: 'J-2026-001',
   },
   {
     id: '5',
+    action: 'Job status updated',
+    subject: 'Miller Addition moved to Closeout',
+    user: 'Jake',
+    timestamp: '2 hours ago',
+    type: 'job',
+    jobRef: 'J-2025-012',
+  },
+  {
+    id: '6',
     action: 'Contract signed',
-    subject: 'Thompson Renovation',
+    subject: 'Thompson Renovation - $385,000',
     user: 'Client',
     timestamp: '3 hours ago',
     type: 'document',
+    jobRef: 'J-2026-008',
   },
 ]
+
+const overnightAlerts: OvernightAlert[] = [
+  {
+    id: '1',
+    message: 'Weather alert: Heavy rain forecast Thu-Fri. 3 jobs have outdoor tasks scheduled.',
+    category: 'action_required',
+    source: 'Weather API',
+    timestamp: '5:30 AM',
+    jobRef: 'Multiple',
+  },
+  {
+    id: '2',
+    message: 'ABC Lumber invoice #4521 ($24,800) received via email and auto-processed. 96% confidence.',
+    category: 'informational',
+    source: 'AI Invoice Processing',
+    timestamp: '11:45 PM',
+    jobRef: 'J-2026-001',
+  },
+  {
+    id: '3',
+    message: 'Budget threshold alert: Wilson Custom Home electrical costs at 92% of budget.',
+    category: 'action_required',
+    source: 'Budget Monitoring',
+    timestamp: '12:00 AM',
+    jobRef: 'J-2026-005',
+  },
+  {
+    id: '4',
+    message: 'Client portal: Sarah Smith viewed draw request #4 and left a comment.',
+    category: 'informational',
+    source: 'Client Portal',
+    timestamp: '9:15 PM',
+    jobRef: 'J-2026-001',
+  },
+]
+
+const mockCashPosition: CashPosition = {
+  bankBalance: 847500,
+  dueOutToday: 48200,
+  dueOutThisWeek: 156800,
+  drawsPending: 285000,
+  netPosition: 927500,
+  status: 'green',
+}
+
+const vendorFollowUps: VendorFollowUp[] = [
+  {
+    id: '1',
+    vendorName: 'Coastal Electric',
+    job: 'Wilson Custom Home',
+    category: 'expired_insurance',
+    daysOverdue: 5,
+    description: 'GL insurance expired Feb 7',
+  },
+  {
+    id: '2',
+    vendorName: 'Premier Plumbing',
+    job: 'Smith Residence',
+    category: 'overdue_invoice',
+    daysOverdue: 12,
+    description: 'Invoice #3847 - $8,450 unprocessed',
+  },
+  {
+    id: '3',
+    vendorName: 'Southeast Roofing',
+    job: 'Anderson Pool House',
+    category: 'overdue_bid',
+    daysOverdue: 3,
+    description: 'Bid response past due date',
+  },
+]
+
+const clientMessages: ClientMessage[] = [
+  {
+    id: '1',
+    clientName: 'Sarah Smith',
+    job: 'Smith Residence',
+    preview: 'Question about the tile options for master bath...',
+    waitTime: '4 hours',
+    waitMinutes: 240,
+    type: 'portal_message',
+  },
+  {
+    id: '2',
+    clientName: 'Tom Johnson',
+    job: 'Johnson Beach House',
+    preview: 'Weekly progress meeting',
+    waitTime: 'Today 2:00 PM',
+    waitMinutes: 0,
+    type: 'meeting',
+  },
+]
+
+// ---------------------------------------------------------------------------
+// Color utilities
+// ---------------------------------------------------------------------------
 
 const cardColorClasses = {
   blue: {
@@ -240,26 +455,59 @@ const cardColorClasses = {
   },
 }
 
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+
+function MiniSparkline({ data, color }: { data: number[]; color: string }) {
+  const max = Math.max(...data)
+  const min = Math.min(...data)
+  const range = max - min || 1
+  const points = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * 60
+    const y = 20 - ((v - min) / range) * 18
+    return `${x},${y}`
+  }).join(' ')
+
+  const strokeColor = color === 'green' ? '#22c55e' : color === 'blue' ? '#3b82f6' : color === 'amber' ? '#f59e0b' : '#8b5cf6'
+
+  return (
+    <svg viewBox="0 0 60 22" className="w-16 h-5">
+      <polyline
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="1.5"
+        points={points}
+      />
+    </svg>
+  )
+}
+
 function SummaryCardComponent({ card }: { card: SummaryCard }) {
   const colors = cardColorClasses[card.color]
   const Icon = card.icon
 
   return (
-    <div className={cn("rounded-lg p-4", colors.bg)}>
+    <div className={cn("rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow", colors.bg)}>
       <div className="flex items-center justify-between mb-2">
         <div className={cn("p-2 rounded-lg", colors.icon)}>
           <Icon className="h-5 w-5" />
         </div>
-        <div className={cn(
-          "flex items-center gap-1 text-xs font-medium",
-          card.trend === 'up' ? "text-green-600" : "text-red-600"
-        )}>
-          {card.trend === 'up' ? (
-            <ArrowUpRight className="h-3 w-3" />
-          ) : (
-            <ArrowDownRight className="h-3 w-3" />
+        <div className="flex items-center gap-2">
+          {card.sparkline && (
+            <MiniSparkline data={card.sparkline} color={card.color} />
           )}
-          {card.change > 0 ? '+' : ''}{card.change}%
+          <div className={cn(
+            "flex items-center gap-1 text-xs font-medium",
+            card.trend === 'up' ? "text-green-600" : "text-red-600"
+          )}>
+            {card.trend === 'up' ? (
+              <ArrowUpRight className="h-3 w-3" />
+            ) : (
+              <ArrowDownRight className="h-3 w-3" />
+            )}
+            {card.change > 0 ? '+' : ''}{card.change}%
+          </div>
         </div>
       </div>
       <div className="text-2xl font-bold text-gray-900">{card.value}</div>
@@ -360,6 +608,222 @@ function ChartPlaceholder({ title, icon: Icon, height = "h-48", chartType = "bar
   )
 }
 
+function OvernightAlertWidget({ alerts }: { alerts: OvernightAlert[] }) {
+  const getCategoryConfig = (category: OvernightAlert['category']) => {
+    switch (category) {
+      case 'action_required': return { bg: 'bg-red-50', text: 'text-red-700', badge: 'bg-red-100 text-red-700', icon: ShieldAlert }
+      case 'informational': return { bg: 'bg-blue-50', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-700', icon: Bell }
+      case 'resolved': return { bg: 'bg-green-50', text: 'text-green-700', badge: 'bg-green-100 text-green-700', icon: CheckSquare }
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Moon className="h-4 w-4 text-indigo-600" />
+            <h4 className="font-medium text-gray-900 text-sm">Overnight Summary</h4>
+          </div>
+          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-medium">
+            {alerts.filter(a => a.category === 'action_required').length} need action
+          </span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {alerts.map(alert => {
+          const config = getCategoryConfig(alert.category)
+          const AlertIcon = config.icon
+          return (
+            <div key={alert.id} className={cn("px-4 py-2.5 hover:bg-gray-50 cursor-pointer", alert.category === 'action_required' && 'bg-red-50/30')}>
+              <div className="flex items-start gap-3">
+                <div className={cn("p-1 rounded-lg mt-0.5", config.badge)}>
+                  <AlertIcon className="h-3 w-3" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-700">{alert.message}</p>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                    <span>{alert.source}</span>
+                    <span className="text-gray-300">|</span>
+                    <span>{alert.timestamp}</span>
+                    {alert.jobRef && (
+                      <>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{alert.jobRef}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                {alert.category === 'action_required' && (
+                  <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium flex-shrink-0">Action</span>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function CashPositionWidget({ data }: { data: CashPosition }) {
+  const statusColors = {
+    green: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', label: 'Comfortable' },
+    yellow: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', label: 'Tight' },
+    red: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', label: 'Action Needed' },
+  }
+  const status = statusColors[data.status]
+
+  const formatCurrency = (amount: number) => {
+    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`
+    if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`
+    return `$${amount.toLocaleString()}`
+  }
+
+  return (
+    <div className={cn("rounded-lg border p-4", status.bg, status.border)}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Wallet className="h-4 w-4 text-gray-600" />
+          <h4 className="font-medium text-gray-900 text-sm">Daily Cash Position</h4>
+        </div>
+        <span className={cn("text-xs px-2 py-0.5 rounded font-medium", status.text, data.status === 'green' ? 'bg-green-100' : data.status === 'yellow' ? 'bg-amber-100' : 'bg-red-100')}>
+          {status.label}
+        </span>
+      </div>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">Bank Balance</span>
+          <span className="text-sm font-semibold text-gray-900">{formatCurrency(data.bankBalance)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">Due Out Today</span>
+          <span className="text-sm font-medium text-red-600">-{formatCurrency(data.dueOutToday)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">Due Out This Week</span>
+          <span className="text-sm font-medium text-red-600">-{formatCurrency(data.dueOutThisWeek)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">Draws Pending</span>
+          <span className="text-sm font-medium text-green-600">+{formatCurrency(data.drawsPending)}</span>
+        </div>
+        <div className="border-t border-gray-200 pt-2 flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-900">Net Position</span>
+          <span className="text-base font-bold text-gray-900">{formatCurrency(data.netPosition)}</span>
+        </div>
+      </div>
+      <button className="mt-3 text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+        View cash flow forecast
+        <ChevronRight className="h-3 w-3" />
+      </button>
+    </div>
+  )
+}
+
+function VendorFollowUpWidget({ items }: { items: VendorFollowUp[] }) {
+  const getCategoryConfig = (cat: VendorFollowUp['category']) => {
+    switch (cat) {
+      case 'expired_insurance': return { label: 'Insurance', bg: 'bg-red-100 text-red-700', icon: ShieldAlert }
+      case 'overdue_invoice': return { label: 'Invoice', bg: 'bg-amber-100 text-amber-700', icon: FileWarning }
+      case 'overdue_bid': return { label: 'Bid', bg: 'bg-orange-100 text-orange-700', icon: Clock }
+      case 'unanswered_rfi': return { label: 'RFI', bg: 'bg-purple-100 text-purple-700', icon: MessageSquare }
+      case 'unacknowledged_bid': return { label: 'Bid Inv.', bg: 'bg-blue-100 text-blue-700', icon: Mail }
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Truck className="h-4 w-4 text-orange-600" />
+            <h4 className="font-medium text-gray-900 text-sm">Vendor Follow-Up</h4>
+          </div>
+          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-medium">
+            {items.length} items
+          </span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {items.map(item => {
+          const config = getCategoryConfig(item.category)
+          return (
+            <div key={item.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm text-gray-900">{item.vendorName}</span>
+                    <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", config.bg)}>{config.label}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                  <span className="text-xs text-gray-400">{item.job}</span>
+                </div>
+                <span className="text-xs font-medium text-red-600 flex-shrink-0">{item.daysOverdue}d overdue</span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
+        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          View all vendor items
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function ClientQueueWidget({ messages }: { messages: ClientMessage[] }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4 text-cyan-600" />
+            <h4 className="font-medium text-gray-900 text-sm">Client Messages</h4>
+          </div>
+          <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded font-medium">
+            {messages.filter(m => m.type === 'portal_message').length} awaiting
+          </span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {messages.map(msg => (
+          <div key={msg.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm text-gray-900">{msg.clientName}</span>
+                  {msg.type === 'meeting' && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Meeting</span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-0.5 truncate">{msg.preview}</p>
+                <span className="text-xs text-gray-400">{msg.job}</span>
+              </div>
+              <div className="flex-shrink-0 text-right">
+                {msg.type === 'portal_message' && (
+                  <span className={cn(
+                    "text-xs font-medium px-1.5 py-0.5 rounded",
+                    msg.waitMinutes > 120 ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                  )}>
+                    {msg.waitTime}
+                  </span>
+                )}
+                {msg.type === 'meeting' && (
+                  <span className="text-xs text-gray-500">{msg.waitTime}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function TasksList({ tasks }: { tasks: TaskDue[] }) {
   const getPriorityColor = (priority: TaskDue['priority']) => {
     switch (priority) {
@@ -369,18 +833,30 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
     }
   }
 
+  const getTypeColor = (type: TaskDue['type']) => {
+    switch (type) {
+      case 'approval': return 'bg-green-50 text-green-600'
+      case 'task': return 'bg-blue-50 text-blue-600'
+      case 'rfi': return 'bg-purple-50 text-purple-600'
+      case 'inspection': return 'bg-amber-50 text-amber-600'
+      case 'selection': return 'bg-pink-50 text-pink-600'
+      case 'invoice': return 'bg-emerald-50 text-emerald-600'
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg border border-gray-200">
       <div className="px-4 py-3 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckSquare className="h-4 w-4 text-blue-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Tasks Due Today</h4>
+            <h4 className="font-medium text-gray-900 text-sm">My Day - Due Today</h4>
           </div>
           <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">
-            {tasks.length} tasks
+            {tasks.length} items
           </span>
         </div>
+        <p className="text-xs text-gray-400 mt-1">Cross-project priority queue sorted by urgency</p>
       </div>
       <div className="divide-y divide-gray-100">
         {tasks.map(task => (
@@ -388,11 +864,12 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="font-medium text-gray-900 text-sm">{task.title}</div>
-                <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2 flex-wrap">
                   <span className="flex items-center gap-1">
                     <Building2 className="h-3 w-3" />
                     {task.job}
                   </span>
+                  <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{task.jobId}</span>
                   <span className="flex items-center gap-1">
                     <User className="h-3 w-3" />
                     {task.assignee}
@@ -400,9 +877,14 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
                 </div>
               </div>
               <div className="text-right flex flex-col items-end gap-1">
-                <span className={cn("text-xs px-2 py-0.5 rounded font-medium", getPriorityColor(task.priority))}>
-                  {task.priority}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", getTypeColor(task.type))}>
+                    {task.sourceModule}
+                  </span>
+                  <span className={cn("text-xs px-2 py-0.5 rounded font-medium", getPriorityColor(task.priority))}>
+                    {task.priority}
+                  </span>
+                </div>
                 <span className="text-xs text-gray-500 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {task.dueTime}
@@ -442,16 +924,30 @@ function InspectionsList({ inspections }: { inspections: UpcomingInspection[] })
             <div className="flex items-start justify-between">
               <div>
                 <div className="font-medium text-gray-900 text-sm">{inspection.type}</div>
-                <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-                  <Building2 className="h-3 w-3" />
-                  {inspection.job}
+                <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                  <span className="flex items-center gap-1">
+                    <Building2 className="h-3 w-3" />
+                    {inspection.job}
+                  </span>
+                  <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{inspection.jobId}</span>
                 </div>
+                {inspection.permitRef && (
+                  <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mt-1 inline-block">
+                    {inspection.permitRef}
+                  </span>
+                )}
               </div>
               <div className="text-right">
                 <div className="text-sm font-medium text-gray-900">{inspection.date}</div>
                 <div className="text-xs text-gray-500">{inspection.time}</div>
+                {inspection.status === 'confirmed' && (
+                  <div className="flex items-center gap-1 text-xs text-green-600 mt-1 justify-end">
+                    <CheckSquare className="h-3 w-3" />
+                    Confirmed
+                  </div>
+                )}
                 {inspection.status === 'pending-confirmation' && (
-                  <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+                  <div className="flex items-center gap-1 text-xs text-amber-600 mt-1 justify-end">
                     <AlertCircle className="h-3 w-3" />
                     Pending
                   </div>
@@ -478,6 +974,9 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
       case 'invoice': return DollarSign
       case 'change-order': return TrendingUp
       case 'document': return ClipboardCheck
+      case 'daily-log': return ClipboardCheck
+      case 'approval': return CheckSquare
+      case 'selection': return Eye
     }
   }
 
@@ -487,6 +986,9 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
       case 'invoice': return 'bg-green-100 text-green-600'
       case 'change-order': return 'bg-amber-100 text-amber-600'
       case 'document': return 'bg-purple-100 text-purple-600'
+      case 'daily-log': return 'bg-cyan-100 text-cyan-600'
+      case 'approval': return 'bg-emerald-100 text-emerald-600'
+      case 'selection': return 'bg-pink-100 text-pink-600'
     }
   }
 
@@ -518,6 +1020,12 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
                     <span>{activity.user}</span>
                     <span className="text-gray-300">|</span>
                     <span>{activity.timestamp}</span>
+                    {activity.jobRef && (
+                      <>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{activity.jobRef}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -535,6 +1043,43 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
   )
 }
 
+function PendingApprovalsBar() {
+  const approvals = [
+    { label: 'Invoices', count: 3, amount: '$96,450' },
+    { label: 'Change Orders', count: 2, amount: '$31,500' },
+    { label: 'POs', count: 1, amount: '$24,800' },
+    { label: 'Draws', count: 1, amount: '$125,000' },
+  ]
+
+  return (
+    <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Bell className="h-4 w-4 text-amber-600" />
+        <span className="text-sm font-medium text-gray-700">Pending Approvals</span>
+        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
+          {approvals.reduce((sum, a) => sum + a.count, 0)} total
+        </span>
+      </div>
+      <div className="flex items-center gap-3">
+        {approvals.map(approval => (
+          <div
+            key={approval.label}
+            className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors"
+          >
+            <span className="text-xs font-medium text-amber-800">{approval.count}</span>
+            <span className="text-xs text-amber-700">{approval.label}</span>
+            <span className="text-xs font-semibold text-amber-900">{approval.amount}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Main Component
+// ---------------------------------------------------------------------------
+
 export function DashboardPreview() {
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -545,11 +1090,19 @@ export function DashboardPreview() {
             <div className="flex items-center gap-3">
               <h3 className="font-semibold text-gray-900">Company Dashboard</h3>
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">All Systems Operational</span>
+              <span className="flex items-center gap-1 text-xs text-gray-400">
+                <RefreshCw className="h-3 w-3" />
+                Auto-refresh: 5 min
+              </span>
             </div>
             <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 February 12, 2026
+              </span>
+              <span className="flex items-center gap-1">
+                <Sun className="h-4 w-4 text-amber-500" />
+                72F, Sunny - Wilmington, NC
               </span>
               <span className="flex items-center gap-1 text-green-600">
                 <TrendingUp className="h-4 w-4" />
@@ -562,6 +1115,10 @@ export function DashboardPreview() {
               <Calendar className="h-4 w-4" />
               This Month
             </button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Eye className="h-4 w-4" />
+              Customize
+            </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               <BarChart3 className="h-4 w-4" />
               Full Report
@@ -570,7 +1127,10 @@ export function DashboardPreview() {
         </div>
       </div>
 
-      {/* Summary Cards */}
+      {/* Pending Approvals Bar */}
+      <PendingApprovalsBar />
+
+      {/* Summary Cards with Sparklines */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
           {summaryCards.map(card => (
@@ -579,11 +1139,19 @@ export function DashboardPreview() {
         </div>
       </div>
 
-      {/* Charts Row */}
+      {/* Overnight Alerts + Cash Position Row */}
       <div className="p-4 grid grid-cols-3 gap-4">
+        <div className="col-span-2">
+          <OvernightAlertWidget alerts={overnightAlerts} />
+        </div>
+        <CashPositionWidget data={mockCashPosition} />
+      </div>
+
+      {/* Charts Row */}
+      <div className="px-4 pb-4 grid grid-cols-3 gap-4">
         <ChartPlaceholder title="Revenue Trend" icon={LineChart} chartType="line" />
         <ChartPlaceholder title="Job Status Breakdown" icon={PieChart} chartType="pie" />
-        <ChartPlaceholder title="Cash Flow" icon={BarChart3} chartType="bar" />
+        <ChartPlaceholder title="Cash Flow Forecast" icon={BarChart3} chartType="bar" />
       </div>
 
       {/* Quick Lists Row */}
@@ -591,6 +1159,12 @@ export function DashboardPreview() {
         <TasksList tasks={tasksDueToday} />
         <InspectionsList inspections={upcomingInspections} />
         <ActivityFeed activities={recentActivity} />
+      </div>
+
+      {/* Vendor Follow-Up + Client Messages Row */}
+      <div className="px-4 pb-4 grid grid-cols-2 gap-4">
+        <VendorFollowUpWidget items={vendorFollowUps} />
+        <ClientQueueWidget messages={clientMessages} />
       </div>
 
       {/* AI Insights Bar */}
@@ -605,6 +1179,7 @@ export function DashboardPreview() {
             3 invoices totaling $96K are overdue - recommend follow-up calls today.
             Miller Addition final inspection tomorrow has 92% pass probability based on similar projects.
             Consider scheduling Thompson Renovation kick-off meeting - contract signed 3 hours ago.
+            <span className="ml-1 text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-medium">AI-generated</span>
           </p>
         </div>
       </div>

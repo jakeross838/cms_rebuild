@@ -16,13 +16,25 @@ import {
   Send,
   FileCheck,
   ClipboardList,
+  Shield,
+  FileSignature,
+  Users,
+  Bell,
+  Layers,
+  MapPin,
+  Ban,
+  FileText,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
-type WaiverStatus = 'pending' | 'requested' | 'received' | 'missing'
-type WaiverType = 'conditional' | 'unconditional'
+type WaiverStatus = 'draft' | 'requested' | 'submitted' | 'approved' | 'rejected' | 'void' | 'missing'
+type WaiverType = 'conditional_progress' | 'unconditional_progress' | 'conditional_final' | 'unconditional_final'
+type SignatureType = 'electronic' | 'wet' | 'notarized' | 'pending'
+type WaiverTier = 'prime' | 'sub_tier'
+type EnforcementLevel = 'strict' | 'warn' | 'none'
+type SubmissionMethod = 'portal' | 'email' | 'manual' | 'pending'
 
 interface LienWaiver {
   id: string
@@ -30,122 +42,267 @@ interface LienWaiver {
   waiverType: WaiverType
   amount: number
   drawNumber: number
+  throughDate: string
   dateRequested: string
   dateReceived?: string
   status: WaiverStatus
   jobName: string
   aiNote?: string
+  invoiceNumber?: string
+  paymentId?: string
+  signatureType: SignatureType
+  tier: WaiverTier
+  parentVendor?: string
+  stateCode: string
+  isStatutoryForm: boolean
+  remindersSent: number
+  nextReminderDate?: string
+  submissionMethod: SubmissionMethod
+  complianceRisk: 'low' | 'medium' | 'high'
+  paymentHold: boolean
+  aiConfidence?: number
+  preliminaryNoticeStatus?: 'sent' | 'confirmed' | 'expired' | 'not_required'
+  lienDeadlineDays?: number
 }
 
 const mockLienWaivers: LienWaiver[] = [
   {
     id: '1',
     vendorName: 'ABC Lumber Supply',
-    waiverType: 'conditional',
+    waiverType: 'conditional_progress',
     amount: 24500,
     drawNumber: 3,
-    dateRequested: '2024-12-01',
-    status: 'received',
-    dateReceived: '2024-12-05',
+    throughDate: '2026-01-31',
+    dateRequested: '2026-01-25',
+    status: 'approved',
+    dateReceived: '2026-01-28',
     jobName: 'Smith Residence',
+    invoiceNumber: 'INV-2024-0892',
+    signatureType: 'electronic',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 0,
+    submissionMethod: 'portal',
+    complianceRisk: 'low',
+    paymentHold: false,
+    aiConfidence: 0.97,
+    preliminaryNoticeStatus: 'confirmed',
   },
   {
     id: '2',
     vendorName: 'PGT Industries',
-    waiverType: 'unconditional',
+    waiverType: 'unconditional_progress',
     amount: 45800,
     drawNumber: 2,
-    dateRequested: '2024-11-15',
-    status: 'received',
-    dateReceived: '2024-11-20',
+    throughDate: '2025-12-31',
+    dateRequested: '2026-01-05',
+    status: 'approved',
+    dateReceived: '2026-01-10',
     jobName: 'Smith Residence',
+    invoiceNumber: 'INV-2024-0875',
+    signatureType: 'wet',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 0,
+    submissionMethod: 'manual',
+    complianceRisk: 'low',
+    paymentHold: false,
+    aiConfidence: 0.95,
+    preliminaryNoticeStatus: 'confirmed',
   },
   {
     id: '3',
     vendorName: 'Jones Plumbing',
-    waiverType: 'conditional',
+    waiverType: 'conditional_progress',
     amount: 12750,
     drawNumber: 3,
-    dateRequested: '2024-12-01',
-    status: 'requested',
+    throughDate: '2026-01-31',
+    dateRequested: '2026-01-25',
+    status: 'submitted',
     jobName: 'Smith Residence',
+    invoiceNumber: 'INV-2024-0880',
     aiNote: 'Vendor typically responds in 3-5 days. Follow-up in 2 days.',
+    signatureType: 'electronic',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 1,
+    nextReminderDate: '2026-02-14',
+    submissionMethod: 'portal',
+    complianceRisk: 'medium',
+    paymentHold: true,
+    aiConfidence: 0.88,
+    preliminaryNoticeStatus: 'confirmed',
   },
   {
     id: '4',
     vendorName: 'Smith Electric',
-    waiverType: 'conditional',
+    waiverType: 'conditional_progress',
     amount: 18200,
     drawNumber: 3,
-    dateRequested: '2024-12-01',
-    status: 'pending',
+    throughDate: '2026-01-31',
+    dateRequested: '2026-01-25',
+    status: 'requested',
     jobName: 'Johnson Beach House',
+    signatureType: 'pending',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 2,
+    nextReminderDate: '2026-02-13',
+    submissionMethod: 'pending',
+    complianceRisk: 'medium',
+    paymentHold: true,
+    preliminaryNoticeStatus: 'sent',
   },
   {
     id: '5',
     vendorName: 'Cool Air HVAC',
-    waiverType: 'unconditional',
+    waiverType: 'unconditional_progress',
     amount: 28000,
     drawNumber: 2,
-    dateRequested: '2024-11-10',
+    throughDate: '2025-12-31',
+    dateRequested: '2026-01-10',
     status: 'missing',
     jobName: 'Smith Residence',
-    aiNote: 'Waiver overdue by 15 days. Contact vendor immediately.',
+    aiNote: 'Waiver overdue by 15 days. Blocking Draw #3 release. Contact vendor immediately.',
+    signatureType: 'pending',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 4,
+    submissionMethod: 'pending',
+    complianceRisk: 'high',
+    paymentHold: true,
+    preliminaryNoticeStatus: 'confirmed',
+    lienDeadlineDays: 45,
   },
   {
     id: '6',
     vendorName: 'Custom Cabinet Co',
-    waiverType: 'conditional',
+    waiverType: 'conditional_progress',
     amount: 32400,
     drawNumber: 3,
-    dateRequested: '2024-12-02',
+    throughDate: '2026-01-31',
+    dateRequested: '2026-01-28',
     status: 'requested',
     jobName: 'Johnson Beach House',
+    signatureType: 'pending',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 0,
+    nextReminderDate: '2026-02-15',
+    submissionMethod: 'pending',
+    complianceRisk: 'low',
+    paymentHold: false,
+    preliminaryNoticeStatus: 'not_required',
   },
   {
     id: '7',
     vendorName: 'Sherwin-Williams',
-    waiverType: 'unconditional',
+    waiverType: 'unconditional_final',
     amount: 4200,
     drawNumber: 1,
-    dateRequested: '2024-10-15',
-    status: 'received',
-    dateReceived: '2024-10-18',
+    throughDate: '2025-10-31',
+    dateRequested: '2025-11-01',
+    status: 'approved',
+    dateReceived: '2025-11-05',
     jobName: 'Miller Addition',
+    signatureType: 'electronic',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 0,
+    submissionMethod: 'portal',
+    complianceRisk: 'low',
+    paymentHold: false,
+    aiConfidence: 0.99,
+    preliminaryNoticeStatus: 'confirmed',
   },
   {
     id: '8',
     vendorName: 'ABC Framing',
-    waiverType: 'conditional',
+    waiverType: 'conditional_progress',
     amount: 38500,
     drawNumber: 3,
-    dateRequested: '2024-12-01',
-    status: 'pending',
+    throughDate: '2026-01-31',
+    dateRequested: '2026-01-25',
+    status: 'draft',
     jobName: 'Wilson Custom',
+    signatureType: 'pending',
+    tier: 'prime',
+    stateCode: 'CA',
+    isStatutoryForm: true,
+    remindersSent: 0,
+    submissionMethod: 'pending',
+    complianceRisk: 'medium',
+    paymentHold: true,
+    preliminaryNoticeStatus: 'sent',
+    lienDeadlineDays: 70,
   },
   {
     id: '9',
     vendorName: 'Coastal Concrete',
-    waiverType: 'unconditional',
+    waiverType: 'conditional_final',
     amount: 22000,
-    drawNumber: 1,
-    dateRequested: '2024-10-01',
+    drawNumber: 4,
+    throughDate: '2026-01-15',
+    dateRequested: '2026-01-20',
     status: 'missing',
     jobName: 'Davis Coastal Home',
-    aiNote: 'Critical: Blocking Draw 4 release. Escalate to project manager.',
+    aiNote: 'Critical: Final waiver blocking project closeout. Escalate to project manager.',
+    signatureType: 'pending',
+    tier: 'prime',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 5,
+    submissionMethod: 'pending',
+    complianceRisk: 'high',
+    paymentHold: true,
+    preliminaryNoticeStatus: 'confirmed',
+    lienDeadlineDays: 30,
+  },
+  {
+    id: '10',
+    vendorName: 'Tampa Electrical Supply',
+    waiverType: 'conditional_progress',
+    amount: 8500,
+    drawNumber: 3,
+    throughDate: '2026-01-31',
+    dateRequested: '2026-01-28',
+    status: 'submitted',
+    jobName: 'Smith Residence',
+    signatureType: 'electronic',
+    tier: 'sub_tier',
+    parentVendor: 'Smith Electric',
+    stateCode: 'FL',
+    isStatutoryForm: true,
+    remindersSent: 0,
+    submissionMethod: 'portal',
+    complianceRisk: 'low',
+    paymentHold: false,
+    preliminaryNoticeStatus: 'not_required',
   },
 ]
 
 const statusConfig: Record<WaiverStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  pending: { label: 'Pending', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: Clock },
+  draft: { label: 'Draft', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: FileText },
   requested: { label: 'Requested', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: Send },
-  received: { label: 'Received', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
-  missing: { label: 'Missing', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
+  submitted: { label: 'Submitted', color: 'text-indigo-700', bgColor: 'bg-indigo-100', icon: FileCheck },
+  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
+  rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
+  void: { label: 'Void', color: 'text-gray-500', bgColor: 'bg-gray-100', icon: Ban },
+  missing: { label: 'Missing', color: 'text-red-700', bgColor: 'bg-red-100', icon: AlertTriangle },
 }
 
-const waiverTypeConfig: Record<WaiverType, { label: string; color: string }> = {
-  conditional: { label: 'Conditional', color: 'bg-purple-50 text-purple-700' },
-  unconditional: { label: 'Unconditional', color: 'bg-teal-50 text-teal-700' },
+const waiverTypeConfig: Record<WaiverType, { label: string; shortLabel: string; color: string }> = {
+  conditional_progress: { label: 'Conditional Progress', shortLabel: 'Cond. Progress', color: 'bg-purple-50 text-purple-700' },
+  unconditional_progress: { label: 'Unconditional Progress', shortLabel: 'Uncond. Progress', color: 'bg-teal-50 text-teal-700' },
+  conditional_final: { label: 'Conditional Final', shortLabel: 'Cond. Final', color: 'bg-orange-50 text-orange-700' },
+  unconditional_final: { label: 'Unconditional Final', shortLabel: 'Uncond. Final', color: 'bg-emerald-50 text-emerald-700' },
 }
 
 function formatCurrency(value: number): string {
@@ -168,6 +325,38 @@ function getDaysSinceRequested(dateRequested: string): number {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 }
 
+function ComplianceRiskBadge({ risk }: { risk: LienWaiver['complianceRisk'] }) {
+  const config = {
+    low: { label: 'Low Risk', color: 'text-green-600 bg-green-50' },
+    medium: { label: 'Med Risk', color: 'text-amber-600 bg-amber-50' },
+    high: { label: 'High Risk', color: 'text-red-600 bg-red-50' },
+  }
+  const cfg = config[risk]
+  return (
+    <span className={cn('text-xs px-1.5 py-0.5 rounded font-medium flex items-center gap-1', cfg.color)}>
+      <Shield className="h-3 w-3" />
+      {cfg.label}
+    </span>
+  )
+}
+
+function SignatureBadge({ type }: { type: SignatureType }) {
+  if (type === 'pending') return null
+  const config = {
+    electronic: { label: 'E-Signed', color: 'text-blue-600 bg-blue-50' },
+    wet: { label: 'Wet Signature', color: 'text-gray-600 bg-gray-100' },
+    notarized: { label: 'Notarized', color: 'text-purple-600 bg-purple-50' },
+    pending: { label: '', color: '' },
+  }
+  const cfg = config[type]
+  return (
+    <span className={cn('text-xs px-1.5 py-0.5 rounded flex items-center gap-1', cfg.color)}>
+      <FileSignature className="h-3 w-3" />
+      {cfg.label}
+    </span>
+  )
+}
+
 function WaiverRow({ waiver }: { waiver: LienWaiver }) {
   const status = statusConfig[waiver.status]
   const waiverType = waiverTypeConfig[waiver.waiverType]
@@ -175,21 +364,39 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
   const daysSinceRequested = getDaysSinceRequested(waiver.dateRequested)
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div className={cn(
+      "bg-white border rounded-lg p-4 hover:shadow-md transition-shadow",
+      "border-gray-200",
+      waiver.complianceRisk === 'high' && "border-l-4 border-l-red-500",
+      waiver.paymentHold && waiver.complianceRisk !== 'high' && "border-l-4 border-l-amber-500"
+    )}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="font-medium text-gray-900">{waiver.vendorName}</span>
+            {waiver.tier === 'sub_tier' && (
+              <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded flex items-center gap-1">
+                <Layers className="h-3 w-3" />
+                Sub-tier of {waiver.parentVendor}
+              </span>
+            )}
             <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1", status.bgColor, status.color)}>
               <StatusIcon className="h-3 w-3" />
               {status.label}
             </span>
             <span className={cn("text-xs px-2 py-0.5 rounded font-medium", waiverType.color)}>
-              {waiverType.label}
+              {waiverType.shortLabel}
             </span>
+            <ComplianceRiskBadge risk={waiver.complianceRisk} />
+            {waiver.paymentHold && (
+              <span className="text-xs px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
+                <Ban className="h-3 w-3" />
+                Payment Hold
+              </span>
+            )}
           </div>
 
-          <div className="grid grid-cols-3 gap-x-6 gap-y-1 text-sm">
+          <div className="grid grid-cols-4 gap-x-4 gap-y-1 text-sm">
             <div className="flex items-center gap-2 text-gray-600">
               <DollarSign className="h-4 w-4 text-gray-400" />
               <span className="font-semibold">{formatCurrency(waiver.amount)}</span>
@@ -202,18 +409,64 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               <Building2 className="h-4 w-4 text-gray-400" />
               <span>{waiver.jobName}</span>
             </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <MapPin className="h-4 w-4 text-gray-400" />
+              <span>{waiver.stateCode}</span>
+              {waiver.isStatutoryForm && (
+                <span className="text-xs text-gray-400">(Statutory)</span>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-2 flex items-center gap-3 text-sm flex-wrap">
+            <span className="text-xs text-gray-500 flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              Through: {formatDate(waiver.throughDate)}
+            </span>
+            {waiver.invoiceNumber && (
+              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                {waiver.invoiceNumber}
+              </span>
+            )}
+            <SignatureBadge type={waiver.signatureType} />
+            {waiver.remindersSent > 0 && (
+              <span className="text-xs text-gray-400 flex items-center gap-1">
+                <Bell className="h-3 w-3" />
+                {waiver.remindersSent} reminder{waiver.remindersSent !== 1 ? 's' : ''} sent
+              </span>
+            )}
+            {waiver.lienDeadlineDays !== undefined && (
+              <span className={cn(
+                "text-xs px-1.5 py-0.5 rounded font-medium",
+                waiver.lienDeadlineDays <= 30 ? "bg-red-100 text-red-700" :
+                waiver.lienDeadlineDays <= 60 ? "bg-amber-100 text-amber-700" :
+                "bg-gray-100 text-gray-600"
+              )}>
+                Lien deadline: {waiver.lienDeadlineDays}d
+              </span>
+            )}
+            {waiver.preliminaryNoticeStatus && waiver.preliminaryNoticeStatus !== 'not_required' && (
+              <span className={cn(
+                "text-xs px-1.5 py-0.5 rounded",
+                waiver.preliminaryNoticeStatus === 'confirmed' ? "bg-green-50 text-green-600" :
+                waiver.preliminaryNoticeStatus === 'sent' ? "bg-blue-50 text-blue-600" :
+                "bg-red-50 text-red-600"
+              )}>
+                Prelim: {waiver.preliminaryNoticeStatus}
+              </span>
+            )}
           </div>
 
           {waiver.aiNote && (
             <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-              waiver.status === 'missing' ? "bg-red-50" : "bg-amber-50"
+              waiver.complianceRisk === 'high' ? "bg-red-50" : "bg-amber-50"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 mt-0.5 flex-shrink-0",
-                waiver.status === 'missing' ? "text-red-500" : "text-amber-500"
+                waiver.complianceRisk === 'high' ? "text-red-500" : "text-amber-500"
               )} />
-              <span className={waiver.status === 'missing' ? "text-red-700" : "text-amber-700"}>
+              <span className={waiver.complianceRisk === 'high' ? "text-red-700" : "text-amber-700"}>
                 {waiver.aiNote}
               </span>
             </div>
@@ -226,7 +479,7 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               <Calendar className="h-3.5 w-3.5 text-gray-400" />
               <span className="text-gray-500">Requested {formatDate(waiver.dateRequested)}</span>
             </div>
-            {waiver.status === 'received' && waiver.dateReceived && (
+            {waiver.status === 'approved' && waiver.dateReceived && (
               <div className="text-xs text-green-600 mt-1">
                 Received {formatDate(waiver.dateReceived)}
               </div>
@@ -241,30 +494,58 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
                 {daysSinceRequested} days ago
               </div>
             )}
+            {waiver.nextReminderDate && (waiver.status === 'requested' || waiver.status === 'submitted') && (
+              <div className="text-xs text-gray-400 mt-1">
+                Next reminder: {formatDate(waiver.nextReminderDate)}
+              </div>
+            )}
           </div>
           <button className="p-1.5 hover:bg-gray-100 rounded">
             <MoreHorizontal className="h-4 w-4 text-gray-400" />
           </button>
         </div>
       </div>
+
+      {(waiver.status === 'requested' || waiver.status === 'missing' || waiver.status === 'draft') && (
+        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+          {(waiver.status === 'requested' || waiver.status === 'missing') && (
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50">
+              <Bell className="h-3.5 w-3.5" />
+              Send Reminder
+            </button>
+          )}
+          {waiver.status === 'draft' && (
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50">
+              <Send className="h-3.5 w-3.5" />
+              Send Request
+            </button>
+          )}
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <FileCheck className="h-3.5 w-3.5" />
+            Mark Received
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
 export function LienWaiversPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
-  const [vendorFilter, setVendorFilter] = useState<string>('all')
+  const [jobFilter, setJobFilter] = useState<string>('all')
   const [drawFilter, setDrawFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
 
-  const vendors = [...new Set(mockLienWaivers.map(w => w.vendorName))]
+  const jobs = [...new Set(mockLienWaivers.map(w => w.jobName))]
   const draws = [...new Set(mockLienWaivers.map(w => w.drawNumber))].sort((a, b) => a - b)
 
   const filteredWaivers = sortItems(
     mockLienWaivers.filter(w => {
-      if (!matchesSearch(w, search, ['vendorName', 'jobName'])) return false
+      if (!matchesSearch(w, search, ['vendorName', 'jobName', 'invoiceNumber'])) return false
       if (activeTab !== 'all' && w.status !== activeTab) return false
-      if (vendorFilter !== 'all' && w.vendorName !== vendorFilter) return false
+      if (jobFilter !== 'all' && w.jobName !== jobFilter) return false
       if (drawFilter !== 'all' && w.drawNumber !== parseInt(drawFilter)) return false
+      if (typeFilter !== 'all' && w.waiverType !== typeFilter) return false
       return true
     }),
     activeSort as keyof LienWaiver | '',
@@ -272,14 +553,14 @@ export function LienWaiversPreview() {
   )
 
   // Calculate quick stats
-  const receivedCount = mockLienWaivers.filter(w => w.status === 'received').length
-  const receivedAmount = mockLienWaivers
-    .filter(w => w.status === 'received')
+  const approvedCount = mockLienWaivers.filter(w => w.status === 'approved').length
+  const approvedAmount = mockLienWaivers
+    .filter(w => w.status === 'approved')
     .reduce((sum, w) => sum + w.amount, 0)
 
-  const pendingCount = mockLienWaivers.filter(w => w.status === 'pending' || w.status === 'requested').length
+  const pendingCount = mockLienWaivers.filter(w => ['draft', 'requested', 'submitted'].includes(w.status)).length
   const pendingAmount = mockLienWaivers
-    .filter(w => w.status === 'pending' || w.status === 'requested')
+    .filter(w => ['draft', 'requested', 'submitted'].includes(w.status))
     .reduce((sum, w) => sum + w.amount, 0)
 
   const missingCount = mockLienWaivers.filter(w => w.status === 'missing').length
@@ -287,9 +568,13 @@ export function LienWaiversPreview() {
     .filter(w => w.status === 'missing')
     .reduce((sum, w) => sum + w.amount, 0)
 
+  const paymentHoldCount = mockLienWaivers.filter(w => w.paymentHold).length
+  const highRiskCount = mockLienWaivers.filter(w => w.complianceRisk === 'high').length
+  const subTierCount = mockLienWaivers.filter(w => w.tier === 'sub_tier').length
+
   // Calculate collection progress
   const totalWaivers = mockLienWaivers.length
-  const collectionProgress = Math.round((receivedCount / totalWaivers) * 100)
+  const collectionProgress = Math.round((approvedCount / totalWaivers) * 100)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -300,12 +585,28 @@ export function LienWaiversPreview() {
             <div className="flex items-center gap-3">
               <h3 className="font-semibold text-gray-900">Lien Waivers</h3>
               <span className="text-sm text-gray-500">{mockLienWaivers.length} waivers | {formatCurrency(mockLienWaivers.reduce((sum, w) => sum + w.amount, 0))} total</span>
+              {highRiskCount > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium flex items-center gap-1">
+                  <Shield className="h-3 w-3" />
+                  {highRiskCount} high risk
+                </span>
+              )}
+              {subTierCount > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium flex items-center gap-1">
+                  <Layers className="h-3 w-3" />
+                  {subTierCount} sub-tier
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Download className="h-4 w-4" />
               Export
+            </button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Users className="h-4 w-4" />
+              Bulk Request
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               <Plus className="h-4 w-4" />
@@ -317,13 +618,13 @@ export function LienWaiversPreview() {
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
               <CheckCircle className="h-4 w-4" />
-              Received ({receivedCount})
+              Approved ({approvedCount})
             </div>
-            <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(receivedAmount)}</div>
+            <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(approvedAmount)}</div>
           </div>
           <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-blue-600 text-sm">
@@ -350,6 +651,40 @@ export function LienWaiversPreview() {
               {missingCount > 0 ? formatCurrency(missingAmount) : '$0'}
             </div>
           </div>
+          <div className={cn(
+            "rounded-lg p-3",
+            paymentHoldCount > 0 ? "bg-amber-50" : "bg-gray-50"
+          )}>
+            <div className={cn(
+              "flex items-center gap-2 text-sm",
+              paymentHoldCount > 0 ? "text-amber-600" : "text-gray-600"
+            )}>
+              <Ban className="h-4 w-4" />
+              Payment Holds
+            </div>
+            <div className={cn(
+              "text-xl font-bold mt-1",
+              paymentHoldCount > 0 ? "text-amber-700" : "text-gray-700"
+            )}>
+              {paymentHoldCount} invoice{paymentHoldCount !== 1 ? 's' : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enforcement Level Banner */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-gray-500">Enforcement:</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
+              Strict - Payments blocked without waiver
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-gray-500">State:</span>
+            <span className="text-xs text-gray-600">FL (Statutory forms required)</span>
+          </div>
         </div>
       </div>
 
@@ -358,12 +693,13 @@ export function LienWaiversPreview() {
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search waivers..."
+          searchPlaceholder="Search waivers, vendors, invoices..."
           tabs={[
             { key: 'all', label: 'All', count: mockLienWaivers.length },
-            { key: 'pending', label: 'Pending', count: mockLienWaivers.filter(w => w.status === 'pending').length },
+            { key: 'draft', label: 'Draft', count: mockLienWaivers.filter(w => w.status === 'draft').length },
             { key: 'requested', label: 'Requested', count: mockLienWaivers.filter(w => w.status === 'requested').length },
-            { key: 'received', label: 'Received', count: mockLienWaivers.filter(w => w.status === 'received').length },
+            { key: 'submitted', label: 'Submitted', count: mockLienWaivers.filter(w => w.status === 'submitted').length },
+            { key: 'approved', label: 'Approved', count: mockLienWaivers.filter(w => w.status === 'approved').length },
             { key: 'missing', label: 'Missing', count: mockLienWaivers.filter(w => w.status === 'missing').length },
           ]}
           activeTab={activeTab}
@@ -376,10 +712,21 @@ export function LienWaiversPreview() {
               onChange: setDrawFilter,
             },
             {
-              label: 'All Vendors',
-              value: vendorFilter,
-              options: vendors.map(v => ({ value: v, label: v })),
-              onChange: setVendorFilter,
+              label: 'All Jobs',
+              value: jobFilter,
+              options: jobs.map(j => ({ value: j, label: j })),
+              onChange: setJobFilter,
+            },
+            {
+              label: 'All Types',
+              value: typeFilter,
+              options: [
+                { value: 'conditional_progress', label: 'Conditional Progress' },
+                { value: 'unconditional_progress', label: 'Unconditional Progress' },
+                { value: 'conditional_final', label: 'Conditional Final' },
+                { value: 'unconditional_final', label: 'Unconditional Final' },
+              ],
+              onChange: setTypeFilter,
             },
           ]}
           sortOptions={[
@@ -387,6 +734,8 @@ export function LienWaiversPreview() {
             { value: 'amount', label: 'Amount' },
             { value: 'dateRequested', label: 'Date Requested' },
             { value: 'drawNumber', label: 'Draw #' },
+            { value: 'complianceRisk', label: 'Risk Level' },
+            { value: 'status', label: 'Status' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -398,7 +747,7 @@ export function LienWaiversPreview() {
       </div>
 
       {/* Waiver List */}
-      <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
+      <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
         {filteredWaivers.map(waiver => (
           <WaiverRow key={waiver.id} waiver={waiver} />
         ))}
@@ -431,6 +780,8 @@ export function LienWaiversPreview() {
                 <span className="flex items-center gap-1">
                   <AlertTriangle className="h-3.5 w-3.5 inline" />
                   {missingCount} missing waiver{missingCount > 1 ? 's' : ''} blocking draw releases.
+                  {highRiskCount > 0 && ` ${highRiskCount} at high compliance risk - escalate immediately.`}
+                  {' '}Lien filing deadlines approaching for 2 vendors.
                 </span>
               )}
               {missingCount === 0 && pendingCount > 0 && (

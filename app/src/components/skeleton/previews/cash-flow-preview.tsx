@@ -17,8 +17,13 @@ import {
   Clock,
   Download,
   RefreshCw,
+  Building2,
+  Sliders,
+  GitBranch,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FilterBar } from '@/components/skeleton/filter-bar'
+import { useFilterState } from '@/hooks/use-filter-state'
 
 interface CashFlowWeek {
   id: string
@@ -33,10 +38,11 @@ interface CashFlowWeek {
   confidence: number
   lowScenario: number
   highScenario: number
-  inflows: { source: string; amount: number; probability: number }[]
-  outflows: { vendor: string; amount: number; type: string }[]
+  inflows: { source: string; amount: number; probability: number; type: string }[]
+  outflows: { vendor: string; amount: number; type: string; lienWaiverStatus?: string }[]
   status: 'healthy' | 'warning' | 'danger'
   aiNote?: string
+  bankAccount?: string
 }
 
 const mockCashFlowWeeks: CashFlowWeek[] = [
@@ -54,14 +60,15 @@ const mockCashFlowWeeks: CashFlowWeek[] = [
     lowScenario: 865000,
     highScenario: 910000,
     status: 'healthy',
+    bankAccount: 'Operating',
     inflows: [
-      { source: 'Smith Residence - Draw #5', amount: 85000, probability: 95 },
-      { source: 'Miller Addition - Draw #2', amount: 40000, probability: 88 },
+      { source: 'Smith Residence - Draw #5', amount: 85000, probability: 95, type: 'draw' },
+      { source: 'Miller Addition - Draw #2', amount: 40000, probability: 88, type: 'draw' },
     ],
     outflows: [
       { vendor: 'Bi-weekly Payroll', amount: 42000, type: 'payroll' },
-      { vendor: 'ABC Lumber Supply', amount: 28500, type: 'material' },
-      { vendor: 'Jones Plumbing', amount: 18000, type: 'subcontractor' },
+      { vendor: 'ABC Lumber Supply', amount: 28500, type: 'material', lienWaiverStatus: 'pending' },
+      { vendor: 'Jones Plumbing', amount: 18000, type: 'subcontractor', lienWaiverStatus: 'received' },
     ],
   },
   {
@@ -78,13 +85,14 @@ const mockCashFlowWeeks: CashFlowWeek[] = [
     lowScenario: 820000,
     highScenario: 875000,
     status: 'healthy',
+    bankAccount: 'Operating',
     inflows: [
-      { source: 'Johnson Beach House - Draw #3', amount: 60000, probability: 80 },
+      { source: 'Johnson Beach House - Draw #3', amount: 60000, probability: 80, type: 'draw' },
     ],
     outflows: [
       { vendor: 'Bi-weekly Payroll', amount: 42000, type: 'payroll' },
-      { vendor: 'PGT Windows', amount: 34500, type: 'material' },
-      { vendor: 'Cool Air HVAC', amount: 18500, type: 'subcontractor' },
+      { vendor: 'PGT Windows', amount: 34500, type: 'material', lienWaiverStatus: 'pending' },
+      { vendor: 'Cool Air HVAC', amount: 18500, type: 'subcontractor', lienWaiverStatus: 'pending' },
     ],
   },
   {
@@ -101,15 +109,16 @@ const mockCashFlowWeeks: CashFlowWeek[] = [
     lowScenario: 684000,
     highScenario: 785000,
     status: 'warning',
+    bankAccount: 'Operating',
     aiNote: 'Large subcontractor payments due. Consider accelerating Draw #6 request or deferring ABC Lumber payment.',
     inflows: [
-      { source: 'Davis Coastal Home - Draw #8', amount: 45000, probability: 90 },
+      { source: 'Davis Coastal Home - Draw #8', amount: 45000, probability: 90, type: 'draw' },
     ],
     outflows: [
       { vendor: 'Bi-weekly Payroll', amount: 42000, type: 'payroll' },
-      { vendor: 'ABC Framing', amount: 52000, type: 'subcontractor' },
-      { vendor: 'Custom Cabinet Co', amount: 38000, type: 'material' },
-      { vendor: 'Smith Electric', amount: 24000, type: 'subcontractor' },
+      { vendor: 'ABC Framing', amount: 52000, type: 'subcontractor', lienWaiverStatus: 'pending' },
+      { vendor: 'Custom Cabinet Co', amount: 38000, type: 'material', lienWaiverStatus: 'not_required' },
+      { vendor: 'Smith Electric', amount: 24000, type: 'subcontractor', lienWaiverStatus: 'pending' },
     ],
   },
   {
@@ -126,13 +135,14 @@ const mockCashFlowWeeks: CashFlowWeek[] = [
     lowScenario: 795000,
     highScenario: 890000,
     status: 'healthy',
+    bankAccount: 'Operating',
     inflows: [
-      { source: 'Smith Residence - Draw #6', amount: 125000, probability: 75 },
-      { source: 'Wilson Custom - Draw #4', amount: 60000, probability: 85 },
+      { source: 'Smith Residence - Draw #6', amount: 125000, probability: 75, type: 'draw' },
+      { source: 'Wilson Custom - Draw #4', amount: 60000, probability: 85, type: 'draw' },
     ],
     outflows: [
       { vendor: 'Bi-weekly Payroll', amount: 42000, type: 'payroll' },
-      { vendor: 'Coastal Plumbing', amount: 18000, type: 'subcontractor' },
+      { vendor: 'Coastal Plumbing', amount: 18000, type: 'subcontractor', lienWaiverStatus: 'received' },
       { vendor: 'Misc Vendors', amount: 18000, type: 'material' },
     ],
   },
@@ -341,6 +351,12 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
                       <div className="flex items-center gap-2">
                         <span className="text-gray-700">{outflow.vendor}</span>
                         <span className="text-xs text-gray-400">{outflow.type}</span>
+                        {outflow.lienWaiverStatus === 'pending' && (
+                          <span className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Lien waiver pending</span>
+                        )}
+                        {outflow.lienWaiverStatus === 'received' && (
+                          <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded">Waiver received</span>
+                        )}
                       </div>
                       <span className="text-red-600 font-medium">{formatCurrency(outflow.amount)}</span>
                     </div>
@@ -363,6 +379,7 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
 
 export function CashFlowPreview() {
   const [expandedWeeks, setExpandedWeeks] = useState<Set<string>>(new Set(['3']))
+  const { search, setSearch, activeTab, setActiveTab } = useFilterState()
 
   const toggleWeek = (id: string) => {
     setExpandedWeeks(prev => {
@@ -382,6 +399,8 @@ export function CashFlowPreview() {
   const cashChangePercent = (cashChange / currentCash) * 100
   const lowestPoint = Math.min(...mockCashFlowWeeks.map(w => w.closingBalance))
   const weeksWithWarning = mockCashFlowWeeks.filter(w => w.status !== 'healthy').length
+  const totalInflows = mockCashFlowWeeks.reduce((s, w) => s + w.expectedInflows, 0)
+  const totalOutflows = mockCashFlowWeeks.reduce((s, w) => s + w.expectedOutflows, 0)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -404,6 +423,30 @@ export function CashFlowPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/* Time Horizon Selector (Gap #87) */}
+            <select className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600">
+              <option>30 Days</option>
+              <option>60 Days</option>
+              <option>90 Days</option>
+              <option>180 Days</option>
+              <option>Custom Range</option>
+            </select>
+            {/* Granularity Toggle */}
+            <select className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600">
+              <option>Weekly</option>
+              <option>Monthly</option>
+            </select>
+            {/* Bank Account Selector (Gap #435) */}
+            <select className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600">
+              <option>All Accounts</option>
+              <option>Operating Account</option>
+              <option>Trust Account</option>
+              <option>Payroll Account</option>
+            </select>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <GitBranch className="h-4 w-4" />
+              What-If
+            </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
               <RefreshCw className="h-4 w-4" />
               Refresh
@@ -416,15 +459,33 @@ export function CashFlowPreview() {
         </div>
       </div>
 
+      {/* Filter Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search inflows/outflows..."
+          tabs={[
+            { key: 'all', label: 'All' },
+            { key: 'inflows', label: 'Inflows Only' },
+            { key: 'outflows', label: 'Outflows Only' },
+            { key: 'warnings', label: 'Warnings', count: weeksWithWarning },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      </div>
+
       {/* Summary Cards */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-6 gap-4">
           <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-blue-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Current Cash
             </div>
             <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(currentCash)}</div>
+            <div className="text-xs text-gray-500 mt-0.5">Operating acct</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -441,8 +502,25 @@ export function CashFlowPreview() {
               "text-xl font-bold mt-1",
               cashChange >= 0 ? "text-green-700" : "text-red-700"
             )}>
-              {cashChange >= 0 ? '+' : ''}{formatCurrency(cashChange)} ({cashChangePercent.toFixed(1)}%)
+              {cashChange >= 0 ? '+' : ''}{formatCurrency(cashChange)}
             </div>
+            <div className="text-xs text-gray-500 mt-0.5">{cashChangePercent.toFixed(1)}%</div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-green-600 text-sm">
+              <ArrowUpRight className="h-4 w-4" />
+              Total Inflows
+            </div>
+            <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(totalInflows)}</div>
+            <div className="text-xs text-gray-500 mt-0.5">Draws + payments</div>
+          </div>
+          <div className="bg-red-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-red-600 text-sm">
+              <ArrowDownRight className="h-4 w-4" />
+              Total Outflows
+            </div>
+            <div className="text-xl font-bold text-red-700 mt-1">{formatCurrency(totalOutflows)}</div>
+            <div className="text-xs text-gray-500 mt-0.5">AP + payroll + subs</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-sm">
@@ -455,12 +533,12 @@ export function CashFlowPreview() {
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-purple-600 text-sm">
               <Target className="h-4 w-4" />
-              Target Cushion
+              Reserve Target
             </div>
             <div className="text-xl font-bold text-purple-700 mt-1">$100K</div>
             <div className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
               <CheckCircle className="h-3 w-3" />
-              All weeks above target
+              All weeks above
             </div>
           </div>
         </div>
@@ -498,6 +576,32 @@ export function CashFlowPreview() {
         </table>
       </div>
 
+      {/* Scenario Modeling Summary */}
+      <div className="bg-white border-t border-gray-200 px-4 py-3">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <GitBranch className="h-4 w-4 text-purple-500" />
+            <span className="font-medium text-gray-700">Scenario Modeling:</span>
+          </div>
+          <div className="flex items-center gap-6 text-gray-600">
+            <span>Best Case: <span className="font-semibold text-green-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].highScenario)}</span></span>
+            <span>Likely: <span className="font-semibold text-blue-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].closingBalance)}</span></span>
+            <span>Worst Case: <span className="font-semibold text-red-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].lowScenario)}</span></span>
+            <button className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1">
+              Run What-If <ChevronRight className="h-3 w-3" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Historical Accuracy */}
+      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>Forecast accuracy (last 12 weeks): <span className="font-semibold text-gray-700">87%</span> within projected range</span>
+          <span>Seasonal pattern: Collections slow 15% in Q1 historically</span>
+        </div>
+      </div>
+
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
@@ -505,11 +609,17 @@ export function CashFlowPreview() {
             <Sparkles className="h-4 w-4 text-amber-600" />
             <span className="font-medium text-sm text-amber-800">Cash Flow Optimization:</span>
           </div>
-          <p className="text-sm text-amber-700">
-            Week 3 shows increased outflows due to multiple subcontractor payments. Recommendation: Request Smith Residence Draw #6
-            by Feb 20 (1 week early) to avoid lowest cash position. Based on client history, Smith typically pays within 5 days of draw
-            approval. This would improve Week 3 closing balance by approximately $125K.
-          </p>
+          <div className="text-sm text-amber-700 space-y-1">
+            <p>
+              Week 3 shows increased outflows due to multiple subcontractor payments. Recommendation: Request Smith Residence Draw #6
+              by Feb 20 (1 week early) to avoid lowest cash position. Based on client history, Smith typically pays within 5 days of draw
+              approval. This would improve Week 3 closing balance by approximately $125K.
+            </p>
+            <p>
+              Shifting ABC Framing and Smith Electric payments from Week 3 to Week 4 would improve Week 3 balance by $76K with no
+              late fee impact (both have Net 45 terms). 3 lien waivers pending collection before payments can be released.
+            </p>
+          </div>
         </div>
       </div>
     </div>

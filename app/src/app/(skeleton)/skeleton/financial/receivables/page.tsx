@@ -27,60 +27,82 @@ export default function AccountsReceivablePage() {
       description="Track all money owed to you by clients. View outstanding draws by job and client, aging analysis, collection status, and payment history. Prioritize collection efforts and maintain healthy cash flow."
       workflow={receivablesWorkflow}
       features={[
-        'AR summary by client',
-        'AR summary by job',
-        'Aging buckets (current, 30, 60, 90+)',
-        'Outstanding draw details',
-        'Payment history',
-        'Collection status tracking',
-        'Automated payment reminders',
-        'Manual follow-up logging',
-        'Payment links',
-        'Partial payment tracking',
-        'Write-off management',
-        'DSO (Days Sales Outstanding) tracking',
-        'Export for accounting',
-        'Lien rights tracking',
+        'AR summary by client and by job with drill-down',
+        'Aging buckets with visual bar (current, 1-30, 31-60, 61-90, 90+)',
+        'Outstanding draw details with draw number reference',
+        'Client payment history tracking (good/slow/poor)',
+        'Collection status workflow (none > reminder > called > escalated > lien notice)',
+        'Automated payment reminders with escalation rules',
+        'Manual follow-up logging (calls, emails)',
+        'Payment links with view tracking',
+        'Partial payment tracking with progress bar',
+        'Retainage receivable as separate line with release dates',
+        'Lien waiver status tracking per receivable (not_required/pending/received)',
+        'AI collection probability scoring per receivable',
+        'DSO (Days Sales Outstanding) tracking with industry benchmark',
+        'Write-off management with approval workflow',
+        'Lien rights tracking with deadline alerts',
+        'Preferred payment method display per client',
+        'Sort by collection probability, retainage, amount, days outstanding',
+        'Export for accounting (PDF, Excel)',
       ]}
       connections={[
-        { name: 'Draws', type: 'input', description: 'Outstanding draws' },
-        { name: 'Clients', type: 'input', description: 'Client payment history' },
-        { name: 'Jobs', type: 'input', description: 'Job-level AR' },
-        { name: 'Payments', type: 'input', description: 'Payments received' },
-        { name: 'Financial Dashboard', type: 'output', description: 'Summary metrics' },
-        { name: 'QuickBooks', type: 'bidirectional', description: 'Sync receivables' },
+        { name: 'Draws', type: 'input', description: 'Outstanding draws with amounts' },
+        { name: 'Clients', type: 'input', description: 'Client payment history and preferences' },
+        { name: 'Jobs', type: 'input', description: 'Job-level AR breakdown' },
+        { name: 'Payments', type: 'input', description: 'Payments received and partial payments' },
+        { name: 'Lien Waivers', type: 'input', description: 'Waiver status affecting collections' },
+        { name: 'Cash Flow', type: 'output', description: 'Expected inflow projections' },
+        { name: 'Financial Dashboard', type: 'output', description: 'Summary AR metrics and DSO' },
+        { name: 'QuickBooks', type: 'bidirectional', description: 'Sync receivables and payments' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
         { name: 'client_id', type: 'uuid', required: true, description: 'Client' },
         { name: 'job_id', type: 'uuid', required: true, description: 'Job' },
         { name: 'draw_id', type: 'uuid', required: true, description: 'Source draw' },
-        { name: 'invoice_number', type: 'string', description: 'Invoice number' },
+        { name: 'invoice_number', type: 'string', description: 'Invoice/draw number' },
         { name: 'amount', type: 'decimal', required: true, description: 'Amount due' },
-        { name: 'amount_paid', type: 'decimal', description: 'Amount received' },
-        { name: 'balance', type: 'decimal', description: 'Remaining balance' },
+        { name: 'amount_paid', type: 'decimal', description: 'Amount received so far' },
+        { name: 'balance', type: 'decimal', description: 'Remaining balance (amount - paid)' },
+        { name: 'retainage_amount', type: 'decimal', description: 'Retainage held on this draw' },
+        { name: 'retainage_release_date', type: 'date', description: 'Expected retainage release' },
         { name: 'due_date', type: 'date', required: true, description: 'Payment due date' },
         { name: 'days_outstanding', type: 'integer', description: 'Days since due' },
-        { name: 'status', type: 'string', required: true, description: 'Current, 30 day, 60 day, 90+, Paid, Written Off' },
-        { name: 'collection_status', type: 'string', description: 'No action, Reminder sent, Called, Escalated' },
+        { name: 'aging_bucket', type: 'string', required: true, description: 'current | 1-30 | 31-60 | 61-90 | 90+' },
+        { name: 'collection_status', type: 'string', description: 'none | reminder_sent | called | escalated | lien_notice' },
+        { name: 'payment_history', type: 'string', description: 'good | slow | poor' },
+        { name: 'payment_method', type: 'string', description: 'Preferred payment method' },
+        { name: 'lien_waiver_status', type: 'string', description: 'not_required | pending | received' },
+        { name: 'ai_collection_probability', type: 'decimal', description: 'AI-predicted collection likelihood (0-100)' },
         { name: 'last_contact', type: 'date', description: 'Last collection contact' },
         { name: 'notes', type: 'text', description: 'Collection notes' },
       ]}
       aiFeatures={[
         {
-          name: 'Collection Priority',
-          description: 'Ranks receivables for collection focus. "Priority: Smith $185K (5 days over, usually pays quick) vs Johnson $45K (30 days, slow payer)."',
+          name: 'Collection Priority Ranking',
+          description: 'Ranks receivables with probability scoring. "Priority: Smith $185K (92% likely, 5 days over) vs Wilson $60K (45% likely, 38 days, lien notice sent)."',
           trigger: 'Daily ranking'
         },
         {
           name: 'Payment Prediction',
-          description: 'Predicts when payment will arrive. "Based on client history, Smith typically pays within 7 days of reminder. Expected: Feb 5."',
+          description: 'Predicts when payment will arrive based on client history. "Smith typically pays within 7 days of reminder. Expected: Feb 14."',
           trigger: 'On overdue'
         },
         {
           name: 'Escalation Recommendations',
-          description: 'Suggests escalation actions. "Johnson 60 days overdue. Historical: paid after lien notice. Consider escalation."',
-          trigger: 'At thresholds'
+          description: 'Suggests escalation actions based on history. "Johnson 60 days overdue. Historical: paid after lien notice. Recommend escalation."',
+          trigger: 'At configurable thresholds'
+        },
+        {
+          name: 'Lien Waiver Impact',
+          description: 'Flags collections blocked by missing lien waivers. "Miller Addition $42K - payment may be delayed until lien waiver is provided."',
+          trigger: 'On collection attempt'
+        },
+        {
+          name: 'DSO Trend Analysis',
+          description: 'Tracks collection efficiency over time. "DSO improved from 32 to 28 days this quarter. Collection rate: 94% above 90% target."',
+          trigger: 'Weekly analysis'
         },
       ]}
       mockupAscii={`

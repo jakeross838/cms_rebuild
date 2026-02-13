@@ -50,59 +50,86 @@ export default function JobLienWaiversPage() {
           description="Track lien waivers from all vendors and subcontractors for this job. Ensure waivers are collected before payments and maintain proper documentation for project closeout and title insurance."
           workflow={['Payment Due', 'Request Waiver', 'Waiver Received', 'Verify', 'Approve Payment']}
           features={[
-            'Waiver tracking by vendor',
-            'Conditional vs unconditional',
-            'Progress vs final waivers',
-            'Auto-request on payment',
-            'Template management',
-            'E-signature support',
-            'Payment linkage',
-            'Draw requirements',
-            'Compliance dashboard',
-            'Missing waiver alerts',
-            'Document storage',
-            'Title company requirements',
-            'Bulk waiver requests',
-            'Waiver history',
+            'Waiver tracking by vendor with status pipeline',
+            '4-type waiver matrix (conditional/unconditional x progress/final)',
+            'State-specific statutory form library (all 50 states)',
+            'Auto-request on invoice approval or payment',
+            'Template management with versioning',
+            'E-signature, wet signature, and notarization support',
+            'Payment hold enforcement (strict/warn/none)',
+            'Draw package waiver checklist',
+            'Compliance risk scoring per vendor per project',
+            'Missing waiver alerts with escalation',
+            'Multi-tier waiver tracking (prime and sub-tier)',
+            'Preliminary notice tracking with deadlines',
+            'Mechanics lien deadline calendar',
+            'Vendor portal for waiver submission',
+            'Bulk waiver request for draw packages',
+            'Reminder schedule with auto-escalation',
+            'Signed document storage and viewer',
+            'Submission method tracking (portal, email, manual)',
           ]}
           connections={[
-            { name: 'Invoices', type: 'bidirectional', description: 'Payment hold' },
-            { name: 'Accounts Payable', type: 'bidirectional', description: 'Block without waiver' },
-            { name: 'Vendors', type: 'input', description: 'Vendor contacts' },
-            { name: 'Draws', type: 'input', description: 'Draw requirements' },
-            { name: 'Document Storage', type: 'output', description: 'Store waivers' },
+            { name: 'Invoices', type: 'bidirectional', description: 'Payment hold enforcement per waiver status' },
+            { name: 'Accounts Payable', type: 'bidirectional', description: 'Block payment without waiver (configurable)' },
+            { name: 'Vendors', type: 'input', description: 'Vendor contacts for waiver requests' },
+            { name: 'Draws', type: 'bidirectional', description: 'Draw package waiver completeness check' },
+            { name: 'Document Storage', type: 'output', description: 'Signed waiver file storage' },
+            { name: 'Vendor Portal', type: 'output', description: 'Vendor self-service waiver submission' },
+            { name: 'E-Signature', type: 'bidirectional', description: 'Electronic signature workflow' },
+            { name: 'Contracts', type: 'input', description: 'Contract closeout waiver requirements' },
           ]}
           dataFields={[
             { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
             { name: 'job_id', type: 'uuid', required: true, description: 'This job' },
             { name: 'vendor_id', type: 'uuid', required: true, description: 'Vendor' },
-            { name: 'waiver_type', type: 'string', required: true, description: 'Conditional, Unconditional' },
-            { name: 'payment_type', type: 'string', description: 'Progress, Final' },
+            { name: 'waiver_type', type: 'string', required: true, description: 'conditional_progress, unconditional_progress, conditional_final, unconditional_final' },
             { name: 'through_date', type: 'date', description: 'Work through date' },
             { name: 'amount', type: 'decimal', description: 'Amount covered' },
             { name: 'invoice_id', type: 'uuid', description: 'Related invoice' },
-            { name: 'requested_date', type: 'date', description: 'When requested' },
-            { name: 'received_date', type: 'date', description: 'When received' },
-            { name: 'status', type: 'string', required: true, description: 'Pending, Received, Verified' },
-            { name: 'document_url', type: 'string', description: 'Signed waiver' },
-            { name: 'signed_by', type: 'string', description: 'Signatory name' },
-            { name: 'notes', type: 'text', description: 'Notes' },
+            { name: 'payment_id', type: 'uuid', description: 'Related payment' },
+            { name: 'template_id', type: 'uuid', description: 'State-specific form template' },
+            { name: 'status', type: 'string', required: true, description: 'draft, requested, submitted, approved, rejected, void' },
+            { name: 'request_sent_at', type: 'timestamp', description: 'When request sent' },
+            { name: 'request_channel', type: 'string', description: 'email, portal, sms' },
+            { name: 'submitted_at', type: 'timestamp', description: 'When vendor submitted' },
+            { name: 'approved_at', type: 'timestamp', description: 'When approved' },
+            { name: 'signature_type', type: 'string', description: 'electronic, wet, notarized' },
+            { name: 'signed_document_url', type: 'string', description: 'Signed waiver document' },
+            { name: 'reminders_sent', type: 'integer', description: 'Number of reminders' },
+            { name: 'next_reminder_at', type: 'timestamp', description: 'Next reminder scheduled' },
+            { name: 'tier', type: 'string', description: 'prime, sub_tier' },
+            { name: 'parent_vendor_id', type: 'uuid', description: 'Prime vendor if sub_tier' },
+            { name: 'state_code', type: 'string', description: 'State for statutory form selection' },
+            { name: 'compliance_risk', type: 'string', description: 'low, medium, high' },
+            { name: 'payment_hold', type: 'boolean', description: 'Payment blocked until received' },
+            { name: 'submission_method', type: 'string', description: 'portal, email, manual' },
           ]}
           aiFeatures={[
             {
               name: 'Auto-Request',
-              description: 'Sends waiver requests. "Invoice approved for ABC Lumber. Conditional lien waiver request sent automatically."',
-              trigger: 'On invoice approval'
+              description: 'Sends waiver requests on triggers. "Invoice approved for ABC Lumber. Conditional progress waiver request sent via portal."',
+              trigger: 'On invoice approval or payment'
             },
             {
               name: 'Compliance Check',
-              description: 'Validates completeness. "Draw #5 requires waivers from 8 vendors. Received: 6. Missing: ABC Electric, XYZ Plumbing."',
+              description: 'Validates completeness for draws. "Draw #5 requires waivers from 8 vendors (including 2 sub-tier). Received: 6. Missing: ABC Electric, XYZ Plumbing."',
               trigger: 'Before draw submission'
             },
             {
-              name: 'Payment Block',
-              description: 'Prevents premature payment. "Cannot process payment to ABC Electric. Conditional waiver not received."',
+              name: 'Payment Hold Enforcement',
+              description: 'Blocks payment per enforcement level. "Strict mode: Cannot process payment to Smith Electric. Conditional waiver not received. Lien deadline in 45 days."',
               trigger: 'On payment attempt'
+            },
+            {
+              name: 'Lien Waiver AI Extraction',
+              description: 'Extracts waiver details from uploaded documents. Detects type, vendor, amount, through-date, and signature presence with confidence scoring.',
+              trigger: 'On document upload'
+            },
+            {
+              name: 'Deadline Monitoring',
+              description: 'Tracks mechanics lien filing deadlines. "Coastal Concrete lien deadline in 30 days. Final waiver required for project closeout."',
+              trigger: 'Continuous monitoring'
             },
           ]}
           mockupAscii={`

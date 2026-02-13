@@ -29,28 +29,38 @@ export default function PaymentsSkeleton() {
       description="Online payment processing for draw requests and invoices via Stripe integration. Generate payment links, track payment status, process credit cards and ACH transfers, and automatically reconcile with draws and budgets."
       workflow={constructionWorkflow}
       features={[
-        'Payment list with status tracking',
-        'Generate payment links for draws',
-        'Credit card processing via Stripe',
-        'ACH bank transfer support',
-        'Partial payment tracking',
-        'Payment reminders (automated)',
+        'Payment list with full status tracking (pending/processing/completed/failed/refunded/partial)',
+        'Generate payment links for draws with expiration dates',
+        'Client name display alongside job and draw reference',
+        'Credit card processing via Stripe (2.9% + $0.30)',
+        'ACH bank transfer support ($15 flat fee)',
+        'Wire transfer support ($25 flat fee)',
+        'Check payment recording',
+        'Partial payment tracking with progress bar and remaining balance',
+        'Payment reminders (automated with escalation)',
         'Late payment notifications',
-        'Payment receipt generation',
+        'Payment receipt generation with download link',
         'Automatic draw status update on payment',
-        'Payment history by client',
-        'Refund processing',
+        'Payment history by client with method preferences',
+        'Refund processing with reason tracking',
         'Payment plan setup for large amounts',
         'Processing fee options (absorb or pass-through)',
-        'Export for accounting reconciliation',
+        'QuickBooks sync status per payment with unsync alert',
+        'Link view tracking (sent/viewed/expires)',
+        'Failed payment retry and new link generation',
+        'Fee comparison summary (ACH vs card savings)',
+        'Sort by job, client, amount, draw number, status',
+        'Export for accounting reconciliation (PDF, Excel)',
         'Mobile-friendly payment page',
       ]}
       connections={[
         { name: 'Draws', type: 'bidirectional', description: 'Payments applied to draws' },
         { name: 'Client Portal', type: 'output', description: 'Payment links in portal' },
-        { name: 'Clients', type: 'input', description: 'Payment info linked to client' },
-        { name: 'QuickBooks', type: 'output', description: 'Payment sync to accounting' },
-        { name: 'Email', type: 'output', description: 'Payment receipts and reminders' },
+        { name: 'Clients', type: 'input', description: 'Payment info and history linked to client' },
+        { name: 'Accounts Receivable', type: 'output', description: 'Payments reduce AR balance' },
+        { name: 'Cash Flow', type: 'output', description: 'Payments update cash projections' },
+        { name: 'QuickBooks', type: 'bidirectional', description: 'Payment sync to accounting' },
+        { name: 'Email', type: 'output', description: 'Payment receipts, reminders, and failure alerts' },
         { name: 'Budget', type: 'output', description: 'Payments update cash received' },
       ]}
       dataFields={[
@@ -59,38 +69,47 @@ export default function PaymentsSkeleton() {
         { name: 'client_id', type: 'uuid', required: true, description: 'FK to clients' },
         { name: 'job_id', type: 'uuid', required: true, description: 'FK to jobs' },
         { name: 'amount', type: 'decimal', required: true, description: 'Payment amount' },
+        { name: 'partial_amount', type: 'decimal', description: 'Amount received so far (for partial payments)' },
         { name: 'processing_fee', type: 'decimal', description: 'Processing fee amount' },
         { name: 'net_amount', type: 'decimal', description: 'Net amount after fees' },
-        { name: 'method', type: 'string', required: true, description: 'Credit Card, ACH, Check, Wire' },
-        { name: 'status', type: 'string', required: true, description: 'Pending, Processing, Completed, Failed, Refunded' },
+        { name: 'method', type: 'string', required: true, description: 'ACH | Credit Card | Wire | Check' },
+        { name: 'status', type: 'string', required: true, description: 'pending | processing | completed | failed | refunded | partial' },
         { name: 'stripe_payment_id', type: 'string', description: 'Stripe payment intent ID' },
         { name: 'payment_link', type: 'string', description: 'Payment URL' },
-        { name: 'link_expires_at', type: 'timestamp', description: 'Link expiration' },
+        { name: 'link_expires_at', type: 'timestamp', description: 'Link expiration date' },
+        { name: 'link_viewed_at', type: 'timestamp', description: 'When client viewed the link' },
         { name: 'paid_at', type: 'timestamp', description: 'When payment completed' },
-        { name: 'receipt_url', type: 'string', description: 'Receipt URL' },
+        { name: 'receipt_url', type: 'string', description: 'Receipt download URL' },
+        { name: 'refund_amount', type: 'decimal', description: 'Amount refunded' },
+        { name: 'refund_reason', type: 'text', description: 'Reason for refund' },
         { name: 'notes', type: 'text', description: 'Payment notes' },
         { name: 'qb_synced', type: 'boolean', description: 'Synced to QuickBooks' },
       ]}
       aiFeatures={[
         {
           name: 'Payment Prediction',
-          description: 'Predicts payment timing based on client history: "Client typically pays within 5 days of draw approval. Expected payment date: Feb 5."',
+          description: 'Predicts payment timing based on client history: "Smith typically pays within 5 days of draw approval. Expected: Feb 5."',
           trigger: 'On draw approval'
         },
         {
           name: 'Late Payment Risk',
-          description: 'Identifies potential late payments: "Draw #5 approved 10 days ago, client average is 5 days. Sending reminder recommended."',
+          description: 'Identifies potential late payments: "Draw #5 approved 10 days ago, client average is 5 days. Recommend sending reminder."',
           trigger: 'Based on client patterns'
         },
         {
           name: 'Fee Optimization',
-          description: 'Suggests payment method to minimize fees: "For $185K draw: ACH fee $15 vs Credit Card fee $5,365. Recommend ACH with 2-day processing."',
+          description: 'Suggests payment method to minimize fees: "For $185K draw: ACH fee $15 vs Credit Card fee $5,365. Recommend ACH."',
           trigger: 'On payment link generation'
         },
         {
           name: 'Cash Flow Integration',
-          description: 'Updates cash flow projections: "Payment received. Updated cash flow: Next 30 days positive. Vendor payments covered."',
+          description: 'Updates cash flow projections: "Payment received. Next 30 days positive. Vendor payments covered."',
           trigger: 'On payment completion'
+        },
+        {
+          name: 'Failed Payment Recovery',
+          description: 'Suggests recovery actions for failed payments: "Thompson payment declined. Card may be expired. Recommend sending new link with ACH option."',
+          trigger: 'On payment failure'
         },
       ]}
       mockupAscii={`

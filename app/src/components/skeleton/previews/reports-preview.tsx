@@ -18,23 +18,34 @@ import {
   CheckCircle,
   Plus,
   History,
+  Eye,
+  Lock,
+  Users,
+  Palette,
+  Globe,
+  Shield,
+  Building2,
+  BookCheck,
+  Timer,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
-type ReportType = 'wip' | 'job_cost_summary' | 'job_cost_detail' | 'ap_aging' | 'ar_aging' | 'income_statement' | 'cash_flow'
+type ReportCategory = 'financial' | 'operations' | 'tax' | 'client_facing' | 'company_wide' | 'custom'
 
 interface Report {
   id: string
-  type: ReportType
   name: string
   description: string
   lastRun?: string
-  scheduledRecurrence?: string
-  scheduledRecipients?: string[]
-  category: 'standard' | 'custom'
+  category: ReportCategory
   icon: typeof FileText
+  audience: 'internal' | 'client' | 'bank' | 'both'
+  accessRoles?: string[]
+  aiNarrativeAvailable?: boolean
+  dataFreshness?: string
+  isLocked?: boolean
 }
 
 interface ScheduledReport {
@@ -43,6 +54,10 @@ interface ScheduledReport {
   frequency: string
   nextRun: string
   recipients: string[]
+  format: 'pdf' | 'excel' | 'both'
+  conditionalRule?: string
+  isActive: boolean
+  lastDeliveryOpened?: boolean
 }
 
 interface RecentReport {
@@ -50,75 +65,226 @@ interface RecentReport {
   reportName: string
   generatedAt: string
   generatedBy: string
-  format: 'pdf' | 'excel'
+  format: 'pdf' | 'excel' | 'csv' | 'word'
   highlights?: string[]
+  audience: 'internal' | 'client' | 'bank'
+  aiNarrative?: boolean
 }
 
 const standardReports: Report[] = [
+  // Financial Reports
   {
     id: '1',
-    type: 'wip',
     name: 'Work in Progress (WIP)',
-    description: 'Over/under billing analysis for all active jobs',
+    description: 'Over/under billing analysis for all active jobs (cost-to-cost method)',
     lastRun: '2026-02-10',
-    category: 'standard',
+    category: 'financial',
     icon: BarChart3,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin', 'office'],
+    aiNarrativeAvailable: true,
+    dataFreshness: 'Feb 10, 3:45 PM',
+    isLocked: true,
   },
   {
     id: '2',
-    type: 'job_cost_summary',
     name: 'Job Cost Summary',
-    description: 'Budget vs actual for all jobs',
+    description: 'Budget vs actual with variance analysis for all jobs',
     lastRun: '2026-02-08',
-    category: 'standard',
+    category: 'financial',
     icon: DollarSign,
+    audience: 'internal',
+    aiNarrativeAvailable: true,
+    dataFreshness: 'Feb 8, 2:30 PM',
   },
   {
     id: '3',
-    type: 'job_cost_detail',
     name: 'Job Cost Detail',
-    description: 'Detailed cost breakdown by job and cost code',
+    description: 'Detailed cost breakdown by job and cost code with committed costs',
     lastRun: '2026-02-05',
-    category: 'standard',
+    category: 'financial',
     icon: FileText,
+    audience: 'internal',
+    dataFreshness: 'Feb 5, 10:15 AM',
   },
   {
     id: '4',
-    type: 'ap_aging',
     name: 'AP Aging Report',
-    description: 'Outstanding payables by aging bucket',
+    description: 'Outstanding payables by aging bucket with early payment discounts',
     lastRun: '2026-02-12',
-    category: 'standard',
+    category: 'financial',
     icon: TrendingUp,
+    audience: 'internal',
+    dataFreshness: 'Feb 12, 9:15 AM',
   },
   {
     id: '5',
-    type: 'ar_aging',
     name: 'AR Aging Report',
-    description: 'Outstanding receivables by aging bucket',
+    description: 'Outstanding receivables by aging bucket with collection status',
     lastRun: '2026-02-12',
-    category: 'standard',
+    category: 'financial',
     icon: PieChart,
+    audience: 'internal',
+    dataFreshness: 'Feb 12, 9:15 AM',
   },
   {
     id: '6',
-    type: 'income_statement',
     name: 'Income Statement',
-    description: 'Revenue, expenses, and net income summary',
+    description: 'Revenue, expenses, and net income summary with period comparison',
     lastRun: '2026-01-31',
-    category: 'standard',
+    category: 'financial',
     icon: BarChart3,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin'],
+    aiNarrativeAvailable: true,
+    isLocked: true,
   },
   {
     id: '7',
-    type: 'cash_flow',
-    name: 'Cash Flow Statement',
-    description: 'Cash inflows and outflows by period',
+    name: 'Cash Flow Forecast',
+    description: 'Cash inflows/outflows by period with scenario modeling',
     lastRun: '2026-02-01',
-    category: 'standard',
+    category: 'financial',
     icon: TrendingUp,
+    audience: 'internal',
+    aiNarrativeAvailable: true,
+  },
+  {
+    id: '8',
+    name: 'Profit Margin by Project',
+    description: 'Portfolio profitability with gross/net margin and overhead allocation',
+    lastRun: '2026-02-08',
+    category: 'financial',
+    icon: DollarSign,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin', 'pm'],
+    aiNarrativeAvailable: true,
+  },
+  {
+    id: '9',
+    name: 'Vendor Payment Summary',
+    description: 'Payment history by vendor with 1099 eligibility flag',
+    lastRun: '2026-02-10',
+    category: 'financial',
+    icon: FileText,
+    audience: 'internal',
+  },
+  {
+    id: '10',
+    name: 'Retainage Report',
+    description: 'Retainage held and payable with release date tracking',
+    lastRun: '2026-02-05',
+    category: 'financial',
+    icon: DollarSign,
+    audience: 'internal',
+  },
+  // Tax & Accounting Reports
+  {
+    id: '11',
+    name: '1099 Preparation',
+    description: 'Vendor payments above IRS threshold with W-9 status flags',
+    lastRun: '2026-01-15',
+    category: 'tax',
+    icon: FileText,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin', 'office'],
+  },
+  {
+    id: '12',
+    name: 'Sales Tax Report',
+    description: 'Sales tax collected and remitted by jurisdiction',
+    category: 'tax',
+    icon: DollarSign,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin', 'office'],
+  },
+  {
+    id: '13',
+    name: 'Insurance Audit Data',
+    description: 'Payroll by class code, subcontractor spend by trade for audit',
+    category: 'tax',
+    icon: Shield,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin'],
+  },
+  // Client-Facing Reports
+  {
+    id: '14',
+    name: 'Owner Budget Report',
+    description: 'Client-friendly budget status without internal cost detail',
+    lastRun: '2026-02-10',
+    category: 'client_facing',
+    icon: Building2,
+    audience: 'client',
+    aiNarrativeAvailable: true,
+  },
+  {
+    id: '15',
+    name: 'Monthly Project Update',
+    description: 'Progress photos, schedule status, and financial summary for clients',
+    lastRun: '2026-02-01',
+    category: 'client_facing',
+    icon: Calendar,
+    audience: 'client',
+    aiNarrativeAvailable: true,
+  },
+  {
+    id: '16',
+    name: 'Draw Request (AIA G702/G703)',
+    description: 'AIA-format Application and Certificate for Payment',
+    lastRun: '2026-02-05',
+    category: 'client_facing',
+    icon: FileText,
+    audience: 'bank',
+  },
+  // Company-Wide Reports
+  {
+    id: '17',
+    name: 'Business Performance Review',
+    description: 'Year-over-year comparison with KPI scorecard and trend analysis',
+    category: 'company_wide',
+    icon: BarChart3,
+    audience: 'internal',
+    accessRoles: ['owner'],
+    aiNarrativeAvailable: true,
+  },
+  {
+    id: '18',
+    name: 'Cross-Project Benchmarking',
+    description: 'Compare cost/SF, margin %, CO rate across projects',
+    lastRun: '2026-02-01',
+    category: 'company_wide',
+    icon: PieChart,
+    audience: 'internal',
+    accessRoles: ['owner', 'admin'],
+    aiNarrativeAvailable: true,
+  },
+  {
+    id: '19',
+    name: 'PM Profitability Ranking',
+    description: 'Projects managed, average margin, budget accuracy by PM',
+    category: 'company_wide',
+    icon: Users,
+    audience: 'internal',
+    accessRoles: ['owner'],
   },
 ]
+
+const reportCategoryConfig: Record<ReportCategory, { label: string; color: string }> = {
+  financial: { label: 'Financial', color: 'bg-blue-100 text-blue-700' },
+  operations: { label: 'Operations', color: 'bg-green-100 text-green-700' },
+  tax: { label: 'Tax & Accounting', color: 'bg-purple-100 text-purple-700' },
+  client_facing: { label: 'Client-Facing', color: 'bg-orange-100 text-orange-700' },
+  company_wide: { label: 'Company-Wide', color: 'bg-indigo-100 text-indigo-700' },
+  custom: { label: 'Custom', color: 'bg-gray-100 text-gray-700' },
+}
+
+const audienceConfig: Record<string, { label: string; icon: typeof Eye }> = {
+  internal: { label: 'Internal', icon: Eye },
+  client: { label: 'Client', icon: Building2 },
+  bank: { label: 'Bank/Lender', icon: BookCheck },
+  both: { label: 'All Audiences', icon: Globe },
+}
 
 const scheduledReports: ScheduledReport[] = [
   {
@@ -127,13 +293,19 @@ const scheduledReports: ScheduledReport[] = [
     frequency: 'Monthly (1st)',
     nextRun: 'Mar 1, 2026',
     recipients: ['jake@rossbuilt.com'],
+    format: 'both',
+    isActive: true,
+    lastDeliveryOpened: true,
   },
   {
     id: '2',
-    reportName: 'Cash Flow',
+    reportName: 'Cash Flow Forecast',
     frequency: 'Weekly (Mon)',
     nextRun: 'Feb 17, 2026',
     recipients: ['accounting@rossbuilt.com'],
+    format: 'pdf',
+    isActive: true,
+    lastDeliveryOpened: true,
   },
   {
     id: '3',
@@ -141,6 +313,9 @@ const scheduledReports: ScheduledReport[] = [
     frequency: 'Monthly (15th)',
     nextRun: 'Feb 15, 2026',
     recipients: ['ops@rossbuilt.com', 'jake@rossbuilt.com'],
+    format: 'excel',
+    isActive: true,
+    lastDeliveryOpened: false,
   },
   {
     id: '4',
@@ -148,6 +323,30 @@ const scheduledReports: ScheduledReport[] = [
     frequency: 'Weekly (Fri)',
     nextRun: 'Feb 14, 2026',
     recipients: ['accounting@rossbuilt.com'],
+    format: 'pdf',
+    isActive: true,
+    lastDeliveryOpened: true,
+  },
+  {
+    id: '5',
+    reportName: 'Budget Alert',
+    frequency: 'Daily',
+    nextRun: 'Feb 13, 2026',
+    recipients: ['jake@rossbuilt.com'],
+    format: 'pdf',
+    conditionalRule: 'Only if any cost code > 90% of budget',
+    isActive: true,
+    lastDeliveryOpened: true,
+  },
+  {
+    id: '6',
+    reportName: 'Monthly Client Update',
+    frequency: 'Monthly (last day)',
+    nextRun: 'Feb 28, 2026',
+    recipients: ['clients@rossbuilt.com'],
+    format: 'pdf',
+    isActive: false,
+    lastDeliveryOpened: undefined,
   },
 ]
 
@@ -159,6 +358,8 @@ const recentReports: RecentReport[] = [
     generatedBy: 'System (Scheduled)',
     format: 'pdf',
     highlights: ['$165K due this week', '2 invoices need lien waivers'],
+    audience: 'internal',
+    aiNarrative: false,
   },
   {
     id: '2',
@@ -167,6 +368,8 @@ const recentReports: RecentReport[] = [
     generatedBy: 'System (Scheduled)',
     format: 'pdf',
     highlights: ['DSO improved to 28 days', '$60K in 31-60 bucket'],
+    audience: 'internal',
+    aiNarrative: false,
   },
   {
     id: '3',
@@ -175,6 +378,8 @@ const recentReports: RecentReport[] = [
     generatedBy: 'Jake Ross',
     format: 'excel',
     highlights: ['Smith Residence overbilled $45K', '2 jobs need attention'],
+    audience: 'internal',
+    aiNarrative: true,
   },
   {
     id: '4',
@@ -183,6 +388,28 @@ const recentReports: RecentReport[] = [
     generatedBy: 'Jake Ross',
     format: 'pdf',
     highlights: ['Overall margin at 14.8%', 'Framing costs trending over'],
+    audience: 'internal',
+    aiNarrative: true,
+  },
+  {
+    id: '5',
+    reportName: 'Monthly Client Update - Smith',
+    generatedAt: '2026-02-01 08:00 AM',
+    generatedBy: 'System (Scheduled)',
+    format: 'pdf',
+    highlights: ['On schedule', 'Budget on track'],
+    audience: 'client',
+    aiNarrative: true,
+  },
+  {
+    id: '6',
+    reportName: 'Draw Request G702 - Johnson',
+    generatedAt: '2026-02-05 03:30 PM',
+    generatedBy: 'Jake Ross',
+    format: 'pdf',
+    highlights: ['Draw #3: $60,000', 'Retainage: $6,000'],
+    audience: 'bank',
+    aiNarrative: false,
   },
 ]
 
@@ -193,6 +420,9 @@ function formatDate(dateString: string): string {
 
 function ReportCard({ report }: { report: Report }) {
   const Icon = report.icon
+  const catConfig = reportCategoryConfig[report.category]
+  const audConfig = audienceConfig[report.audience]
+  const AudIcon = audConfig.icon
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -201,17 +431,51 @@ function ReportCard({ report }: { report: Report }) {
           <div className="p-2 bg-blue-50 rounded-lg">
             <Icon className="h-5 w-5 text-blue-600" />
           </div>
-          <div>
-            <h4 className="font-medium text-gray-900">{report.name}</h4>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="font-medium text-gray-900">{report.name}</h4>
+              {report.isLocked && (
+                <span title="Period locked"><Lock className="h-3.5 w-3.5 text-gray-400" /></span>
+              )}
+            </div>
             <p className="text-sm text-gray-500 mt-0.5">{report.description}</p>
-            {report.lastRun && (
-              <p className="text-xs text-gray-400 mt-2">
-                Last run: {formatDate(report.lastRun)}
-              </p>
-            )}
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
+              <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", catConfig.color)}>
+                {catConfig.label}
+              </span>
+              <span className="text-xs text-gray-400 flex items-center gap-1">
+                <AudIcon className="h-3 w-3" />
+                {audConfig.label}
+              </span>
+              {report.aiNarrativeAvailable && (
+                <span className="text-xs text-purple-500 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
+                  AI narrative
+                </span>
+              )}
+              {report.accessRoles && (
+                <span className="text-xs text-gray-400 flex items-center gap-1">
+                  <Shield className="h-3 w-3" />
+                  {report.accessRoles.join(', ')}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 mt-1.5">
+              {report.lastRun && (
+                <span className="text-xs text-gray-400">
+                  Last run: {formatDate(report.lastRun)}
+                </span>
+              )}
+              {report.dataFreshness && (
+                <span className="text-xs text-green-500 flex items-center gap-1">
+                  <Timer className="h-3 w-3" />
+                  Data: {report.dataFreshness}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-        <ChevronRight className="h-5 w-5 text-gray-300" />
+        <ChevronRight className="h-5 w-5 text-gray-300 flex-shrink-0" />
       </div>
 
       <div className="mt-4 flex items-center gap-2">
@@ -234,18 +498,45 @@ function ReportCard({ report }: { report: Report }) {
 
 function ScheduledReportRow({ report }: { report: ScheduledReport }) {
   return (
-    <div className="flex items-center justify-between py-2 px-3 hover:bg-gray-50 rounded">
+    <div className={cn(
+      "flex items-center justify-between py-2.5 px-3 hover:bg-gray-50 rounded",
+      !report.isActive && "opacity-50"
+    )}>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-gray-400" />
+          <Calendar className={cn("h-4 w-4", report.isActive ? "text-blue-500" : "text-gray-300")} />
           <span className="font-medium text-gray-900 text-sm">{report.reportName}</span>
+          {!report.isActive && (
+            <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Paused</span>
+          )}
         </div>
         <span className="text-sm text-gray-500">{report.frequency}</span>
+        <span className={cn(
+          "text-xs px-1.5 py-0.5 rounded font-medium uppercase",
+          report.format === 'pdf' ? "bg-red-100 text-red-600" :
+          report.format === 'excel' ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"
+        )}>
+          {report.format === 'both' ? 'PDF+XLS' : report.format}
+        </span>
       </div>
       <div className="flex items-center gap-4">
+        {report.conditionalRule && (
+          <span className="text-xs text-purple-500 flex items-center gap-1" title={report.conditionalRule}>
+            <AlertTriangle className="h-3 w-3" />
+            Conditional
+          </span>
+        )}
         <div className="flex items-center gap-1 text-sm text-gray-500">
           <Mail className="h-3.5 w-3.5" />
           <span>{report.recipients.length} recipient{report.recipients.length > 1 ? 's' : ''}</span>
+          {report.lastDeliveryOpened !== undefined && (
+            <span className={cn(
+              "ml-1",
+              report.lastDeliveryOpened ? "text-green-500" : "text-gray-400"
+            )}>
+              {report.lastDeliveryOpened ? '(opened)' : '(not opened)'}
+            </span>
+          )}
         </div>
         <span className="text-xs text-gray-400">Next: {report.nextRun}</span>
         <button className="p-1 hover:bg-gray-100 rounded">
@@ -257,24 +548,40 @@ function ScheduledReportRow({ report }: { report: ScheduledReport }) {
 }
 
 function RecentReportRow({ report }: { report: RecentReport }) {
+  const formatColors: Record<string, string> = {
+    pdf: "bg-red-100 text-red-600",
+    excel: "bg-green-100 text-green-600",
+    csv: "bg-gray-100 text-gray-600",
+    word: "bg-blue-100 text-blue-600",
+  }
+  const audInfo = audienceConfig[report.audience]
+  const AudIcon = audInfo.icon
+
   return (
     <div className="flex items-center justify-between py-3 px-3 hover:bg-gray-50 rounded border-b border-gray-100 last:border-0">
       <div className="flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-medium text-gray-900 text-sm">{report.reportName}</span>
-          <span className={cn(
-            "text-xs px-1.5 py-0.5 rounded font-medium uppercase",
-            report.format === 'pdf' ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"
-          )}>
+          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium uppercase", formatColors[report.format] ?? "bg-gray-100 text-gray-600")}>
             {report.format}
           </span>
+          <span className="text-xs text-gray-400 flex items-center gap-1">
+            <AudIcon className="h-3 w-3" />
+            {audInfo.label}
+          </span>
+          {report.aiNarrative && (
+            <span className="text-xs text-purple-500 flex items-center gap-1">
+              <Sparkles className="h-3 w-3" />
+              AI narrative
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-4 mt-1">
           <span className="text-xs text-gray-400">{report.generatedAt}</span>
           <span className="text-xs text-gray-400">by {report.generatedBy}</span>
         </div>
         {report.highlights && (
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
             {report.highlights.map((highlight, idx) => (
               <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
                 {highlight}
@@ -283,16 +590,25 @@ function RecentReportRow({ report }: { report: RecentReport }) {
           </div>
         )}
       </div>
-      <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-        <Download className="h-3.5 w-3.5" />
-        Download
-      </button>
+      <div className="flex items-center gap-2 ml-2">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Download className="h-3.5 w-3.5" />
+          Download
+        </button>
+        <button className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50" title="Regenerate">
+          <Play className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   )
 }
 
 export function ReportsPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'standard' })
+
+  // Category filter for standard reports
+  const categories: ReportCategory[] = ['financial', 'tax', 'client_facing', 'company_wide']
+  const activeCategoryFilter = activeSort === 'category' ? sortDirection : ''
 
   const filteredStandardReports = sortItems(
     standardReports.filter(report => {
@@ -311,6 +627,12 @@ export function ReportsPreview() {
     matchesSearch(report, search, ['reportName', 'generatedBy']),
   )
 
+  // Group standard reports by category
+  const reportsByCategory = categories.reduce((acc, cat) => {
+    acc[cat] = filteredStandardReports.filter(r => r.category === cat)
+    return acc
+  }, {} as Record<ReportCategory, Report[]>)
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -318,11 +640,15 @@ export function ReportsPreview() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Financial Reports</h3>
-              <span className="text-sm text-gray-500">{standardReports.length} standard reports</span>
+              <h3 className="font-semibold text-gray-900">Reports</h3>
+              <span className="text-sm text-gray-500">{standardReports.length} standard | {scheduledReports.filter(s => s.isActive).length} scheduled</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Palette className="h-4 w-4" />
+              Branding
+            </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Plus className="h-4 w-4" />
               Custom Report
@@ -337,7 +663,33 @@ export function ReportsPreview() {
           <Sparkles className="h-4 w-4 text-blue-600" />
           <span className="text-sm text-blue-700">
             <span className="font-medium">Month-end in 3 days.</span> WIP report due for bank covenant review.
-            <button className="ml-2 underline text-blue-800 hover:text-blue-900">Generate now</button>
+            January period is unlocked - lock before generating final reports.
+            <button className="ml-2 underline text-blue-800 hover:text-blue-900">Generate WIP</button>
+            <button className="ml-2 underline text-blue-800 hover:text-blue-900">Lock Period</button>
+          </span>
+        </div>
+      </div>
+
+      {/* Branding Status Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <Palette className="h-3 w-3 text-green-500" />
+              Branding: Configured (Logo + Colors)
+            </span>
+            <span className="flex items-center gap-1">
+              <Lock className="h-3 w-3 text-amber-500" />
+              Period Lock: Jan 2026 = Open | Dec 2025 = Locked
+            </span>
+            <span className="flex items-center gap-1">
+              <Globe className="h-3 w-3 text-blue-500" />
+              Export: PDF, Excel, CSV, Word
+            </span>
+          </div>
+          <span className="flex items-center gap-1">
+            <Sparkles className="h-3 w-3 text-purple-500" />
+            AI Narratives: {standardReports.filter(r => r.aiNarrativeAvailable).length} reports supported
           </span>
         </div>
       </div>
@@ -358,7 +710,8 @@ export function ReportsPreview() {
           sortOptions={activeTab === 'standard' ? [
             { value: 'name', label: 'Name' },
             { value: 'lastRun', label: 'Last Run' },
-            { value: 'type', label: 'Type' },
+            { value: 'category', label: 'Category' },
+            { value: 'audience', label: 'Audience' },
           ] : []}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -368,14 +721,31 @@ export function ReportsPreview() {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 max-h-[600px] overflow-y-auto">
         {activeTab === 'standard' && (
-          <div className="grid grid-cols-2 gap-4">
-            {filteredStandardReports.map(report => (
-              <ReportCard key={report.id} report={report} />
-            ))}
+          <div className="space-y-6">
+            {categories.map(cat => {
+              const reports = reportsByCategory[cat]
+              if (!reports || reports.length === 0) return null
+              const catConfig = reportCategoryConfig[cat]
+              return (
+                <div key={cat}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={cn("text-xs px-2 py-0.5 rounded font-medium", catConfig.color)}>
+                      {catConfig.label}
+                    </span>
+                    <span className="text-xs text-gray-400">{reports.length} reports</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {reports.map(report => (
+                      <ReportCard key={report.id} report={report} />
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
             {filteredStandardReports.length === 0 && (
-              <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+              <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
                 No reports match your search
               </div>
             )}
@@ -386,7 +756,12 @@ export function ReportsPreview() {
           <div className="bg-white rounded-lg border border-gray-200">
             <div className="px-4 py-3 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium text-gray-900 text-sm">Scheduled Reports</h4>
+                <div className="flex items-center gap-3">
+                  <h4 className="font-medium text-gray-900 text-sm">Scheduled Reports</h4>
+                  <span className="text-xs text-gray-400">
+                    {scheduledReports.filter(s => s.isActive).length} active | {scheduledReports.filter(s => !s.isActive).length} paused
+                  </span>
+                </div>
                 <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                   + Add Schedule
                 </button>
@@ -410,7 +785,10 @@ export function ReportsPreview() {
             <div className="px-4 py-3 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium text-gray-900 text-sm">Recently Generated Reports</h4>
-                <span className="text-xs text-gray-400">Last 7 days</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-gray-400">Last 7 days</span>
+                  <span className="text-xs text-gray-400">{recentReports.filter(r => r.aiNarrative).length} with AI narrative</span>
+                </div>
               </div>
             </div>
             <div className="p-2">
@@ -430,8 +808,8 @@ export function ReportsPreview() {
       {/* Quick Report Generator */}
       <div className="bg-white border-t border-gray-200 px-4 py-4">
         <h4 className="font-medium text-gray-900 text-sm mb-3">Quick Generate</h4>
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex-1 min-w-[180px]">
             <select className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>Select a report...</option>
               {standardReports.map(report => (
@@ -439,22 +817,23 @@ export function ReportsPreview() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>This Month</option>
-              <option>Last Month</option>
-              <option>This Quarter</option>
-              <option>YTD</option>
-              <option>Custom Range</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>All Jobs</option>
-              <option>Active Jobs Only</option>
-              <option>Select Jobs...</option>
-            </select>
-          </div>
+          <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option>This Month</option>
+            <option>Last Month</option>
+            <option>This Quarter</option>
+            <option>YTD</option>
+            <option>Custom Range</option>
+          </select>
+          <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option>All Jobs</option>
+            <option>Active Jobs Only</option>
+            <option>Select Jobs...</option>
+          </select>
+          <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option>Internal</option>
+            <option>Client-Facing</option>
+            <option>Bank/Lender</option>
+          </select>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               <Download className="h-4 w-4" />
@@ -463,6 +842,10 @@ export function ReportsPreview() {
             <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Download className="h-4 w-4" />
               Excel
+            </button>
+            <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Download className="h-4 w-4" />
+              CSV
             </button>
           </div>
         </div>
@@ -478,8 +861,9 @@ export function ReportsPreview() {
           <p className="text-sm text-amber-700">
             Based on your activity, consider running the Job Cost Detail report for Smith Residence -
             margin has dropped 4% since last report. The WIP report shows potential overbilling on 2 jobs
-            that should be reviewed before month-end. Your scheduled reports have been delivered on time -
-            94% open rate by recipients.
+            that should be reviewed before month-end. January period is unlocked - lock now to protect financial data.
+            Your scheduled reports have been delivered on time - 94% open rate by recipients.
+            1 scheduled report (Job Cost Detail) was not opened by recipients last delivery.
           </p>
         </div>
       </div>

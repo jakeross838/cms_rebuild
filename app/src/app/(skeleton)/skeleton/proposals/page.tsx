@@ -28,54 +28,64 @@ export default function ProposalsSkeleton() {
       ) : (
         <PageSpec
           title="Proposals"
-          phase="Phase 0 - Foundation"
-          planFile="views/precon/ESTIMATES_PROPOSALS_CONTRACTS.md"
-          description="Generate beautiful client-facing proposals from estimates. Show selection options at different tiers, let clients see upgrade/downgrade impacts, and present allowance items for their future choices. Proposals become the foundation for contracts and set expectations for the client portal experience."
+          phase="Phase 4 - Intelligence"
+          planFile="docs/modules/20-estimating-engine.md"
+          description="Generate branded client-facing proposals from estimates. Present selection options at different tiers with photos, show upgrade/downgrade impacts with real-time calculators, highlight allowances, and track client engagement. Proposals support e-signature for conversion to contracts, configurable expiration, and version history."
           workflow={constructionWorkflow}
           features={[
             'Generate proposal from estimate with one click',
-            'SELECTION PRESENTATION: Show tier options for each selection',
-            'Client-friendly pricing: "Your porch ceiling options" with photos',
+            'Branded presentation with builder logo, colors, and contact info',
+            'Configurable detail levels: executive summary, category summary, detailed breakdown',
+            'Selection presentation: Show tier options with photos per category',
             'Side-by-side tier comparison: Builder vs Standard vs Premium vs Luxury',
             'Upgrade/downgrade impact calculator shown to client',
-            'Allowance items highlighted: "You will choose these later"',
+            'Allowance items highlighted with client-friendly explanations',
             'Include selection photos, specs, manufacturer info',
             'Customizable proposal templates with builder branding',
-            'Interactive PDF or web-based proposal link',
+            'Interactive web view (shareable link) or PDF download',
             'Client can mark preferences (non-binding) before contract',
-            'Track proposal views and time spent on each section',
+            'Track proposal views, time spent per section, and engagement patterns',
             'Version history with selection changes tracked',
-            'E-signature ready (converts to contract)',
-            'Expiration date with countdown',
-            'Send via email with preview link',
+            'E-signature integration (DocuSign + native) for acceptance',
+            'Configurable expiration with countdown and auto-alerts',
+            'Contract type display (NTE, GMP, Cost-Plus, Fixed)',
+            'Comparison mode: present two scope options side-by-side',
+            'Pipeline board: Kanban-style tracking across stages',
+            'Expired proposal resend workflow',
+            'Win/loss analytics with acceptance rate tracking',
           ]}
           connections={[
-            { name: 'Estimates', type: 'input', description: 'Proposal generated from estimate with selections' },
-            { name: 'Selections Catalog', type: 'input', description: 'Photos, specs, tier options displayed' },
-            { name: 'Contracts', type: 'output', description: 'Accepted proposal becomes contract' },
-            { name: 'Client Portal', type: 'output', description: 'Sets expectations for portal selections' },
-            { name: 'Leads', type: 'input', description: 'Proposal tied to lead for pipeline tracking' },
-            { name: 'Email', type: 'output', description: 'Proposal sent to client via email' },
-            { name: 'Client Intelligence', type: 'bidirectional', description: 'Track what clients focus on; learn preferences' },
+            { name: 'Estimates', type: 'input', description: 'Proposal generated from estimate with selections and pricing' },
+            { name: 'Selections Catalog', type: 'input', description: 'Photos, specs, tier options displayed in proposal' },
+            { name: 'Contracts', type: 'output', description: 'Accepted proposal becomes contract (Module 38)' },
+            { name: 'Client Portal', type: 'output', description: 'Sets expectations for portal selection experience' },
+            { name: 'Leads / CRM', type: 'input', description: 'Proposal tied to lead for pipeline tracking' },
+            { name: 'Email / Notifications', type: 'output', description: 'Proposal sent to client via email with preview link' },
+            { name: 'E-Signature', type: 'bidirectional', description: 'DocuSign integration for proposal acceptance' },
+            { name: 'Client Intelligence', type: 'bidirectional', description: 'Track what clients focus on; learn preferences for future proposals' },
           ]}
           dataFields={[
             { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
             { name: 'estimate_id', type: 'uuid', required: true, description: 'FK to estimates' },
             { name: 'lead_id', type: 'uuid', description: 'FK to leads' },
             { name: 'client_id', type: 'uuid', required: true, description: 'FK to clients' },
-            { name: 'status', type: 'string', required: true, description: 'Draft, Sent, Viewed, Accepted, Declined, Expired' },
-            { name: 'version', type: 'integer', description: 'Proposal version number' },
-            { name: 'selected_tier', type: 'string', description: 'Default tier shown (standard, premium, etc.)' },
+            { name: 'status', type: 'string', required: true, description: 'draft | sent | viewed | accepted | declined | expired' },
+            { name: 'version', type: 'integer', required: true, description: 'Proposal version number' },
+            { name: 'contract_type', type: 'string', description: 'nte | gmp | cost_plus | fixed' },
+            { name: 'default_tier', type: 'string', description: 'Default tier shown (standard, premium, etc.)' },
             { name: 'total_amount', type: 'decimal', description: 'Total proposal amount at selected tier' },
             { name: 'allowances_total', type: 'decimal', description: 'Total of allowance items' },
+            { name: 'tier_comparison', type: 'jsonb', description: 'Total amounts at each tier level' },
+            { name: 'template_id', type: 'uuid', description: 'FK to proposal_templates for branding' },
             { name: 'sent_at', type: 'timestamp', description: 'When proposal was sent' },
             { name: 'viewed_at', type: 'timestamp', description: 'When client first viewed' },
             { name: 'view_count', type: 'integer', description: 'Number of views' },
             { name: 'time_spent_seconds', type: 'integer', description: 'Total time client spent viewing' },
-            { name: 'expires_at', type: 'timestamp', description: 'Proposal expiration' },
+            { name: 'expires_at', type: 'timestamp', description: 'Proposal expiration date' },
+            { name: 'esign_envelope_id', type: 'string', description: 'DocuSign envelope ID' },
+            { name: 'esign_status', type: 'string', description: 'not_sent | sent | viewed | signed | declined' },
             { name: 'client_preferences', type: 'jsonb', description: 'Non-binding selection preferences marked by client' },
             { name: 'accepted_at', type: 'timestamp', description: 'When client accepted' },
-            { name: 'template_id', type: 'uuid', description: 'FK to proposal_templates' },
           ]}
           aiFeatures={[
             {

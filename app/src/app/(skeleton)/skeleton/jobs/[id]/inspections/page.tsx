@@ -25,59 +25,86 @@ export default function JobInspectionsPage() {
       description="Manage all inspections for this job. Schedule inspections, prepare for them, track results, and address any failures. Critical for maintaining schedule and ensuring quality."
       workflow={['Work Complete', 'Request Inspection', 'Scheduled', 'Inspector On-Site', 'Pass/Fail', 'Re-inspect if Needed']}
       features={[
-        'Inspection checklist by permit',
-        'Request scheduling',
-        'Pre-inspection checklists',
-        'Inspector availability',
-        'Result tracking',
-        'Failure documentation',
-        'Re-inspection scheduling',
-        'Inspection history',
-        'Photo documentation',
-        'Notes and comments',
-        'Schedule integration',
-        'Notification to team',
-        'Inspector contact info',
-        'Compliance calendar',
+        'Inspection type library per jurisdiction with configurable sequences',
+        'Prerequisite enforcement (cannot schedule framing before foundation passes)',
+        'Inspection request workflow: ready to schedule, requested, confirmed, completed',
+        'Result recording: Pass, Fail, Conditional/Partial, Cancelled, No-Show',
+        'Failure documentation: deficiency list with photos, required corrections, re-inspection scope',
+        'Correction assignment: auto-create tasks for responsible trade on failure',
+        'Re-inspection scheduling linked to original failure',
+        'Pre-inspection checklists per inspection type (interactive, mobile-friendly)',
+        'Inspector contact management per jurisdiction',
+        'Calendar integration: inspection dates on project schedule and builder-wide calendar',
+        'Batch inspection requests across multiple projects',
+        'Photo documentation attached to results and deficiencies',
+        'Historical pass/fail rates by trade and inspector (analytics)',
+        'Schedule impact propagation: failed inspection delays downstream tasks',
+        'Repeated failure escalation: risk flag on project dashboard after configurable threshold',
+        'Daily log auto-population with inspection results',
+        'Final building inspection coordination with preparation checklist',
+        'Notification to PM, superintendent, and affected vendors on results',
       ]}
       connections={[
-        { name: 'Permits', type: 'input', description: 'Required inspections' },
-        { name: 'Schedule', type: 'bidirectional', description: 'Work timing' },
-        { name: 'Daily Logs', type: 'output', description: 'Log results' },
-        { name: 'Photos', type: 'bidirectional', description: 'Documentation' },
-        { name: 'Building Department', type: 'bidirectional', description: 'Schedule requests' },
+        { name: 'Permits (M32)', type: 'input', description: 'Required inspections generated from permit types per jurisdiction' },
+        { name: 'Schedule (M7)', type: 'bidirectional', description: 'Inspection passes unlock downstream tasks; failures propagate delays' },
+        { name: 'Daily Logs (M8)', type: 'output', description: 'Inspection results auto-populate in daily log for inspection date' },
+        { name: 'Document Storage (M6)', type: 'bidirectional', description: 'Inspection photos, deficiency documentation' },
+        { name: 'Vendor Management (M10)', type: 'output', description: 'Correction tasks assigned to responsible trade on failure' },
+        { name: 'Notification Engine (M5)', type: 'output', description: 'Result notifications, scheduling reminders, escalation alerts' },
+        { name: 'Punch List (M28)', type: 'output', description: 'Failed inspection items can generate punch list entries' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'job_id', type: 'uuid', required: true, description: 'This job' },
-        { name: 'permit_id', type: 'uuid', description: 'Related permit' },
-        { name: 'inspection_type', type: 'string', required: true, description: 'Type of inspection' },
-        { name: 'requested_date', type: 'date', description: 'Preferred date' },
-        { name: 'scheduled_date', type: 'date', description: 'Confirmed date' },
-        { name: 'scheduled_time', type: 'string', description: 'Time window' },
-        { name: 'inspector', type: 'string', description: 'Inspector name' },
-        { name: 'status', type: 'string', required: true, description: 'Pending, Scheduled, Passed, Failed, Cancelled' },
-        { name: 'result', type: 'string', description: 'Pass, Fail, Partial' },
-        { name: 'comments', type: 'text', description: 'Inspector comments' },
-        { name: 'corrections_needed', type: 'text', description: 'Required fixes' },
-        { name: 'reinspection_date', type: 'date', description: 'Re-inspect date' },
-        { name: 'photos', type: 'jsonb', description: 'Photos taken' },
+        { name: 'builder_id', type: 'uuid', required: true, description: 'FK to builders (tenant)' },
+        { name: 'project_id', type: 'uuid', required: true, description: 'FK to projects' },
+        { name: 'permit_id', type: 'uuid', description: 'FK to related permit' },
+        { name: 'inspection_type_id', type: 'uuid', description: 'FK to inspection type in jurisdiction' },
+        { name: 'sequence_order', type: 'integer', description: 'Order in inspection sequence' },
+        { name: 'prerequisite_inspection_id', type: 'uuid', description: 'Must pass before this can be scheduled' },
+        { name: 'scheduled_date', type: 'date', description: 'Confirmed inspection date' },
+        { name: 'scheduled_time', type: 'string', description: 'Time window or specific time' },
+        { name: 'inspector_name', type: 'string', description: 'Inspector name' },
+        { name: 'inspector_phone', type: 'string', description: 'Inspector phone number' },
+        { name: 'status', type: 'string', required: true, description: 'ready_to_schedule, scheduled, passed, failed, conditional, cancelled, rescheduled' },
+        { name: 'result', type: 'string', description: 'pass, fail, conditional_pass, no_show' },
+        { name: 'result_notes', type: 'text', description: 'Inspector comments and findings' },
+        { name: 'completed_at', type: 'timestamp', description: 'When inspection was completed' },
+        { name: 'photos', type: 'jsonb', description: 'Inspection documentation photos' },
+        { name: 'deficiencies', type: 'jsonb', description: 'Deficiency list with descriptions, photos, vendor assignment' },
+        { name: 'reinspection_of', type: 'uuid', description: 'FK to original failed inspection if re-inspection' },
+        { name: 'pre_inspection_checklist', type: 'jsonb', description: 'Interactive pre-inspection readiness checklist' },
+        { name: 'schedule_impact', type: 'text', description: 'Description of schedule impact if failed' },
       ]}
       aiFeatures={[
         {
-          name: 'Pre-Inspection Check',
-          description: 'Ensures readiness.',
-          trigger: 'Day before inspection'
+          name: 'Pre-Inspection Readiness Check',
+          description: 'Day before inspection: verifies all prerequisite work is complete, checklist items are checked, and common fail points are addressed.',
+          trigger: 'Day before scheduled inspection'
         },
         {
           name: 'Scheduling Optimization',
-          description: 'Plans inspection timing.',
-          trigger: 'On work completion'
+          description: 'Recommends optimal inspection timing based on work completion, inspector availability, and historical approval patterns per inspector.',
+          trigger: 'On work completion milestone'
         },
         {
-          name: 'Failure Resolution',
-          description: 'Addresses failures.',
-          trigger: 'On failure'
+          name: 'Failure Resolution & Correction Routing',
+          description: 'On failure: auto-creates correction tasks for responsible vendor, calculates schedule impact, and schedules re-inspection.',
+          trigger: 'On inspection failure'
+        },
+        {
+          name: 'Inspector Pattern Analysis',
+          description: 'Tracks pass/fail patterns by inspector and trade. Warns when a specific inspector commonly flags certain issues.',
+          trigger: 'On inspection scheduling'
+        },
+        {
+          name: 'Schedule Impact Propagation',
+          description: 'When inspection fails, recalculates critical path, propagates delays to all downstream tasks, and notifies affected parties.',
+          trigger: 'On inspection failure'
+        },
+        {
+          name: 'Vendor Quality Monitoring',
+          description: 'Tracks first-pass inspection rates per vendor. Flags vendors with below-average rates and recommends extra QC.',
+          trigger: 'Periodic analysis'
         },
       ]}
       mockupAscii=""

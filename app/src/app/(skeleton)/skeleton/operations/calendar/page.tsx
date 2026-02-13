@@ -19,67 +19,100 @@ export default function CompanyCalendarPage() {
         </button>
       </div>
       {activeTab === 'preview' ? <CalendarPreview /> : <PageSpec
-      title="Company Calendar"
+      title="Operations Calendar"
       phase="Phase 1 - Operations"
       planFile="views/operations/CALENDAR.md"
-      description="Master calendar showing all important dates across all jobs. View milestones, inspections, deliveries, deadlines, and meetings in one unified calendar. Filter by job, type, or team member."
-      workflow={['View Events', 'Filter/Search', 'Click for Details', 'Navigate to Source']}
+      description="Multi-project operations calendar with weather integration, critical path tracking, and schedule health monitoring. Unified view of work tasks, inspections, deliveries, milestones, deadlines, and meetings across all active jobs. Weather overlay blocks outdoor work automatically based on configurable trade-specific rules."
+      workflow={['Morning Review', 'Filter by Job/Type', 'Check Weather Impact', 'Resolve Conflicts', 'End-of-Day Updates', 'Tomorrow Prep']}
       features={[
-        'Month, week, day, and agenda views',
-        'Color-coded by event type',
-        'Filter by job',
-        'Filter by event type (milestone, inspection, delivery, deadline)',
-        'Filter by team member',
-        'Click event to see details',
-        'Link to source (job schedule, permit, etc.)',
-        'Today indicator',
-        'Overdue items highlighted',
+        'Month, week, day, and agenda views with configurable default',
+        'Color-coded by job with event type icons (work, inspection, delivery, milestone, deadline, meeting)',
+        'FilterBar: search, job filter, event type tabs, critical path filter',
+        'Critical path task highlighting with cascading delay indicator',
+        'Milestone and deadline tracking with overdue highlighting',
+        'Blocked task visualization (weather, dependency, resource)',
+        'Weather overlay: 7-14 day forecast at project location from weather API',
+        'Trade-specific weather rules: rain blocks concrete/roofing, wind blocks crane, temp blocks masonry',
+        'Weather impact days highlighted on calendar with affected task list',
+        'Multi-project schedule health bar: on-track / at-risk / behind per job',
+        'Two-week look-ahead report generation (printable, shareable with trades)',
+        'Morning schedule dashboard: who goes where today, conflicts, weather',
+        'Material delivery calendar with PO links and confirmation workflow',
+        'Inspection calendar with inspector contacts and preparation checklists',
+        'End-of-day schedule updates with drag-and-drop rescheduling',
+        'Tomorrow preparation dashboard with vendor start confirmations',
+        'Dependency cascade preview on schedule changes',
+        'Holiday awareness with configurable regional calendar',
+        'Work hour restrictions per municipality',
+        'Subscribe via iCal feed',
         'Print/export calendar',
-        'Subscribe via iCal',
-        'Weather overlay',
-        'Holiday awareness',
-        'Quick add events',
+        'Click event to navigate to source module (schedule, permit, PO, etc.)',
       ]}
       connections={[
-        { name: 'Job Schedules', type: 'input', description: 'Milestones from all jobs' },
-        { name: 'Inspections', type: 'input', description: 'Scheduled inspections' },
-        { name: 'Deliveries', type: 'input', description: 'Material deliveries' },
-        { name: 'Permits', type: 'input', description: 'Permit deadlines' },
-        { name: 'Client Selections', type: 'input', description: 'Selection deadlines' },
-        { name: 'Insurance', type: 'input', description: 'Expiration dates' },
-        { name: 'Meetings', type: 'input', description: 'Scheduled meetings' },
+        { name: 'Job Schedules', type: 'bidirectional', description: 'All tasks, milestones, dependencies from project schedules' },
+        { name: 'Inspections', type: 'input', description: 'Scheduled inspections with inspector contacts' },
+        { name: 'Deliveries', type: 'input', description: 'Material deliveries linked to POs and vendors' },
+        { name: 'Permits', type: 'input', description: 'Permit deadlines and inspection gates' },
+        { name: 'Client Selections', type: 'input', description: 'Selection deadlines that gate downstream work' },
+        { name: 'Insurance', type: 'input', description: 'COI expiration dates for scheduled vendors' },
+        { name: 'Meetings', type: 'input', description: 'Client meetings, owner walkthroughs, vendor coordination' },
+        { name: 'Weather API', type: 'input', description: '7-14 day forecasts with trade-specific impact rules' },
+        { name: 'Crew Schedule', type: 'bidirectional', description: 'Resource assignments and availability' },
+        { name: 'Daily Logs', type: 'output', description: 'Schedule progress feeds daily log entries' },
+        { name: 'Vendor Availability', type: 'input', description: 'Vendor availability windows for conflict detection' },
+        { name: 'Notifications', type: 'output', description: 'Schedule change alerts to affected trades and team' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
         { name: 'title', type: 'string', required: true, description: 'Event title' },
-        { name: 'type', type: 'string', required: true, description: 'Event type' },
+        { name: 'type', type: 'enum', required: true, description: 'work, inspection, delivery, meeting, milestone, deadline' },
         { name: 'start_date', type: 'timestamp', required: true, description: 'Start date/time' },
         { name: 'end_date', type: 'timestamp', description: 'End date/time' },
-        { name: 'all_day', type: 'boolean', description: 'All day event' },
+        { name: 'all_day', type: 'boolean', description: 'All day event flag' },
         { name: 'job_id', type: 'uuid', description: 'Associated job' },
-        { name: 'source_type', type: 'string', description: 'Source module' },
-        { name: 'source_id', type: 'uuid', description: 'Source record' },
-        { name: 'assigned_to', type: 'uuid[]', description: 'Team members' },
-        { name: 'location', type: 'string', description: 'Location' },
-        { name: 'notes', type: 'text', description: 'Notes' },
-        { name: 'color', type: 'string', description: 'Display color' },
-        { name: 'is_overdue', type: 'boolean', description: 'Past due' },
+        { name: 'source_type', type: 'string', description: 'Source module (schedule, permit, PO, etc.)' },
+        { name: 'source_id', type: 'uuid', description: 'Source record FK' },
+        { name: 'assigned_to', type: 'uuid[]', description: 'Team members assigned' },
+        { name: 'vendor_id', type: 'uuid', description: 'Assigned vendor' },
+        { name: 'location', type: 'string', description: 'Event location / job site address' },
+        { name: 'phase', type: 'string', description: 'Construction phase' },
+        { name: 'is_critical_path', type: 'boolean', description: 'On critical path' },
+        { name: 'is_weather_sensitive', type: 'boolean', description: 'Affected by weather conditions' },
+        { name: 'status', type: 'enum', description: 'scheduled, in_progress, completed, blocked, overdue' },
+        { name: 'dependency_count', type: 'integer', description: 'Number of successor tasks' },
+        { name: 'notes', type: 'text', description: 'Event notes' },
+        { name: 'color', type: 'string', description: 'Display color (job-based)' },
       ]}
       aiFeatures={[
         {
           name: 'Conflict Detection',
-          description: 'Identifies scheduling conflicts. "2 inspections scheduled same time at different jobs. Mike assigned to both."',
-          trigger: 'On calendar load'
+          description: 'Identifies scheduling conflicts across projects. "County Inspector at Smith (9 AM) and Coastal Retreat (11 AM). Mike assigned to both — confirm inspector handles sequentially or reassign."',
+          trigger: 'On calendar load and on schedule change'
         },
         {
-          name: 'Workload View',
-          description: 'Shows team workload by day. "Tuesday is heavy: 3 inspections, 2 deliveries, 1 client meeting."',
-          trigger: 'On demand'
+          name: 'Weather Impact Analysis',
+          description: 'Matches 7-day forecast to trade-specific rules. "Rain Thu Feb 13: 1.5 in, 20mph wind. Blocked: Harbor View concrete pour, Coastal Retreat roofing. Unaffected: Smith electrical (interior). Suggest: reschedule concrete to Mon Feb 17."',
+          trigger: 'Daily forecast update'
         },
         {
-          name: 'Weather Alerts',
-          description: 'Flags outdoor work on bad weather days. "Rain forecasted Thursday. 2 jobs have outdoor work scheduled."',
-          trigger: 'Daily forecast check'
+          name: 'Critical Path Monitoring',
+          description: 'Tracks critical path tasks across all projects. "Smith electrical rough-in is critical path — any delay shifts completion by equal days. Currently on track. Next critical: plumbing rough-in Feb 18."',
+          trigger: 'Real-time on task status change'
+        },
+        {
+          name: 'Schedule Health Scoring',
+          description: 'Weekly scorecard across all projects. "Smith: on track (62% complete, 0 days drift). Johnson: at risk (45% complete, 3 days behind baseline). Coastal: behind (15% complete, permit deadline overdue)."',
+          trigger: 'Weekly analysis + real-time on drift'
+        },
+        {
+          name: 'Tomorrow Preparation',
+          description: 'End-of-day briefing for next day. "Tomorrow: 4 tasks across 3 jobs. Vendor confirmations needed: ABC Electric (Smith), Jones Plumbing (Johnson). Material check: finish lumber delivery at 8 AM."',
+          trigger: 'Daily at configurable time'
+        },
+        {
+          name: 'Recovery Suggestions',
+          description: 'When schedule slips, suggests recovery options. "Coastal Retreat 5 days behind. Options: (1) overlap framing and rough-in, (2) add Saturday crews, (3) fast-track permit review. Cost impact: $2K-$8K."',
+          trigger: 'On schedule drift exceeding threshold'
         },
       ]}
       mockupAscii={`

@@ -6,10 +6,6 @@ import { TimeClockPreview } from '@/components/skeleton/previews/time-clock-prev
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const constructionWorkflow = [
-  'Clock In', 'Work Entry', 'Job Assignment', 'Clock Out', 'Timesheet Review', 'Payroll Export'
-]
-
 export default function TimeClockSkeleton() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
 
@@ -46,78 +42,108 @@ export default function TimeClockSkeleton() {
         <TimeClockPreview />
       ) : (
         <PageSpec
-          title="Time Clock"
-          phase="Phase 4 - Time & Payments"
-          planFile="views/time-clock/TIME_CLOCK.md"
-          description="GPS-enabled time tracking for field workers. Clock in/out, track time per job and cost code, with supervisor review and payroll export."
-          workflow={constructionWorkflow}
+          title="Time Clock & Workforce Management"
+          phase="Phase 5 - Full Platform (Module 34)"
+          planFile="docs/modules/34-hr-workforce.md"
+          description="GPS-enabled time tracking with geofence verification, timesheet approval workflows (single/multi-level), labor burden calculation with full transparency, crew scheduling, payroll data export, break tracking with state-specific rules, overtime calculation, and offline clock-in capability. Tracks labor costs accurately with workers comp class codes and fully burdened hourly rates."
+          workflow={['Clock In (GPS)', 'Log Work', 'Break Tracking', 'Clock Out', 'Timesheet Review', 'Approve/Reject', 'Payroll Export']}
           features={[
-            'Mobile-first clock in/out with GPS location',
-            'Job and cost code assignment per time entry',
-            'Photo capture at clock in/out (optional)',
-            'Break tracking with configurable rules',
-            'Overtime calculation with state-specific rules',
-            'Supervisor timesheet review and approval',
-            'Daily/weekly/pay period views',
-            'Bulk time entry for office workers',
-            'Integration with payroll systems',
-            'Geofencing for job site verification',
+            'Mobile clock in/out with GPS location capture',
+            'Geofenced job sites: auto-suggest project based on proximity',
+            'Geofence violation alerts (clocked in but not at job site)',
+            'Photo verification option at clock-in (configurable)',
+            'Break tracking with configurable paid/unpaid rules per state',
+            'Drive time tracking between job sites (billable or not)',
+            'Split time across multiple projects in a single day',
+            'Offline clock-in with GPS sync when connectivity returns',
+            'Weekly timesheet summary from daily clock entries',
+            'Multi-level approval workflow (supervisor -> owner/admin)',
+            'Rejection with notes and resubmission workflow',
+            'Batch approval for supervisors managing multiple crew members',
+            'Overtime flagging: 40/week or 8/day (state-dependent)',
+            'Locked timesheets after approval (edits require formal amendment)',
+            'Timesheet dispute workflow with audit trail',
+            'Labor burden calculation: base + FICA + FUTA/SUTA + WC + insurance + retirement + PTO',
+            'Fully burdened hourly rate per employee and workers comp class',
+            'Burden rate "Show Calculation" transparency view',
+            'Crew-to-project assignment with date ranges and conflict detection',
+            'Payroll export: CSV, QuickBooks, ADP, Gusto, Paychex formats',
+            'Pre-export validation: missing timesheets, unapproved hours',
+            'Union/non-union employee support with separate rules',
           ]}
           connections={[
-            { name: 'Users', type: 'input', description: 'Time tracked per employee' },
-            { name: 'Jobs', type: 'input', description: 'Time assigned to jobs' },
-            { name: 'Cost Codes', type: 'input', description: 'Time categorized by cost code' },
-            { name: 'Daily Logs', type: 'output', description: 'Time data feeds daily logs' },
-            { name: 'Budget', type: 'output', description: 'Labor costs update budget actuals' },
-            { name: 'Payroll', type: 'output', description: 'Export to payroll systems' },
-            { name: 'Reports', type: 'output', description: 'Labor reports and analysis' },
+            { name: 'Core Data Model (M03)', type: 'input', description: 'Project assignments and cost code structure' },
+            { name: 'Scheduling (M07)', type: 'bidirectional', description: 'Crew availability affects task scheduling' },
+            { name: 'Budget & Cost Tracking (M09)', type: 'output', description: 'Labor costs update budget actuals' },
+            { name: 'Daily Logs (M08)', type: 'output', description: 'Time data feeds daily log manpower section' },
+            { name: 'Financial Reporting (M19)', type: 'output', description: 'Labor costs feed project financial reports' },
+            { name: 'Safety & Compliance (M33)', type: 'bidirectional', description: 'Shared certification tracking, training records' },
+            { name: 'Notification Engine (M05)', type: 'output', description: 'Certification alerts, timesheet reminders' },
+            { name: 'Auth & Access (M01)', type: 'input', description: 'Employee user accounts and role assignments' },
+            { name: 'Mobile App (M40)', type: 'input', description: 'GPS-verified clock in/out from the field' },
           ]}
           dataFields={[
             { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-            { name: 'user_id', type: 'uuid', required: true, description: 'FK to users' },
-            { name: 'job_id', type: 'uuid', description: 'FK to jobs' },
-            { name: 'cost_code_id', type: 'uuid', description: 'FK to cost codes' },
+            { name: 'builder_id', type: 'uuid', required: true, description: 'Tenant ID (company_id)' },
+            { name: 'employee_id', type: 'uuid', required: true, description: 'FK to employees' },
+            { name: 'project_id', type: 'uuid', description: 'FK to projects' },
+            { name: 'cost_code', type: 'string', description: 'Cost code assignment' },
             { name: 'clock_in', type: 'timestamp', required: true, description: 'Clock in time' },
             { name: 'clock_out', type: 'timestamp', description: 'Clock out time' },
-            { name: 'clock_in_location', type: 'point', description: 'GPS coordinates at clock in' },
-            { name: 'clock_out_location', type: 'point', description: 'GPS coordinates at clock out' },
-            { name: 'clock_in_photo', type: 'string', description: 'Photo URL at clock in' },
-            { name: 'break_minutes', type: 'integer', description: 'Total break time' },
+            { name: 'clock_in_gps', type: 'point', description: 'GPS coordinates at clock in' },
+            { name: 'clock_out_gps', type: 'point', description: 'GPS coordinates at clock out' },
+            { name: 'geofence_status', type: 'string', description: 'inside | outside | unknown' },
+            { name: 'break_minutes', type: 'integer', description: 'Total break time in minutes' },
             { name: 'total_hours', type: 'decimal', description: 'Calculated work hours' },
-            { name: 'hourly_rate', type: 'decimal', description: 'Employee hourly rate' },
-            { name: 'status', type: 'string', required: true, description: 'Active, Pending Review, Approved, Rejected' },
-            { name: 'notes', type: 'text', description: 'Work notes' },
+            { name: 'overtime_hours', type: 'decimal', description: 'Overtime hours' },
+            { name: 'photo_verification_url', type: 'string', description: 'Photo at clock in' },
+            { name: 'is_offline_entry', type: 'boolean', description: 'Submitted while offline' },
+            { name: 'description', type: 'text', description: 'Work description' },
+            { name: 'status', type: 'string', required: true, description: 'pending | approved | flagged | rejected | disputed' },
+            { name: 'timesheet_id', type: 'uuid', description: 'FK to weekly timesheet' },
+            { name: 'base_wage', type: 'decimal', description: 'Employee base hourly rate' },
+            { name: 'burdened_rate', type: 'decimal', description: 'Fully burdened hourly rate' },
+            { name: 'workers_comp_class', type: 'string', description: 'Workers comp classification code' },
           ]}
           aiFeatures={[
-            { name: 'Location Verification', description: 'Verifies clock in location matches job site address', trigger: 'On clock in' },
-            { name: 'Anomaly Detection', description: 'Flags unusual time entries (too long, wrong location, patterns)', trigger: 'On timesheet review' },
-            { name: 'Break Reminders', description: 'Reminds workers to take required breaks per state law', trigger: 'During shift' },
-            { name: 'Cost Code Suggestion', description: 'Suggests cost code based on job phase and worker role', trigger: 'On clock in' },
+            { name: 'GPS Geofence Verification', description: 'Auto-verifies clock-in location matches job site geofence. Flags entries outside boundary with distance and suggests correct job site.', trigger: 'On clock in/out' },
+            { name: 'Anomaly Detection', description: 'Flags unusual time entries: excessive hours (10+), abnormal break patterns, wrong location, inconsistent patterns. "James Thompson 45min break exceeds 30min policy."', trigger: 'On timesheet review' },
+            { name: 'Break Compliance', description: 'Monitors state-specific break laws (CA 8hr/day, SC federal 40hr/week) and sends reminders. "4-hour mark approaching for Sarah Chen - break required per CA law."', trigger: 'During shift' },
+            { name: 'Cost Code Suggestion', description: 'Suggests cost code based on job phase, worker role, and recent history. "David Nguyen at Johnson Beach House (finish phase) + Finish Carpenter role = FN-300."', trigger: 'On clock in' },
+            { name: 'Overtime Projection', description: 'Projects weekly overtime and calculates burdened cost impact. "Lisa Martinez trending to 48h this week. Additional burdened OT cost: $390."', trigger: 'Mid-week analysis' },
+            { name: 'Payroll Export Validation', description: 'Pre-validates payroll export for missing timesheets, unapproved hours, and mathematical discrepancies before generating file.', trigger: 'On export request' },
           ]}
           mockupAscii={`
 ┌─────────────────────────────────────────────────────────────────────┐
-│ Time Clock                          Week of Dec 16, 2024  [< >]     │
+│ Time Clock Management       Week of Feb 10  [Payroll Export] [+]   │
 ├─────────────────────────────────────────────────────────────────────┤
-│ Tabs: My Time | Team (Supervisor) | Pending Approval               │
+│ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐           │
+│ │42.9h │ │  2   │ │ 6.5h │ │  1   │ │ 83%  │ │  2   │           │
+│ │Today │ │Clock │ │ OT   │ │Flaggd│ │ GPS  │ │Tmsht │           │
+│ │Hours │ │  In  │ │ Week │ │      │ │Verify│ │Pendng│           │
+│ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘           │
+│ Connected: Budget | Daily Logs | Financial | Scheduling | Payroll │
 ├─────────────────────────────────────────────────────────────────────┤
+│ Team | Entries | Timesheets | Pending Review | AI Insights          │
+├─────────────────────────────────────────────────────────────────────┤
+│ TEAM OVERVIEW                                                       │
+│ ┌──────────────────────────┐ ┌──────────────────────────┐          │
+│ │ Marcus Rodriguez  ● Off  │ │ Sarah Chen        ● In   │          │
+│ │ Crew Alpha | FR Lead     │ │ Crew Bravo | HVAC        │          │
+│ │ 42.5h | OT: 2.5h | 2 job│ │ 40h | OT: 0 | 3 jobs    │          │
+│ │ Base: $38 | Burdened: $56│ │ Base: $42 | Burdened: $62│          │
+│ │ WC: 5403 - Carpentry     │ │ WC: 5183 - HVAC          │          │
+│ └──────────────────────────┘ └──────────────────────────┘          │
 │                                                                     │
-│  ┌────────────────────────────────────────────────────────────┐     │
-│  │  CLOCK STATUS: Not Clocked In                              │     │
-│  │  [ CLOCK IN ]                                              │     │
-│  │  Job: [Select Job ▾]  Cost Code: [Select ▾]                │     │
-│  └────────────────────────────────────────────────────────────┘     │
-│                                                                     │
-│  THIS WEEK                                                          │
-│  ┌────────┬──────────────┬────────────┬─────────┬─────────────────┐ │
-│  │ Day    │ Job          │ In - Out   │ Hours   │ Status          │ │
-│  ├────────┼──────────────┼────────────┼─────────┼─────────────────┤ │
-│  │ Mon    │ Smith Home   │ 7am - 4pm  │ 8.0     │ ● Approved      │ │
-│  │ Tue    │ Smith Home   │ 7am - 5pm  │ 9.0     │ ● Approved      │ │
-│  │ Wed    │ Johnson Res  │ 6:30a-3:30p│ 8.0     │ ● Pending       │ │
-│  │ Thu    │ ---          │ ---        │ ---     │ (Today)         │ │
-│  └────────┴──────────────┴────────────┴─────────┴─────────────────┘ │
-│                                                                     │
-│  Week Total: 25.0 hrs  |  Overtime: 1.0 hrs                         │
+│ TIMESHEETS (Feb 3-9)                                                │
+│ ┌─────────────────────────────────────────────────────────────────┐│
+│ │ Marcus: 40+2.5 OT | $2,389 burdened | Status: Submitted       ││
+│ │ Sarah:  40h       | $2,486 burdened | Status: Approved ✓       ││
+│ │ Lisa:   40+4 OT   | $1,497 burdened | Status: Rejected ✗      ││
+│ └─────────────────────────────────────────────────────────────────┘│
+├─────────────────────────────────────────────────────────────────────┤
+│ 💡 AI: "Lisa trending 48h. Marcus outside geofence (offline).      │
+│ 2 timesheets pending Monday deadline."                              │
 └─────────────────────────────────────────────────────────────────────┘
 `}
         />

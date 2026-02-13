@@ -22,35 +22,37 @@ export default function SelectionsCatalogPage() {
       </div>
       {activeTab === 'preview' ? <SelectionsCatalogPreview /> : <PageSpec
       title="Selections Catalog"
-      phase="Phase 0 - Foundation"
-      planFile="views/library/SELECTIONS_CATALOG.md"
-      description="Master library of all products, materials, and finishes available for selection. Every estimate line item requiring a choice pulls from this catalog. Includes pricing tiers (builder-grade to luxury), vendor sources, lead times, and specifications. The single source of truth for 'what can we install and what does it cost?'"
+      phase="Phase 4 - Intelligence"
+      planFile="docs/modules/21-selection-management.md"
+      description="Master library of all products, materials, and finishes available for selection. Includes pricing tiers (Builder through Luxury), vendor sources, lead times, availability status, SKU tracking, and specifications. Supports builder-defined categories, allowance items, default selections per tier, and integration with price intelligence for real-time cost tracking."
       workflow={workflow}
       features={[
-        'Organized by category: Finishes, Fixtures, Structural, MEP, Appliances',
-        'Sub-categories: Flooring > Tile, Hardwood, LVP, Carpet',
-        'Multiple options per selection type with tier levels',
-        'Builder-grade, Standard, Premium, Luxury pricing tiers',
-        'Each selection: Name, SKU, Manufacturer, Unit, Price, Lead Time',
+        'Organized by builder-defined categories and subcategories',
+        'Multiple options per selection type with 4 tier levels',
+        'Each selection: Name, SKU, Manufacturer, Model, Unit, Material/Labor Cost, Lead Time',
+        'Availability status: In Stock, Low Stock, Backordered, Discontinued, Special Order',
+        'Source tracking: builder-added, designer-recommended, client-requested, catalog-imported',
         'Vendor assignments with preferred vendor ranking',
         'Photo and specification attachments per selection',
-        'Allowance amounts for client-choice items',
-        'Default selections for each tier',
-        'Price history tracking with market trends',
-        'Bulk import from vendor price lists',
-        'Sync pricing from vendor portals',
-        'Clone and customize for specific projects',
-        'Active/inactive status for discontinued items',
+        'Allowance items with default allowance amounts',
+        'Default selection flags per tier level',
+        'Price history tracking with market trend alerts',
+        'Bulk import from vendor price lists (CSV)',
+        'Active/inactive status for retired/discontinued items',
         'Coastal rating and compliance flags',
+        'Usage tracking: how many estimates/jobs reference each item',
+        'Clone and customize for specific projects',
+        'SKU management with manufacturer model cross-reference',
       ]}
       connections={[
         { name: 'Estimates', type: 'output', description: 'Line items pull selections and pricing' },
         { name: 'Job Selections', type: 'output', description: 'Client portal shows catalog options' },
-        { name: 'Proposals', type: 'output', description: 'Selections included with photos' },
+        { name: 'Proposals', type: 'output', description: 'Selections included with photos in proposals' },
         { name: 'Purchase Orders', type: 'output', description: 'PO created with selection details' },
         { name: 'Vendors', type: 'bidirectional', description: 'Vendor linked to each selection' },
-        { name: 'Assemblies', type: 'output', description: 'Templates reference selections' },
-        { name: 'Invoices', type: 'input', description: 'Actual prices update intelligence' },
+        { name: 'Assemblies', type: 'output', description: 'Assembly templates reference selections' },
+        { name: 'Invoices', type: 'input', description: 'Actual prices update price intelligence' },
+        { name: 'Price Intelligence', type: 'bidirectional', description: 'Price trend tracking and anomaly detection' },
       ]}
       dataFields={[
         { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
@@ -60,7 +62,7 @@ export default function SelectionsCatalogPage() {
         { name: 'manufacturer', type: 'string', description: 'Brand/manufacturer' },
         { name: 'model', type: 'string', description: 'Model number' },
         { name: 'sku', type: 'string', description: 'Internal SKU' },
-        { name: 'tier', type: 'string', required: true, description: 'builder, standard, premium, luxury' },
+        { name: 'tier', type: 'string', required: true, description: 'builder | standard | premium | luxury' },
         { name: 'unit', type: 'string', required: true, description: 'SF, LF, EA, etc.' },
         { name: 'material_cost', type: 'decimal', required: true, description: 'Material cost per unit' },
         { name: 'labor_cost', type: 'decimal', description: 'Labor cost per unit' },
@@ -70,8 +72,12 @@ export default function SelectionsCatalogPage() {
         { name: 'is_allowance_item', type: 'boolean', description: 'Client chooses this' },
         { name: 'allowance_amount', type: 'decimal', description: 'Default allowance value' },
         { name: 'is_active', type: 'boolean', required: true, description: 'Currently available' },
-        { name: 'coastal_rated', type: 'boolean', description: 'Suitable for coastal' },
-        { name: 'photos', type: 'jsonb', description: 'Product photos' },
+        { name: 'is_default_for_tier', type: 'boolean', description: 'Default option for its tier' },
+        { name: 'availability_status', type: 'string', description: 'in_stock | low_stock | backordered | discontinued | special_order' },
+        { name: 'source', type: 'string', description: 'builder | designer | client | catalog' },
+        { name: 'coastal_rated', type: 'boolean', description: 'Suitable for coastal construction' },
+        { name: 'usage_count', type: 'integer', description: 'Times used in estimates/jobs' },
+        { name: 'photos', type: 'jsonb', description: 'Product photos array' },
       ]}
       aiFeatures={[
         {
@@ -86,13 +92,18 @@ export default function SelectionsCatalogPage() {
         },
         {
           name: 'Vendor Price Comparison',
-          description: 'Compares pricing across vendors. "ABC Supply: $8.50/LF, XYZ Lumber: $7.90/LF."',
+          description: 'Compares pricing across vendors for same product. "ABC Supply: $8.50/LF, XYZ Lumber: $7.90/LF."',
           trigger: 'On new invoice'
         },
         {
           name: 'Discontinued Detection',
-          description: 'Monitors for discontinued items with active estimates.',
-          trigger: 'Periodic sync'
+          description: 'Monitors for discontinued items referenced in active estimates/selections and suggests replacements.',
+          trigger: 'Periodic sync + vendor notification'
+        },
+        {
+          name: 'Alternative Suggestions',
+          description: 'When an item has a price increase, suggests comparable alternatives at lower cost.',
+          trigger: 'On price change detection'
         },
       ]}
       mockupAscii={`

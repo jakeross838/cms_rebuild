@@ -11,179 +11,395 @@ import {
   Package,
   Calendar,
   MoreHorizontal,
+  Eye,
+  MessageSquare,
+  Image,
+  Palette,
+  FileSignature,
+  Truck,
+  ArrowRightLeft,
+  ShoppingCart,
+  BarChart3,
+  Send,
+  Star,
+  LinkIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
+type SelectionStatus =
+  | 'not_started'
+  | 'options_presented'
+  | 'client_reviewing'
+  | 'selected'
+  | 'confirmed'
+  | 'ordered'
+  | 'received'
+  | 'installed'
+  | 'change_requested'
+
+type PricingModel = 'allowance' | 'fixed' | 'cost_plus'
+
 interface Selection {
   id: string
   category: string
+  room: string
   itemName: string
   selectedProduct: string | null
   price: number
   allowance: number
-  status: 'pending' | 'selected' | 'ordered' | 'installed'
+  pricingModel: PricingModel
+  markupPct: number
+  status: SelectionStatus
   deadline: string
   daysUntilDeadline: number
-  vendor?: string
-  aiNote?: string
+  leadTimeDays: number | null
+  vendor: string | null
+  designerRecommended: boolean
+  commentCount: number
+  inspirationCount: number
+  optionsCount: number
+  hasSignature: boolean
+  poNumber: string | null
+  scheduleDependency: string | null
+  aiNote: string | null
 }
 
 const mockSelections: Selection[] = [
   {
     id: '1',
     category: 'Flooring',
+    room: 'Master Bedroom',
     itemName: 'Master Bedroom Hardwood',
     selectedProduct: 'White Oak 5" Engineered',
     price: 8500,
     allowance: 7500,
+    pricingModel: 'allowance',
+    markupPct: 0,
     status: 'ordered',
     deadline: 'Dec 15',
     daysUntilDeadline: 18,
+    leadTimeDays: 21,
     vendor: 'ABC Flooring',
+    designerRecommended: true,
+    commentCount: 3,
+    inspirationCount: 5,
+    optionsCount: 4,
+    hasSignature: true,
+    poNumber: 'PO-2026-0142',
+    scheduleDependency: 'Flooring Install - Week 18',
+    aiNote: null,
   },
   {
     id: '2',
     category: 'Flooring',
+    room: 'Living Area',
     itemName: 'Living Area Tile',
     selectedProduct: 'Porcelain 24x24 Gray',
     price: 4200,
     allowance: 4500,
-    status: 'selected',
+    pricingModel: 'allowance',
+    markupPct: 0,
+    status: 'confirmed',
     deadline: 'Dec 20',
     daysUntilDeadline: 23,
+    leadTimeDays: 10,
     vendor: 'Tile Warehouse',
+    designerRecommended: false,
+    commentCount: 1,
+    inspirationCount: 2,
+    optionsCount: 3,
+    hasSignature: true,
+    poNumber: null,
+    scheduleDependency: 'Tile Install - Week 19',
+    aiNote: null,
   },
   {
     id: '3',
     category: 'Fixtures',
+    room: 'Master Bath',
     itemName: 'Master Bath Faucets',
     selectedProduct: null,
     price: 0,
     allowance: 1200,
-    status: 'pending',
+    pricingModel: 'allowance',
+    markupPct: 0,
+    status: 'options_presented',
     deadline: 'Dec 10',
     daysUntilDeadline: 3,
+    leadTimeDays: null,
+    vendor: null,
+    designerRecommended: false,
+    commentCount: 2,
+    inspirationCount: 0,
+    optionsCount: 5,
+    hasSignature: false,
+    poNumber: null,
+    scheduleDependency: 'Plumbing Trim - Week 22',
     aiNote: 'Decision needed in 3 days to avoid schedule delay',
   },
   {
     id: '4',
     category: 'Fixtures',
+    room: 'Kitchen',
     itemName: 'Kitchen Sink',
     selectedProduct: 'Kohler Farmhouse 33"',
     price: 850,
     allowance: 800,
+    pricingModel: 'allowance',
+    markupPct: 0,
     status: 'installed',
     deadline: 'Nov 25',
     daysUntilDeadline: -12,
+    leadTimeDays: 14,
     vendor: 'Plumbing Supply Co',
+    designerRecommended: true,
+    commentCount: 0,
+    inspirationCount: 1,
+    optionsCount: 3,
+    hasSignature: true,
+    poNumber: 'PO-2026-0098',
+    scheduleDependency: null,
+    aiNote: null,
   },
   {
     id: '5',
     category: 'Appliances',
+    room: 'Kitchen',
     itemName: 'Refrigerator',
     selectedProduct: 'Sub-Zero 48" Built-in',
     price: 12500,
     allowance: 8000,
+    pricingModel: 'allowance',
+    markupPct: 0,
     status: 'ordered',
     deadline: 'Jan 5',
     daysUntilDeadline: 39,
+    leadTimeDays: 84,
     vendor: 'Elite Appliances',
-    aiNote: '12-week lead time - on track for install',
+    designerRecommended: false,
+    commentCount: 4,
+    inspirationCount: 3,
+    optionsCount: 3,
+    hasSignature: true,
+    poNumber: 'PO-2026-0125',
+    scheduleDependency: 'Appliance Install - Week 24',
+    aiNote: '12-week lead time -- on track for install date',
   },
   {
     id: '6',
     category: 'Appliances',
+    room: 'Kitchen',
     itemName: 'Range/Oven',
     selectedProduct: null,
     price: 0,
     allowance: 6000,
-    status: 'pending',
+    pricingModel: 'allowance',
+    markupPct: 0,
+    status: 'client_reviewing',
     deadline: 'Dec 8',
     daysUntilDeadline: 1,
+    leadTimeDays: null,
+    vendor: null,
+    designerRecommended: false,
+    commentCount: 1,
+    inspirationCount: 2,
+    optionsCount: 4,
+    hasSignature: false,
+    poNumber: null,
+    scheduleDependency: 'Appliance Install - Week 24',
     aiNote: 'Critical: Must select today to meet schedule',
   },
   {
     id: '7',
     category: 'Appliances',
+    room: 'Kitchen',
     itemName: 'Dishwasher',
     selectedProduct: 'Miele G7000',
     price: 1800,
     allowance: 1500,
+    pricingModel: 'allowance',
+    markupPct: 0,
     status: 'selected',
     deadline: 'Dec 15',
     daysUntilDeadline: 18,
+    leadTimeDays: 14,
     vendor: 'Elite Appliances',
+    designerRecommended: true,
+    commentCount: 0,
+    inspirationCount: 0,
+    optionsCount: 3,
+    hasSignature: false,
+    poNumber: null,
+    scheduleDependency: 'Appliance Install - Week 24',
+    aiNote: null,
   },
   {
     id: '8',
     category: 'Countertops',
+    room: 'Kitchen',
     itemName: 'Kitchen Counters',
     selectedProduct: 'Calacatta Quartz',
     price: 9200,
     allowance: 8500,
+    pricingModel: 'allowance',
+    markupPct: 0,
     status: 'ordered',
     deadline: 'Dec 18',
     daysUntilDeadline: 21,
+    leadTimeDays: 21,
     vendor: 'Stone Masters',
+    designerRecommended: true,
+    commentCount: 6,
+    inspirationCount: 8,
+    optionsCount: 5,
+    hasSignature: true,
+    poNumber: 'PO-2026-0133',
+    scheduleDependency: 'Counter Install - Week 20',
+    aiNote: null,
   },
   {
     id: '9',
     category: 'Countertops',
+    room: 'Master Bath',
     itemName: 'Master Bath Vanity Top',
     selectedProduct: null,
     price: 0,
     allowance: 2500,
-    status: 'pending',
+    pricingModel: 'allowance',
+    markupPct: 0,
+    status: 'not_started',
     deadline: 'Dec 22',
     daysUntilDeadline: 25,
+    leadTimeDays: null,
+    vendor: null,
+    designerRecommended: false,
+    commentCount: 0,
+    inspirationCount: 0,
+    optionsCount: 0,
+    hasSignature: false,
+    poNumber: null,
+    scheduleDependency: 'Counter Install - Week 21',
+    aiNote: null,
   },
   {
     id: '10',
     category: 'Lighting',
+    room: 'Dining Room',
     itemName: 'Dining Chandelier',
     selectedProduct: 'Visual Comfort Darlana',
     price: 2400,
     allowance: 2000,
+    pricingModel: 'allowance',
+    markupPct: 0,
     status: 'selected',
     deadline: 'Jan 10',
     daysUntilDeadline: 44,
+    leadTimeDays: 28,
     vendor: 'Lighting Design Co',
+    designerRecommended: true,
+    commentCount: 2,
+    inspirationCount: 4,
+    optionsCount: 6,
+    hasSignature: false,
+    poNumber: null,
+    scheduleDependency: 'Lighting Trim - Week 23',
+    aiNote: null,
   },
   {
     id: '11',
     category: 'Lighting',
+    room: 'Whole House',
     itemName: 'Recessed Lighting Package',
     selectedProduct: 'Lutron LED 4"',
     price: 3200,
     allowance: 3500,
+    pricingModel: 'fixed',
+    markupPct: 0,
     status: 'installed',
     deadline: 'Nov 20',
     daysUntilDeadline: -17,
+    leadTimeDays: 7,
     vendor: 'Electric Supply',
+    designerRecommended: false,
+    commentCount: 0,
+    inspirationCount: 0,
+    optionsCount: 2,
+    hasSignature: true,
+    poNumber: 'PO-2026-0087',
+    scheduleDependency: null,
+    aiNote: null,
   },
   {
     id: '12',
     category: 'Cabinetry',
+    room: 'Kitchen',
     itemName: 'Kitchen Cabinets',
     selectedProduct: 'Custom Shaker Maple',
     price: 28000,
     allowance: 25000,
-    status: 'ordered',
+    pricingModel: 'allowance',
+    markupPct: 0,
+    status: 'received',
     deadline: 'Dec 1',
     daysUntilDeadline: 4,
+    leadTimeDays: 42,
     vendor: 'Custom Cabinet Co',
+    designerRecommended: false,
+    commentCount: 8,
+    inspirationCount: 12,
+    optionsCount: 4,
+    hasSignature: true,
+    poNumber: 'PO-2026-0110',
+    scheduleDependency: 'Cabinet Install - Week 17',
+    aiNote: 'Received on site Dec 1 -- on schedule for install',
+  },
+  {
+    id: '13',
+    category: 'Fixtures',
+    room: 'Master Bath',
+    itemName: 'Freestanding Tub',
+    selectedProduct: 'Victoria + Albert Amiata',
+    price: 4800,
+    allowance: 3500,
+    pricingModel: 'cost_plus',
+    markupPct: 15,
+    status: 'change_requested',
+    deadline: 'Dec 5',
+    daysUntilDeadline: -2,
+    leadTimeDays: 35,
+    vendor: 'Plumbing Supply Co',
+    designerRecommended: true,
+    commentCount: 5,
+    inspirationCount: 3,
+    optionsCount: 4,
+    hasSignature: true,
+    poNumber: 'PO-2026-0115',
+    scheduleDependency: 'Plumbing Trim - Week 22',
+    aiNote: 'Change request: client wants different finish. Cancellation fee $240. New lead time 5 weeks.',
   },
 ]
 
+const rooms = ['All Rooms', 'Kitchen', 'Master Bath', 'Master Bedroom', 'Living Area', 'Dining Room', 'Whole House']
 const categories = ['All', 'Flooring', 'Fixtures', 'Appliances', 'Countertops', 'Lighting', 'Cabinetry']
 
-const statusConfig = {
-  pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
+const statusConfig: Record<SelectionStatus, { label: string; color: string; icon: typeof Clock }> = {
+  not_started: { label: 'Not Started', color: 'bg-gray-100 text-gray-600', icon: Clock },
+  options_presented: { label: 'Options Presented', color: 'bg-indigo-100 text-indigo-700', icon: Eye },
+  client_reviewing: { label: 'Client Reviewing', color: 'bg-cyan-100 text-cyan-700', icon: Eye },
   selected: { label: 'Selected', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
-  ordered: { label: 'Ordered', color: 'bg-purple-100 text-purple-700', icon: Package },
+  confirmed: { label: 'Confirmed', color: 'bg-emerald-100 text-emerald-700', icon: FileSignature },
+  ordered: { label: 'Ordered', color: 'bg-purple-100 text-purple-700', icon: ShoppingCart },
+  received: { label: 'Received', color: 'bg-teal-100 text-teal-700', icon: Truck },
   installed: { label: 'Installed', color: 'bg-green-100 text-green-700', icon: CheckCircle },
+  change_requested: { label: 'Change Requested', color: 'bg-orange-100 text-orange-700', icon: ArrowRightLeft },
+}
+
+const pricingModelLabels: Record<PricingModel, string> = {
+  allowance: 'Allowance',
+  fixed: 'Fixed Price',
+  cost_plus: 'Cost-Plus',
 }
 
 function formatCurrency(value: number): string {
@@ -195,22 +411,26 @@ function formatCurrency(value: number): string {
 function SelectionCard({ selection }: { selection: Selection }) {
   const config = statusConfig[selection.status]
   const StatusIcon = config.icon
-  const overAllowance = selection.price > selection.allowance
+  const overAllowance = selection.price > selection.allowance && selection.price > 0
   const variance = selection.price - selection.allowance
+  const isUrgent = (selection.status === 'not_started' || selection.status === 'options_presented' || selection.status === 'client_reviewing') && selection.daysUntilDeadline <= 3
 
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      selection.status === 'pending' && selection.daysUntilDeadline <= 3
-        ? "border-amber-300"
-        : "border-gray-200"
+      isUrgent ? "border-amber-300" : selection.status === 'change_requested' ? "border-orange-300" : "border-gray-200"
     )}>
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-medium text-gray-500 uppercase">{selection.category}</span>
-            {selection.status === 'pending' && selection.daysUntilDeadline <= 3 && (
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+            <span className="text-xs text-gray-400">-</span>
+            <span className="text-xs text-gray-500">{selection.room}</span>
+            {isUrgent && <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
+            {selection.designerRecommended && (
+              <span className="flex items-center gap-0.5 text-xs text-pink-600" title="Designer recommended">
+                <Palette className="h-3 w-3" />
+              </span>
             )}
           </div>
           <h4 className="font-medium text-gray-900">{selection.itemName}</h4>
@@ -226,12 +446,21 @@ function SelectionCard({ selection }: { selection: Selection }) {
         ) : (
           <p className="text-sm text-gray-400 italic">No selection made</p>
         )}
-        {selection.vendor && (
-          <p className="text-xs text-gray-500 mt-1">{selection.vendor}</p>
-        )}
+        <div className="flex items-center gap-3 mt-1">
+          {selection.vendor && (
+            <p className="text-xs text-gray-500">{selection.vendor}</p>
+          )}
+          {selection.poNumber && (
+            <span className="text-xs text-purple-600 flex items-center gap-0.5">
+              <LinkIcon className="h-3 w-3" />
+              {selection.poNumber}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex items-center justify-between mb-3">
+      {/* Pricing */}
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3 text-sm">
           <div className="flex items-center gap-1">
             <DollarSign className="h-3.5 w-3.5 text-gray-400" />
@@ -243,7 +472,7 @@ function SelectionCard({ selection }: { selection: Selection }) {
             </span>
           </div>
           <span className="text-gray-400">/</span>
-          <span className="text-gray-500">{formatCurrency(selection.allowance)} allow.</span>
+          <span className="text-gray-500">{formatCurrency(selection.allowance)} {pricingModelLabels[selection.pricingModel].toLowerCase()}</span>
         </div>
         {selection.price > 0 && (
           <span className={cn(
@@ -255,6 +484,39 @@ function SelectionCard({ selection }: { selection: Selection }) {
         )}
       </div>
 
+      {/* Meta indicators */}
+      <div className="flex items-center gap-3 mb-3 text-xs text-gray-400">
+        {selection.optionsCount > 0 && (
+          <span className="flex items-center gap-0.5" title={`${selection.optionsCount} options presented`}>
+            <Eye className="h-3 w-3" />
+            {selection.optionsCount}
+          </span>
+        )}
+        {selection.commentCount > 0 && (
+          <span className="flex items-center gap-0.5" title={`${selection.commentCount} comments`}>
+            <MessageSquare className="h-3 w-3" />
+            {selection.commentCount}
+          </span>
+        )}
+        {selection.inspirationCount > 0 && (
+          <span className="flex items-center gap-0.5" title={`${selection.inspirationCount} inspiration images`}>
+            <Image className="h-3 w-3" />
+            {selection.inspirationCount}
+          </span>
+        )}
+        {selection.hasSignature && (
+          <span className="flex items-center gap-0.5 text-green-500" title="E-signature captured">
+            <FileSignature className="h-3 w-3" />
+          </span>
+        )}
+        {selection.leadTimeDays !== null && (
+          <span className="flex items-center gap-0.5" title={`${selection.leadTimeDays} day lead time`}>
+            <Truck className="h-3 w-3" />
+            {selection.leadTimeDays}d
+          </span>
+        )}
+      </div>
+
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
         <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", config.color)}>
           <StatusIcon className="h-3.5 w-3.5" />
@@ -262,28 +524,33 @@ function SelectionCard({ selection }: { selection: Selection }) {
         </div>
         <div className={cn(
           "flex items-center gap-1 text-xs",
-          selection.daysUntilDeadline <= 3 && selection.status === 'pending'
-            ? "text-amber-600 font-medium"
-            : "text-gray-500"
+          isUrgent ? "text-amber-600 font-medium" : "text-gray-500"
         )}>
           <Calendar className="h-3.5 w-3.5" />
           <span>{selection.deadline}</span>
-          {selection.status === 'pending' && selection.daysUntilDeadline > 0 && (
+          {selection.daysUntilDeadline > 0 && (selection.status === 'not_started' || selection.status === 'options_presented' || selection.status === 'client_reviewing') && (
             <span className="text-gray-400">({selection.daysUntilDeadline}d)</span>
           )}
         </div>
       </div>
 
+      {selection.scheduleDependency && (
+        <div className="mt-2 text-xs text-gray-400 flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          {selection.scheduleDependency}
+        </div>
+      )}
+
       {selection.aiNote && (
         <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2 text-xs",
-          selection.daysUntilDeadline <= 3 ? "bg-amber-50" : "bg-blue-50"
+          selection.status === 'change_requested' ? "bg-orange-50" : isUrgent ? "bg-amber-50" : "bg-blue-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
-            selection.daysUntilDeadline <= 3 ? "text-amber-500" : "text-blue-500"
+            selection.status === 'change_requested' ? "text-orange-500" : isUrgent ? "text-amber-500" : "text-blue-500"
           )} />
-          <span className={selection.daysUntilDeadline <= 3 ? "text-amber-700" : "text-blue-700"}>
+          <span className={selection.status === 'change_requested' ? "text-orange-700" : isUrgent ? "text-amber-700" : "text-blue-700"}>
             {selection.aiNote}
           </span>
         </div>
@@ -295,24 +562,26 @@ function SelectionCard({ selection }: { selection: Selection }) {
 function SelectionRow({ selection }: { selection: Selection }) {
   const config = statusConfig[selection.status]
   const StatusIcon = config.icon
-  const overAllowance = selection.price > selection.allowance
+  const overAllowance = selection.price > selection.allowance && selection.price > 0
   const variance = selection.price - selection.allowance
+  const isUrgent = (selection.status === 'not_started' || selection.status === 'options_presented' || selection.status === 'client_reviewing') && selection.daysUntilDeadline <= 3
 
   return (
     <tr className={cn(
       "hover:bg-gray-50",
-      selection.status === 'pending' && selection.daysUntilDeadline <= 3 && "bg-amber-50/50"
+      isUrgent && "bg-amber-50/50",
+      selection.status === 'change_requested' && "bg-orange-50/30",
     )}>
       <td className="py-3 px-4">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-gray-500 uppercase bg-gray-100 px-1.5 py-0.5 rounded">
             {selection.category}
           </span>
-          {selection.status === 'pending' && selection.daysUntilDeadline <= 3 && (
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
-          )}
+          {isUrgent && <AlertTriangle className="h-4 w-4 text-amber-500" />}
+          {selection.designerRecommended && <Palette className="h-3.5 w-3.5 text-pink-500" />}
         </div>
       </td>
+      <td className="py-3 px-4 text-xs text-gray-500">{selection.room}</td>
       <td className="py-3 px-4">
         <div className="font-medium text-gray-900">{selection.itemName}</div>
         {selection.vendor && (
@@ -354,9 +623,7 @@ function SelectionRow({ selection }: { selection: Selection }) {
       <td className="py-3 px-4 text-right">
         <div className={cn(
           "text-sm",
-          selection.daysUntilDeadline <= 3 && selection.status === 'pending'
-            ? "text-amber-600 font-medium"
-            : "text-gray-600"
+          isUrgent ? "text-amber-600 font-medium" : "text-gray-600"
         )}>
           {selection.deadline}
         </div>
@@ -366,15 +633,17 @@ function SelectionRow({ selection }: { selection: Selection }) {
 }
 
 export function SelectionsPreview() {
+  const [selectedRoom, setSelectedRoom] = useState<string>('All Rooms')
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
   const filteredSelections = sortItems(
     mockSelections.filter(selection => {
-      if (!matchesSearch(selection, search, ['itemName', 'selectedProduct', 'vendor', 'category'])) return false
+      if (!matchesSearch(selection, search, ['itemName', 'selectedProduct', 'vendor', 'category', 'room'])) return false
+      const roomMatch = selectedRoom === 'All Rooms' || selection.room === selectedRoom
       const categoryMatch = selectedCategory === 'All' || selection.category === selectedCategory
       const statusMatch = activeTab === 'all' || selection.status === activeTab
-      return categoryMatch && statusMatch
+      return roomMatch && categoryMatch && statusMatch
     }),
     activeSort as keyof Selection | '',
     sortDirection,
@@ -382,14 +651,20 @@ export function SelectionsPreview() {
 
   // Calculate stats
   const totalSelections = mockSelections.length
-  const selectionsMade = mockSelections.filter(s => s.status !== 'pending').length
-  const pendingDecisions = mockSelections.filter(s => s.status === 'pending').length
-  const urgentDecisions = mockSelections.filter(s => s.status === 'pending' && s.daysUntilDeadline <= 3).length
+  const completedStatuses: SelectionStatus[] = ['selected', 'confirmed', 'ordered', 'received', 'installed']
+  const selectionsMade = mockSelections.filter(s => completedStatuses.includes(s.status)).length
+  const pendingStatuses: SelectionStatus[] = ['not_started', 'options_presented', 'client_reviewing']
+  const pendingDecisions = mockSelections.filter(s => pendingStatuses.includes(s.status)).length
+  const urgentDecisions = mockSelections.filter(s => pendingStatuses.includes(s.status) && s.daysUntilDeadline <= 3).length
+  const changeRequests = mockSelections.filter(s => s.status === 'change_requested').length
 
   const totalAllowance = mockSelections.reduce((sum, s) => sum + s.allowance, 0)
   const totalSelected = mockSelections.reduce((sum, s) => sum + s.price, 0)
   const selectionsWithPrices = mockSelections.filter(s => s.price > 0)
   const varianceFromSelected = selectionsWithPrices.reduce((sum, s) => sum + (s.price - s.allowance), 0)
+
+  const designerRecommendedCount = mockSelections.filter(s => s.designerRecommended).length
+  const totalComments = mockSelections.reduce((sum, s) => sum + s.commentCount, 0)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -399,37 +674,74 @@ export function SelectionsPreview() {
           <div className="flex items-center gap-3">
             <h3 className="font-semibold text-gray-900">Client Selections</h3>
             <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Smith Residence</span>
+            {changeRequests > 0 && (
+              <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+                <ArrowRightLeft className="h-3 w-3" />
+                {changeRequests} change request{changeRequests !== 1 ? 's' : ''}
+              </span>
+            )}
           </div>
           <div className="text-sm text-gray-500 mt-0.5">
             {selectionsMade} of {totalSelections} selections made | {pendingDecisions} pending
+            {urgentDecisions > 0 && (
+              <span className="text-amber-600 font-medium ml-1">({urgentDecisions} urgent)</span>
+            )}
           </div>
         </div>
+
+        {/* Progress Bar */}
+        <div className="mb-3">
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all"
+              style={{ width: `${(selectionsMade / totalSelections) * 100}%` }}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
+            <span>{Math.round((selectionsMade / totalSelections) * 100)}% complete</span>
+            <span>{totalSelections - selectionsMade} remaining</span>
+          </div>
+        </div>
+
         <FilterBar
           search={search}
           onSearchChange={setSearch}
           searchPlaceholder="Search selections..."
           tabs={[
             { key: 'all', label: 'All', count: mockSelections.length },
-            { key: 'pending', label: 'Pending', count: mockSelections.filter(s => s.status === 'pending').length },
+            { key: 'not_started', label: 'Not Started', count: mockSelections.filter(s => s.status === 'not_started').length },
+            { key: 'options_presented', label: 'Options', count: mockSelections.filter(s => s.status === 'options_presented').length },
+            { key: 'client_reviewing', label: 'Reviewing', count: mockSelections.filter(s => s.status === 'client_reviewing').length },
             { key: 'selected', label: 'Selected', count: mockSelections.filter(s => s.status === 'selected').length },
+            { key: 'confirmed', label: 'Confirmed', count: mockSelections.filter(s => s.status === 'confirmed').length },
             { key: 'ordered', label: 'Ordered', count: mockSelections.filter(s => s.status === 'ordered').length },
+            { key: 'received', label: 'Received', count: mockSelections.filter(s => s.status === 'received').length },
             { key: 'installed', label: 'Installed', count: mockSelections.filter(s => s.status === 'installed').length },
+            { key: 'change_requested', label: 'Changes', count: mockSelections.filter(s => s.status === 'change_requested').length },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
           dropdowns={[
             {
+              label: 'All Rooms',
+              value: selectedRoom === 'All Rooms' ? 'all' : selectedRoom,
+              options: rooms.filter(r => r !== 'All Rooms').map(r => ({ value: r, label: r })),
+              onChange: (v) => setSelectedRoom(v === 'all' ? 'All Rooms' : v),
+            },
+            {
               label: 'All Categories',
               value: selectedCategory === 'All' ? 'all' : selectedCategory,
-              options: categories.filter(c => c !== 'All').map(cat => ({ value: cat, label: cat })),
+              options: categories.filter(c => c !== 'All').map(c => ({ value: c, label: c })),
               onChange: (v) => setSelectedCategory(v === 'all' ? 'All' : v),
             },
           ]}
           sortOptions={[
             { value: 'itemName', label: 'Item Name' },
+            { value: 'room', label: 'Room' },
             { value: 'price', label: 'Price' },
             { value: 'allowance', label: 'Allowance' },
             { value: 'daysUntilDeadline', label: 'Deadline' },
+            { value: 'status', label: 'Status' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -437,7 +749,10 @@ export function SelectionsPreview() {
           onSortDirectionChange={toggleSortDirection}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
-          actions={[{ icon: Plus, label: 'Add Selection', onClick: () => {}, variant: 'primary' }]}
+          actions={[
+            { icon: Plus, label: 'Add Selection', onClick: () => {}, variant: 'primary' },
+            { icon: Send, label: 'Send Reminder', onClick: () => {} },
+          ]}
           resultCount={filteredSelections.length}
           totalCount={mockSelections.length}
         />
@@ -445,11 +760,11 @@ export function SelectionsPreview() {
 
       {/* Stats Cards */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-6 gap-3">
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-gray-500 text-sm">
               <CheckCircle className="h-4 w-4" />
-              Selections Made
+              Made
             </div>
             <div className="text-xl font-bold text-gray-900 mt-1">
               {selectionsMade} <span className="text-sm font-normal text-gray-500">/ {totalSelections}</span>
@@ -464,7 +779,7 @@ export function SelectionsPreview() {
               urgentDecisions > 0 ? "text-amber-600" : "text-gray-500"
             )}>
               <Clock className="h-4 w-4" />
-              Pending Decisions
+              Pending
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
@@ -472,7 +787,7 @@ export function SelectionsPreview() {
             )}>
               {pendingDecisions}
               {urgentDecisions > 0 && (
-                <span className="text-sm font-medium text-amber-600 ml-2">({urgentDecisions} urgent)</span>
+                <span className="text-sm font-medium text-amber-600 ml-1">({urgentDecisions} urgent)</span>
               )}
             </div>
           </div>
@@ -491,8 +806,8 @@ export function SelectionsPreview() {
               "flex items-center gap-2 text-sm",
               varianceFromSelected > 0 ? "text-red-600" : "text-green-600"
             )}>
-              <DollarSign className="h-4 w-4" />
-              Over/Under Allowance
+              <BarChart3 className="h-4 w-4" />
+              Variance
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
@@ -500,6 +815,20 @@ export function SelectionsPreview() {
             )}>
               {varianceFromSelected > 0 ? '+' : ''}{formatCurrency(varianceFromSelected)}
             </div>
+          </div>
+          <div className="bg-pink-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-pink-600 text-sm">
+              <Star className="h-4 w-4" />
+              Designer Picks
+            </div>
+            <div className="text-xl font-bold text-pink-700 mt-1">{designerRecommendedCount}</div>
+          </div>
+          <div className="bg-blue-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-blue-600 text-sm">
+              <MessageSquare className="h-4 w-4" />
+              Comments
+            </div>
+            <div className="text-xl font-bold text-blue-700 mt-1">{totalComments}</div>
           </div>
         </div>
       </div>
@@ -522,6 +851,7 @@ export function SelectionsPreview() {
             <thead className="bg-gray-100 border-b border-gray-200 sticky top-0">
               <tr>
                 <th className="text-left py-3 px-4 font-medium text-gray-600">Category</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">Room</th>
                 <th className="text-left py-3 px-4 font-medium text-gray-600">Item</th>
                 <th className="text-left py-3 px-4 font-medium text-gray-600">Selected Product</th>
                 <th className="text-right py-3 px-4 font-medium text-gray-600">Price</th>
@@ -536,7 +866,7 @@ export function SelectionsPreview() {
               ))}
               {filteredSelections.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-gray-500">
+                  <td colSpan={8} className="text-center py-12 text-gray-500">
                     No selections match the current filters
                   </td>
                 </tr>
@@ -545,6 +875,37 @@ export function SelectionsPreview() {
           </table>
         </div>
       )}
+
+      {/* Cross-Module Connection Badges */}
+      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-500 font-medium">Connected:</span>
+          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            Selections Catalog
+          </span>
+          <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <BarChart3 className="h-3 w-3" />
+            Budget
+          </span>
+          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <ShoppingCart className="h-3 w-3" />
+            Purchase Orders
+          </span>
+          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            Schedule
+          </span>
+          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <ArrowRightLeft className="h-3 w-3" />
+            Change Orders
+          </span>
+          <span className="bg-pink-50 text-pink-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <Eye className="h-3 w-3" />
+            Client Portal
+          </span>
+        </div>
+      </div>
 
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
@@ -556,12 +917,12 @@ export function SelectionsPreview() {
           <div className="flex items-center gap-4 text-sm text-amber-700">
             <span className="flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              2 selections need decisions this week to avoid schedule delays
+              {urgentDecisions} selection{urgentDecisions !== 1 ? 's' : ''} need decisions this week to avoid delays
             </span>
             <span>|</span>
-            <span>Range/Oven selection critical - must select today</span>
+            <span>Range/Oven selection critical -- must select today</span>
             <span>|</span>
-            <span>Master Bath Faucets deadline in 3 days</span>
+            <span>Tub change request: $240 cancellation fee + 5 week new lead time</span>
           </div>
         </div>
       </div>

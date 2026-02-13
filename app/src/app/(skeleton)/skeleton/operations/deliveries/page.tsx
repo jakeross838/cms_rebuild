@@ -23,65 +23,99 @@ export default function DeliveriesPage() {
       {activeTab === 'preview' ? <DeliveriesPreview /> : <PageSpec
       title="Deliveries"
       phase="Phase 2 - Operations"
-      planFile="views/operations/DELIVERIES.md"
-      description="Track incoming material deliveries across all jobs. Know what's arriving when and where. Coordinate with job schedules to ensure materials arrive when needed and site is prepared to receive them."
+      planFile="docs/modules/18-purchase-orders.md (Section 6: Delivery Tracking)"
+      description="Cross-job delivery tracking and receiving management. Tracks all incoming material deliveries from POs, including partial receipts, backorder management, damage reporting, and three-way matching integration. Configurable receiving workflow (field or office). Schedule impact analysis for delayed or backordered materials. Vendor on-time delivery performance tracking feeds into vendor scorecards."
       workflow={workflow}
       features={[
-        'Delivery list with status',
-        'Calendar view of upcoming deliveries',
-        'Filter by job, vendor, date',
-        'Expected vs actual delivery dates',
-        'Delivery time windows',
-        'Site contact and instructions',
-        'Delivery confirmation',
-        'Photo documentation on receipt',
-        'Discrepancy reporting',
-        'Back-order tracking',
-        'Delivery cost tracking',
-        'Coordinate with schedule tasks',
-        'Notifications for delays',
-        'Vendor delivery performance',
+        'Delivery list grouped by timeline (today, tomorrow, upcoming, delayed, partial, delivered)',
+        'Calendar view of upcoming deliveries across all jobs',
+        'Filter by job, vendor, status, date range',
+        'Expected vs actual delivery dates with variance tracking',
+        'Delivery time windows with site preparation alerts',
+        'Site contact assignment and special instructions',
+        'Mobile-friendly receiving form with quantity check-off',
+        'Partial receipt support with backorder auto-flagging',
+        'Photo documentation on receipt (configurable: optional or required)',
+        'Damaged item reporting with photos and auto-vendor notification',
+        'Wrong item flagging with return workflow',
+        'Condition status: good, damaged, wrong_item',
+        'Tracking number with carrier link (UPS/FedEx/freight)',
+        'Receiving location: job_site, warehouse, office',
+        'Backorder dashboard with schedule impact cross-reference',
+        'Three-way matching integration (PO-receipt-invoice)',
+        'Schedule task dependency tracking per delivery',
+        'Schedule impact warnings when deliveries delay or backorder',
+        'Vendor on-time delivery rate tracking',
+        'Delivery value tracking and cost code association',
+        'Delivery performance reports by vendor',
+        'Weather impact on delivery scheduling',
+        'Automated reminders to vendors for upcoming delivery dates',
       ]}
       connections={[
-        { name: 'Purchase Orders', type: 'input', description: 'Deliveries from POs' },
-        { name: 'Jobs', type: 'bidirectional', description: 'Deliveries to job sites' },
-        { name: 'Job Schedule', type: 'bidirectional', description: 'Coordinate with tasks' },
-        { name: 'Calendar', type: 'output', description: 'Shows on calendar' },
-        { name: 'Vendors', type: 'input', description: 'Vendor delivery tracking' },
-        { name: 'Invoices', type: 'output', description: 'Verify receipt before payment' },
+        { name: 'Purchase Orders', type: 'input', description: 'Deliveries sourced from PO line items and expected dates' },
+        { name: 'PO Receipts', type: 'output', description: 'Receipt records created for three-way matching' },
+        { name: 'Jobs', type: 'bidirectional', description: 'Deliveries scoped to job sites' },
+        { name: 'Job Schedule', type: 'bidirectional', description: 'Schedule impact analysis for delays/backorders' },
+        { name: 'Calendar', type: 'output', description: 'Delivery events shown on company calendar (green)' },
+        { name: 'Vendors', type: 'bidirectional', description: 'Vendor delivery performance feeds scorecards' },
+        { name: 'Invoices', type: 'output', description: 'Receipt data feeds three-way matching' },
+        { name: 'Budget', type: 'output', description: 'Received amounts update committed cost tracking' },
+        { name: 'Notifications', type: 'output', description: 'Delay alerts, upcoming delivery reminders' },
       ]}
       dataFields={[
-        { name: 'id', type: 'uuid', required: true, description: 'Primary key' },
-        { name: 'po_id', type: 'uuid', required: true, description: 'Source PO' },
-        { name: 'job_id', type: 'uuid', required: true, description: 'Delivery job' },
-        { name: 'vendor_id', type: 'uuid', required: true, description: 'Delivering vendor' },
-        { name: 'description', type: 'string', required: true, description: 'What is being delivered' },
-        { name: 'expected_date', type: 'date', required: true, description: 'Expected delivery' },
-        { name: 'expected_time', type: 'string', description: 'Time window' },
-        { name: 'actual_date', type: 'date', description: 'Actual delivery date' },
-        { name: 'status', type: 'string', required: true, description: 'Scheduled, In Transit, Delivered, Delayed, Partial' },
-        { name: 'site_contact', type: 'string', description: 'Who receives' },
-        { name: 'delivery_instructions', type: 'text', description: 'Special instructions' },
-        { name: 'received_by', type: 'uuid', description: 'Who received' },
-        { name: 'received_notes', type: 'text', description: 'Condition notes' },
-        { name: 'photos', type: 'jsonb', description: 'Delivery photos' },
-        { name: 'discrepancy', type: 'text', description: 'Any issues' },
+        { name: 'id', type: 'uuid', required: true, description: 'Primary key (v2_po_receipts)' },
+        { name: 'purchase_order_id', type: 'uuid', required: true, description: 'Source PO' },
+        { name: 'builder_id', type: 'uuid', required: true, description: 'Tenant isolation' },
+        { name: 'received_by', type: 'uuid', required: true, description: 'User who received' },
+        { name: 'received_at', type: 'timestamp', description: 'When received' },
+        { name: 'location', type: 'string', description: 'job_site | warehouse | office' },
+        { name: 'notes', type: 'text', description: 'General receiving notes' },
+        { name: 'photos', type: 'text[]', description: 'Array of photo file URLs' },
+        { name: 'receipt_item.po_item_id', type: 'uuid', required: true, description: 'Link to PO line item' },
+        { name: 'receipt_item.quantity_received', type: 'decimal', required: true, description: 'Quantity received this delivery' },
+        { name: 'receipt_item.condition', type: 'string', description: 'good | damaged | wrong_item' },
+        { name: 'receipt_item.damage_notes', type: 'text', description: 'Damage description' },
+        { name: 'receipt_item.damage_photos', type: 'text[]', description: 'Damage photo URLs' },
+        { name: 'po.expected_delivery_date', type: 'date', description: 'Expected delivery from PO' },
+        { name: 'po.tracking_number', type: 'string', description: 'Carrier tracking number' },
+        { name: 'po.carrier', type: 'string', description: 'Shipping carrier name' },
+        { name: 'po_item.backordered_quantity', type: 'decimal', description: 'Items not yet received' },
       ]}
       aiFeatures={[
         {
           name: 'Schedule Coordination',
-          description: 'Ensures deliveries align with work. "Windows arriving Thursday. Framing must be complete by Wednesday."',
-          trigger: 'On schedule change'
+          description: 'Cross-references deliveries with schedule tasks. "Windows arriving Thursday. Framing must complete by Wednesday. Current status: 85% complete -- on track."',
+          trigger: 'On schedule change or delivery update'
         },
         {
           name: 'Delay Prediction',
-          description: 'Predicts delays based on vendor patterns. "ABC Lumber: 20% deliveries delayed. Buffer recommended."',
+          description: 'Uses vendor history to predict delays. "ABC Lumber: 18% late delivery rate. This delivery has 22% probability of delay based on current order volume. Buffer recommended."',
           trigger: 'On delivery schedule'
         },
         {
-          name: 'Site Readiness',
-          description: 'Checks site can receive delivery. "Drywall delivery scheduled but no forklift on site. Add equipment."',
+          name: 'Site Readiness Check',
+          description: 'Validates site can receive delivery. "Drywall delivery requires boom truck. Confirm equipment on site. Area below east wall must be clear for staging."',
           trigger: 'Day before delivery'
+        },
+        {
+          name: 'Backorder Schedule Impact',
+          description: 'Calculates schedule risk from backorders. "HVAC condensing unit backordered. ETA Feb 25. Task HVAC Install scheduled Feb 10. Schedule slip: +15 days on critical path."',
+          trigger: 'On partial delivery'
+        },
+        {
+          name: 'Vendor Performance Alert',
+          description: 'Flags vendors below on-time threshold. "Elite Appliances: 72% on-time rate (threshold: 85%). 3 of last 4 deliveries late. Consider alternative supplier for future orders."',
+          trigger: 'On vendor performance calculation'
+        },
+        {
+          name: 'Damage Pattern Detection',
+          description: 'Identifies recurring damage issues. "Smith Electric Supply: 2nd delivery with damaged breakers in 3 months. Recommend requesting improved packaging or considering alternative supplier."',
+          trigger: 'On damage report'
+        },
+        {
+          name: 'Weather Impact',
+          description: 'Checks weather forecast against upcoming deliveries. "Rain forecast Feb 14-15. Lumber delivery scheduled Feb 14 -- materials require covered staging. Alert site contact."',
+          trigger: 'On weather forecast update'
         },
       ]}
       mockupAscii={`

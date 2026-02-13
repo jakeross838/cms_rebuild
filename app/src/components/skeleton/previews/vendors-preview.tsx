@@ -13,6 +13,7 @@ import {
   Sparkles,
   AlertTriangle,
   TrendingUp,
+  TrendingDown,
   Users,
   Building2,
   Wrench,
@@ -20,24 +21,52 @@ import {
   Droplets,
   Hammer,
   PaintBucket,
+  DollarSign,
+  FileText,
+  ShoppingCart,
+  Award,
+  Clock,
+  Ban,
+  CheckCircle,
+  Target,
+  Briefcase,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
+interface PerformanceScores {
+  quality: number
+  timeliness: number
+  communication: number
+  budget: number
+  safety: number
+  composite: number
+}
+
 interface Vendor {
   id: string
   name: string
   trade: string
-  type: 'subcontractor' | 'supplier'
-  rating: number
+  type: 'subcontractor' | 'supplier' | 'service'
+  status: 'approved' | 'preferred' | 'conditional' | 'blacklisted' | 'pending'
+  scores: PerformanceScores
   reliability: number
   phone: string
   email: string
+  paymentTerms: string
   insuranceStatus: 'valid' | 'expiring' | 'expired'
   insuranceExpiry: string
+  licenseStatus: 'valid' | 'expired' | 'na'
+  w9OnFile: boolean
   projectsCompleted: number
+  activeJobs: number
+  totalSpend: number
+  activePOs: number
+  openPunchItems: number
+  bidWinRate: number
   avgResponseTime: string
+  warrantyCallbacks: number
   aiNote?: string
 }
 
@@ -47,116 +76,221 @@ const mockVendors: Vendor[] = [
     name: 'ABC Framing Co.',
     trade: 'Framing',
     type: 'subcontractor',
-    rating: 4.8,
+    status: 'preferred',
+    scores: { quality: 4.8, timeliness: 4.5, communication: 4.7, budget: 4.3, safety: 4.9, composite: 92 },
     reliability: 96,
     phone: '(850) 555-0101',
     email: 'contact@abcframing.com',
+    paymentTerms: 'Net 30',
     insuranceStatus: 'valid',
-    insuranceExpiry: 'Dec 2025',
+    insuranceExpiry: 'Dec 2026',
+    licenseStatus: 'valid',
+    w9OnFile: true,
     projectsCompleted: 47,
+    activeJobs: 3,
+    totalSpend: 1850000,
+    activePOs: 4,
+    openPunchItems: 2,
+    bidWinRate: 78,
     avgResponseTime: '2 hrs',
-    aiNote: 'Top performer for coastal elevated homes. Typically +2 days on complex roofs.',
+    warrantyCallbacks: 1,
+    aiNote: 'Top performer for coastal elevated homes. On-time start rate: 94%. Typically +2 days on complex roofs but quality is excellent.',
   },
   {
     id: '2',
     name: 'Smith Electric',
     trade: 'Electrical',
     type: 'subcontractor',
-    rating: 4.5,
+    status: 'approved',
+    scores: { quality: 4.5, timeliness: 4.2, communication: 4.0, budget: 4.4, safety: 4.6, composite: 85 },
     reliability: 92,
     phone: '(850) 555-0102',
     email: 'info@smithelectric.com',
+    paymentTerms: 'Net 30',
     insuranceStatus: 'valid',
-    insuranceExpiry: 'Mar 2025',
+    insuranceExpiry: 'Mar 2027',
+    licenseStatus: 'valid',
+    w9OnFile: true,
     projectsCompleted: 32,
+    activeJobs: 2,
+    totalSpend: 920000,
+    activePOs: 3,
+    openPunchItems: 5,
+    bidWinRate: 65,
     avgResponseTime: '4 hrs',
+    warrantyCallbacks: 3,
   },
   {
     id: '3',
     name: 'Jones Plumbing',
     trade: 'Plumbing',
     type: 'subcontractor',
-    rating: 4.2,
+    status: 'conditional',
+    scores: { quality: 3.8, timeliness: 3.5, communication: 3.2, budget: 4.0, safety: 4.1, composite: 72 },
     reliability: 88,
     phone: '(850) 555-0103',
     email: 'service@jonesplumbing.com',
+    paymentTerms: '2/10 Net 30',
     insuranceStatus: 'expiring',
-    insuranceExpiry: 'Feb 2025',
+    insuranceExpiry: 'Mar 2026',
+    licenseStatus: 'valid',
+    w9OnFile: true,
     projectsCompleted: 28,
+    activeJobs: 2,
+    totalSpend: 645000,
+    activePOs: 2,
+    openPunchItems: 8,
+    bidWinRate: 55,
     avgResponseTime: '6 hrs',
-    aiNote: 'Insurance expiring in 30 days. Recommend renewal confirmation.',
+    warrantyCallbacks: 5,
+    aiNote: 'Insurance expiring in 30 days. Declining quality trend: 3 consecutive jobs with above-average punch items. Recommend performance review.',
   },
   {
     id: '4',
     name: 'Cool Air HVAC',
     trade: 'HVAC',
     type: 'subcontractor',
-    rating: 4.6,
+    status: 'preferred',
+    scores: { quality: 4.6, timeliness: 4.7, communication: 4.5, budget: 4.2, safety: 4.8, composite: 89 },
     reliability: 94,
     phone: '(850) 555-0104',
     email: 'quotes@coolairhvac.com',
+    paymentTerms: 'Net 30',
     insuranceStatus: 'valid',
-    insuranceExpiry: 'Aug 2025',
+    insuranceExpiry: 'Aug 2026',
+    licenseStatus: 'valid',
+    w9OnFile: true,
     projectsCompleted: 41,
+    activeJobs: 3,
+    totalSpend: 1340000,
+    activePOs: 5,
+    openPunchItems: 1,
+    bidWinRate: 72,
     avgResponseTime: '3 hrs',
+    warrantyCallbacks: 2,
   },
   {
     id: '5',
     name: 'Coastal Paint Pros',
     trade: 'Painting',
     type: 'subcontractor',
-    rating: 4.3,
+    status: 'conditional',
+    scores: { quality: 4.0, timeliness: 3.6, communication: 3.8, budget: 4.3, safety: 4.0, composite: 76 },
     reliability: 85,
     phone: '(850) 555-0105',
     email: 'hello@coastalpaint.com',
+    paymentTerms: 'Net 15',
     insuranceStatus: 'expired',
-    insuranceExpiry: 'Jan 2025',
+    insuranceExpiry: 'Jan 2026',
+    licenseStatus: 'valid',
+    w9OnFile: true,
     projectsCompleted: 19,
+    activeJobs: 0,
+    totalSpend: 285000,
+    activePOs: 0,
+    openPunchItems: 3,
+    bidWinRate: 45,
     avgResponseTime: '8 hrs',
-    aiNote: 'Insurance expired. Do not assign until renewed.',
+    warrantyCallbacks: 4,
+    aiNote: 'Insurance expired. PO creation blocked until renewed. 3 late completions in last 5 jobs. Consider backup painter.',
   },
   {
     id: '6',
     name: 'ABC Lumber Supply',
     trade: 'Lumber',
     type: 'supplier',
-    rating: 4.7,
+    status: 'preferred',
+    scores: { quality: 4.7, timeliness: 4.8, communication: 4.5, budget: 4.1, safety: 5.0, composite: 90 },
     reliability: 95,
     phone: '(850) 555-0106',
     email: 'orders@abclumber.com',
+    paymentTerms: '2/10 Net 30',
     insuranceStatus: 'valid',
-    insuranceExpiry: 'Oct 2025',
+    insuranceExpiry: 'Oct 2026',
+    licenseStatus: 'na',
+    w9OnFile: true,
     projectsCompleted: 156,
+    activeJobs: 4,
+    totalSpend: 3200000,
+    activePOs: 8,
+    openPunchItems: 0,
+    bidWinRate: 82,
     avgResponseTime: '1 hr',
+    warrantyCallbacks: 0,
   },
   {
     id: '7',
     name: 'PGT Industries',
     trade: 'Windows & Doors',
     type: 'supplier',
-    rating: 4.4,
+    status: 'approved',
+    scores: { quality: 4.4, timeliness: 3.9, communication: 4.2, budget: 4.5, safety: 5.0, composite: 84 },
     reliability: 91,
     phone: '(850) 555-0107',
     email: 'sales@pgt.com',
+    paymentTerms: 'Net 45',
     insuranceStatus: 'valid',
-    insuranceExpiry: 'Nov 2025',
+    insuranceExpiry: 'Nov 2026',
+    licenseStatus: 'na',
+    w9OnFile: true,
     projectsCompleted: 89,
+    activeJobs: 3,
+    totalSpend: 2100000,
+    activePOs: 6,
+    openPunchItems: 0,
+    bidWinRate: 70,
     avgResponseTime: '24 hrs',
-    aiNote: '8-week lead time on impact windows. Order early.',
+    warrantyCallbacks: 2,
+    aiNote: '8-week lead time on impact windows. Order early for schedule compliance. Price increase effective April 2026.',
   },
   {
     id: '8',
     name: 'Gulf Coast Concrete',
     trade: 'Concrete',
     type: 'subcontractor',
-    rating: 4.9,
+    status: 'preferred',
+    scores: { quality: 4.9, timeliness: 4.8, communication: 4.6, budget: 4.5, safety: 4.9, composite: 95 },
     reliability: 98,
     phone: '(850) 555-0108',
     email: 'dispatch@gulfcoastconcrete.com',
+    paymentTerms: 'Net 30',
     insuranceStatus: 'valid',
-    insuranceExpiry: 'Jun 2025',
+    insuranceExpiry: 'Jun 2026',
+    licenseStatus: 'valid',
+    w9OnFile: true,
     projectsCompleted: 72,
+    activeJobs: 4,
+    totalSpend: 2650000,
+    activePOs: 5,
+    openPunchItems: 0,
+    bidWinRate: 88,
     avgResponseTime: '2 hrs',
+    warrantyCallbacks: 0,
+  },
+  {
+    id: '9',
+    name: 'Bayou Tile & Stone',
+    trade: 'Tile',
+    type: 'subcontractor',
+    status: 'pending',
+    scores: { quality: 0, timeliness: 0, communication: 0, budget: 0, safety: 0, composite: 0 },
+    reliability: 0,
+    phone: '(850) 555-0109',
+    email: 'info@bayoutile.com',
+    paymentTerms: 'Net 30',
+    insuranceStatus: 'valid',
+    insuranceExpiry: 'Sep 2026',
+    licenseStatus: 'valid',
+    w9OnFile: false,
+    projectsCompleted: 0,
+    activeJobs: 0,
+    totalSpend: 0,
+    activePOs: 0,
+    openPunchItems: 0,
+    bidWinRate: 0,
+    avgResponseTime: '-',
+    warrantyCallbacks: 0,
+    aiNote: 'New vendor — prequalification pending. Missing W-9. Awaiting EMR rating and references.',
   },
 ]
 
@@ -193,27 +327,30 @@ function StarRating({ rating }: { rating: number }) {
   )
 }
 
+function VendorStatusBadge({ status }: { status: Vendor['status'] }) {
+  const config = {
+    preferred: { label: 'Preferred', color: 'bg-green-100 text-green-700', icon: Award },
+    approved: { label: 'Approved', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
+    conditional: { label: 'Conditional', color: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
+    blacklisted: { label: 'Blacklisted', color: 'bg-red-100 text-red-700', icon: Ban },
+    pending: { label: 'Pending', color: 'bg-gray-100 text-gray-600', icon: Clock },
+  }
+  const { label, color, icon: Icon } = config[status]
+  return (
+    <span className={cn("flex items-center gap-1 text-xs px-1.5 py-0.5 rounded font-medium", color)}>
+      <Icon className="h-3 w-3" />
+      {label}
+    </span>
+  )
+}
+
 function InsuranceStatus({ status, expiry }: { status: Vendor['insuranceStatus']; expiry: string }) {
   const config = {
-    valid: {
-      icon: ShieldCheck,
-      label: 'Valid',
-      color: 'text-green-600 bg-green-50',
-    },
-    expiring: {
-      icon: ShieldAlert,
-      label: 'Expiring',
-      color: 'text-amber-600 bg-amber-50',
-    },
-    expired: {
-      icon: ShieldX,
-      label: 'Expired',
-      color: 'text-red-600 bg-red-50',
-    },
+    valid: { icon: ShieldCheck, label: 'Valid', color: 'text-green-600 bg-green-50' },
+    expiring: { icon: ShieldAlert, label: 'Expiring', color: 'text-amber-600 bg-amber-50' },
+    expired: { icon: ShieldX, label: 'Expired', color: 'text-red-600 bg-red-50' },
   }
-
   const { icon: Icon, label, color } = config[status]
-
   return (
     <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", color)}>
       <Icon className="h-3.5 w-3.5" />
@@ -223,22 +360,47 @@ function InsuranceStatus({ status, expiry }: { status: Vendor['insuranceStatus']
   )
 }
 
+function CompositeScoreBadge({ score }: { score: number }) {
+  if (score === 0) return <span className="text-xs text-gray-400">No data</span>
+  return (
+    <div className={cn(
+      "flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full",
+      score >= 90 ? "bg-green-100 text-green-700" :
+      score >= 80 ? "bg-blue-100 text-blue-700" :
+      score >= 70 ? "bg-amber-100 text-amber-700" :
+      "bg-red-100 text-red-700"
+    )}>
+      <Target className="h-3 w-3" />
+      {score}
+    </div>
+  )
+}
+
+function formatCurrency(value: number): string {
+  if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M'
+  if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K'
+  return '$' + value.toFixed(0)
+}
+
 function VendorCard({ vendor }: { vendor: Vendor }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
+      vendor.status === 'blacklisted' ? "border-red-200 bg-red-50/30" :
       vendor.insuranceStatus === 'expired' ? "border-red-200" :
       vendor.insuranceStatus === 'expiring' ? "border-amber-200" : "border-gray-200"
     )}>
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2">
             <h4 className="font-medium text-gray-900">{vendor.name}</h4>
             <span className={cn(
               "text-xs px-1.5 py-0.5 rounded font-medium",
-              vendor.type === 'subcontractor' ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+              vendor.type === 'subcontractor' ? "bg-blue-100 text-blue-700" :
+              vendor.type === 'supplier' ? "bg-purple-100 text-purple-700" :
+              "bg-teal-100 text-teal-700"
             )}>
-              {vendor.type === 'subcontractor' ? 'Sub' : 'Supplier'}
+              {vendor.type === 'subcontractor' ? 'Sub' : vendor.type === 'supplier' ? 'Supplier' : 'Service'}
             </span>
           </div>
           <p className="text-sm text-gray-500">{vendor.trade}</p>
@@ -248,22 +410,30 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
         </button>
       </div>
 
+      {/* Status + Score Row */}
+      <div className="flex items-center gap-2 mb-3">
+        <VendorStatusBadge status={vendor.status} />
+        <CompositeScoreBadge score={vendor.scores.composite} />
+        <span className="text-xs text-gray-400 ml-auto">{vendor.paymentTerms}</span>
+      </div>
+
+      {/* Rating + Reliability */}
       <div className="flex items-center gap-4 mb-3">
-        <StarRating rating={vendor.rating} />
-        <div className="flex items-center gap-1.5">
-          <div className={cn(
-            "text-xs font-medium px-1.5 py-0.5 rounded",
-            vendor.reliability >= 95 ? "bg-green-100 text-green-700" :
-            vendor.reliability >= 90 ? "bg-blue-100 text-blue-700" :
-            vendor.reliability >= 85 ? "bg-amber-100 text-amber-700" :
-            "bg-red-100 text-red-700"
-          )}>
-            {vendor.reliability}% reliable
-          </div>
+        <StarRating rating={vendor.scores.quality} />
+        <div className={cn(
+          "text-xs font-medium px-1.5 py-0.5 rounded",
+          vendor.reliability >= 95 ? "bg-green-100 text-green-700" :
+          vendor.reliability >= 90 ? "bg-blue-100 text-blue-700" :
+          vendor.reliability >= 85 ? "bg-amber-100 text-amber-700" :
+          vendor.reliability > 0 ? "bg-red-100 text-red-700" :
+          "bg-gray-100 text-gray-500"
+        )}>
+          {vendor.reliability > 0 ? `${vendor.reliability}% reliable` : 'New'}
         </div>
       </div>
 
-      <div className="space-y-1.5 mb-3">
+      {/* Contact Info */}
+      <div className="space-y-1 mb-3">
         <div className="flex items-center gap-2 text-xs text-gray-600">
           <Phone className="h-3.5 w-3.5" />
           <span>{vendor.phone}</span>
@@ -274,27 +444,63 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
         </div>
       </div>
 
+      {/* Cross-module stats */}
+      <div className="flex items-center gap-3 mb-3 text-xs">
+        <span className="flex items-center gap-1 text-gray-500" title="Total spend">
+          <DollarSign className="h-3 w-3" />{formatCurrency(vendor.totalSpend)}
+        </span>
+        <span className="flex items-center gap-1 text-blue-500" title="Active POs">
+          <ShoppingCart className="h-3 w-3" />{vendor.activePOs} POs
+        </span>
+        <span className="flex items-center gap-1 text-gray-500" title="Active jobs">
+          <Briefcase className="h-3 w-3" />{vendor.activeJobs} jobs
+        </span>
+        {vendor.openPunchItems > 0 && (
+          <span className="flex items-center gap-1 text-amber-500" title="Open punch items">
+            <AlertTriangle className="h-3 w-3" />{vendor.openPunchItems} punch
+          </span>
+        )}
+        {vendor.warrantyCallbacks > 0 && (
+          <span className="flex items-center gap-1 text-red-500" title="Warranty callbacks">
+            <FileText className="h-3 w-3" />{vendor.warrantyCallbacks} callbacks
+          </span>
+        )}
+      </div>
+
+      {/* Insurance + Compliance */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
         <InsuranceStatus status={vendor.insuranceStatus} expiry={vendor.insuranceExpiry} />
-        <span className="text-xs text-gray-500">{vendor.projectsCompleted} projects</span>
+        <div className="flex items-center gap-2">
+          {vendor.w9OnFile ? (
+            <span className="text-[10px] bg-green-50 text-green-600 px-1 py-0.5 rounded">W-9</span>
+          ) : (
+            <span className="text-[10px] bg-red-50 text-red-600 px-1 py-0.5 rounded">No W-9</span>
+          )}
+          {vendor.licenseStatus === 'valid' && (
+            <span className="text-[10px] bg-green-50 text-green-600 px-1 py-0.5 rounded">Licensed</span>
+          )}
+          {vendor.licenseStatus === 'expired' && (
+            <span className="text-[10px] bg-red-50 text-red-600 px-1 py-0.5 rounded">Lic Expired</span>
+          )}
+        </div>
       </div>
 
       {vendor.aiNote && (
         <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2",
-          vendor.insuranceStatus === 'expired' || vendor.insuranceStatus === 'expiring'
+          vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
             ? "bg-amber-50"
             : "bg-blue-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
-            vendor.insuranceStatus === 'expired' || vendor.insuranceStatus === 'expiring'
+            vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
               ? "text-amber-500"
               : "text-blue-500"
           )} />
           <span className={cn(
             "text-xs",
-            vendor.insuranceStatus === 'expired' || vendor.insuranceStatus === 'expiring'
+            vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
               ? "text-amber-700"
               : "text-blue-700"
           )}>
@@ -309,12 +515,14 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
 export function VendorsPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
   const [ratingFilter, setRatingFilter] = useState<number>(0)
+  const [statusFilter, setStatusFilter] = useState<string>('all')
 
   const filtered = sortItems(
     mockVendors.filter(vendor => {
       if (!matchesSearch(vendor, search, ['name', 'trade', 'email'])) return false
       if (activeTab !== 'all' && vendor.trade !== activeTab) return false
-      if (vendor.rating < ratingFilter) return false
+      if (vendor.scores.quality > 0 && vendor.scores.quality < ratingFilter) return false
+      if (statusFilter !== 'all' && vendor.status !== statusFilter) return false
       return true
     }),
     activeSort as keyof Vendor | '',
@@ -324,8 +532,13 @@ export function VendorsPreview() {
   const totalVendors = mockVendors.length
   const subcontractors = mockVendors.filter(v => v.type === 'subcontractor').length
   const suppliers = mockVendors.filter(v => v.type === 'supplier').length
+  const preferredCount = mockVendors.filter(v => v.status === 'preferred').length
   const insuranceAlerts = mockVendors.filter(v => v.insuranceStatus !== 'valid').length
-  const avgRating = mockVendors.reduce((sum, v) => sum + v.rating, 0) / mockVendors.length
+  const avgCompositeScore = Math.round(
+    mockVendors.filter(v => v.scores.composite > 0).reduce((sum, v) => sum + v.scores.composite, 0) /
+    mockVendors.filter(v => v.scores.composite > 0).length
+  )
+  const totalSpend = mockVendors.reduce((sum, v) => sum + v.totalSpend, 0)
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -334,68 +547,75 @@ export function VendorsPreview() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-gray-900">Vendor Directory</h3>
-            <p className="text-sm text-gray-500">Subcontractors & Suppliers</p>
+            <p className="text-sm text-gray-500">Subcontractors, Suppliers & Service Providers</p>
           </div>
         </div>
       </div>
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="grid grid-cols-5 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Users className="h-5 w-5 text-blue-600" />
+        <div className="grid grid-cols-7 gap-3">
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center">
+              <Users className="h-4 w-4 text-blue-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{totalVendors}</div>
-              <div className="text-xs text-gray-500">Total Vendors</div>
+              <div className="text-lg font-bold text-gray-900">{totalVendors}</div>
+              <div className="text-[10px] text-gray-500">Total</div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
-              <Hammer className="h-5 w-5 text-green-600" />
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-green-100 flex items-center justify-center">
+              <Hammer className="h-4 w-4 text-green-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{subcontractors}</div>
-              <div className="text-xs text-gray-500">Subcontractors</div>
+              <div className="text-lg font-bold text-gray-900">{subcontractors}</div>
+              <div className="text-[10px] text-gray-500">Subs</div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-purple-600" />
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-purple-100 flex items-center justify-center">
+              <Building2 className="h-4 w-4 text-purple-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{suppliers}</div>
-              <div className="text-xs text-gray-500">Suppliers</div>
+              <div className="text-lg font-bold text-gray-900">{suppliers}</div>
+              <div className="text-[10px] text-gray-500">Suppliers</div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-amber-100 flex items-center justify-center">
-              <Star className="h-5 w-5 text-amber-600" />
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-green-100 flex items-center justify-center">
+              <Award className="h-4 w-4 text-green-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{avgRating.toFixed(1)}</div>
-              <div className="text-xs text-gray-500">Avg Rating</div>
+              <div className="text-lg font-bold text-gray-900">{preferredCount}</div>
+              <div className="text-[10px] text-gray-500">Preferred</div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              "h-10 w-10 rounded-lg flex items-center justify-center",
-              insuranceAlerts > 0 ? "bg-red-100" : "bg-green-100"
-            )}>
-              <AlertTriangle className={cn(
-                "h-5 w-5",
-                insuranceAlerts > 0 ? "text-red-600" : "text-green-600"
-              )} />
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center">
+              <Target className="h-4 w-4 text-blue-600" />
             </div>
             <div>
-              <div className={cn(
-                "text-xl font-bold",
-                insuranceAlerts > 0 ? "text-red-600" : "text-gray-900"
-              )}>
-                {insuranceAlerts}
-              </div>
-              <div className="text-xs text-gray-500">Insurance Alerts</div>
+              <div className="text-lg font-bold text-gray-900">{avgCompositeScore}</div>
+              <div className="text-[10px] text-gray-500">Avg Score</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center", insuranceAlerts > 0 ? "bg-red-100" : "bg-green-100")}>
+              <AlertTriangle className={cn("h-4 w-4", insuranceAlerts > 0 ? "text-red-600" : "text-green-600")} />
+            </div>
+            <div>
+              <div className={cn("text-lg font-bold", insuranceAlerts > 0 ? "text-red-600" : "text-gray-900")}>{insuranceAlerts}</div>
+              <div className="text-[10px] text-gray-500">Ins. Alerts</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-lg bg-emerald-100 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-emerald-600" />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-gray-900">{formatCurrency(totalSpend)}</div>
+              <div className="text-[10px] text-gray-500">Total Spend</div>
             </div>
           </div>
         </div>
@@ -416,9 +636,10 @@ export function VendorsPreview() {
           onTabChange={setActiveTab}
           sortOptions={[
             { value: 'name', label: 'Name' },
-            { value: 'rating', label: 'Rating' },
             { value: 'reliability', label: 'Reliability' },
+            { value: 'totalSpend', label: 'Total Spend' },
             { value: 'projectsCompleted', label: 'Projects' },
+            { value: 'activeJobs', label: 'Active Jobs' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
@@ -430,24 +651,40 @@ export function VendorsPreview() {
           resultCount={filtered.length}
           totalCount={mockVendors.length}
         >
-          {/* Rating filter in children slot */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Min Rating:</span>
-            <div className="flex items-center gap-1">
-              {[0, 3, 4, 4.5].map(rating => (
-                <button
-                  key={rating}
-                  onClick={() => setRatingFilter(rating)}
-                  className={cn(
-                    "px-2 py-1 text-xs rounded",
-                    ratingFilter === rating
-                      ? "bg-amber-100 text-amber-700 font-medium"
-                      : "text-gray-500 hover:bg-gray-100"
-                  )}
-                >
-                  {rating === 0 ? 'Any' : `${rating}+`}
-                </button>
-              ))}
+          {/* Additional filters */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Status:</span>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All</option>
+                <option value="preferred">Preferred</option>
+                <option value="approved">Approved</option>
+                <option value="conditional">Conditional</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Min Rating:</span>
+              <div className="flex items-center gap-1">
+                {[0, 3, 4, 4.5].map(rating => (
+                  <button
+                    key={rating}
+                    onClick={() => setRatingFilter(rating)}
+                    className={cn(
+                      "px-2 py-1 text-xs rounded",
+                      ratingFilter === rating
+                        ? "bg-amber-100 text-amber-700 font-medium"
+                        : "text-gray-500 hover:bg-gray-100"
+                    )}
+                  >
+                    {rating === 0 ? 'Any' : `${rating}+`}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </FilterBar>
@@ -455,7 +692,7 @@ export function VendorsPreview() {
 
       {/* Vendor Grid */}
       <div className="p-4">
-        <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+        <div className="grid grid-cols-2 gap-4 max-h-[500px] overflow-y-auto">
           {filtered.map(vendor => (
             <VendorCard key={vendor.id} vendor={vendor} />
           ))}
@@ -472,20 +709,25 @@ export function VendorsPreview() {
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">AI Insights:</span>
+            <span className="font-medium text-sm text-amber-800">AI Vendor Intelligence:</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-amber-700">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-amber-700">
             <span className="flex items-center gap-1">
               <TrendingUp className="h-3.5 w-3.5" />
-              ABC Framing is your top performer (96% reliability)
+              Gulf Coast Concrete is your top performer (score: 95, 0 callbacks)
             </span>
-            <span>|</span>
+            <span className="text-amber-300">|</span>
+            <span className="flex items-center gap-1">
+              <TrendingDown className="h-3.5 w-3.5" />
+              Jones Plumbing declining: quality score dropped from 4.2 to 3.8 over 3 jobs
+            </span>
+            <span className="text-amber-300">|</span>
             <span className="flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              2 vendors need insurance renewal
+              2 vendors need insurance renewal, 1 missing W-9
             </span>
-            <span>|</span>
-            <span>Consider adding backup HVAC vendor for Q2 demand</span>
+            <span className="text-amber-300">|</span>
+            <span>Consider adding backup HVAC vendor for Q2 demand (3 concurrent jobs projected)</span>
           </div>
         </div>
       </div>

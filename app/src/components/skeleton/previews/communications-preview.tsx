@@ -17,13 +17,33 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  Bell,
+  BellOff,
+  Send,
+  Eye,
+  Zap,
+  Shield,
+  AlertTriangle,
+  XCircle,
+  Wifi,
+  Globe,
+  Settings,
+  Volume2,
+  VolumeX,
+  Timer,
+  BarChart3,
+  Inbox,
+  ArrowRightLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
-type CommunicationType = 'email' | 'call' | 'meeting' | 'note' | 'sms'
+type CommunicationType = 'email' | 'call' | 'meeting' | 'note' | 'sms' | 'push' | 'in_app'
 type CommunicationDirection = 'inbound' | 'outbound'
+type UrgencyLevel = 'low' | 'normal' | 'high' | 'critical'
+type DeliveryStatus = 'queued' | 'sent' | 'delivered' | 'failed' | 'bounced'
+type NotificationCategory = 'financial' | 'schedule' | 'documents' | 'field_ops' | 'approvals' | 'system'
 
 interface Communication {
   id: string
@@ -41,6 +61,20 @@ interface Communication {
   hasDecision?: boolean
   decisionText?: string
   actionItem?: string
+  urgency: UrgencyLevel
+  deliveryStatus: DeliveryStatus
+  deliveryChannel: CommunicationType[]
+  category: NotificationCategory
+  eventType?: string
+  entityType?: string
+  entityId?: string
+  isRead: boolean
+  isSnoozed?: boolean
+  snoozeUntil?: string
+  isMuted?: boolean
+  digestBatched?: boolean
+  batchCount?: number
+  relatedModule?: string
 }
 
 const mockCommunications: Communication[] = [
@@ -59,6 +93,14 @@ const mockCommunications: Communication[] = [
     hasAttachment: false,
     hasDecision: true,
     decisionText: 'Client approved upgraded white oak shaker cabinets (+$4,200)',
+    urgency: 'high',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['email', 'in_app'],
+    category: 'approvals',
+    eventType: 'selection.approved',
+    entityType: 'selection',
+    isRead: true,
+    relatedModule: 'Selections (21)',
   },
   {
     id: '2',
@@ -74,6 +116,14 @@ const mockCommunications: Communication[] = [
     isImportant: false,
     hasAttachment: false,
     actionItem: 'Prepare staging area by Wednesday EOD',
+    urgency: 'normal',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['in_app'],
+    category: 'schedule',
+    eventType: 'delivery.confirmed',
+    entityType: 'purchase_order',
+    isRead: true,
+    relatedModule: 'POs (18)',
   },
   {
     id: '3',
@@ -91,6 +141,14 @@ const mockCommunications: Communication[] = [
     actionItem: 'Send revised layout to architect for review',
     hasDecision: true,
     decisionText: 'Client to confirm island relocation by Friday Feb 14',
+    urgency: 'high',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['email', 'in_app', 'push'],
+    category: 'approvals',
+    eventType: 'meeting.completed',
+    entityType: 'project',
+    isRead: true,
+    relatedModule: 'Change Orders (17)',
   },
   {
     id: '4',
@@ -105,6 +163,14 @@ const mockCommunications: Communication[] = [
     timeAgo: 'Yesterday',
     isImportant: false,
     hasAttachment: true,
+    urgency: 'normal',
+    deliveryStatus: 'sent',
+    deliveryChannel: ['email'],
+    category: 'schedule',
+    eventType: 'schedule.confirmation_request',
+    entityType: 'schedule_task',
+    isRead: true,
+    relatedModule: 'Scheduling (7)',
   },
   {
     id: '5',
@@ -119,6 +185,14 @@ const mockCommunications: Communication[] = [
     timeAgo: '2 days ago',
     isImportant: false,
     hasAttachment: false,
+    urgency: 'normal',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['sms', 'in_app'],
+    category: 'schedule',
+    eventType: 'schedule.ahead_of_plan',
+    entityType: 'schedule_task',
+    isRead: true,
+    relatedModule: 'Daily Logs (8)',
   },
   {
     id: '6',
@@ -134,6 +208,105 @@ const mockCommunications: Communication[] = [
     isImportant: true,
     hasAttachment: false,
     actionItem: 'Prepare CO documentation for client meeting',
+    urgency: 'high',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['in_app'],
+    category: 'financial',
+    eventType: 'budget.variance_alert',
+    entityType: 'budget',
+    isRead: true,
+    relatedModule: 'Budget (9)',
+  },
+  {
+    id: '7',
+    type: 'in_app',
+    direction: 'inbound',
+    from: 'System',
+    fromRole: 'Notification Engine',
+    to: ['Jake Mitchell'],
+    subject: 'Invoice #INV-2026-089 Approved for Payment',
+    preview: 'Invoice from ABC Lumber Supply for $12,450 has been approved by Sarah Ross. Payment scheduled for Feb 14. Cost code: 06-100 Framing Lumber.',
+    timestamp: 'Feb 12, 2026 8:00 AM',
+    timeAgo: '4 hours ago',
+    isImportant: false,
+    hasAttachment: false,
+    urgency: 'normal',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['email', 'in_app'],
+    category: 'financial',
+    eventType: 'invoice.approved',
+    entityType: 'invoice',
+    isRead: false,
+    relatedModule: 'Invoicing (11)',
+  },
+  {
+    id: '8',
+    type: 'push',
+    direction: 'inbound',
+    from: 'System',
+    fromRole: 'Safety Alert',
+    to: ['All Project Team'],
+    subject: 'CRITICAL: Severe Weather Alert - Hurricane Watch',
+    preview: 'NWS Hurricane Watch issued for Charleston County. Secure site materials and equipment. All outdoor work suspended starting Feb 13 6:00 AM.',
+    timestamp: 'Feb 12, 2026 7:30 AM',
+    timeAgo: '5 hours ago',
+    isImportant: true,
+    hasAttachment: false,
+    urgency: 'critical',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['push', 'sms', 'email', 'in_app'],
+    category: 'system',
+    eventType: 'weather.severe_alert',
+    entityType: 'project',
+    isRead: true,
+    relatedModule: 'Safety (33)',
+  },
+  {
+    id: '9',
+    type: 'in_app',
+    direction: 'inbound',
+    from: 'System',
+    fromRole: 'Digest',
+    to: ['Jake Mitchell'],
+    subject: 'Daily Digest: 7 Notifications Batched',
+    preview: '3 vendor invoice submissions, 2 schedule updates, 1 lien waiver received, 1 inspection passed. Click to expand details.',
+    timestamp: 'Feb 11, 2026 8:00 AM',
+    timeAgo: 'Yesterday',
+    isImportant: false,
+    hasAttachment: false,
+    urgency: 'low',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['email', 'in_app'],
+    category: 'system',
+    eventType: 'digest.daily',
+    entityType: 'digest',
+    isRead: true,
+    digestBatched: true,
+    batchCount: 7,
+    relatedModule: 'Notifications (5)',
+  },
+  {
+    id: '10',
+    type: 'email',
+    direction: 'inbound',
+    from: 'Coastal Insurance Co.',
+    fromRole: 'Vendor',
+    to: ['Jake Mitchell'],
+    subject: 'COI Renewal - ABC Plumbing Expired',
+    preview: 'Certificate of Insurance for ABC Plumbing has expired as of Feb 10, 2026. Updated COI required before work can continue per your subcontract terms.',
+    timestamp: 'Feb 10, 2026 3:00 PM',
+    timeAgo: '2 days ago',
+    isImportant: true,
+    hasAttachment: true,
+    urgency: 'high',
+    deliveryStatus: 'delivered',
+    deliveryChannel: ['email', 'in_app', 'push'],
+    category: 'documents',
+    eventType: 'insurance.expired',
+    entityType: 'vendor',
+    isRead: false,
+    actionItem: 'Contact ABC Plumbing for updated COI before next scheduled work',
+    relatedModule: 'Vendors (10)',
   },
 ]
 
@@ -143,14 +316,39 @@ const typeConfig: Record<CommunicationType, { icon: typeof Mail; label: string; 
   meeting: { icon: Calendar, label: 'Meeting', color: 'text-purple-600', bgColor: 'bg-purple-100' },
   note: { icon: FileText, label: 'Note', color: 'text-gray-600', bgColor: 'bg-gray-100' },
   sms: { icon: MessageSquare, label: 'SMS', color: 'text-cyan-600', bgColor: 'bg-cyan-100' },
+  push: { icon: Bell, label: 'Push', color: 'text-red-600', bgColor: 'bg-red-100' },
+  in_app: { icon: Inbox, label: 'In-App', color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
+}
+
+const urgencyConfig: Record<UrgencyLevel, { label: string; color: string; bgColor: string }> = {
+  low: { label: 'Low', color: 'text-gray-500', bgColor: 'bg-gray-100' },
+  normal: { label: 'Normal', color: 'text-blue-600', bgColor: 'bg-blue-50' },
+  high: { label: 'High', color: 'text-amber-600', bgColor: 'bg-amber-50' },
+  critical: { label: 'Critical', color: 'text-red-600', bgColor: 'bg-red-50' },
+}
+
+const deliveryStatusConfig: Record<DeliveryStatus, { label: string; icon: typeof CheckCircle; color: string }> = {
+  queued: { label: 'Queued', icon: Clock, color: 'text-gray-400' },
+  sent: { label: 'Sent', icon: Send, color: 'text-blue-500' },
+  delivered: { label: 'Delivered', icon: CheckCircle, color: 'text-green-500' },
+  failed: { label: 'Failed', icon: XCircle, color: 'text-red-500' },
+  bounced: { label: 'Bounced', icon: AlertTriangle, color: 'text-amber-500' },
 }
 
 function CommunicationRow({ communication }: { communication: Communication }) {
   const config = typeConfig[communication.type]
   const Icon = config.icon
+  const urgency = urgencyConfig[communication.urgency]
+  const delivery = deliveryStatusConfig[communication.deliveryStatus]
+  const DeliveryIcon = delivery.icon
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+    <div className={cn(
+      "bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer",
+      !communication.isRead ? "border-blue-200 bg-blue-50/30" : "border-gray-200",
+      communication.urgency === 'critical' ? "border-l-4 border-l-red-500" : "",
+      communication.urgency === 'high' ? "border-l-4 border-l-amber-400" : "",
+    )}>
       <div className="flex items-start gap-4">
         {/* Type Icon */}
         <div className={cn("p-2.5 rounded-lg flex-shrink-0", config.bgColor)}>
@@ -161,13 +359,29 @@ function CommunicationRow({ communication }: { communication: Communication }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-gray-900 truncate">{communication.subject}</span>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className={cn("font-medium truncate", !communication.isRead ? "text-gray-900" : "text-gray-700")}>
+                  {communication.subject}
+                </span>
+                {!communication.isRead && (
+                  <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                )}
                 {communication.isImportant && (
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500 flex-shrink-0" />
                 )}
                 {communication.hasAttachment && (
                   <Paperclip className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                )}
+                {communication.urgency !== 'normal' && communication.urgency !== 'low' && (
+                  <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", urgency.bgColor, urgency.color)}>
+                    {urgency.label}
+                  </span>
+                )}
+                {communication.digestBatched && (
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 flex items-center gap-0.5">
+                    <Timer className="h-2.5 w-2.5" />
+                    Digest ({communication.batchCount})
+                  </span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
@@ -185,8 +399,28 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                     </>
                   )}
                 </span>
+                {communication.relatedModule && (
+                  <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                    {communication.relatedModule}
+                  </span>
+                )}
               </div>
               <p className="text-sm text-gray-600 line-clamp-2">{communication.preview}</p>
+
+              {/* Delivery Channels */}
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[10px] text-gray-400">Delivered via:</span>
+                {communication.deliveryChannel.map(ch => {
+                  const chConfig = typeConfig[ch]
+                  const ChIcon = chConfig.icon
+                  return (
+                    <span key={ch} className="flex items-center gap-0.5 text-[10px] text-gray-500" title={chConfig.label}>
+                      <ChIcon className="h-3 w-3" />
+                    </span>
+                  )
+                })}
+                <span title={delivery.label}><DeliveryIcon className={cn("h-3 w-3 ml-1", delivery.color)} /></span>
+              </div>
 
               {/* Decision Badge */}
               {communication.hasDecision && communication.decisionText && (
@@ -210,9 +444,15 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                 <Clock className="h-3 w-3" />
                 <span>{communication.timeAgo}</span>
               </div>
+              {communication.eventType && (
+                <span className="text-[10px] text-gray-400 font-mono">{communication.eventType}</span>
+              )}
               <div className="flex items-center gap-1">
-                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600">
+                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600" title="Reply">
                   <Reply className="h-4 w-4" />
+                </button>
+                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600" title="Snooze">
+                  <BellOff className="h-4 w-4" />
                 </button>
                 <ChevronRight className="h-4 w-4 text-gray-300" />
               </div>
@@ -226,6 +466,8 @@ function CommunicationRow({ communication }: { communication: Communication }) {
 
 export function CommunicationsPreview() {
   const [personFilter, setPersonFilter] = useState<string>('all')
+  const [urgencyFilter, setUrgencyFilter] = useState<string>('all')
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const people = [...new Set([
@@ -235,9 +477,11 @@ export function CommunicationsPreview() {
 
   const filteredCommunications = sortItems(
     mockCommunications.filter(c => {
-      if (!matchesSearch(c, search, ['subject', 'preview', 'from'])) return false
+      if (!matchesSearch(c, search, ['subject', 'preview', 'from', 'eventType', 'relatedModule'])) return false
       if (activeTab !== 'all' && c.type !== activeTab) return false
       if (personFilter !== 'all' && c.from !== personFilter && !c.to.includes(personFilter)) return false
+      if (urgencyFilter !== 'all' && c.urgency !== urgencyFilter) return false
+      if (categoryFilter !== 'all' && c.category !== categoryFilter) return false
       return true
     }),
     activeSort as keyof Communication | '',
@@ -245,10 +489,14 @@ export function CommunicationsPreview() {
   )
 
   // Calculate stats
+  const unreadCount = mockCommunications.filter(c => !c.isRead).length
   const emailCount = mockCommunications.filter(c => c.type === 'email').length
-  const callCount = mockCommunications.filter(c => c.type === 'call').length
-  const meetingCount = mockCommunications.filter(c => c.type === 'meeting').length
+  const criticalCount = mockCommunications.filter(c => c.urgency === 'critical').length
+  const highCount = mockCommunications.filter(c => c.urgency === 'high').length
   const decisionsCount = mockCommunications.filter(c => c.hasDecision).length
+  const actionItems = mockCommunications.filter(c => c.actionItem).length
+  const deliveredCount = mockCommunications.filter(c => c.deliveryStatus === 'delivered').length
+  const failedCount = mockCommunications.filter(c => c.deliveryStatus === 'failed' || c.deliveryStatus === 'bounced').length
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -256,18 +504,32 @@ export function CommunicationsPreview() {
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
           <h3 className="font-semibold text-gray-900">Communications - Smith Residence</h3>
+          {unreadCount > 0 && (
+            <span className="flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+              <Bell className="h-3 w-3" />
+              {unreadCount} unread
+            </span>
+          )}
           <span className="text-sm text-gray-500">47 this month</span>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="flex items-center gap-1 text-xs text-green-600" title="SSE Connected">
+              <Wifi className="h-3 w-3" />
+              Live
+            </span>
+          </div>
         </div>
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search communications..."
+          searchPlaceholder="Search communications, event types..."
           tabs={[
             { key: 'all', label: 'All', count: mockCommunications.length },
             { key: 'email', label: 'Email', count: emailCount },
-            { key: 'call', label: 'Call', count: callCount },
-            { key: 'meeting', label: 'Meeting', count: meetingCount },
+            { key: 'call', label: 'Call', count: mockCommunications.filter(c => c.type === 'call').length },
+            { key: 'meeting', label: 'Meeting', count: mockCommunications.filter(c => c.type === 'meeting').length },
             { key: 'sms', label: 'SMS', count: mockCommunications.filter(c => c.type === 'sms').length },
+            { key: 'push', label: 'Push', count: mockCommunications.filter(c => c.type === 'push').length },
+            { key: 'in_app', label: 'In-App', count: mockCommunications.filter(c => c.type === 'in_app').length },
             { key: 'note', label: 'Note', count: mockCommunications.filter(c => c.type === 'note').length },
           ]}
           activeTab={activeTab}
@@ -279,54 +541,161 @@ export function CommunicationsPreview() {
               options: people.map(p => ({ value: p, label: p })),
               onChange: setPersonFilter,
             },
+            {
+              label: 'All Urgency',
+              value: urgencyFilter,
+              options: [
+                { value: 'critical', label: 'Critical' },
+                { value: 'high', label: 'High' },
+                { value: 'normal', label: 'Normal' },
+                { value: 'low', label: 'Low' },
+              ],
+              onChange: setUrgencyFilter,
+            },
+            {
+              label: 'All Categories',
+              value: categoryFilter,
+              options: [
+                { value: 'financial', label: 'Financial' },
+                { value: 'schedule', label: 'Schedule' },
+                { value: 'documents', label: 'Documents' },
+                { value: 'field_ops', label: 'Field Ops' },
+                { value: 'approvals', label: 'Approvals' },
+                { value: 'system', label: 'System' },
+              ],
+              onChange: setCategoryFilter,
+            },
           ]}
           sortOptions={[
             { value: 'timestamp', label: 'Date' },
+            { value: 'urgency', label: 'Urgency' },
             { value: 'subject', label: 'Subject' },
             { value: 'from', label: 'From' },
             { value: 'type', label: 'Type' },
+            { value: 'category', label: 'Category' },
+            { value: 'deliveryStatus', label: 'Delivery Status' },
           ]}
           activeSort={activeSort}
           onSortChange={setActiveSort}
           sortDirection={sortDirection}
           onSortDirectionChange={toggleSortDirection}
-          actions={[{ icon: Plus, label: 'New Message', onClick: () => {}, variant: 'primary' }]}
+          actions={[
+            { icon: Plus, label: 'New Message', onClick: () => {}, variant: 'primary' },
+            { icon: Settings, label: 'Preferences', onClick: () => {} },
+          ]}
           resultCount={filteredCommunications.length}
           totalCount={mockCommunications.length}
         />
       </div>
 
-      {/* Quick Stats */}
+      {/* Stats Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-6 gap-3">
           <div className="flex items-center gap-3 p-2 bg-blue-50 rounded-lg">
-            <Mail className="h-5 w-5 text-blue-500" />
+            <Bell className="h-5 w-5 text-blue-500" />
             <div>
-              <div className="text-lg font-semibold text-blue-700">{emailCount}</div>
-              <div className="text-xs text-blue-600">Emails</div>
+              <div className="text-lg font-semibold text-blue-700">{unreadCount}</div>
+              <div className="text-xs text-blue-600">Unread</div>
+            </div>
+          </div>
+          <div className={cn("flex items-center gap-3 p-2 rounded-lg", criticalCount > 0 ? "bg-red-50" : "bg-gray-50")}>
+            <AlertTriangle className={cn("h-5 w-5", criticalCount > 0 ? "text-red-500" : "text-gray-400")} />
+            <div>
+              <div className={cn("text-lg font-semibold", criticalCount > 0 ? "text-red-700" : "text-gray-700")}>{criticalCount}</div>
+              <div className={cn("text-xs", criticalCount > 0 ? "text-red-600" : "text-gray-500")}>Critical</div>
+            </div>
+          </div>
+          <div className={cn("flex items-center gap-3 p-2 rounded-lg", highCount > 0 ? "bg-amber-50" : "bg-gray-50")}>
+            <Shield className={cn("h-5 w-5", highCount > 0 ? "text-amber-500" : "text-gray-400")} />
+            <div>
+              <div className={cn("text-lg font-semibold", highCount > 0 ? "text-amber-700" : "text-gray-700")}>{highCount}</div>
+              <div className={cn("text-xs", highCount > 0 ? "text-amber-600" : "text-gray-500")}>High Priority</div>
             </div>
           </div>
           <div className="flex items-center gap-3 p-2 bg-green-50 rounded-lg">
-            <Phone className="h-5 w-5 text-green-500" />
+            <CheckCircle className="h-5 w-5 text-green-500" />
             <div>
-              <div className="text-lg font-semibold text-green-700">{callCount}</div>
-              <div className="text-xs text-green-600">Calls</div>
+              <div className="text-lg font-semibold text-green-700">{decisionsCount}</div>
+              <div className="text-xs text-green-600">Decisions</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-2 bg-purple-50 rounded-lg">
-            <Calendar className="h-5 w-5 text-purple-500" />
+          <div className="flex items-center gap-3 p-2 bg-orange-50 rounded-lg">
+            <Zap className="h-5 w-5 text-orange-500" />
             <div>
-              <div className="text-lg font-semibold text-purple-700">{meetingCount}</div>
-              <div className="text-xs text-purple-600">Meetings</div>
+              <div className="text-lg font-semibold text-orange-700">{actionItems}</div>
+              <div className="text-xs text-orange-600">Action Items</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-2 bg-amber-50 rounded-lg">
-            <CheckCircle className="h-5 w-5 text-amber-500" />
+          <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+            <BarChart3 className="h-5 w-5 text-gray-500" />
             <div>
-              <div className="text-lg font-semibold text-amber-700">{decisionsCount}</div>
-              <div className="text-xs text-amber-600">Decisions</div>
+              <div className="text-lg font-semibold text-gray-700">{deliveredCount}/{mockCommunications.length}</div>
+              <div className="text-xs text-gray-500">Delivered</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Notification Preferences Summary Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <div className="flex items-center gap-4 text-xs">
+          <span className="text-gray-500 font-medium">Preferences:</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded" title="In-app notifications active">
+            <Inbox className="h-3 w-3" />
+            In-App: On
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded" title="Email delivery active">
+            <Mail className="h-3 w-3" />
+            Email: On
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-cyan-50 text-cyan-700 rounded" title="SMS delivery active">
+            <MessageSquare className="h-3 w-3" />
+            SMS: On
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded" title="Push notifications active">
+            <Bell className="h-3 w-3" />
+            Push: On
+          </span>
+          <span className="text-gray-300">|</span>
+          <span className="flex items-center gap-1 text-gray-500" title="Quiet hours active">
+            <VolumeX className="h-3 w-3" />
+            Quiet: 10pm-7am
+          </span>
+          <span className="flex items-center gap-1 text-gray-500" title="Digest mode">
+            <Timer className="h-3 w-3" />
+            Digest: Daily 8am
+          </span>
+          <span className="flex items-center gap-1 text-gray-500" title="Critical alerts bypass quiet hours">
+            <Volume2 className="h-3 w-3 text-red-400" />
+            Critical bypass: On
+          </span>
+        </div>
+      </div>
+
+      {/* Cross-Module Connections */}
+      <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <div className="flex items-center gap-3 text-xs">
+          <span className="text-gray-500 font-medium">Connections:</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded">
+            <Globe className="h-3 w-3" />
+            All Modules (event emitters)
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded">
+            <ArrowRightLeft className="h-3 w-3" />
+            Auth & Roles (1)
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded">
+            <Eye className="h-3 w-3" />
+            Dashboard (4)
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded">
+            <Mail className="h-3 w-3" />
+            SendGrid/Twilio
+          </span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 rounded">
+            <Wifi className="h-3 w-3" />
+            SSE Real-Time
+          </span>
         </div>
       </div>
 
@@ -349,8 +718,10 @@ export function CommunicationsPreview() {
             <Sparkles className="h-4 w-4 text-amber-600" />
             <span className="font-medium text-sm text-amber-800">AI Summary:</span>
           </div>
-          <div className="flex-1 text-sm text-amber-700">
+          <div className="flex-1 text-sm text-amber-700 space-y-1">
             <p>This week: 12 emails, 5 calls, 2 meetings with client. Key topics: cabinet selections, kitchen layout change. 2 decisions logged, 3 action items pending.</p>
+            <p>CRITICAL: Hurricane watch active. All-channel notification sent to project team. Critical alerts bypassed quiet hours for 4 team members.</p>
+            <p>Digest efficiency: 7 low-priority notifications batched yesterday, reducing notification volume by 58% for this project.</p>
           </div>
         </div>
       </div>
