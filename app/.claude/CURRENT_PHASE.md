@@ -1,106 +1,51 @@
-# Current Phase: MVP Phase 1 - Foundation & Core Data
+# Current Phase: Not Started
 
-**Started**: 2024-02-12
-**Status**: Ready to Begin
-**Roadmap Reference**: `docs/MVP_ROADMAP.md`
+**Status:** Planning complete. Ready to begin Phase 1.
 
-## Objective
+## What's Done
 
-Establish core entities and basic CRUD operations for the fundamental building blocks of the platform.
+- All 50 module specs written (`docs/modules/`)
+- All 11 architecture docs written (`docs/architecture/`)
+- All 93 skeleton pages built with mock data
+- All 65 preview components built
+- Navigation fully configured
+- Gap tracker populated (100+ items)
+- CLAUDE.md consolidated with build rules
 
-## Pain Points Addressed
+## What's Next
 
-- #671: Project data lives in multiple systems
-- #121: Looking through multiple spreadsheets
-- #411: Can't find project documents quickly
-- #296: Can't see all projects' status at a glance
+### Phase 1 — Foundation (Modules 01-06)
 
-## Database Tables to Create
+Build order within Phase 1:
 
-- [ ] `companies` - Tenant accounts (exists, verify complete)
-- [ ] `users` - User accounts with roles (exists, verify complete)
-- [ ] `clients` - Customer/homeowner records
-- [ ] `jobs` - Construction projects (exists, verify complete)
-- [ ] `job_phases` - Project phases/milestones
-- [ ] `contacts` - Contact information
-- [ ] `addresses` - Address records
-- [ ] `notes` - Notes on any entity
-- [ ] `tags` - Tagging system
+1. **Module 01: Auth & Access Control**
+   - Supabase tables: companies, users, roles, permissions
+   - RLS policies for multi-tenancy
+   - Auth endpoints: login, logout, signup, invite
+   - RBAC with 7 canonical roles
+   - Spec: `docs/modules/01-auth-and-access.md`
 
-## API Endpoints to Build
+2. **Module 03: Core Data Model**
+   - Tables: jobs, clients, contacts, addresses
+   - CRUD APIs for all core entities
+   - Spec: `docs/modules/03-core-data-model.md`
 
-### Auth
-- [ ] `POST /api/auth/login`
-- [ ] `POST /api/auth/logout`
-- [ ] `GET /api/auth/me`
+3. **Module 02: Configuration Engine**
+   - Settings, feature flags, company config
+   - Spec: `docs/modules/02-configuration-engine.md`
 
-### Companies
-- [ ] `GET /api/companies/:id`
-- [ ] `PATCH /api/companies/:id`
+4. **Module 04: Navigation, Search & Dashboard**
+   - Global search (Cmd+K), dashboard with real data
+   - Spec: `docs/modules/04-navigation-search-dashboard.md`
 
-### Users
-- [ ] `GET /api/users`
-- [ ] `POST /api/users`
-- [ ] `GET /api/users/:id`
-- [ ] `PATCH /api/users/:id`
-- [ ] `DELETE /api/users/:id`
+5. **Module 05: Notification Engine**
+   - Real-time notifications, email delivery
+   - Spec: `docs/modules/05-notification-engine.md`
 
-### Clients
-- [ ] `GET /api/clients`
-- [ ] `POST /api/clients`
-- [ ] `GET /api/clients/:id`
-- [ ] `PATCH /api/clients/:id`
-- [ ] `DELETE /api/clients/:id`
-
-### Jobs
-- [ ] `GET /api/jobs`
-- [ ] `POST /api/jobs`
-- [ ] `GET /api/jobs/:id`
-- [ ] `PATCH /api/jobs/:id`
-- [ ] `DELETE /api/jobs/:id`
-- [ ] `GET /api/jobs/:id/summary`
-
-## UI Pages to Build
-
-- [ ] Dashboard with project list
-- [ ] Client list page
-- [ ] Client detail/edit page
-- [ ] Job list page
-- [ ] Job detail page
-- [ ] Job create/edit form
-- [ ] User management page
-- [ ] Company settings page
-- [ ] Global search
-
-## Success Criteria
-
-- [ ] User can create account and set up company
-- [ ] User can invite team members with appropriate roles
-- [ ] User can create and manage clients
-- [ ] User can create and manage jobs with basic info
-- [ ] Dashboard shows all active jobs with status
-- [ ] Search returns results across clients, jobs, users
-
-## Progress Log
-
-### 2024-02-12
-- MVP Roadmap created with 8 phases
-- Pain points and connection map imported
-- Phase 1 ready to begin
+6. **Module 06: Document Storage**
+   - File upload, folders, Supabase storage
+   - Spec: `docs/modules/06-document-storage.md`
 
 ---
 
-## Phase Completion Checklist
-
-Before marking phase complete:
-
-- [ ] All database tables created with RLS
-- [ ] All API endpoints functional
-- [ ] All UI pages working
-- [ ] `npm run validate` passes
-- [ ] Core functionality tested
-- [ ] `.claude/CONTEXT.md` updated
-
----
-
-*Last Updated: 2024-02-12*
+*Last Updated: 2026-02-12*

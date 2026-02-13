@@ -1,131 +1,67 @@
 # Architecture Decisions Log
 
-> Record of significant technical decisions made during development.
-> Each entry explains the context, options, and rationale.
+> Significant technical decisions. Each entry explains context, options, and rationale.
 
 ---
 
-## 2024-02-12 - Multi-Tenant Data Isolation Strategy
+## 2026-02-12 — Consolidate to 6-Phase / 50-Module Structure
 
-**Context**: Need to support 10,000+ companies with complete data isolation.
+**Context**: Project had evolved through multiple planning sessions with inconsistent phase numbering (8 MVP phases, 16+ post-MVP phases, enterprise phases 17-22, mobile phases 23-25). Confusing and duplicative.
 
-**Options Considered**:
-1. Separate databases per tenant - Maximum isolation but expensive/complex
-2. Separate schemas per tenant - Good isolation, moderate complexity
-3. Shared tables with `company_id` + RLS - Simpler, relies on Postgres security
+**Decision**: Consolidated to 6 clean phases with 50 modules. Single authoritative source in root `CLAUDE.md`.
 
-**Decision**: Shared tables with `company_id` column and Row Level Security (RLS)
-
-**Rationale**:
-- Supabase RLS is battle-tested and enforced at database level
-- Simpler deployment and maintenance
-- Easier cross-tenant queries for admin/analytics if needed
-- Lower infrastructure cost
-- Can always migrate to schemas later if needed
-
-**Consequences**:
-- Every tenant table MUST have `company_id`
-- RLS policies required on all tenant tables
-- All queries should include `company_id` filter even with RLS (defense in depth)
-- Need `get_current_company_id()` helper function
+**Rationale**: One numbering system, one source of truth. Every module has a spec file (`docs/modules/XX-*.md`). Phases build on each other in order.
 
 ---
 
-## 2024-02-12 - Caching Strategy
+## 2026-02-12 — 7 Canonical Roles (Owner/Admin Split)
 
-**Context**: Need fast, scalable caching for multi-tenant environment.
+**Context**: Needed to define role hierarchy. Buildertrend research showed they split Owner and Admin in June 2025.
 
-**Options Considered**:
-1. Redis (self-hosted) - Full control, more ops overhead
-2. Vercel KV (managed Redis) - Zero ops, integrates with Vercel
-3. In-memory only - Simple but lost on restart, no sharing between instances
+**Decision**: `owner > admin > pm > superintendent > office > field > read_only`
+- Owner has billing/subscription access, Admin does not
+- Old `accountant` role replaced by `office` with accounting permissions
+- Custom roles inherit from a system role + add/remove permissions
 
-**Decision**: Vercel KV as primary with in-memory fallback
-
-**Rationale**:
-- Vercel KV is managed, scales automatically
-- In-memory fallback allows development without KV setup
-- Graceful degradation if KV has issues
-- Tenant-isolated cache keys prevent data leakage
-
-**Consequences**:
-- Cache keys must include `company_id`
-- Need `KV_REST_API_URL` and `KV_REST_API_TOKEN` for production
-- Development works without KV (uses in-memory)
+**Rationale**: Matches industry standard. Solves Buildertrend pain point of no per-user overrides.
 
 ---
 
-## 2024-02-12 - API Middleware Architecture
+## 2026-02-12 — Full CRUD + Data Normalization as Platform Standard
 
-**Context**: Need consistent auth, rate limiting, and monitoring across all API endpoints.
+**Context**: Materials come in named differently from every vendor. Same item has 4+ names. User needs to control naming, categories, and grouping everywhere.
 
-**Options Considered**:
-1. Next.js middleware.ts - Runs on edge, limited capabilities
-2. Per-route middleware - Flexible but repetitive
-3. Wrapper function (createApiHandler) - Consistent, composable
+**Decision**: Platform-wide standards:
+1. Every list view supports full CRUD (add/edit/delete/sort/search/bulk)
+2. Three-tier matching engine for all external inputs (exact → fuzzy → AI)
+3. User-controlled taxonomy (never hardcode categories)
+4. Soft delete only (archive with restore)
 
-**Decision**: `createApiHandler` wrapper function
-
-**Rationale**:
-- Single point for auth, rate limiting, metrics, audit
-- Strongly typed context passed to handlers
-- Easy to add new middleware features
-- Clear options per endpoint (roles, rate limit tier, etc.)
-
-**Consequences**:
-- All API routes should use `createApiHandler`
-- Context object provides `user`, `companyId`, `requestId`
-- Options configure behavior per endpoint
+**Spec**: `docs/architecture/normalization-and-crud.md`
 
 ---
 
-## 2024-02-12 - Background Job Processing
+## 2026-02-12 — Multi-Tenant Data Isolation
 
-**Context**: Need async job processing for emails, heavy computations, etc.
+**Decision**: Shared tables with `company_id` + Row Level Security (RLS)
 
-**Options Considered**:
-1. External queue (SQS, RabbitMQ) - Powerful but external dependency
-2. Vercel Cron + database queue - Simple, self-contained
-3. Trigger.dev - Managed, but another service
-
-**Decision**: Database-backed queue with Vercel Cron processing
-
-**Rationale**:
-- No external dependencies beyond Supabase
-- Vercel Cron triggers processing every minute
-- Full audit trail in database
-- Retry logic and dead letter queue built-in
-- Can migrate to external queue later if needed
-
-**Consequences**:
-- `job_queue` table stores pending jobs
-- Cron endpoint processes jobs every minute
-- Jobs have priority, retry count, backoff
-- Need `CRON_SECRET` for production security
+**Rationale**: Supabase RLS is battle-tested, simpler than separate schemas, lower cost. Every tenant table has `company_id`, RLS policy, and filtered queries.
 
 ---
 
-## 2024-02-12 - Development Standards Documentation
+## 2026-02-12 — AI Processing Layer (Mandatory)
 
-**Context**: Project needs to scale to multiple developers with consistent patterns.
+**Decision**: ALL data entering the system passes through AI extraction/normalization before storage. No raw input goes directly to tables.
 
-**Options Considered**:
-1. Wiki/Notion - External, can drift from code
-2. In-repo markdown - Lives with code, versioned
-3. Comments only - Not comprehensive enough
+**Spec**: `docs/architecture/ai-engine-design.md` Section 0
 
-**Decision**: Comprehensive markdown docs in `docs/` directory
+---
 
-**Rationale**:
-- Documentation lives with code, stays in sync
-- Versioned with git
-- Easy to reference and update
-- Enforced by ESLint/Prettier where possible
+## 2026-02-12 — Permissions Mode (Open → Standard → Strict)
 
-**Consequences**:
-- `docs/standards/` contains all coding standards
-- `docs/guides/` contains how-to guides
-- Developers expected to read before contributing
+**Decision**: Three permission modes. V1 defaults to `open` (everyone sees everything). Infrastructure for `standard` and `strict` built from day 1 but not enforced until toggled.
+
+**Rationale**: Lets builders start simple, tighten as they grow.
 
 ---
 
