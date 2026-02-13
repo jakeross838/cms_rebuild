@@ -30,12 +30,14 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 // ── Types ────────────────────────────────────────────────────
 
 type BidPackageStatus = 'draft' | 'published' | 'closed' | 'awarded'
 type InvitationStatus = 'sent' | 'viewed' | 'acknowledged' | 'submitted' | 'declined' | 'no_response'
+type FTQTrend = 'up' | 'down' | 'stable'
 
 interface BidLineItem {
   description: string
@@ -756,6 +758,32 @@ export function BidsPreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            name: 'Bid Comparison',
+            description: 'Compares vendor bids side-by-side',
+          },
+          {
+            name: 'Scope Alignment',
+            description: 'Validates bids cover full scope',
+          },
+          {
+            name: 'Price Anomaly Detection',
+            description: 'Flags unusually high/low bids',
+          },
+          {
+            name: 'Vendor History',
+            description: 'Shows past performance of bidders',
+          },
+          {
+            name: 'Negotiation Insights',
+            description: 'Suggests negotiation opportunities',
+          },
+        ]}
+      />
     </div>
   )
 }

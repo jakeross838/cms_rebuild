@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type ContractStatus = 'draft' | 'internal_review' | 'sent' | 'signed' | 'active' | 'complete' | 'amended'
 type ContractType = 'fixed_price' | 'cost_plus' | 'gmp' | 't_and_m' | 'hybrid'
@@ -582,6 +583,56 @@ export function ContractsPreview() {
             <p>Davis Coastal: closeout at 85% - outstanding items: final lien waiver (unconditional), warranty letter, O&M manual.</p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Contract AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Clause Analysis',
+              trigger: 'On creation',
+              insight: 'Identifies risky contract clauses',
+              detail: 'AI scans contract language to flag potentially problematic clauses, including unfavorable indemnification terms, liability caps, and payment conditions that may expose the company to risk.',
+              severity: 'warning',
+              confidence: 92,
+            },
+            {
+              feature: 'Scope Comparison',
+              trigger: 'On change',
+              insight: 'Compares contract scope to estimate',
+              detail: 'Automatically compares contracted scope of work against the original estimate to identify gaps, exclusions, or scope creep that could impact profitability.',
+              severity: 'info',
+              confidence: 88,
+            },
+            {
+              feature: 'Change Order Forecast',
+              trigger: 'Real-time',
+              insight: 'Predicts likely change order areas',
+              detail: 'Analyzes historical project data and contract terms to predict areas most likely to result in change orders, helping teams proactively manage scope and client expectations.',
+              severity: 'warning',
+              confidence: 85,
+            },
+            {
+              feature: 'Payment Terms Analysis',
+              trigger: 'On creation',
+              insight: 'Evaluates payment structure risks',
+              detail: 'Reviews payment schedules, retainage terms, and milestone structures to identify cash flow risks and ensure alignment with project cost curves.',
+              severity: 'info',
+              confidence: 94,
+            },
+            {
+              feature: 'Compliance Check',
+              trigger: 'On submission',
+              insight: 'Validates required clauses and terms',
+              detail: 'Ensures contracts include all state-required clauses (SC right-to-cancel, lien notices), insurance requirements, and company-standard protective language.',
+              severity: 'success',
+              confidence: 97,
+            },
+          ]}
+        />
       </div>
     </div>
   )

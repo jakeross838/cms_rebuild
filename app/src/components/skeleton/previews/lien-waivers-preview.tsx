@@ -28,6 +28,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type WaiverStatus = 'draft' | 'requested' | 'submitted' | 'approved' | 'rejected' | 'void' | 'missing'
 type WaiverType = 'conditional_progress' | 'unconditional_progress' | 'conditional_final' | 'unconditional_final'
@@ -793,6 +794,51 @@ export function LienWaiversPreview() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI-Powered Lien Waiver Management"
+          columns={2}
+          features={[
+            {
+              feature: 'Auto-Request',
+              trigger: 'On change',
+              insight: 'Generates waiver requests tied to payments',
+              detail: 'Automatically creates and sends waiver requests when payments are scheduled or invoices are approved, ensuring timely collection.',
+              severity: 'info',
+            },
+            {
+              feature: 'Compliance Check',
+              trigger: 'On submission',
+              insight: 'Validates waiver completeness and accuracy',
+              detail: 'Reviews submitted waivers for required fields, proper signatures, correct amounts, and matching payment records.',
+              severity: 'success',
+            },
+            {
+              feature: 'Deadline Tracking',
+              trigger: 'Real-time',
+              insight: 'Alerts for approaching statutory deadlines',
+              detail: 'Monitors lien filing deadlines by state and sends proactive alerts before critical dates to prevent compliance issues.',
+              severity: 'warning',
+            },
+            {
+              feature: 'Chain Verification',
+              trigger: 'On change',
+              insight: 'Ensures full lien waiver chain for each vendor',
+              detail: 'Tracks waiver collection across all tiers (prime, sub-tier) to verify complete protection before releasing payments.',
+              severity: 'info',
+            },
+            {
+              feature: 'Form Matching',
+              trigger: 'On submission',
+              insight: 'Validates correct form type for jurisdiction',
+              detail: 'Automatically verifies that the waiver form used matches state statutory requirements and project specifications.',
+              severity: 'success',
+            },
+          ]}
+        />
       </div>
     </div>
   )

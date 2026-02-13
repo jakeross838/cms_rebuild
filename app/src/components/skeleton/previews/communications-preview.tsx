@@ -38,6 +38,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type CommunicationType = 'email' | 'call' | 'meeting' | 'note' | 'sms' | 'push' | 'in_app'
 type CommunicationDirection = 'inbound' | 'outbound'
@@ -724,6 +725,61 @@ export function CommunicationsPreview() {
             <p>Digest efficiency: 7 low-priority notifications batched yesterday, reducing notification volume by 58% for this project.</p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features for Communications"
+          features={[
+            {
+              feature: 'Response Time Tracking',
+              trigger: 'Real-time',
+              insight: 'Monitors communication response patterns. Average response time: 4.2 hours. Client emails responded within 2 hours on average.',
+              detail: 'Tracks response times across all channels and identifies patterns. Alerts when responses exceed typical thresholds for priority communications.',
+              confidence: 92,
+              severity: 'info' as const,
+              action: { label: 'View Analytics', onClick: () => {} },
+            },
+            {
+              feature: 'Sentiment Analysis',
+              trigger: 'Real-time',
+              insight: 'Detects tone and urgency in messages. 2 messages flagged as frustrated tone requiring immediate attention.',
+              detail: 'NLP analysis identifies emotional tone, urgency indicators, and potential issues before they escalate. Supports proactive client relationship management.',
+              confidence: 88,
+              severity: 'warning' as const,
+              action: { label: 'Review Flagged', onClick: () => {} },
+            },
+            {
+              feature: 'Thread Summarization',
+              trigger: 'On-change',
+              insight: 'AI-generated summaries of long threads. 3 email threads summarized with key decisions and action items extracted.',
+              detail: 'Automatically generates concise summaries for threads with 5+ messages. Extracts key decisions, commitments, and follow-up items.',
+              confidence: 91,
+              severity: 'success' as const,
+              action: { label: 'View Summaries', onClick: () => {} },
+            },
+            {
+              feature: 'Follow-up Reminders',
+              trigger: 'Daily',
+              insight: 'Suggests when to follow up. 2 conversations flagged for follow-up: electrical rough-in confirmation and COI renewal.',
+              detail: 'Analyzes conversation context and commitment dates to suggest optimal follow-up timing. Prevents important items from falling through the cracks.',
+              confidence: 85,
+              severity: 'warning' as const,
+              action: { label: 'Set Reminders', onClick: () => {} },
+            },
+            {
+              feature: 'Important Detection',
+              trigger: 'Real-time',
+              insight: 'Highlights critical communications. Auto-flagged 4 messages containing budget approvals, schedule changes, or safety alerts.',
+              detail: 'Machine learning model trained on construction communications to identify high-priority messages requiring immediate attention.',
+              confidence: 94,
+              severity: 'critical' as const,
+              action: { label: 'Review Critical', onClick: () => {} },
+            },
+          ]}
+          columns={2}
+        />
       </div>
     </div>
   )

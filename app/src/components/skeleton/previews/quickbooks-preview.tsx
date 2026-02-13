@@ -30,6 +30,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type ConnectionHealth = 'healthy' | 'warning' | 'error' | 'disconnected'
 type ConflictStrategy = 'last_write_wins' | 'platform_wins' | 'qbo_wins' | 'manual_review'
@@ -893,6 +894,51 @@ export function QuickbooksPreview() {
             using platform-wins). Sync health: 99.2% success rate this month. Token renewal needed in {tokenExpiresIn} days.
           </p>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="p-4 border-t border-gray-200">
+        <AIFeaturesPanel
+          title="QuickBooks AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Sync Health',
+              trigger: 'Real-time',
+              insight: 'Monitors sync status and errors across all entity types. Currently tracking 7 entity syncs with 99.2% success rate.',
+              severity: 'success',
+              confidence: 99,
+            },
+            {
+              feature: 'Mapping Validation',
+              trigger: 'On change',
+              insight: 'Validates account mappings between cost codes and QuickBooks accounts. 2 unmapped cost codes detected requiring attention.',
+              severity: 'warning',
+              confidence: 95,
+            },
+            {
+              feature: 'Discrepancy Detection',
+              trigger: 'Real-time',
+              insight: 'Identifies data mismatches between systems. 1 vendor address conflict detected and auto-resolved using platform-wins strategy.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'Reconciliation Assist',
+              trigger: 'On submission',
+              insight: 'Helps resolve sync issues by suggesting corrections. 2 journal entries pending due to unmapped accounts - auto-mapping available.',
+              severity: 'warning',
+              confidence: 88,
+            },
+            {
+              feature: 'Performance Metrics',
+              trigger: 'Daily',
+              insight: 'Tracks sync reliability and performance trends. This month: 1,247 records synced, 99.2% success rate, avg sync time 2.3s.',
+              severity: 'success',
+              confidence: 97,
+            },
+          ]}
+        />
       </div>
     </div>
   )

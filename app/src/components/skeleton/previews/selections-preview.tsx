@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type SelectionStatus =
   | 'not_started'
@@ -925,6 +926,62 @@ export function SelectionsPreview() {
             <span>Tub change request: $240 cancellation fee + 5 week new lead time</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features for Selections"
+          columns={2}
+          features={[
+            {
+              feature: 'Budget Impact',
+              trigger: 'Real-time',
+              insight: 'Current selections are $4,750 over total allowance. Refrigerator (+$4,500) and Countertops (+$700) are the main contributors.',
+              severity: 'warning',
+              confidence: 92,
+            },
+            {
+              feature: 'Lead Time Alerts',
+              trigger: 'On change',
+              insight: 'Refrigerator has 12-week lead time. Order placed - arrival expected Week 22, on track for install.',
+              detail: 'Long lead time items: Sub-Zero Refrigerator (84 days), Custom Cabinets (42 days), Freestanding Tub (35 days)',
+              severity: 'info',
+              confidence: 95,
+            },
+            {
+              feature: 'Deadline Tracking',
+              trigger: 'Daily',
+              insight: '2 selections need decisions within 3 days: Range/Oven (today!) and Master Bath Faucets (3 days).',
+              severity: 'critical',
+              confidence: 100,
+              action: {
+                label: 'Send Reminders',
+                onClick: () => {},
+              },
+            },
+            {
+              feature: 'Popular Choices',
+              trigger: 'On creation',
+              insight: 'White Oak engineered hardwood is the #1 flooring choice in similar projects (selected in 68% of luxury renovations).',
+              detail: 'Other popular selections: Kohler Farmhouse sinks (72%), Calacatta Quartz counters (54%), Visual Comfort lighting (48%)',
+              severity: 'success',
+              confidence: 87,
+            },
+            {
+              feature: 'Design Compatibility',
+              trigger: 'Real-time',
+              insight: 'Selected Calacatta Quartz pairs well with the White Oak flooring and Kohler fixtures. Consider matching cabinet hardware.',
+              detail: 'AI analyzed color palette, material textures, and style consistency across 8 selected items.',
+              severity: 'success',
+              confidence: 89,
+              action: {
+                label: 'View Suggestions',
+                onClick: () => {},
+              },
+            },
+          ]}
+        />
       </div>
     </div>
   )

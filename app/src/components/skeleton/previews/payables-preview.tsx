@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type PayableStatus = 'pending' | 'approved' | 'scheduled' | 'paid' | 'disputed'
@@ -902,6 +903,32 @@ export function PayablesPreview() {
           </p>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Payment Prioritization',
+            description: 'AI ranks payments by vendor importance and discount opportunity',
+          },
+          {
+            title: 'Cash Flow Impact',
+            description: 'Shows effect of payment on cash position',
+          },
+          {
+            title: 'Discount Capture',
+            description: 'Highlights available early payment discounts',
+          },
+          {
+            title: 'Batch Optimization',
+            description: 'Groups payments for efficient processing',
+          },
+          {
+            title: 'Vendor Relationship',
+            description: 'Tracks payment history and vendor health',
+          },
+        ]}
+      />
     </div>
   )
 }

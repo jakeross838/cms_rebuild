@@ -35,6 +35,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 // ---------------------------------------------------------------------------
@@ -1152,6 +1153,32 @@ export function TodosPreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Priority Scoring',
+            description: 'AI ranks tasks by urgency and impact',
+          },
+          {
+            title: 'Due Date Suggestions',
+            description: 'Recommends realistic due dates',
+          },
+          {
+            title: 'Assignment Optimization',
+            description: 'Suggests best person for each task',
+          },
+          {
+            title: 'Dependency Detection',
+            description: 'Identifies task dependencies',
+          },
+          {
+            title: 'Overdue Prediction',
+            description: 'Predicts tasks likely to miss deadlines',
+          },
+        ]}
+      />
 
       {/* Footer Stats */}
       <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center justify-between text-xs text-gray-500">

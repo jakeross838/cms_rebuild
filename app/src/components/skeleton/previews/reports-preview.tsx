@@ -31,6 +31,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type ReportCategory = 'financial' | 'operations' | 'tax' | 'client_facing' | 'company_wide' | 'custom'
 
@@ -867,6 +868,32 @@ export function ReportsPreview() {
           </p>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Report Recommendations',
+            description: 'Suggests relevant reports',
+          },
+          {
+            title: 'Anomaly Detection',
+            description: 'Highlights unusual data patterns',
+          },
+          {
+            title: 'Trend Analysis',
+            description: 'Identifies key trends',
+          },
+          {
+            title: 'Scheduled Delivery',
+            description: 'Automates report distribution',
+          },
+          {
+            title: 'Custom Insights',
+            description: 'AI-generated report summaries',
+          },
+        ]}
+      />
     </div>
   )
 }

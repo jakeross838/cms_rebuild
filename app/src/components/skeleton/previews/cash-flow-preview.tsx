@@ -24,6 +24,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface CashFlowWeek {
   id: string
@@ -402,6 +403,54 @@ export function CashFlowPreview() {
   const totalInflows = mockCashFlowWeeks.reduce((s, w) => s + w.expectedInflows, 0)
   const totalOutflows = mockCashFlowWeeks.reduce((s, w) => s + w.expectedOutflows, 0)
 
+  const aiFeatures = [
+    {
+      feature: 'Forecast Accuracy',
+      trigger: 'Weekly',
+      insight: 'Last 12 weeks: 87% accuracy. Predicted vs actual variance averages +/- $12K.',
+      detail: 'Inflows predicted within 5% accuracy 92% of the time. Outflows slightly less predictable due to timing shifts.',
+      confidence: 87,
+      severity: 'success' as const,
+      action: { label: 'View Accuracy Report', onClick: () => {} },
+    },
+    {
+      feature: 'Gap Warning',
+      trigger: 'Real-time',
+      insight: 'Week 3 cash position drops to $738K. Recommend accelerating Draw #6 or deferring payments.',
+      detail: 'Large subcontractor payments ($114K) coincide with lower inflows. Buffer still above $100K target but margin is thin.',
+      confidence: 92,
+      severity: 'warning' as const,
+      action: { label: 'View Recommendations', onClick: () => {} },
+    },
+    {
+      feature: 'Payment Timing',
+      trigger: 'On change',
+      insight: 'Shifting ABC Framing and Smith Electric to Week 4 improves Week 3 balance by $76K.',
+      detail: 'Both vendors have Net 45 terms with 8 days remaining. No late fee impact. Lien waivers pending for 3 payments.',
+      confidence: 95,
+      severity: 'info' as const,
+      action: { label: 'Optimize Schedule', onClick: () => {} },
+    },
+    {
+      feature: 'Collection Prediction',
+      trigger: 'Daily',
+      insight: 'Smith Residence Draw #6 has 75% probability of payment by Mar 7. Historical: 5-day avg.',
+      detail: 'Client payment history shows consistent 5-day turnaround. Current draw request submitted Feb 28.',
+      confidence: 88,
+      severity: 'info' as const,
+      action: { label: 'View Collection Forecast', onClick: () => {} },
+    },
+    {
+      feature: 'Scenario Modeling',
+      trigger: 'On demand',
+      insight: 'What-if: Delaying all sub payments 1 week improves cash position by $152K at lowest point.',
+      detail: 'Trade-off analysis available for payment timing, draw acceleration, and emergency credit line scenarios.',
+      confidence: 90,
+      severity: 'info' as const,
+      action: { label: 'Run What-If Analysis', onClick: () => {} },
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -621,6 +670,15 @@ export function CashFlowPreview() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Cash Flow Intelligence"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
     </div>
   )

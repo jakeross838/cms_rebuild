@@ -22,15 +22,26 @@ import {
   Send,
   RotateCcw,
   Hash,
+  Bell,
+  ArrowUpCircle,
+  ThumbsUp,
+  HelpCircle,
+  TrendingUp,
+  Users,
+  Search,
+  Target,
+  BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ── Types ────────────────────────────────────────────────────
 
 type RFIStatus = 'draft' | 'submitted' | 'under_review' | 'response_received' | 'accepted' | 'closed'
 type RFIPriority = 'low' | 'standard' | 'urgent' | 'critical'
+type ResponseType = 'answer' | 'clarification_request' | 'partial' | 'forward'
 
 interface RFIRouting {
   recipientName: string
@@ -45,7 +56,7 @@ interface RFIRouting {
 interface RFIResponse {
   responderName: string
   responderCompany: string
-  responseType: 'answer' | 'clarification_request' | 'partial' | 'forward'
+  responseType: ResponseType
   responseText: string
   createdAt: string
   attachmentCount: number
@@ -261,7 +272,107 @@ const priorityConfig: Record<RFIPriority, { label: string; color: string; bgColo
   critical: { label: 'Critical', color: 'text-red-600', bgColor: 'bg-red-50', sla: '24 hour SLA' },
 }
 
+// ── Response Type Config ────────────────────────────────────
+
+const responseTypeConfig: Record<ResponseType, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
+  answer: { label: 'Answer', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
+  clarification_request: { label: 'Clarification', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: HelpCircle },
+  partial: { label: 'Partial', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: RotateCcw },
+  forward: { label: 'Forward', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: ArrowRight },
+}
+
 // ── Sub-Components ──────────────────────────────────────────
+
+function ResponseTypeBadge({ type }: { type: ResponseType }) {
+  const config = responseTypeConfig[type]
+  const Icon = config.icon
+
+  return (
+    <span className={cn(
+      "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium",
+      config.bgColor,
+      config.color
+    )}>
+      <Icon className="h-2.5 w-2.5" />
+      {config.label}
+    </span>
+  )
+}
+
+function SLAEscalationWarning({ rfi }: { rfi: RFI }) {
+  const isOpen = ['submitted', 'under_review', 'response_received'].includes(rfi.status)
+  if (!isOpen) return null
+
+  const dueDate = new Date(rfi.dueDate)
+  const today = new Date()
+  const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+
+  // Overdue - SLA breach
+  if (diffDays < 0) {
+    const overdueDays = Math.abs(diffDays)
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 bg-red-100 border border-red-300 rounded-lg">
+        <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+        <span className="text-sm font-medium text-red-700">
+          SLA Breach: {overdueDays} day{overdueDays > 1 ? 's' : ''} overdue
+        </span>
+      </div>
+    )
+  }
+
+  // Approaching SLA - warning (within 2 days)
+  if (diffDays <= 2) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 bg-amber-100 border border-amber-300 rounded-lg">
+        <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
+        <span className="text-sm font-medium text-amber-700">
+          SLA Warning: Due in {diffDays} day{diffDays !== 1 ? 's' : ''}
+        </span>
+      </div>
+    )
+  }
+
+  return null
+}
+
+function ResponseWorkflowButtons({ rfi }: { rfi: RFI }) {
+  const isOpen = ['submitted', 'under_review'].includes(rfi.status)
+  const hasResponse = rfi.status === 'response_received'
+  const isOverdue = rfi.daysOpen > 0 && isOpen && new Date(rfi.dueDate) < new Date()
+
+  if (!isOpen && !hasResponse) return null
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      {isOpen && (
+        <>
+          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-md transition-colors">
+            <Bell className="h-3 w-3" />
+            Send Reminder
+          </button>
+          {isOverdue && (
+            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 rounded-md transition-colors">
+              <ArrowUpCircle className="h-3 w-3" />
+              Escalate
+            </button>
+          )}
+        </>
+      )}
+      {hasResponse && (
+        <>
+          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 rounded-md transition-colors">
+            <ThumbsUp className="h-3 w-3" />
+            Accept Answer
+          </button>
+          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-md transition-colors">
+            <HelpCircle className="h-3 w-3" />
+            Request Clarification
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
 
 function BallInCourtBadge({ routing }: { routing: RFIRouting[] }) {
   const current = routing.find(r => r.ballInCourt)
@@ -315,6 +426,52 @@ function ImpactBadges({ rfi }: { rfi: RFI }) {
   )
 }
 
+function SlowResponderAnalytics() {
+  // Mock slow responder data
+  const responderStats = [
+    { role: 'Architect', avgDays: 4.2, isAboveAverage: false },
+    { role: 'Engineer', avgDays: 6.1, isAboveAverage: true },
+    { role: 'Owner', avgDays: 8.3, isAboveAverage: true },
+  ]
+
+  const projectAverage = 5.2
+
+  return (
+    <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+      <div className="flex items-center gap-2 mb-2">
+        <TrendingUp className="h-4 w-4 text-orange-600" />
+        <span className="text-sm font-medium text-orange-800">Slowest Responders</span>
+      </div>
+      <div className="flex flex-wrap gap-3 text-xs">
+        {responderStats.map((stat) => (
+          <div
+            key={stat.role}
+            className={cn(
+              "flex items-center gap-1",
+              stat.isAboveAverage ? "text-orange-700 font-medium" : "text-orange-600"
+            )}
+          >
+            <Users className="h-3 w-3" />
+            <span>{stat.role} avg:</span>
+            <span className={cn(
+              "font-semibold",
+              stat.isAboveAverage && "text-red-600"
+            )}>
+              {stat.avgDays} days
+            </span>
+            {stat.isAboveAverage && (
+              <span className="text-red-500 text-[10px]">(above avg)</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 text-[10px] text-orange-600">
+        Project average: {projectAverage} days
+      </div>
+    </div>
+  )
+}
+
 function RFICard({ rfi }: { rfi: RFI }) {
   const status = statusConfig[rfi.status]
   const priority = priorityConfig[rfi.priority]
@@ -326,6 +483,12 @@ function RFICard({ rfi }: { rfi: RFI }) {
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
       isOverdue ? "border-red-200" : "border-gray-200"
     )}>
+      {/* SLA Escalation Warning - Prominent Position */}
+      <SLAEscalationWarning rfi={rfi} />
+      {(isOverdue || (isOpen && Math.ceil((new Date(rfi.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 2)) && (
+        <div className="mb-3" />
+      )}
+
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
           <div className={cn(
@@ -411,14 +574,15 @@ function RFICard({ rfi }: { rfi: RFI }) {
         <ImpactBadges rfi={rfi} />
       </div>
 
-      {/* Response thread preview */}
+      {/* Response thread preview with Response Type Badge */}
       {rfi.responses.length > 0 && (
         <div className="mb-3 p-2 bg-green-50 rounded-md border border-green-100">
-          <div className="flex items-center gap-1.5 mb-1">
+          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
             <CheckCircle className="h-3 w-3 text-green-600" />
             <span className="text-xs font-medium text-green-700">
               Response from {rfi.responses[0].responderName}
             </span>
+            <ResponseTypeBadge type={rfi.responses[0].responseType} />
             <span className="text-xs text-green-500 ml-auto">{rfi.responses[0].createdAt}</span>
           </div>
           <p className="text-xs text-green-700 line-clamp-2">{rfi.responses[0].responseText}</p>
@@ -429,6 +593,11 @@ function RFICard({ rfi }: { rfi: RFI }) {
           )}
         </div>
       )}
+
+      {/* Response Workflow Buttons */}
+      <div className="mb-3">
+        <ResponseWorkflowButtons rfi={rfi} />
+      </div>
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
@@ -522,6 +691,48 @@ export function RFIsPreview() {
   const totalScheduleImpact = mockRFIs
     .filter(r => r.scheduleImpactDays && r.scheduleImpactDays > 0)
     .reduce((sum, r) => sum + (r.scheduleImpactDays || 0), 0)
+
+  // AI Features for AIFeaturesPanel
+  const aiFeatures = [
+    {
+      feature: 'Similar RFI Search',
+      trigger: 'On creation',
+      insight: 'Found 3 similar RFIs from past projects. RFI-047 (Johnson) has approved answer that may apply.',
+      severity: 'info' as const,
+      icon: <Search className="h-4 w-4" />,
+      action: {
+        label: 'View Similar RFIs',
+        onClick: () => {},
+      },
+    },
+    {
+      feature: 'Impact Assessment',
+      trigger: 'Real-time',
+      insight: 'This RFI affects framing schedule. 2-day delay if not resolved by Feb 15.',
+      severity: 'warning' as const,
+      icon: <Target className="h-4 w-4" />,
+      confidence: 87,
+    },
+    {
+      feature: 'SLA Intelligence',
+      trigger: 'Daily',
+      insight: 'Architect typically responds in 3-4 days. Current wait: 6 days. Recommend: Escalate to principal.',
+      severity: 'critical' as const,
+      icon: <Clock className="h-4 w-4" />,
+      action: {
+        label: 'Escalate Now',
+        onClick: () => {},
+      },
+    },
+    {
+      feature: 'Ball-in-Court Analysis',
+      trigger: 'Real-time',
+      insight: 'RFI pending with architect for 5 days. Pattern: This architect averages 4 days, currently 25% slower than usual.',
+      severity: 'warning' as const,
+      icon: <BarChart3 className="h-4 w-4" />,
+      confidence: 92,
+    },
+  ]
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -638,6 +849,20 @@ export function RFIsPreview() {
             <div className="text-2xl font-bold text-amber-700 mt-1">+{totalScheduleImpact}d</div>
           </div>
         </div>
+
+        {/* Slow Responder Analytics */}
+        <div className="mt-4">
+          <SlowResponderAnalytics />
+        </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-b border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="RFI Intelligence"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
 
       {/* RFI List */}

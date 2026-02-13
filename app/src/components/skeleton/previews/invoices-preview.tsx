@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type InvoiceStatus = 'needs_review' | 'ready_for_approval' | 'approved' | 'in_draw' | 'paid' | 'disputed' | 'denied' | 'split' | 'voided'
 
@@ -564,6 +565,59 @@ export function InvoicesPreview() {
   // Active statuses for tabs (exclude rare states from tabs but keep in filter)
   const tabStatuses: InvoiceStatus[] = ['needs_review', 'ready_for_approval', 'approved', 'in_draw', 'paid', 'disputed', 'denied']
 
+  // AI Features for Invoices
+  const aiFeatures = [
+    {
+      feature: 'Auto-Coding',
+      trigger: 'On submission',
+      insight: 'AI matches invoices to cost codes and POs based on vendor history, descriptions, and job context.',
+      severity: 'info' as const,
+      confidence: 94,
+      detail: '7 of 10 invoices were auto-coded with 95%+ confidence. 2 require manual review due to new cost codes.',
+    },
+    {
+      feature: 'Duplicate Detection',
+      trigger: 'Real-time',
+      insight: 'Flags potential duplicate invoices by analyzing invoice numbers, amounts, dates, and vendor patterns.',
+      severity: 'warning' as const,
+      confidence: 89,
+      action: {
+        label: 'Review Flagged',
+        onClick: () => {},
+      },
+    },
+    {
+      feature: 'PO Variance Alert',
+      trigger: 'On submission',
+      insight: 'Highlights invoices exceeding PO amounts. INV-0847 is $920 over PO-089, INV-0838 is $2,100 over PO-081.',
+      severity: 'warning' as const,
+      confidence: 98,
+      action: {
+        label: 'View Variances',
+        onClick: () => {},
+      },
+    },
+    {
+      feature: 'Approval Routing',
+      trigger: 'On creation',
+      insight: 'Suggests approval path based on invoice amount and type. Invoices >$25K route to Owner, $10K-$25K to PM.',
+      severity: 'info' as const,
+      confidence: 96,
+      detail: 'Current queue: 2 invoices pending PM review, 1 pending Owner approval (Wilson Custom $32.1K).',
+    },
+    {
+      feature: 'Payment Optimization',
+      trigger: 'Daily',
+      insight: 'Suggests batch payments for early payment discounts. Pay Jones Plumbing by Dec 8 to save $175 (2% discount).',
+      severity: 'success' as const,
+      confidence: 92,
+      action: {
+        label: 'View Recommendations',
+        onClick: () => {},
+      },
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -721,6 +775,15 @@ export function InvoicesPreview() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-t border-purple-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Invoice AI Features"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
     </div>
   )

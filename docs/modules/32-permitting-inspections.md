@@ -59,12 +59,15 @@ configuration without affecting other projects.
 
 ### Result Logging
 - Inspection result recording: Pass, Fail, Partial/Conditional, Cancelled, No-Show
+- **FTQ (First-Time Quality) tracking:** Mark whether this was first-time pass or required re-inspection. Calculate FTQ rates per vendor, trade, and project (integrates with Module 22 Vendor Performance and Module 28 Punch List & Quality).
 - Failure documentation: deficiency list with photos, required corrections, re-inspection scope
+- **Vendor FTQ attribution:** When inspection fails, attribute deficiencies to responsible vendor(s) for FTQ scoring impact
 - Conditional pass tracking: conditions to satisfy before proceeding
 - Correction assignment: auto-create tasks for responsible trade when inspection fails
 - Re-inspection scheduling with link to original failure
 - Inspector notes and comments capture
 - Historical pass/fail rates by trade and inspector (analytics)
+- **FTQ analytics dashboard:** Track FTQ trends by trade, vendor, and project. Flag vendors below FTQ threshold (default: 85%).
 
 ### Edge Cases & What-If Scenarios
 

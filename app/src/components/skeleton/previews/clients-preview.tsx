@@ -28,6 +28,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type ClientStatus = 'active' | 'pending' | 'completed' | 'on-hold' | 'warranty'
 
@@ -615,6 +616,51 @@ export function ClientsPreview() {
             <p>No clients found matching your criteria</p>
           </div>
         )}
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Client Intelligence"
+          columns={2}
+          features={[
+            {
+              feature: 'Referral Potential',
+              trigger: 'Real-time',
+              insight: 'Identifies clients likely to refer based on satisfaction scores, engagement patterns, and past referral history.',
+              severity: 'success',
+              confidence: 87,
+            },
+            {
+              feature: 'Communication Analysis',
+              trigger: 'On change',
+              insight: 'Tracks response patterns and preferences to optimize outreach timing and channel selection.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'Satisfaction Scoring',
+              trigger: 'Real-time',
+              insight: 'Predicts client satisfaction based on interactions, portal usage, and project milestone completion.',
+              severity: 'info',
+              confidence: 85,
+            },
+            {
+              feature: 'Repeat Business',
+              trigger: 'Daily',
+              insight: 'Identifies candidates for repeat projects by analyzing project history, property portfolio, and engagement signals.',
+              severity: 'success',
+              confidence: 78,
+            },
+            {
+              feature: 'Testimonial Candidates',
+              trigger: 'On change',
+              insight: 'Suggests clients for testimonials and reviews based on satisfaction scores and project outcomes.',
+              severity: 'info',
+              confidence: 83,
+            },
+          ]}
+        />
       </div>
 
       {/* AI Insights Bar */}

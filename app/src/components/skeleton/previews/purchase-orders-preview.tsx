@@ -29,10 +29,13 @@ import {
   CircleDot,
   AlertCircle,
   Gauge,
+  ExternalLink,
+  User,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface PurchaseOrder {
   id: string
@@ -57,11 +60,14 @@ interface PurchaseOrder {
   expectedDelivery?: string
   // Status & workflow
   status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'acknowledged' | 'partial_delivery' | 'fully_received' | 'invoiced' | 'closed' | 'cancelled'
-  approvalProgress?: { completed: number; total: number }
+  approvalProgress?: { completed: number; total: number; currentApprover?: string }
   versionNumber: number
   // Receiving
   receivedPct: number
   backorderedItems: number
+  // Tracking
+  trackingNumber?: string
+  carrier?: 'ups' | 'fedex' | 'usps' | 'freight'
   // Three-way match
   threeWayMatchStatus?: 'full_match' | 'partial_match' | 'variance' | 'pending'
   varianceAmount?: number
@@ -82,6 +88,20 @@ interface PurchaseOrder {
   // AI
   aiNote?: string
   aiPriceAssessment?: string
+}
+
+const carrierLinks: Record<string, (tracking: string) => string> = {
+  ups: (t) => `https://www.ups.com/track?tracknum=${t}`,
+  fedex: (t) => `https://www.fedex.com/fedextrack/?trknbr=${t}`,
+  usps: (t) => `https://tools.usps.com/go/TrackConfirmAction?tLabels=${t}`,
+  freight: (t) => `#`, // Generic freight - no link
+}
+
+const carrierNames: Record<string, string> = {
+  ups: 'UPS',
+  fedex: 'FedEx',
+  usps: 'USPS',
+  freight: 'Freight',
 }
 
 const mockPurchaseOrders: PurchaseOrder[] = [
@@ -108,6 +128,8 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     receivedPct: 0,
     backorderedItems: 0,
     isEmergency: false,
+    trackingNumber: '1Z999AA10123456784',
+    carrier: 'ups',
     aiPriceAssessment: 'Within market range (+2.1%)',
   },
   {
@@ -262,6 +284,8 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     isEmergency: false,
     changeOrderId: 'co-002',
     changeOrderNumber: 'CO-002',
+    trackingNumber: '794644790132',
+    carrier: 'fedex',
     aiNote: '2 items backordered: condensing unit (ETA Jan 25) and handler (ETA Feb 3). Schedule task "HVAC Install" may slip.',
   },
   {
@@ -338,6 +362,56 @@ const mockPurchaseOrders: PurchaseOrder[] = [
     blanketLimit: 50000,
     blanketUsed: 28500,
     aiNote: 'Blanket PO 57% utilized. 3 releases issued. At current rate, limit reached by mid-March.',
+  },
+  {
+    id: '11',
+    poNumber: 'PO-2026-0145',
+    vendorName: 'Home Depot Pro',
+    jobName: 'Miller Addition',
+    subtotal: 4200,
+    taxAmount: 294,
+    shippingAmount: 0,
+    totalAmount: 4494,
+    invoicedAmount: 0,
+    remainingAmount: 4494,
+    poType: 'standard',
+    costCode: '04 - Framing',
+    paymentTerms: 'Net 30',
+    itemsCount: 8,
+    issueDate: '2026-01-10',
+    status: 'pending_approval',
+    versionNumber: 1,
+    receivedPct: 0,
+    backorderedItems: 0,
+    isEmergency: false,
+    approvalProgress: { completed: 1, total: 3, currentApprover: 'Mike Johnson (PM)' },
+    aiNote: 'Approving this PO will consume 85% of 04-Framing budget. $2,340 remaining.',
+  },
+  {
+    id: '12',
+    poNumber: 'PO-2026-0146',
+    vendorName: 'Coastal Roofing Supply',
+    jobName: 'Johnson Beach House',
+    subtotal: 15200,
+    taxAmount: 1064,
+    shippingAmount: 350,
+    totalAmount: 16614,
+    invoicedAmount: 16614,
+    remainingAmount: 0,
+    poType: 'standard',
+    costCode: '07 - Roofing',
+    paymentTerms: 'Net 30',
+    itemsCount: 14,
+    issueDate: '2025-12-20',
+    status: 'fully_received',
+    versionNumber: 1,
+    receivedPct: 100,
+    backorderedItems: 0,
+    threeWayMatchStatus: 'full_match',
+    isEmergency: false,
+    trackingNumber: 'PRO-2026-88541',
+    carrier: 'freight',
+    aiPriceAssessment: 'Competitive pricing, 3% below market avg',
   },
 ]
 
@@ -455,7 +529,52 @@ function POCard({ po }: { po: PurchaseOrder }) {
             )}
           </div>
         )}
+        {/* Tracking number display */}
+        {po.trackingNumber && po.carrier && (
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
+            <Truck className="h-3.5 w-3.5" />
+            <span className="text-xs text-gray-500">{carrierNames[po.carrier]}:</span>
+            <span className="text-xs font-mono text-gray-700">{po.trackingNumber}</span>
+            {po.carrier !== 'freight' && (
+              <a
+                href={carrierLinks[po.carrier](po.trackingNumber)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-0.5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Track Shipment
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Approval progress for pending_approval status */}
+      {po.status === 'pending_approval' && po.approvalProgress && (
+        <div className="mb-3 p-2 bg-amber-50 rounded">
+          <div className="flex items-center justify-between text-xs text-amber-700 mb-1">
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              Approval Progress
+            </span>
+            <span>{po.approvalProgress.completed}/{po.approvalProgress.total}</span>
+          </div>
+          <div className="w-full bg-amber-200 rounded-full h-1.5">
+            <div
+              className="h-1.5 rounded-full bg-amber-500 transition-all"
+              style={{ width: `${(po.approvalProgress.completed / po.approvalProgress.total) * 100}%` }}
+            />
+          </div>
+          {po.approvalProgress.currentApprover && (
+            <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+              <User className="h-3 w-3" />
+              <span>Current: {po.approvalProgress.currentApprover}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Receiving progress for partial/received */}
       {(po.status === 'partial_delivery' || po.status === 'fully_received') && (
@@ -637,6 +756,51 @@ export function PurchaseOrdersPreview() {
   const projectBudget = 2450000
   const commitmentPct = ((totalCommitted / projectBudget) * 100).toFixed(1)
 
+  // AI Features for the panel
+  const aiFeatures = [
+    {
+      feature: 'Budget Impact Analysis',
+      trigger: 'On submission',
+      insight: 'Approving this PO will consume 85% of 04-Framing budget. $2,340 remaining.',
+      severity: 'warning' as const,
+      confidence: 95,
+      action: {
+        label: 'View Budget',
+        onClick: () => {},
+      },
+    },
+    {
+      feature: 'Vendor Recommendation',
+      trigger: 'On creation',
+      insight: '3 vendors quoted this material. ABC Lumber: $4,200 (selected), XYZ Supply: $4,450, Coastal: $3,980 (new vendor, no rating)',
+      severity: 'info' as const,
+      confidence: 88,
+      detail: 'ABC Lumber has 98% on-time delivery rate and established credit terms. Coastal offers lowest price but has no performance history.',
+    },
+    {
+      feature: 'Price Intelligence Check',
+      trigger: 'Real-time',
+      insight: 'Material costs 8% above 6-month average. Lumber prices trending up - consider locking price.',
+      severity: 'warning' as const,
+      confidence: 92,
+      action: {
+        label: 'View Trends',
+        onClick: () => {},
+      },
+    },
+    {
+      feature: 'Material Substitution',
+      trigger: 'On change',
+      insight: 'DeWalt DW735 unavailable. Alternatives: Makita 2012NB (same price), DeWalt DW734 ($50 less, lighter duty)',
+      severity: 'info' as const,
+      confidence: 85,
+      action: {
+        label: 'Compare Options',
+        onClick: () => {},
+      },
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -728,6 +892,7 @@ export function PurchaseOrdersPreview() {
             { key: 'sent', label: 'Sent', count: mockPurchaseOrders.filter(po => po.status === 'sent').length },
             { key: 'acknowledged', label: 'Ack\'d', count: mockPurchaseOrders.filter(po => po.status === 'acknowledged').length },
             { key: 'partial_delivery', label: 'Partial', count: mockPurchaseOrders.filter(po => po.status === 'partial_delivery').length },
+            { key: 'fully_received', label: 'Received', count: mockPurchaseOrders.filter(po => po.status === 'fully_received').length },
             { key: 'invoiced', label: 'Invoiced', count: mockPurchaseOrders.filter(po => po.status === 'invoiced').length },
             { key: 'closed', label: 'Closed', count: mockPurchaseOrders.filter(po => po.status === 'closed').length },
           ]}
@@ -788,32 +953,13 @@ export function PurchaseOrdersPreview() {
         )}
       </div>
 
-      {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
-        <div className="flex items-start gap-3">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">Procurement Insights:</span>
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-amber-700">
-            <span className="flex items-center gap-1">
-              <AlertTriangle className="h-3.5 w-3.5" />
-              Custom Cabinet Co: no acknowledgment in 3 days (avg response: 1.2 days)
-            </span>
-            <span className="text-amber-400">|</span>
-            <span className="flex items-center gap-1">
-              <DollarSign className="h-3.5 w-3.5" />
-              Consolidate ABC Lumber POs to save ~$850 (volume discount)
-            </span>
-            <span className="text-amber-400">|</span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              PGT windows on track for Feb 20. Order Johnson job windows by Jan 20.
-            </span>
-            <span className="text-amber-400">|</span>
-            <span>Smith Electric early-pay discount captured: $184 saved</span>
-          </div>
-        </div>
+      {/* AI Features Panel */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-t border-purple-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Procurement AI Insights"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
     </div>
   )

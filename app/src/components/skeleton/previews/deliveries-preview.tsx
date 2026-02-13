@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface Delivery {
   id: string
@@ -882,6 +883,51 @@ export function DeliveriesPreview() {
             <span>HVAC backorder may push schedule +5 days at Johnson Beach House</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Delivery AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Schedule Optimization',
+              trigger: 'Real-time',
+              insight: 'Suggests optimal delivery windows based on site activity, crew schedules, and equipment availability.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'Conflict Detection',
+              trigger: 'On change',
+              insight: 'Identifies delivery conflicts such as overlapping time slots, insufficient staging space, or missing equipment.',
+              severity: 'warning',
+              confidence: 88,
+            },
+            {
+              feature: 'Site Readiness',
+              trigger: 'Daily',
+              insight: 'Validates that the job site is ready for scheduled deliveries including access, staging areas, and unloading equipment.',
+              severity: 'success',
+              confidence: 95,
+            },
+            {
+              feature: 'Weather Alerts',
+              trigger: 'Real-time',
+              insight: 'Warns of weather conditions that may impact deliveries, suggesting rescheduling for weather-sensitive materials.',
+              severity: 'warning',
+              confidence: 85,
+            },
+            {
+              feature: 'Tracking Intelligence',
+              trigger: 'Real-time',
+              insight: 'Predicts delivery arrival times using GPS tracking, traffic data, and historical carrier performance.',
+              severity: 'info',
+              confidence: 90,
+            },
+          ]}
+        />
       </div>
     </div>
   )

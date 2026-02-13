@@ -38,6 +38,7 @@ import {
   BookText,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -536,6 +537,34 @@ export function SettingsPreview() {
             <UsageStats />
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="p-4 border-t border-gray-200">
+        <AIFeaturesPanel
+          features={[
+            {
+              title: 'Configuration Audit',
+              description: 'Reviews settings for issues',
+            },
+            {
+              title: 'Best Practices',
+              description: 'Suggests optimal configurations',
+            },
+            {
+              title: 'Security Scan',
+              description: 'Identifies security gaps',
+            },
+            {
+              title: 'Usage Analytics',
+              description: 'Shows feature adoption',
+            },
+            {
+              title: 'Optimization Tips',
+              description: 'Recommends improvements',
+            },
+          ]}
+        />
       </div>
 
       {/* AI Insights Bar */}

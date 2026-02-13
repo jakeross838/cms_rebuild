@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface BudgetLine {
@@ -746,6 +747,32 @@ export function BudgetPreview() {
           </p>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Budget Forecasting',
+            description: 'Predicts budget trends and variances',
+          },
+          {
+            title: 'Cost Code Analysis',
+            description: 'Identifies over/under budget categories',
+          },
+          {
+            title: 'Change Order Impact',
+            description: 'Shows CO effect on budget',
+          },
+          {
+            title: 'Contingency Tracking',
+            description: 'Monitors contingency utilization',
+          },
+          {
+            title: 'Vendor Cost Trends',
+            description: 'Tracks vendor pricing patterns',
+          },
+        ]}
+      />
     </div>
   )
 }

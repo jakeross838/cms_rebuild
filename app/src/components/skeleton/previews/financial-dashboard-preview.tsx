@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   DollarSign,
   TrendingUp,
@@ -17,6 +18,7 @@ import {
   Building2,
   Calendar,
   ChevronRight,
+  ChevronDown,
   FileText,
   Lock,
   RefreshCw,
@@ -24,10 +26,26 @@ import {
   CheckCircle,
   Receipt,
   Banknote,
+  Filter,
+  MessageSquare,
+  Users,
+  ClipboardCheck,
+  Cloud,
+  Sun,
+  CloudRain,
+  Phone,
+  Mail,
+  Bell,
+  Send,
+  Eye,
+  ShoppingCart,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel, type AIFeatureCardProps } from '@/components/skeleton/ui'
+
+// ── Types ───────────────────────────────────────────────────────
 
 interface SummaryCard {
   id: string
@@ -38,6 +56,7 @@ interface SummaryCard {
   icon: React.ElementType
   trend: 'up' | 'down' | 'neutral'
   color: 'blue' | 'green' | 'amber' | 'purple'
+  sparklineData?: number[]
 }
 
 interface PaymentDue {
@@ -88,6 +107,9 @@ interface KPIWidget {
   subLabel: string
   icon: React.ElementType
   color: 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'gray'
+  sparklineData?: number[]
+  changePercent?: number
+  changeDirection?: 'up' | 'down'
 }
 
 interface OutstandingDraw {
@@ -99,6 +121,58 @@ interface OutstandingDraw {
   daysInStatus: number
 }
 
+interface PendingApproval {
+  type: 'invoice' | 'change-order' | 'po' | 'draw'
+  count: number
+  label: string
+  color: string
+}
+
+interface ActivityItem {
+  id: string
+  type: 'payment-received' | 'invoice-sent' | 'po-approved' | 'draw-submitted'
+  description: string
+  amount: number
+  timestamp: string
+  job?: string
+}
+
+interface VendorFollowUp {
+  id: string
+  vendor: string
+  reason: string
+  daysWaiting: number
+  job?: string
+}
+
+interface ClientMessage {
+  id: string
+  client: string
+  subject: string
+  daysAging: number
+  job?: string
+}
+
+interface UpcomingInspection {
+  id: string
+  job: string
+  permitRef: string
+  inspectorName?: string
+  date: string
+  status: 'scheduled' | 'pending-confirmation'
+}
+
+interface WeatherInfo {
+  jobSite: string
+  temperature: number
+  conditions: 'sunny' | 'cloudy' | 'rainy' | 'stormy'
+  outdoorRisk: 'low' | 'medium' | 'high'
+}
+
+type DateRangePreset = 'last-7-days' | 'last-30-days' | 'mtd' | 'qtd' | 'ytd' | 'custom'
+
+// ── Data ────────────────────────────────────────────────────────
+
 const summaryCards: SummaryCard[] = [
   {
     id: '1',
@@ -109,6 +183,7 @@ const summaryCards: SummaryCard[] = [
     icon: Wallet,
     trend: 'up',
     color: 'blue',
+    sparklineData: [420, 445, 438, 460, 472, 485, 487.5],
   },
   {
     id: '2',
@@ -119,6 +194,7 @@ const summaryCards: SummaryCard[] = [
     icon: ArrowUpRight,
     trend: 'down',
     color: 'green',
+    sparklineData: [380, 365, 352, 340, 335, 328, 324.8],
   },
   {
     id: '3',
@@ -129,6 +205,7 @@ const summaryCards: SummaryCard[] = [
     icon: ArrowDownRight,
     trend: 'up',
     color: 'amber',
+    sparklineData: [120, 128, 135, 142, 148, 152, 156.2],
   },
   {
     id: '4',
@@ -139,16 +216,17 @@ const summaryCards: SummaryCard[] = [
     icon: TrendingUp,
     trend: 'up',
     color: 'purple',
+    sparklineData: [580, 595, 610, 625, 640, 648, 655.1],
   },
 ]
 
 const secondaryKPIs: KPIWidget[] = [
-  { id: '1', label: 'Active Contract Value', value: '$8.4M', subLabel: '5 active jobs', icon: FileText, color: 'blue' },
-  { id: '2', label: 'Revenue MTD', value: '$485K', subLabel: 'Feb 2026', icon: DollarSign, color: 'green' },
-  { id: '3', label: 'Revenue YTD', value: '$2.1M', subLabel: '$2.3M target', icon: BarChart3, color: 'purple' },
-  { id: '4', label: 'Outstanding Draws', value: '3', subLabel: '$310K pending', icon: Receipt, color: 'amber' },
-  { id: '5', label: 'Pending Invoices', value: '7', subLabel: '$89K to approve', icon: Banknote, color: 'red' },
-  { id: '6', label: 'Avg Profit Margin', value: '14.8%', subLabel: 'Target: 18%', icon: TrendingUp, color: 'amber' },
+  { id: '1', label: 'Active Contract Value', value: '$8.4M', subLabel: '5 active jobs', icon: FileText, color: 'blue', sparklineData: [7.8, 7.9, 8.1, 8.2, 8.3, 8.35, 8.4], changePercent: 2.4, changeDirection: 'up' },
+  { id: '2', label: 'Revenue MTD', value: '$485K', subLabel: 'Feb 2026', icon: DollarSign, color: 'green', sparklineData: [65, 120, 180, 260, 340, 420, 485], changePercent: 8.1, changeDirection: 'up' },
+  { id: '3', label: 'Revenue YTD', value: '$2.1M', subLabel: '$2.3M target', icon: BarChart3, color: 'purple', sparklineData: [1.5, 1.6, 1.75, 1.85, 1.95, 2.0, 2.1], changePercent: 5.0, changeDirection: 'up' },
+  { id: '4', label: 'Outstanding Draws', value: '3', subLabel: '$310K pending', icon: Receipt, color: 'amber', sparklineData: [5, 4, 4, 3, 3, 3, 3], changePercent: -25, changeDirection: 'down' },
+  { id: '5', label: 'Pending Invoices', value: '7', subLabel: '$89K to approve', icon: Banknote, color: 'red', sparklineData: [4, 5, 6, 5, 6, 7, 7], changePercent: 16.7, changeDirection: 'up' },
+  { id: '6', label: 'Avg Profit Margin', value: '14.8%', subLabel: 'Target: 18%', icon: TrendingUp, color: 'amber', sparklineData: [13.2, 13.8, 14.1, 14.4, 14.5, 14.6, 14.8], changePercent: 1.4, changeDirection: 'up' },
 ]
 
 const outstandingDraws: OutstandingDraw[] = [
@@ -329,6 +407,110 @@ const jobProfitability: JobProfitability[] = [
   },
 ]
 
+const pendingApprovals: PendingApproval[] = [
+  { type: 'invoice', count: 3, label: 'Invoices', color: 'bg-blue-100 text-blue-700' },
+  { type: 'change-order', count: 2, label: 'Change Orders', color: 'bg-amber-100 text-amber-700' },
+  { type: 'po', count: 5, label: 'POs', color: 'bg-purple-100 text-purple-700' },
+  { type: 'draw', count: 1, label: 'Draws', color: 'bg-green-100 text-green-700' },
+]
+
+const recentActivities: ActivityItem[] = [
+  { id: '1', type: 'payment-received', description: 'Payment received from Davis Family Trust', amount: 32500, timestamp: '10 min ago', job: 'Davis Coastal Home' },
+  { id: '2', type: 'invoice-sent', description: 'Invoice #1024 sent to Wilson Custom Homes', amount: 45000, timestamp: '25 min ago', job: 'Wilson Custom' },
+  { id: '3', type: 'po-approved', description: 'PO #892 approved for ABC Lumber Supply', amount: 28500, timestamp: '1 hour ago', job: 'Smith Residence' },
+  { id: '4', type: 'draw-submitted', description: 'Draw #3 submitted for review', amount: 60000, timestamp: '2 hours ago', job: 'Johnson Beach House' },
+  { id: '5', type: 'payment-received', description: 'Payment received from Thompson Builders', amount: 18750, timestamp: '3 hours ago', job: 'Thompson Renovation' },
+  { id: '6', type: 'po-approved', description: 'PO #893 approved for Cool Air HVAC', amount: 22800, timestamp: '4 hours ago', job: 'Smith Residence' },
+  { id: '7', type: 'invoice-sent', description: 'Invoice #1025 sent to Miller family', amount: 42500, timestamp: '5 hours ago', job: 'Miller Addition' },
+]
+
+const vendorFollowUps: VendorFollowUp[] = [
+  { id: '1', vendor: 'ABC Lumber Supply', reason: 'Invoice overdue', daysWaiting: 12, job: 'Smith Residence' },
+  { id: '2', vendor: 'Florida Electric Co', reason: 'PO confirmation needed', daysWaiting: 5, job: 'Johnson Beach House' },
+  { id: '3', vendor: 'Gulf Coast Windows', reason: 'Payment terms expiring', daysWaiting: 3, job: 'Davis Coastal Home' },
+  { id: '4', vendor: 'Jones Plumbing', reason: 'Lien waiver pending', daysWaiting: 8, job: 'Miller Addition' },
+]
+
+const clientMessages: ClientMessage[] = [
+  { id: '1', client: 'Wilson Custom Homes', subject: 'Re: Invoice #1024 payment schedule', daysAging: 5, job: 'Wilson Custom' },
+  { id: '2', client: 'Davis Family Trust', subject: 'Draw #9 documentation request', daysAging: 2, job: 'Davis Coastal Home' },
+  { id: '3', client: 'Thompson Builders', subject: 'Change order approval needed', daysAging: 3, job: 'Thompson Renovation' },
+]
+
+const upcomingInspections: UpcomingInspection[] = [
+  { id: '1', job: 'Smith Residence', permitRef: 'BLD-2026-0142', inspectorName: 'Tom Martinez', date: 'Feb 14, 9:00 AM', status: 'scheduled' },
+  { id: '2', job: 'Johnson Beach House', permitRef: 'BLD-2026-0156', date: 'Feb 15, 2:00 PM', status: 'pending-confirmation' },
+  { id: '3', job: 'Miller Addition', permitRef: 'BLD-2026-0148', inspectorName: 'Sarah Lee', date: 'Feb 17, 10:30 AM', status: 'scheduled' },
+  { id: '4', job: 'Davis Coastal Home', permitRef: 'BLD-2026-0161', date: 'Feb 18, 11:00 AM', status: 'pending-confirmation' },
+]
+
+const weatherData: WeatherInfo[] = [
+  { jobSite: 'Smith Residence', temperature: 72, conditions: 'sunny', outdoorRisk: 'low' },
+  { jobSite: 'Johnson Beach House', temperature: 68, conditions: 'cloudy', outdoorRisk: 'low' },
+  { jobSite: 'Davis Coastal Home', temperature: 65, conditions: 'rainy', outdoorRisk: 'high' },
+]
+
+const aiFeatures: AIFeatureCardProps[] = [
+  {
+    feature: 'Cash Flow Alert',
+    trigger: 'real-time',
+    insight: 'Payables due next week: $45,200. AR expected: $28,000. May need to delay 2 vendor payments.',
+    severity: 'warning',
+    confidence: 88,
+    action: { label: 'View Details', onClick: () => {} },
+  },
+  {
+    feature: 'Collection Recommendations',
+    trigger: 'daily',
+    insight: 'Smith Residence 45 days overdue ($12,400). Suggest: Call this week, sent 2 emails with no response.',
+    severity: 'warning',
+    confidence: 82,
+    action: { label: 'Create Task', onClick: () => {} },
+  },
+  {
+    feature: 'Profitability Insights',
+    trigger: 'real-time',
+    insight: 'Harbor View trending 3% below target margin. Labor costs 12% over budget on framing phase.',
+    severity: 'critical',
+    confidence: 91,
+    action: { label: 'Analyze', onClick: () => {} },
+  },
+  {
+    feature: 'Inspection Pass Probability',
+    trigger: 'on-submission',
+    insight: 'Electrical rough-in inspection tomorrow: 85% pass probability based on similar jobs.',
+    severity: 'success',
+    confidence: 85,
+    action: { label: 'View Checklist', onClick: () => {} },
+  },
+  {
+    feature: 'Priority Queue Ranking',
+    trigger: 'daily',
+    insight: 'Top 3 actions: 1) Collect Smith $12,400, 2) Submit Draw #4 Johnson, 3) Approve ABC Electric PO',
+    severity: 'info',
+    confidence: 94,
+    action: { label: 'Start Queue', onClick: () => {} },
+  },
+  {
+    feature: 'Overnight Summary',
+    trigger: 'daily',
+    insight: 'Since yesterday: 2 payments received ($18,400), 1 CO approved, Draw #3 Harbor View funded',
+    severity: 'success',
+    confidence: 100,
+  },
+]
+
+const dateRangePresets: { key: DateRangePreset; label: string }[] = [
+  { key: 'last-7-days', label: 'Last 7 Days' },
+  { key: 'last-30-days', label: 'Last 30 Days' },
+  { key: 'mtd', label: 'MTD' },
+  { key: 'qtd', label: 'QTD' },
+  { key: 'ytd', label: 'YTD' },
+  { key: 'custom', label: 'Custom' },
+]
+
+// ── Utilities ───────────────────────────────────────────────────
+
 function formatCurrency(value: number): string {
   if (value >= 1000000) return '$' + (value / 1000000).toFixed(2) + 'M'
   if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K'
@@ -358,6 +540,44 @@ const cardColorClasses = {
   },
 }
 
+// ── Sparkline Component ─────────────────────────────────────────
+
+function Sparkline({ data, color = 'blue', width = 60, height = 20 }: { data: number[]; color?: string; width?: number; height?: number }) {
+  if (!data || data.length < 2) return null
+
+  const min = Math.min(...data)
+  const max = Math.max(...data)
+  const range = max - min || 1
+
+  const points = data.map((value, index) => {
+    const x = (index / (data.length - 1)) * width
+    const y = height - ((value - min) / range) * height
+    return `${x},${y}`
+  }).join(' ')
+
+  const colorMap: Record<string, string> = {
+    blue: 'stroke-blue-500',
+    green: 'stroke-green-500',
+    amber: 'stroke-amber-500',
+    purple: 'stroke-purple-500',
+    red: 'stroke-red-500',
+  }
+
+  return (
+    <svg width={width} height={height} className="overflow-visible">
+      <polyline
+        points={points}
+        fill="none"
+        className={cn('stroke-[1.5]', colorMap[color] || 'stroke-blue-500')}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+// ── Summary Card Component ──────────────────────────────────────
+
 function SummaryCardComponent({ card }: { card: SummaryCard }) {
   const colors = cardColorClasses[card.color]
   const Icon = card.icon
@@ -385,10 +605,17 @@ function SummaryCardComponent({ card }: { card: SummaryCard }) {
       </div>
       <div className="text-2xl font-bold text-gray-900">{formatCurrency(card.value)}</div>
       <div className="text-sm text-gray-500 mt-1">{card.label}</div>
-      <div className="text-xs text-gray-400 mt-0.5">{card.changeLabel}</div>
+      <div className="flex items-center justify-between mt-1">
+        <div className="text-xs text-gray-400">{card.changeLabel}</div>
+        {card.sparklineData && (
+          <Sparkline data={card.sparklineData} color={card.color} width={50} height={16} />
+        )}
+      </div>
     </div>
   )
 }
+
+// ── Chart Placeholder ───────────────────────────────────────────
 
 function ChartPlaceholder({ title, icon: Icon, height = "h-48" }: { title: string; icon: React.ElementType; height?: string }) {
   return (
@@ -415,6 +642,8 @@ function ChartPlaceholder({ title, icon: Icon, height = "h-48" }: { title: strin
   )
 }
 
+// ── Secondary KPI Row ───────────────────────────────────────────
+
 function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
   const colorMap: Record<string, string> = {
     blue: 'text-blue-600',
@@ -435,14 +664,32 @@ function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
               <Icon className="h-3.5 w-3.5" />
               {w.label}
             </div>
-            <div className="text-lg font-bold text-gray-900">{w.value}</div>
-            <div className="text-xs text-gray-500">{w.subLabel}</div>
+            <div className="flex items-center justify-between">
+              <div className="text-lg font-bold text-gray-900">{w.value}</div>
+              {w.sparklineData && (
+                <Sparkline data={w.sparklineData} color={w.color} width={40} height={14} />
+              )}
+            </div>
+            <div className="flex items-center justify-between mt-0.5">
+              <div className="text-xs text-gray-500">{w.subLabel}</div>
+              {w.changePercent !== undefined && (
+                <div className={cn(
+                  "flex items-center gap-0.5 text-[10px] font-medium",
+                  w.changeDirection === 'up' ? 'text-green-600' : 'text-red-600'
+                )}>
+                  {w.changeDirection === 'up' ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                  {w.changePercent > 0 ? '+' : ''}{w.changePercent}%
+                </div>
+              )}
+            </div>
           </div>
         )
       })}
     </div>
   )
 }
+
+// ── Outstanding Draws List ──────────────────────────────────────
 
 function OutstandingDrawsList({ draws }: { draws: OutstandingDraw[] }) {
   const statusColors: Record<string, string> = {
@@ -488,6 +735,8 @@ function OutstandingDrawsList({ draws }: { draws: OutstandingDraw[] }) {
     </div>
   )
 }
+
+// ── Payments List ───────────────────────────────────────────────
 
 function PaymentsList({ payments }: { payments: PaymentDue[] }) {
   const getTypeIcon = (type: PaymentDue['type']) => {
@@ -562,6 +811,8 @@ function PaymentsList({ payments }: { payments: PaymentDue[] }) {
   )
 }
 
+// ── Overdue List ────────────────────────────────────────────────
+
 function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
   return (
     <div className="bg-white rounded-lg border border-gray-200">
@@ -618,6 +869,8 @@ function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
     </div>
   )
 }
+
+// ── Job Profitability Table ─────────────────────────────────────
 
 function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
   const getStatusBadge = (status: JobProfitability['status']) => {
@@ -719,8 +972,413 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
   )
 }
 
+// ── Pending Approvals Bar ───────────────────────────────────────
+
+function PendingApprovalsBar({ approvals }: { approvals: PendingApproval[] }) {
+  const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const total = approvals.reduce((sum, a) => sum + a.count, 0)
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <Bell className="h-4 w-4 text-amber-500" />
+          <h4 className="font-medium text-gray-900 text-sm">Pending Approvals</h4>
+          <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">{total} total</span>
+        </div>
+        {activeFilter && (
+          <button
+            onClick={() => setActiveFilter(null)}
+            className="text-xs text-gray-500 hover:text-gray-700"
+          >
+            Clear filter
+          </button>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        {approvals.map(approval => (
+          <button
+            key={approval.type}
+            onClick={() => setActiveFilter(activeFilter === approval.type ? null : approval.type)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all",
+              approval.color,
+              activeFilter === approval.type && "ring-2 ring-offset-1 ring-blue-500"
+            )}
+          >
+            <span>{approval.label}:</span>
+            <span className="font-bold">{approval.count}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Real-time Activity Feed ─────────────────────────────────────
+
+function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
+  const [filter, setFilter] = useState<string>('all')
+
+  const activityTypeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
+    'payment-received': { icon: DollarSign, color: 'text-green-600 bg-green-100', label: 'Payments' },
+    'invoice-sent': { icon: Send, color: 'text-blue-600 bg-blue-100', label: 'Invoices' },
+    'po-approved': { icon: CheckCircle, color: 'text-purple-600 bg-purple-100', label: 'POs' },
+    'draw-submitted': { icon: FileText, color: 'text-amber-600 bg-amber-100', label: 'Draws' },
+  }
+
+  const filteredActivities = filter === 'all'
+    ? activities.slice(0, 7)
+    : activities.filter(a => a.type === filter).slice(0, 7)
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4 text-blue-500 animate-spin-slow" />
+            <h4 className="font-medium text-gray-900 text-sm">Real-time Activity</h4>
+          </div>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-600"
+          >
+            <option value="all">All</option>
+            <option value="payment-received">Payments</option>
+            <option value="invoice-sent">Invoices</option>
+            <option value="po-approved">POs</option>
+            <option value="draw-submitted">Draws</option>
+          </select>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+        {filteredActivities.map(activity => {
+          const config = activityTypeConfig[activity.type]
+          const Icon = config.icon
+          return (
+            <div key={activity.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+              <div className="flex items-start gap-3">
+                <div className={cn("p-1.5 rounded-lg", config.color)}>
+                  <Icon className="h-3.5 w-3.5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm text-gray-900 truncate">{activity.description}</div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs font-medium text-gray-700">{formatCurrency(activity.amount)}</span>
+                    <span className="text-xs text-gray-400">{activity.timestamp}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
+        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          View all activity
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Vendor Follow-up Queue ──────────────────────────────────────
+
+function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
+  const getReasonColor = (reason: string) => {
+    if (reason.includes('overdue')) return 'text-red-600 bg-red-50'
+    if (reason.includes('confirmation')) return 'text-amber-600 bg-amber-50'
+    if (reason.includes('expiring')) return 'text-purple-600 bg-purple-50'
+    return 'text-gray-600 bg-gray-50'
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-purple-500" />
+            <h4 className="font-medium text-gray-900 text-sm">Vendor Follow-up Queue</h4>
+          </div>
+          <span className="text-xs text-gray-500">{vendors.length} pending</span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {vendors.map(vendor => (
+          <div key={vendor.id} className="px-4 py-2.5 hover:bg-gray-50">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-gray-900 text-sm">{vendor.vendor}</div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className={cn("text-xs px-1.5 py-0.5 rounded", getReasonColor(vendor.reason))}>
+                    {vendor.reason}
+                  </span>
+                  {vendor.job && <span className="text-xs text-gray-400">{vendor.job}</span>}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={cn(
+                  "text-xs font-medium",
+                  vendor.daysWaiting > 7 ? "text-red-600" : "text-gray-500"
+                )}>
+                  {vendor.daysWaiting} days
+                </span>
+                <button className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 flex items-center gap-1">
+                  <Phone className="h-3 w-3" />
+                  Follow Up
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
+        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          View all vendors
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Client Communication Queue ──────────────────────────────────
+
+function ClientCommunicationQueue({ messages }: { messages: ClientMessage[] }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4 text-blue-500" />
+            <h4 className="font-medium text-gray-900 text-sm">Client Messages Awaiting Response</h4>
+          </div>
+          <span className="text-xs text-gray-500">{messages.length} pending</span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {messages.map(message => (
+          <div key={message.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 text-sm">{message.client}</div>
+                <div className="text-xs text-gray-500 truncate mt-0.5">{message.subject}</div>
+                {message.job && <div className="text-xs text-gray-400 mt-0.5">{message.job}</div>}
+              </div>
+              <div className="flex items-center gap-2 ml-3">
+                <span className={cn(
+                  "text-xs font-medium px-1.5 py-0.5 rounded",
+                  message.daysAging > 3 ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-600"
+                )}>
+                  {message.daysAging} days
+                </span>
+                <button className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200 flex items-center gap-1">
+                  <Mail className="h-3 w-3" />
+                  Reply
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
+        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          View all messages
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Upcoming Inspections Widget ─────────────────────────────────
+
+function UpcomingInspectionsWidget({ inspections }: { inspections: UpcomingInspection[] }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ClipboardCheck className="h-4 w-4 text-green-500" />
+            <h4 className="font-medium text-gray-900 text-sm">Upcoming Inspections</h4>
+          </div>
+          <span className="text-xs text-gray-500">{inspections.length} scheduled</span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {inspections.slice(0, 5).map(inspection => (
+          <div key={inspection.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-gray-900 text-sm">{inspection.job}</div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-gray-500">Permit: {inspection.permitRef}</span>
+                  {inspection.inspectorName && (
+                    <span className="text-xs text-gray-400">Inspector: {inspection.inspectorName}</span>
+                  )}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs font-medium text-gray-700">{inspection.date}</div>
+                <span className={cn(
+                  "text-xs px-1.5 py-0.5 rounded mt-0.5 inline-block",
+                  inspection.status === 'scheduled' ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                )}>
+                  {inspection.status === 'scheduled' ? 'Scheduled' : 'Pending Confirmation'}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
+        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          View all inspections
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Weather Widget ──────────────────────────────────────────────
+
+function WeatherWidget({ weatherData }: { weatherData: WeatherInfo[] }) {
+  const getWeatherIcon = (conditions: WeatherInfo['conditions']) => {
+    switch (conditions) {
+      case 'sunny': return Sun
+      case 'cloudy': return Cloud
+      case 'rainy': return CloudRain
+      case 'stormy': return CloudRain
+      default: return Cloud
+    }
+  }
+
+  const getRiskColor = (risk: WeatherInfo['outdoorRisk']) => {
+    switch (risk) {
+      case 'low': return 'bg-green-100 text-green-700'
+      case 'medium': return 'bg-amber-100 text-amber-700'
+      case 'high': return 'bg-red-100 text-red-700'
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center gap-2">
+          <Cloud className="h-4 w-4 text-blue-500" />
+          <h4 className="font-medium text-gray-900 text-sm">Job Site Weather</h4>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {weatherData.map((weather, index) => {
+          const WeatherIcon = getWeatherIcon(weather.conditions)
+          return (
+            <div key={index} className="px-4 py-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-1.5 bg-blue-50 rounded-lg">
+                    <WeatherIcon className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900 text-sm">{weather.jobSite}</div>
+                    <div className="text-xs text-gray-500 capitalize">{weather.conditions}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-gray-900">{weather.temperature}°F</span>
+                  <span className={cn("text-xs px-1.5 py-0.5 rounded", getRiskColor(weather.outdoorRisk))}>
+                    {weather.outdoorRisk === 'high' ? 'Outdoor Risk' : weather.outdoorRisk === 'medium' ? 'Caution' : 'Good'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ── Date Range Selector ─────────────────────────────────────────
+
+function DateRangeSelector({
+  selectedRange,
+  onRangeChange
+}: {
+  selectedRange: DateRangePreset
+  onRangeChange: (range: DateRangePreset) => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const getDateRangeLabel = (range: DateRangePreset) => {
+    const preset = dateRangePresets.find(p => p.key === range)
+    if (!preset) return 'Select Range'
+
+    const today = new Date()
+    switch (range) {
+      case 'last-7-days':
+        return 'Feb 6 - Feb 12, 2026'
+      case 'last-30-days':
+        return 'Jan 14 - Feb 12, 2026'
+      case 'mtd':
+        return 'Feb 1 - Feb 12, 2026'
+      case 'qtd':
+        return 'Jan 1 - Feb 12, 2026'
+      case 'ytd':
+        return 'Jan 1 - Feb 12, 2026'
+      case 'custom':
+        return 'Custom Range'
+      default:
+        return preset.label
+    }
+  }
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"
+      >
+        <Calendar className="h-4 w-4" />
+        <span className="font-medium">{dateRangePresets.find(p => p.key === selectedRange)?.label}</span>
+        <span className="text-gray-400">|</span>
+        <span className="text-xs text-gray-500">{getDateRangeLabel(selectedRange)}</span>
+        <ChevronDown className="h-4 w-4" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
+          <div className="py-1">
+            {dateRangePresets.map(preset => (
+              <button
+                key={preset.key}
+                onClick={() => {
+                  onRangeChange(preset.key)
+                  setIsOpen(false)
+                }}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-sm hover:bg-gray-50",
+                  selectedRange === preset.key ? "bg-blue-50 text-blue-700" : "text-gray-700"
+                )}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Main Component ──────────────────────────────────────────────
+
 export function FinancialDashboardPreview() {
   const { search, setSearch, activeTab, setActiveTab } = useFilterState()
+  const [dateRange, setDateRange] = useState<DateRangePreset>('mtd')
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -756,10 +1414,7 @@ export function FinancialDashboardPreview() {
               <Settings className="h-4 w-4" />
               Configure KPIs
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-              <Calendar className="h-4 w-4" />
-              Date Range
-            </button>
+            <DateRangeSelector selectedRange={dateRange} onRangeChange={setDateRange} />
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               <BarChart3 className="h-4 w-4" />
               Full Report
@@ -783,6 +1438,11 @@ export function FinancialDashboardPreview() {
           activeTab={activeTab}
           onTabChange={setActiveTab}
         />
+      </div>
+
+      {/* Pending Approvals Bar */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <PendingApprovalsBar approvals={pendingApprovals} />
       </div>
 
       {/* Primary Summary Cards */}
@@ -811,6 +1471,13 @@ export function FinancialDashboardPreview() {
         <ChartPlaceholder title="Budget vs Actual (All Active Jobs)" icon={BarChart3} height="h-32" />
       </div>
 
+      {/* Real-time Activity & Weather Row */}
+      <div className="px-4 pb-4 grid grid-cols-3 gap-4">
+        <ActivityFeed activities={recentActivities} />
+        <UpcomingInspectionsWidget inspections={upcomingInspections} />
+        <WeatherWidget weatherData={weatherData} />
+      </div>
+
       {/* Quick Lists Row */}
       <div className="px-4 pb-4 grid grid-cols-3 gap-4">
         <PaymentsList payments={upcomingPayments} />
@@ -818,9 +1485,24 @@ export function FinancialDashboardPreview() {
         <OutstandingDrawsList draws={outstandingDraws} />
       </div>
 
+      {/* Vendor & Client Communication Queues */}
+      <div className="px-4 pb-4 grid grid-cols-2 gap-4">
+        <VendorFollowUpQueue vendors={vendorFollowUps} />
+        <ClientCommunicationQueue messages={clientMessages} />
+      </div>
+
       {/* Job Profitability */}
       <div className="px-4 pb-4">
         <JobProfitabilityTable jobs={jobProfitability} />
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="px-4 pb-4">
+        <AIFeaturesPanel
+          title="AI Financial Insights"
+          features={aiFeatures}
+          columns={3}
+        />
       </div>
 
       {/* WIP Summary Bar */}

@@ -61,7 +61,7 @@ Build structured bid packages from project scope, plans, and specifications.
 
 Distribute bid packages to qualified vendors and track response status.
 
-- **Vendor Selection:** Select vendors from the builder's approved vendor list. Filter by trade, prequalification status, geographic service area, and past performance.
+- **Vendor Selection:** Select vendors from the builder's approved vendor list. Filter by trade, prequalification status, geographic service area, past performance, and **FTQ (First-Time Quality) score** (Module 22). Display vendor's FTQ score and trend when selecting bidders.
 - **Invitation Distribution:** Send bid invitations via platform notification, email, or both. Include bid package link, due date, and pre-bid meeting details.
 - **Status Dashboard:** Track each invitation: Sent, Viewed, Acknowledged, Bid Submitted, Declined, No Response.
 - **Due Date Management:** Configurable bid due dates with automated reminder notifications (7 days, 3 days, 1 day before due).
@@ -82,10 +82,10 @@ Normalize bid responses for accurate comparison regardless of how vendors format
 
 Leverage AI to analyze bids, detect anomalies, and recommend award decisions.
 
-- **Bid Comparison Matrix:** Auto-generated side-by-side comparison showing: price, scope coverage, proposed schedule, payment terms, exclusions, vendor score.
+- **Bid Comparison Matrix:** Auto-generated side-by-side comparison showing: price, scope coverage, proposed schedule, payment terms, exclusions, vendor composite score, and **FTQ score with trend indicator** (integrates with Module 22 vendor performance).
 - **Anomaly Detection:** Flag bids that are significantly above or below the expected range based on historical data, estimate amounts, or peer bids.
 - **Scope Gap Detection:** AI identifies scope items that no bidder or only one bidder included. Alerts builder to potential scope holes.
-- **Award Recommendation:** Weighted scoring algorithm considering: price (configurable weight), vendor past performance, scope completeness, schedule compatibility, payment terms. Builder configures scoring weights.
+- **Award Recommendation:** Weighted scoring algorithm considering: price (configurable weight), vendor past performance, **FTQ score** (with quality trend), scope completeness, schedule compatibility, payment terms. Builder configures scoring weights. Vendors below FTQ threshold (configurable, default 75%) flagged with quality warning.
 - **Historical Accuracy Tracking:** Track how actual project costs compared to winning bids. Feed back into vendor reliability scoring.
 
 #### Edge Cases & What-If Scenarios

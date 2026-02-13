@@ -30,11 +30,19 @@ import {
   Link2,
   ArrowRight,
   BarChart3,
+  ListChecks,
+  Gauge,
+  Percent,
+  CircleDot,
+  Minus,
+  HardHat,
+  Trophy,
   Download,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -75,6 +83,8 @@ interface SafetyObservation {
   hasPhotos: boolean
   photoCount: number
   isAnonymous: boolean
+  createsPunchItem?: boolean
+  punchItemId?: string
 }
 
 interface SafetyIncident {
@@ -144,6 +154,48 @@ interface VendorSafetyStatus {
   activeProjects: number
 }
 
+interface SafetyChecklist {
+  id: string
+  name: string
+  type: 'daily' | 'weekly' | 'audit' | 'equipment'
+  status: 'pending' | 'in_progress' | 'completed'
+  totalItems: number
+  completedItems: number
+  ftqScore?: number
+  completedBy?: string
+  completedDate?: string
+  job: string
+  deficienciesFound: number
+}
+
+interface SafetyChecklistTemplate {
+  id: string
+  name: string
+  itemCount: number
+  category: string
+  frequency: string
+  description: string
+}
+
+interface VendorSafetyScore {
+  vendorName: string
+  safetyObservationCount: number
+  safetyFTQScore: number
+  safetyRanking: number
+  safetyIncidents: number
+  trend: 'up' | 'down' | 'stable'
+  positiveObservations: number
+  hazardObservations: number
+}
+
+interface SafetyFTQMetrics {
+  overallScore: number
+  checklistFTQ: number
+  observationTrend: 'up' | 'down' | 'stable'
+  complianceRate: number
+  nearMissToIncidentRatio: string
+  checklistCompletionRate: number
+}
 // ── Mock Data ───────────────────────────────────────────────────────────
 
 const safetyMetrics: SafetyMetric[] = [
@@ -505,6 +557,38 @@ const vendorSafetyStatuses: VendorSafetyStatus[] = [
   { vendorName: 'Coastal Excavation', emrRating: 1.25, incidentCount: 1, certificationStatus: 'non_compliant', lastIncidentDate: 'Jan 10', activeProjects: 1 },
 ]
 
+const safetyChecklists: SafetyChecklist[] = [
+  { id: '1', name: 'Daily Site Safety Checklist', type: 'daily', status: 'completed', totalItems: 25, completedItems: 25, ftqScore: 96, completedBy: 'Mike Smith', completedDate: 'Today 7:30 AM', job: 'Smith Residence', deficienciesFound: 1 },
+  { id: '2', name: 'Daily Site Safety Checklist', type: 'daily', status: 'completed', totalItems: 25, completedItems: 25, ftqScore: 100, completedBy: 'Tom Wilson', completedDate: 'Today 7:15 AM', job: 'Johnson Beach House', deficienciesFound: 0 },
+  { id: '3', name: 'Weekly Fall Protection Audit', type: 'weekly', status: 'in_progress', totalItems: 18, completedItems: 12, job: 'Smith Residence', deficienciesFound: 2 },
+  { id: '4', name: 'Equipment Safety Check', type: 'equipment', status: 'pending', totalItems: 15, completedItems: 0, job: 'Harbor View Custom Home', deficienciesFound: 0 },
+  { id: '5', name: 'Monthly Safety Audit', type: 'audit', status: 'completed', totalItems: 45, completedItems: 45, ftqScore: 91, completedBy: 'Jake Ross', completedDate: 'Feb 1', job: 'All Sites', deficienciesFound: 4 },
+]
+
+const safetyChecklistTemplates: SafetyChecklistTemplate[] = [
+  { id: '1', name: 'Daily Site Safety Checklist', itemCount: 25, category: 'General Safety', frequency: 'Daily', description: 'Comprehensive daily safety walkthrough covering PPE, housekeeping, fall protection, and emergency preparedness.' },
+  { id: '2', name: 'Fall Protection Audit', itemCount: 18, category: 'Fall Protection', frequency: 'Weekly', description: 'Detailed inspection of guardrails, personal fall arrest systems, covers, and safety nets.' },
+  { id: '3', name: 'Equipment Safety Check', itemCount: 15, category: 'Equipment', frequency: 'Before Use', description: 'Pre-operation inspection for heavy equipment, power tools, and lifting devices.' },
+  { id: '4', name: 'Scaffold Inspection', itemCount: 22, category: 'Scaffolding', frequency: 'Daily when in use', description: 'Complete scaffold safety check including base plates, bracing, planks, and access.' },
+  { id: '5', name: 'Monthly Safety Audit', itemCount: 45, category: 'Compliance', frequency: 'Monthly', description: 'Full OSHA compliance audit covering all safety categories and documentation.' },
+]
+
+const vendorSafetyScores: VendorSafetyScore[] = [
+  { vendorName: 'Premium Drywall', safetyObservationCount: 12, safetyFTQScore: 98, safetyRanking: 1, safetyIncidents: 0, trend: 'stable', positiveObservations: 11, hazardObservations: 1 },
+  { vendorName: 'Coastal Electric', safetyObservationCount: 8, safetyFTQScore: 92, safetyRanking: 2, safetyIncidents: 1, trend: 'up', positiveObservations: 6, hazardObservations: 2 },
+  { vendorName: 'ABC Framing', safetyObservationCount: 15, safetyFTQScore: 78, safetyRanking: 3, safetyIncidents: 2, trend: 'down', positiveObservations: 8, hazardObservations: 7 },
+  { vendorName: 'Coastal Excavation', safetyObservationCount: 6, safetyFTQScore: 72, safetyRanking: 4, safetyIncidents: 1, trend: 'down', positiveObservations: 3, hazardObservations: 3 },
+]
+
+const safetyFTQMetrics: SafetyFTQMetrics = {
+  overallScore: 89,
+  checklistFTQ: 94,
+  observationTrend: 'up',
+  complianceRate: 97,
+  nearMissToIncidentRatio: '5:1',
+  checklistCompletionRate: 96,
+}
+
 // ── Category/Severity Helpers ───────────────────────────────────────────
 
 const categoryLabels: Record<SafetyObservation['category'], string> = {
@@ -549,6 +633,22 @@ const incidentStatusColors: Record<SafetyIncident['status'], string> = {
 }
 
 // ── Sub-components ──────────────────────────────────────────────────────
+// ── FTQ Helper Functions ────────────────────────────────────────────────
+
+function getFTQColor(score: number): string {
+  if (score >= 95) return 'text-green-700'
+  if (score >= 85) return 'text-blue-700'
+  if (score >= 70) return 'text-amber-700'
+  return 'text-red-700'
+}
+
+function getFTQBgColor(score: number): string {
+  if (score >= 95) return 'bg-green-100'
+  if (score >= 85) return 'bg-blue-100'
+  if (score >= 70) return 'bg-amber-100'
+  return 'bg-red-100'
+}
+
 
 function MetricCard({ metric }: { metric: SafetyMetric }) {
   const Icon = metric.icon
@@ -959,6 +1059,133 @@ function VendorSafetyRow({ vendor }: { vendor: VendorSafetyStatus }) {
 }
 
 // ── Main Component ──────────────────────────────────────────────────────
+function SafetyChecklistCard({ checklist }: { checklist: SafetyChecklist }) {
+  const completionPercent = Math.round((checklist.completedItems / checklist.totalItems) * 100)
+
+  return (
+    <div className={cn(
+      "bg-white rounded-lg border p-4",
+      checklist.status === 'completed' ? "border-green-200" :
+      checklist.status === 'in_progress' ? "border-blue-200" :
+      "border-gray-200"
+    )}>
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className={cn(
+            "p-2 rounded-lg",
+            checklist.status === 'completed' ? "bg-green-100" :
+            checklist.status === 'in_progress' ? "bg-blue-100" :
+            "bg-gray-100"
+          )}>
+            <ListChecks className={cn(
+              "h-4 w-4",
+              checklist.status === 'completed' ? "text-green-600" :
+              checklist.status === 'in_progress' ? "text-blue-600" :
+              "text-gray-600"
+            )} />
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-900 text-sm">{checklist.name}</h4>
+            <p className="text-xs text-gray-500 flex items-center gap-1">
+              <Building2 className="h-3 w-3" />
+              {checklist.job}
+            </p>
+          </div>
+        </div>
+        {checklist.ftqScore !== undefined && (
+          <span className={cn(
+            "text-xs px-2 py-0.5 rounded font-bold",
+            getFTQBgColor(checklist.ftqScore),
+            getFTQColor(checklist.ftqScore)
+          )}>
+            FTQ: {checklist.ftqScore}%
+          </span>
+        )}
+      </div>
+      <div className="mt-3">
+        <div className="flex items-center justify-between text-xs mb-1">
+          <span className="text-gray-500">{checklist.completedItems}/{checklist.totalItems} items</span>
+          <span className="font-medium text-gray-700">{completionPercent}%</span>
+        </div>
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className={cn(
+              "h-full rounded-full transition-all",
+              checklist.status === 'completed' ? "bg-green-500" :
+              checklist.status === 'in_progress' ? "bg-blue-500" :
+              "bg-gray-400"
+            )}
+            style={{ width: `${completionPercent}%` }}
+          />
+        </div>
+      </div>
+      <div className="mt-3 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          {checklist.deficienciesFound > 0 && (
+            <span className="text-amber-600 flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" />
+              {checklist.deficienciesFound} deficiencies
+            </span>
+          )}
+          {checklist.status === 'completed' && checklist.completedBy && (
+            <span className="text-gray-500">
+              by {checklist.completedBy}
+            </span>
+          )}
+        </div>
+        {checklist.completedDate && (
+          <span className="text-gray-400">{checklist.completedDate}</span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function VendorSafetyScoreRow({ vendor }: { vendor: VendorSafetyScore }) {
+  return (
+    <tr className="border-b border-gray-100 hover:bg-gray-50">
+      <td className="px-3 py-2">
+        <div className="flex items-center gap-2">
+          {vendor.safetyRanking <= 3 && (
+            <Trophy className={cn(
+              "h-4 w-4",
+              vendor.safetyRanking === 1 ? "text-amber-500" :
+              vendor.safetyRanking === 2 ? "text-gray-400" :
+              "text-amber-700"
+            )} />
+          )}
+          <span className="text-sm font-medium text-gray-900">{vendor.vendorName}</span>
+        </div>
+      </td>
+      <td className="px-3 py-2 text-sm text-center">{vendor.safetyObservationCount}</td>
+      <td className="px-3 py-2 text-sm text-center">
+        <span className={cn(
+          "px-2 py-0.5 rounded text-xs font-bold",
+          getFTQBgColor(vendor.safetyFTQScore),
+          getFTQColor(vendor.safetyFTQScore)
+        )}>
+          {vendor.safetyFTQScore}%
+        </span>
+      </td>
+      <td className="px-3 py-2 text-sm text-center font-bold text-gray-900">#{vendor.safetyRanking}</td>
+      <td className="px-3 py-2 text-sm text-center">
+        {vendor.safetyIncidents > 0 ? (
+          <span className="text-red-600 font-medium">{vendor.safetyIncidents}</span>
+        ) : (
+          <span className="text-green-600">0</span>
+        )}
+      </td>
+      <td className="px-3 py-2 text-sm text-center">
+        <div className="flex items-center justify-center gap-1">
+          {vendor.trend === 'up' && <TrendingUp className="h-3 w-3 text-green-600" />}
+          {vendor.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-600" />}
+          {vendor.trend === 'stable' && <Minus className="h-3 w-3 text-gray-400" />}
+        </div>
+      </td>
+    </tr>
+  )
+}
+
 
 export function SafetyPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState({ defaultTab: 'dashboard' })
@@ -1024,6 +1251,7 @@ export function SafetyPreview() {
             { key: 'training', label: 'Training & Compliance' },
             { key: 'scores', label: 'Safety Scores' },
             { key: 'vendors', label: 'Vendor Safety' },
+            { key: 'quality', label: 'Quality Integration' },
           ]}
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -1531,6 +1759,51 @@ export function SafetyPreview() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="border-t border-gray-200 px-4 py-4 bg-white">
+        <AIFeaturesPanel
+          title="Safety AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Incident Pattern Detection',
+              trigger: 'Real-time',
+              insight: 'Identifies recurring safety issues across projects and vendors to prevent future incidents.',
+              severity: 'warning',
+              confidence: 87,
+            },
+            {
+              feature: 'Risk Prediction',
+              trigger: 'Daily',
+              insight: 'Predicts high-risk activities and areas based on historical data, weather, and project phase.',
+              severity: 'critical',
+              confidence: 82,
+            },
+            {
+              feature: 'Training Gap Analysis',
+              trigger: 'On-change',
+              insight: 'Identifies missing certifications and training requirements before workers are assigned to jobs.',
+              severity: 'warning',
+              confidence: 95,
+            },
+            {
+              feature: 'Compliance Scoring',
+              trigger: 'Real-time',
+              insight: 'Rates overall safety compliance by project, vendor, and company-wide with actionable insights.',
+              severity: 'success',
+              confidence: 91,
+            },
+            {
+              feature: 'Weather Risk Alerts',
+              trigger: 'Real-time',
+              insight: 'Warns of weather-related hazards including heat illness risk, high winds, and storm conditions.',
+              severity: 'info',
+              confidence: 94,
+            },
+          ]}
+        />
       </div>
     </div>
   )

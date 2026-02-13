@@ -25,6 +25,7 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface PortalMilestone {
   id: string
@@ -446,6 +447,34 @@ export function PortalPreview() {
           </div>
           <button className="text-xs text-blue-600 hover:underline">Manage Preferences</button>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="mx-6 mb-6">
+        <AIFeaturesPanel
+          features={[
+            {
+              title: 'Engagement Analytics',
+              description: 'Tracks portal usage',
+            },
+            {
+              title: 'Content Recommendations',
+              description: 'Suggests relevant content',
+            },
+            {
+              title: 'Response Tracking',
+              description: 'Monitors client responses',
+            },
+            {
+              title: 'Satisfaction Scoring',
+              description: 'Predicts client satisfaction',
+            },
+            {
+              title: 'Communication Insights',
+              description: 'Analyzes communication patterns',
+            },
+          ]}
+        />
       </div>
 
       {/* Footer - White-labeled */}

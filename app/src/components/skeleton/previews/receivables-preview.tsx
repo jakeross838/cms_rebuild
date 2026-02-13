@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Download,
   Clock,
@@ -21,12 +22,43 @@ import {
   FileWarning,
   Percent,
   Receipt,
+  XCircle,
+  Link,
+  Eye,
+  MousePointer,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { SubmissionForm } from '@/components/skeleton/ui'
+import { ViewModeToggle } from '@/components/skeleton/ui'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type AgingBucket = 'current' | '1-30' | '31-60' | '61-90' | '90+'
+type ViewMode = 'aging' | 'client' | 'job'
+
+interface PaymentLinkTracking {
+  sentAt?: string
+  viewedAt?: string
+  clickedAt?: string
+  paidAt?: string
+}
+
+interface WriteOffRecord {
+  id: string
+  amount: number
+  reason: string
+  approvedBy?: string
+  approvalRequired: boolean
+  date: string
+}
+
+interface EmailFollowUp {
+  id: string
+  subject: string
+  recipient: string
+  date: string
+}
 
 interface Receivable {
   id: string
@@ -46,9 +78,31 @@ interface Receivable {
   paymentHistory: 'good' | 'slow' | 'poor'
   paymentMethod?: string
   lienWaiverStatus?: 'not_required' | 'pending' | 'received'
+  lienDeadline?: string
   aiNote?: string
   aiCollectionProbability?: number
+  paymentLinkTracking?: PaymentLinkTracking
+  writeOffHistory?: WriteOffRecord[]
+  emailFollowUps?: EmailFollowUp[]
 }
+
+interface PaidReceivable {
+  amount: number
+  daysToCollect: number
+}
+
+const mockPaidReceivables: PaidReceivable[] = [
+  { amount: 45000, daysToCollect: 22 },
+  { amount: 85000, daysToCollect: 18 },
+  { amount: 32000, daysToCollect: 35 },
+  { amount: 67000, daysToCollect: 28 },
+  { amount: 125000, daysToCollect: 31 },
+  { amount: 28000, daysToCollect: 25 },
+  { amount: 95000, daysToCollect: 30 },
+  { amount: 42000, daysToCollect: 27 },
+]
+
+const lastMonthDSO = 31
 
 const mockReceivables: Receivable[] = [
   {
@@ -71,6 +125,13 @@ const mockReceivables: Receivable[] = [
     lienWaiverStatus: 'received',
     aiCollectionProbability: 92,
     aiNote: 'Client usually pays within 7 days of reminder. Expected payment: Feb 14.',
+    paymentLinkTracking: {
+      sentAt: '2026-02-10',
+      viewedAt: '2026-02-11',
+    },
+    emailFollowUps: [
+      { id: 'e1', subject: 'Payment Reminder - Draw #5', recipient: 'billing@smithfamily.com', date: '2026-02-10' },
+    ],
   },
   {
     id: '2',
@@ -90,6 +151,15 @@ const mockReceivables: Receivable[] = [
     lienWaiverStatus: 'pending',
     aiCollectionProbability: 68,
     aiNote: 'Client has history of 45-day payments. Consider escalation if no payment by Feb 20.',
+    paymentLinkTracking: {
+      sentAt: '2026-02-01',
+      viewedAt: '2026-02-02',
+      clickedAt: '2026-02-02',
+    },
+    emailFollowUps: [
+      { id: 'e2', subject: 'Overdue Notice - Draw #3', recipient: 'ap@johnsondev.com', date: '2026-02-01' },
+      { id: 'e3', subject: 'Second Notice - Immediate Attention Required', recipient: 'ap@johnsondev.com', date: '2026-02-08' },
+    ],
   },
   {
     id: '3',
@@ -108,6 +178,12 @@ const mockReceivables: Receivable[] = [
     paymentMethod: 'Credit Card',
     lienWaiverStatus: 'received',
     aiCollectionProbability: 97,
+    paymentLinkTracking: {
+      sentAt: '2026-02-10',
+      viewedAt: '2026-02-12',
+      clickedAt: '2026-02-12',
+      paidAt: '2026-02-12',
+    },
   },
   {
     id: '4',
@@ -128,6 +204,9 @@ const mockReceivables: Receivable[] = [
     paymentMethod: 'ACH',
     lienWaiverStatus: 'received',
     aiCollectionProbability: 88,
+    paymentLinkTracking: {
+      sentAt: '2026-02-08',
+    },
   },
   {
     id: '5',
@@ -147,6 +226,9 @@ const mockReceivables: Receivable[] = [
     lienWaiverStatus: 'pending',
     aiCollectionProbability: 72,
     aiNote: 'Lien waiver not yet received. Payment may be delayed until waiver is provided.',
+    emailFollowUps: [
+      { id: 'e4', subject: 'Lien Waiver Request', recipient: 'accounting@millerinvest.com', date: '2026-02-06' },
+    ],
   },
   {
     id: '6',
@@ -165,6 +247,10 @@ const mockReceivables: Receivable[] = [
     paymentHistory: 'poor',
     aiCollectionProbability: 45,
     aiNote: 'Lien notice sent Feb 8. Historical: Client paid 3 days after notice on previous project.',
+    lienDeadline: '2026-03-25',
+    emailFollowUps: [
+      { id: 'e5', subject: 'Final Notice Before Lien Filing', recipient: 'wilson@wilsoncustom.com', date: '2026-02-08' },
+    ],
   },
   {
     id: '7',
@@ -200,6 +286,13 @@ const mockReceivables: Receivable[] = [
     paymentHistory: 'poor',
     aiCollectionProbability: 30,
     aiNote: 'High risk. Consider filing mechanics lien within 30 days. Lien deadline: Mar 15.',
+    lienDeadline: '2026-03-15',
+    writeOffHistory: [
+      { id: 'w1', amount: 2500, reason: 'Disputed work quality - partial settlement', approvedBy: 'John Manager', approvalRequired: true, date: '2026-01-20' },
+    ],
+    emailFollowUps: [
+      { id: 'e6', subject: 'Urgent: Account Escalation Notice', recipient: 'legal@parkerdev.com', date: '2026-02-05' },
+    ],
   },
 ]
 
@@ -228,6 +321,20 @@ function formatCurrency(value: number): string {
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function calculateDSO(paidReceivables: PaidReceivable[]): number {
+  if (paidReceivables.length === 0) return 0
+  const totalWeightedDays = paidReceivables.reduce((sum, r) => sum + (r.amount * r.daysToCollect), 0)
+  const totalAmount = paidReceivables.reduce((sum, r) => sum + r.amount, 0)
+  return Math.round(totalWeightedDays / totalAmount)
+}
+
+function getDaysUntilDeadline(deadlineDate: string): number {
+  const deadline = new Date(deadlineDate)
+  const today = new Date()
+  const diffTime = deadline.getTime() - today.getTime()
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 }
 
 function PaymentHistoryBadge({ history }: { history: Receivable['paymentHistory'] }) {
@@ -268,12 +375,229 @@ function CollectionProbabilityBadge({ probability }: { probability?: number }) {
   )
 }
 
-function ReceivableRow({ receivable }: { receivable: Receivable }) {
+function PaymentLinkStatus({ tracking }: { tracking?: PaymentLinkTracking }) {
+  if (!tracking || !tracking.sentAt) return null
+
+  if (tracking.paidAt) {
+    return (
+      <div className="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+        <Link className="h-3 w-3" />
+        <span>Link sent {formatDate(tracking.sentAt)}, Paid {formatDate(tracking.paidAt)} ✓</span>
+      </div>
+    )
+  }
+
+  const parts: string[] = [`Link sent ${formatDate(tracking.sentAt)}`]
+  if (tracking.viewedAt) {
+    parts.push(`Viewed ${formatDate(tracking.viewedAt)}`)
+  }
+  if (tracking.clickedAt) {
+    parts.push(`Clicked ${formatDate(tracking.clickedAt)}`)
+  } else if (tracking.viewedAt) {
+    parts.push('Not clicked')
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+      <Link className="h-3 w-3" />
+      {tracking.viewedAt && <Eye className="h-3 w-3" />}
+      {tracking.clickedAt && <MousePointer className="h-3 w-3" />}
+      <span>{parts.join(', ')}</span>
+    </div>
+  )
+}
+
+function LienDeadlineAlert({ deadline, collectionStatus }: { deadline?: string; collectionStatus: string }) {
+  if (!deadline || (collectionStatus !== 'escalated' && collectionStatus !== 'lien_notice')) return null
+
+  const daysUntil = getDaysUntilDeadline(deadline)
+  const isUrgent = daysUntil < 30
+  const isWarning = daysUntil < 60
+
+  return (
+    <div className={cn(
+      "flex items-center gap-1.5 text-xs px-2 py-1 rounded",
+      isUrgent ? "bg-red-50 text-red-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-gray-50 text-gray-700"
+    )}>
+      <AlertTriangle className="h-3 w-3" />
+      <span>Lien deadline: {formatDate(deadline)} ({daysUntil} days)</span>
+    </div>
+  )
+}
+
+function WriteOffHistory({ history }: { history?: WriteOffRecord[] }) {
+  if (!history || history.length === 0) return null
+
+  return (
+    <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+      <div className="text-xs font-medium text-gray-700 mb-1">Write-off History</div>
+      {history.map(record => (
+        <div key={record.id} className="text-xs text-gray-600 flex items-center gap-2">
+          <XCircle className="h-3 w-3 text-gray-400" />
+          <span>{formatDate(record.date)}: {formatCurrency(record.amount)} - {record.reason}</span>
+          {record.approvedBy && <span className="text-gray-400">| Approved by: {record.approvedBy}</span>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function EmailFollowUpHistory({ emails }: { emails?: EmailFollowUp[] }) {
+  if (!emails || emails.length === 0) return null
+
+  return (
+    <div className="mt-2 p-2 bg-blue-50 rounded border border-blue-100">
+      <div className="text-xs font-medium text-blue-700 mb-1">Email Follow-up History</div>
+      {emails.map(email => (
+        <div key={email.id} className="text-xs text-blue-600 flex items-center gap-2">
+          <Mail className="h-3 w-3" />
+          <span>{formatDate(email.date)}: "{email.subject}" to {email.recipient}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+interface WriteOffModalProps {
+  isOpen: boolean
+  onClose: () => void
+  receivable: Receivable
+}
+
+function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
+  const [amount, setAmount] = useState('')
+  const [reason, setReason] = useState('')
+  const [approvalRequired, setApprovalRequired] = useState(true)
+
+  if (!isOpen) return null
+
+  const balance = receivable.amount - receivable.amountPaid
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Write Off Receivable</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Invoice: {receivable.invoiceNumber} | Balance: {formatCurrency(balance)}
+        </p>
+        <SubmissionForm
+          fields={[
+            {
+              name: 'amount',
+              label: 'Write-off Amount',
+              type: 'currency',
+              value: amount,
+              onChange: setAmount,
+              placeholder: 'Enter amount to write off',
+              max: balance,
+            },
+            {
+              name: 'reason',
+              label: 'Reason for Write-off',
+              type: 'textarea',
+              value: reason,
+              onChange: setReason,
+              placeholder: 'Enter reason for write-off (e.g., uncollectable, disputed work, bankruptcy)',
+            },
+            {
+              name: 'approvalRequired',
+              label: 'Requires Management Approval',
+              type: 'checkbox',
+              checked: approvalRequired,
+              onChange: setApprovalRequired,
+            },
+          ]}
+          onSubmit={() => {
+            console.log('Write-off submitted:', { amount, reason, approvalRequired })
+            onClose()
+          }}
+          onCancel={onClose}
+          submitLabel="Submit Write-off"
+        />
+        {receivable.writeOffHistory && receivable.writeOffHistory.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <WriteOffHistory history={receivable.writeOffHistory} />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+interface EmailLogModalProps {
+  isOpen: boolean
+  onClose: () => void
+  receivable: Receivable
+}
+
+function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
+  const [subject, setSubject] = useState('')
+  const [recipient, setRecipient] = useState('')
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Log Email Follow-up</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Invoice: {receivable.invoiceNumber} | Client: {receivable.clientName}
+        </p>
+        <SubmissionForm
+          fields={[
+            {
+              name: 'subject',
+              label: 'Email Subject',
+              type: 'text',
+              value: subject,
+              onChange: setSubject,
+              placeholder: 'Enter email subject',
+            },
+            {
+              name: 'recipient',
+              label: 'Recipient Email',
+              type: 'email',
+              value: recipient,
+              onChange: setRecipient,
+              placeholder: 'recipient@example.com',
+            },
+            {
+              name: 'date',
+              label: 'Date Sent',
+              type: 'date',
+              value: date,
+              onChange: setDate,
+            },
+          ]}
+          onSubmit={() => {
+            console.log('Email logged:', { subject, recipient, date })
+            onClose()
+          }}
+          onCancel={onClose}
+          submitLabel="Log Email"
+        />
+        {receivable.emailFollowUps && receivable.emailFollowUps.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <EmailFollowUpHistory emails={receivable.emailFollowUps} />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
+  receivable: Receivable
+  onWriteOff: (receivable: Receivable) => void
+  onLogEmail: (receivable: Receivable) => void
+}) {
   const aging = agingConfig[receivable.agingBucket]
   const collectionStatus = collectionStatusConfig[receivable.collectionStatus]
   const StatusIcon = collectionStatus.icon
   const balance = receivable.amount - receivable.amountPaid
   const isHighRisk = receivable.paymentHistory === 'poor' || receivable.collectionStatus === 'escalated' || receivable.collectionStatus === 'lien_notice'
+  const isSeverelyOverdue = receivable.daysOutstanding >= 60 || receivable.agingBucket === '61-90' || receivable.agingBucket === '90+'
 
   return (
     <div className={cn(
@@ -340,6 +664,20 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
             )}
           </div>
 
+          {/* Payment Link Tracking */}
+          {receivable.paymentLinkTracking && (
+            <div className="mt-2">
+              <PaymentLinkStatus tracking={receivable.paymentLinkTracking} />
+            </div>
+          )}
+
+          {/* Lien Deadline Alert */}
+          {receivable.lienDeadline && (
+            <div className="mt-2">
+              <LienDeadlineAlert deadline={receivable.lienDeadline} collectionStatus={receivable.collectionStatus} />
+            </div>
+          )}
+
           {/* Retainage info */}
           {receivable.retainageAmount > 0 && (
             <div className="mt-2 flex items-center gap-2 text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
@@ -365,6 +703,12 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
               </span>
             </div>
           )}
+
+          {/* Write-off History */}
+          <WriteOffHistory history={receivable.writeOffHistory} />
+
+          {/* Email Follow-up History */}
+          <EmailFollowUpHistory emails={receivable.emailFollowUps} />
         </div>
 
         <div className="flex items-start gap-4 ml-4">
@@ -398,10 +742,19 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
           </button>
         )}
         {(receivable.collectionStatus === 'called' || receivable.collectionStatus === 'reminder_sent') && (
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Phone className="h-3.5 w-3.5" />
-            Log Call
-          </button>
+          <>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Phone className="h-3.5 w-3.5" />
+              Log Call
+            </button>
+            <button
+              onClick={() => onLogEmail(receivable)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              <Mail className="h-3.5 w-3.5" />
+              Log Email
+            </button>
+          </>
         )}
         {receivable.collectionStatus !== 'escalated' && receivable.collectionStatus !== 'lien_notice' && receivable.daysOutstanding > 30 && (
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-700 border border-red-200 rounded-lg hover:bg-red-50">
@@ -415,6 +768,15 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
             Send Lien Notice
           </button>
         )}
+        {isSeverelyOverdue && (
+          <button
+            onClick={() => onWriteOff(receivable)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+          >
+            <XCircle className="h-3.5 w-3.5" />
+            Write Off
+          </button>
+        )}
         <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
           <ExternalLink className="h-3.5 w-3.5" />
           Payment Link
@@ -424,8 +786,31 @@ function ReceivableRow({ receivable }: { receivable: Receivable }) {
   )
 }
 
+function groupReceivablesByClient(receivables: Receivable[]): Record<string, Receivable[]> {
+  return receivables.reduce((acc, r) => {
+    if (!acc[r.clientName]) {
+      acc[r.clientName] = []
+    }
+    acc[r.clientName].push(r)
+    return acc
+  }, {} as Record<string, Receivable[]>)
+}
+
+function groupReceivablesByJob(receivables: Receivable[]): Record<string, Receivable[]> {
+  return receivables.reduce((acc, r) => {
+    if (!acc[r.jobName]) {
+      acc[r.jobName] = []
+    }
+    acc[r.jobName].push(r)
+    return acc
+  }, {} as Record<string, Receivable[]>)
+}
+
 export function ReceivablesPreview() {
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
+  const [viewMode, setViewMode] = useState<ViewMode>('aging')
+  const [writeOffModal, setWriteOffModal] = useState<{ isOpen: boolean; receivable: Receivable | null }>({ isOpen: false, receivable: null })
+  const [emailLogModal, setEmailLogModal] = useState<{ isOpen: boolean; receivable: Receivable | null }>({ isOpen: false, receivable: null })
 
   const filteredReceivables = sortItems(
     mockReceivables.filter(r => {
@@ -449,13 +834,116 @@ export function ReceivablesPreview() {
   const totalAR = Object.values(agingSummary).reduce((sum, v) => sum + v, 0)
   const totalOverdue = agingSummary['1-30'] + agingSummary['31-60'] + agingSummary['61-90'] + agingSummary['90+']
   const actionNeeded = mockReceivables.filter(r => r.daysOutstanding > 7).length
-  const dso = 28 // Days Sales Outstanding
+
+  // Calculate DSO dynamically
+  const dso = calculateDSO(mockPaidReceivables)
+  const dsoChange = lastMonthDSO - dso
+  const dsoTrend = dsoChange > 0 ? 'down' : dsoChange < 0 ? 'up' : 'flat'
+
   const totalRetainage = mockReceivables.reduce((sum, r) => sum + r.retainageAmount, 0)
   const pendingLienWaivers = mockReceivables.filter(r => r.lienWaiverStatus === 'pending').length
   const avgCollectionProbability = Math.round(
     mockReceivables.filter(r => r.aiCollectionProbability !== undefined).reduce((sum, r) => sum + (r.aiCollectionProbability ?? 0), 0) /
     mockReceivables.filter(r => r.aiCollectionProbability !== undefined).length
   )
+
+  const handleWriteOff = (receivable: Receivable) => {
+    setWriteOffModal({ isOpen: true, receivable })
+  }
+
+  const handleLogEmail = (receivable: Receivable) => {
+    setEmailLogModal({ isOpen: true, receivable })
+  }
+
+  const renderReceivables = () => {
+    if (viewMode === 'client') {
+      const grouped = groupReceivablesByClient(filteredReceivables)
+      return Object.entries(grouped).map(([clientName, receivables]) => (
+        <div key={clientName} className="mb-6">
+          <div className="flex items-center gap-2 mb-3 px-2">
+            <Building2 className="h-5 w-5 text-gray-500" />
+            <h4 className="font-semibold text-gray-800">{clientName}</h4>
+            <span className="text-sm text-gray-500">
+              ({receivables.length} items, {formatCurrency(receivables.reduce((sum, r) => sum + (r.amount - r.amountPaid), 0))})
+            </span>
+          </div>
+          <div className="space-y-3">
+            {receivables.map(receivable => (
+              <ReceivableRow
+                key={receivable.id}
+                receivable={receivable}
+                onWriteOff={handleWriteOff}
+                onLogEmail={handleLogEmail}
+              />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    if (viewMode === 'job') {
+      const grouped = groupReceivablesByJob(filteredReceivables)
+      return Object.entries(grouped).map(([jobName, receivables]) => (
+        <div key={jobName} className="mb-6">
+          <div className="flex items-center gap-2 mb-3 px-2">
+            <Briefcase className="h-5 w-5 text-gray-500" />
+            <h4 className="font-semibold text-gray-800">{jobName}</h4>
+            <span className="text-sm text-gray-500">
+              ({receivables.length} items, {formatCurrency(receivables.reduce((sum, r) => sum + (r.amount - r.amountPaid), 0))})
+            </span>
+          </div>
+          <div className="space-y-3">
+            {receivables.map(receivable => (
+              <ReceivableRow
+                key={receivable.id}
+                receivable={receivable}
+                onWriteOff={handleWriteOff}
+                onLogEmail={handleLogEmail}
+              />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    // Default: aging view
+    return filteredReceivables.map(receivable => (
+      <ReceivableRow
+        key={receivable.id}
+        receivable={receivable}
+        onWriteOff={handleWriteOff}
+        onLogEmail={handleLogEmail}
+      />
+    ))
+  }
+
+  // AI Feature configurations
+  const aiFeatures = [
+    {
+      id: 'collection-priority',
+      title: 'Collection Priority',
+      content: 'Priority collection: 1) Smith $12,400 (45 days, responds to calls), 2) Johnson $8,200 (30 days, prefers email)',
+      icon: TrendingUp,
+    },
+    {
+      id: 'payment-prediction',
+      title: 'Payment Prediction',
+      content: 'Smith likely to pay within 7 days based on past pattern. Johnson may need escalation - slow payer historically.',
+      icon: Sparkles,
+    },
+    {
+      id: 'lien-waiver-impact',
+      title: 'Lien Waiver Impact',
+      content: 'Coastal Plumbing lien waiver pending. Blocking: Draw #4 submission ($18,400)',
+      icon: Shield,
+    },
+    {
+      id: 'dso-trend',
+      title: 'DSO Trend',
+      content: `DSO trending ${dsoTrend === 'up' ? 'up' : 'down'}: ${dso} days this month vs ${lastMonthDSO} last month. 3 accounts driving ${dsoTrend === 'up' ? 'increase' : 'improvement'}.`,
+      icon: dsoTrend === 'up' ? TrendingUp : TrendingDown,
+    },
+  ]
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -533,7 +1021,7 @@ export function ReceivablesPreview() {
               "flex items-center gap-2 text-sm",
               dso <= 30 ? "text-green-600" : dso <= 45 ? "text-amber-600" : "text-red-600"
             )}>
-              {dso <= 35 ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
+              {dsoTrend === 'down' ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
               DSO (Days Sales Outstanding)
             </div>
             <div className={cn(
@@ -542,7 +1030,9 @@ export function ReceivablesPreview() {
             )}>
               {dso} days
             </div>
-            <div className="text-xs text-gray-500 mt-0.5">Industry avg: 35 days</div>
+            <div className="text-xs text-gray-500 mt-0.5">
+              {dsoTrend === 'down' ? `↓${Math.abs(dsoChange)}` : dsoTrend === 'up' ? `↑${Math.abs(dsoChange)}` : '→'} from last month | Industry avg: 35 days
+            </div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-purple-600 text-sm">
@@ -607,42 +1097,51 @@ export function ReceivablesPreview() {
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <FilterBar
-          search={search}
-          onSearchChange={setSearch}
-          searchPlaceholder="Search receivables..."
-          tabs={[
-            { key: 'all', label: 'All', count: mockReceivables.length },
-            { key: 'current', label: 'Current', count: mockReceivables.filter(r => r.agingBucket === 'current').length },
-            { key: '1-30', label: '1-30 Days', count: mockReceivables.filter(r => r.agingBucket === '1-30').length },
-            { key: '31-60', label: '31-60 Days', count: mockReceivables.filter(r => r.agingBucket === '31-60').length },
-            { key: '61-90', label: '61-90 Days', count: mockReceivables.filter(r => r.agingBucket === '61-90').length },
-            { key: '90+', label: '90+ Days', count: mockReceivables.filter(r => r.agingBucket === '90+').length },
-          ]}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          sortOptions={[
-            { value: 'clientName', label: 'Client' },
-            { value: 'amount', label: 'Amount' },
-            { value: 'daysOutstanding', label: 'Days Outstanding' },
-            { value: 'dueDate', label: 'Due Date' },
-            { value: 'retainageAmount', label: 'Retainage' },
-            { value: 'aiCollectionProbability', label: 'Collection Probability' },
-          ]}
-          activeSort={activeSort}
-          onSortChange={setActiveSort}
-          sortDirection={sortDirection}
-          onSortDirectionChange={toggleSortDirection}
-          resultCount={filteredReceivables.length}
-          totalCount={mockReceivables.length}
-        />
+        <div className="flex items-center justify-between mb-3">
+          <FilterBar
+            search={search}
+            onSearchChange={setSearch}
+            searchPlaceholder="Search receivables..."
+            tabs={[
+              { key: 'all', label: 'All', count: mockReceivables.length },
+              { key: 'current', label: 'Current', count: mockReceivables.filter(r => r.agingBucket === 'current').length },
+              { key: '1-30', label: '1-30 Days', count: mockReceivables.filter(r => r.agingBucket === '1-30').length },
+              { key: '31-60', label: '31-60 Days', count: mockReceivables.filter(r => r.agingBucket === '31-60').length },
+              { key: '61-90', label: '61-90 Days', count: mockReceivables.filter(r => r.agingBucket === '61-90').length },
+              { key: '90+', label: '90+ Days', count: mockReceivables.filter(r => r.agingBucket === '90+').length },
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            sortOptions={[
+              { value: 'clientName', label: 'Client' },
+              { value: 'amount', label: 'Amount' },
+              { value: 'daysOutstanding', label: 'Days Outstanding' },
+              { value: 'dueDate', label: 'Due Date' },
+              { value: 'retainageAmount', label: 'Retainage' },
+              { value: 'aiCollectionProbability', label: 'Collection Probability' },
+            ]}
+            activeSort={activeSort}
+            onSortChange={setActiveSort}
+            sortDirection={sortDirection}
+            onSortDirectionChange={toggleSortDirection}
+            resultCount={filteredReceivables.length}
+            totalCount={mockReceivables.length}
+          />
+          <ViewModeToggle
+            modes={[
+              { key: 'aging', label: 'Aging' },
+              { key: 'client', label: 'By Client' },
+              { key: 'job', label: 'By Job' },
+            ]}
+            activeMode={viewMode}
+            onModeChange={(mode) => setViewMode(mode as ViewMode)}
+          />
+        </div>
       </div>
 
       {/* Receivable List */}
       <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-        {filteredReceivables.map(receivable => (
-          <ReceivableRow key={receivable.id} receivable={receivable} />
-        ))}
+        {renderReceivables()}
         {filteredReceivables.length === 0 && (
           <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
             No receivables match your filters
@@ -666,6 +1165,13 @@ export function ReceivablesPreview() {
         </div>
       </div>
 
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        title="AI Collection Insights"
+        features={aiFeatures}
+        className="border-t border-gray-200"
+      />
+
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
@@ -678,10 +1184,28 @@ export function ReceivablesPreview() {
             Wilson Custom ($60K, 45% likely) has lien notice sent - expect payment within 3-5 days based on history.
             Parker Developments ($15K, 30% likely) is high risk - recommend filing mechanics lien by Mar 15.
             {pendingLienWaivers > 0 && ` ${pendingLienWaivers} lien waivers pending - may delay collections.`}
-            {' '}Collection rate this month: 94% (above 90% target). DSO trending down from 32 to {dso} days.
+            {' '}Collection rate this month: 94% (above 90% target). DSO: {dso} days ({dsoTrend === 'down' ? `↓${Math.abs(dsoChange)}` : `↑${Math.abs(dsoChange)}`} from last month).
           </p>
         </div>
       </div>
+
+      {/* Write-off Modal */}
+      {writeOffModal.receivable && (
+        <WriteOffModal
+          isOpen={writeOffModal.isOpen}
+          onClose={() => setWriteOffModal({ isOpen: false, receivable: null })}
+          receivable={writeOffModal.receivable}
+        />
+      )}
+
+      {/* Email Log Modal */}
+      {emailLogModal.receivable && (
+        <EmailLogModal
+          isOpen={emailLogModal.isOpen}
+          onClose={() => setEmailLogModal({ isOpen: false, receivable: null })}
+          receivable={emailLogModal.receivable}
+        />
+      )}
     </div>
   )
 }

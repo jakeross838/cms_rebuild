@@ -36,6 +36,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -389,6 +390,56 @@ export function PriceIntelligencePreview() {
       {activeTab === 'analytics' && <AnalyticsTab />}
       {activeTab === 'alerts' && <AlertsTab />}
       {activeTab === 'quotes' && <QuotesTab />}
+
+      {/* AI Features Panel */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg px-4 py-4">
+        <AIFeaturesPanel
+          title="Price Intelligence AI Features"
+          features={[
+            {
+              feature: 'Market Rate Tracking',
+              trigger: 'Real-time',
+              insight: 'Continuously monitors material and labor prices across vendors and market sources to maintain up-to-date pricing intelligence.',
+              severity: 'info' as const,
+              confidence: 94,
+              detail: 'Tracking 248 materials across 14 vendors with 1,247 data points collected this quarter.',
+            },
+            {
+              feature: 'Price Alerts',
+              trigger: 'On change',
+              insight: 'Notifies you of significant price changes, anomalies, or opportunities to save by switching vendors.',
+              severity: 'warning' as const,
+              confidence: 91,
+              detail: '3 active alerts requiring attention. Price swings over 15% trigger immediate notifications.',
+            },
+            {
+              feature: 'Vendor Comparison',
+              trigger: 'On submission',
+              insight: 'Automatically compares vendor pricing for each material, highlighting best prices and value opportunities.',
+              severity: 'success' as const,
+              confidence: 96,
+              detail: 'Best vendor recommendations generated for all 248 tracked materials with confidence scores.',
+            },
+            {
+              feature: 'Cost Forecasting',
+              trigger: 'Weekly',
+              insight: 'Predicts future material and labor prices based on historical trends, market indicators, and seasonal patterns.',
+              severity: 'info' as const,
+              confidence: 78,
+              detail: 'Lumber prices projected to decrease 3-5% over next 60 days based on supply chain indicators.',
+            },
+            {
+              feature: 'Negotiation Insights',
+              trigger: 'On change',
+              insight: 'Suggests negotiation points and leverage opportunities based on vendor pricing history and market conditions.',
+              severity: 'success' as const,
+              confidence: 85,
+              detail: 'Gulf Lumber prices 8% above market average on sheet goods - opportunity for rate sheet renegotiation.',
+            },
+          ]}
+          columns={2}
+        />
+      </div>
     </div>
   )
 }

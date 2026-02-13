@@ -98,9 +98,93 @@ Proactive quality inspections throughout construction, not just final punch.
 - **Vendor Self-Inspection:** Before requesting builder inspection, vendor completes a self-inspection checklist. Builder sees vendor's self-assessment alongside their own inspection.
 - **Historical Analytics:** Track pass rates by trade, by vendor, by inspector over time. Feed into vendor scoring (Module 22).
 
+### Conditional Checklist Logic
+
+If/Then branching logic enables dynamic checklists that adapt based on previous answers, reducing inspector burden and ensuring relevant follow-up questions are always asked.
+
+- **Visibility Conditions:** Checkpoints can show or hide based on previous answers. Hidden items are skipped in the inspection flow and do not count toward completion percentage.
+- **Formula Support:** Excel-like condition syntax for defining rules. Example: `IF checkpoint_1 = "Fail" THEN show checkpoint_5`. Conditions can reference any prior checkpoint in the checklist by its ID or position.
+- **Condition Operators:** Supported operators for building conditions:
+  - `equals` - exact match (e.g., result = "Fail")
+  - `not_equals` - does not match (e.g., result != "Pass")
+  - `greater_than` - numeric comparison (e.g., measurement > 100)
+  - `less_than` - numeric comparison (e.g., measurement < 50)
+  - `contains` - substring or array contains (e.g., notes contains "moisture")
+  - `is_empty` - field has no value (e.g., photo is_empty)
+- **Action Types:** When a condition evaluates to true, the system can execute these actions:
+  - `show` - reveal a previously hidden checkpoint
+  - `hide` - hide a checkpoint from the inspector
+  - `require` - make a checkpoint mandatory (cannot skip)
+  - `skip` - automatically skip a checkpoint and mark as N/A
+  - `alert` - display a warning message to the inspector
+  - `require_photo` - dynamically require a photo for a checkpoint
+- **Approval Gates:** Checkpoints can be configured to pause the checklist for supervisor approval. When an approval gate is reached: (a) the inspector cannot proceed past the gate, (b) a notification is sent to the designated approver role, (c) the approver reviews the checklist progress and either approves (allowing continuation) or rejects (with notes requiring re-inspection), and (d) approval timestamp and approver identity are recorded in the checklist audit log.
+- **Cascading Conditions:** Conditions can reference multiple prior checkpoints using AND/OR logic. Example: `IF checkpoint_1 = "Fail" AND checkpoint_3 = "Fail" THEN require checkpoint_10`. Cascading allows complex decision trees while keeping individual rules readable.
+- **Rule Priority:** When multiple rules could apply to the same target checkpoint, rules are evaluated in priority_order. The first matching rule wins.
+- **Template vs. Instance Rules:** Rules can be defined at the template level (apply to all checklists from that template) or at the checklist instance level (override for a specific inspection).
+
+### First-Time Quality Metrics
+
+FTQ (First-Time Quality) scoring measures the percentage of items that pass inspection on the first attempt, providing a key quality metric for vendors, trades, and projects.
+
+- **FTQ Rated vs Non-Rated Items:** Each checklist item can be marked as FTQ-rated or non-rated. Non-rated items (e.g., informational checkpoints, N/A items) are excluded from FTQ calculations. By default, all pass/fail items are FTQ-rated.
+- **%FTQ Calculation:** The First-Time Quality percentage is calculated as:
+  ```
+  %FTQ = (Items passed on first attempt) / (Total FTQ-rated items) x 100
+  ```
+  Example: If a checklist has 20 FTQ-rated items and 18 passed on the first inspection, %FTQ = 90%.
+- **First Attempt Tracking:** The system records the result of the first inspection attempt separately from subsequent re-inspections. If an item fails initially and passes on re-inspection, it still counts as a first-attempt failure for FTQ purposes. The `first_attempt_result` field captures pass, fail, or N/A for the initial inspection.
+- **Score Rollup Levels:** FTQ scores roll up through multiple levels for hierarchical reporting:
+  - **Item Level:** Individual checklist item first-attempt result
+  - **Checklist Level:** Aggregate FTQ% for a single checklist instance
+  - **Vendor Level:** FTQ% across all checklists for a specific vendor
+  - **Trade Level:** FTQ% for all vendors in a trade (e.g., all plumbing vendors)
+  - **Project Level:** FTQ% across all checklists on a project
+  - **Company Level:** Builder-wide FTQ% across all projects
+- **Trend Tracking:** FTQ trends are calculated over configurable periods:
+  - 30-day rolling average
+  - 60-day rolling average
+  - 90-day rolling average
+  - 6-month average
+  - 12-month average
+  - Year-over-year comparison
+  Trends include direction (improving, declining, stable) and delta (percentage point change).
+- **Threshold Alerts:** Configurable alerts when FTQ drops below threshold:
+  - Builder sets minimum acceptable FTQ% per trade or vendor tier
+  - When a vendor's rolling FTQ% drops below threshold, alert is sent to PM/superintendent
+  - Repeated threshold violations can trigger automatic vendor review workflow
+  - Dashboard displays vendors currently below threshold with days in violation
+
+### Measurement Checkpoints
+
+Measurement checkpoints capture numeric values with unit validation, enabling precise quality control for dimensional, pressure, temperature, and other quantitative inspections.
+
+- **Numeric Input Fields:** Checklist items can be configured as measurement type, presenting a numeric input field instead of pass/fail buttons. Supports decimal precision configuration (e.g., 2 decimal places for inches, 0 for whole numbers).
+- **Unit Support:** Comprehensive unit library for construction measurements:
+  - **Linear:** inches (in), feet (ft), millimeters (mm), centimeters (cm), meters (m)
+  - **Pressure:** PSI, bar, kPa
+  - **Temperature:** degrees Fahrenheit (F), degrees Celsius (C)
+  - **Electrical:** amps (A), volts (V), watts (W), ohms
+  - **Airflow:** CFM (cubic feet per minute), L/s
+  - **Humidity:** % relative humidity
+  - **Angle:** degrees
+  - **Weight:** pounds (lbs), kilograms (kg)
+  - **Custom:** builder-defined units for specialized measurements
+- **Min/Max Validation:** Each measurement checkpoint can specify minimum and maximum acceptable values. Values outside the range are flagged as out-of-tolerance. Example: "Outlet voltage" min=118V, max=122V.
+- **Target Value with Tolerance:** For precision measurements, specify a target value with an acceptable tolerance range. Example: "Door frame width" target=36.0", tolerance=+/-0.125". System calculates whether the measured value falls within target +/- tolerance.
+- **Auto-Fail When Outside Tolerance:** When enabled, measurements outside the acceptable range automatically set the checkpoint result to "Fail" without requiring inspector confirmation. When disabled, out-of-tolerance measurements display a warning but allow inspector override.
+- **Measurement History Comparison:** For recurring measurements (e.g., same HVAC system at rough-in and final), the system displays previous readings for comparison. Inspector can see trend (improving, declining, stable) and flag anomalies.
+- **Calibration Requirements:** Measurement checkpoints can specify required calibration for the measuring device. System can prompt inspector to confirm calibration date before accepting measurement.
+
 #### Edge Cases & What-If Scenarios
 
 1. **Failed checklist item to punch item conversion reliability.** The automatic conversion of failed checklist items into actionable punch items must be seamless and reliable. Required behavior: (a) every failed checklist item generates a punch item with one click (not auto-created without review, to avoid noise from N/A items marked fail by mistake), (b) the generated punch item is pre-populated with: trade (from checklist), room/area (from checklist), description (from checklist item + acceptance criteria), photos (from inspection), and the checklist reference link, (c) the inspector can edit the generated punch item before saving (adjust description, add severity, assign vendor), (d) if multiple checklist items fail in the same area, the inspector can consolidate them into a single punch item with multiple deficiency references, and (e) the checklist completion report shows a clear count of "items failed -> punch items created" for accountability tracking.
+
+2. **Branching rule circular dependency.** When building conditional logic, it is possible to create circular dependencies where Rule A shows Item B, and Rule B shows Item A, creating an infinite loop. Required behavior: (a) the system validates branching rules on save and rejects configurations that create circular dependencies, (b) a visual dependency graph is available in the rule editor showing the flow of conditions, (c) if a circular dependency is detected at runtime (defensive check), the system logs an error, breaks the loop by showing all affected items, and alerts the checklist administrator, and (d) rules can only reference items with a lower sort_order (items that appear earlier in the checklist) to prevent forward-reference loops.
+
+3. **Measurement out of tolerance but inspector overrides.** When a measurement falls outside the acceptable range but the inspector believes the reading is acceptable (e.g., calibration issue, environmental factors, engineering judgment), an override capability with full audit trail is required. Required behavior: (a) inspector can override an out-of-tolerance measurement by providing a written justification, (b) overrides require a confirmation step ("Are you sure you want to override this out-of-tolerance measurement?"), (c) the override is flagged in the checklist record with the original measurement, tolerance range, inspector justification, and timestamp, (d) overrides can be configured to require supervisor approval (similar to approval gates), (e) override frequency per inspector is tracked and available in quality analytics, and (f) overrides are highlighted in any exported reports or compliance documentation.
+
+4. **FTQ recalculation after item edit.** When a checklist item result is edited after initial inspection (e.g., correcting a data entry error, updating after re-inspection), the system must handle FTQ score recalculation appropriately. Required behavior: (a) the first_attempt_result field is immutable after the first inspection -- edits to the current result do not change the first attempt record, (b) if an administrator needs to correct a first_attempt_result due to data entry error, this requires a special "correct historical data" permission and creates an audit log entry, (c) FTQ scores at the checklist level are recalculated immediately when first_attempt_result is corrected, (d) rolled-up FTQ scores (vendor, project, company) are recalculated on a scheduled basis (configurable: real-time, hourly, daily) to avoid performance impact, and (e) FTQ trend data includes a "data corrected" flag for periods where historical corrections were made.
 
 ### 28.6 Warranty Linkage
 
@@ -215,6 +299,34 @@ Track the financial impact of every punch item.
 | notes | text | Inspector notes |
 | punch_item_id | uuid | FK to punch_items (if deficiency auto-created) |
 | inspected_at | timestamptz | When item was inspected |
+| is_conditional | boolean | Whether this item has visibility conditions |
+| visibility_condition | jsonb | JSON object defining show/hide conditions |
+| requires_approval | boolean | Whether this item is an approval gate |
+| approval_role | varchar(100) | Role required to approve (if requires_approval) |
+| is_ftq_rated | boolean | Whether this item counts toward FTQ score (default TRUE) |
+| value_type | varchar(20) | pass_fail, pass_fail_na, measurement, text, photo, signature, date, multi_select |
+| measurement_unit | varchar(50) | Unit of measurement (if value_type = measurement) |
+| measurement_min | decimal(12,4) | Minimum acceptable value |
+| measurement_max | decimal(12,4) | Maximum acceptable value |
+| measurement_target | decimal(12,4) | Target value for precision measurements |
+| measurement_tolerance | decimal(12,4) | Acceptable deviation from target |
+| auto_fail_outside_range | boolean | Whether to auto-fail out-of-tolerance measurements |
+
+### quality_checklist_item_results
+| Column | Type | Description |
+|--------|------|-------------|
+| id | uuid | Primary key |
+| checklist_item_id | uuid | FK to quality_checklist_items |
+| builder_id | uuid | FK to builders |
+| first_attempt_result | varchar(10) | pass, fail, na (result of first inspection) |
+| attempt_count | integer | Number of inspection attempts |
+| measurement_value | decimal(12,4) | Recorded measurement value |
+| is_within_tolerance | boolean | Whether measurement was within acceptable range |
+| override_justification | text | Reason for overriding out-of-tolerance measurement |
+| override_approved_by | uuid | FK to users (supervisor who approved override) |
+| override_approved_at | timestamptz | When override was approved |
+| created_at | timestamptz | Record creation |
+| updated_at | timestamptz | Last modification |
 
 ### quality_checklist_templates
 | Column | Type | Description |
@@ -247,6 +359,42 @@ Track the financial impact of every punch item.
 | notes | text | Signoff notes |
 | created_at | timestamptz | Record creation |
 
+### checklist_branching_rules
+| Column | Type | Description |
+|--------|------|-------------|
+| id | uuid | Primary key |
+| builder_id | uuid | FK to builders |
+| checklist_template_id | uuid | FK to quality_checklist_templates |
+| trigger_item_id | uuid | FK to quality_checklist_items (item that triggers the rule) |
+| condition_operator | varchar(30) | equals, not_equals, greater_than, less_than, contains, is_empty |
+| condition_value | varchar(500) | Value to compare against |
+| action_type | varchar(30) | show, hide, require, skip, alert, require_photo |
+| target_item_ids | uuid[] | Array of item IDs affected by this rule |
+| alert_message | text | Message to display (if action_type = alert) |
+| priority_order | integer | Order in which rules are evaluated (lower = higher priority) |
+| is_active | boolean | Whether rule is currently active |
+| created_at | timestamptz | Record creation |
+| updated_at | timestamptz | Last modification |
+
+### ftq_scores
+| Column | Type | Description |
+|--------|------|-------------|
+| id | uuid | Primary key |
+| builder_id | uuid | FK to builders |
+| entity_type | varchar(30) | checklist, vendor, trade, project, company |
+| entity_id | uuid | FK to the entity (checklist_id, vendor_id, project_id, or null for company) |
+| period_start | date | Start date of the scoring period |
+| period_end | date | End date of the scoring period |
+| period_type | varchar(20) | 30_day, 60_day, 90_day, 6_month, 12_month, all_time |
+| ftq_rated_items | integer | Total number of FTQ-rated items in period |
+| ftq_passed_first_attempt | integer | Number of items passed on first attempt |
+| ftq_percentage | decimal(5,2) | Calculated FTQ% (0.00 to 100.00) |
+| trend_direction | varchar(10) | improving, declining, stable |
+| trend_delta | decimal(5,2) | Percentage point change from previous period |
+| data_corrected | boolean | Whether historical corrections affected this period |
+| calculated_at | timestamptz | When this score was calculated |
+| created_at | timestamptz | Record creation |
+
 ---
 
 ## API Endpoints
@@ -276,6 +424,15 @@ Track the financial impact of every punch item.
 | GET | /api/v2/vendors/:id/punch-items | Vendor's assigned punch items |
 | POST | /api/v2/projects/:id/punch-items/client-submit | Client submits punch item via portal |
 | GET | /api/v2/projects/:id/punch-items/cost-report | Punch list cost/back-charge report |
+| GET | /api/v2/quality/checklists/:id/branching-rules | Get branching rules for a checklist template |
+| POST | /api/v2/quality/checklists/:id/branching-rules | Create a new branching rule |
+| PUT | /api/v2/quality/branching-rules/:id | Update a branching rule |
+| DELETE | /api/v2/quality/branching-rules/:id | Delete a branching rule |
+| GET | /api/v2/quality/ftq-scores | Get FTQ scores with filters (entity_type, entity_id, period_type) |
+| GET | /api/v2/quality/ftq-scores/trends | Get FTQ trend data over time |
+| GET | /api/v2/vendors/:id/ftq-history | Get FTQ history for a specific vendor |
+| GET | /api/v2/projects/:id/ftq-dashboard | Get project-level FTQ dashboard data |
+| POST | /api/v2/quality/ftq-scores/calculate | Trigger FTQ score recalculation for specified scope |
 
 ---
 
@@ -291,6 +448,12 @@ Track the financial impact of every punch item.
 - **Checklist Template Manager** — CRUD for managing checklist templates with drag-and-drop item ordering.
 - **Cost of Quality Report** — Per-project and per-vendor report showing punch item costs, back-charges, and trend analysis.
 - **Sign-Off Modal** — Digital signature capture with summary of items being signed off and any remaining open items warning.
+- **ConditionalChecklistItem** — Renders checklist items based on visibility conditions. Evaluates branching rules in real-time as the inspector progresses through the checklist. Shows/hides items dynamically with smooth transitions.
+- **BranchingRuleEditor** — Visual editor for creating and managing If/Then rules. Drag-and-drop interface for connecting trigger items to target items. Condition builder with operator selection and value input. Dependency graph visualization showing rule flow.
+- **ApprovalGateCheckpoint** — Special checkpoint type that pauses the checklist for supervisor approval. Displays approval request form with checklist progress summary. Shows pending/approved/rejected status with approver details and timestamp.
+- **MeasurementInput** — Numeric input field with unit selector dropdown. Displays min/max range and target value. Real-time validation with visual indicators (green = in tolerance, yellow = warning, red = out of tolerance). Shows previous measurement history for comparison.
+- **FTQScoreCard** — Compact display of FTQ percentage with trend indicator (arrow up/down/flat). Color-coded by threshold status (green = above threshold, yellow = approaching threshold, red = below threshold). Click to expand for period details.
+- **FTQDashboard** — Company-wide or project-wide FTQ metrics view. Includes: overall FTQ% with trend chart, breakdown by trade/vendor, vendors below threshold list, historical comparison, and drill-down capability to individual checklists.
 
 ---
 

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 // ---------------------------------------------------------------------------
@@ -674,6 +675,17 @@ export function WarrantyClaimsPreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          { name: 'Claim Validation', description: 'Validates warranty coverage' },
+          { name: 'Pattern Detection', description: 'Identifies recurring issues' },
+          { name: 'Resolution Tracking', description: 'Tracks claim resolution' },
+          { name: 'Cost Analysis', description: 'Analyzes claim costs' },
+          { name: 'Vendor Attribution', description: 'Assigns responsibility' },
+        ]}
+      />
     </div>
   )
 }

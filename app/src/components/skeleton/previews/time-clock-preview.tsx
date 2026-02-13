@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 // ── Types ───────────────────────────────────────────────────────────────
@@ -1089,6 +1090,51 @@ export function TimeClockPreview() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-6 py-6">
+        <AIFeaturesPanel
+          title="AI-Powered Time Management"
+          columns={2}
+          features={[
+            {
+              feature: 'Overtime Prediction',
+              trigger: 'Real-time',
+              insight: 'Predicts workers approaching overtime based on current hours and scheduled shifts. Lisa Martinez is trending toward 48h this week with projected burdened OT cost of $195.36.',
+              severity: 'warning',
+              confidence: 92,
+            },
+            {
+              feature: 'Attendance Patterns',
+              trigger: 'Daily',
+              insight: 'Identifies attendance anomalies such as unusual clock-in times, missed punches, or irregular patterns. No anomalies detected in the current pay period.',
+              severity: 'success',
+              confidence: 88,
+            },
+            {
+              feature: 'Labor Cost Forecasting',
+              trigger: 'Real-time',
+              insight: 'Projects labor costs based on time entries and burdened rates. Current week trending at $8,874.96 total burdened labor cost across all active projects.',
+              severity: 'info',
+              confidence: 94,
+            },
+            {
+              feature: 'Break Compliance',
+              trigger: 'On change',
+              insight: 'Ensures break requirements are met per state labor laws (SC/FL/NC). James Thompson exceeded 30-min break limit by 15 minutes - flagged for supervisor review.',
+              severity: 'warning',
+              confidence: 85,
+            },
+            {
+              feature: 'Geo-Validation',
+              trigger: 'Real-time',
+              insight: 'Validates clock-in locations match assigned job sites using GPS geofencing. 9 of 10 entries verified inside geofence. 1 entry from Marcus Rodriguez flagged as outside boundary.',
+              severity: 'info',
+              confidence: 96,
+            },
+          ]}
+        />
       </div>
 
       {/* AI Insights Footer Bar */}

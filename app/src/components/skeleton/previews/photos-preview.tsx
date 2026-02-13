@@ -29,6 +29,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface Photo {
   id: string
@@ -730,6 +731,52 @@ export function PhotosPreview() {
             <span>{duplicateCount} duplicate{duplicateCount !== 1 ? 's' : ''} detected, {lowQualityCount} low-quality filtered</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Photo Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Auto-Captioning',
+              trigger: 'On creation',
+              insight: 'AI generates construction-context captions for uploaded photos, describing work progress, materials, and location.',
+              severity: 'info',
+            },
+            {
+              feature: 'Phase/Trade Detection',
+              trigger: 'On creation',
+              insight: 'Automatically tags photos based on visual content, identifying construction phase and trade from image analysis.',
+              severity: 'info',
+            },
+            {
+              feature: 'Quality Scoring',
+              trigger: 'Real-time',
+              insight: `Identifies blurry, dark, or duplicate images. ${lowQualityCount} low-quality photos flagged for review.`,
+              severity: lowQualityCount > 0 ? 'warning' : 'success',
+            },
+            {
+              feature: 'Client-Suitable Filtering',
+              trigger: 'On creation',
+              insight: `Flags photos safe for client sharing based on content analysis. ${clientReadyCount} of ${totalPhotos} photos marked client-ready.`,
+              severity: 'success',
+            },
+            {
+              feature: 'Milestone Detection',
+              trigger: 'On creation',
+              insight: `Identifies milestone-worthy shots documenting key project progress. ${milestoneCount} milestone photos detected.`,
+              severity: milestoneCount > 0 ? 'success' : 'info',
+            },
+            {
+              feature: 'Duplicate Detection',
+              trigger: 'Real-time',
+              insight: `Groups similar photos to reduce clutter and storage. ${duplicateCount} duplicate${duplicateCount !== 1 ? 's' : ''} identified.`,
+              severity: duplicateCount > 0 ? 'warning' : 'success',
+            },
+          ]}
+        />
       </div>
     </div>
   )

@@ -32,6 +32,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -353,6 +354,44 @@ const meetingAgendaItems: MeetingAgendaItem[] = [
   { id: '2', topic: 'Wilson Home: Electrical budget at 92%', jobRef: 'J-2026-005', source: 'Budget', status: 'alert' },
   { id: '3', topic: 'Miller Addition: Final inspection tomorrow', jobRef: 'J-2025-012', source: 'Inspections', status: 'update' },
   { id: '4', topic: 'Thompson Renovation: Kick-off scheduling needed', jobRef: 'J-2026-008', source: 'New Contract', status: 'decision' },
+]
+
+const aiFeaturesData = [
+  {
+    feature: 'Health Scoring',
+    trigger: 'Real-time',
+    insight: 'Overall project health assessment based on budget, schedule, and resource utilization across all active jobs.',
+    severity: 'success' as const,
+    confidence: 92,
+  },
+  {
+    feature: 'Risk Detection',
+    trigger: 'Real-time',
+    insight: 'Identifies potential issues before they become problems - currently tracking 3 medium-risk items across your portfolio.',
+    severity: 'warning' as const,
+    confidence: 87,
+  },
+  {
+    feature: 'Progress Tracking',
+    trigger: 'Daily',
+    insight: 'AI-verified completion status shows 18 jobs at 94% average schedule adherence with automated milestone validation.',
+    severity: 'info' as const,
+    confidence: 95,
+  },
+  {
+    feature: 'Action Priorities',
+    trigger: 'Real-time',
+    insight: 'Ranked list of next actions: 1) Approve Draw #5, 2) Follow up on overdue invoices, 3) Review material cost changes.',
+    severity: 'critical' as const,
+    confidence: 88,
+  },
+  {
+    feature: 'Trend Analysis',
+    trigger: 'Weekly',
+    insight: 'Key metric trends show revenue up 12.5%, crew efficiency improved 8%, and receivables collection rate increased by 15%.',
+    severity: 'success' as const,
+    confidence: 91,
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -813,6 +852,17 @@ export function OverviewPreview() {
           <QuickActionsPanel />
           <TeamActivityPanel />
           <MeetingPrep />
+        </div>
+      </div>
+
+      {/* AI Features Panel Section */}
+      <div className="px-4 pb-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <AIFeaturesPanel
+            title="AI-Powered Features"
+            features={aiFeaturesData}
+            columns={2}
+          />
         </div>
       </div>
 

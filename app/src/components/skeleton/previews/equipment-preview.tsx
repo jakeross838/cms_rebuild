@@ -25,10 +25,20 @@ import {
   ShieldAlert,
   CircleDollarSign,
   ChevronRight,
+  X,
+  Download,
+  Printer,
+  Image,
+  ChevronLeft,
+  Clock,
+  Camera,
+  AlertCircle,
+  MapPinned,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel, SubmissionForm, type FormField } from '@/components/skeleton/ui'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -60,9 +70,12 @@ interface Equipment {
   rentalVendor?: string
   rentalRate?: string
   rentalExpectedReturn?: string
+  rentalDailyRate?: number
+  rentalStartDate?: string
   gpsEnabled: boolean
   gpsLastLocation?: string
   geofenceStatus?: 'inside' | 'outside' | 'no_geofence'
+  geofenceAlertTime?: string
   checkoutStatus?: 'checked_out' | 'available' | 'overdue'
   checkedOutBy?: string
   checkoutDate?: string
@@ -70,6 +83,9 @@ interface Equipment {
   hourMeterReading?: number
   maintenanceDueHours?: number
   aiNote?: string
+  photoUrls?: string[]
+  checklistCompleted?: boolean
+  checklistCompletedDate?: string
 }
 
 interface MaintenanceLog {
@@ -105,7 +121,46 @@ interface RentalEquipment {
   daysRented: number
 }
 
+interface MaintenanceChecklist {
+  id: string
+  item: string
+  completed: boolean
+}
+
+interface CategoryChecklists {
+  'Heavy Equipment': MaintenanceChecklist[]
+  'Vehicle': MaintenanceChecklist[]
+  'Power Tool': MaintenanceChecklist[]
+}
+
 // ── Mock Data ───────────────────────────────────────────────────────────
+
+const maintenanceChecklists: CategoryChecklists = {
+  'Heavy Equipment': [
+    { id: 'he1', item: 'Check hydraulic fluid levels', completed: false },
+    { id: 'he2', item: 'Inspect tracks/tires for wear', completed: false },
+    { id: 'he3', item: 'Test all controls and levers', completed: false },
+    { id: 'he4', item: 'Verify safety features (ROPS, lights, alarms)', completed: false },
+    { id: 'he5', item: 'Check engine oil and coolant', completed: false },
+    { id: 'he6', item: 'Inspect belts and hoses', completed: false },
+  ],
+  'Vehicle': [
+    { id: 'v1', item: 'Check tire pressure and condition', completed: false },
+    { id: 'v2', item: 'Verify all lights functioning', completed: false },
+    { id: 'v3', item: 'Test brakes and emergency brake', completed: false },
+    { id: 'v4', item: 'Check fluid levels (oil, coolant, brake)', completed: false },
+    { id: 'v5', item: 'Inspect mirrors and windshield', completed: false },
+    { id: 'v6', item: 'Test horn and wipers', completed: false },
+    { id: 'v7', item: 'Check seatbelts and safety equipment', completed: false },
+  ],
+  'Power Tool': [
+    { id: 'pt1', item: 'Inspect power cord/battery', completed: false },
+    { id: 'pt2', item: 'Check blade/bit condition', completed: false },
+    { id: 'pt3', item: 'Verify safety guards in place', completed: false },
+    { id: 'pt4', item: 'Test trigger and controls', completed: false },
+    { id: 'pt5', item: 'Clean air vents and filters', completed: false },
+  ],
+}
 
 const mockEquipment: Equipment[] = [
   {
@@ -135,6 +190,13 @@ const mockEquipment: Equipment[] = [
     gpsEnabled: true,
     gpsLastLocation: '1234 Oak St, Charleston SC',
     geofenceStatus: 'inside',
+    photoUrls: [
+      '/equipment/ford-f250-1.jpg',
+      '/equipment/ford-f250-2.jpg',
+      '/equipment/ford-f250-3.jpg',
+    ],
+    checklistCompleted: true,
+    checklistCompletedDate: '2026-02-12',
   },
   {
     id: '2',
@@ -155,7 +217,7 @@ const mockEquipment: Equipment[] = [
     depreciationMethod: 'straight_line',
     usefulLifeYears: 7,
     lastMaintenance: '2025-12-20',
-    nextMaintenance: '2026-03-20',
+    nextMaintenance: '2026-01-20',
     usage: '28,200 miles',
     utilizationRate: 88,
     costPerHour: 14.20,
@@ -163,6 +225,11 @@ const mockEquipment: Equipment[] = [
     gpsEnabled: true,
     gpsLastLocation: '3421 Surf Dr, Folly Beach SC',
     geofenceStatus: 'inside',
+    photoUrls: [
+      '/equipment/ford-transit-1.jpg',
+      '/equipment/ford-transit-2.jpg',
+    ],
+    checklistCompleted: false,
   },
   {
     id: '3',
@@ -193,6 +260,13 @@ const mockEquipment: Equipment[] = [
     gpsLastLocation: 'Equipment Yard, Main Office',
     geofenceStatus: 'inside',
     aiNote: 'At 40% utilization rate. You spent $14,200 on rentals for skid steers in 12 months. Consider cost analysis: own vs rent.',
+    photoUrls: [
+      '/equipment/bobcat-s650-1.jpg',
+      '/equipment/bobcat-s650-2.jpg',
+      '/equipment/bobcat-s650-3.jpg',
+    ],
+    checklistCompleted: true,
+    checklistCompletedDate: '2026-02-10',
   },
   {
     id: '4',
@@ -220,7 +294,13 @@ const mockEquipment: Equipment[] = [
     isRental: false,
     gpsEnabled: true,
     gpsLastLocation: '5678 Beach Rd, Mount Pleasant SC',
-    geofenceStatus: 'inside',
+    geofenceStatus: 'outside',
+    geofenceAlertTime: '2026-02-08 11:47 PM',
+    photoUrls: [
+      '/equipment/cat-303-1.jpg',
+      '/equipment/cat-303-2.jpg',
+    ],
+    checklistCompleted: false,
   },
   {
     id: '5',
@@ -246,6 +326,9 @@ const mockEquipment: Equipment[] = [
     costPerHour: 8.50,
     isRental: false,
     gpsEnabled: false,
+    photoUrls: [
+      '/equipment/honda-generator-1.jpg',
+    ],
   },
   {
     id: '6',
@@ -272,6 +355,9 @@ const mockEquipment: Equipment[] = [
     checkoutDate: '2026-01-15',
     expectedReturnDate: '2026-02-20',
     aiNote: 'Checked out 4 weeks ago. Approaching expected return date. Confirm still needed at Smith job.',
+    photoUrls: [
+      '/equipment/dewalt-laser-1.jpg',
+    ],
   },
   {
     id: '7',
@@ -292,6 +378,10 @@ const mockEquipment: Equipment[] = [
     isRental: false,
     gpsEnabled: false,
     checkoutStatus: 'available',
+    photoUrls: [
+      '/equipment/milwaukee-drill-1.jpg',
+      '/equipment/milwaukee-drill-2.jpg',
+    ],
   },
   {
     id: '8',
@@ -316,6 +406,9 @@ const mockEquipment: Equipment[] = [
     checkoutStatus: 'checked_out',
     checkedOutBy: 'Carlos Mendez',
     checkoutDate: '2026-02-03',
+    photoUrls: [
+      '/equipment/dewalt-tablesaw-1.jpg',
+    ],
   },
   {
     id: '9',
@@ -339,6 +432,8 @@ const mockEquipment: Equipment[] = [
     rentalVendor: 'Sunbelt Rentals',
     rentalRate: '$85/day',
     rentalExpectedReturn: '2026-02-15',
+    rentalDailyRate: 85,
+    rentalStartDate: '2026-02-05',
     gpsEnabled: false,
   },
 ]
@@ -468,6 +563,416 @@ function formatCurrency(value: number): string {
   return '$' + value.toFixed(0)
 }
 
+function getDaysUntil(dateStr: string): number {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const target = new Date(dateStr + 'T00:00:00')
+  const diff = target.getTime() - today.getTime()
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+}
+
+function isMaintenanceOverdue(nextMaintenance?: string): boolean {
+  if (!nextMaintenance || !/^\d{4}-\d{2}-\d{2}$/.test(nextMaintenance)) return false
+  return getDaysUntil(nextMaintenance) < 0
+}
+
+function getOverdueDays(nextMaintenance?: string): number {
+  if (!nextMaintenance || !/^\d{4}-\d{2}-\d{2}$/.test(nextMaintenance)) return 0
+  const days = getDaysUntil(nextMaintenance)
+  return days < 0 ? Math.abs(days) : 0
+}
+
+// ── QR Code Component ───────────────────────────────────────────────────
+
+function QRCodeSVG({ data, size = 120 }: { data: string; size?: number }) {
+  // Simple QR-like pattern generator (visual placeholder)
+  const cellSize = size / 25
+  const cells: boolean[][] = []
+
+  // Generate pattern based on data hash
+  let hash = 0
+  for (let i = 0; i < data.length; i++) {
+    hash = ((hash << 5) - hash) + data.charCodeAt(i)
+    hash = hash & hash
+  }
+
+  for (let row = 0; row < 25; row++) {
+    cells[row] = []
+    for (let col = 0; col < 25; col++) {
+      // Position detection patterns (corners)
+      const isTopLeft = row < 7 && col < 7
+      const isTopRight = row < 7 && col > 17
+      const isBottomLeft = row > 17 && col < 7
+
+      if (isTopLeft || isTopRight || isBottomLeft) {
+        // Create finder pattern
+        const isOuter = row === 0 || row === 6 || col === 0 || col === 6 ||
+                       (isTopRight && (col === 18 || col === 24)) ||
+                       (isBottomLeft && (row === 18 || row === 24))
+        const isInner = (row >= 2 && row <= 4 && col >= 2 && col <= 4) ||
+                       (isTopRight && row >= 2 && row <= 4 && col >= 20 && col <= 22) ||
+                       (isBottomLeft && row >= 20 && row <= 22 && col >= 2 && col <= 4)
+        cells[row][col] = isOuter || isInner
+      } else {
+        // Data area - pseudo-random based on position and hash
+        cells[row][col] = ((hash + row * 31 + col * 17) % 3) === 0
+      }
+    }
+  }
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <rect width={size} height={size} fill="white" />
+      {cells.map((row, rowIndex) =>
+        row.map((cell, colIndex) =>
+          cell ? (
+            <rect
+              key={`${rowIndex}-${colIndex}`}
+              x={colIndex * cellSize}
+              y={rowIndex * cellSize}
+              width={cellSize}
+              height={cellSize}
+              fill="black"
+            />
+          ) : null
+        )
+      )}
+    </svg>
+  )
+}
+
+// ── QR Code Modal ───────────────────────────────────────────────────────
+
+function QRCodeModal({
+  equipment,
+  isOpen,
+  onClose
+}: {
+  equipment: Equipment
+  isOpen: boolean
+  onClose: () => void
+}) {
+  if (!isOpen) return null
+
+  const qrData = JSON.stringify({
+    id: equipment.id,
+    assetTag: equipment.assetTag,
+    name: equipment.name,
+    serialNumber: equipment.serialNumber,
+  })
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-900">Equipment QR Code</h3>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X className="h-5 w-5 text-gray-400" />
+          </button>
+        </div>
+
+        <div className="flex flex-col items-center">
+          <div className="border-2 border-gray-200 p-4 rounded-lg mb-4">
+            <QRCodeSVG data={qrData} size={160} />
+          </div>
+
+          <div className="text-center mb-4">
+            <div className="font-medium text-gray-900">{equipment.name}</div>
+            <div className="text-sm text-gray-500 font-mono">{equipment.assetTag}</div>
+            <div className="text-xs text-gray-400 mt-1">SN: {equipment.serialNumber}</div>
+          </div>
+
+          <div className="flex gap-2 w-full">
+            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <Printer className="h-4 w-4" />
+              Print QR
+            </button>
+            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50">
+              <Download className="h-4 w-4" />
+              Download
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Photo Gallery Modal ─────────────────────────────────────────────────
+
+function PhotoGalleryModal({
+  photos,
+  equipmentName,
+  isOpen,
+  onClose,
+  initialIndex = 0,
+}: {
+  photos: string[]
+  equipmentName: string
+  isOpen: boolean
+  onClose: () => void
+  initialIndex?: number
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
+
+  if (!isOpen || photos.length === 0) return null
+
+  const goNext = () => setCurrentIndex((prev) => (prev + 1) % photos.length)
+  const goPrev = () => setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length)
+
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="relative max-w-4xl w-full mx-4" onClick={e => e.stopPropagation()}>
+        <button
+          onClick={onClose}
+          className="absolute -top-10 right-0 p-2 text-white hover:text-gray-300"
+        >
+          <X className="h-6 w-6" />
+        </button>
+
+        <div className="bg-gray-900 rounded-lg overflow-hidden">
+          <div className="relative aspect-video bg-gray-800 flex items-center justify-center">
+            {/* Placeholder for actual image */}
+            <div className="text-center">
+              <Image className="h-16 w-16 text-gray-600 mx-auto mb-2" />
+              <div className="text-gray-400 text-sm">{photos[currentIndex]}</div>
+            </div>
+
+            {photos.length > 1 && (
+              <>
+                <button
+                  onClick={goPrev}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  onClick={goNext}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="p-4">
+            <div className="text-white font-medium">{equipmentName}</div>
+            <div className="text-gray-400 text-sm">
+              Photo {currentIndex + 1} of {photos.length}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Maintenance Checklist Modal ─────────────────────────────────────────
+
+function ChecklistModal({
+  equipment,
+  isOpen,
+  onClose,
+}: {
+  equipment: Equipment
+  isOpen: boolean
+  onClose: () => void
+}) {
+  const categoryKey = equipment.category as keyof CategoryChecklists
+  const checklist = maintenanceChecklists[categoryKey] || maintenanceChecklists['Power Tool']
+  const [items, setItems] = useState(checklist.map(item => ({ ...item })))
+
+  if (!isOpen) return null
+
+  const completedCount = items.filter(i => i.completed).length
+  const allCompleted = completedCount === items.length
+
+  const toggleItem = (id: string) => {
+    setItems(prev => prev.map(item =>
+      item.id === id ? { ...item, completed: !item.completed } : item
+    ))
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-semibold text-gray-900">Maintenance Checklist</h3>
+            <p className="text-sm text-gray-500">{equipment.name}</p>
+          </div>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X className="h-5 w-5 text-gray-400" />
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <div className="flex items-center justify-between text-sm mb-2">
+            <span className="text-gray-600">Progress</span>
+            <span className={cn(
+              "font-medium",
+              allCompleted ? "text-green-600" : "text-amber-600"
+            )}>
+              {completedCount} / {items.length} complete
+            </span>
+          </div>
+          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className={cn(
+                "h-full transition-all",
+                allCompleted ? "bg-green-500" : "bg-amber-500"
+              )}
+              style={{ width: `${(completedCount / items.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2 max-h-64 overflow-y-auto mb-4">
+          {items.map(item => (
+            <label
+              key={item.id}
+              className={cn(
+                "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                item.completed
+                  ? "bg-green-50 border-green-200"
+                  : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+              )}
+            >
+              <input
+                type="checkbox"
+                checked={item.completed}
+                onChange={() => toggleItem(item.id)}
+                className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+              />
+              <span className={cn(
+                "text-sm",
+                item.completed ? "text-green-700 line-through" : "text-gray-700"
+              )}>
+                {item.item}
+              </span>
+            </label>
+          ))}
+        </div>
+
+        <button
+          className={cn(
+            "w-full py-2 rounded-lg font-medium transition-colors",
+            allCompleted
+              ? "bg-green-600 text-white hover:bg-green-700"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          )}
+          disabled={!allCompleted}
+        >
+          {allCompleted ? "Complete Checklist" : `Complete ${items.length - completedCount} more items`}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Breakdown Report Modal ──────────────────────────────────────────────
+
+function BreakdownModal({
+  equipment,
+  isOpen,
+  onClose,
+}: {
+  equipment: Equipment
+  isOpen: boolean
+  onClose: () => void
+}) {
+  const [submitted, setSubmitted] = useState(false)
+
+  if (!isOpen) return null
+
+  const breakdownFields: FormField[] = [
+    {
+      name: 'issueDescription',
+      label: 'Issue Description',
+      type: 'textarea',
+      required: true,
+      placeholder: 'Describe the breakdown or malfunction...',
+    },
+    {
+      name: 'photos',
+      label: 'Photos',
+      type: 'file',
+      placeholder: 'Upload photos of the issue',
+    },
+    {
+      name: 'urgency',
+      label: 'Urgency Level',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'low', label: 'Low - Can continue work' },
+        { value: 'medium', label: 'Medium - Partial impact' },
+        { value: 'high', label: 'High - Work stopped' },
+        { value: 'critical', label: 'Critical - Safety concern' },
+      ],
+    },
+  ]
+
+  const handleSubmit = () => {
+    setSubmitted(true)
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-semibold text-gray-900">Report Equipment Breakdown</h3>
+            <p className="text-sm text-gray-500">{equipment.name} ({equipment.assetTag})</p>
+          </div>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X className="h-5 w-5 text-gray-400" />
+          </button>
+        </div>
+
+        {!submitted ? (
+          <>
+            <SubmissionForm
+              fields={breakdownFields}
+              submitLabel="Report Breakdown"
+              onSubmit={handleSubmit}
+            />
+
+            {/* AI Suggestion */}
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start gap-2">
+                <Sparkles className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-sm font-medium text-blue-800">AI Suggestion: Available Alternatives</div>
+                  <ul className="mt-1 text-sm text-blue-700 space-y-1">
+                    <li>- Bobcat S650 (in yard, available immediately)</li>
+                    <li>- Rental: Sunbelt has Cat 303 ($450/day, 2hr delivery)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-6">
+            <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
+            <h4 className="font-medium text-gray-900 mb-1">Breakdown Reported</h4>
+            <p className="text-sm text-gray-500 mb-4">
+              Maintenance team has been notified. Estimated response: 2 hours.
+            </p>
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+            >
+              Close
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Sub-components ──────────────────────────────────────────────────────
 
 function EquipmentCard({ equipment }: { equipment: Equipment }) {
@@ -476,183 +981,354 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
   const StatusIcon = statusCfg.icon
   const CategoryIcon = categoryCfg.icon
 
+  const [qrModalOpen, setQrModalOpen] = useState(false)
+  const [photoModalOpen, setPhotoModalOpen] = useState(false)
+  const [photoIndex, setPhotoIndex] = useState(0)
+  const [checklistModalOpen, setChecklistModalOpen] = useState(false)
+  const [breakdownModalOpen, setBreakdownModalOpen] = useState(false)
+
+  // Calculate maintenance overdue
+  const maintenanceOverdue = isMaintenanceOverdue(equipment.nextMaintenance)
+  const overdueDays = getOverdueDays(equipment.nextMaintenance)
+
+  // Calculate rental return info
+  const rentalDaysUntilReturn = equipment.isRental && equipment.rentalExpectedReturn
+    ? getDaysUntil(equipment.rentalExpectedReturn)
+    : null
+  const rentalOverdue = rentalDaysUntilReturn !== null && rentalDaysUntilReturn < 0
+  const rentalSoonDue = rentalDaysUntilReturn !== null && rentalDaysUntilReturn >= 0 && rentalDaysUntilReturn <= 3
+
+  // Calculate rental cost accumulating
+  const rentalCostAccumulated = equipment.isRental && equipment.rentalDailyRate && equipment.rentalStartDate
+    ? (() => {
+        const start = new Date(equipment.rentalStartDate + 'T00:00:00')
+        const today = new Date()
+        const days = Math.ceil((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+        return days * equipment.rentalDailyRate
+      })()
+    : 0
+
+  // Get checklist for this equipment type
+  const categoryKey = equipment.category as keyof CategoryChecklists
+  const hasChecklist = categoryKey in maintenanceChecklists
+
+  const openPhoto = (index: number) => {
+    setPhotoIndex(index)
+    setPhotoModalOpen(true)
+  }
+
   return (
-    <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      equipment.status === 'maintenance' && "border-amber-200",
-      equipment.status === 'repair' && "border-orange-200",
-      equipment.status === 'lost_stolen' && "border-red-300 bg-red-50"
-    )}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-start gap-3">
-          <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center", categoryCfg.bg)}>
-            <CategoryIcon className={cn("h-5 w-5", categoryCfg.color)} />
+    <>
+      <div className={cn(
+        "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+        equipment.status === 'maintenance' && "border-amber-200",
+        equipment.status === 'repair' && "border-orange-200",
+        equipment.status === 'lost_stolen' && "border-red-300 bg-red-50",
+        equipment.geofenceStatus === 'outside' && "border-red-300"
+      )}>
+        {/* Overdue Maintenance Alert */}
+        {maintenanceOverdue && (
+          <div className="mb-3 -mt-1 -mx-1 px-3 py-2 bg-red-100 border border-red-200 rounded-t-lg flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+            <span className="text-sm font-semibold text-red-700">OVERDUE</span>
+            <span className="text-sm text-red-600">{overdueDays} days overdue</span>
           </div>
-          <div>
-            <h4 className="font-medium text-gray-900">
-              {equipment.name}
-              {equipment.isRental && (
-                <span className="ml-1.5 text-xs bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">Rental</span>
-              )}
-            </h4>
-            <div className="flex items-center gap-2 mt-0.5 text-sm text-gray-500">
-              <span className="font-mono">{equipment.assetTag}</span>
-              {equipment.serialNumber && equipment.serialNumber !== 'N/A - Rental' && (
-                <span className="text-xs text-gray-400">SN: {equipment.serialNumber.slice(0, 10)}...</span>
-              )}
+        )}
+
+        {/* Geofence Alert */}
+        {equipment.geofenceStatus === 'outside' && (
+          <div className="mb-3 -mt-1 -mx-1 px-3 py-2 bg-red-50 border border-red-200 rounded-t-lg">
+            <div className="flex items-center gap-2 text-red-700">
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm font-medium">Outside designated area</span>
+            </div>
+            {equipment.geofenceAlertTime && (
+              <div className="text-xs text-red-600 mt-1 ml-6">
+                Since {equipment.geofenceAlertTime}
+              </div>
+            )}
+            <button className="mt-2 ml-6 flex items-center gap-1 text-xs text-red-700 hover:text-red-800 font-medium">
+              <MapPinned className="h-3 w-3" />
+              View on Map
+            </button>
+          </div>
+        )}
+
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-start gap-3">
+            <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center", categoryCfg.bg)}>
+              <CategoryIcon className={cn("h-5 w-5", categoryCfg.color)} />
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900">
+                {equipment.name}
+                {equipment.isRental && (
+                  <span className="ml-1.5 text-xs bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">Rental</span>
+                )}
+              </h4>
+              <div className="flex items-center gap-2 mt-0.5 text-sm text-gray-500">
+                <span className="font-mono">{equipment.assetTag}</span>
+                {equipment.serialNumber && equipment.serialNumber !== 'N/A - Rental' && (
+                  <span className="text-xs text-gray-400">SN: {equipment.serialNumber.slice(0, 10)}...</span>
+                )}
+              </div>
             </div>
           </div>
+          <button className="p-1 hover:bg-gray-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          </button>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
-        </button>
-      </div>
 
-      <div className="text-sm text-gray-600 mb-3">
-        {equipment.make} {equipment.model} ({equipment.year})
-      </div>
-
-      {equipment.currentJob && (
-        <div className="flex items-center gap-2 mb-2 text-sm">
-          <MapPin className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-700">{equipment.currentJob}</span>
-        </div>
-      )}
-
-      {equipment.assignedTo && (
-        <div className="flex items-center gap-2 mb-2 text-sm">
-          <User className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-700">{equipment.assignedTo}</span>
-        </div>
-      )}
-
-      {equipment.usage && (
-        <div className="flex items-center gap-2 mb-2 text-sm">
-          <Gauge className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-700">{equipment.usage}</span>
-          {equipment.utilizationRate !== undefined && (
-            <span className={cn(
-              "text-xs px-1.5 py-0.5 rounded font-medium",
-              equipment.utilizationRate >= 70 ? "bg-green-100 text-green-700" :
-              equipment.utilizationRate >= 40 ? "bg-amber-100 text-amber-700" :
-              "bg-red-100 text-red-700"
-            )}>
-              {equipment.utilizationRate}% util
-            </span>
-          )}
-        </div>
-      )}
-
-      {equipment.gpsEnabled && (
-        <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
-          <Navigation className={cn(
-            "h-3.5 w-3.5",
-            equipment.geofenceStatus === 'inside' ? "text-green-500" :
-            equipment.geofenceStatus === 'outside' ? "text-red-500" :
-            "text-gray-400"
-          )} />
-          <span>{equipment.gpsLastLocation}</span>
-          {equipment.geofenceStatus === 'outside' && (
-            <span className="text-red-600 font-medium flex items-center gap-0.5">
-              <AlertTriangle className="h-3 w-3" /> Outside geofence
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Rental info */}
-      {equipment.isRental && (
-        <div className="mb-3 p-2 rounded bg-orange-50 text-xs text-orange-700 space-y-0.5">
-          <div className="font-medium">Rental from {equipment.rentalVendor}</div>
-          <div>Rate: {equipment.rentalRate}</div>
-          {equipment.rentalExpectedReturn && (
-            <div>Return by: {formatDate(equipment.rentalExpectedReturn)}</div>
-          )}
-        </div>
-      )}
-
-      {/* Checkout info */}
-      {equipment.checkoutStatus === 'checked_out' && !equipment.isRental && (
-        <div className="mb-2 text-xs text-gray-500 flex items-center gap-1">
-          <Package className="h-3 w-3" />
-          Checked out: {equipment.checkoutDate ? formatDate(equipment.checkoutDate) : ''}
-          {equipment.expectedReturnDate && <span> (Return: {formatDate(equipment.expectedReturnDate)})</span>}
-        </div>
-      )}
-
-      {equipment.maintenanceNote && (
-        <div className="mb-3 p-2 rounded bg-amber-50 flex items-start gap-2 text-xs">
-          <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
-          <span className="text-amber-700">{equipment.maintenanceNote}</span>
-        </div>
-      )}
-
-      {/* Value and depreciation */}
-      {!equipment.isRental && (
-        <div className="mb-3 grid grid-cols-3 gap-2 text-xs">
-          <div className="bg-gray-50 rounded p-1.5 text-center">
-            <div className="text-gray-500">Purchased</div>
-            <div className="font-medium text-gray-900">{formatCurrency(equipment.purchasePrice)}</div>
+        {/* Photo Gallery Thumbnails */}
+        {equipment.photoUrls && equipment.photoUrls.length > 0 && (
+          <div className="flex gap-2 mb-3">
+            {equipment.photoUrls.slice(0, 3).map((photo, idx) => (
+              <button
+                key={idx}
+                onClick={() => openPhoto(idx)}
+                className="w-16 h-12 bg-gray-100 rounded border border-gray-200 flex items-center justify-center hover:border-blue-400 transition-colors overflow-hidden"
+              >
+                <Image className="h-5 w-5 text-gray-400" />
+              </button>
+            ))}
+            {equipment.photoUrls.length > 3 && (
+              <button
+                onClick={() => openPhoto(3)}
+                className="w-16 h-12 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-xs text-gray-500 hover:border-blue-400"
+              >
+                +{equipment.photoUrls.length - 3}
+              </button>
+            )}
           </div>
-          <div className="bg-gray-50 rounded p-1.5 text-center">
-            <div className="text-gray-500">Book Value</div>
-            <div className="font-medium text-gray-900">{formatCurrency(equipment.currentValue)}</div>
+        )}
+
+        <div className="text-sm text-gray-600 mb-3">
+          {equipment.make} {equipment.model} ({equipment.year})
+        </div>
+
+        {equipment.currentJob && (
+          <div className="flex items-center gap-2 mb-2 text-sm">
+            <MapPin className="h-4 w-4 text-gray-400" />
+            <span className="text-gray-700">{equipment.currentJob}</span>
           </div>
-          {equipment.costPerHour && (
+        )}
+
+        {equipment.assignedTo && (
+          <div className="flex items-center gap-2 mb-2 text-sm">
+            <User className="h-4 w-4 text-gray-400" />
+            <span className="text-gray-700">{equipment.assignedTo}</span>
+          </div>
+        )}
+
+        {equipment.usage && (
+          <div className="flex items-center gap-2 mb-2 text-sm">
+            <Gauge className="h-4 w-4 text-gray-400" />
+            <span className="text-gray-700">{equipment.usage}</span>
+            {equipment.utilizationRate !== undefined && (
+              <span className={cn(
+                "text-xs px-1.5 py-0.5 rounded font-medium",
+                equipment.utilizationRate >= 70 ? "bg-green-100 text-green-700" :
+                equipment.utilizationRate >= 40 ? "bg-amber-100 text-amber-700" :
+                "bg-red-100 text-red-700"
+              )}>
+                {equipment.utilizationRate}% util
+              </span>
+            )}
+          </div>
+        )}
+
+        {equipment.gpsEnabled && (
+          <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
+            <Navigation className={cn(
+              "h-3.5 w-3.5",
+              equipment.geofenceStatus === 'inside' ? "text-green-500" :
+              equipment.geofenceStatus === 'outside' ? "text-red-500" :
+              "text-gray-400"
+            )} />
+            <span>{equipment.gpsLastLocation}</span>
+          </div>
+        )}
+
+        {/* Rental info with return reminders */}
+        {equipment.isRental && (
+          <div className="mb-3 p-2 rounded bg-orange-50 text-xs text-orange-700 space-y-1">
+            <div className="font-medium">Rental from {equipment.rentalVendor}</div>
+            <div>Rate: {equipment.rentalRate}</div>
+            {equipment.rentalExpectedReturn && (
+              <div className="flex items-center gap-2">
+                <span>Return by: {formatDate(equipment.rentalExpectedReturn)}</span>
+                {rentalOverdue && (
+                  <span className="px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-semibold">
+                    OVERDUE by {Math.abs(rentalDaysUntilReturn!)} days
+                  </span>
+                )}
+                {rentalSoonDue && (
+                  <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium">
+                    Return in {rentalDaysUntilReturn} days
+                  </span>
+                )}
+              </div>
+            )}
+            {rentalCostAccumulated > 0 && (
+              <div className="flex items-center gap-1 mt-1 pt-1 border-t border-orange-200">
+                <DollarSign className="h-3 w-3" />
+                <span>Cost accumulated: ${rentalCostAccumulated.toLocaleString()}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Checkout info */}
+        {equipment.checkoutStatus === 'checked_out' && !equipment.isRental && (
+          <div className="mb-2 text-xs text-gray-500 flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            Checked out: {equipment.checkoutDate ? formatDate(equipment.checkoutDate) : ''}
+            {equipment.expectedReturnDate && <span> (Return: {formatDate(equipment.expectedReturnDate)})</span>}
+          </div>
+        )}
+
+        {equipment.maintenanceNote && (
+          <div className="mb-3 p-2 rounded bg-amber-50 flex items-start gap-2 text-xs">
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
+            <span className="text-amber-700">{equipment.maintenanceNote}</span>
+          </div>
+        )}
+
+        {/* Checklist Status */}
+        {hasChecklist && (
+          <div className="mb-3 flex items-center gap-2 text-xs">
+            <FileText className="h-3.5 w-3.5 text-gray-400" />
+            {equipment.checklistCompleted ? (
+              <span className="text-green-600 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                Checklist completed {equipment.checklistCompletedDate ? formatDate(equipment.checklistCompletedDate) : ''}
+              </span>
+            ) : (
+              <span className="text-amber-600">Checklist pending</span>
+            )}
+          </div>
+        )}
+
+        {/* Value and depreciation */}
+        {!equipment.isRental && (
+          <div className="mb-3 grid grid-cols-3 gap-2 text-xs">
             <div className="bg-gray-50 rounded p-1.5 text-center">
-              <div className="text-gray-500">Cost/Hr</div>
-              <div className="font-medium text-gray-900">${equipment.costPerHour.toFixed(2)}</div>
+              <div className="text-gray-500">Purchased</div>
+              <div className="font-medium text-gray-900">{formatCurrency(equipment.purchasePrice)}</div>
             </div>
-          )}
-        </div>
-      )}
+            <div className="bg-gray-50 rounded p-1.5 text-center">
+              <div className="text-gray-500">Book Value</div>
+              <div className="font-medium text-gray-900">{formatCurrency(equipment.currentValue)}</div>
+            </div>
+            {equipment.costPerHour && (
+              <div className="bg-gray-50 rounded p-1.5 text-center">
+                <div className="text-gray-500">Cost/Hr</div>
+                <div className="font-medium text-gray-900">${equipment.costPerHour.toFixed(2)}</div>
+              </div>
+            )}
+          </div>
+        )}
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", statusCfg.color)}>
-          <StatusIcon className="h-3.5 w-3.5" />
-          {statusCfg.label}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", statusCfg.color)}>
+            <StatusIcon className="h-3.5 w-3.5" />
+            {statusCfg.label}
+          </div>
+          <div className="flex items-center gap-2">
+            {equipment.nextMaintenance && (
+              <span className={cn(
+                "text-xs flex items-center gap-1",
+                maintenanceOverdue ? "text-red-600 font-medium" : "text-gray-500"
+              )}>
+                <Calendar className="h-3 w-3" />
+                {formatDate(equipment.nextMaintenance)}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {equipment.nextMaintenance && (
-            <span className="text-xs text-gray-500 flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              {formatDate(equipment.nextMaintenance)}
-            </span>
+
+        {equipment.aiNote && (
+          <div className="mt-3 p-2 rounded-md bg-blue-50 flex items-start gap-2 text-xs">
+            <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-blue-500" />
+            <span className="text-blue-700">{equipment.aiNote}</span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+          {equipment.status === 'available' && (
+            <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+              <MapPin className="h-3.5 w-3.5" />
+              Deploy to Job
+            </button>
           )}
+          {equipment.status === 'deployed' && (
+            <>
+              <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+                <CheckCircle className="h-3.5 w-3.5" />
+                Return / Check In
+              </button>
+              <button
+                onClick={() => setBreakdownModalOpen(true)}
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-red-600 border border-red-200 rounded hover:bg-red-50"
+              >
+                <AlertTriangle className="h-3.5 w-3.5" />
+                Breakdown
+              </button>
+            </>
+          )}
+          {equipment.status === 'maintenance' && (
+            <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-amber-600 border border-amber-200 rounded hover:bg-amber-50">
+              <Wrench className="h-3.5 w-3.5" />
+              View Maintenance
+            </button>
+          )}
+          {hasChecklist && !equipment.checklistCompleted && (
+            <button
+              onClick={() => setChecklistModalOpen(true)}
+              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-purple-600 border border-purple-200 rounded hover:bg-purple-50"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              Checklist
+            </button>
+          )}
+          <button
+            onClick={() => setQrModalOpen(true)}
+            className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
+          >
+            <QrCode className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
-      {equipment.aiNote && (
-        <div className="mt-3 p-2 rounded-md bg-blue-50 flex items-start gap-2 text-xs">
-          <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-blue-500" />
-          <span className="text-blue-700">{equipment.aiNote}</span>
-        </div>
+      {/* Modals */}
+      <QRCodeModal
+        equipment={equipment}
+        isOpen={qrModalOpen}
+        onClose={() => setQrModalOpen(false)}
+      />
+
+      {equipment.photoUrls && (
+        <PhotoGalleryModal
+          photos={equipment.photoUrls}
+          equipmentName={equipment.name}
+          isOpen={photoModalOpen}
+          onClose={() => setPhotoModalOpen(false)}
+          initialIndex={photoIndex}
+        />
       )}
 
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-        {equipment.status === 'available' && (
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
-            <MapPin className="h-3.5 w-3.5" />
-            Deploy to Job
-          </button>
-        )}
-        {equipment.status === 'deployed' && (
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
-            <CheckCircle className="h-3.5 w-3.5" />
-            Return / Check In
-          </button>
-        )}
-        {equipment.status === 'maintenance' && (
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-amber-600 border border-amber-200 rounded hover:bg-amber-50">
-            <Wrench className="h-3.5 w-3.5" />
-            View Maintenance
-          </button>
-        )}
-        <button className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
-          <QrCode className="h-3.5 w-3.5" />
-        </button>
-      </div>
-    </div>
+      <ChecklistModal
+        equipment={equipment}
+        isOpen={checklistModalOpen}
+        onClose={() => setChecklistModalOpen(false)}
+      />
+
+      <BreakdownModal
+        equipment={equipment}
+        isOpen={breakdownModalOpen}
+        onClose={() => setBreakdownModalOpen(false)}
+      />
+    </>
   )
 }
 
@@ -686,6 +1362,49 @@ export function EquipmentPreview() {
   const activeRentalCost = mockRentals.filter(r => r.status === 'active' || r.status === 'overdue').reduce((sum, r) => sum + r.totalCostToDate, 0)
   const gpsTrackedCount = mockEquipment.filter(e => e.gpsEnabled).length
 
+  // Count overdue maintenance
+  const overdueMaintenanceCount = mockEquipment.filter(e => isMaintenanceOverdue(e.nextMaintenance)).length
+
+  // AI Features
+  const aiFeatures = [
+    {
+      id: 'maintenance-prediction',
+      title: 'Maintenance Prediction',
+      description: 'Generator approaching 500 hours. Oil change due in ~50 operating hours based on 250-hour interval.',
+      icon: Clock,
+      iconBg: 'bg-amber-100',
+      iconColor: 'text-amber-600',
+      action: { label: 'Schedule Maintenance', onClick: () => {} },
+    },
+    {
+      id: 'utilization-analysis',
+      title: 'Utilization Analysis',
+      description: 'Bobcat S650 at 40% utilization this month. Consider: Rent out idle days or reassign to Johnson project.',
+      icon: Gauge,
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-blue-600',
+      action: { label: 'View Report', onClick: () => {} },
+    },
+    {
+      id: 'rent-vs-own',
+      title: 'Rent vs Own Analysis',
+      description: '12-month excavator rental spend: $24,800. Purchase price: $85,000. Break-even: 41 months. Recommend: Continue renting.',
+      icon: CircleDollarSign,
+      iconBg: 'bg-green-100',
+      iconColor: 'text-green-600',
+      action: { label: 'Full Analysis', onClick: () => {} },
+    },
+    {
+      id: 'location-intelligence',
+      title: 'Location Intelligence',
+      description: 'Compactor left Harbor View at 11:47 PM Saturday. Unusual - verify with site super Monday AM.',
+      icon: MapPinned,
+      iconBg: 'bg-red-100',
+      iconColor: 'text-red-600',
+      action: { label: 'View Location', onClick: () => {} },
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -697,6 +1416,12 @@ export function EquipmentPreview() {
               <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
                 {totalEquipment} owned + {rentalCount} rented
               </span>
+              {overdueMaintenanceCount > 0 && (
+                <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {overdueMaintenanceCount} overdue
+                </span>
+              )}
             </div>
             <div className="text-sm text-gray-500 mt-0.5">
               Track equipment, tools, vehicles, rentals, maintenance, and depreciation
@@ -955,20 +1680,37 @@ export function EquipmentPreview() {
                 <h5 className="font-medium text-amber-800">Maintenance Due / Overdue</h5>
               </div>
               <div className="space-y-2">
-                {mockEquipment.filter(e => e.maintenanceNote).map(eq => (
-                  <div key={eq.id} className="flex items-center justify-between bg-white rounded p-2 border border-amber-100">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-gray-500">{eq.assetTag}</span>
-                      <span className="text-sm font-medium text-gray-900">{eq.name}</span>
+                {mockEquipment.filter(e => e.maintenanceNote || isMaintenanceOverdue(e.nextMaintenance)).map(eq => {
+                  const overdue = isMaintenanceOverdue(eq.nextMaintenance)
+                  const days = getOverdueDays(eq.nextMaintenance)
+                  return (
+                    <div key={eq.id} className={cn(
+                      "flex items-center justify-between rounded p-2 border",
+                      overdue ? "bg-red-50 border-red-200" : "bg-white border-amber-100"
+                    )}>
+                      <div className="flex items-center gap-2">
+                        {overdue && (
+                          <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            OVERDUE
+                          </span>
+                        )}
+                        <span className="font-mono text-xs text-gray-500">{eq.assetTag}</span>
+                        <span className="text-sm font-medium text-gray-900">{eq.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {overdue ? (
+                          <span className="text-xs text-red-700 font-medium">{days} days overdue</span>
+                        ) : (
+                          <span className="text-xs text-amber-700">{eq.maintenanceNote}</span>
+                        )}
+                        <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                          Schedule <ChevronRight className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-amber-700">{eq.maintenanceNote}</span>
-                      <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                        Schedule <ChevronRight className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
@@ -1024,6 +1766,16 @@ export function EquipmentPreview() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="border-t border-gray-200">
+        <AIFeaturesPanel
+          title="Equipment Intelligence"
+          features={aiFeatures}
+          collapsible
+          defaultExpanded={false}
+        />
       </div>
 
       {/* AI Insights Bar */}

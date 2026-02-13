@@ -38,6 +38,7 @@ import {
   Smartphone,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -668,6 +669,51 @@ export function DashboardsPreview() {
           {selectedDashboard && <DashboardEditor dashboard={selectedDashboard} />}
         </div>
       )}
+
+      {/* AI Features Panel */}
+      <div className="px-4 pb-4">
+        <AIFeaturesPanel
+          title="AI-Powered Dashboard Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Widget Recommendations',
+              trigger: 'Real-time',
+              insight: 'Suggests relevant widgets based on your role and frequently accessed data.',
+              severity: 'info',
+              confidence: 88,
+            },
+            {
+              feature: 'Data Refresh',
+              trigger: 'On change',
+              insight: 'Optimizes data refresh timing to balance performance with data freshness.',
+              severity: 'success',
+              confidence: 92,
+            },
+            {
+              feature: 'Alert Configuration',
+              trigger: 'Daily',
+              insight: 'Smart alert thresholds based on historical patterns and business context.',
+              severity: 'warning',
+              confidence: 85,
+            },
+            {
+              feature: 'Layout Optimization',
+              trigger: 'On creation',
+              insight: 'Suggests dashboard layouts optimized for your screen size and usage patterns.',
+              severity: 'info',
+              confidence: 78,
+            },
+            {
+              feature: 'Insight Generation',
+              trigger: 'Real-time',
+              insight: 'Auto-generates insights from dashboard data to surface trends and anomalies.',
+              severity: 'success',
+              confidence: 94,
+            },
+          ]}
+        />
+      </div>
 
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">

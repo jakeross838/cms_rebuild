@@ -10,6 +10,7 @@ import {
   Bell,
   Search,
   UserCircle,
+  Settings,
 } from 'lucide-react'
 import {
   companyNav,
@@ -148,6 +149,78 @@ function NavItemList({ items, jobBase }: { items: NavItem[]; jobBase?: string })
   )
 }
 
+// ── Settings mega-menu (consolidates Directory, Library, Platform, Settings) ──
+
+function SettingsMegaMenu() {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+
+  // Check if any right nav item is active
+  const isActive = companyRightNav.some(section =>
+    section.items?.some(item =>
+      pathname === item.href || pathname.startsWith(item.href + '/')
+    )
+  )
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors',
+          isActive && 'bg-accent text-foreground'
+        )}
+        title="Settings & More"
+      >
+        <Settings className="h-5 w-5" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-1 w-[640px] bg-popover rounded-lg shadow-lg border border-border p-4 z-[100]">
+          <div className="grid grid-cols-3 gap-6">
+            {companyRightNav.map((section) => (
+              <div key={section.label}>
+                <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-foreground">
+                  <section.icon className="h-4 w-4" />
+                  {section.label}
+                </div>
+                <div className="space-y-0.5">
+                  {section.items?.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        'block px-2 py-1.5 text-sm rounded-md transition-colors',
+                        pathname === item.href || pathname.startsWith(item.href + '/')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main unified nav ──────────────────────────────────────────
 
 export function UnifiedNav() {
@@ -171,16 +244,18 @@ export function UnifiedNav() {
           <span className="font-semibold text-foreground">RossOS</span>
         </Link>
 
-        {/* ── Left zone ── */}
+        {/* ── Main Navigation ── */}
         <nav className="flex items-center gap-1">
           {isJobContext ? (
             <>
+              {/* Job context: Overview, Property + Phase dropdowns */}
               <NavItemList items={jobNav} jobBase={jobBase} />
               <div className="h-6 w-px bg-border mx-2" />
               <NavItemList items={jobPhaseNav} jobBase={jobBase} />
             </>
           ) : (
             <>
+              {/* Company context: Dashboard, Sales, Jobs + Operations, Financial */}
               <NavItemList items={companyNav} />
               <div className="h-6 w-px bg-border mx-2" />
               <NavItemList items={companyJobNav} />
@@ -188,26 +263,18 @@ export function UnifiedNav() {
           )}
         </nav>
 
-        {/* ── Divider ── */}
-        <div className="h-6 w-px bg-border mx-3" />
-
-        {/* ── Right zone (support) ── */}
-        <nav className="flex items-center gap-1">
-          <NavItemList items={companyRightNav} />
-        </nav>
-
         {/* ── Spacer ── */}
         <div className="flex-1" />
 
         {/* ── Utility zone ── */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {/* Search */}
-          <div className="relative">
+          <div className="relative mr-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search..."
-              className="w-48 pl-9 pr-4 py-1.5 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-48 pl-9 pr-4 py-1.5 text-sm border border-border rounded-lg bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent focus:bg-background"
             />
           </div>
 
@@ -217,15 +284,18 @@ export function UnifiedNav() {
             <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full" />
           </button>
 
+          {/* Settings mega-menu (consolidates Directory, Library, Platform, Settings) */}
+          <SettingsMegaMenu />
+
           {/* User avatar */}
-          <button className="flex items-center gap-2 p-1.5 hover:bg-accent rounded-lg">
+          <button className="flex items-center gap-2 p-1.5 hover:bg-accent rounded-lg ml-1">
             <div className="h-8 w-8 bg-muted rounded-full flex items-center justify-center">
               <UserCircle className="h-5 w-5 text-muted-foreground" />
             </div>
           </button>
 
           {/* Skeleton mode badge */}
-          <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
+          <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full ml-2">
             Skeleton
           </span>
         </div>

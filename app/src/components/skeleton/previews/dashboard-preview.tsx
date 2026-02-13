@@ -36,6 +36,7 @@ import {
   Phone,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1182,6 +1183,51 @@ export function DashboardPreview() {
             <span className="ml-1 text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-medium">AI-generated</span>
           </p>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="px-4 py-4 bg-white border-t border-gray-200">
+        <AIFeaturesPanel
+          title="Dashboard AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Priority Alerts',
+              trigger: 'real-time',
+              insight: 'AI-ranked urgent items needing attention. Currently flagging 3 high-priority items: overdue draw approval, expired vendor insurance, and weather-impacted schedule conflicts.',
+              severity: 'critical',
+              confidence: 94,
+            },
+            {
+              feature: 'Project Health',
+              trigger: 'daily',
+              insight: 'Overall project health scoring across your portfolio. 9 of 12 active jobs rated "Healthy", 2 rated "At Risk" due to budget overruns, 1 rated "Critical" requiring immediate attention.',
+              severity: 'warning',
+              confidence: 91,
+            },
+            {
+              feature: 'Action Recommendations',
+              trigger: 'real-time',
+              insight: 'Suggested next actions based on current state: Schedule Thompson Renovation kick-off, follow up on 3 overdue invoices, and review Wilson Custom Home electrical budget before next draw.',
+              severity: 'info',
+              confidence: 87,
+            },
+            {
+              feature: 'Risk Indicators',
+              trigger: 'daily',
+              insight: 'Early warning for project risks. Detecting potential schedule slip on Anderson Pool House due to permit delays, and cash flow tightness projected for end of month if draws are not submitted.',
+              severity: 'warning',
+              confidence: 82,
+            },
+            {
+              feature: 'Performance Insights',
+              trigger: 'weekly',
+              insight: 'Key metrics and trends: Revenue trending 8% above target, profit margin 0.8% below target, client satisfaction score at 94%. Draw cycle time improved by 2 days vs last quarter.',
+              severity: 'success',
+              confidence: 96,
+            },
+          ]}
+        />
       </div>
     </div>
   )

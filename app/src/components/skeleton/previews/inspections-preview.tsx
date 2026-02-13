@@ -23,10 +23,14 @@ import {
   Wrench,
   ListChecks,
   TrendingUp,
+  TrendingDown,
+  Target,
+  Gauge,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -38,9 +42,35 @@ type InspectionResult = 'pass' | 'fail' | 'conditional_pass' | 'no_show' | null
 interface Deficiency {
   description: string
   responsibleVendor: string
+  responsibleVendorId: string
   correctionTaskCreated: boolean
   resolved: boolean
   photos: number
+}
+
+interface VendorFTQ {
+  vendorId: string
+  vendorName: string
+  ftqScore: number
+  ftqTrend: 'up' | 'down' | 'stable'
+  ftqThreshold: 'excellent' | 'good' | 'fair' | 'poor'
+}
+
+// Vendor FTQ data for inspections
+const vendorFTQData: Record<string, VendorFTQ> = {
+  'jones': { vendorId: 'jones', vendorName: 'Jones Plumbing', ftqScore: 78, ftqTrend: 'down', ftqThreshold: 'fair' },
+  'abc_electric': { vendorId: 'abc_electric', vendorName: 'ABC Electric', ftqScore: 92, ftqTrend: 'up', ftqThreshold: 'good' },
+  'hvac_pro': { vendorId: 'hvac_pro', vendorName: 'HVAC Pro Services', ftqScore: 88, ftqTrend: 'stable', ftqThreshold: 'good' },
+  'frame_masters': { vendorId: 'frame_masters', vendorName: 'Frame Masters', ftqScore: 95, ftqTrend: 'up', ftqThreshold: 'excellent' },
+  'roof_right': { vendorId: 'roof_right', vendorName: 'Roof Right Co', ftqScore: 96, ftqTrend: 'stable', ftqThreshold: 'excellent' },
+}
+
+// FTQ threshold configuration
+const ftqThresholdConfig = {
+  excellent: { label: 'Excellent', bgColor: 'bg-green-100', textColor: 'text-green-700' },
+  good: { label: 'Good', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
+  fair: { label: 'Fair', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
+  poor: { label: 'Poor', bgColor: 'bg-red-100', textColor: 'text-red-700' },
 }
 
 interface Inspection {
@@ -147,6 +177,7 @@ const mockInspections: Inspection[] = [
       {
         description: 'Water heater vent clearance insufficient - requires 6" from combustible materials, currently at 3"',
         responsibleVendor: 'Jones Plumbing',
+        responsibleVendorId: 'jones',
         correctionTaskCreated: true,
         resolved: true,
         photos: 2,
@@ -154,6 +185,7 @@ const mockInspections: Inspection[] = [
       {
         description: 'P-trap missing under laundry sink drain - required per IPC 2021 Section 1002',
         responsibleVendor: 'Jones Plumbing',
+        responsibleVendorId: 'jones',
         correctionTaskCreated: true,
         resolved: true,
         photos: 1,
@@ -439,8 +471,21 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                       <p className={def.resolved ? 'text-green-700' : 'text-red-700'}>{def.description}</p>
                       {def.resolved && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0 ml-2" />}
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-gray-500">
+                    <div className="flex items-center gap-3 mt-1 text-gray-500 flex-wrap">
                       <span className="flex items-center gap-1"><Wrench className="h-3 w-3" />{def.responsibleVendor}</span>
+                      {/* Vendor FTQ Badge */}
+                      {def.responsibleVendorId && vendorFTQData[def.responsibleVendorId] && (
+                        <span className={cn(
+                          "flex items-center gap-0.5 px-1 py-0.5 rounded text-[10px] font-medium",
+                          ftqThresholdConfig[vendorFTQData[def.responsibleVendorId].ftqThreshold].bgColor,
+                          ftqThresholdConfig[vendorFTQData[def.responsibleVendorId].ftqThreshold].textColor
+                        )} title="First-Time Quality Score">
+                          <Target className="h-2.5 w-2.5" />
+                          FTQ {vendorFTQData[def.responsibleVendorId].ftqScore}%
+                          {vendorFTQData[def.responsibleVendorId].ftqTrend === 'up' && <TrendingUp className="h-2.5 w-2.5" />}
+                          {vendorFTQData[def.responsibleVendorId].ftqTrend === 'down' && <TrendingDown className="h-2.5 w-2.5" />}
+                        </span>
+                      )}
                       {def.correctionTaskCreated && <span className="text-blue-600 flex items-center gap-1"><ClipboardCheck className="h-3 w-3" />Task created</span>}
                       {def.photos > 0 && <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{def.photos} photos</span>}
                     </div>
@@ -781,6 +826,58 @@ export function InspectionsPreview() {
             <p>&#x2022; Historical: Jones Plumbing has 78% first-pass rate (below avg 85%). Recommend extra QC before scheduling inspections.</p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="border-t border-gray-200 px-4 py-4 bg-white">
+        <AIFeaturesPanel
+          title="AI Inspection Features"
+          columns={2}
+          features={[
+            {
+              feature: 'FTQ Vendor Analysis',
+              trigger: 'Real-time',
+              insight: 'Jones Plumbing FTQ at 78% (below 85% threshold). Recommend pre-inspection QC walkthrough before scheduling.',
+              severity: 'critical',
+              confidence: 94,
+            },
+            {
+              feature: 'Scheduling Optimization',
+              trigger: 'Real-time',
+              insight: 'Suggests optimal inspection timing based on inspector availability, weather forecasts, and prerequisite completion status.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'FTQ Trend Tracking',
+              trigger: 'Daily',
+              insight: 'Frame Masters FTQ improved to 95% (up 3.2% this month). Roof Right Co maintains 96% excellence.',
+              severity: 'success',
+              confidence: 91,
+            },
+            {
+              feature: 'Readiness Check',
+              trigger: 'On-change',
+              insight: 'Validates prerequisites before scheduling. Foundation inspection requires plumbing stubs and electrical conduit - currently 60% ready.',
+              severity: 'warning',
+              confidence: 88,
+            },
+            {
+              feature: 'Failure Prediction',
+              trigger: 'Real-time',
+              insight: 'Based on vendor FTQ scores and checklist completion, electrical rough-in has 35% predicted failure risk.',
+              severity: 'warning',
+              confidence: 82,
+            },
+            {
+              feature: 'Rescheduling Alerts',
+              trigger: 'Real-time',
+              insight: 'Saturday plumbing re-inspection may conflict with predicted rain - consider Friday afternoon.',
+              severity: 'warning',
+              confidence: 85,
+            },
+          ]}
+        />
       </div>
     </div>
   )

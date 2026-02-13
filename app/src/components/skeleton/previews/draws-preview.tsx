@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type DrawStatus = 'draft' | 'internal_review' | 'approved_internal' | 'submitted' | 'lender_review' | 'revision_requested' | 'approved' | 'disbursed' | 'paid'
@@ -728,6 +729,51 @@ export function DrawsPreview() {
             Based on 23 similar projects, submit Draw #5 documentation 5 days before milestone for 40% faster approval.
           </p>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI-Powered Draw Management"
+          columns={2}
+          features={[
+            {
+              feature: 'Completion Verification',
+              trigger: 'on-submission',
+              insight: 'Validates work completion before draw submission by cross-referencing progress photos, inspection reports, and subcontractor sign-offs.',
+              severity: 'info',
+              confidence: 94,
+            },
+            {
+              feature: 'Overbilling Detection',
+              trigger: 'real-time',
+              insight: 'Flags potential overbilling by comparing claimed percentages against historical patterns and industry benchmarks.',
+              severity: 'warning',
+              confidence: 87,
+            },
+            {
+              feature: 'Draw Timing Optimization',
+              trigger: 'daily',
+              insight: 'Suggests optimal draw timing based on lender processing patterns, cash flow needs, and project milestones.',
+              severity: 'success',
+              confidence: 91,
+            },
+            {
+              feature: 'Lender Pattern Analysis',
+              trigger: 'on-change',
+              insight: 'Tracks lender approval patterns including average review times, common revision requests, and inspector preferences.',
+              severity: 'info',
+              confidence: 88,
+            },
+            {
+              feature: 'Cash Flow Projection',
+              trigger: 'real-time',
+              insight: 'Projects cash flow impact of pending draws, accounting for retainage schedules and typical disbursement timelines.',
+              severity: 'info',
+              confidence: 92,
+            },
+          ]}
+        />
       </div>
     </div>
   )

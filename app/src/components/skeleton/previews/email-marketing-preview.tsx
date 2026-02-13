@@ -31,6 +31,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type CampaignStatus = 'draft' | 'scheduled' | 'sent' | 'automated'
 type CampaignType = 'one-time' | 'automated' | 'drip'
@@ -608,6 +609,56 @@ export function EmailMarketingPreview() {
             <p>Portfolio page for "Davis Coastal Home" has been viewed 47 times - generating interest. Consider a case study to capitalize on momentum.</p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI-Powered Email Marketing"
+          columns={2}
+          features={[
+            {
+              feature: 'Send Time Optimization',
+              trigger: 'Real-time',
+              insight: 'Best time to send emails based on recipient engagement patterns and historical open rates.',
+              detail: 'Analyzes past campaign performance to determine optimal send times for each audience segment.',
+              confidence: 92,
+              severity: 'success',
+            },
+            {
+              feature: 'Subject Line Analysis',
+              trigger: 'On creation',
+              insight: 'Predicts open rates by analyzing subject line effectiveness using AI models.',
+              detail: 'Evaluates subject line length, tone, personalization, and urgency to forecast engagement.',
+              confidence: 87,
+              severity: 'info',
+            },
+            {
+              feature: 'Audience Segmentation',
+              trigger: 'Daily',
+              insight: 'Smart list segmentation based on client behavior, engagement history, and project status.',
+              detail: 'Automatically groups contacts by engagement level, project type, and likelihood to convert.',
+              confidence: 94,
+              severity: 'success',
+            },
+            {
+              feature: 'Content Suggestions',
+              trigger: 'On creation',
+              insight: 'AI content recommendations tailored to your audience and campaign goals.',
+              detail: 'Suggests copy improvements, calls-to-action, and personalization tokens based on best practices.',
+              confidence: 85,
+              severity: 'info',
+            },
+            {
+              feature: 'Performance Prediction',
+              trigger: 'On submission',
+              insight: 'Predicts campaign results including open rates, click rates, and conversion likelihood.',
+              detail: 'Uses machine learning to forecast campaign performance before sending.',
+              confidence: 89,
+              severity: 'success',
+            },
+          ]}
+        />
       </div>
     </div>
   )

@@ -54,6 +54,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type IntegrationStatus = 'connected' | 'disconnected' | 'error' | 'paused'
 type IntegrationCategory = 'accounting' | 'calendar' | 'communication' | 'storage' | 'automation' | 'payment' | 'esignature' | 'construction' | 'financial_feeds' | 'suppliers' | 'design' | 'geospatial' | 'weather' | 'building_codes' | 'licensing' | 'energy' | 'smart_home' | 'site_services' | 'crm'
@@ -1188,6 +1189,56 @@ export function IntegrationsPreview() {
             <p>You manually enter 8 permit statuses/week. Installing the Accela integration could save 2+ hours/week with auto-status checking.</p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="p-4 border-t border-gray-200">
+        <AIFeaturesPanel
+          title="Integration AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Sync Health Monitoring',
+              trigger: 'Real-time',
+              insight: 'Tracks integration sync status across all connected services. Currently monitoring 6 active integrations with 99.2% overall health score.',
+              detail: 'Continuous monitoring of sync operations, latency metrics, and circuit breaker states to ensure reliable data flow between systems.',
+              severity: 'success',
+              confidence: 99,
+            },
+            {
+              feature: 'Error Pattern Detection',
+              trigger: 'On change',
+              insight: 'Identifies recurring sync issues. Detected pattern: QuickBooks vendor sync failures occur 3x more often on Mondays due to rate limiting.',
+              detail: 'Machine learning analysis of error logs to surface systemic issues and recommend preventive measures before they impact operations.',
+              severity: 'warning',
+              confidence: 87,
+            },
+            {
+              feature: 'Data Mapping Suggestions',
+              trigger: 'On creation',
+              insight: 'Recommends field mappings for new integrations. Suggested mapping: RossOS "Project.Client" to Stripe "Customer.name" with 94% accuracy.',
+              detail: 'AI analyzes data schemas from both systems to suggest optimal field mappings, reducing manual configuration time by up to 80%.',
+              severity: 'info',
+              confidence: 94,
+            },
+            {
+              feature: 'Usage Analytics',
+              trigger: 'Weekly',
+              insight: 'Shows most valuable integrations. QuickBooks saves 12 hrs/week, Gmail auto-filing saves 8 hrs/week. Stripe adoption recommended based on payment patterns.',
+              detail: 'Calculates ROI for each integration based on automation savings, error reduction, and workflow efficiency improvements.',
+              severity: 'success',
+              confidence: 91,
+            },
+            {
+              feature: 'Conflict Resolution',
+              trigger: 'Real-time',
+              insight: 'Suggests fixes for data conflicts. Found: Vendor "ABC Lumber" exists in both RossOS and QuickBooks with different IDs. Auto-merge available.',
+              detail: 'Detects data conflicts across integrated systems and provides intelligent resolution options including merge, override, or manual review.',
+              severity: 'warning',
+              confidence: 85,
+            },
+          ]}
+        />
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { JobSidebar } from '@/components/skeleton/job-sidebar'
+import { JobSelectorSidebar } from '@/components/skeleton/job-selector-sidebar'
 
 export default function JobLayout({
   children,
@@ -7,7 +7,7 @@ export default function JobLayout({
 }) {
   return (
     <div className="flex flex-1 overflow-hidden -m-6">
-      <JobSidebar />
+      <JobSelectorSidebar />
 
       <div className="flex-1 overflow-y-auto p-6">
         {children}

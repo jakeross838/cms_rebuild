@@ -41,6 +41,7 @@ import {
   ArrowUpDown,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -888,6 +889,51 @@ export function CompanySettingsPreview() {
             Approval thresholds have not been reviewed in 90+ days.
           </p>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Company Settings AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Compliance Check',
+              trigger: 'daily',
+              insight: 'Verifies regulatory compliance across company settings, license renewals, and insurance requirements.',
+              severity: 'success',
+              confidence: 92,
+            },
+            {
+              feature: 'Branding Consistency',
+              trigger: 'on-change',
+              insight: 'Ensures brand alignment across all portals, documents, and communications for consistent presentation.',
+              severity: 'info',
+              confidence: 88,
+            },
+            {
+              feature: 'Integration Health',
+              trigger: 'real-time',
+              insight: 'Monitors integrations with QuickBooks, scheduling tools, and third-party services for connectivity issues.',
+              severity: 'success',
+              confidence: 95,
+            },
+            {
+              feature: 'User Activity',
+              trigger: 'weekly',
+              insight: 'Tracks user engagement patterns, identifies inactive accounts, and suggests permission optimizations.',
+              severity: 'info',
+              confidence: 85,
+            },
+            {
+              feature: 'Security Posture',
+              trigger: 'real-time',
+              insight: 'Assesses security status including MFA adoption, session policies, and access pattern anomalies.',
+              severity: 'warning',
+              confidence: 78,
+            },
+          ]}
+        />
       </div>
     </div>
   )

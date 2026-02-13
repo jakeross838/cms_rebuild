@@ -28,6 +28,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type ItemType = 'line' | 'allowance' | 'exclusion' | 'alternate'
 type ContractType = 'nte' | 'gmp' | 'cost_plus' | 'fixed'
@@ -753,6 +754,56 @@ export function EstimatesPreview() {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Historical Pricing',
+              trigger: 'on-creation',
+              insight: 'Compares to similar past projects',
+              detail: 'This estimate is 3% below your average for coastal elevated homes of similar size. Porch ceiling pricing is 8% higher than your last 5 projects.',
+              confidence: 87,
+              severity: 'info',
+            },
+            {
+              feature: 'Market Rate Check',
+              trigger: 'real-time',
+              insight: 'Validates pricing against market rates',
+              detail: 'Impact windows pricing is competitive. Kitchen cabinet labor rate is 12% below current market - consider adjusting to avoid margin squeeze.',
+              confidence: 91,
+              severity: 'success',
+            },
+            {
+              feature: 'Scope Completeness',
+              trigger: 'on-change',
+              insight: 'Identifies potentially missing line items',
+              detail: 'Consider adding: Soffit venting (typical for coastal), Hurricane straps (code requirement), Waterproofing membrane for exterior.',
+              confidence: 78,
+              severity: 'warning',
+            },
+            {
+              feature: 'Risk Assessment',
+              trigger: 'on-submission',
+              insight: 'Flags high-risk assumptions',
+              detail: 'High risk: 8-week window lead time vs 4-week project start. Medium risk: Tile allowance historically under-budgeted by 15% for premium clients.',
+              confidence: 82,
+              severity: 'warning',
+            },
+            {
+              feature: 'Win Probability',
+              trigger: 'real-time',
+              insight: 'Predicts likelihood of winning bid',
+              detail: 'Based on client profile, project type, and pricing position, estimated 73% win probability. Premium tier selections align with client history.',
+              confidence: 73,
+              severity: 'info',
+            },
+          ]}
+        />
       </div>
     </div>
   )

@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 // ---------------------------------------------------------------------------
@@ -593,6 +594,32 @@ export function NotificationsPreview() {
           </button>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Priority Scoring',
+            description: 'Ranks notifications by importance',
+          },
+          {
+            title: 'Smart Grouping',
+            description: 'Groups related notifications',
+          },
+          {
+            title: 'Delivery Optimization',
+            description: 'Chooses best delivery channel',
+          },
+          {
+            title: 'Noise Reduction',
+            description: 'Filters low-value notifications',
+          },
+          {
+            title: 'Action Suggestions',
+            description: 'Recommends next actions',
+          },
+        ]}
+      />
     </div>
   )
 }

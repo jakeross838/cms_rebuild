@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
 
 interface CalendarTask {
@@ -593,6 +594,32 @@ export function CalendarPreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Conflict Detection',
+            description: 'Identifies scheduling conflicts',
+          },
+          {
+            title: 'Optimal Timing',
+            description: 'Suggests best times for inspections/meetings',
+          },
+          {
+            title: 'Travel Optimization',
+            description: 'Groups appointments by location',
+          },
+          {
+            title: 'Resource Balancing',
+            description: 'Identifies over/under scheduled days',
+          },
+          {
+            title: 'Weather Awareness',
+            description: 'Flags outdoor activities on bad weather days',
+          },
+        ]}
+      />
     </div>
   )
 }

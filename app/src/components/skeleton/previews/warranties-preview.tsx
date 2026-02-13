@@ -27,10 +27,21 @@ import {
   Mail,
   Link2,
   Download,
+  Target,
+  BarChart3,
+  CheckCircle2,
+  XCircle,
+  Play,
+  Award,
+  TrendingDown,
+  Activity,
+  Brain,
+  ListChecks,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -62,6 +73,11 @@ interface Warranty {
   costToDate?: number
   claimCount?: number
   aiNote?: string
+  // FTQ Quality Tracking fields
+  originalConstructionFTQ?: number
+  inspectionLink?: string
+  repairFTQ?: number
+  vendorCallbackRate?: number
 }
 
 interface WalkthroughSchedule {
@@ -72,6 +88,13 @@ interface WalkthroughSchedule {
   findingsCount?: number
   completedBy?: string
   homeownerSigned?: boolean
+  // FTQ Checklist fields
+  checklistId?: string
+  checklistName?: string
+  checklistCompletion?: number
+  checklistFTQ?: number
+  totalItems?: number
+  passedItems?: number
 }
 
 interface WarrantyReserve {
@@ -83,9 +106,64 @@ interface WarrantyReserve {
   utilizationPercentage: number
 }
 
+interface VendorWarrantyCallback {
+  vendorName: string
+  totalClaims: number
+  callbackRate: number
+  warrantyFTQ: number
+  totalCost: number
+  ranking: number
+  trend: 'improving' | 'stable' | 'declining'
+}
+
+interface ConstructionFTQData {
+  overallScore: number
+  phaseScores: { phase: string; score: number; vendorName: string }[]
+  qualityCorrelation: string
+  predictedClaimsRange: { min: number; max: number }
+  riskAreas: { area: string; riskLevel: 'high' | 'medium' | 'low'; vendorName: string; originalFTQ: number }[]
+}
+
 // ---------------------------------------------------------------------------
 // Mock Data
 // ---------------------------------------------------------------------------
+
+const mockConstructionFTQ: ConstructionFTQData = {
+  overallScore: 94,
+  phaseScores: [
+    { phase: 'Foundation', score: 97, vendorName: 'Gulf Coast Concrete' },
+    { phase: 'Framing', score: 95, vendorName: 'Coastal Framing' },
+    { phase: 'Roofing', score: 96, vendorName: 'Gulf Coast Roofing' },
+    { phase: 'Plumbing', score: 91, vendorName: 'Jones Plumbing' },
+    { phase: 'Electrical', score: 88, vendorName: 'Smith Electric' },
+    { phase: 'HVAC', score: 94, vendorName: 'Cool Air HVAC' },
+    { phase: 'Windows/Doors', score: 93, vendorName: 'Coastal Windows & Doors' },
+    { phase: 'Finishes', score: 92, vendorName: 'Low Country Painting' },
+  ],
+  qualityCorrelation: 'Projects with 94%+ FTQ historically see 40% fewer warranty claims',
+  predictedClaimsRange: { min: 4, max: 8 },
+  riskAreas: [
+    { area: 'Electrical - Bedroom #2', riskLevel: 'high', vendorName: 'Smith Electric', originalFTQ: 88 },
+    { area: 'Plumbing - Master Bath', riskLevel: 'medium', vendorName: 'Jones Plumbing', originalFTQ: 91 },
+    { area: 'Windows - Lot 2024-B Units', riskLevel: 'medium', vendorName: 'Coastal Windows & Doors', originalFTQ: 93 },
+  ],
+}
+
+const mockVendorCallbacks: VendorWarrantyCallback[] = [
+  { vendorName: 'Smith Electric', totalClaims: 8, callbackRate: 12.5, warrantyFTQ: 87, totalCost: 2400, ranking: 5, trend: 'declining' },
+  { vendorName: 'Jones Plumbing', totalClaims: 5, callbackRate: 6.2, warrantyFTQ: 94, totalCost: 890, ranking: 2, trend: 'stable' },
+  { vendorName: 'Cool Air HVAC', totalClaims: 3, callbackRate: 4.1, warrantyFTQ: 96, totalCost: 450, ranking: 1, trend: 'improving' },
+  { vendorName: 'Gulf Coast Roofing', totalClaims: 2, callbackRate: 3.8, warrantyFTQ: 98, totalCost: 320, ranking: 1, trend: 'stable' },
+  { vendorName: 'Coastal Windows & Doors', totalClaims: 4, callbackRate: 8.3, warrantyFTQ: 91, totalCost: 1250, ranking: 3, trend: 'declining' },
+]
+
+const mockRepairFTQScores: Record<string, number> = {
+  '1': 96,
+  '2': 94,
+  '6': 88,
+  '7': 85,
+  '10': 92,
+}
 
 const mockWarranties: Warranty[] = [
   {
@@ -107,6 +185,8 @@ const mockWarranties: Warranty[] = [
     costToDate: 0,
     claimCount: 0,
     aiNote: 'Manufacturer warranty includes annual maintenance requirement. Schedule service before Jan 2026 to maintain coverage.',
+    originalConstructionFTQ: 94,
+    inspectionLink: '/inspections/hvac-rough-in',
   },
   {
     id: '2',
@@ -125,6 +205,8 @@ const mockWarranties: Warranty[] = [
     costToDate: 0,
     claimCount: 0,
     aiNote: 'Workmanship warranty expires in 28 days. Schedule 11-month walkthrough before expiration to document any issues.',
+    originalConstructionFTQ: 94,
+    inspectionLink: '/inspections/hvac-final',
   },
   {
     id: '3',
@@ -144,6 +226,8 @@ const mockWarranties: Warranty[] = [
     claimPhone: '(800) 555-ROOF',
     costToDate: 0,
     claimCount: 0,
+    originalConstructionFTQ: 96,
+    inspectionLink: '/inspections/roofing-final',
   },
   {
     id: '4',
@@ -161,6 +245,8 @@ const mockWarranties: Warranty[] = [
     claimPhone: '(843) 555-7700',
     costToDate: 0,
     claimCount: 0,
+    originalConstructionFTQ: 96,
+    inspectionLink: '/inspections/roofing-final',
   },
   {
     id: '5',
@@ -181,6 +267,8 @@ const mockWarranties: Warranty[] = [
     selectionLink: 'Plumbing > Water Heater > Rinnai RU199',
     costToDate: 0,
     claimCount: 0,
+    originalConstructionFTQ: 91,
+    inspectionLink: '/inspections/plumbing-final',
   },
   {
     id: '6',
@@ -202,6 +290,10 @@ const mockWarranties: Warranty[] = [
     costToDate: 450,
     claimCount: 1,
     aiNote: '1 seal failure claim filed (CLM-2026-078). Same batch as Taylor Estate issue. Monitor other units from lot 2024-B.',
+    originalConstructionFTQ: 93,
+    inspectionLink: '/inspections/windows-doors',
+    repairFTQ: 88,
+    vendorCallbackRate: 8.3,
   },
   {
     id: '7',
@@ -220,6 +312,10 @@ const mockWarranties: Warranty[] = [
     costToDate: 150,
     claimCount: 1,
     aiNote: 'Workmanship warranty expires in 3 days. 1 claim for outlet not functioning in bedroom #2. Ensure all items resolved before expiration.',
+    originalConstructionFTQ: 88,
+    inspectionLink: '/inspections/electrical-rough',
+    repairFTQ: 85,
+    vendorCallbackRate: 12.5,
   },
   {
     id: '8',
@@ -255,6 +351,8 @@ const mockWarranties: Warranty[] = [
     coverageType: 'limited',
     costToDate: 0,
     claimCount: 0,
+    originalConstructionFTQ: 97,
+    inspectionLink: '/inspections/foundation',
   },
   {
     id: '10',
@@ -274,6 +372,8 @@ const mockWarranties: Warranty[] = [
     costToDate: 2840,
     claimCount: 4,
     aiNote: 'Builder 1-year warranty expires in 28 days. 4 claims filed, $2,840 in warranty costs. Schedule 11-month walkthrough immediately.',
+    originalConstructionFTQ: 94,
+    repairFTQ: 92,
   },
   {
     id: '11',
@@ -289,6 +389,8 @@ const mockWarranties: Warranty[] = [
     costToDate: 0,
     claimCount: 0,
     aiNote: 'Warranty expired. Consider extended protection plan or goodwill repairs for client retention.',
+    originalConstructionFTQ: 92,
+    inspectionLink: '/inspections/exterior-paint',
   },
 ]
 
@@ -301,18 +403,30 @@ const mockWalkthroughs: WalkthroughSchedule[] = [
     findingsCount: 3,
     completedBy: 'Mike Johnson',
     homeownerSigned: true,
+    checklistId: 'CL-30DAY-001',
+    checklistName: '30-Day Warranty Walkthrough Checklist',
+    checklistCompletion: 100,
+    checklistFTQ: 96,
+    totalItems: 45,
+    passedItems: 43,
   },
   {
     id: '2',
     type: '11_month',
     scheduledDate: '2025-12-15',
     status: 'scheduled',
+    checklistId: 'CL-11MTH-001',
+    checklistName: '11-Month Warranty Walkthrough Checklist',
+    totalItems: 68,
   },
   {
     id: '3',
     type: '2_year',
     scheduledDate: '2027-01-15',
     status: 'scheduled',
+    checklistId: 'CL-2YR-001',
+    checklistName: '2-Year Structural Walkthrough Checklist',
+    totalItems: 32,
   },
 ]
 
@@ -382,9 +496,273 @@ function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount)
 }
 
+function getFTQColor(score: number): string {
+  if (score >= 95) return 'text-green-600'
+  if (score >= 90) return 'text-blue-600'
+  if (score >= 85) return 'text-amber-600'
+  return 'text-red-600'
+}
+
+function getFTQBgColor(score: number): string {
+  if (score >= 95) return 'bg-green-100 text-green-700'
+  if (score >= 90) return 'bg-blue-100 text-blue-700'
+  if (score >= 85) return 'bg-amber-100 text-amber-700'
+  return 'bg-red-100 text-red-700'
+}
+
+function getRiskColor(level: 'high' | 'medium' | 'low'): string {
+  if (level === 'high') return 'bg-red-100 text-red-700'
+  if (level === 'medium') return 'bg-amber-100 text-amber-700'
+  return 'bg-green-100 text-green-700'
+}
+
+// ---------------------------------------------------------------------------
+// FTQ Panels
+// ---------------------------------------------------------------------------
+
+function ConstructionFTQPanel({ data }: { data: ConstructionFTQData }) {
+  return (
+    <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Target className="h-4 w-4 text-blue-600" />
+        <span className="text-sm font-medium text-gray-700">FTQ Impact on Warranty</span>
+        <span className="text-xs text-gray-500 ml-auto">Construction quality correlation</span>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-100">
+          <div className="text-xs text-blue-600 mb-1">Original Construction FTQ</div>
+          <div className={cn("text-3xl font-bold", getFTQColor(data.overallScore))}>{data.overallScore}%</div>
+          <div className="text-xs text-gray-500 mt-1">First Time Quality Score</div>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="text-xs text-gray-600 mb-1">Predicted Claims</div>
+          <div className="text-2xl font-bold text-gray-800">{data.predictedClaimsRange.min}-{data.predictedClaimsRange.max}</div>
+          <div className="text-xs text-gray-500 mt-1">Year 1 estimate</div>
+        </div>
+        <div className="col-span-2 bg-blue-50 rounded-lg p-3 border border-blue-100">
+          <div className="flex items-start gap-2">
+            <Brain className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <div className="text-xs font-medium text-blue-700 mb-1">Quality Correlation Insight</div>
+              <div className="text-sm text-blue-800">{data.qualityCorrelation}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <div className="text-xs font-medium text-gray-600 mb-2">FTQ by Construction Phase</div>
+          <div className="space-y-1.5">
+            {data.phaseScores.map((phase, idx) => (
+              <div key={idx} className="flex items-center gap-2 text-xs">
+                <span className="w-20 text-gray-600 truncate">{phase.phase}</span>
+                <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full rounded-full",
+                      phase.score >= 95 ? "bg-green-500" :
+                      phase.score >= 90 ? "bg-blue-500" :
+                      phase.score >= 85 ? "bg-amber-500" : "bg-red-500"
+                    )}
+                    style={{ width: `${phase.score}%` }}
+                  />
+                </div>
+                <span className={cn("w-10 text-right font-medium", getFTQColor(phase.score))}>{phase.score}%</span>
+                <span className="w-24 text-gray-400 truncate">{phase.vendorName}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs font-medium text-gray-600 mb-2">Warranty Risk Areas (from FTQ)</div>
+          <div className="space-y-2">
+            {data.riskAreas.map((risk, idx) => (
+              <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-100">
+                <AlertTriangle className={cn(
+                  "h-3.5 w-3.5 flex-shrink-0",
+                  risk.riskLevel === 'high' ? 'text-red-500' :
+                  risk.riskLevel === 'medium' ? 'text-amber-500' : 'text-green-500'
+                )} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-gray-700 truncate">{risk.area}</div>
+                  <div className="text-xs text-gray-500">{risk.vendorName} - FTQ: {risk.originalFTQ}%</div>
+                </div>
+                <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", getRiskColor(risk.riskLevel))}>
+                  {risk.riskLevel}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCallback[] }) {
+  return (
+    <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="flex items-center gap-2 mb-3">
+        <BarChart3 className="h-4 w-4 text-purple-600" />
+        <span className="text-sm font-medium text-gray-700">Vendor Warranty Performance</span>
+        <span className="text-xs text-gray-500 ml-auto">Callback rates & repair quality</span>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="text-left py-2 text-xs font-medium text-gray-500">Vendor</th>
+              <th className="text-center py-2 text-xs font-medium text-gray-500">Claims</th>
+              <th className="text-center py-2 text-xs font-medium text-gray-500">Callback Rate</th>
+              <th className="text-center py-2 text-xs font-medium text-gray-500">Warranty FTQ</th>
+              <th className="text-center py-2 text-xs font-medium text-gray-500">Cost</th>
+              <th className="text-center py-2 text-xs font-medium text-gray-500">Rank</th>
+              <th className="text-center py-2 text-xs font-medium text-gray-500">Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vendors.map((vendor, idx) => (
+              <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="py-2 font-medium text-gray-700">{vendor.vendorName}</td>
+                <td className="py-2 text-center text-gray-600">{vendor.totalClaims}</td>
+                <td className="py-2 text-center">
+                  <span className={cn(
+                    "px-1.5 py-0.5 rounded text-xs font-medium",
+                    vendor.callbackRate <= 5 ? 'bg-green-100 text-green-700' :
+                    vendor.callbackRate <= 10 ? 'bg-amber-100 text-amber-700' :
+                    'bg-red-100 text-red-700'
+                  )}>
+                    {vendor.callbackRate}%
+                  </span>
+                </td>
+                <td className="py-2 text-center">
+                  <span className={cn("font-medium", getFTQColor(vendor.warrantyFTQ))}>
+                    {vendor.warrantyFTQ}%
+                  </span>
+                </td>
+                <td className="py-2 text-center text-gray-600">{formatCurrency(vendor.totalCost)}</td>
+                <td className="py-2 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    {vendor.ranking === 1 && <Award className="h-3.5 w-3.5 text-yellow-500" />}
+                    <span className={cn(
+                      "text-xs font-medium",
+                      vendor.ranking <= 2 ? 'text-green-600' :
+                      vendor.ranking <= 3 ? 'text-blue-600' : 'text-gray-600'
+                    )}>
+                      #{vendor.ranking}
+                    </span>
+                  </div>
+                </td>
+                <td className="py-2 text-center">
+                  {vendor.trend === 'improving' && <TrendingUp className="h-4 w-4 text-green-500 mx-auto" />}
+                  {vendor.trend === 'stable' && <Activity className="h-4 w-4 text-blue-500 mx-auto" />}
+                  {vendor.trend === 'declining' && <TrendingDown className="h-4 w-4 text-red-500 mx-auto" />}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function WarrantyPredictionPanel({ ftqData }: { ftqData: ConstructionFTQData }) {
+  return (
+    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-200 px-4 py-3">
+      <div className="flex items-start gap-3">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Brain className="h-4 w-4 text-indigo-600" />
+          <span className="font-medium text-sm text-indigo-800">AI Warranty Predictions (from FTQ Data):</span>
+        </div>
+        <div className="grid grid-cols-3 gap-4 flex-1">
+          <div className="bg-white/60 rounded-lg p-2 border border-indigo-100">
+            <div className="text-xs text-indigo-600 mb-1">Expected Year 1 Claims</div>
+            <div className="text-lg font-bold text-indigo-800">{ftqData.predictedClaimsRange.min}-{ftqData.predictedClaimsRange.max}</div>
+            <div className="text-xs text-indigo-500">Based on {ftqData.overallScore}% FTQ</div>
+          </div>
+          <div className="bg-white/60 rounded-lg p-2 border border-indigo-100">
+            <div className="text-xs text-indigo-600 mb-1">Highest Risk Vendor</div>
+            <div className="text-lg font-bold text-red-600">Smith Electric</div>
+            <div className="text-xs text-indigo-500">88% FTQ, 12.5% callback</div>
+          </div>
+          <div className="bg-white/60 rounded-lg p-2 border border-indigo-100">
+            <div className="text-xs text-indigo-600 mb-1">Predicted Warranty Cost</div>
+            <div className="text-lg font-bold text-indigo-800">$4,200-$6,800</div>
+            <div className="text-xs text-indigo-500">Year 1 estimate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ---------------------------------------------------------------------------
 // Sub-Components
 // ---------------------------------------------------------------------------
+
+function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) {
+  return (
+    <div className={cn(
+      "flex-1 rounded-lg p-3 border",
+      walkthrough.status === 'completed' ? 'bg-green-50 border-green-200' :
+      walkthrough.status === 'overdue' ? 'bg-red-50 border-red-200' :
+      'bg-blue-50 border-blue-200'
+    )}>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-medium text-gray-700">{walkthroughTypeConfig[walkthrough.type]}</span>
+        <span className={cn(
+          'text-xs px-1.5 py-0.5 rounded font-medium',
+          walkthrough.status === 'completed' ? 'bg-green-100 text-green-700' :
+          walkthrough.status === 'overdue' ? 'bg-red-100 text-red-700' :
+          'bg-blue-100 text-blue-700'
+        )}>
+          {walkthrough.status === 'completed' ? 'Done' : walkthrough.status === 'overdue' ? 'Overdue' : 'Scheduled'}
+        </span>
+      </div>
+      <p className="text-sm font-medium text-gray-900">{formatDate(walkthrough.scheduledDate)}</p>
+
+      {/* Checklist Info */}
+      {walkthrough.checklistId && (
+        <div className="mt-2 pt-2 border-t border-gray-200/50">
+          <button className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 mb-1">
+            <ListChecks className="h-3 w-3" />
+            <span className="truncate">{walkthrough.checklistName}</span>
+            <ExternalLink className="h-2.5 w-2.5" />
+          </button>
+
+          {walkthrough.status === 'completed' && walkthrough.checklistCompletion !== undefined ? (
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-gray-500">
+                {walkthrough.passedItems}/{walkthrough.totalItems} items
+              </span>
+              <span className={cn("font-medium", getFTQColor(walkthrough.checklistFTQ || 0))}>
+                FTQ: {walkthrough.checklistFTQ}%
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">{walkthrough.totalItems} checklist items</span>
+              {walkthrough.status === 'scheduled' && (
+                <button className="flex items-center gap-1 text-xs bg-blue-600 text-white px-2 py-0.5 rounded hover:bg-blue-700">
+                  <Play className="h-3 w-3" />
+                  Start
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {walkthrough.findingsCount !== undefined && (
+        <p className="text-xs text-gray-500 mt-1">{walkthrough.findingsCount} findings | {walkthrough.homeownerSigned ? 'Signed' : 'Unsigned'}</p>
+      )}
+    </div>
+  )
+}
 
 function WarrantyCard({ warranty }: { warranty: Warranty }) {
   const status = statusConfig[warranty.status]
@@ -467,6 +845,51 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
           <span className="text-gray-700">{warranty.duration}</span>
         </div>
       </div>
+
+      {/* Quality Tracking Section */}
+      {(warranty.originalConstructionFTQ || warranty.repairFTQ) && (
+        <div className="mb-3 pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2">
+            <Target className="h-3 w-3" />
+            <span>Quality Tracking</span>
+          </div>
+          <div className="flex items-center gap-3">
+            {warranty.originalConstructionFTQ && (
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-gray-500">Construction FTQ:</span>
+                <span className={cn("text-xs font-medium", getFTQColor(warranty.originalConstructionFTQ))}>
+                  {warranty.originalConstructionFTQ}%
+                </span>
+                {warranty.inspectionLink && (
+                  <button className="text-blue-600 hover:text-blue-700">
+                    <ExternalLink className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+            )}
+            {warranty.repairFTQ && (
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-gray-500">Repair FTQ:</span>
+                <span className={cn("text-xs font-medium", getFTQColor(warranty.repairFTQ))}>
+                  {warranty.repairFTQ}%
+                </span>
+              </div>
+            )}
+            {warranty.vendorCallbackRate && (
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-gray-500">Callback:</span>
+                <span className={cn(
+                  "text-xs font-medium",
+                  warranty.vendorCallbackRate <= 5 ? 'text-green-600' :
+                  warranty.vendorCallbackRate <= 10 ? 'text-amber-600' : 'text-red-600'
+                )}>
+                  {warranty.vendorCallbackRate}%
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Claim & Cost info */}
       {(warranty.claimCount !== undefined && warranty.claimCount > 0) && (
@@ -596,6 +1019,10 @@ export function WarrantiesPreview() {
         <div className="flex items-center gap-3 mb-3">
           <h3 className="font-semibold text-gray-900">Warranty Binder</h3>
           <span className="text-sm text-gray-500">{totalItems} warranties | {coveragePercentage}% coverage active</span>
+          <span className={cn("text-sm px-2 py-0.5 rounded font-medium ml-auto", getFTQBgColor(mockConstructionFTQ.overallScore))}>
+            <Target className="h-3 w-3 inline mr-1" />
+            Construction FTQ: {mockConstructionFTQ.overallScore}%
+          </span>
         </div>
         <FilterBar
           search={search}
@@ -646,7 +1073,7 @@ export function WarrantiesPreview() {
 
       {/* Stats Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-6 gap-3">
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
               <ShieldCheck className="h-4 w-4" />
@@ -685,43 +1112,40 @@ export function WarrantiesPreview() {
               Reserve
             </div>
             <div className="text-2xl font-bold text-purple-700 mt-1">{formatCurrency(mockReserve.remainingAmount)}</div>
-            <div className="text-xs text-purple-600 mt-0.5">
-              {formatCurrency(mockReserve.spentAmount)} of {formatCurrency(mockReserve.reserveAmount)} used ({mockReserve.utilizationPercentage}%)
+            <div className="text-xs text-purple-600 mt-0.5">{mockReserve.utilizationPercentage}% used</div>
+          </div>
+          <div className="bg-indigo-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-indigo-600 text-sm">
+              <Target className="h-4 w-4" />
+              FTQ Score
             </div>
+            <div className={cn("text-2xl font-bold mt-1", getFTQColor(mockConstructionFTQ.overallScore))}>
+              {mockConstructionFTQ.overallScore}%
+            </div>
+            <div className="text-xs text-indigo-600 mt-0.5">construction quality</div>
           </div>
         </div>
       </div>
 
+      {/* FTQ Impact Panel */}
+      <ConstructionFTQPanel data={mockConstructionFTQ} />
+
+      {/* Vendor Warranty Performance */}
+      <VendorWarrantyPerformancePanel vendors={mockVendorCallbacks} />
+
+      {/* Warranty Prediction Panel */}
+      <WarrantyPredictionPanel ftqData={mockConstructionFTQ} />
+
       {/* Walkthrough Schedule */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-2 mb-3">
-          <ClipboardCheck className="h-4 w-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Scheduled Walkthroughs</span>
+          <ListChecks className="h-4 w-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">Warranty Walkthrough Checklists</span>
+          <span className="text-xs text-gray-500 ml-auto">Linked to quality checklists</span>
         </div>
         <div className="flex items-center gap-3">
           {mockWalkthroughs.map(wt => (
-            <div key={wt.id} className={cn(
-              "flex-1 rounded-lg p-3 border",
-              wt.status === 'completed' ? 'bg-green-50 border-green-200' :
-              wt.status === 'overdue' ? 'bg-red-50 border-red-200' :
-              'bg-blue-50 border-blue-200'
-            )}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium text-gray-700">{walkthroughTypeConfig[wt.type]}</span>
-                <span className={cn(
-                  'text-xs px-1.5 py-0.5 rounded font-medium',
-                  wt.status === 'completed' ? 'bg-green-100 text-green-700' :
-                  wt.status === 'overdue' ? 'bg-red-100 text-red-700' :
-                  'bg-blue-100 text-blue-700'
-                )}>
-                  {wt.status === 'completed' ? 'Done' : wt.status === 'overdue' ? 'Overdue' : 'Scheduled'}
-                </span>
-              </div>
-              <p className="text-sm font-medium text-gray-900">{formatDate(wt.scheduledDate)}</p>
-              {wt.findingsCount !== undefined && (
-                <p className="text-xs text-gray-500">{wt.findingsCount} findings | {wt.homeownerSigned ? 'Signed' : 'Unsigned'}</p>
-              )}
-            </div>
+            <WalkthroughCard key={wt.id} walkthrough={wt} />
           ))}
         </div>
       </div>
@@ -748,10 +1172,76 @@ export function WarrantiesPreview() {
           <div className="space-y-1 text-sm text-amber-700">
             <p>&#x2022; 11-month walkthrough needed within 28 days - 4 builder warranties expiring. Schedule immediately.</p>
             <p>&#x2022; PGT window seal failure matches pattern from lot 2024-B across 2 other projects. Recommend batch inspection.</p>
-            <p>&#x2022; Warranty reserve at 18.3% utilization - historically similar projects average 35% at this stage. Reserve is healthy.</p>
-            <p>&#x2022; HVAC annual maintenance required by Trane to maintain coverage - service overdue by 15 days.</p>
+            <p>&#x2022; Smith Electric has 12.5% callback rate (highest) - consider additional oversight on future electrical work.</p>
+            <p>&#x2022; Based on 94% construction FTQ, predicted warranty costs are 40% below industry average.</p>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Warranty & FTQ Features"
+          columns={2}
+          features={[
+            {
+              feature: 'FTQ-Based Warranty Prediction',
+              trigger: 'On completion',
+              insight: 'Predicts warranty claims from construction quality',
+              detail: 'Analyzes original construction FTQ scores to forecast warranty claim frequency and costs. Higher FTQ = fewer callbacks.',
+              severity: 'info',
+            },
+            {
+              feature: 'Vendor Accountability Tracking',
+              trigger: 'Real-time',
+              insight: 'Links warranty issues to original work quality',
+              detail: 'Tracks callback rates, repair FTQ, and warranty costs by vendor. Provides rankings and trend analysis for vendor performance.',
+              severity: 'warning',
+            },
+            {
+              feature: 'Repair Quality Monitoring',
+              trigger: 'On claim close',
+              insight: 'Measures FTQ on warranty repairs',
+              detail: 'Ensures warranty repairs meet quality standards. Tracks repair FTQ scores and flags vendors with declining repair quality.',
+              severity: 'info',
+            },
+            {
+              feature: 'Expiration Alerts',
+              trigger: 'Real-time',
+              insight: 'Proactive warranty expiration notifications',
+              detail: 'Automatically monitors all warranty end dates and sends alerts 90, 60, 30, and 7 days before expiration.',
+              severity: 'warning',
+            },
+            {
+              feature: 'Pattern Detection',
+              trigger: 'Weekly',
+              insight: 'Identifies recurring warranty issues',
+              detail: 'Analyzes claim patterns across projects, products, and vendors. Detects batch defects and systemic quality issues.',
+              severity: 'info',
+            },
+            {
+              feature: 'Walkthrough Checklist Integration',
+              trigger: 'On schedule',
+              insight: 'Links walkthroughs to quality checklists',
+              detail: 'Connects warranty walkthroughs to standardized checklists with FTQ scoring. Ensures consistent inspection quality.',
+              severity: 'success',
+            },
+            {
+              feature: 'Cost Forecasting',
+              trigger: 'Monthly',
+              insight: 'Predicts warranty reserve utilization',
+              detail: 'Uses FTQ data and historical patterns to forecast warranty costs. Helps optimize reserve allocation.',
+              severity: 'info',
+            },
+            {
+              feature: 'Risk Area Identification',
+              trigger: 'On analysis',
+              insight: 'Highlights areas prone to warranty claims',
+              detail: 'Identifies specific locations, systems, or vendors at higher risk based on construction FTQ and historical data.',
+              severity: 'warning',
+            },
+          ]}
+        />
       </div>
     </div>
   )

@@ -36,8 +36,13 @@ import {
   Mail,
   Wrench,
   Hash,
+  ListChecks,
+  Image,
+  FolderOpen,
+  BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel, type AIFeatureCardProps } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -72,7 +77,10 @@ interface JobOverview {
   subdivision: string
   daysSinceStart: number
   estimatedDaysRemaining: number
-  aiRiskScore: number
+  aiHealthScore: number
+  warrantyStatus: 'in-construction' | 'warranty-period' | 'warranty-expired'
+  warrantyEndDate?: string
+  phaseProgress: { phase: string; percent: number }[]
 }
 
 interface MetricCard {
@@ -105,6 +113,13 @@ interface QuickLink {
   count?: number
   alert?: boolean
   badgeColor?: string
+}
+
+interface DocumentShortcut {
+  id: string
+  name: string
+  icon: React.ElementType
+  lastUpdated: string
 }
 
 interface WeatherData {
@@ -140,6 +155,15 @@ interface RiskItem {
   source: 'ai' | 'manual'
 }
 
+interface NextStepItem {
+  id: string
+  action: string
+  priority: 'urgent' | 'high' | 'medium' | 'low'
+  assignee: string
+}
+
+type JobTab = 'overview' | 'budget' | 'schedule' | 'invoices' | 'photos' | 'files' | 'daily-logs'
+
 // ---------------------------------------------------------------------------
 // Mock Data
 // ---------------------------------------------------------------------------
@@ -173,7 +197,19 @@ const mockJob: JobOverview = {
   subdivision: 'Ocean Ridge',
   daysSinceStart: 28,
   estimatedDaysRemaining: 200,
-  aiRiskScore: 72,
+  aiHealthScore: 72,
+  warrantyStatus: 'in-construction',
+  warrantyEndDate: 'Mar 2027',
+  phaseProgress: [
+    { phase: 'Site Work', percent: 100 },
+    { phase: 'Foundation', percent: 100 },
+    { phase: 'Framing', percent: 85 },
+    { phase: 'Roofing', percent: 60 },
+    { phase: 'MEP Rough-In', percent: 20 },
+    { phase: 'Insulation & Drywall', percent: 0 },
+    { phase: 'Finishes', percent: 0 },
+    { phase: 'Final', percent: 0 },
+  ],
 }
 
 const mockMetrics: MetricCard[] = [
@@ -305,6 +341,14 @@ const mockQuickLinks: QuickLink[] = [
   { id: '12', label: 'Permits', icon: Shield, count: 3 },
 ]
 
+const mockDocumentShortcuts: DocumentShortcut[] = [
+  { id: '1', name: 'Contract', icon: FileText, lastUpdated: 'Jan 10, 2026' },
+  { id: '2', name: 'Plans', icon: BookOpen, lastUpdated: 'Jan 8, 2026' },
+  { id: '3', name: 'Specifications', icon: ClipboardList, lastUpdated: 'Jan 8, 2026' },
+  { id: '4', name: 'Permits', icon: Shield, lastUpdated: 'Feb 5, 2026' },
+  { id: '5', name: 'Insurance', icon: Shield, lastUpdated: 'Jan 3, 2026' },
+]
+
 const mockWeather: WeatherData = {
   current: { condition: 'Sunny', temp: 72, icon: Sun },
   forecast: [
@@ -339,6 +383,52 @@ const mockRisks: RiskItem[] = [
   { id: '3', description: 'Material cost escalation on specialty items', likelihood: 'medium', impact: 'high', status: 'open', source: 'manual' },
 ]
 
+const mockNextSteps: NextStepItem[] = [
+  { id: '1', action: 'Schedule electrical rough-in inspection', priority: 'urgent', assignee: 'Mike Thompson' },
+  { id: '2', action: 'Follow up on cabinet submittal', priority: 'high', assignee: 'Jake Mitchell' },
+  { id: '3', action: 'Review upcoming draw request', priority: 'high', assignee: 'Jake Mitchell' },
+  { id: '4', action: 'Confirm HVAC delivery date', priority: 'medium', assignee: 'Mike Thompson' },
+  { id: '5', action: 'Send weekly update to client', priority: 'medium', assignee: 'Jake Mitchell' },
+]
+
+const mockAIFeatures: AIFeatureCardProps[] = [
+  {
+    feature: 'Job Health Summary',
+    trigger: 'Real-time',
+    insight: 'Health Score: 72/100. Factors: Budget (+15), Schedule (-8), Quality (+10), Client Comm (+5)',
+    severity: 'warning',
+    confidence: 85,
+  },
+  {
+    feature: 'Next Steps',
+    trigger: 'Daily',
+    insight: 'Recommended: 1. Schedule framing inspection (urgent), 2. Review CO-004 pricing, 3. Send weekly update to client',
+    severity: 'info',
+    confidence: 90,
+  },
+  {
+    feature: 'Risk Detection',
+    trigger: 'Real-time',
+    insight: '2 new risks detected: Weather delay likely Thu-Fri, ABC Drywall availability concern week of Mar 10',
+    severity: 'warning',
+    confidence: 78,
+  },
+  {
+    feature: 'Predicted Completion',
+    trigger: 'On change',
+    insight: 'Current trajectory: Mar 28 (original: Mar 22). Main factors: Permit delay, weather forecast',
+    severity: 'warning',
+    confidence: 82,
+  },
+  {
+    feature: 'Milestone Alert',
+    trigger: 'Real-time',
+    insight: 'Drywall start at risk. Dependency: Framing inspection must pass by Feb 20',
+    severity: 'critical',
+    confidence: 88,
+  },
+]
+
 // ---------------------------------------------------------------------------
 // Status configs
 // ---------------------------------------------------------------------------
@@ -349,6 +439,22 @@ const statuses = [
   { id: 'closeout', label: 'Closeout', color: 'bg-amber-500', bgLight: 'bg-amber-50', textColor: 'text-amber-700' },
   { id: 'complete', label: 'Complete', color: 'bg-gray-500', bgLight: 'bg-gray-100', textColor: 'text-gray-700' },
   { id: 'warranty', label: 'Warranty', color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
+]
+
+const warrantyStatuses = {
+  'in-construction': { label: 'In Construction', color: 'bg-blue-100 text-blue-700' },
+  'warranty-period': { label: 'Warranty Period', color: 'bg-purple-100 text-purple-700' },
+  'warranty-expired': { label: 'Warranty Expired', color: 'bg-gray-100 text-gray-600' },
+}
+
+const jobTabs: { id: JobTab; label: string }[] = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'budget', label: 'Budget' },
+  { id: 'schedule', label: 'Schedule' },
+  { id: 'invoices', label: 'Invoices' },
+  { id: 'photos', label: 'Photos' },
+  { id: 'files', label: 'Files' },
+  { id: 'daily-logs', label: 'Daily Logs' },
 ]
 
 function getStatusConfig(status: JobOverview['status']) {
@@ -385,14 +491,46 @@ function getActivityColor(type: ActivityItem['type']) {
   }
 }
 
+function getPriorityConfig(priority: NextStepItem['priority']) {
+  switch (priority) {
+    case 'urgent': return { color: 'bg-red-100 text-red-700', label: 'Urgent' }
+    case 'high': return { color: 'bg-amber-100 text-amber-700', label: 'High' }
+    case 'medium': return { color: 'bg-blue-100 text-blue-700', label: 'Medium' }
+    case 'low': return { color: 'bg-gray-100 text-gray-600', label: 'Low' }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Components
 // ---------------------------------------------------------------------------
 
+function JobNavigationTabs({ activeTab }: { activeTab: JobTab }) {
+  return (
+    <div className="bg-white border-b border-gray-200">
+      <div className="flex items-center gap-1 px-6">
+        {jobTabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={cn(
+              "px-4 py-3 text-sm font-medium border-b-2 transition-colors",
+              activeTab === tab.id
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function SummaryHeader({ job }: { job: JobOverview }) {
   const statusConfig = getStatusConfig(job.status)
+  const warrantyConfig = warrantyStatuses[job.warrantyStatus]
 
-  const getRiskColor = (score: number) => {
+  const getHealthColor = (score: number) => {
     if (score >= 80) return 'bg-green-100 text-green-700'
     if (score >= 60) return 'bg-amber-100 text-amber-700'
     return 'bg-red-100 text-red-700'
@@ -417,8 +555,15 @@ function SummaryHeader({ job }: { job: JobOverview }) {
               </span>
               <span className="text-xs text-gray-400 font-mono">{job.jobNumber}</span>
               <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{job.projectType}</span>
-              <span className={cn("text-xs px-2 py-0.5 rounded font-medium", getRiskColor(job.aiRiskScore))}>
-                Health: {job.aiRiskScore}/100
+              <span className={cn("text-xs px-2 py-0.5 rounded font-medium", getHealthColor(job.aiHealthScore))}>
+                Health: {job.aiHealthScore}/100
+              </span>
+              {/* Warranty Status Badge */}
+              <span className={cn("text-xs px-2 py-0.5 rounded font-medium", warrantyConfig.color)}>
+                {warrantyConfig.label}
+                {job.warrantyStatus === 'warranty-period' && job.warrantyEndDate && (
+                  <span className="ml-1">- Ends: {job.warrantyEndDate}</span>
+                )}
               </span>
             </div>
             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
@@ -476,18 +621,122 @@ function SummaryHeader({ job }: { job: JobOverview }) {
           </button>
         </div>
       </div>
+    </div>
+  )
+}
 
-      {/* Progress Bar */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Overall Progress</span>
-          <span className={cn("text-sm font-semibold", statusConfig.textColor)}>{job.progress}%</span>
-        </div>
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+function PercentCompleteVisualization({ job }: { job: JobOverview }) {
+  const statusConfig = getStatusConfig(job.status)
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="font-semibold text-gray-900">Project Progress</h4>
+        <span className={cn("text-2xl font-bold", statusConfig.textColor)}>{job.progress}%</span>
+      </div>
+
+      {/* Large Progress Bar */}
+      <div className="mb-4">
+        <div className="h-6 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={cn("h-full rounded-full transition-all", statusConfig.color)}
+            className={cn("h-full rounded-full transition-all flex items-center justify-end pr-2", statusConfig.color)}
             style={{ width: `${job.progress}%` }}
-          />
+          >
+            {job.progress > 15 && (
+              <span className="text-xs font-medium text-white">{job.progress}% Complete</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Phase Breakdown */}
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Progress by Phase</div>
+        {job.phaseProgress.map((phase, idx) => (
+          <div key={idx} className="flex items-center gap-3">
+            <div className="w-32 text-xs text-gray-600 truncate">{phase.phase}</div>
+            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  phase.percent === 100 ? "bg-green-500" :
+                  phase.percent > 0 ? "bg-blue-500" : "bg-gray-200"
+                )}
+                style={{ width: `${phase.percent}%` }}
+              />
+            </div>
+            <div className="w-10 text-xs text-right text-gray-500">{phase.percent}%</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DocumentShortcuts({ documents }: { documents: DocumentShortcut[] }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <h4 className="font-semibold text-gray-900 text-sm">Key Documents</h4>
+      </div>
+      <div className="p-3">
+        <div className="grid grid-cols-5 gap-2">
+          {documents.map(doc => {
+            const Icon = doc.icon
+            return (
+              <button
+                key={doc.id}
+                className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="p-2 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
+                  <Icon className="h-4 w-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                    {doc.name}
+                  </div>
+                  <div className="text-[10px] text-gray-400">{doc.lastUpdated}</div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function NextStepsCard({ steps }: { steps: NextStepItem[] }) {
+  return (
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+      <div className="px-4 py-3 border-b border-blue-200">
+        <div className="flex items-center gap-2">
+          <ListChecks className="h-4 w-4 text-blue-600" />
+          <h4 className="font-semibold text-blue-900 text-sm">Next Steps</h4>
+          <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">AI Recommended</span>
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="space-y-2">
+          {steps.map((step, idx) => {
+            const priorityConfig = getPriorityConfig(step.priority)
+            return (
+              <div key={step.id} className="flex items-start gap-3 p-2 bg-white/60 rounded-lg">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium flex items-center justify-center">
+                  {idx + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-800">{step.action}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={cn("text-[10px] px-1.5 py-0.5 rounded font-medium", priorityConfig.color)}>
+                      {priorityConfig.label}
+                    </span>
+                    <span className="text-xs text-gray-500">{step.assignee}</span>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
@@ -835,46 +1084,6 @@ function QuickLinksGrid({ links }: { links: QuickLink[] }) {
   )
 }
 
-function AIInsightsBar() {
-  return (
-    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
-      <div className="flex items-start gap-3">
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="p-1.5 bg-amber-100 rounded-lg">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-          </div>
-          <span className="font-semibold text-sm text-amber-800">Job Health Summary</span>
-        </div>
-        <div className="flex-1">
-          <div className="flex items-start gap-6">
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-amber-700">
-                Budget trending 3.8% below target margin. Carpentry costs $15K over - recommend change order for roof complexity.
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Clock className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-amber-700">
-                5-day schedule slip due to weather. Rain forecast Thu-Fri may add 2 more days. Consider weekend crew for recovery.
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-green-700">
-                Client engagement excellent - 100% draw approval rate, avg 2-day turnaround. Selection completion at 60%.
-              </p>
-            </div>
-          </div>
-          <div className="mt-2 text-right">
-            <span className="text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-medium">AI-generated health analysis</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ---------------------------------------------------------------------------
 // Main Component
 // ---------------------------------------------------------------------------
@@ -885,6 +1094,9 @@ export function JobOverviewPreview() {
       {/* Summary Header */}
       <SummaryHeader job={mockJob} />
 
+      {/* Job Navigation Tabs */}
+      <JobNavigationTabs activeTab="overview" />
+
       {/* Key Metrics Cards */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="grid grid-cols-4 gap-4">
@@ -894,9 +1106,29 @@ export function JobOverviewPreview() {
         </div>
       </div>
 
+      {/* Percent Complete + Next Steps Row */}
+      <div className="px-6 py-4 grid grid-cols-2 gap-6">
+        <PercentCompleteVisualization job={mockJob} />
+        <NextStepsCard steps={mockNextSteps} />
+      </div>
+
+      {/* Document Shortcuts */}
+      <div className="px-6 pb-4">
+        <DocumentShortcuts documents={mockDocumentShortcuts} />
+      </div>
+
       {/* Quick Links */}
-      <div className="px-6 py-4">
+      <div className="px-6 pb-4">
         <QuickLinksGrid links={mockQuickLinks} />
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="px-6 pb-4">
+        <AIFeaturesPanel
+          title="AI Insights"
+          features={mockAIFeatures}
+          columns={2}
+        />
       </div>
 
       {/* Main Content Grid */}
@@ -918,9 +1150,6 @@ export function JobOverviewPreview() {
         <TeamRoster team={mockTeam} />
         <RiskRegister risks={mockRisks} />
       </div>
-
-      {/* AI Insights Bar */}
-      <AIInsightsBar />
     </div>
   )
 }

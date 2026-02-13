@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface InsurancePolicy {
@@ -858,6 +859,32 @@ export function InsurancePreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Expiration Alerts',
+            description: 'Proactive certificate expiration warnings',
+          },
+          {
+            title: 'Coverage Gap Analysis',
+            description: 'Identifies insufficient coverage',
+          },
+          {
+            title: 'Auto-Verification',
+            description: 'Validates certificates against requirements',
+          },
+          {
+            title: 'Compliance Scoring',
+            description: 'Rates vendor insurance compliance',
+          },
+          {
+            title: 'Renewal Tracking',
+            description: 'Tracks renewal status and follow-ups',
+          },
+        ]}
+      />
     </div>
   )
 }

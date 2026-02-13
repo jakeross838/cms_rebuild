@@ -33,6 +33,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1406,6 +1407,32 @@ export function VendorPortalPreview() {
           <span className="text-xs text-gray-400">English | Espa&ntilde;ol</span>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Engagement Tracking',
+            description: 'Monitors vendor portal usage',
+          },
+          {
+            title: 'Document Status',
+            description: 'Tracks document submissions',
+          },
+          {
+            title: 'Compliance Alerts',
+            description: 'Flags compliance issues',
+          },
+          {
+            title: 'Communication Analysis',
+            description: 'Tracks vendor responsiveness',
+          },
+          {
+            title: 'Onboarding Progress',
+            description: 'Monitors vendor onboarding completion',
+          },
+        ]}
+      />
     </div>
   )
 }

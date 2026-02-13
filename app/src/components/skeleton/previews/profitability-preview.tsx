@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface JobProfitability {
@@ -679,6 +680,56 @@ export function ProfitabilityPreview() {
             than XYZ Framing based on last 8 projects.
           </p>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="px-4 py-4 bg-white border-t border-gray-200">
+        <AIFeaturesPanel
+          title="AI-Powered Profitability Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Margin Analysis',
+              trigger: 'Real-time',
+              insight: 'Tracks profit margins by job/category',
+              detail: 'Monitors gross and net margins across all active jobs, alerting when margins fall below target thresholds. Currently tracking 5 active jobs with average margin of 13.9%.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'Cost Driver Detection',
+              trigger: 'On change',
+              insight: 'Identifies factors affecting profit',
+              detail: 'Analyzes cost code variances to pinpoint specific line items driving margin erosion. Currently flagging framing labor on Smith Residence as primary cost driver.',
+              severity: 'warning',
+              confidence: 87,
+            },
+            {
+              feature: 'Forecast Accuracy',
+              trigger: 'Weekly',
+              insight: 'Compares projected vs actual',
+              detail: 'Evaluates the accuracy of cost projections against actual costs as jobs progress. Current forecast accuracy across portfolio: 94.2%.',
+              severity: 'success',
+              confidence: 94,
+            },
+            {
+              feature: 'Benchmark Comparison',
+              trigger: 'Daily',
+              insight: 'Compares to industry standards',
+              detail: 'Compares your cost per square foot, margins, and change order rates against industry benchmarks. Your avg cost/SF of $385 is 6% below industry average.',
+              severity: 'success',
+              confidence: 88,
+            },
+            {
+              feature: 'Improvement Suggestions',
+              trigger: 'On change',
+              insight: 'Recommends profit improvements',
+              detail: 'Provides actionable recommendations to improve profitability based on historical data and current trends. Top suggestion: Submit change order for tray ceiling scope on Smith Residence.',
+              severity: 'warning',
+              confidence: 85,
+            },
+          ]}
+        />
       </div>
     </div>
   )

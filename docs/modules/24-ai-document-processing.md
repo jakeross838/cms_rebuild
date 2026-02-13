@@ -180,6 +180,114 @@ The system automatically classifies incoming documents into categories (Gap 504)
   - **Enterprise**: Full AI suite -- advanced extraction, photo auto-tagging, anomaly detection, communication assistance, plan analysis.
 - Feature availability is controlled by the tenant feature flag system.
 
+
+### 10. AI Photo Quality Analysis
+
+Computer vision analysis of construction photos for automatic quality inspection and defect detection. This system enables proactive identification of construction defects, reducing the burden on manual inspection and improving overall build quality.
+
+**Core Capabilities:**
+- **Automatic defect detection**: Identifies cracks, gaps, misalignment, stains, damage, and incomplete work in construction photos
+- **Defect classification**: Categorizes detected issues by type and severity (critical, major, minor, cosmetic)
+- **Bounding box localization**: Pinpoints exact location of defects within images for easy identification
+- **Confidence scoring**: Each detection includes a confidence score to prioritize human review
+- **Punch list integration**: Auto-create punch items from detected defects with one click (integrates with Module 28)
+
+**Defect Categories by Trade:**
+
+| Trade | Detectable Defects |
+|-------|-------------------|
+| **Drywall** | Nail pops, cracks, visible joints, unfinished areas, water damage, tape bubbling, corner bead damage |
+| **Paint** | Drips, uneven coverage, missed spots, color inconsistency, peeling, bleeding, brush/roller marks |
+| **Flooring** | Gaps between boards, scratches, uneven transitions, buckled areas, squeaky spots (user-reported), staining |
+| **Tile** | Grout issues (missing, cracked, discolored), cracked tiles, lippage, alignment problems, hollow tiles |
+| **Framing** | Twisted studs, missing fasteners, improper spacing, out-of-plumb walls, crown issues |
+| **Exterior** | Flashing issues, siding gaps, trim problems, caulking failures, drainage concerns, soffit/fascia damage |
+
+**Severity Classification:**
+- **Critical**: Safety hazard or structural concern requiring immediate attention
+- **Major**: Significant quality issue that must be addressed before phase completion
+- **Minor**: Noticeable defect that should be corrected before client walkthrough
+- **Cosmetic**: Minor imperfection, may be acceptable depending on visibility and client standards
+
+**Workflow:**
+1. Photo uploaded or captured via mobile app
+2. AI analysis runs automatically (or on-demand for batch processing)
+3. Detected defects displayed with bounding boxes on photo
+4. User reviews detections, confirms or dismisses false positives
+5. Confirmed defects can be converted to punch items with pre-filled details
+6. Corrections feed back into model training for improved accuracy
+
+### 11. OCR Measurement Capture
+
+Extract numeric measurements from photos of gauges, meters, and measuring instruments for automatic data capture and validation.
+
+**Supported Measurement Types:**
+- **Pressure gauges**: PSI readings from plumbing and HVAC tests
+- **Thermometers**: Temperature readings in Fahrenheit and Celsius
+- **Multimeters**: Voltage (V), amperage (A), resistance (Ohms) readings
+- **Rulers/tape measures**: Linear measurements in inches, feet, centimeters, meters
+- **Level indicators**: Degree measurements for slope and grade
+- **Flow meters**: GPM/LPM readings for water flow tests
+- **Humidity meters**: Relative humidity percentages
+
+**Features:**
+- **Automatic unit detection**: Recognizes measurement units from gauge labels and context
+- **Range validation**: Compares extracted values against expected ranges for the measurement type
+- **Historical tracking**: Stores measurement history for trend analysis and compliance documentation
+- **Calibration alerts**: Flags readings that fall outside acceptable ranges
+- **Multi-reading support**: Extracts multiple measurements from a single photo (e.g., multimeter with multiple displays)
+
+**Use Cases:**
+- Pressure testing documentation (plumbing rough-in, HVAC commissioning)
+- Temperature verification for HVAC startup
+- Electrical inspection readings
+- Moisture content readings for flooring installation
+- Concrete temperature and slump testing
+
+### 12. AI-Generated Quality Reports
+
+Automatically generate comprehensive inspection reports from photos and checklist data, reducing documentation time while improving report quality and consistency.
+
+**Report Components:**
+- **Executive summary**: High-level overview of inspection findings generated from photo analysis and checklist completion data
+- **Areas of concern**: Highlighted sections with supporting images showing detected defects or incomplete work
+- **Trend analysis**: Comparison with previous inspections to identify recurring issues or improvement patterns
+- **Defect heat map**: Visual representation of defect concentration by area/room
+- **Recommended next steps**: AI-suggested action items based on findings
+- **Photo evidence**: Auto-selected photos with annotations highlighting key findings
+
+**Report Types:**
+- Pre-drywall inspection report
+- Frame walk report
+- Final punch list report
+- Quality trend report (across multiple inspections)
+- Trade-specific quality report
+- Client walkthrough summary
+
+**Export Options:**
+- PDF with full annotations and photo evidence
+- Summary PDF (executive overview only)
+- Excel spreadsheet with defect data for analysis
+- Integration with project management dashboard
+
+**Customization:**
+- Builder-specific report templates
+- Configurable sections and branding
+- Threshold settings for what constitutes "areas of concern"
+- Automated distribution lists per report type
+
+### 13. AI Quality Inspection Integration Points
+
+The AI quality inspection system integrates with multiple modules to provide seamless workflow automation:
+
+| Module | Integration |
+|--------|-------------|
+| **Module 28: Punch Lists** | Auto-create punch items from detected defects with pre-filled trade, location, description, and severity. Photo automatically attached. |
+| **Module 8: Daily Logs** | Analyze daily log photos for potential issues; flag concerns for superintendent review. Surface quality trends in daily summary. |
+| **Module 33: Safety Management** | Flag potential safety concerns identified in photos (missing guardrails, improper ladder use, tripping hazards). Route to safety officer. |
+| **Module 32: Inspection Scheduling** | Support inspection documentation with AI-enhanced reports. Auto-populate inspection findings from photo analysis. |
+| **Module 14: Daily Logs** | Correlate photo analysis with daily activities to identify which crews may need quality coaching. |
+| **Module 22: Vendor Performance** | Track defect rates by trade contractor to inform vendor scorecards and future bid evaluations. |
 ---
 
 ## Database Tables
@@ -236,6 +344,25 @@ v2_communication_drafts
   id, builder_id, draft_type (client_update|rfi_response|co_description),
   source_context_json, generated_text, status (generated|edited|sent|discarded),
   edited_text, created_by, created_at
+
+# AI Photo Quality Analysis Tables
+
+v2_ai_photo_analysis
+  id, photo_id, builder_id, project_id, analysis_type,
+  detections JSONB, confidence_score, processed_at,
+  model_version, processing_time_ms
+
+v2_ai_defect_detections
+  id, analysis_id, defect_type, severity (critical|major|minor|cosmetic),
+  confidence, bounding_box JSONB, description, suggested_action,
+  linked_punch_item_id, reviewed_by, review_status (pending|confirmed|dismissed),
+  created_at, reviewed_at
+
+v2_ai_measurement_extractions
+  id, photo_id, measurement_type, extracted_value,
+  extracted_unit, confidence, bounding_box JSONB,
+  validated_value, validation_status (valid|invalid|pending),
+  expected_range_min, expected_range_max, created_at
 ```
 
 ---
@@ -290,6 +417,18 @@ GET    /api/v2/ai/plans/:id/takeoff                   # Get preliminary takeoff 
 GET    /api/v2/ai/config                             # Get builder's AI configuration
 PUT    /api/v2/ai/config                             # Update AI settings (automation level, features)
 GET    /api/v2/ai/config/tier                        # Get available AI features for current subscription
+
+# AI Photo Quality Analysis
+POST   /api/v2/ai/photos/analyze                     # Analyze a single photo for defects and quality issues
+GET    /api/v2/ai/photos/:id/analysis                # Get analysis results for a specific photo
+POST   /api/v2/ai/photos/batch-analyze               # Batch analyze multiple photos for defects
+GET    /api/v2/ai/defects                            # List all detected defects (filterable by project_id, severity, status)
+POST   /api/v2/ai/defects/:id/create-punch-item      # Convert a detected defect into a punch list item
+PUT    /api/v2/ai/defects/:id/review                 # Confirm or dismiss a detected defect
+POST   /api/v2/ai/photos/extract-measurement         # Extract measurement readings from a photo
+GET    /api/v2/ai/measurements/:photoId              # Get extracted measurements for a photo
+GET    /api/v2/ai/quality-report/:projectId          # Generate AI quality report for a project
+POST   /api/v2/ai/quality-report/:projectId/export   # Export quality report to PDF
 ```
 
 ---
@@ -315,6 +454,13 @@ GET    /api/v2/ai/config/tier                        # Get available AI features
 | `SmartSearchBar` | Search across all documents using extracted text and tags |
 | `PlanViewerWithAI` | Plan viewer showing AI-identified rooms and elements (future) |
 | `AIFeatureTierBanner` | Banner showing available AI features and upgrade prompt for locked features |
+| `DefectDetectionViewer` | Photo viewer with bounding box overlays showing detected defects |
+| `DefectReviewPanel` | Side panel for reviewing, confirming, or dismissing detected defects |
+| `DefectToPunchItemModal` | Modal for converting a detected defect to a punch list item with pre-filled fields |
+| `MeasurementExtractor` | Interface for capturing and validating gauge/meter readings from photos |
+| `QualityReportGenerator` | Dashboard for generating and customizing AI quality reports |
+| `DefectHeatMap` | Visual heat map showing defect concentration by room/area |
+| `QualityTrendChart` | Time-series chart showing quality metrics across inspections |
 
 ---
 
@@ -324,9 +470,12 @@ GET    /api/v2/ai/config/tier                        # Get available AI features
 - **Module 13: Invoice AI** -- shared OCR/extraction infrastructure, invoice-specific processing
 - **Module 15: Document Management** -- document organization, version tracking, folder structure
 - **Module 16: Invoice Processing** -- destination for classified invoices and lien waivers
-- **Module 22: Vendor Performance** -- destination for classified COIs, compliance documents
+- **Module 22: Vendor Performance** -- destination for classified COIs, compliance documents; defect rate tracking by trade contractor
 - **Module 20: Estimating Engine** -- destination for classified bids; plan takeoff data
 - **Module 14: Daily Logs** -- photo attachment context, daily report processing
+- **Module 28: Punch Lists** -- destination for defects converted to punch items
+- **Module 32: Inspection Scheduling** -- AI-enhanced inspection reports
+- **Module 33: Safety Management** -- safety concern flagging from photo analysis
 - **Cloud AI Services** -- OCR (Google Vision / AWS Textract), NLP, computer vision models
 - **Storage Service** -- Tiered object storage (S3/similar) for photos and videos
 
@@ -341,3 +490,6 @@ GET    /api/v2/ai/config/tier                        # Get available AI features
 5. How should the email integration work -- one forwarding address per builder, per project, or per document type?
 6. What are the storage cost implications of tiered photo storage at scale? At what scale do we need to move from hot to warm storage automatically?
 7. For communication assistance (Gap 505), should AI-generated drafts be clearly watermarked/labeled so recipients know AI was involved?
+8. For defect detection, what is the acceptable false positive rate before users lose trust in the system? Should severity thresholds be configurable per builder?
+9. What training data is available for construction defect detection models? Should we partner with inspection companies for labeled datasets?
+10. For measurement extraction, should the system require calibration photos for each gauge type to improve accuracy?

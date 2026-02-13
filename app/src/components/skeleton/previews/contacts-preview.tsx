@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types (aligned to Module 03 - Core Data Model, contacts table)
@@ -793,6 +794,56 @@ export function ContactsPreview() {
             <div>Potential duplicate: "Gerald Wu" (archived) and "Wu Designs LLC" may reference the same contact.</div>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features for Contacts"
+          columns={2}
+          features={[
+            {
+              feature: 'Duplicate Detection',
+              trigger: 'real-time',
+              insight: 'Identifies potential duplicate contacts based on name, email, phone, and company matching algorithms.',
+              detail: 'Found 2 potential duplicates: "Gerald Wu" and "Wu Designs LLC" share similar company patterns.',
+              severity: 'warning',
+              confidence: 85,
+            },
+            {
+              feature: 'Relationship Mapping',
+              trigger: 'on-change',
+              insight: 'Shows connections between contacts across projects, companies, and referral networks.',
+              detail: 'Sarah Johnson (Realtor) has referred 3 clients including James Parker. Strong referral source.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'Contact Enrichment',
+              trigger: 'daily',
+              insight: 'Suggests additional info from public sources like LinkedIn, company websites, and business directories.',
+              detail: 'Found updated credentials for Bob Wilson: PE license renewed through 2027.',
+              severity: 'success',
+              confidence: 78,
+            },
+            {
+              feature: 'Engagement Scoring',
+              trigger: 'real-time',
+              insight: 'Ranks contacts by interaction frequency including emails, calls, and project involvement.',
+              detail: 'Top engaged contacts: Rick Torres (12 interactions/month), Lisa Chen (8/month), Bob Wilson (7/month).',
+              severity: 'info',
+              confidence: 95,
+            },
+            {
+              feature: 'Role Classification',
+              trigger: 'on-creation',
+              insight: 'Auto-categorizes contacts by role type based on title, company, and project assignments.',
+              detail: 'Suggested reclassification: Mike Brown from "Other" to new category "Legal/Compliance".',
+              severity: 'info',
+              confidence: 88,
+            },
+          ]}
+        />
       </div>
     </div>
   )

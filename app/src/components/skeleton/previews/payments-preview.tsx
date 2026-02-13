@@ -24,6 +24,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface Payment {
   id: string
@@ -512,6 +513,46 @@ export function PaymentsPreview() {
             {notSyncedCount > 0 && ` ${notSyncedCount} payment(s) awaiting QuickBooks sync.`}
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Payment Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Payment Scheduling',
+              trigger: 'real-time',
+              insight: 'Optimizes payment timing',
+              severity: 'info',
+            },
+            {
+              feature: 'Discount Capture',
+              trigger: 'on-change',
+              insight: 'Identifies early payment discounts',
+              severity: 'success',
+            },
+            {
+              feature: 'Cash Flow Impact',
+              trigger: 'real-time',
+              insight: 'Shows payment effect on cash',
+              severity: 'info',
+            },
+            {
+              feature: 'Vendor Priority',
+              trigger: 'daily',
+              insight: 'Ranks payments by importance',
+              severity: 'warning',
+            },
+            {
+              feature: 'Reconciliation Assist',
+              trigger: 'on-change',
+              insight: 'Helps match payments to invoices',
+              severity: 'info',
+            },
+          ]}
+        />
       </div>
 
       {/* Footer */}

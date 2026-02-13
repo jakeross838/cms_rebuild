@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
 import React from 'react'
 
@@ -594,6 +595,56 @@ export function CostCodesPreview() {
             <span>CUST-01 Smart Home is inactive with 2 open budget lines -- reassign before deactivating</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features for Cost Codes"
+          columns={2}
+          features={[
+            {
+              feature: 'Usage Analytics',
+              trigger: 'Real-time',
+              insight: 'Shows most/least used cost codes across all projects to identify trends and optimize your code structure.',
+              detail: '06-200 Finish Carpentry leads with 189 uses, while CUST-01 Smart Home has only 23 uses and may be a candidate for consolidation.',
+              severity: 'info',
+              confidence: 92,
+            },
+            {
+              feature: 'Coding Suggestions',
+              trigger: 'On creation',
+              insight: 'Recommends appropriate cost codes for line items based on descriptions and historical patterns.',
+              detail: 'AI analyzes item descriptions and matches them to the most frequently used cost codes for similar items across your projects.',
+              severity: 'info',
+              confidence: 87,
+            },
+            {
+              feature: 'Budget Variance',
+              trigger: 'Daily',
+              insight: 'Tracks spending patterns by cost code and alerts when actuals deviate significantly from budgets.',
+              detail: '09-200 Tile is currently 12% over budget across 3 active projects. Consider reviewing vendor pricing or markup adjustments.',
+              severity: 'warning',
+              confidence: 95,
+            },
+            {
+              feature: 'Hierarchy Optimization',
+              trigger: 'Weekly',
+              insight: 'Suggests improvements to your cost code structure based on usage patterns and industry standards.',
+              detail: 'Consider adding subcategories under 06-200 Finish Carpentry for Trim, Cabinets, and Built-ins to improve tracking granularity.',
+              severity: 'info',
+              confidence: 78,
+            },
+            {
+              feature: 'Industry Benchmarking',
+              trigger: 'Weekly',
+              insight: 'Compares your cost code markups and unit costs against regional industry standards.',
+              detail: 'Your Tile markup (18%) is 3% above the regional average (15%). Drywall unit cost ($2.75/SF) is competitive with market rates.',
+              severity: 'info',
+              confidence: 84,
+            },
+          ]}
+        />
       </div>
     </div>
   )

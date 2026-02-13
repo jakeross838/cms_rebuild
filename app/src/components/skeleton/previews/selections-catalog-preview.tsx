@@ -32,6 +32,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type AvailabilityStatus = 'in_stock' | 'low_stock' | 'backordered' | 'discontinued' | 'special_order'
 type ItemSource = 'builder' | 'designer' | 'client' | 'catalog'
@@ -827,6 +828,46 @@ export function SelectionsCatalogPreview() {
             <span>GE Profile range discontinued -- replacement available</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features"
+          columns={2}
+          features={[
+            {
+              feature: 'Price Tracking',
+              trigger: 'Real-time',
+              insight: 'Monitors selection prices across vendors and alerts on significant changes',
+              severity: 'info',
+            },
+            {
+              feature: 'Availability Alerts',
+              trigger: 'Real-time',
+              insight: 'Tracks item availability and notifies when stock levels change',
+              severity: 'warning',
+            },
+            {
+              feature: 'Lead Time Updates',
+              trigger: 'Daily',
+              insight: 'Monitors lead times and flags items with delivery delays',
+              severity: 'info',
+            },
+            {
+              feature: 'Alternative Suggestions',
+              trigger: 'On change',
+              insight: 'Recommends alternatives when items are discontinued or prices increase',
+              severity: 'success',
+            },
+            {
+              feature: 'Popularity Insights',
+              trigger: 'Weekly',
+              insight: 'Shows trending selections based on usage across projects',
+              severity: 'info',
+            },
+          ]}
+        />
       </div>
     </div>
   )

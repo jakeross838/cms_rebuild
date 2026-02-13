@@ -37,6 +37,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface DocumentFile {
   id: string
@@ -634,6 +635,52 @@ export function DocumentsPreview() {
     return daysDiff >= -7 && daysDiff <= 0
   }).length
 
+  const aiFeatures = [
+    {
+      feature: 'Document Classification',
+      trigger: 'On submission',
+      insight: 'Auto-categorizes uploaded docs into folders based on content analysis, file names, and metadata.',
+      severity: 'info' as const,
+      confidence: 96,
+      detail: `${aiProcessedCount} documents classified automatically. AI identified document types including contracts, permits, invoices, and submittals.`,
+    },
+    {
+      feature: 'OCR Extraction',
+      trigger: 'On submission',
+      insight: 'Extracts text from scanned documents using OCR, making them searchable and enabling data extraction.',
+      severity: 'info' as const,
+      confidence: 92,
+      detail: 'Text extracted from PDFs and images. Key data fields identified: dates, amounts, vendor names, and permit numbers.',
+    },
+    {
+      feature: 'Expiration Tracking',
+      trigger: 'Daily',
+      insight: `Alerts for expiring documents. ${expiringCount} document${expiringCount !== 1 ? 's' : ''} expiring within 90 days including permits, COIs, and licenses.`,
+      severity: expiringCount > 0 ? 'warning' as const : 'success' as const,
+      confidence: 98,
+      action: expiringCount > 0 ? {
+        label: 'View Expiring',
+        onClick: () => {},
+      } : undefined,
+    },
+    {
+      feature: 'Version Control',
+      trigger: 'On change',
+      insight: 'Tracks document versions automatically, maintaining revision history and highlighting changes between versions.',
+      severity: 'info' as const,
+      confidence: 95,
+      detail: 'Version history maintained for all documents. Current active versions displayed with revision markers.',
+    },
+    {
+      feature: 'Search Intelligence',
+      trigger: 'Real-time',
+      insight: 'AI-powered document search across file names, extracted text, tags, and metadata for instant results.',
+      severity: 'info' as const,
+      confidence: 94,
+      detail: `${aiProcessedCount} documents indexed and searchable. Natural language queries supported for finding relevant documents.`,
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -842,6 +889,15 @@ export function DocumentsPreview() {
             <span>Missing: Electrical inspection report for rough-in phase</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-t border-purple-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Document AI Features"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
     </div>
   )

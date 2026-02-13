@@ -12,11 +12,9 @@ import {
   Clock,
   AlertCircle,
   CircleDot,
-  Sparkles,
   MoreHorizontal,
   DollarSign,
   User,
-  Shield,
   FileText,
   RotateCcw,
   ClipboardCheck,
@@ -24,10 +22,21 @@ import {
   AlertTriangle,
   Calendar,
   Eye,
+  Footprints,
+  ChevronUp,
+  TrendingUp,
+  TrendingDown,
+  Target,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import {
+  PriorityFilter,
+  GroupByToggle,
+  AIFeaturesPanel,
+  AIFeatureCard,
+} from '@/components/skeleton/ui'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -36,11 +45,28 @@ type Priority = 'critical' | 'high' | 'medium' | 'low' | 'cosmetic'
 type CostResponsibility = 'vendor_backcharge' | 'builder_warranty' | 'shared' | 'none'
 type PhotoStage = 'issue' | 'repair' | 'verification' | 'rejection'
 type ItemSource = 'walkthrough' | 'checklist' | 'client_portal' | 'daily_log'
+type GroupByValue = 'none' | 'room' | 'floor' | 'trade'
 
 interface PunchItemPhoto {
   stage: PhotoStage
   url: string
   hasAnnotations: boolean
+}
+
+interface AssignedPerson {
+  id: string
+  name: string
+  avatar?: string
+}
+
+interface VendorFTQ {
+  vendorId: string
+  vendorName: string
+  ftqScore: number
+  ftqTrend: 'up' | 'down' | 'stable'
+  ftqTrendValue: number
+  ftqThreshold: 'excellent' | 'good' | 'fair' | 'poor'
+  totalInspections: number
 }
 
 interface PunchItem {
@@ -69,6 +95,28 @@ interface PunchItem {
   warrantyConversion: boolean
   hasPlanPin: boolean
   notes?: string
+  assignedTo?: AssignedPerson
+}
+
+// ── Vendor FTQ Data ────────────────────────────────────────────────
+
+const vendorFTQData: Record<string, VendorFTQ> = {
+  'v1': { vendorId: 'v1', vendorName: 'Pro Finish Painting', ftqScore: 91, ftqTrend: 'up', ftqTrendValue: 2.3, ftqThreshold: 'good', totalInspections: 28 },
+  'v2': { vendorId: 'v2', vendorName: 'Custom Cabinet Co', ftqScore: 96, ftqTrend: 'stable', ftqTrendValue: 0.5, ftqThreshold: 'excellent', totalInspections: 42 },
+  'v3': { vendorId: 'v3', vendorName: 'Quality Tile Co', ftqScore: 88, ftqTrend: 'down', ftqTrendValue: -1.8, ftqThreshold: 'good', totalInspections: 35 },
+  'v4': { vendorId: 'v4', vendorName: 'CoolAir HVAC', ftqScore: 94, ftqTrend: 'up', ftqTrendValue: 3.1, ftqThreshold: 'excellent', totalInspections: 51 },
+  'v5': { vendorId: 'v5', vendorName: 'ABC Drywall', ftqScore: 68, ftqTrend: 'down', ftqTrendValue: -4.2, ftqThreshold: 'poor', totalInspections: 63 },
+  'v6': { vendorId: 'v6', vendorName: 'FastFix Electric', ftqScore: 79, ftqTrend: 'stable', ftqTrendValue: 0.2, ftqThreshold: 'fair', totalInspections: 38 },
+  'v7': { vendorId: 'v7', vendorName: 'Premier Plumbing', ftqScore: 92, ftqTrend: 'up', ftqTrendValue: 1.5, ftqThreshold: 'good', totalInspections: 45 },
+  'v8': { vendorId: 'v8', vendorName: 'Foundation First', ftqScore: 97, ftqTrend: 'stable', ftqTrendValue: 0.8, ftqThreshold: 'excellent', totalInspections: 22 },
+}
+
+// FTQ threshold badge colors
+const ftqThresholdConfig = {
+  excellent: { label: 'Excellent', bgColor: 'bg-green-100', textColor: 'text-green-700', borderColor: 'border-green-300' },
+  good: { label: 'Good', bgColor: 'bg-blue-100', textColor: 'text-blue-700', borderColor: 'border-blue-300' },
+  fair: { label: 'Fair', bgColor: 'bg-amber-100', textColor: 'text-amber-700', borderColor: 'border-amber-300' },
+  poor: { label: 'Poor', bgColor: 'bg-red-100', textColor: 'text-red-700', borderColor: 'border-red-300' },
 }
 
 // ── Mock Data ────────────────────────────────────────────────
@@ -93,6 +141,8 @@ const mockPunchItems: PunchItem[] = [
     source: 'walkthrough',
     warrantyConversion: false,
     hasPlanPin: true,
+    assignedTo: { id: 'u1', name: 'Mike Johnson' },
+    notes: 'Client noticed this during final walkthrough. Paint color is SW 7015 Repose Gray.',
   },
   {
     id: '2',
@@ -115,6 +165,7 @@ const mockPunchItems: PunchItem[] = [
     source: 'walkthrough',
     warrantyConversion: false,
     hasPlanPin: true,
+    assignedTo: { id: 'u2', name: 'Sarah Chen' },
   },
   {
     id: '3',
@@ -138,6 +189,7 @@ const mockPunchItems: PunchItem[] = [
     source: 'client_portal',
     warrantyConversion: false,
     hasPlanPin: true,
+    assignedTo: { id: 'u3', name: 'Tom Williams' },
   },
   {
     id: '4',
@@ -184,9 +236,10 @@ const mockPunchItems: PunchItem[] = [
     costResponsibility: 'vendor_backcharge',
     estimatedCost: 450,
     source: 'client_portal',
-    warrantyConversion: false,
+    warrantyConversion: true,
     hasPlanPin: true,
-    notes: 'Client reported cold air coming in. Potential warranty claim against PGT.',
+    notes: 'Client reported cold air coming in. Potential warranty claim against PGT. Window installed 11 months ago - within warranty period.',
+    assignedTo: { id: 'u4', name: 'Dave Martinez' },
   },
   {
     id: '6',
@@ -207,6 +260,7 @@ const mockPunchItems: PunchItem[] = [
     source: 'walkthrough',
     warrantyConversion: false,
     hasPlanPin: false,
+    assignedTo: { id: 'u5', name: 'Chris Brown' },
   },
   {
     id: '7',
@@ -232,6 +286,7 @@ const mockPunchItems: PunchItem[] = [
     checklistRef: 'Trim Inspection #2',
     warrantyConversion: false,
     hasPlanPin: true,
+    notes: 'Vendor attempted caulk fix but it is not acceptable. Needs proper scribe cut and repaint.',
   },
   {
     id: '8',
@@ -255,6 +310,7 @@ const mockPunchItems: PunchItem[] = [
     source: 'daily_log',
     warrantyConversion: false,
     hasPlanPin: false,
+    assignedTo: { id: 'u5', name: 'Chris Brown' },
   },
   {
     id: '9',
@@ -280,7 +336,7 @@ const mockPunchItems: PunchItem[] = [
     estimatedCost: 120,
     actualCost: 95,
     source: 'walkthrough',
-    warrantyConversion: false,
+    warrantyConversion: true,
     hasPlanPin: false,
   },
   {
@@ -302,6 +358,29 @@ const mockPunchItems: PunchItem[] = [
     source: 'walkthrough',
     warrantyConversion: false,
     hasPlanPin: true,
+  },
+  {
+    id: '11',
+    itemNumber: 'PL-011',
+    description: 'Hardwood floor scratch near entry - furniture delivery damage',
+    room: 'Foyer',
+    floorLevel: '1st Floor',
+    trade: 'Flooring',
+    assignedVendor: 'Premium Floors Inc',
+    assignedVendorId: 'v9',
+    priority: 'high',
+    status: 'assigned',
+    photos: [{ stage: 'issue', url: '/photos/pl-011-issue.jpg', hasAnnotations: true }],
+    dueDate: '2026-02-14',
+    createdAt: '2026-02-07',
+    rejectionCount: 0,
+    costResponsibility: 'vendor_backcharge',
+    estimatedCost: 350,
+    source: 'walkthrough',
+    warrantyConversion: true,
+    hasPlanPin: true,
+    assignedTo: { id: 'u6', name: 'Lisa Park' },
+    notes: 'Delivery company may be liable. Get photos from security camera for documentation.',
   },
 ]
 
@@ -338,6 +417,13 @@ const sourceConfig: Record<ItemSource, { label: string; icon: typeof FileText }>
   client_portal: { label: 'Client Portal', icon: User },
   daily_log: { label: 'Daily Log', icon: FileText },
 }
+
+const groupByOptions = [
+  { id: 'none', label: 'None' },
+  { id: 'room', label: 'Room' },
+  { id: 'floor', label: 'Floor' },
+  { id: 'trade', label: 'Trade' },
+]
 
 // ── Sub-Components ──────────────────────────────────────────
 
@@ -384,7 +470,8 @@ function PhotoStages({ photos }: { photos: PunchItemPhoto[] }) {
   )
 }
 
-function PunchItemCard({ item }: { item: PunchItem }) {
+function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthroughMode?: boolean }) {
+  const [notesExpanded, setNotesExpanded] = useState(false)
   const status = statusConfig[item.status]
   const priority = priorityConfig[item.priority]
   const cost = costConfig[item.costResponsibility]
@@ -392,6 +479,56 @@ function PunchItemCard({ item }: { item: PunchItem }) {
   const StatusIcon = status.icon
   const SourceIcon = source.icon
   const isOverdue = item.dueDate && new Date(item.dueDate) < new Date() && !['verified', 'closed', 'completed'].includes(item.status)
+
+  // Simplified walkthrough mode card
+  if (isWalkthroughMode) {
+    return (
+      <div className={cn(
+        "bg-white rounded-lg border p-4 shadow-sm",
+        isOverdue ? "border-red-200" : "border-gray-200"
+      )}>
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-mono text-sm font-medium text-gray-700">{item.itemNumber}</span>
+              <span className={cn(
+                "text-xs px-2 py-0.5 rounded font-medium",
+                priority.bgColor,
+                priority.textColor
+              )}>
+                {priority.label}
+              </span>
+              {item.warrantyConversion && (
+                <span className="text-xs px-2 py-0.5 rounded font-medium bg-purple-100 text-purple-700">
+                  Warranty
+                </span>
+              )}
+            </div>
+            <p className="font-medium text-gray-900 text-base">{item.description}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 text-sm text-gray-600">
+          <div className="flex items-center gap-1">
+            <MapPin className="h-4 w-4" />
+            <span>{item.room}</span>
+          </div>
+          <span className="text-gray-300">|</span>
+          <span>{item.trade}</span>
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <span className={cn(
+            "text-sm px-2 py-1 rounded font-medium flex items-center gap-1",
+            status.bgColor,
+            status.textColor
+          )}>
+            <StatusIcon className="h-4 w-4" />
+            {status.label}
+          </span>
+          <PhotoStages photos={item.photos} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={cn(
@@ -407,6 +544,11 @@ function PunchItemCard({ item }: { item: PunchItem }) {
               <span title="Pinned to floor plan"><MapPin className="h-3 w-3 text-blue-500" /></span>
             )}
             <PhotoStages photos={item.photos} />
+            {item.warrantyConversion && (
+              <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-purple-100 text-purple-700">
+                Warranty
+              </span>
+            )}
           </div>
           <p className="font-medium text-gray-900 text-sm line-clamp-2">{item.description}</p>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -428,12 +570,29 @@ function PunchItemCard({ item }: { item: PunchItem }) {
         </button>
       </div>
 
-      {/* Vendor assignment */}
+      {/* Vendor assignment with FTQ */}
       <div className="flex items-center gap-2 mb-2">
         <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
           <span className="text-xs font-medium text-blue-700">{item.assignedVendor[0]}</span>
         </div>
         <span className="text-xs text-gray-600">{item.assignedVendor}</span>
+        {/* FTQ Score Badge */}
+        {vendorFTQData[item.assignedVendorId] && (
+          <span 
+            className={cn(
+              "text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5 font-medium border",
+              ftqThresholdConfig[vendorFTQData[item.assignedVendorId].ftqThreshold].bgColor,
+              ftqThresholdConfig[vendorFTQData[item.assignedVendorId].ftqThreshold].textColor,
+              ftqThresholdConfig[vendorFTQData[item.assignedVendorId].ftqThreshold].borderColor
+            )}
+            title={"First-Time Quality Score: " + vendorFTQData[item.assignedVendorId].ftqScore + "% (" + vendorFTQData[item.assignedVendorId].totalInspections + " inspections)"}
+          >
+            <Target className="h-2.5 w-2.5" />
+            FTQ {vendorFTQData[item.assignedVendorId].ftqScore}%
+            {vendorFTQData[item.assignedVendorId].ftqTrend === 'up' && <TrendingUp className="h-2.5 w-2.5" />}
+            {vendorFTQData[item.assignedVendorId].ftqTrend === 'down' && <TrendingDown className="h-2.5 w-2.5" />}
+          </span>
+        )}
         {item.dueDate && (
           <span className={cn(
             "text-xs ml-auto flex items-center gap-0.5",
@@ -445,6 +604,17 @@ function PunchItemCard({ item }: { item: PunchItem }) {
           </span>
         )}
       </div>
+
+      {/* Assigned person */}
+      {item.assignedTo && (
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+            <span className="text-xs font-medium text-green-700">{item.assignedTo.name[0]}</span>
+          </div>
+          <span className="text-xs text-gray-500">Assigned to:</span>
+          <span className="text-xs text-gray-700 font-medium">{item.assignedTo.name}</span>
+        </div>
+      )}
 
       {/* Rejection notice */}
       {item.status === 'rejected' && item.lastRejectionReason && (
@@ -462,6 +632,24 @@ function PunchItemCard({ item }: { item: PunchItem }) {
         <div className="mb-2 text-xs text-purple-600 flex items-center gap-1">
           <ClipboardCheck className="h-3 w-3" />
           From: {item.checklistRef}
+        </div>
+      )}
+
+      {/* Notes expandable section */}
+      {item.notes && (
+        <div className="mb-2">
+          <button
+            onClick={() => setNotesExpanded(!notesExpanded)}
+            className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"
+          >
+            {notesExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            <span>Notes</span>
+          </button>
+          {notesExpanded && (
+            <div className="mt-1 p-2 bg-gray-50 rounded text-xs text-gray-600">
+              {item.notes}
+            </div>
+          )}
         </div>
       )}
 
@@ -536,12 +724,24 @@ export function PunchListPreview() {
   const [filterRoom, setFilterRoom] = useState<string | 'all'>('all')
   const [filterTrade, setFilterTrade] = useState<string | 'all'>('all')
   const [filterVendor, setFilterVendor] = useState<string | 'all'>('all')
-  const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set(['Master Bedroom', 'Kitchen', 'Living Room']))
+  const [filterPriority, setFilterPriority] = useState<string[]>([])
+  const [groupBy, setGroupBy] = useState<GroupByValue>('room')
+  const [isWalkthroughMode, setIsWalkthroughMode] = useState(false)
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['Master Bedroom', 'Kitchen', 'Living Room', '1st Floor', '2nd Floor', 'Painting', 'Electrical']))
 
   // Get unique values for filters
   const rooms = [...new Set(mockPunchItems.map(item => item.room))]
   const trades = [...new Set(mockPunchItems.map(item => item.trade))]
   const vendors = [...new Set(mockPunchItems.map(item => item.assignedVendor))]
+
+  // Calculate priority counts for filter
+  const priorityCounts: Record<string, number> = {
+    critical: mockPunchItems.filter(i => i.priority === 'critical').length,
+    high: mockPunchItems.filter(i => i.priority === 'high').length,
+    medium: mockPunchItems.filter(i => i.priority === 'medium').length,
+    low: mockPunchItems.filter(i => i.priority === 'low').length,
+    none: mockPunchItems.filter(i => i.priority === 'cosmetic').length,
+  }
 
   // Filter items
   const filteredItems = sortItems(
@@ -551,16 +751,41 @@ export function PunchListPreview() {
       if (filterRoom !== 'all' && item.room !== filterRoom) return false
       if (filterTrade !== 'all' && item.trade !== filterTrade) return false
       if (filterVendor !== 'all' && item.assignedVendor !== filterVendor) return false
+      if (filterPriority.length > 0) {
+        const priorityMap: Record<string, Priority> = {
+          critical: 'critical',
+          high: 'high',
+          medium: 'medium',
+          low: 'low',
+          none: 'cosmetic',
+        }
+        const matchingPriorities = filterPriority.map(p => priorityMap[p])
+        if (!matchingPriorities.includes(item.priority)) return false
+      }
       return true
     }),
     activeSort as keyof PunchItem | '',
     sortDirection,
   )
 
-  // Group items by room
-  const itemsByRoom = filteredItems.reduce((acc, item) => {
-    if (!acc[item.room]) acc[item.room] = []
-    acc[item.room].push(item)
+  // Group items based on groupBy selection
+  const getGroupKey = (item: PunchItem): string => {
+    switch (groupBy) {
+      case 'room':
+        return item.room
+      case 'floor':
+        return item.floorLevel
+      case 'trade':
+        return item.trade
+      default:
+        return 'all'
+    }
+  }
+
+  const itemsByGroup = filteredItems.reduce((acc, item) => {
+    const key = getGroupKey(item)
+    if (!acc[key]) acc[key] = []
+    acc[key].push(item)
     return acc
   }, {} as Record<string, PunchItem[]>)
 
@@ -575,17 +800,63 @@ export function PunchListPreview() {
   const totalEstCost = mockPunchItems.reduce((sum, item) => sum + (item.estimatedCost || 0), 0)
   const backchargeCount = mockPunchItems.filter(item => item.costResponsibility === 'vendor_backcharge' && !['verified', 'closed'].includes(item.status)).length
 
-  const toggleRoom = (room: string) => {
-    setExpandedRooms(prev => {
+  const toggleGroup = (group: string) => {
+    setExpandedGroups(prev => {
       const next = new Set(prev)
-      if (next.has(room)) {
-        next.delete(room)
+      if (next.has(group)) {
+        next.delete(group)
       } else {
-        next.add(room)
+        next.add(group)
       }
       return next
     })
   }
+
+  // AI Insights data with FTQ integration
+  const aiFeatures = [
+    {
+      feature: 'FTQ Score Analysis',
+      trigger: 'Real-time',
+      insight: 'ABC Drywall FTQ at 68% (below 70% threshold). 40% of punch items attributed. Recommend vendor quality review.',
+      severity: 'critical' as const,
+      confidence: 94,
+    },
+    {
+      feature: 'Completion Rate Prediction',
+      trigger: 'Real-time',
+      insight: 'At current pace, punch list completion in ~4 days. 8 items/day average.',
+      severity: 'info' as const,
+      confidence: 85,
+    },
+    {
+      feature: 'First-Time Quality Trends',
+      trigger: 'Daily',
+      insight: 'Pro Finish Painting FTQ improved +2.3% this month. Custom Cabinet Co maintains 96% excellence.',
+      severity: 'success' as const,
+      confidence: 91,
+    },
+    {
+      feature: 'Vendor FTQ Prediction',
+      trigger: 'On-change',
+      insight: 'FastFix Electric predicted 75% FTQ for next project based on crew changes and complexity.',
+      severity: 'warning' as const,
+      confidence: 82,
+    },
+    {
+      feature: 'Back-Charge Calculation',
+      trigger: 'Real-time',
+      insight: 'Potential back-charges: $1,240 (ABC Drywall: $800, XYZ Paint: $440). Linked to FTQ scores.',
+      severity: 'info' as const,
+      confidence: 92,
+    },
+    {
+      feature: 'Warranty Risk Assessment',
+      trigger: 'On-change',
+      insight: '3 items from vendors with declining FTQ flagged for warranty consideration.',
+      severity: 'warning' as const,
+      confidence: 75,
+    },
+  ]
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -614,21 +885,37 @@ export function PunchListPreview() {
               {totalItems} total | {openItems} open | {inProgressItems} in progress | {verifiedOrClosed} verified/closed
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsWalkthroughMode(!isWalkthroughMode)}
+              className={cn(
+                "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border transition-colors",
+                isWalkthroughMode
+                  ? "bg-blue-50 border-blue-200 text-blue-700"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              )}
+            >
+              <Footprints className="h-4 w-4" />
+              Walkthrough Mode
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="px-4 py-3 bg-white border-b border-gray-200">
-        <div className="grid grid-cols-7 gap-2">
-          <StatCard icon={CircleDot} label="Total Items" value={totalItems} iconColor="text-blue-600" iconBg="bg-blue-50" />
-          <StatCard icon={CheckCircle2} label="Complete" value={`${completePercent}%`} subValue={`${verifiedOrClosed} of ${totalItems}`} iconColor="text-green-600" iconBg="bg-green-50" />
-          <StatCard icon={CircleDot} label="Open" value={openItems} iconColor="text-red-600" iconBg="bg-red-50" />
-          <StatCard icon={AlertCircle} label="Critical" value={criticalItems} iconColor="text-red-600" iconBg="bg-red-50" />
-          <StatCard icon={RotateCcw} label="Rejected" value={rejectedItems} iconColor="text-red-600" iconBg="bg-red-50" />
-          <StatCard icon={DollarSign} label="Est. Cost" value={`$${totalEstCost.toLocaleString()}`} subValue={`${backchargeCount} back-charges`} iconColor="text-amber-600" iconBg="bg-amber-50" />
-          <StatCard icon={Layers} label="Rooms" value={rooms.length} subValue={`${trades.length} trades`} iconColor="text-purple-600" iconBg="bg-purple-50" />
+      {!isWalkthroughMode && (
+        <div className="px-4 py-3 bg-white border-b border-gray-200">
+          <div className="grid grid-cols-7 gap-2">
+            <StatCard icon={CircleDot} label="Total Items" value={totalItems} iconColor="text-blue-600" iconBg="bg-blue-50" />
+            <StatCard icon={CheckCircle2} label="Complete" value={`${completePercent}%`} subValue={`${verifiedOrClosed} of ${totalItems}`} iconColor="text-green-600" iconBg="bg-green-50" />
+            <StatCard icon={CircleDot} label="Open" value={openItems} iconColor="text-red-600" iconBg="bg-red-50" />
+            <StatCard icon={AlertCircle} label="Critical" value={criticalItems} iconColor="text-red-600" iconBg="bg-red-50" />
+            <StatCard icon={RotateCcw} label="Rejected" value={rejectedItems} iconColor="text-red-600" iconBg="bg-red-50" />
+            <StatCard icon={DollarSign} label="Est. Cost" value={`$${totalEstCost.toLocaleString()}`} subValue={`${backchargeCount} back-charges`} iconColor="text-amber-600" iconBg="bg-amber-50" />
+            <StatCard icon={Layers} label="Rooms" value={rooms.length} subValue={`${trades.length} trades`} iconColor="text-purple-600" iconBg="bg-purple-50" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-2">
@@ -680,76 +967,108 @@ export function PunchListPreview() {
           onSortChange={setActiveSort}
           sortDirection={sortDirection}
           onSortDirectionChange={toggleSortDirection}
-          actions={[
-            { icon: Download, label: 'Export', onClick: () => {} },
-            { icon: ClipboardCheck, label: 'Walkthrough', onClick: () => {} },
-            { icon: Plus, label: 'Add Item', onClick: () => {}, variant: 'primary' },
-          ]}
+          actions={
+            isWalkthroughMode
+              ? [
+                  { icon: Plus, label: 'Add Item', onClick: () => {}, variant: 'primary' },
+                ]
+              : [
+                  { icon: Download, label: 'Export', onClick: () => {} },
+                  { icon: ClipboardCheck, label: 'Walkthrough', onClick: () => {} },
+                  { icon: Plus, label: 'Add Item', onClick: () => {}, variant: 'primary' },
+                ]
+          }
           resultCount={filteredItems.length}
           totalCount={mockPunchItems.length}
         />
+
+        {/* Additional filters row */}
+        <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100">
+          <PriorityFilter
+            value={filterPriority}
+            onChange={setFilterPriority}
+            counts={priorityCounts}
+          />
+          <GroupByToggle
+            value={groupBy}
+            onChange={(value) => setGroupBy(value as GroupByValue)}
+            options={groupByOptions}
+          />
+        </div>
       </div>
 
-      {/* Punch Items by Room */}
+      {/* Punch Items by Group */}
       <div className="max-h-[450px] overflow-y-auto">
-        {Object.entries(itemsByRoom).map(([room, items]) => {
-          const isExpanded = expandedRooms.has(room)
-          const roomComplete = items.filter(i => ['completed', 'verified', 'closed'].includes(i.status)).length
-          const roomTotal = items.length
-          const roomCritical = items.filter(i => i.priority === 'critical' && !['verified', 'closed'].includes(i.status)).length
+        {groupBy === 'none' ? (
+          // No grouping - flat list
+          <div className="p-4 space-y-3 bg-white">
+            {filteredItems.map(item => (
+              <PunchItemCard key={item.id} item={item} isWalkthroughMode={isWalkthroughMode} />
+            ))}
+          </div>
+        ) : (
+          // Grouped view
+          Object.entries(itemsByGroup).map(([group, items]) => {
+            const isExpanded = expandedGroups.has(group)
+            const groupComplete = items.filter(i => ['completed', 'verified', 'closed'].includes(i.status)).length
+            const groupTotal = items.length
+            const groupCritical = items.filter(i => i.priority === 'critical' && !['verified', 'closed'].includes(i.status)).length
 
-          return (
-            <div key={room} className="border-b border-gray-100 last:border-b-0">
-              {/* Room Header */}
-              <button
-                onClick={() => toggleRoom(room)}
-                className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-2">
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
-                  )}
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span className="font-medium text-gray-900">{room}</span>
-                  <span className="text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">
-                    {roomTotal}
-                  </span>
-                  {roomCritical > 0 && (
-                    <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                      <AlertCircle className="h-3 w-3" />
-                      {roomCritical} critical
+            return (
+              <div key={group} className="border-b border-gray-100 last:border-b-0">
+                {/* Group Header */}
+                <button
+                  onClick={() => toggleGroup(group)}
+                  className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100"
+                >
+                  <div className="flex items-center gap-2">
+                    {isExpanded ? (
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                    )}
+                    {groupBy === 'room' && <MapPin className="h-4 w-4 text-gray-500" />}
+                    {groupBy === 'floor' && <Layers className="h-4 w-4 text-gray-500" />}
+                    {groupBy === 'trade' && <ClipboardCheck className="h-4 w-4 text-gray-500" />}
+                    <span className="font-medium text-gray-900">{group}</span>
+                    <span className="text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">
+                      {groupTotal}
                     </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">{roomComplete}/{roomTotal} complete</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={cn(
-                        "h-full rounded-full",
-                        roomComplete === roomTotal ? "bg-green-500" : "bg-blue-500"
-                      )}
-                      style={{ width: `${(roomComplete / roomTotal) * 100}%` }}
-                    />
+                    {groupCritical > 0 && (
+                      <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                        <AlertCircle className="h-3 w-3" />
+                        {groupCritical} critical
+                      </span>
+                    )}
                   </div>
-                </div>
-              </button>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">{groupComplete}/{groupTotal} complete</span>
+                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-full rounded-full",
+                          groupComplete === groupTotal ? "bg-green-500" : "bg-blue-500"
+                        )}
+                        style={{ width: `${(groupComplete / groupTotal) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </button>
 
-              {/* Room Items */}
-              {isExpanded && (
-                <div className="p-4 space-y-3 bg-white">
-                  {items.map(item => (
-                    <PunchItemCard key={item.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })}
+                {/* Group Items */}
+                {isExpanded && (
+                  <div className="p-4 space-y-3 bg-white">
+                    {items.map(item => (
+                      <PunchItemCard key={item.id} item={item} isWalkthroughMode={isWalkthroughMode} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })
+        )}
 
-        {Object.keys(itemsByRoom).length === 0 && (
+        {Object.keys(itemsByGroup).length === 0 && (
           <div className="text-center py-12 text-gray-400">
             <CheckCircle2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p>No punch items found matching your criteria</p>
@@ -757,19 +1076,23 @@ export function PunchListPreview() {
         )}
       </div>
 
-      {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
-        <div className="flex items-start gap-3">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">AI Insight:</span>
-          </div>
-          <div className="flex flex-col gap-1 text-sm text-amber-700">
-            <span>At current completion rate, punch list will be cleared in ~4 days. PL-005 (window seal gap) is critical and overdue -- vendor response needed.</span>
-            <span>PL-007 rejected for inadequate repair. Coastal Framing has 2 items remaining. Quality Tile Co typically resolves items in 3 days -- on track.</span>
-            <span>Estimated back-charge total: ${totalEstCost} across {backchargeCount} vendor items. Kitchen cabinet alignment usually requires follow-up 15% of the time.</span>
-          </div>
+      {/* Walkthrough Mode Add Item Button */}
+      {isWalkthroughMode && (
+        <div className="bg-white border-t border-gray-200 px-4 py-3">
+          <button className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <Plus className="h-5 w-5" />
+            <span className="font-medium">Add New Item</span>
+          </button>
         </div>
+      )}
+
+      {/* AI Features Panel */}
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-t border-purple-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Insights"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
     </div>
   )

@@ -26,10 +26,17 @@ import {
   Link2,
   Layers,
   BarChart3,
+  Camera,
+  FileCheck,
+  Receipt,
+  Signature,
+  AlertCircle,
+  ArrowRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface ChangeOrder {
   id: string
@@ -75,6 +82,11 @@ interface ChangeOrder {
   // AI
   aiNote?: string
   aiConfidence?: number
+  // Documentation completeness
+  hasPhotos?: boolean
+  hasScopeDescription?: boolean
+  hasCostBreakdown?: boolean
+  hasClientApproval?: boolean
 }
 
 const mockChangeOrders: ChangeOrder[] = [
@@ -108,6 +120,10 @@ const mockChangeOrders: ChangeOrder[] = [
     selectionId: 'sel-042',
     selectionName: 'Master Bath Tile',
     costCode: '09 - Finishes',
+    hasPhotos: true,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: true,
   },
   {
     id: '2',
@@ -140,6 +156,10 @@ const mockChangeOrders: ChangeOrder[] = [
     linkedPoIds: ['PO-2026-0098'],
     aiNote: 'Similar soil issues on 3 nearby coastal projects. Recommend budgeting +10% contingency for coastal sites.',
     aiConfidence: 0.92,
+    hasPhotos: true,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: true,
   },
   {
     id: '3',
@@ -172,6 +192,10 @@ const mockChangeOrders: ChangeOrder[] = [
     costCode: '06 - Carpentry',
     aiNote: 'Client counter-proposed $12,500. Original: $14,720. Pending 8 days -- follow up recommended.',
     aiConfidence: 0.88,
+    hasPhotos: true,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: false,
   },
   {
     id: '4',
@@ -202,6 +226,10 @@ const mockChangeOrders: ChangeOrder[] = [
     selectionName: 'Kitchen Appliances',
     costCode: '11 - Equipment',
     aiNote: 'Auto-generated from selection overage. Allowance: $8,000, Selected: $23,200. Client portal presentation sent Feb 7.',
+    hasPhotos: false,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: false,
   },
   {
     id: '5',
@@ -229,6 +257,10 @@ const mockChangeOrders: ChangeOrder[] = [
     approvalProgress: { completed: 1, total: 3 },
     costCode: '08 - Doors & Windows',
     aiNote: 'Step 1/3 approved (PM). Awaiting Director review. Auto-escalation in 2 days.',
+    hasPhotos: true,
+    hasScopeDescription: true,
+    hasCostBreakdown: false,
+    hasClientApproval: false,
   },
   {
     id: '6',
@@ -260,6 +292,10 @@ const mockChangeOrders: ChangeOrder[] = [
     selectionId: 'sel-045',
     selectionName: 'Guest Bath Tile',
     costCode: '09 - Finishes',
+    hasPhotos: true,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: true,
   },
   {
     id: '7',
@@ -289,6 +325,10 @@ const mockChangeOrders: ChangeOrder[] = [
     rfiId: 'rfi-015',
     rfiNumber: 'RFI-015',
     aiNote: 'Rejected: Design team responsible per contract terms. No owner cost impact.',
+    hasPhotos: false,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: false,
   },
   {
     id: '8',
@@ -317,6 +357,10 @@ const mockChangeOrders: ChangeOrder[] = [
     costCode: '04 - Masonry',
     aiNote: 'Domestic stone lead time 2 weeks vs. imported 8 weeks. Schedule improvement of 3 days on critical path.',
     aiConfidence: 0.95,
+    hasPhotos: true,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: false,
   },
   {
     id: '9',
@@ -345,6 +389,10 @@ const mockChangeOrders: ChangeOrder[] = [
     internalApprovedAt: '2026-01-10',
     costCode: '12 - Furnishings',
     aiNote: 'Withdrawn by client Jan 15 after cost presentation. Within 48-hour withdrawal window.',
+    hasPhotos: false,
+    hasScopeDescription: true,
+    hasCostBreakdown: true,
+    hasClientApproval: false,
   },
 ]
 
@@ -394,6 +442,56 @@ function formatCurrencyPlain(value: number): string {
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+// AI Feature 4: Documentation Completeness Checker
+function DocumentationCompletenessCard({ co }: { co: ChangeOrder }) {
+  const items = [
+    { key: 'photos', label: 'Photos', icon: Camera, complete: co.hasPhotos ?? false },
+    { key: 'scope', label: 'Scope description', icon: FileCheck, complete: co.hasScopeDescription ?? false },
+    { key: 'cost', label: 'Cost breakdown', icon: Receipt, complete: co.hasCostBreakdown ?? false },
+    { key: 'approval', label: 'Client approval', icon: Signature, complete: co.hasClientApproval ?? false },
+  ]
+
+  const completedCount = items.filter(item => item.complete).length
+  const readinessPercent = Math.round((completedCount / items.length) * 100)
+  const missingItems = items.filter(item => !item.complete)
+
+  if (readinessPercent === 100) return null
+
+  return (
+    <AIFeatureCard
+      feature="Documentation Completeness"
+      trigger="Real-time"
+      severity={readinessPercent >= 75 ? 'warning' : 'critical'}
+      confidence={readinessPercent}
+      insight={`${readinessPercent}% ready for approval. ${missingItems.length} item${missingItems.length !== 1 ? 's' : ''} missing.`}
+      detail={missingItems.length > 0 ? `Missing: ${missingItems.map(i => i.label).join(', ')}` : undefined}
+      action={missingItems.length > 0 ? { label: 'Add Missing Items', onClick: () => {} } : undefined}
+    />
+  )
+}
+
+// AI Feature 5: Budget Cascade Preview
+function BudgetCascadePreview({ co }: { co: ChangeOrder }) {
+  if (co.status === 'approved' || co.status === 'rejected' || co.status === 'withdrawn' || co.status === 'voided') {
+    return null
+  }
+
+  // Mock data for budget cascade
+  const currentContingency = 18200
+  const newContingency = currentContingency - Math.abs(co.totalAmount)
+
+  return (
+    <AIFeatureCard
+      feature="Budget Cascade Preview"
+      trigger="On change"
+      severity={newContingency < 10000 ? 'warning' : 'info'}
+      insight={`Approval will impact project budget and draw schedule.`}
+      detail={`Update ${co.costCode} budget ${formatCurrency(co.totalAmount)}, ${co.isCredit ? 'increase' : 'reduce'} contingency from ${formatCurrencyPlain(currentContingency)} to ${formatCurrencyPlain(Math.max(0, newContingency))}, adjust Draw #4 by ${formatCurrency(co.totalAmount)}`}
+      action={{ label: 'Preview Full Impact', onClick: () => {} }}
+    />
+  )
 }
 
 function ChangeOrderCard({ co }: { co: ChangeOrder }) {
@@ -450,6 +548,19 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
         )}
       </div>
 
+      {/* AI Feature 1: Cost Estimation - Comparative Analysis */}
+      {co.status !== 'approved' && co.status !== 'rejected' && co.status !== 'withdrawn' && (
+        <AIFeatureCard
+          feature="Cost Estimation"
+          trigger="On creation"
+          severity="info"
+          confidence={87}
+          insight={`Similar ${co.title.toLowerCase().includes('tile') ? 'tile upgrade' : co.title.toLowerCase().includes('roof') ? 'roof modification' : 'change'} on Johnson project cost ${formatCurrencyPlain(Math.round(co.totalAmount * 0.87))}. Current estimate ${formatCurrencyPlain(co.totalAmount)} is ${Math.round((co.totalAmount / (co.totalAmount * 0.87) - 1) * 100)}% higher - consider price escalation factors.`}
+          action={{ label: 'Apply Estimate', onClick: () => {} }}
+          className="mb-3"
+        />
+      )}
+
       {/* Cost breakdown */}
       <div className="bg-gray-50 rounded p-2 mb-3 text-xs text-gray-600">
         <div className="flex items-center justify-between mb-1">
@@ -492,6 +603,22 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
         </div>
       </div>
 
+      {/* AI Feature 2: Schedule Impact Analysis - Enhanced */}
+      {co.scheduleImpact !== 0 && co.affectedTasks.length > 0 && (
+        <AIFeatureCard
+          feature="Schedule Impact Analysis"
+          trigger="Real-time"
+          severity={co.scheduleImpact > 0 ? 'warning' : 'success'}
+          insight={co.scheduleImpact > 0
+            ? `This CO adds ${co.scheduleImpact} days to ${co.affectedTasks[0]}. Critical path impact: ${co.affectedTasks.length > 1 ? co.affectedTasks[1] : 'Drywall'} start pushed from Mar 15 to Mar ${15 + co.scheduleImpact}.`
+            : `This CO saves ${Math.abs(co.scheduleImpact)} days. Critical path improvement: Project completion advanced.`
+          }
+          detail={`Cascading effects on ${co.affectedTasks.length} task${co.affectedTasks.length !== 1 ? 's' : ''}: ${co.affectedTasks.join(', ')}`}
+          icon={<AlertCircle className="h-4 w-4" />}
+          className="mb-3"
+        />
+      )}
+
       {/* Approval progress */}
       {(co.status === 'internal_review' || co.status === 'client_presented') && (
         <div className="mb-3">
@@ -518,6 +645,20 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
           <span className="text-purple-700 font-medium">
             Negotiation: {negotiationLabels[co.negotiationStatus]}
           </span>
+        </div>
+      )}
+
+      {/* AI Feature 4: Documentation Completeness (before approval) */}
+      {(co.status === 'draft' || co.status === 'internal_review' || co.status === 'client_presented') && (
+        <div className="mb-3">
+          <DocumentationCompletenessCard co={co} />
+        </div>
+      )}
+
+      {/* AI Feature 5: Budget Cascade Preview */}
+      {(co.status === 'draft' || co.status === 'internal_review' || co.status === 'client_presented' || co.status === 'negotiation') && (
+        <div className="mb-3">
+          <BudgetCascadePreview co={co} />
         </div>
       )}
 
@@ -606,6 +747,49 @@ export function ChangeOrdersPreview() {
   }))
   const topCause = causeTotals.sort((a, b) => b.count - a.count)[0]
 
+  // AI Feature 3: Cause Pattern Detection
+  const designErrorCOs = mockChangeOrders.filter(co => co.causeCategory === 'Design Error')
+  const designErrorPercent = Math.round((designErrorCOs.length / totalCOs) * 100)
+  const portfolioAvgDesignError = 15
+
+  // AI Insights for bottom panel
+  const aiInsights = [
+    {
+      feature: 'Escalation Alert',
+      trigger: 'Real-time' as const,
+      severity: 'warning' as const,
+      insight: 'CO-003 negotiation pending 8 days -- auto-escalation in 2 days',
+      action: { label: 'View CO-003', onClick: () => {} },
+    },
+    {
+      feature: 'Cause Pattern Detection',
+      trigger: 'Daily' as const,
+      severity: designErrorPercent > portfolioAvgDesignError * 2 ? 'critical' as const : 'warning' as const,
+      insight: `${designErrorPercent}% of COs on this job from design errors (portfolio avg: ${portfolioAvgDesignError}%). Consider design review process improvements.`,
+      detail: `${designErrorCOs.length} design error COs totaling ${formatCurrency(designErrorCOs.reduce((sum, co) => sum + co.totalAmount, 0))}. Pattern suggests early design coordination meetings could reduce CO volume.`,
+      action: { label: 'View Recommendations', onClick: () => {} },
+    },
+    {
+      feature: 'Field Conditions Analysis',
+      trigger: 'Weekly' as const,
+      severity: 'info' as const,
+      insight: 'Field conditions: 43% of net change vs. 25% portfolio avg',
+    },
+    {
+      feature: 'CO Rate Benchmark',
+      trigger: 'Weekly' as const,
+      severity: 'info' as const,
+      insight: `CO rate ${((totalCOs / originalContract) * 1000000).toFixed(1)} COs/$1M vs. portfolio avg 5.2`,
+    },
+    {
+      feature: 'Value Engineering',
+      trigger: 'On change' as const,
+      severity: 'success' as const,
+      insight: 'CO-008 saves 3 schedule days on critical path via domestic stone substitution',
+      action: { label: 'View Details', onClick: () => {} },
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -682,16 +866,58 @@ export function ChangeOrdersPreview() {
             </div>
             <div className="text-xs text-gray-400">{approvedCOs.filter(co => co.scheduleImpact !== 0).length} COs w/ impact</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          {/* AI Feature 3: Cause Pattern Detection - Enhanced stat card */}
+          <div className={cn(
+            "rounded-lg p-3",
+            designErrorPercent > portfolioAvgDesignError * 2 ? "bg-red-50" : "bg-gray-50"
+          )}>
+            <div className={cn(
+              "flex items-center gap-2 text-xs",
+              designErrorPercent > portfolioAvgDesignError * 2 ? "text-red-600" : "text-gray-500"
+            )}>
               <BarChart3 className="h-3.5 w-3.5" />
-              Top Cause
+              <span className="flex items-center gap-1">
+                Top Cause
+                {designErrorPercent > portfolioAvgDesignError * 2 && (
+                  <AlertTriangle className="h-3 w-3" />
+                )}
+              </span>
             </div>
-            <div className="text-sm font-bold text-gray-900 mt-1">{topCause?.cause}</div>
-            <div className="text-xs text-gray-400">{topCause?.count} COs ({formatCurrency(topCause?.amount ?? 0)})</div>
+            <div className={cn(
+              "text-sm font-bold mt-1",
+              designErrorPercent > portfolioAvgDesignError * 2 ? "text-red-700" : "text-gray-900"
+            )}>
+              {topCause?.cause}
+            </div>
+            <div className="text-xs text-gray-400">
+              {topCause?.count} COs ({formatCurrency(topCause?.amount ?? 0)})
+            </div>
+            {designErrorPercent > portfolioAvgDesignError && (
+              <div className="mt-1 flex items-center gap-1 text-[10px] text-amber-600">
+                <Sparkles className="h-2.5 w-2.5" />
+                {designErrorPercent}% vs {portfolioAvgDesignError}% avg
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* AI Feature 3: Cause Pattern Detection - Expanded Analysis */}
+      {designErrorPercent > portfolioAvgDesignError && (
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <AIFeatureCard
+            feature="Cause Pattern Detection"
+            trigger="Daily"
+            severity={designErrorPercent > portfolioAvgDesignError * 2 ? 'critical' : 'warning'}
+            confidence={92}
+            insight={`${designErrorPercent}% of COs on this job from design errors (portfolio avg: ${portfolioAvgDesignError}%). Consider design review process improvements.`}
+            detail="Recommendations: 1) Implement design coordination meetings before each phase. 2) Require architect sign-off on structural details. 3) Add RFI checkpoint before major trade mobilization."
+            action={{ label: 'View Full Analysis', onClick: () => {} }}
+            collapsible
+            defaultCollapsed
+          />
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-4 py-2">
@@ -766,29 +992,13 @@ export function ChangeOrdersPreview() {
         )}
       </div>
 
-      {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
-        <div className="flex items-start gap-3">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">AI Insights:</span>
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-amber-700">
-            <span className="flex items-center gap-1">
-              <AlertTriangle className="h-3.5 w-3.5" />
-              CO-003 negotiation pending 8 days -- auto-escalation in 2 days
-            </span>
-            <span className="text-amber-400">|</span>
-            <span>Field conditions: 43% of net change vs. 25% portfolio avg</span>
-            <span className="text-amber-400">|</span>
-            <span>CO rate {((totalCOs / originalContract) * 1000000).toFixed(1)} COs/$1M vs. portfolio avg 5.2</span>
-            <span className="text-amber-400">|</span>
-            <span className="flex items-center gap-1">
-              <DollarSign className="h-3.5 w-3.5" />
-              Value engineering CO-008 saves 3 schedule days on critical path
-            </span>
-          </div>
-        </div>
+      {/* AI Insights Bar - Using AIFeaturesPanel */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Insights"
+          features={aiInsights}
+          columns={2}
+        />
       </div>
     </div>
   )

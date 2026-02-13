@@ -37,10 +37,13 @@ import {
   CalendarDays,
   Activity,
   ArrowRight,
+  HelpCircle,
+  Info,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import {
   differenceInCalendarDays,
   addDays,
@@ -79,6 +82,8 @@ interface ScheduleItem {
   baselineStartDate?: string
   baselineEndDate?: string
   aiPredictedEndDate?: string
+  aiConfidence?: number
+  aiReasoning?: string[]
   durationDays?: number
   percentComplete?: number
   status?: TaskStatus
@@ -151,6 +156,13 @@ const SUB_CONFIRMATION_CONFIG: Record<SubConfirmation, { label: string; badgeCla
   confirmed:  { label: 'Confirmed', badgeClass: 'bg-green-100 text-green-700' },
 }
 
+const DEPENDENCY_TYPE_CONFIG: Record<DependencyType, { label: string; color: string; arrowColor: string }> = {
+  FS: { label: 'Finish-to-Start', color: 'text-blue-600', arrowColor: '#3b82f6' },
+  SS: { label: 'Start-to-Start', color: 'text-green-600', arrowColor: '#16a34a' },
+  FF: { label: 'Finish-to-Finish', color: 'text-orange-600', arrowColor: '#ea580c' },
+  SF: { label: 'Start-to-Finish', color: 'text-purple-600', arrowColor: '#9333ea' },
+}
+
 // ============================================================================
 // 3. Mock Data — "Smith Residence" Build (~20 weeks, ~40 items)
 // ============================================================================
@@ -204,7 +216,7 @@ const mockPhases: SchedulePhase[] = [
         items: [
           { id: 't8', groupId: 'g2b', name: 'Form & pour grade beams', kind: 'task', taskType: 'construction', trade: 'Foundation', startDate: '2025-11-26', endDate: '2025-12-03', actualStartDate: '2025-11-26', actualEndDate: '2025-12-04', durationDays: 6, percentComplete: 100, status: 'complete', isCriticalPath: true, totalFloat: 0, vendor: 'Deep South Pilings', subConfirmation: 'confirmed', isWeatherSensitive: true },
           { id: 't9', groupId: 'g2b', name: 'Cure period (7 days)', kind: 'task', taskType: 'weather_hold', trade: 'Foundation', startDate: '2025-12-04', endDate: '2025-12-10', actualStartDate: '2025-12-05', actualEndDate: '2025-12-11', durationDays: 7, percentComplete: 100, status: 'complete', isCriticalPath: true, totalFloat: 0 },
-          { id: 't10', groupId: 'g2b', name: 'Strip forms & backfill', kind: 'task', taskType: 'construction', trade: 'Foundation', startDate: '2025-12-11', endDate: '2025-12-13', actualStartDate: '2025-12-12', durationDays: 3, percentComplete: 75, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'Deep South Pilings', subConfirmation: 'confirmed', aiPredictedEndDate: '2025-12-15' },
+          { id: 't10', groupId: 'g2b', name: 'Strip forms & backfill', kind: 'task', taskType: 'construction', trade: 'Foundation', startDate: '2025-12-11', endDate: '2025-12-13', actualStartDate: '2025-12-12', durationDays: 3, percentComplete: 75, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'Deep South Pilings', subConfirmation: 'confirmed', aiPredictedEndDate: '2025-12-15', aiConfidence: 78, aiReasoning: ['Weather forecast (+1 day)', 'Crew availability normal', 'Similar task history (+0.5 days)'] },
           { id: 'c4', groupId: 'g2b', name: 'Verify rebar placement per structural drawings', kind: 'checklist', isChecked: true },
         ],
       },
@@ -230,15 +242,15 @@ const mockPhases: SchedulePhase[] = [
       {
         id: 'g3b', phaseId: 'p3', name: 'Wall Framing', sortOrder: 2,
         items: [
-          { id: 't14', groupId: 'g3b', name: 'Frame exterior walls', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2025-12-26', endDate: '2026-01-06', actualStartDate: '2025-12-27', durationDays: 8, percentComplete: 80, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', assignee: 'Tom A.', subConfirmation: 'confirmed', baselineStartDate: '2025-12-24', baselineEndDate: '2026-01-02', aiPredictedEndDate: '2026-01-08', aiNote: 'ABC typically +2 days on coastal elevated homes' },
-          { id: 't15', groupId: 'g3b', name: 'Frame interior walls', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2026-01-07', endDate: '2026-01-13', actualStartDate: '2026-01-09', durationDays: 5, percentComplete: 30, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', assignee: 'Tom A.', subConfirmation: 'confirmed', baselineStartDate: '2026-01-03', baselineEndDate: '2026-01-08', aiPredictedEndDate: '2026-01-16' },
+          { id: 't14', groupId: 'g3b', name: 'Frame exterior walls', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2025-12-26', endDate: '2026-01-06', actualStartDate: '2025-12-27', durationDays: 8, percentComplete: 80, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', assignee: 'Tom A.', subConfirmation: 'confirmed', baselineStartDate: '2025-12-24', baselineEndDate: '2026-01-02', aiPredictedEndDate: '2026-01-08', aiConfidence: 85, aiReasoning: ['Weather forecast (+2 days)', 'Vendor history (+1 day)', 'Similar task duration analysis'], aiNote: 'ABC typically +2 days on coastal elevated homes' },
+          { id: 't15', groupId: 'g3b', name: 'Frame interior walls', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2026-01-07', endDate: '2026-01-13', actualStartDate: '2026-01-09', durationDays: 5, percentComplete: 30, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', assignee: 'Tom A.', subConfirmation: 'confirmed', baselineStartDate: '2026-01-03', baselineEndDate: '2026-01-08', aiPredictedEndDate: '2026-01-16', aiConfidence: 72, aiReasoning: ['Exterior walls delay (+2 days)', 'Material availability normal', 'Crew efficiency trending down'] },
           { id: 'sv1', groupId: 'g3b', name: 'Wall plumb & square check', kind: 'task', taskType: 'survey', trade: 'Survey', startDate: '2026-01-14', endDate: '2026-01-14', durationDays: 1, percentComplete: 0, status: 'not_started', totalFloat: 2 },
         ],
       },
       {
         id: 'g3c', phaseId: 'p3', name: 'Roof Framing', sortOrder: 3,
         items: [
-          { id: 't16', groupId: 'g3c', name: 'Set roof trusses', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2026-01-15', endDate: '2026-01-22', durationDays: 6, percentComplete: 10, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', assignee: 'Tom A.', subConfirmation: 'confirmed', isWeatherSensitive: true, linkedPO: 'PO-005', baselineStartDate: '2026-01-09', baselineEndDate: '2026-01-15', aiPredictedEndDate: '2026-01-25', aiNote: 'Complex hip roof — AI suggests 18 days total' },
+          { id: 't16', groupId: 'g3c', name: 'Set roof trusses', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2026-01-15', endDate: '2026-01-22', durationDays: 6, percentComplete: 10, status: 'in_progress', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', assignee: 'Tom A.', subConfirmation: 'confirmed', isWeatherSensitive: true, linkedPO: 'PO-005', baselineStartDate: '2026-01-09', baselineEndDate: '2026-01-15', aiPredictedEndDate: '2026-01-25', aiConfidence: 68, aiReasoning: ['Complex hip roof geometry (+2 days)', 'Weather risk window (+1 day)', 'Crane scheduling dependency'], aiNote: 'Complex hip roof — AI suggests 18 days total' },
           { id: 't17', groupId: 'g3c', name: 'Roof sheathing & dry-in', kind: 'task', taskType: 'construction', trade: 'Framing', startDate: '2026-01-23', endDate: '2026-01-29', durationDays: 5, percentComplete: 0, status: 'not_started', isCriticalPath: true, totalFloat: 0, vendor: 'ABC Framing', subConfirmation: 'pending', isWeatherSensitive: true, baselineStartDate: '2026-01-16', baselineEndDate: '2026-01-21' },
           { id: 'i3', groupId: 'g3c', name: 'Structural framing inspection', kind: 'task', taskType: 'inspection', trade: 'Inspection', startDate: '2026-01-30', endDate: '2026-01-30', durationDays: 1, percentComplete: 0, status: 'not_started', isCriticalPath: true, totalFloat: 0, linkedInspection: 'STR-2026-0112' },
           { id: 'm1', groupId: 'g3c', name: 'Dried In milestone', kind: 'task', taskType: 'milestone', startDate: '2026-01-30', endDate: '2026-01-30', durationDays: 0, percentComplete: 0, status: 'not_started', isCriticalPath: true },
@@ -317,15 +329,17 @@ const mockDependencies: ScheduleDependency[] = [
   { predecessorId: 't9', successorId: 't10', type: 'FS', lagDays: 0 },
   { predecessorId: 't11', successorId: 'i2', type: 'FS', lagDays: 0 },
   { predecessorId: 't10', successorId: 't12', type: 'FS', lagDays: 1 },
-  { predecessorId: 't12', successorId: 't13', type: 'FS', lagDays: 0 },
+  { predecessorId: 't12', successorId: 't13', type: 'SS', lagDays: 2 },  // SS: Start-to-Start
   { predecessorId: 't13', successorId: 't14', type: 'FS', lagDays: 1 },
-  { predecessorId: 't14', successorId: 't15', type: 'FS', lagDays: 0 },
+  { predecessorId: 't14', successorId: 't15', type: 'SS', lagDays: 3 },  // SS: Start-to-Start (can start interior while exterior ongoing)
   { predecessorId: 't15', successorId: 't16', type: 'FS', lagDays: 1 },
   { predecessorId: 't16', successorId: 't17', type: 'FS', lagDays: 0 },
-  { predecessorId: 't17', successorId: 'i3', type: 'FS', lagDays: 0 },
+  { predecessorId: 't17', successorId: 'i3', type: 'FF', lagDays: 0 },   // FF: Finish-to-Finish (inspection must finish when sheathing finishes)
   { predecessorId: 'i3', successorId: 't19', type: 'FS', lagDays: 2 },
   { predecessorId: 'i3', successorId: 't24', type: 'FS', lagDays: 14 },
+  { predecessorId: 't24', successorId: 't25', type: 'SS', lagDays: 0 },  // SS: Electrical and plumbing can start together
   { predecessorId: 't25', successorId: 'i4', type: 'FS', lagDays: 0 },
+  { predecessorId: 't20', successorId: 't21', type: 'SF', lagDays: 1 },  // SF: Start-to-Finish (underlayment must start before roof can finish)
 ]
 
 const mockWeather: WeatherDay[] = (() => {
@@ -390,6 +404,18 @@ function getPxPerDay(zoom: ZoomLevel): number {
   if (zoom === 'day') return 36
   if (zoom === 'week') return 12
   return 4
+}
+
+function getConfidenceColor(confidence: number): string {
+  if (confidence >= 80) return 'text-green-600'
+  if (confidence >= 60) return 'text-amber-600'
+  return 'text-red-600'
+}
+
+function getConfidenceBgColor(confidence: number): string {
+  if (confidence >= 80) return 'bg-green-100'
+  if (confidence >= 60) return 'bg-amber-100'
+  return 'bg-red-100'
 }
 
 // ============================================================================
@@ -534,6 +560,32 @@ function TimelineHeader({ columns, zoom, timelineWidth }: {
   )
 }
 
+function WeekendShading({ timelineStart, totalDays, timelineWidth, zoom, height }: {
+  timelineStart: string; totalDays: number; timelineWidth: number; zoom: ZoomLevel; height: number
+}) {
+  if (zoom !== 'day') return null
+
+  const startDate = new Date(timelineStart)
+  const days = eachDayOfInterval({ start: startDate, end: addDays(startDate, totalDays - 1) })
+
+  return (
+    <div className="absolute top-0 left-0 pointer-events-none" style={{ width: timelineWidth, height }}>
+      {days.map((day, i) => {
+        if (!isWeekend(day)) return null
+        const pos = (i / totalDays) * 100
+        const width = (1 / totalDays) * 100
+        return (
+          <div
+            key={i}
+            className="absolute top-0 h-full bg-gray-100"
+            style={{ left: `${pos}%`, width: `${width}%` }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 function TodayLine({ timelineStart, totalDays, height }: { timelineStart: string; totalDays: number; height: number }) {
   const pos = getDatePosition(TODAY, timelineStart, totalDays)
   if (pos < 0 || pos > 100) return null
@@ -541,6 +593,44 @@ function TodayLine({ timelineStart, totalDays, height }: { timelineStart: string
     <div className="absolute top-0 z-20 pointer-events-none" style={{ left: `${pos}%`, height }}>
       <div className="w-px h-full border-l-2 border-dashed border-red-400" />
       <div className="absolute -top-0.5 -left-2.5 bg-red-500 text-white text-[9px] px-1 rounded">Today</div>
+    </div>
+  )
+}
+
+function AIWhyTooltip({ item }: { item: ScheduleItem }) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  if (!item.aiPredictedEndDate || !item.aiReasoning) return null
+
+  return (
+    <div className="relative inline-block">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
+        className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <HelpCircle className="h-3 w-3" />
+      </button>
+      {isOpen && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-3 bg-white rounded-lg shadow-lg border border-gray-200">
+          <div className="text-xs font-medium text-gray-900 mb-2 flex items-center gap-1">
+            <Sparkles className="h-3 w-3 text-amber-500" />
+            AI Prediction Factors
+          </div>
+          <ul className="space-y-1">
+            {item.aiReasoning.map((reason, i) => (
+              <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
+                <span className="text-amber-500 mt-0.5">-</span>
+                {reason}
+              </li>
+            ))}
+          </ul>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1">
+            <div className="w-2 h-2 bg-white border-b border-r border-gray-200 transform rotate-45" />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -554,13 +644,14 @@ function GanttBar({ item, timelineStart, totalDays, showBaseline }: {
   const barBg = isCp ? 'bg-red-200' : config.bgColor
   const barFill = isCp ? 'bg-red-500' : config.barColor
 
-  // Milestone / deadline: diamond marker
+  // Milestone: diamond marker
   if (item.taskType === 'milestone' || (item.durationDays === 0 && item.taskType !== 'deadline')) {
     const pos = getDatePosition(item.startDate, timelineStart, totalDays)
     return (
       <div className="relative h-7 flex items-center">
-        <div className="absolute" style={{ left: `${pos}%`, marginLeft: '-6px' }}>
-          <div className={cn('w-3 h-3 rotate-45', isCp ? 'bg-red-500' : config.barColor)} />
+        <div className="absolute flex items-center gap-1.5" style={{ left: `${pos}%`, marginLeft: '-8px' }}>
+          <div className={cn('w-4 h-4 rotate-45 border-2', isCp ? 'bg-red-500 border-red-600' : 'bg-emerald-500 border-emerald-600')} />
+          <span className="text-xs font-semibold text-emerald-700 whitespace-nowrap ml-1">{item.name}</span>
         </div>
       </div>
     )
@@ -600,10 +691,15 @@ function GanttBar({ item, timelineStart, totalDays, showBaseline }: {
           <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] font-medium text-white/80">{pct}%</span>
         )}
       </div>
-      {/* AI predicted end marker */}
+      {/* AI predicted end marker with confidence */}
       {item.aiPredictedEndDate && (
-        <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${getDatePosition(item.aiPredictedEndDate, timelineStart, totalDays)}%` }}>
+        <div className="absolute top-1/2 -translate-y-1/2 flex items-center" style={{ left: `${getDatePosition(item.aiPredictedEndDate, timelineStart, totalDays)}%` }}>
           <div className="w-0 h-5 border-l-2 border-dashed border-orange-400 opacity-70" />
+          {item.aiConfidence && (
+            <div className={cn('ml-1 px-1 py-0.5 rounded text-[9px] font-medium', getConfidenceBgColor(item.aiConfidence), getConfidenceColor(item.aiConfidence))}>
+              {item.aiConfidence}%
+            </div>
+          )}
         </div>
       )}
       {/* Sub confirmation on bar */}
@@ -699,8 +795,16 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
     <div className="flex border-b border-gray-50 hover:bg-blue-50/50 group">
       <div className="w-64 flex-shrink-0 px-3 py-1.5 pl-14 sticky left-0 z-10 bg-white group-hover:bg-blue-50/50 border-r border-gray-200">
         <div className="flex items-center gap-1.5 min-w-0">
-          {item.taskType === 'milestone' || item.taskType === 'deadline' ? (
-            <span className={cn('font-medium text-sm truncate', item.taskType === 'deadline' ? 'text-red-600' : 'text-emerald-600')}>◆ {item.name}</span>
+          {item.taskType === 'milestone' ? (
+            <span className="font-medium text-sm truncate text-emerald-600 flex items-center gap-1">
+              <Diamond className="h-3 w-3 text-emerald-500" />
+              {item.name}
+            </span>
+          ) : item.taskType === 'deadline' ? (
+            <span className="font-medium text-sm truncate text-red-600">
+              <Flag className="h-3 w-3 inline mr-1" />
+              {item.name}
+            </span>
           ) : (
             <span className="text-sm text-gray-700 truncate">{item.name}</span>
           )}
@@ -721,7 +825,7 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-400">
+        <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-400 flex-wrap">
           {item.trade && (
             <span className="text-gray-300">{item.trade}</span>
           )}
@@ -755,6 +859,14 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
               <FileText className="h-3 w-3" />{item.linkedDailyLog}
             </span>
           )}
+          {/* AI Predicted date with confidence */}
+          {item.aiPredictedEndDate && item.aiConfidence && (
+            <span className={cn('flex items-center gap-0.5 text-[10px] font-medium flex-shrink-0', getConfidenceColor(item.aiConfidence))}>
+              <Sparkles className="h-2.5 w-2.5" />
+              Predicted: {format(parseISO(item.aiPredictedEndDate), 'MMM d')} ({item.aiConfidence}%)
+              <AIWhyTooltip item={item} />
+            </span>
+          )}
         </div>
       </div>
       <div className="relative" style={{ width: timelineWidth }}>
@@ -784,32 +896,101 @@ function DependencyArrows({ dependencies, itemMap, timelineStart, totalDays, row
     .map(dep => {
       const pred = itemMap.get(dep.predecessorId)!
       const succ = itemMap.get(dep.successorId)!
+      const predStart = pred.item.startDate
       const predEnd = pred.item.endDate ?? pred.item.startDate
       const succStart = succ.item.startDate
-      if (!predEnd || !succStart) return null
-      const x1Pct = getDatePosition(predEnd, timelineStart, totalDays)
-      const x2Pct = getDatePosition(succStart, timelineStart, totalDays)
+      const succEnd = succ.item.endDate ?? succ.item.startDate
+      if (!predStart || !predEnd || !succStart || !succEnd) return null
+
+      const depConfig = DEPENDENCY_TYPE_CONFIG[dep.type]
+      const isCritical = pred.item.isCriticalPath && succ.item.isCriticalPath
+
+      // Calculate positions based on dependency type
+      let x1Pct: number, x2Pct: number
+      switch (dep.type) {
+        case 'SS': // Start-to-Start
+          x1Pct = getDatePosition(predStart, timelineStart, totalDays)
+          x2Pct = getDatePosition(succStart, timelineStart, totalDays)
+          break
+        case 'FF': // Finish-to-Finish
+          x1Pct = getDatePosition(predEnd, timelineStart, totalDays)
+          x2Pct = getDatePosition(succEnd, timelineStart, totalDays)
+          break
+        case 'SF': // Start-to-Finish
+          x1Pct = getDatePosition(predStart, timelineStart, totalDays)
+          x2Pct = getDatePosition(succEnd, timelineStart, totalDays)
+          break
+        case 'FS': // Finish-to-Start (default)
+        default:
+          x1Pct = getDatePosition(predEnd, timelineStart, totalDays)
+          x2Pct = getDatePosition(succStart, timelineStart, totalDays)
+          break
+      }
+
       const y1 = pred.rowIndex * rowHeight + rowHeight / 2
       const y2 = succ.rowIndex * rowHeight + rowHeight / 2
-      const isCritical = pred.item.isCriticalPath && succ.item.isCriticalPath
-      return { x1Pct, x2Pct, y1, y2, isCritical, key: `${dep.predecessorId}-${dep.successorId}` }
+
+      return {
+        x1Pct,
+        x2Pct,
+        y1,
+        y2,
+        isCritical,
+        type: dep.type,
+        color: isCritical ? '#ef4444' : depConfig.arrowColor,
+        key: `${dep.predecessorId}-${dep.successorId}`
+      }
     })
-    .filter(Boolean) as { x1Pct: number; x2Pct: number; y1: number; y2: number; isCritical: boolean; key: string }[]
+    .filter(Boolean) as { x1Pct: number; x2Pct: number; y1: number; y2: number; isCritical: boolean; type: DependencyType; color: string; key: string }[]
 
   if (lines.length === 0) return null
+
   return (
     <svg className="absolute top-0 left-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none">
       <defs>
         <marker id="arrow-gray" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4 Z" fill="#9ca3af" /></marker>
         <marker id="arrow-red" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4 Z" fill="#ef4444" /></marker>
+        <marker id="arrow-blue" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4 Z" fill="#3b82f6" /></marker>
+        <marker id="arrow-green" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4 Z" fill="#16a34a" /></marker>
+        <marker id="arrow-orange" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4 Z" fill="#ea580c" /></marker>
+        <marker id="arrow-purple" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4 Z" fill="#9333ea" /></marker>
       </defs>
-      {lines.map(({ x1Pct, x2Pct, y1, y2, isCritical, key }) => {
-        const color = isCritical ? '#ef4444' : '#9ca3af'
-        const marker = isCritical ? 'url(#arrow-red)' : 'url(#arrow-gray)'
+      {lines.map(({ x1Pct, x2Pct, y1, y2, isCritical, type, color, key }) => {
+        const markerMap: Record<DependencyType, string> = {
+          FS: isCritical ? 'url(#arrow-red)' : 'url(#arrow-blue)',
+          SS: isCritical ? 'url(#arrow-red)' : 'url(#arrow-green)',
+          FF: isCritical ? 'url(#arrow-red)' : 'url(#arrow-orange)',
+          SF: isCritical ? 'url(#arrow-red)' : 'url(#arrow-purple)',
+        }
+        const marker = markerMap[type]
         const midXPct = x1Pct + 0.3
+
+        // Calculate label position
+        const labelX = (x1Pct + x2Pct) / 2
+        const labelY = (y1 + y2) / 2 - 8
+
         return (
           <g key={key}>
-            <path d={`M ${x1Pct}% ${y1} L ${midXPct}% ${y1} L ${midXPct}% ${y2} L ${x2Pct}% ${y2}`} fill="none" stroke={color} strokeWidth={isCritical ? 1.5 : 1} markerEnd={marker} opacity={0.7} />
+            <path
+              d={`M ${x1Pct}% ${y1} L ${midXPct}% ${y1} L ${midXPct}% ${y2} L ${x2Pct}% ${y2}`}
+              fill="none"
+              stroke={color}
+              strokeWidth={isCritical ? 1.5 : 1}
+              markerEnd={marker}
+              opacity={0.7}
+            />
+            {/* Dependency type label */}
+            <text
+              x={`${labelX}%`}
+              y={labelY}
+              fontSize="9"
+              fill={color}
+              textAnchor="middle"
+              fontWeight="500"
+              className="select-none"
+            >
+              {type}
+            </text>
           </g>
         )
       })}
@@ -875,6 +1056,17 @@ function ScheduleLegend() {
         <div className="w-px h-4 bg-gray-200" />
         <div className="flex items-center gap-1.5"><Check className="h-3 w-3 text-green-600" /><span>Sub Confirmed</span></div>
         <div className="flex items-center gap-1.5"><CircleDashed className="h-3 w-3 text-yellow-600" /><span>Awaiting Sub</span></div>
+      </div>
+      {/* Dependency type legend */}
+      <div className="flex items-center gap-4 text-xs text-gray-500 mt-2 pt-2 border-t border-gray-100">
+        <span className="font-medium text-gray-600">Dependencies:</span>
+        {(Object.entries(DEPENDENCY_TYPE_CONFIG) as [DependencyType, typeof DEPENDENCY_TYPE_CONFIG[DependencyType]][]).map(([key, cfg]) => (
+          <div key={key} className="flex items-center gap-1.5">
+            <div className={cn('w-3 h-0.5 rounded', key === 'FS' ? 'bg-blue-500' : key === 'SS' ? 'bg-green-500' : key === 'FF' ? 'bg-orange-500' : 'bg-purple-500')} />
+            <span className={cfg.color}>{key}</span>
+            <span className="text-gray-400">({cfg.label})</span>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -1113,6 +1305,64 @@ export function SchedulePreview() {
 
   const ROW_HEIGHT = 32
 
+  // AI Features for the schedule
+  const aiFeatures = [
+    {
+      feature: 'Duration Learning',
+      trigger: 'Real-time',
+      insight: 'Framing tasks averaging 12% longer than estimated. Suggest: Adjust template durations.',
+      detail: 'Based on analysis of 47 similar framing tasks across 12 projects over the past 6 months.',
+      confidence: 89,
+      severity: 'warning' as const,
+      action: { label: 'Adjust Templates', onClick: () => {} },
+    },
+    {
+      feature: 'Weather Integration',
+      trigger: 'Daily',
+      insight: 'Rain forecast Thu-Fri. 3 outdoor tasks may be affected. Recommend: Move interior work forward.',
+      detail: 'Tasks affected: Set roof trusses, Roof sheathing & dry-in, Install roofing underlayment',
+      confidence: 92,
+      severity: 'warning' as const,
+      action: { label: 'View Reschedule Options', onClick: () => {} },
+    },
+    {
+      feature: 'Completion Prediction',
+      trigger: 'Real-time',
+      insight: 'Project completion: Mar 28 (was Mar 22). Delay factors: Framing (+3 days), Weather (+2 days)',
+      detail: 'Critical path analysis indicates 6-day slip from baseline. Recovery possible with crew addition.',
+      confidence: 85,
+      severity: 'critical' as const,
+      action: { label: 'View Recovery Plan', onClick: () => {} },
+    },
+    {
+      feature: 'Schedule Optimization',
+      trigger: 'On change',
+      insight: 'Moving HVAC rough-in before electrical could save 2 days. Both crews available.',
+      detail: 'No resource conflicts detected. Requires coordination meeting with Smith Electric and HVAC contractor.',
+      confidence: 78,
+      severity: 'success' as const,
+      action: { label: 'Apply Optimization', onClick: () => {} },
+    },
+    {
+      feature: 'Vendor Reliability',
+      trigger: 'On submission',
+      insight: 'ABC Drywall: 2 of last 5 tasks started late. Consider buffer or backup vendor.',
+      detail: 'Average delay: 1.8 days. Root causes: Material availability (60%), Crew scheduling (40%)',
+      confidence: 94,
+      severity: 'warning' as const,
+      action: { label: 'View Vendor History', onClick: () => {} },
+    },
+    {
+      feature: 'Variance Analysis',
+      trigger: 'Weekly',
+      insight: 'Phase 1 completed 4 days late. Root cause: Permit delay (3 days), Rain (1 day)',
+      detail: 'Recommend: Add 2-day buffer for permit-dependent phases. Weather contingency adequate.',
+      confidence: 96,
+      severity: 'info' as const,
+      action: { label: 'Update Risk Register', onClick: () => {} },
+    },
+  ]
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
@@ -1127,7 +1377,22 @@ export function SchedulePreview() {
             </div>
             <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" />Nov 4, 2025 — Mar 20, 2026 ({totalDays} days)</span>
-              <span className="flex items-center gap-1"><CalendarClock className="h-4 w-4" />Predicted: Mar 15 (85% confidence)</span>
+              <span className="flex items-center gap-1">
+                <CalendarClock className="h-4 w-4" />
+                Predicted: Mar 28
+                <span className={cn('text-xs px-1.5 py-0.5 rounded font-medium ml-1', getConfidenceBgColor(85), getConfidenceColor(85))}>
+                  85% confidence
+                </span>
+                <AIWhyTooltip item={{
+                  id: 'project',
+                  groupId: '',
+                  name: 'Project',
+                  kind: 'task',
+                  aiPredictedEndDate: '2026-03-28',
+                  aiConfidence: 85,
+                  aiReasoning: ['Framing phase delay (+3 days)', 'Weather forecast impact (+2 days)', 'Vendor reliability adjustment (+1 day)']
+                }} />
+              </span>
               <span className="flex items-center gap-1 text-amber-600"><CloudRain className="h-4 w-4" />Rain forecast Thu-Fri</span>
             </div>
           </div>
@@ -1169,6 +1434,11 @@ export function SchedulePreview() {
         </div>
 
         <div className="relative">
+          {/* Weekend shading layer (only on day zoom) */}
+          <div className="absolute top-0 left-64 right-0 pointer-events-none" style={{ width: timelineWidth, height: totalRenderedRows * ROW_HEIGHT }}>
+            <WeekendShading timelineStart={PROJECT_START} totalDays={totalDays} timelineWidth={timelineWidth} zoom={zoom} height={totalRenderedRows * ROW_HEIGHT} />
+          </div>
+
           {filteredPhases.map(phase => {
             const phaseExpanded = expandedPhases.has(phase.id)
             return (
@@ -1211,19 +1481,13 @@ export function SchedulePreview() {
       {/* Legend */}
       <ScheduleLegend />
 
-      {/* AI Insights */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
-        <div className="flex items-start gap-3">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">AI Insights</span>
-          </div>
-          <div className="text-sm text-amber-700 space-y-1">
-            <p>Framing is running 5 days behind baseline — ABC Framing typically +2 days on coastal elevated homes. Recommend adding 1 crew member to recover schedule by Jan 30 dried-in milestone.</p>
-            <p>Moving HVAC rough before electrical rough saves 3 days on critical path. No resource conflicts detected. Window delivery on track (PO-002, PGT confirmed Jan 20).</p>
-            <p>Jones Plumbing (plumbing top-out) has not been contacted yet — starts Feb 16. Send confirmation request by Feb 3 to maintain 2-week vendor notice policy.</p>
-          </div>
-        </div>
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Schedule Intelligence"
+          features={aiFeatures}
+          columns={2}
+        />
       </div>
     </div>
   )

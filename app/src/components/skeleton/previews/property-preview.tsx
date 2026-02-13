@@ -24,6 +24,7 @@ import {
   FileText,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 type ConstructionType = 'new_construction' | 'renovation' | 'addition' | 'tear_down_rebuild'
 
@@ -515,6 +516,38 @@ export function PropertyPreview() {
             </div>
           </div>
         </div>
+
+        {/* AI Features Panel */}
+        <AIFeaturesPanel
+          className="mt-4"
+          features={[
+            {
+              id: 'lot-analysis',
+              name: 'Lot Analysis',
+              description: 'AI analysis of lot characteristics',
+            },
+            {
+              id: 'permit-research',
+              name: 'Permit Research',
+              description: 'Identifies required permits for location',
+            },
+            {
+              id: 'market-valuation',
+              name: 'Market Valuation',
+              description: 'Estimates property value',
+            },
+            {
+              id: 'utility-research',
+              name: 'Utility Research',
+              description: 'Identifies available utilities',
+            },
+            {
+              id: 'risk-assessment',
+              name: 'Risk Assessment',
+              description: 'Environmental and location risks',
+            },
+          ]}
+        />
       </div>
 
       {/* AI Insights Bar */}

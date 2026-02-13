@@ -24,16 +24,28 @@ import {
   Droplets,
   Flame,
   Home,
+  RefreshCw,
+  ArrowRightLeft,
+  PauseCircle,
+  PlayCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 type PermitStatus = 'not_applied' | 'draft' | 'submitted' | 'under_review' | 'approved' | 'issued' | 'expired' | 'on_hold'
+
+interface PermitHold {
+  reason: string
+  holdDate: string
+  conditions: string[]
+  resolutionSteps: string[]
+}
 
 interface Permit {
   id: string
@@ -57,18 +69,27 @@ interface Permit {
   codeEdition?: string
   notes?: string
   aiNote?: string
+  hold?: PermitHold
+  renewalDeadline?: string
+  renewalFeeEstimate?: number
+}
+
+interface COPrerequisite {
+  id: string
+  category: 'permits' | 'inspections' | 'utilities' | 'documentation'
+  name: string
+  status: 'pass' | 'fail' | 'pending'
+  details?: string
 }
 
 interface COTracking {
   id: string
   type: 'final_co' | 'temp_co'
   status: 'prerequisites_pending' | 'applied' | 'issued' | 'expired'
-  prerequisitesMet: number
-  prerequisitesTotal: number
+  prerequisites: COPrerequisite[]
   appliedDate?: string
   issuedDate?: string
   expirationDate?: string
-  conditions?: string[]
 }
 
 interface UtilityConnection {
@@ -80,6 +101,7 @@ interface UtilityConnection {
   completedDate?: string
   accountNumber?: string
   transferConfirmed: boolean
+  transferDate?: string
   status: 'not_started' | 'applied' | 'scheduled' | 'completed' | 'transferred'
 }
 
@@ -204,6 +226,8 @@ const mockPermits: Permit[] = [
     feeActual: 500,
     notes: 'Expired - requires renewal before final inspection',
     aiNote: 'Expired 25 days ago. Renewal typically takes 5-7 business days for DHEC. Final inspection blocked until renewed.',
+    renewalDeadline: '2026-02-28',
+    renewalFeeEstimate: 150,
   },
   {
     id: '7',
@@ -253,15 +277,68 @@ const mockPermits: Permit[] = [
     feeActual: 600,
     conditions: ['Silt fence required around perimeter', 'Erosion control inspection within 48hr of grading'],
   },
+  {
+    id: '10',
+    permitType: 'Tree Removal',
+    jurisdiction: 'City of Charleston',
+    jurisdictionContact: 'Urban Forestry: (843) 724-7321',
+    applicationDate: '2026-01-20',
+    approvalDate: null,
+    issuedDate: null,
+    expirationDate: null,
+    status: 'on_hold',
+    feeEstimated: 450,
+    requiredDocuments: [
+      { name: 'Tree Survey', status: 'uploaded' },
+      { name: 'Mitigation Plan', status: 'uploaded' },
+    ],
+    hold: {
+      reason: 'Heritage Tree Review Required',
+      holdDate: '2026-02-05',
+      conditions: [
+        'Property contains 2 heritage oaks (>24" DBH)',
+        'Requires Historic Preservation Board review',
+        'Arborist assessment pending',
+      ],
+      resolutionSteps: [
+        'Submit certified arborist report',
+        'Attend Historic Preservation Board meeting (Feb 20)',
+        'Provide alternative site plan if removal denied',
+        'Pay heritage tree mitigation fee ($2,500/tree) if approved',
+      ],
+    },
+    aiNote: 'Heritage tree hold - typical resolution 2-4 weeks. Next HPB meeting Feb 20. Recommend engaging arborist immediately.',
+  },
+]
+
+const mockCOPrerequisites: COPrerequisite[] = [
+  // Building permits
+  { id: 'bp1', category: 'permits', name: 'Building Permit - Current', status: 'pass', details: 'BP-2025-0842 valid through Dec 2026' },
+  { id: 'bp2', category: 'permits', name: 'Building Permit - Final Inspected', status: 'pending', details: 'Awaiting final building inspection' },
+  // Trade permits
+  { id: 'tp1', category: 'permits', name: 'Electrical Permit - Approved', status: 'fail', details: 'Still under review' },
+  { id: 'tp2', category: 'permits', name: 'Plumbing Permit - Approved', status: 'pass', details: 'PL-2026-1102 approved' },
+  { id: 'tp3', category: 'permits', name: 'HVAC Permit - Approved', status: 'fail', details: 'Not yet applied' },
+  // Final inspections
+  { id: 'fi1', category: 'inspections', name: 'Final Inspection - Building', status: 'pending', details: 'Not yet scheduled' },
+  { id: 'fi2', category: 'inspections', name: 'Final Inspection - Electrical', status: 'fail', details: 'Permit required first' },
+  { id: 'fi3', category: 'inspections', name: 'Final Inspection - Plumbing', status: 'pending', details: 'Scheduled Feb 28' },
+  { id: 'fi4', category: 'inspections', name: 'Final Inspection - HVAC', status: 'fail', details: 'Permit required first' },
+  { id: 'fi5', category: 'inspections', name: 'Final Inspection - Fire', status: 'fail', details: 'Fire sprinkler permit in draft' },
+  // Utility connections
+  { id: 'uc1', category: 'utilities', name: 'Power Connection - Verified', status: 'pending', details: 'Scheduled Mar 1' },
+  { id: 'uc2', category: 'utilities', name: 'Water Connection - Verified', status: 'pending', details: 'Scheduled Mar 1' },
+  { id: 'uc3', category: 'utilities', name: 'Gas Connection - Verified', status: 'fail', details: 'Application pending' },
+  // Documentation
+  { id: 'doc1', category: 'documentation', name: 'As-Built Survey - Submitted', status: 'fail', details: 'Not yet submitted' },
+  { id: 'doc2', category: 'documentation', name: 'Fire Marshal - Signed Off', status: 'fail', details: 'Requires fire sprinkler completion' },
 ]
 
 const mockCO: COTracking = {
   id: '1',
   type: 'final_co',
   status: 'prerequisites_pending',
-  prerequisitesMet: 4,
-  prerequisitesTotal: 9,
-  conditions: ['All permits must be current', 'All inspections passed', 'Final utility connections complete', 'As-built survey submitted'],
+  prerequisites: mockCOPrerequisites,
 }
 
 const mockUtilities: UtilityConnection[] = [
@@ -270,7 +347,7 @@ const mockUtilities: UtilityConnection[] = [
   { id: '3', utilityType: 'sewer', provider: 'Charleston Water System', completedDate: '2025-12-15', status: 'completed', accountNumber: 'CWS-88221', transferConfirmed: false },
   { id: '4', utilityType: 'gas', provider: 'Piedmont Natural Gas', status: 'applied', applicationDate: '2026-02-01', accountNumber: undefined, transferConfirmed: false },
   { id: '5', utilityType: 'cable_internet', provider: 'Comcast Xfinity', status: 'not_started', accountNumber: undefined, transferConfirmed: false },
-  { id: '6', utilityType: 'irrigation', provider: 'Self (well)', completedDate: '2026-01-10', status: 'completed', accountNumber: 'N/A', transferConfirmed: false },
+  { id: '6', utilityType: 'irrigation', provider: 'Self (well)', completedDate: '2026-01-10', status: 'transferred', accountNumber: 'N/A', transferConfirmed: true, transferDate: '2026-02-01' },
 ]
 
 // ---------------------------------------------------------------------------
@@ -337,11 +414,20 @@ function getDaysUntil(dateStr: string | null): number | null {
   return Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 }
 
+function calculateCOReadiness(prerequisites: COPrerequisite[]): number {
+  const passed = prerequisites.filter(p => p.status === 'pass').length
+  return Math.round((passed / prerequisites.length) * 100)
+}
+
 // ---------------------------------------------------------------------------
 // Sub-Components
 // ---------------------------------------------------------------------------
 
-function PermitCard({ permit }: { permit: Permit }) {
+function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
+  permit: Permit
+  onResolveHold?: (permitId: string) => void
+  onApplyRenewal?: (permitId: string) => void
+}) {
   const statusInfo = statusConfig[permit.status]
   const StatusIcon = statusInfo.icon
   const daysUntilExpiration = permit.expirationDate ? getDaysUntil(permit.expirationDate) : null
@@ -350,7 +436,7 @@ function PermitCard({ permit }: { permit: Permit }) {
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       permit.status === 'expired' ? 'border-red-200' :
-      permit.status === 'on_hold' ? 'border-orange-200' :
+      permit.status === 'on_hold' ? 'border-orange-300 border-2' :
       permit.scheduleDependencies?.length ? 'border-l-4 border-l-amber-400' : 'border-gray-200'
     )}>
       <div className="flex items-start justify-between mb-3">
@@ -365,6 +451,46 @@ function PermitCard({ permit }: { permit: Permit }) {
           <MoreHorizontal className="h-4 w-4 text-gray-400" />
         </button>
       </div>
+
+      {/* Hold Status UI */}
+      {permit.status === 'on_hold' && permit.hold && (
+        <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <PauseCircle className="h-4 w-4 text-orange-600" />
+            <span className="font-semibold text-orange-800">{permit.hold.reason}</span>
+          </div>
+          <p className="text-xs text-orange-700 mb-2">Hold placed: {formatDate(permit.hold.holdDate)}</p>
+
+          <div className="mb-2">
+            <p className="text-xs font-medium text-orange-800 mb-1">Hold Conditions:</p>
+            <ul className="text-xs text-orange-700 space-y-0.5">
+              {permit.hold.conditions.map((condition, idx) => (
+                <li key={idx} className="flex items-start gap-1">
+                  <span className="text-orange-400">&#x2022;</span>
+                  {condition}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mb-3">
+            <p className="text-xs font-medium text-orange-800 mb-1">Resolution Steps:</p>
+            <ol className="text-xs text-orange-700 space-y-0.5 list-decimal list-inside">
+              {permit.hold.resolutionSteps.map((step, idx) => (
+                <li key={idx}>{step}</li>
+              ))}
+            </ol>
+          </div>
+
+          <button
+            onClick={() => onResolveHold?.(permit.id)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white text-xs font-medium rounded hover:bg-orange-700 transition-colors"
+          >
+            <PlayCircle className="h-3.5 w-3.5" />
+            Resolve Hold
+          </button>
+        </div>
+      )}
 
       <div className="space-y-2 mb-3">
         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -483,10 +609,37 @@ function PermitCard({ permit }: { permit: Permit }) {
         </div>
       )}
 
+      {/* Expired permit - Renewal workflow */}
       {permit.status === 'expired' && (
-        <div className="mt-2 p-2 bg-red-50 rounded-md flex items-start gap-2">
-          <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
-          <span className="text-xs text-red-700">Permit expired -- renewal required before dependent work can proceed</span>
+        <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start gap-2 mb-2">
+            <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <span className="text-sm font-medium text-red-700">Permit Expired - Renewal Required</span>
+              <p className="text-xs text-red-600 mt-0.5">Dependent work blocked until renewed</p>
+            </div>
+          </div>
+          {permit.renewalDeadline && (
+            <div className="flex items-center gap-4 text-xs text-red-700 mb-2">
+              <span className="flex items-center gap-1">
+                <CalendarClock className="h-3.5 w-3.5" />
+                Deadline: {formatDate(permit.renewalDeadline)}
+              </span>
+              {permit.renewalFeeEstimate && (
+                <span className="flex items-center gap-1">
+                  <DollarSign className="h-3.5 w-3.5" />
+                  Est. Fee: {formatCurrency(permit.renewalFeeEstimate)}
+                </span>
+              )}
+            </div>
+          )}
+          <button
+            onClick={() => onApplyRenewal?.(permit.id)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Apply for Renewal
+          </button>
         </div>
       )}
     </div>
@@ -530,12 +683,161 @@ function TimelineStep({ step, isLast }: { step: typeof timelineSteps[0]; isLast:
   )
 }
 
+function COPrerequisiteChecklist({ prerequisites }: { prerequisites: COPrerequisite[] }) {
+  const readiness = calculateCOReadiness(prerequisites)
+  const categories = ['permits', 'inspections', 'utilities', 'documentation'] as const
+  const categoryLabels: Record<typeof categories[number], string> = {
+    permits: 'Building & Trade Permits',
+    inspections: 'Final Inspections',
+    utilities: 'Utility Connections',
+    documentation: 'Documentation',
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <Shield className="h-4 w-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">Certificate of Occupancy Prerequisites</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            'text-xs px-2 py-1 rounded font-medium',
+            readiness >= 80 ? 'bg-green-100 text-green-700' :
+            readiness >= 50 ? 'bg-amber-100 text-amber-700' :
+            'bg-red-100 text-red-700'
+          )}>
+            {readiness}% Ready
+          </span>
+          <span className="text-xs text-gray-500">
+            {prerequisites.filter(p => p.status === 'pass').length}/{prerequisites.length} Complete
+          </span>
+        </div>
+      </div>
+
+      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+        <div
+          className={cn(
+            "h-2 rounded-full transition-all",
+            readiness >= 80 ? 'bg-green-500' :
+            readiness >= 50 ? 'bg-amber-500' :
+            'bg-red-500'
+          )}
+          style={{ width: `${readiness}%` }}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {categories.map(category => {
+          const items = prerequisites.filter(p => p.category === category)
+          const passed = items.filter(p => p.status === 'pass').length
+          return (
+            <div key={category} className="bg-gray-50 rounded-lg p-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-medium text-gray-700">{categoryLabels[category]}</span>
+                <span className={cn(
+                  'text-[10px] px-1.5 py-0.5 rounded',
+                  passed === items.length ? 'bg-green-100 text-green-700' :
+                  passed > 0 ? 'bg-amber-100 text-amber-700' :
+                  'bg-red-100 text-red-700'
+                )}>
+                  {passed}/{items.length}
+                </span>
+              </div>
+              <div className="space-y-1">
+                {items.map(item => (
+                  <div key={item.id} className="flex items-start gap-1.5 text-[11px]">
+                    {item.status === 'pass' ? (
+                      <CheckCircle className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                    ) : item.status === 'fail' ? (
+                      <XCircle className="h-3 w-3 text-red-500 mt-0.5 flex-shrink-0" />
+                    ) : (
+                      <Clock className="h-3 w-3 text-amber-500 mt-0.5 flex-shrink-0" />
+                    )}
+                    <div>
+                      <span className={cn(
+                        item.status === 'pass' ? 'text-green-700' :
+                        item.status === 'fail' ? 'text-red-700' :
+                        'text-amber-700'
+                      )}>
+                        {item.name}
+                      </span>
+                      {item.details && (
+                        <p className="text-gray-500 text-[10px]">{item.details}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTransfer?: (utilityId: string) => void }) {
+  const UtilIcon = utilityIcons[utility.utilityType]
+  const isComplete = utility.status === 'completed' || utility.status === 'transferred'
+  const canTransfer = utility.status === 'completed' && !utility.transferConfirmed
+
+  return (
+    <div className={cn(
+      'rounded-lg p-2 border text-center',
+      utility.status === 'transferred' ? 'bg-purple-50 border-purple-200' :
+      utility.status === 'completed' ? 'bg-green-50 border-green-200' :
+      utility.status === 'scheduled' ? 'bg-blue-50 border-blue-200' :
+      utility.status === 'applied' ? 'bg-amber-50 border-amber-200' :
+      'bg-gray-50 border-gray-200'
+    )}>
+      <UtilIcon className={cn(
+        'h-4 w-4 mx-auto mb-1',
+        utility.status === 'transferred' ? 'text-purple-600' :
+        utility.status === 'completed' ? 'text-green-600' :
+        utility.status === 'scheduled' ? 'text-blue-600' :
+        utility.status === 'applied' ? 'text-amber-600' : 'text-gray-400'
+      )} />
+      <p className="text-xs font-medium text-gray-700">{utilityLabels[utility.utilityType]}</p>
+      <p className="text-[10px] text-gray-500">{utility.provider}</p>
+      <p className={cn(
+        'text-[10px] font-medium mt-0.5',
+        utility.status === 'transferred' ? 'text-purple-600' :
+        utility.status === 'completed' ? 'text-green-600' :
+        utility.status === 'scheduled' ? 'text-blue-600' :
+        utility.status === 'applied' ? 'text-amber-600' : 'text-gray-400'
+      )}>
+        {utility.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+      </p>
+
+      {/* Transfer confirmation */}
+      {utility.transferConfirmed && utility.transferDate && (
+        <div className="mt-1 text-[10px] text-purple-600">
+          Transferred {formatDate(utility.transferDate)}
+        </div>
+      )}
+
+      {/* Transfer button for complete utilities */}
+      {canTransfer && (
+        <button
+          onClick={() => onTransfer?.(utility.id)}
+          className="mt-1.5 flex items-center gap-1 mx-auto px-2 py-0.5 bg-green-600 text-white text-[10px] font-medium rounded hover:bg-green-700 transition-colors"
+        >
+          <ArrowRightLeft className="h-2.5 w-2.5" />
+          Transfer
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ---------------------------------------------------------------------------
 // Main Component
 // ---------------------------------------------------------------------------
 
 export function PermitsPreview() {
   const [jurisdictionFilter, setJurisdictionFilter] = useState<string>('all')
+  const [utilities, setUtilities] = useState(mockUtilities)
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection, viewMode, setViewMode } = useFilterState({ defaultView: 'grid' })
 
   const filteredPermits = sortItems(
@@ -561,7 +863,26 @@ export function PermitsPreview() {
   const schedulingRisks = mockPermits.filter(p => p.scheduleDependencies && p.scheduleDependencies.length > 0 && p.status !== 'issued' && p.status !== 'approved').length
 
   const jurisdictions = [...new Set(mockPermits.map(p => p.jurisdiction))]
-  const utilitiesComplete = mockUtilities.filter(u => u.status === 'completed' || u.status === 'transferred').length
+  const utilitiesComplete = utilities.filter(u => u.status === 'completed' || u.status === 'transferred').length
+  const coReadiness = calculateCOReadiness(mockCOPrerequisites)
+
+  const handleResolveHold = (permitId: string) => {
+    console.log('Resolving hold for permit:', permitId)
+    // In a real app, this would open a modal or navigate to resolution workflow
+  }
+
+  const handleApplyRenewal = (permitId: string) => {
+    console.log('Applying for renewal for permit:', permitId)
+    // In a real app, this would open the renewal application form
+  }
+
+  const handleUtilityTransfer = (utilityId: string) => {
+    setUtilities(prev => prev.map(u =>
+      u.id === utilityId
+        ? { ...u, transferConfirmed: true, transferDate: new Date().toISOString().split('T')[0], status: 'transferred' as const }
+        : u
+    ))
+  }
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -578,9 +899,15 @@ export function PermitsPreview() {
                   {schedulingRisks} schedule risk{schedulingRisks > 1 ? 's' : ''}
                 </span>
               )}
+              {onHoldCount > 0 && (
+                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+                  <PauseCircle className="h-3 w-3" />
+                  {onHoldCount} on hold
+                </span>
+              )}
             </div>
             <div className="text-sm text-gray-500 mt-0.5">
-              {issuedCount} issued | {pendingApproval} pending | {permitsNeeded} not yet applied | CO: {mockCO.prerequisitesMet}/{mockCO.prerequisitesTotal} prerequisites met
+              {issuedCount} issued | {pendingApproval} pending | {permitsNeeded} not yet applied | CO: {coReadiness}% ready
             </div>
           </div>
         </div>
@@ -588,7 +915,7 @@ export function PermitsPreview() {
 
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-6 gap-3">
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-gray-500 text-sm">
               <FileText className="h-4 w-4" />
@@ -613,6 +940,13 @@ export function PermitsPreview() {
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{issuedCount}</div>
           </div>
+          <div className={cn("rounded-lg p-3", onHoldCount > 0 ? "bg-orange-50" : "bg-gray-50")}>
+            <div className={cn("flex items-center gap-2 text-sm", onHoldCount > 0 ? "text-orange-600" : "text-gray-500")}>
+              <PauseCircle className="h-4 w-4" />
+              On Hold
+            </div>
+            <div className={cn("text-xl font-bold mt-1", onHoldCount > 0 ? "text-orange-700" : "text-gray-900")}>{onHoldCount}</div>
+          </div>
           <div className={cn("rounded-lg p-3", expiredCount > 0 ? "bg-red-50" : "bg-gray-50")}>
             <div className={cn("flex items-center gap-2 text-sm", expiredCount > 0 ? "text-red-600" : "text-gray-500")}>
               <AlertTriangle className="h-4 w-4" />
@@ -631,6 +965,34 @@ export function PermitsPreview() {
         </div>
       </div>
 
+      {/* AI Feature Cards */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="grid grid-cols-2 gap-3">
+          <AIFeatureCard
+            feature="Timeline Intelligence"
+            trigger="real-time"
+            insight="Building permit approval taking 12 days (avg for this jurisdiction: 8). May impact framing start Mar 10."
+            severity="warning"
+            confidence={87}
+            action={{
+              label: 'View Timeline Impact',
+              onClick: () => console.log('View timeline impact'),
+            }}
+          />
+          <AIFeatureCard
+            feature="CO Readiness Assessment"
+            trigger="daily"
+            insight={`CO readiness: ${coReadiness}%. Blockers: Electrical final pending, Gas connection not scheduled.`}
+            severity={coReadiness >= 80 ? 'success' : coReadiness >= 50 ? 'warning' : 'critical'}
+            confidence={92}
+            action={{
+              label: 'View All Blockers',
+              onClick: () => console.log('View CO blockers'),
+            }}
+          />
+        </div>
+      </div>
+
       {/* Timeline View */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="flex items-center gap-2 mb-3">
@@ -646,74 +1008,31 @@ export function PermitsPreview() {
         </div>
       </div>
 
-      {/* CO Tracking */}
+      {/* CO Tracking with detailed prerequisites */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-700">Certificate of Occupancy Progress</span>
-          </div>
-          <span className={cn(
-            'text-xs px-2 py-1 rounded font-medium',
-            mockCO.status === 'issued' ? 'bg-green-100 text-green-700' :
-            mockCO.status === 'applied' ? 'bg-blue-100 text-blue-700' :
-            'bg-amber-100 text-amber-700'
-          )}>
-            {mockCO.prerequisitesMet}/{mockCO.prerequisitesTotal} Prerequisites Met
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-          <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${(mockCO.prerequisitesMet / mockCO.prerequisitesTotal) * 100}%` }} />
-        </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
-          {mockCO.conditions?.map((c, idx) => (
-            <span key={idx} className="flex items-center gap-1">
-              {idx < mockCO.prerequisitesMet ? <CheckCircle className="h-3 w-3 text-green-500" /> : <Clock className="h-3 w-3 text-gray-400" />}
-              {c}
-            </span>
-          ))}
-        </div>
+        <COPrerequisiteChecklist prerequisites={mockCOPrerequisites} />
       </div>
 
-      {/* Utility Connections */}
+      {/* Utility Connections with transfer workflow */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-gray-600" />
             <span className="text-sm font-medium text-gray-700">Utility Final Connections</span>
           </div>
-          <span className="text-xs text-gray-500">{utilitiesComplete}/{mockUtilities.length} complete</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-500">{utilitiesComplete}/{utilities.length} complete</span>
+            <span className="text-xs text-purple-600">{utilities.filter(u => u.transferConfirmed).length} transferred</span>
+          </div>
         </div>
         <div className="grid grid-cols-6 gap-2">
-          {mockUtilities.map(util => {
-            const UtilIcon = utilityIcons[util.utilityType]
-            return (
-              <div key={util.id} className={cn(
-                'rounded-lg p-2 border text-center',
-                util.status === 'completed' || util.status === 'transferred' ? 'bg-green-50 border-green-200' :
-                util.status === 'scheduled' ? 'bg-blue-50 border-blue-200' :
-                util.status === 'applied' ? 'bg-amber-50 border-amber-200' :
-                'bg-gray-50 border-gray-200'
-              )}>
-                <UtilIcon className={cn(
-                  'h-4 w-4 mx-auto mb-1',
-                  util.status === 'completed' || util.status === 'transferred' ? 'text-green-600' :
-                  util.status === 'scheduled' ? 'text-blue-600' :
-                  util.status === 'applied' ? 'text-amber-600' : 'text-gray-400'
-                )} />
-                <p className="text-xs font-medium text-gray-700">{utilityLabels[util.utilityType]}</p>
-                <p className="text-[10px] text-gray-500">{util.provider}</p>
-                <p className={cn(
-                  'text-[10px] font-medium mt-0.5',
-                  util.status === 'completed' || util.status === 'transferred' ? 'text-green-600' :
-                  util.status === 'scheduled' ? 'text-blue-600' :
-                  util.status === 'applied' ? 'text-amber-600' : 'text-gray-400'
-                )}>
-                  {util.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-                </p>
-              </div>
-            )
-          })}
+          {utilities.map(util => (
+            <UtilityCard
+              key={util.id}
+              utility={util}
+              onTransfer={handleUtilityTransfer}
+            />
+          ))}
         </div>
       </div>
 
@@ -730,6 +1049,7 @@ export function PermitsPreview() {
             { key: 'submitted', label: 'Submitted', count: mockPermits.filter(p => p.status === 'submitted').length },
             { key: 'under_review', label: 'Under Review', count: mockPermits.filter(p => p.status === 'under_review').length },
             { key: 'issued', label: 'Issued', count: mockPermits.filter(p => p.status === 'issued' || p.status === 'approved').length },
+            { key: 'on_hold', label: 'On Hold', count: onHoldCount },
             { key: 'expired', label: 'Expired', count: expiredCount },
           ]}
           activeTab={activeTab}
@@ -770,13 +1090,23 @@ export function PermitsPreview() {
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-2 gap-4">
             {filteredPermits.map(permit => (
-              <PermitCard key={permit.id} permit={permit} />
+              <PermitCard
+                key={permit.id}
+                permit={permit}
+                onResolveHold={handleResolveHold}
+                onApplyRenewal={handleApplyRenewal}
+              />
             ))}
           </div>
         ) : (
           <div className="space-y-3">
             {filteredPermits.map(permit => (
-              <PermitCard key={permit.id} permit={permit} />
+              <PermitCard
+                key={permit.id}
+                permit={permit}
+                onResolveHold={handleResolveHold}
+                onApplyRenewal={handleApplyRenewal}
+              />
             ))}
           </div>
         )}
@@ -785,6 +1115,39 @@ export function PermitsPreview() {
             No permits match the selected filters
           </div>
         )}
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          features={[
+            {
+              name: 'Permit Timeline',
+              description: 'Predicts approval timing',
+              status: 'active',
+            },
+            {
+              name: 'Requirement Checking',
+              description: 'Validates permit requirements',
+              status: 'active',
+            },
+            {
+              name: 'Inspector Insights',
+              description: 'Tracks inspector patterns',
+              status: 'active',
+            },
+            {
+              name: 'Deadline Alerts',
+              description: 'Proactive deadline warnings',
+              status: 'active',
+            },
+            {
+              name: 'Document Completeness',
+              description: 'Checks required documents',
+              status: 'active',
+            },
+          ]}
+        />
       </div>
 
       {/* AI Insights Bar */}
@@ -798,8 +1161,8 @@ export function PermitsPreview() {
             <p>&#x2022; HVAC permit needed in 18 days but avg approval is 21 days -- apply immediately to avoid schedule impact</p>
             <p>&#x2022; Electrical permit under review -- panel schedule needs revision. 85% likely approved by Feb 14</p>
             <p>&#x2022; Septic permit expired 25 days ago -- renewal blocks final inspection. DHEC renewal takes 5-7 business days</p>
-            <p>&#x2022; County ROW permit backlogged. Recommend weekly status check with Public Works (843) 202-7600</p>
-            <p>&#x2022; CO prerequisites: 4 of 9 met. Critical path items: expired septic renewal, pending electrical/HVAC permits</p>
+            <p>&#x2022; Tree Removal permit on hold -- Heritage tree review required. HPB meeting Feb 20</p>
+            <p>&#x2022; CO prerequisites: {coReadiness}% complete. Critical blockers: Electrical final pending, Gas connection not scheduled, Fire marshal sign-off required</p>
           </div>
         </div>
       </div>

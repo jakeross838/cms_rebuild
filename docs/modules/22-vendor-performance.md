@@ -55,6 +55,14 @@ The vendor performance score is a weighted composite of five dimensions. Weights
 - Inspection pass rate on first attempt.
 - Warranty callback rate (callbacks attributed to this vendor within 12 months of completion).
 - Client satisfaction ratings (if collected).
+- **FTQ (First-Time Quality) Score**: Key quality metric calculated from Module 28 checklist results.
+  - %FTQ = (First-pass inspections / Total inspections) x 100
+  - FTQ score feeds directly into the Quality dimension (30% weight)
+  - FTQ Thresholds:
+    - **Excellent**: 95%+ (green badge, preferred vendor consideration)
+    - **Good**: 85-94% (blue badge, meets expectations)
+    - **Fair**: 70-84% (yellow badge, improvement needed)
+    - **Poor**: <70% (red badge, probation consideration)
 
 **Timeliness Score (default weight: 25%)**
 - On-time start percentage: % of scheduled tasks where vendor started on the scheduled date (Gap 716).
@@ -149,7 +157,7 @@ The vendor performance score is a weighted composite of five dimensions. Weights
 - **Underperforming vendor alert**: Notification when a vendor's score drops below a configurable threshold.
 - Reports delivered via email on a configurable schedule or on-demand.
 
-### 7. Platform-Wide Benchmarking (Optional)
+### 8. Platform-Wide Benchmarking (Optional)
 
 - With builder consent, vendor scores contribute to anonymous platform-wide benchmarks (Gap 390).
 - Builders see: "This vendor's performance is in the top 20% for [trade] in [region]."
@@ -157,7 +165,7 @@ The vendor performance score is a weighted composite of five dimensions. Weights
 - Vendors who work for multiple builders on the platform get a composite benchmark score.
 - Builders can opt in or out of the benchmarking program.
 
-### 8. Vendor Profile Page
+### 9. Vendor Profile Page
 
 - Unified profile view aggregating all vendor data (Gap 708-723):
   - Contact information, addresses, key personnel (Gap 708)
@@ -173,6 +181,105 @@ The vendor performance score is a weighted composite of five dimensions. Weights
   - Related vendor entities / subsidiary relationships (Gap 721)
   - Capacity indicator showing active job count (Gap 722)
   - Quick action buttons: Create PO, Invite to Bid, Send Message, Schedule Meeting (Gap 723)
+
+### 10. Vendor FTQ Dashboard
+
+The Vendor FTQ Dashboard provides a comprehensive view of a vendor's quality performance based on First-Time Quality (FTQ) metrics from Module 28 checklist results.
+
+**Dashboard Components:**
+
+- **Current FTQ Score**: Large display showing current FTQ percentage with color-coded badge (Excellent/Good/Fair/Poor)
+- **FTQ by Trade/Scope**: Breakdown of FTQ performance by the different work scopes the vendor performs
+- **FTQ Trend Chart**: Line chart showing FTQ percentage over configurable time periods (30, 60, 90, 180, 365 days)
+- **Peer Comparison**: Side-by-side comparison with other vendors in the same trade category
+- **FTQ Rankings**: Where this vendor ranks among all vendors in their trade(s) based on FTQ score
+
+**Calculation Details:**
+- FTQ calculated from inspection checklists in Module 28
+- First-pass inspection = checklist completed with all items passing on initial submission
+- Rolling window configurable: 30, 60, 90, 180, or 365 days
+- Minimum inspection count required before FTQ is displayed (configurable, default: 10)
+
+**Display Logic:**
+- If vendor has insufficient data, show "Insufficient Data" message with count needed
+- If vendor is new (< 90 days), show "New Vendor" badge alongside FTQ
+- Highlight significant changes (> 5% improvement or decline) from previous period
+
+### 11. AI-Powered Quality Prediction
+
+Leverages historical FTQ data and contextual factors to predict likely quality outcomes for future vendor assignments.
+
+**Predicted FTQ Score:**
+- AI model predicts FTQ percentage for upcoming work based on:
+  - Historical FTQ performance with this builder
+  - Performance on similar scope/trade work
+  - Crew composition (if tracked)
+  - Current workload/capacity
+  - Seasonal patterns (e.g., winter framing quality)
+  - Recent trend direction (improving vs. declining)
+
+**Confidence Score:**
+- Each prediction includes a confidence percentage (0-100%)
+- Confidence based on:
+  - Volume of historical data available
+  - Consistency of past performance
+  - Similarity of predicted work to historical work
+  - Recency of data
+
+**Risk Factors:**
+- AI identifies specific risk factors that may impact quality:
+  - "Vendor is over capacity (5 active jobs)"
+  - "Recent FTQ decline of 12% over past 60 days"
+  - "First time performing this scope for this builder"
+  - "Crew changes detected (new lead assigned)"
+  - "Historically lower FTQ on projects > $500K"
+
+**Suggested Mitigations:**
+- For each risk factor, AI provides actionable recommendations:
+  - "Consider additional inspection checkpoints"
+  - "Request dedicated crew assignment"
+  - "Schedule pre-work quality review meeting"
+  - "Increase inspection frequency for first 2 weeks"
+
+**Alternative Vendor Suggestions:**
+- When predicted FTQ is below threshold, suggest alternative vendors:
+  - Show top 3 alternative vendors in same trade
+  - Display their predicted FTQ and availability
+  - Include cost comparison if bid data available
+
+### 12. FTQ Integration with Bid Evaluation
+
+Integrates FTQ quality metrics into the bid evaluation and vendor selection process.
+
+**Bid List Display:**
+- FTQ score badge displayed next to each vendor in bid comparison views
+- Color-coded to quickly identify quality tier (green/blue/yellow/red)
+- Tooltip shows FTQ breakdown: current %, trend, peer percentile
+
+**Warning Badges:**
+- Automatic warning badges for quality concerns:
+  - "Low FTQ" badge for vendors below configurable threshold (default: 70%)
+  - "Declining" badge for vendors with > 10% FTQ drop in past 90 days
+  - "Variable Quality" badge for vendors with high FTQ standard deviation
+  - "New Vendor" badge for vendors with < 10 inspections on file
+
+**Trend Indicators:**
+- Visual trend indicators on each vendor in bid list:
+  - Up arrow (green): FTQ improved > 5% over past 90 days
+  - Flat arrow (gray): FTQ stable (within +/- 5%)
+  - Down arrow (red): FTQ declined > 5% over past 90 days
+
+**Minimum FTQ Filter:**
+- Bid list filter option: "Minimum FTQ Score"
+- Allows builder to exclude vendors below a quality threshold from bid consideration
+- Filter options: 95%, 90%, 85%, 80%, 70%, No minimum
+- Filtered vendors shown in a collapsed "Below FTQ Threshold" section (not hidden entirely)
+
+**Bid Scoring Integration:**
+- When scoring bids, FTQ can be factored into overall bid ranking:
+  - Configurable weight for FTQ in bid score (0-30%)
+  - Default: 15% weight
+  - Formula: Bid Score = (Price Score x price_weight) + (FTQ Score x ftq_weight) + (Other Factors x other_weights)
 
 ---
 
@@ -221,6 +328,45 @@ v2_vendor_status
 v2_vendor_benchmarks
   vendor_id, trade, region, percentile_rank, benchmark_score, sample_size,
   calculated_at
+
+-- FTQ-Specific Tables --
+
+vendors (additional columns)
+  ftq_score DECIMAL(5,2)             -- Current FTQ percentage (0-100)
+  ftq_calculation_date TIMESTAMP     -- When FTQ was last calculated
+  ftq_inspection_count INTEGER       -- Number of inspections in calculation window
+  ftq_trend VARCHAR(20)              -- 'improving', 'stable', 'declining'
+  ftq_trend_percentage DECIMAL(5,2)  -- Percentage change from previous period
+
+v2_vendor_ftq_history
+  id UUID PRIMARY KEY
+  builder_id UUID NOT NULL           -- Tenant scope
+  vendor_id UUID NOT NULL
+  trade VARCHAR(100)                 -- Trade/scope for this FTQ calculation
+  period_start DATE NOT NULL         -- Start of calculation period
+  period_end DATE NOT NULL           -- End of calculation period
+  total_inspections INTEGER          -- Total inspections in period
+  first_pass_inspections INTEGER     -- Inspections passed on first attempt
+  ftq_percentage DECIMAL(5,2)        -- Calculated FTQ (first_pass/total * 100)
+  calculation_window INTEGER         -- Window in days (30, 60, 90, 180, 365)
+  created_at TIMESTAMP DEFAULT NOW()
+  UNIQUE(builder_id, vendor_id, trade, period_end, calculation_window)
+
+v2_vendor_quality_predictions
+  id UUID PRIMARY KEY
+  builder_id UUID NOT NULL
+  vendor_id UUID NOT NULL
+  project_id UUID                    -- Optional: prediction for specific project
+  trade VARCHAR(100)
+  predicted_ftq DECIMAL(5,2)         -- AI predicted FTQ percentage
+  confidence_score DECIMAL(5,2)      -- Confidence in prediction (0-100)
+  risk_factors JSONB                 -- Array of identified risk factors
+  suggested_mitigations JSONB        -- Array of suggested actions
+  alternative_vendors JSONB          -- Array of suggested alternatives
+  model_version VARCHAR(50)          -- AI model version used
+  prediction_date TIMESTAMP
+  actual_ftq DECIMAL(5,2)            -- Filled in after work completed (for model training)
+  created_at TIMESTAMP DEFAULT NOW()
 ```
 
 ---
@@ -265,6 +411,14 @@ GET    /api/v2/reports/vendor-project-review/:projectId  # Project closeout vend
 # Benchmarks
 GET    /api/v2/vendors/:id/benchmark                 # Platform-wide benchmark for this vendor
 PUT    /api/v2/settings/benchmarking                 # Opt in/out of benchmarking program
+
+# FTQ Endpoints
+GET    /api/v2/vendors/:id/ftq                       # Get current FTQ score and details
+GET    /api/v2/vendors/:id/ftq/history               # FTQ trend over time with configurable window
+GET    /api/v2/vendors/:id/ftq/by-trade              # FTQ breakdown by trade/scope
+GET    /api/v2/vendors/:id/ftq/prediction            # AI-predicted FTQ for upcoming work
+GET    /api/v2/vendors/ftq/rankings                  # Vendor rankings by FTQ score (filterable by trade)
+POST   /api/v2/vendors/:id/ftq/recalculate           # Trigger FTQ recalculation for a vendor
 ```
 
 ---
@@ -289,6 +443,21 @@ PUT    /api/v2/settings/benchmarking                 # Opt in/out of benchmarkin
 | `VendorQuickActions` | Action buttons: Create PO, Invite to Bid, Send Message |
 | `ScoringWeightConfigurator` | Builder settings to adjust dimension weights |
 | `ComplianceAlertBanner` | Alert bar showing vendors with expiring compliance documents |
+| `VendorFTQDashboard` | Comprehensive FTQ quality dashboard with score, trends, and rankings |
+| `FTQScoreBadge` | Color-coded FTQ badge (Excellent/Good/Fair/Poor) with percentage |
+| `FTQTrendChart` | Line chart showing FTQ percentage over configurable time periods |
+| `FTQByTradeBreakdown` | Table/chart showing FTQ performance broken down by trade/scope |
+| `FTQPeerComparison` | Side-by-side comparison with peer vendors in same trade |
+| `FTQRankingWidget` | Shows vendor's FTQ rank within their trade category |
+| `QualityPredictionCard` | AI prediction display with predicted FTQ, confidence, and risks |
+| `RiskFactorsList` | List of AI-identified quality risk factors with severity indicators |
+| `MitigationSuggestions` | Actionable recommendations to address quality risks |
+| `AlternativeVendorPanel` | Suggested alternative vendors when predicted FTQ is low |
+| `BidFTQBadge` | FTQ badge displayed in bid comparison views |
+| `BidQualityWarning` | Warning badges for quality concerns in bid evaluation |
+| `BidTrendIndicator` | Visual trend arrow (up/flat/down) for FTQ changes |
+| `MinimumFTQFilter` | Filter control to set minimum FTQ threshold for bid lists |
+| `BidFTQScoreIntegration` | Display showing how FTQ factors into bid scoring |
 
 ---
 
@@ -297,7 +466,7 @@ PUT    /api/v2/settings/benchmarking                 # Opt in/out of benchmarkin
 - **Module 10: Contact/Vendor Management** -- vendor master records, contact data
 - **Module 7: Scheduling** -- schedule adherence data (planned vs. actual dates)
 - **Module 9: Budget & Cost Tracking** -- bid accuracy (estimate vs. actual), invoice data
-- **Module 28: Punch List & Quality** -- punch item counts, resolution times, inspection data
+- **Module 28: Punch List & Quality** -- punch item counts, resolution times, inspection data, FTQ checklist results
 - **Module 27: Warranty & Home Care** -- warranty callback data
 - **Module 21: RFI Management** -- RFI response times
 - **Module 14: Daily Logs** -- safety observations, vendor presence data
@@ -313,4 +482,7 @@ PUT    /api/v2/settings/benchmarking                 # Opt in/out of benchmarkin
 4. How do we handle vendor succession (Gap 391) -- does the score transfer when a company is acquired or when a key person leaves? Is this manual or automated?
 5. Should scoring weight presets be provided (e.g., "quality-focused," "budget-focused," "balanced") or always fully custom per builder?
 6. How do we handle disputed scores -- can a vendor challenge a low rating on a specific project?
-
+7. For FTQ predictions, what is the minimum number of historical jobs required before AI predictions are enabled for a vendor?
+8. Should FTQ thresholds be configurable per builder, or should they be platform-wide standards?
+9. How do we handle the case where a vendor's crew changes significantly -- should FTQ history be reset or weighted differently?
+10. Should predicted FTQ factor into automated bid ranking, or remain advisory only?

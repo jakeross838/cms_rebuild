@@ -34,6 +34,7 @@ import {
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 
 interface WorkItem {
   description: string
@@ -831,6 +832,52 @@ export function DailyLogsPreview() {
             <span>4 schedule tasks auto-updated from log entries</span>
           </div>
         </div>
+      </div>
+
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="AI Features for Daily Logs"
+          features={[
+            {
+              feature: 'Voice-to-Text AI',
+              trigger: 'Real-time',
+              insight: 'Speech-to-text with construction vocabulary. Recognizes trade terms, material names, and common abbreviations.',
+              detail: 'Trained on 50,000+ construction daily logs. Understands terms like "LVL", "HVAC rough-in", "punch list", and trade-specific jargon.',
+              confidence: 94,
+              severity: 'info' as const,
+              action: { label: 'Start Dictation', onClick: () => {} },
+            },
+            {
+              feature: 'Progress Auto-Detection',
+              trigger: 'On submission',
+              insight: 'AI reads photos to estimate % complete. Detected roof sheathing at 85% from today\'s photos.',
+              detail: 'Computer vision analyzes construction photos to estimate task completion. Compares against baseline images and schedule milestones.',
+              confidence: 87,
+              severity: 'success' as const,
+              action: { label: 'Review Estimates', onClick: () => {} },
+            },
+            {
+              feature: 'Issue Categorization',
+              trigger: 'Real-time',
+              insight: 'Auto-categorizes issues and suggests triggered entities. Weather delay auto-linked to Schedule Note.',
+              detail: 'Analyzes issue descriptions to suggest category, severity, and related entities (RFIs, Change Orders, Safety Observations).',
+              confidence: 91,
+              severity: 'info' as const,
+              action: { label: 'View Suggestions', onClick: () => {} },
+            },
+            {
+              feature: 'Weather Impact',
+              trigger: 'Daily',
+              insight: 'Correlates weather with schedule delays. Rain days show 40% productivity drop for exterior trades.',
+              detail: 'Analyzes historical weather data against daily log entries to predict and document weather-related schedule impacts.',
+              confidence: 88,
+              severity: 'warning' as const,
+              action: { label: 'View Weather Analysis', onClick: () => {} },
+            },
+          ]}
+          columns={2}
+        />
       </div>
     </div>
   )

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface Job {
@@ -358,6 +359,32 @@ export function JobsListPreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Portfolio Health',
+            description: 'Overall job portfolio status',
+          },
+          {
+            title: 'Resource Allocation',
+            description: 'Suggests resource balancing',
+          },
+          {
+            title: 'Timeline Risks',
+            description: 'Flags at-risk projects',
+          },
+          {
+            title: 'Profitability Ranking',
+            description: 'Ranks jobs by profit margin',
+          },
+          {
+            title: 'Capacity Planning',
+            description: 'Projects future workload',
+          },
+        ]}
+      />
     </div>
   )
 }

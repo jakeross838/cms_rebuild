@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Plus,
   Download,
@@ -26,10 +26,17 @@ import {
   Stamp,
   CalendarClock,
   Package,
+  ChevronDown,
+  ChevronRight,
+  Check,
+  PenLine,
+  FileDown,
+  BadgeCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { BulkSelectBar, AIFeaturesPanel } from '@/components/skeleton/ui'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -44,6 +51,12 @@ type SubmittalStatus =
 
 type ResponseAction = 'approved' | 'approved_as_noted' | 'revise_and_resubmit' | 'rejected' | 'no_exceptions'
 
+interface DigitalSignature {
+  signedBy: string
+  signedAt: string
+  licenseNumber?: string
+}
+
 interface ReviewStamp {
   action: ResponseAction
   reviewerName: string
@@ -52,6 +65,7 @@ interface ReviewStamp {
   stampedAt: string
   comments?: string
   licenseNumber?: string
+  digitalSignature?: DigitalSignature
 }
 
 interface SubmittalDistribution {
@@ -81,10 +95,18 @@ interface Submittal {
   stamps: ReviewStamp[]
   selectionLink?: { selectionName: string; room: string }
   scheduleDependency?: { taskName: string; impactDays: number; critical: boolean }
-  linkedPO?: { poNumber: string; holdStatus: 'on_hold' | 'released' }
+  linkedPO?: { poNumber: string; holdStatus: 'on_hold' | 'released'; amount?: number; vendor?: string }
   permitRequired: boolean
   aiNote?: string
   aiPredictedApprovalDays?: number
+  packageId?: string
+  packageName?: string
+}
+
+interface SubmittalPackage {
+  id: string
+  name: string
+  submittals: Submittal[]
 }
 
 // ── Mock Data ────────────────────────────────────────────────
@@ -134,7 +156,7 @@ const mockSubmittals: Submittal[] = [
     ],
     stamps: [
       { action: 'revise_and_resubmit', reviewerName: 'Mark Thompson', reviewerCompany: 'Bay Engineering', reviewerRole: 'Structural Engineer', stampedAt: '2024-11-30', comments: 'Connection details at grid B-4 need revision per updated soils report', licenseNumber: 'PE-48291-FL' },
-      { action: 'approved', reviewerName: 'Mark Thompson', reviewerCompany: 'Bay Engineering', reviewerRole: 'Structural Engineer', stampedAt: '2024-12-08', comments: 'Approved. Revised connections acceptable.', licenseNumber: 'PE-48291-FL' },
+      { action: 'approved', reviewerName: 'Mark Thompson', reviewerCompany: 'Bay Engineering', reviewerRole: 'Structural Engineer', stampedAt: '2024-12-08', comments: 'Approved. Revised connections acceptable.', licenseNumber: 'PE-48291-FL', digitalSignature: { signedBy: 'Mark Thompson, PE', signedAt: '2024-12-08', licenseNumber: 'PE-48291-FL' } },
     ],
     linkedPO: { poNumber: 'PO-2024-022', holdStatus: 'released' },
     permitRequired: true,
@@ -161,10 +183,12 @@ const mockSubmittals: Submittal[] = [
     stamps: [],
     selectionLink: { selectionName: 'Kitchen Cabinetry Package', room: 'Kitchen' },
     scheduleDependency: { taskName: 'Cabinet installation', impactDays: 8, critical: true },
-    linkedPO: { poNumber: 'PO-2024-041', holdStatus: 'on_hold' },
+    linkedPO: { poNumber: 'PO-2024-041', holdStatus: 'on_hold', amount: 12400, vendor: 'ABC Cabinets' },
     permitRequired: false,
     aiNote: 'Vendor historically requires 2 revision cycles. 56-day lead time — order by Jan 10 to meet install date.',
     aiPredictedApprovalDays: 18,
+    packageId: 'pkg-kitchen',
+    packageName: 'Kitchen Appliance Package',
   },
   {
     id: '4',
@@ -207,7 +231,7 @@ const mockSubmittals: Submittal[] = [
       { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-08', viewedAt: '2024-12-08', responded: true },
     ],
     stamps: [
-      { action: 'approved_as_noted', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-12-11', comments: 'Approved — use ice & water shield at all valleys per local code' },
+      { action: 'approved_as_noted', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-12-11', comments: 'Approved — use ice & water shield at all valleys per local code', digitalSignature: { signedBy: 'Sarah Chen, AIA', signedAt: '2024-12-11' } },
     ],
     linkedPO: { poNumber: 'PO-2024-045', holdStatus: 'released' },
     permitRequired: false,
@@ -296,7 +320,7 @@ const mockSubmittals: Submittal[] = [
       { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-12', viewedAt: '2024-12-12', responded: true },
     ],
     stamps: [
-      { action: 'no_exceptions', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-12-12', comments: 'All units match spec. NOA documentation verified.' },
+      { action: 'no_exceptions', reviewerName: 'Sarah Chen', reviewerCompany: 'Smith Architects', reviewerRole: 'Architect', stampedAt: '2024-12-12', comments: 'All units match spec. NOA documentation verified.', digitalSignature: { signedBy: 'Sarah Chen, AIA', signedAt: '2024-12-12' } },
     ],
     linkedPO: { poNumber: 'PO-2024-050', holdStatus: 'released' },
     permitRequired: true,
@@ -309,9 +333,9 @@ const mockSubmittals: Submittal[] = [
     specSection: '09 30 00 - Tiling',
     tradeCategory: 'Finishes',
     vendor: 'Florida Tile Distributors',
-    dateSubmitted: '2024-12-14',
+    dateSubmitted: '2024-12-01',
     requiredDate: '2024-12-28',
-    daysInReview: 1,
+    daysInReview: 12,
     status: 'pending',
     revision: 1,
     documentCount: 2,
@@ -319,8 +343,52 @@ const mockSubmittals: Submittal[] = [
     stamps: [],
     selectionLink: { selectionName: 'Bathroom Tile Package', room: 'Master Bathroom' },
     permitRequired: false,
-    aiNote: 'Awaiting owner selection confirmation. 3 options under review by client.',
+    aiNote: 'Awaiting owner selection confirmation. 3 options under review by client. Tile samples requested 12 days ago.',
     aiPredictedApprovalDays: 14,
+  },
+  {
+    id: '11',
+    number: 'SUB-011',
+    description: 'Kitchen range hood and ventilation',
+    specSection: '23 37 00 - Kitchen Ventilation',
+    tradeCategory: 'MEP',
+    vendor: 'Viking Range Corp',
+    dateSubmitted: '2024-12-02',
+    requiredDate: '2024-12-16',
+    daysInReview: 10,
+    status: 'under_review',
+    revision: 1,
+    leadTimeDays: 42,
+    documentCount: 2,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-02', viewedAt: '2024-12-08', responded: false },
+    ],
+    stamps: [],
+    permitRequired: false,
+    packageId: 'pkg-kitchen',
+    packageName: 'Kitchen Appliance Package',
+  },
+  {
+    id: '12',
+    number: 'SUB-012',
+    description: 'Built-in refrigerator specifications',
+    specSection: '11 31 00 - Residential Appliances',
+    tradeCategory: 'Finishes',
+    vendor: 'Sub-Zero Group',
+    dateSubmitted: '2024-12-02',
+    requiredDate: '2024-12-16',
+    daysInReview: 10,
+    status: 'under_review',
+    revision: 1,
+    leadTimeDays: 60,
+    documentCount: 3,
+    distribution: [
+      { recipientName: 'Sarah Chen', recipientCompany: 'Smith Architects', recipientRole: 'Architect', sentAt: '2024-12-02', viewedAt: '2024-12-08', responded: false },
+    ],
+    stamps: [],
+    permitRequired: false,
+    packageId: 'pkg-kitchen',
+    packageName: 'Kitchen Appliance Package',
   },
 ]
 
@@ -352,17 +420,99 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+// ── Utility Functions ────────────────────────────────────────
+
+function calculateDueStatus(requiredDate: string): { text: string; color: string; isOverdue: boolean } {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const required = new Date(requiredDate)
+  required.setHours(0, 0, 0, 0)
+
+  const diffTime = required.getTime() - today.getTime()
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays < 0) {
+    return {
+      text: `${Math.abs(diffDays)} days overdue`,
+      color: 'text-red-600 bg-red-50',
+      isOverdue: true,
+    }
+  } else if (diffDays <= 7) {
+    return {
+      text: `Due in ${diffDays} day${diffDays === 1 ? '' : 's'}`,
+      color: 'text-amber-600 bg-amber-50',
+      isOverdue: false,
+    }
+  } else {
+    return {
+      text: `Due in ${diffDays} days`,
+      color: 'text-green-600 bg-green-50',
+      isOverdue: false,
+    }
+  }
+}
+
+function calculateDeliveryDate(approvalDate: Date, leadTimeDays: number): string {
+  const delivery = new Date(approvalDate)
+  delivery.setDate(delivery.getDate() + leadTimeDays)
+  return delivery.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function checkLeadTimeRisk(submittal: Submittal): { isAtRisk: boolean; message: string } | null {
+  if (!submittal.leadTimeDays || !submittal.scheduleDependency) return null
+
+  const today = new Date()
+  const requiredDate = new Date(submittal.requiredDate)
+  const approvalBuffer = submittal.aiPredictedApprovalDays || 7
+
+  // Calculate expected approval date
+  const expectedApproval = new Date(today)
+  expectedApproval.setDate(expectedApproval.getDate() + approvalBuffer)
+
+  // Calculate delivery date after approval
+  const deliveryDate = new Date(expectedApproval)
+  deliveryDate.setDate(deliveryDate.getDate() + submittal.leadTimeDays)
+
+  // Check if delivery date exceeds schedule requirement
+  if (deliveryDate > requiredDate) {
+    const daysLate = Math.ceil((deliveryDate.getTime() - requiredDate.getTime()) / (1000 * 60 * 60 * 24))
+    return {
+      isAtRisk: true,
+      message: `Lead time threatens schedule by ${daysLate} days`,
+    }
+  }
+
+  return null
+}
+
 // ── Sub-Components ────────────────────────────────────────────
+
+function DigitalSignatureIndicator({ signature }: { signature: DigitalSignature }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs bg-green-50 text-green-700 px-2 py-1 rounded">
+      <BadgeCheck className="h-3.5 w-3.5" />
+      <span>Signed by {signature.signedBy} on {formatDate(signature.signedAt)}</span>
+      {signature.licenseNumber && (
+        <span className="text-green-600 font-mono text-[10px]">({signature.licenseNumber})</span>
+      )}
+    </div>
+  )
+}
 
 function ReviewStampBadge({ stamp }: { stamp: ReviewStamp }) {
   const config = actionConfig[stamp.action]
   return (
-    <div className={cn('text-xs px-2 py-1 rounded flex items-center gap-1.5', config.bgColor)}>
-      <Stamp className="h-3 w-3" />
-      <span className={cn('font-medium', config.color)}>{config.label}</span>
-      <span className="text-gray-500">by {stamp.reviewerName}</span>
-      {stamp.licenseNumber && (
-        <span className="text-gray-400 font-mono text-[10px]">({stamp.licenseNumber})</span>
+    <div className="space-y-1">
+      <div className={cn('text-xs px-2 py-1 rounded flex items-center gap-1.5', config.bgColor)}>
+        <Stamp className="h-3 w-3" />
+        <span className={cn('font-medium', config.color)}>{config.label}</span>
+        <span className="text-gray-500">by {stamp.reviewerName}</span>
+        {stamp.licenseNumber && (
+          <span className="text-gray-400 font-mono text-[10px]">({stamp.licenseNumber})</span>
+        )}
+      </div>
+      {stamp.digitalSignature && (
+        <DigitalSignatureIndicator signature={stamp.digitalSignature} />
       )}
     </div>
   )
@@ -443,28 +593,90 @@ function ConnectionBadges({ submittal }: { submittal: Submittal }) {
   )
 }
 
+function LeadTimeDisplay({ submittal }: { submittal: Submittal }) {
+  if (!submittal.leadTimeDays) return null
+
+  const leadTimeRisk = checkLeadTimeRisk(submittal)
+  const today = new Date()
+  const expectedDelivery = calculateDeliveryDate(today, submittal.leadTimeDays + (submittal.aiPredictedApprovalDays || 7))
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center gap-1 text-xs">
+        <Truck className="h-3 w-3 text-gray-400" />
+        <span className="text-gray-600">Lead Time: {submittal.leadTimeDays} days</span>
+        <span className="text-gray-400">|</span>
+        <span className="text-gray-500">Est. delivery: {expectedDelivery}</span>
+      </div>
+      {leadTimeRisk?.isAtRisk && (
+        <div className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+          <AlertTriangle className="h-3 w-3" />
+          <span>{leadTimeRisk.message}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DueStatusBadge({ requiredDate, status }: { requiredDate: string; status: SubmittalStatus }) {
+  // Don't show due status for completed items
+  if (['approved', 'approved_as_noted', 'rejected'].includes(status)) return null
+
+  const dueStatus = calculateDueStatus(requiredDate)
+
+  return (
+    <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium', dueStatus.color)}>
+      {dueStatus.text}
+    </span>
+  )
+}
+
 // ── Main Card ────────────────────────────────────────────────
 
-function SubmittalCard({ submittal }: { submittal: Submittal }) {
+interface SubmittalCardProps {
+  submittal: Submittal
+  isSelected: boolean
+  onToggleSelect: (id: string) => void
+}
+
+function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardProps) {
   const statusInfo = statusConfig[submittal.status]
   const StatusIcon = statusInfo.icon
   const latestStamp = submittal.stamps.length > 0 ? submittal.stamps[submittal.stamps.length - 1] : null
-  const isOverdue = submittal.daysInReview > 14 && !['approved', 'approved_as_noted', 'rejected'].includes(submittal.status)
+  const dueStatus = calculateDueStatus(submittal.requiredDate)
+  const isOverdue = dueStatus.isOverdue && !['approved', 'approved_as_noted', 'rejected'].includes(submittal.status)
 
   return (
     <div className={cn(
       'bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer',
-      isOverdue ? 'border-red-200' : 'border-gray-200'
+      isOverdue ? 'border-red-200' : 'border-gray-200',
+      isSelected && 'ring-2 ring-blue-500 border-blue-300'
     )}>
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Checkbox */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleSelect(submittal.id)
+            }}
+            className={cn(
+              'w-5 h-5 rounded border flex items-center justify-center transition-colors',
+              isSelected
+                ? 'bg-blue-500 border-blue-500 text-white'
+                : 'border-gray-300 hover:border-blue-400'
+            )}
+          >
+            {isSelected && <Check className="h-3 w-3" />}
+          </button>
           <span className="font-mono font-semibold text-gray-900">{submittal.number}</span>
           <span className="text-xs text-gray-400">Rev {submittal.revision}</span>
           <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1', statusInfo.bgColor, statusInfo.color)}>
             <StatusIcon className="h-3 w-3" />
             {statusInfo.label}
           </span>
+          <DueStatusBadge requiredDate={submittal.requiredDate} status={submittal.status} />
         </div>
         <button className="p-1 hover:bg-gray-100 rounded">
           <MoreHorizontal className="h-4 w-4 text-gray-400" />
@@ -509,7 +721,14 @@ function SubmittalCard({ submittal }: { submittal: Submittal }) {
         </div>
       )}
 
-      {/* Footer: dates, docs, lead time */}
+      {/* Lead Time Display */}
+      {submittal.leadTimeDays && (
+        <div className="mb-2">
+          <LeadTimeDisplay submittal={submittal} />
+        </div>
+      )}
+
+      {/* Footer: dates, docs */}
       <div className="flex items-center gap-3 pt-2 border-t border-gray-100 text-xs text-gray-600 flex-wrap">
         <div className="flex items-center gap-1">
           <Calendar className="h-3 w-3" />
@@ -518,19 +737,13 @@ function SubmittalCard({ submittal }: { submittal: Submittal }) {
         <div className="flex items-center gap-1">
           <Clock className="h-3 w-3" />
           <span className={cn(
-            isOverdue ? 'text-red-600 font-medium' :
+            submittal.daysInReview > 14 ? 'text-red-600 font-medium' :
             submittal.daysInReview > 10 ? 'text-amber-600 font-medium' :
             'text-gray-500'
           )}>
             {submittal.daysInReview}d in review
           </span>
         </div>
-        {submittal.leadTimeDays && (
-          <div className="flex items-center gap-1">
-            <Truck className="h-3 w-3" />
-            <span>{submittal.leadTimeDays}d lead</span>
-          </div>
-        )}
         <div className="flex items-center gap-1">
           <Paperclip className="h-3 w-3" />
           <span>{submittal.documentCount}</span>
@@ -569,11 +782,98 @@ function SubmittalCard({ submittal }: { submittal: Submittal }) {
   )
 }
 
+// ── Package Group Component ──────────────────────────────────
+
+interface PackageGroupProps {
+  pkg: SubmittalPackage
+  selectedIds: Set<string>
+  onToggleSelect: (id: string) => void
+}
+
+function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
+  const [isExpanded, setIsExpanded] = useState(true)
+
+  const allSelected = pkg.submittals.every(s => selectedIds.has(s.id))
+  const someSelected = pkg.submittals.some(s => selectedIds.has(s.id))
+
+  const handleSelectAll = () => {
+    pkg.submittals.forEach(s => {
+      if (!selectedIds.has(s.id)) {
+        onToggleSelect(s.id)
+      }
+    })
+  }
+
+  const handleDeselectAll = () => {
+    pkg.submittals.forEach(s => {
+      if (selectedIds.has(s.id)) {
+        onToggleSelect(s.id)
+      }
+    })
+  }
+
+  return (
+    <div className="col-span-2 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+      {/* Package Header */}
+      <div
+        className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 cursor-pointer hover:bg-gray-50"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-3">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              allSelected ? handleDeselectAll() : handleSelectAll()
+            }}
+            className={cn(
+              'w-5 h-5 rounded border flex items-center justify-center transition-colors',
+              allSelected
+                ? 'bg-blue-500 border-blue-500 text-white'
+                : someSelected
+                ? 'bg-blue-200 border-blue-400'
+                : 'border-gray-300 hover:border-blue-400'
+            )}
+          >
+            {allSelected && <Check className="h-3 w-3" />}
+            {someSelected && !allSelected && <div className="w-2 h-0.5 bg-blue-500" />}
+          </button>
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4 text-gray-500" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-gray-500" />
+          )}
+          <Package className="h-4 w-4 text-purple-500" />
+          <span className="font-medium text-gray-900">{pkg.name}</span>
+          <span className="text-xs text-gray-500">({pkg.submittals.length} items)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Package</span>
+        </div>
+      </div>
+
+      {/* Package Contents */}
+      {isExpanded && (
+        <div className="p-4 grid grid-cols-2 gap-4">
+          {pkg.submittals.map(submittal => (
+            <SubmittalCard
+              key={submittal.id}
+              submittal={submittal}
+              isSelected={selectedIds.has(submittal.id)}
+              onToggleSelect={onToggleSelect}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main Component ────────────────────────────────────────────
 
 export function SubmittalsPreview() {
   const [specFilter, setSpecFilter] = useState<string>('all')
   const [tradeFilter, setTradeFilter] = useState<string>('all')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const filteredSubmittals = sortItems(
@@ -588,6 +888,71 @@ export function SubmittalsPreview() {
     sortDirection,
   )
 
+  // Group submittals by package
+  const { packages, ungroupedSubmittals } = useMemo(() => {
+    const packageMap = new Map<string, SubmittalPackage>()
+    const ungrouped: Submittal[] = []
+
+    filteredSubmittals.forEach(submittal => {
+      if (submittal.packageId && submittal.packageName) {
+        const existing = packageMap.get(submittal.packageId)
+        if (existing) {
+          existing.submittals.push(submittal)
+        } else {
+          packageMap.set(submittal.packageId, {
+            id: submittal.packageId,
+            name: submittal.packageName,
+            submittals: [submittal],
+          })
+        }
+      } else {
+        ungrouped.push(submittal)
+      }
+    })
+
+    return {
+      packages: Array.from(packageMap.values()),
+      ungroupedSubmittals: ungrouped,
+    }
+  }, [filteredSubmittals])
+
+  // Selection handlers
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) {
+        newSet.delete(id)
+      } else {
+        newSet.add(id)
+      }
+      return newSet
+    })
+  }
+
+  const selectAll = () => {
+    setSelectedIds(new Set(filteredSubmittals.map(s => s.id)))
+  }
+
+  const clearSelection = () => {
+    setSelectedIds(new Set())
+  }
+
+  // Bulk action handlers
+  const handleBulkApprove = () => {
+    console.log('Approving:', Array.from(selectedIds))
+    // Implementation would go here
+  }
+
+  const handleRequestRevision = () => {
+    console.log('Requesting revision:', Array.from(selectedIds))
+    // Implementation would go here
+  }
+
+  const handleExport = () => {
+    console.log('Exporting:', Array.from(selectedIds))
+    // Implementation would go here
+  }
+
   // ── Stats ────────────────────────────────────────────────────
   const totalSubmittals = mockSubmittals.length
   const pendingReview = mockSubmittals.filter(s =>
@@ -598,14 +963,66 @@ export function SubmittalsPreview() {
   ).length
   const reviseCount = mockSubmittals.filter(s => s.status === 'revise_resubmit').length
   const rejectedCount = mockSubmittals.filter(s => s.status === 'rejected').length
-  const overdueCount = mockSubmittals.filter(s =>
-    s.daysInReview > 14 && !['approved', 'approved_as_noted', 'rejected'].includes(s.status)
-  ).length
+  const overdueCount = mockSubmittals.filter(s => {
+    const dueStatus = calculateDueStatus(s.requiredDate)
+    return dueStatus.isOverdue && !['approved', 'approved_as_noted', 'rejected'].includes(s.status)
+  }).length
   const avgDaysInReview = Math.round(
     mockSubmittals.reduce((sum, s) => sum + s.daysInReview, 0) / mockSubmittals.length
   )
   const posOnHold = mockSubmittals.filter(s => s.linkedPO?.holdStatus === 'on_hold').length
   const criticalPathItems = mockSubmittals.filter(s => s.scheduleDependency?.critical).length
+
+  // ── AI Insights ────────────────────────────────────────────────
+  const aiFeatures = [
+    {
+      feature: 'Approval Timeline',
+      trigger: 'Real-time',
+      insight: 'Based on similar submittals, expect approval in 5-7 days. Current reviewer typically takes 4 days.',
+      severity: 'info' as const,
+      confidence: 85,
+    },
+    {
+      feature: 'Schedule Impact',
+      trigger: 'On change',
+      insight: 'Cabinet submittal on critical path. Delayed approval impacts install date Mar 15 → Mar 22.',
+      severity: 'critical' as const,
+      confidence: 92,
+      action: {
+        label: 'View Schedule',
+        onClick: () => console.log('View schedule'),
+      },
+    },
+    {
+      feature: 'Vendor Follow-up',
+      trigger: 'Daily',
+      insight: 'Tile samples requested 12 days ago. Vendor typically ships in 5 days. Recommend: Call vendor.',
+      severity: 'warning' as const,
+      confidence: 78,
+      action: {
+        label: 'Contact Vendor',
+        onClick: () => console.log('Contact vendor'),
+      },
+    },
+    {
+      feature: 'Distribution Alert',
+      trigger: 'Real-time',
+      insight: 'Architect viewed submittal 4 days ago but hasn\'t responded. Pattern suggests action needed.',
+      severity: 'warning' as const,
+      confidence: 88,
+      action: {
+        label: 'Send Reminder',
+        onClick: () => console.log('Send reminder'),
+      },
+    },
+    {
+      feature: 'PO Release',
+      trigger: 'On submission',
+      insight: 'Upon approval, ready to release PO-0234 ($12,400) to ABC Cabinets.',
+      severity: 'success' as const,
+      confidence: 100,
+    },
+  ]
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -668,6 +1085,38 @@ export function SubmittalsPreview() {
         />
       </div>
 
+      {/* Bulk Select Bar */}
+      <div className="px-4 pt-4">
+        <BulkSelectBar
+          selectedCount={selectedIds.size}
+          totalCount={filteredSubmittals.length}
+          onSelectAll={selectAll}
+          onClearSelection={clearSelection}
+        >
+          <button
+            onClick={handleBulkApprove}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+          >
+            <CheckCircle className="h-4 w-4" />
+            Approve Selected
+          </button>
+          <button
+            onClick={handleRequestRevision}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+          >
+            <PenLine className="h-4 w-4" />
+            Request Revision
+          </button>
+          <button
+            onClick={handleExport}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <FileDown className="h-4 w-4" />
+            Export
+          </button>
+        </BulkSelectBar>
+      </div>
+
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
@@ -701,7 +1150,7 @@ export function SubmittalsPreview() {
               overdueCount > 0 ? 'text-red-600' : 'text-blue-600'
             )}>
               {overdueCount > 0 ? <AlertTriangle className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-              {overdueCount > 0 ? 'Overdue (>14d)' : 'Avg Review'}
+              {overdueCount > 0 ? 'Overdue' : 'Avg Review'}
             </div>
             <div className={cn(
               'text-lg font-bold mt-1',
@@ -750,10 +1199,27 @@ export function SubmittalsPreview() {
       </div>
 
       {/* Submittals Grid */}
-      <div className="p-4 grid grid-cols-2 gap-4 max-h-[480px] overflow-y-auto">
-        {filteredSubmittals.map(submittal => (
-          <SubmittalCard key={submittal.id} submittal={submittal} />
+      <div className="p-4 grid grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
+        {/* Render packages first */}
+        {packages.map(pkg => (
+          <PackageGroup
+            key={pkg.id}
+            pkg={pkg}
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+          />
         ))}
+
+        {/* Render ungrouped submittals */}
+        {ungroupedSubmittals.map(submittal => (
+          <SubmittalCard
+            key={submittal.id}
+            submittal={submittal}
+            isSelected={selectedIds.has(submittal.id)}
+            onToggleSelect={toggleSelect}
+          />
+        ))}
+
         {filteredSubmittals.length === 0 && (
           <div className="col-span-2 text-center py-8 text-gray-400">
             No submittals match the selected filters
@@ -761,17 +1227,26 @@ export function SubmittalsPreview() {
         )}
       </div>
 
+      {/* AI Features Panel */}
+      <div className="bg-white border-t border-gray-200 px-4 py-4">
+        <AIFeaturesPanel
+          title="Submittal Intelligence"
+          features={aiFeatures}
+          columns={2}
+        />
+      </div>
+
       {/* AI Insights Bar */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">Submittal Intelligence:</span>
+            <span className="font-medium text-sm text-amber-800">Quick Insights:</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-amber-700 flex-wrap">
             <span className="flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              {overdueCount} overdue ({'>'}14d review cycle)
+              {overdueCount} overdue (past required date)
             </span>
             <span>|</span>
             <span className="flex items-center gap-1">

@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 type ProposalStatus = 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined' | 'expired'
@@ -674,6 +675,32 @@ export function ProposalsPreview() {
           </p>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            name: 'Win Rate Analysis',
+            description: 'Tracks proposal success patterns',
+          },
+          {
+            name: 'Competitive Pricing',
+            description: 'Compares pricing to market',
+          },
+          {
+            name: 'Content Optimization',
+            description: 'Suggests improvements to proposal text',
+          },
+          {
+            name: 'Follow-up Timing',
+            description: 'Optimal timing for proposal follow-ups',
+          },
+          {
+            name: 'Scope Clarity',
+            description: 'Identifies ambiguous scope items',
+          },
+        ]}
+      />
     </div>
   )
 }

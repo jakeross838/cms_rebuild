@@ -33,6 +33,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 
 interface PerformanceScores {
@@ -731,6 +732,32 @@ export function VendorsPreview() {
           </div>
         </div>
       </div>
+
+      {/* AI Features Panel */}
+      <AIFeaturesPanel
+        features={[
+          {
+            title: 'Performance Scoring',
+            description: 'Rates vendors on quality, timeliness, pricing',
+          },
+          {
+            title: 'Price Trend Analysis',
+            description: 'Tracks vendor pricing changes over time',
+          },
+          {
+            title: 'Capacity Planning',
+            description: 'Identifies vendors with available capacity',
+          },
+          {
+            title: 'Risk Assessment',
+            description: 'Flags vendors with insurance/license issues',
+          },
+          {
+            title: 'Recommendation Engine',
+            description: 'Suggests vendors for specific trade needs',
+          },
+        ]}
+      />
     </div>
   )
 }
