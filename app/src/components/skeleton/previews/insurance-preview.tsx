@@ -563,7 +563,7 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-200">
         <span className={cn(
-          "text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1",
+          "text-xs px-2 py-1 rounded font-medium flex items-center gap-1",
           policy.status === 'expired' ? "bg-red-100 text-red-700" :
           policy.status === 'expiring' ? "bg-amber-100 text-amber-700" :
           policy.status === 'pending' ? "bg-blue-100 text-blue-700" :

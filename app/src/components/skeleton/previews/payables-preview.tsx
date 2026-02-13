@@ -412,17 +412,17 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="font-mono text-sm font-medium text-gray-900">{payable.invoiceNumber}</span>
-              <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1", status.bgColor, status.color)}>
+              <span className={cn("text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1", status.bgColor, status.color)}>
                 <StatusIcon className="h-3 w-3" />
                 {status.label}
               </span>
               {payable.invoiceType === 'credit_memo' && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium">
+                <span className="text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-700 font-medium">
                   Credit Memo
                 </span>
               )}
               {payable.earlyPayDiscount && payable.status !== 'paid' && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium flex items-center gap-1">
                   <DollarSign className="h-3 w-3" />
                   {payable.earlyPayDiscount.percent}% discount available
                 </span>
@@ -431,7 +431,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 <ConfidenceBadge score={payable.aiConfidence} />
               )}
               {payable.duplicateWarning && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-700 font-medium flex items-center gap-1">
                   <Copy className="h-3 w-3" />
                   Possible Duplicate
                 </span>
@@ -681,7 +681,7 @@ export function PayablesPreview() {
               <h3 className="font-semibold text-gray-900">Accounts Payable</h3>
               <span className="text-sm text-gray-500">{mockPayables.length} invoices | {formatCurrency(totalOutstanding)} outstanding</span>
               {anomalyCount > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <ShieldAlert className="h-3 w-3" />
                   {anomalyCount} anomal{anomalyCount === 1 ? 'y' : 'ies'}
                 </span>

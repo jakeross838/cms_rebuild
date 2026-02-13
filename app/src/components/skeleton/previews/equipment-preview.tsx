@@ -120,14 +120,14 @@ const mockEquipment: Equipment[] = [
     status: 'deployed',
     currentJob: 'Smith Residence',
     assignedTo: 'Mike Rodriguez',
-    purchaseDate: 'Jan 2023',
+    purchaseDate: '2023-01-01',
     purchasePrice: 65000,
     currentValue: 55000,
     salvageValue: 15000,
     depreciationMethod: 'macrs',
     usefulLifeYears: 5,
-    lastMaintenance: 'Jan 15, 2026',
-    nextMaintenance: 'Feb 15, 2026',
+    lastMaintenance: '2026-01-15',
+    nextMaintenance: '2026-02-15',
     usage: '12,450 miles',
     utilizationRate: 92,
     costPerHour: 18.50,
@@ -148,14 +148,14 @@ const mockEquipment: Equipment[] = [
     status: 'deployed',
     currentJob: 'Johnson Beach House',
     assignedTo: 'Carlos Mendez',
-    purchaseDate: 'Mar 2022',
+    purchaseDate: '2022-03-01',
     purchasePrice: 45000,
     currentValue: 35000,
     salvageValue: 10000,
     depreciationMethod: 'straight_line',
     usefulLifeYears: 7,
-    lastMaintenance: 'Dec 20, 2025',
-    nextMaintenance: 'Mar 20, 2026',
+    lastMaintenance: '2025-12-20',
+    nextMaintenance: '2026-03-20',
     usage: '28,200 miles',
     utilizationRate: 88,
     costPerHour: 14.20,
@@ -174,13 +174,13 @@ const mockEquipment: Equipment[] = [
     serialNumber: 'B3NZ16789',
     year: 2021,
     status: 'available',
-    purchaseDate: 'Jun 2021',
+    purchaseDate: '2021-06-01',
     purchasePrice: 52000,
     currentValue: 38000,
     salvageValue: 12000,
     depreciationMethod: 'macrs',
     usefulLifeYears: 7,
-    lastMaintenance: 'Jan 5, 2026',
+    lastMaintenance: '2026-01-05',
     nextMaintenance: 'In ~50 hours',
     maintenanceNote: 'Preventive maintenance due in 50 operating hours',
     usage: '850 hours',
@@ -206,13 +206,13 @@ const mockEquipment: Equipment[] = [
     status: 'deployed',
     currentJob: 'Harbor View Custom Home',
     assignedTo: 'Tom Williams',
-    purchaseDate: 'Aug 2022',
+    purchaseDate: '2022-08-01',
     purchasePrice: 68000,
     currentValue: 52000,
     salvageValue: 18000,
     depreciationMethod: 'macrs',
     usefulLifeYears: 7,
-    lastMaintenance: 'Feb 1, 2026',
+    lastMaintenance: '2026-02-01',
     usage: '620 hours',
     hourMeterReading: 620,
     utilizationRate: 72,
@@ -232,13 +232,13 @@ const mockEquipment: Equipment[] = [
     serialNumber: 'HONDA7K-2020-001',
     year: 2020,
     status: 'maintenance',
-    purchaseDate: 'Apr 2020',
+    purchaseDate: '2020-04-01',
     purchasePrice: 4500,
     currentValue: 2800,
     salvageValue: 500,
     depreciationMethod: 'straight_line',
     usefulLifeYears: 10,
-    lastMaintenance: 'Jan 25, 2026',
+    lastMaintenance: '2026-01-25',
     maintenanceNote: 'Oil change and filter replacement in progress. Expected completion: tomorrow.',
     usage: '500 hours',
     hourMeterReading: 500,
@@ -259,7 +259,7 @@ const mockEquipment: Equipment[] = [
     status: 'deployed',
     currentJob: 'Smith Residence',
     assignedTo: 'Mike Rodriguez',
-    purchaseDate: 'Sep 2023',
+    purchaseDate: '2023-09-01',
     purchasePrice: 450,
     currentValue: 350,
     salvageValue: 50,
@@ -269,8 +269,8 @@ const mockEquipment: Equipment[] = [
     gpsEnabled: false,
     checkoutStatus: 'checked_out',
     checkedOutBy: 'Mike Rodriguez',
-    checkoutDate: 'Jan 15, 2026',
-    expectedReturnDate: 'Feb 20, 2026',
+    checkoutDate: '2026-01-15',
+    expectedReturnDate: '2026-02-20',
     aiNote: 'Checked out 4 weeks ago. Approaching expected return date. Confirm still needed at Smith job.',
   },
   {
@@ -283,7 +283,7 @@ const mockEquipment: Equipment[] = [
     serialNumber: 'MIL-M18F-052',
     year: 2023,
     status: 'available',
-    purchaseDate: 'Nov 2023',
+    purchaseDate: '2023-11-01',
     purchasePrice: 380,
     currentValue: 300,
     salvageValue: 50,
@@ -305,7 +305,7 @@ const mockEquipment: Equipment[] = [
     status: 'deployed',
     currentJob: 'Johnson Beach House',
     assignedTo: 'Carlos Mendez',
-    purchaseDate: 'Feb 2022',
+    purchaseDate: '2022-02-01',
     purchasePrice: 650,
     currentValue: 450,
     salvageValue: 100,
@@ -315,7 +315,7 @@ const mockEquipment: Equipment[] = [
     gpsEnabled: false,
     checkoutStatus: 'checked_out',
     checkedOutBy: 'Carlos Mendez',
-    checkoutDate: 'Feb 3, 2026',
+    checkoutDate: '2026-02-03',
   },
   {
     id: '9',
@@ -338,7 +338,7 @@ const mockEquipment: Equipment[] = [
     isRental: true,
     rentalVendor: 'Sunbelt Rentals',
     rentalRate: '$85/day',
-    rentalExpectedReturn: 'Feb 15, 2026',
+    rentalExpectedReturn: '2026-02-15',
     gpsEnabled: false,
   },
 ]
@@ -350,14 +350,14 @@ const mockMaintenanceLogs: MaintenanceLog[] = [
     assetTag: 'ROSS-01',
     maintenanceType: 'preventive',
     description: 'Oil change, tire rotation, brake inspection',
-    performedDate: 'Jan 15, 2026',
+    performedDate: '2026-01-15',
     performedBy: 'Internal',
     serviceProvider: 'Ross Fleet Maintenance',
     partsCost: 85,
     laborCost: 120,
     totalCost: 205,
     hoursAtService: undefined,
-    nextDueDate: 'Apr 15, 2026',
+    nextDueDate: '2026-04-15',
   },
   {
     id: '2',
@@ -365,7 +365,7 @@ const mockMaintenanceLogs: MaintenanceLog[] = [
     assetTag: 'ROSS-10',
     maintenanceType: 'preventive',
     description: 'Hydraulic fluid change, filter replacement, track tension',
-    performedDate: 'Jan 5, 2026',
+    performedDate: '2026-01-05',
     performedBy: 'Bobcat Dealer',
     serviceProvider: 'Bobcat of Charleston',
     partsCost: 340,
@@ -380,7 +380,7 @@ const mockMaintenanceLogs: MaintenanceLog[] = [
     assetTag: 'ROSS-20',
     maintenanceType: 'corrective',
     description: 'Oil change and filter replacement - running rough at idle',
-    performedDate: 'Feb 11, 2026',
+    performedDate: '2026-02-11',
     performedBy: 'Internal',
     serviceProvider: 'Ross Equipment Shop',
     partsCost: 45,
@@ -398,8 +398,8 @@ const mockRentals: RentalEquipment[] = [
     project: 'Harbor View Custom Home',
     rentalRate: '$85',
     ratePeriod: 'daily',
-    startDate: 'Feb 5, 2026',
-    expectedReturnDate: 'Feb 15, 2026',
+    startDate: '2026-02-05',
+    expectedReturnDate: '2026-02-15',
     deliveryFee: 0,
     totalCostToDate: 595,
     status: 'active',
@@ -413,8 +413,8 @@ const mockRentals: RentalEquipment[] = [
     project: 'Harbor View Custom Home',
     rentalRate: '$1,800',
     ratePeriod: 'daily',
-    startDate: 'Feb 8, 2026',
-    expectedReturnDate: 'Feb 9, 2026',
+    startDate: '2026-02-08',
+    expectedReturnDate: '2026-02-09',
     deliveryFee: 350,
     totalCostToDate: 3950,
     status: 'returned',
@@ -428,8 +428,8 @@ const mockRentals: RentalEquipment[] = [
     project: 'Smith Residence',
     rentalRate: '$450',
     ratePeriod: 'weekly',
-    startDate: 'Jan 20, 2026',
-    expectedReturnDate: 'Feb 3, 2026',
+    startDate: '2026-01-20',
+    expectedReturnDate: '2026-02-03',
     deliveryFee: 150,
     totalCostToDate: 1050,
     status: 'overdue',
@@ -456,6 +456,12 @@ const categoryConfig: Record<Equipment['category'], { icon: React.ElementType; c
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────
+
+function formatDate(dateStr: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
 
 function formatCurrency(value: number): string {
   if (value >= 1000) return '$' + (value / 1000).toFixed(value >= 10000 ? 0 : 1) + 'K'
@@ -560,7 +566,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
           <div className="font-medium">Rental from {equipment.rentalVendor}</div>
           <div>Rate: {equipment.rentalRate}</div>
           {equipment.rentalExpectedReturn && (
-            <div>Return by: {equipment.rentalExpectedReturn}</div>
+            <div>Return by: {formatDate(equipment.rentalExpectedReturn)}</div>
           )}
         </div>
       )}
@@ -569,8 +575,8 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
       {equipment.checkoutStatus === 'checked_out' && !equipment.isRental && (
         <div className="mb-2 text-xs text-gray-500 flex items-center gap-1">
           <Package className="h-3 w-3" />
-          Checked out: {equipment.checkoutDate}
-          {equipment.expectedReturnDate && <span> (Return: {equipment.expectedReturnDate})</span>}
+          Checked out: {equipment.checkoutDate ? formatDate(equipment.checkoutDate) : ''}
+          {equipment.expectedReturnDate && <span> (Return: {formatDate(equipment.expectedReturnDate)})</span>}
         </div>
       )}
 
@@ -610,7 +616,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
           {equipment.nextMaintenance && (
             <span className="text-xs text-gray-500 flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {equipment.nextMaintenance}
+              {formatDate(equipment.nextMaintenance)}
             </span>
           )}
         </div>
@@ -769,14 +775,14 @@ export function EquipmentPreview() {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-gray-500">Connected to:</span>
           {[
-            { label: 'Jobs (Cost Allocation)', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-            { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-            { label: 'Financial Reporting', color: 'bg-green-50 text-green-700 border-green-200' },
-            { label: 'Vendor Management', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-            { label: 'Purchase Orders', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-            { label: 'Notifications', color: 'bg-pink-50 text-pink-700 border-pink-200' },
+            { label: 'Jobs (Cost Allocation)', color: 'bg-blue-50 text-blue-700' },
+            { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700' },
+            { label: 'Financial Reporting', color: 'bg-green-50 text-green-700' },
+            { label: 'Vendor Management', color: 'bg-orange-50 text-orange-700' },
+            { label: 'Purchase Orders', color: 'bg-indigo-50 text-indigo-700' },
+            { label: 'Notifications', color: 'bg-pink-50 text-pink-700' },
           ].map(badge => (
-            <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded border flex items-center gap-1", badge.color)}>
+            <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded flex items-center gap-1", badge.color)}>
               <Link2 className="h-3 w-3" />
               {badge.label}
             </span>
@@ -902,7 +908,7 @@ export function EquipmentPreview() {
                       <td className="py-2 px-3 text-gray-600">{rental.rentalRate}/{rental.ratePeriod.slice(0, 1)}</td>
                       <td className="py-2 px-3 text-gray-600">{rental.daysRented}</td>
                       <td className="py-2 px-3 font-medium text-gray-900">${rental.totalCostToDate.toLocaleString()}</td>
-                      <td className="py-2 px-3 text-gray-600">{rental.expectedReturnDate}</td>
+                      <td className="py-2 px-3 text-gray-600">{formatDate(rental.expectedReturnDate)}</td>
                       <td className="py-2 px-3">
                         <span className={cn(
                           "text-xs px-2 py-0.5 rounded font-medium",
@@ -1003,7 +1009,7 @@ export function EquipmentPreview() {
                         </span>
                       </td>
                       <td className="py-2 px-3 text-gray-600 text-xs">{log.description}</td>
-                      <td className="py-2 px-3 text-gray-600">{log.performedDate}</td>
+                      <td className="py-2 px-3 text-gray-600">{formatDate(log.performedDate)}</td>
                       <td className="py-2 px-3 text-gray-600">{log.serviceProvider}</td>
                       <td className="py-2 px-3 text-gray-600">${log.partsCost}</td>
                       <td className="py-2 px-3 text-gray-600">${log.laborCost}</td>

@@ -295,7 +295,7 @@ function StarRating({ rating }: { rating: number }) {
 
 function ValueScoreBadge({ score }: { score: number }) {
   const color = score >= 85 ? 'bg-green-100 text-green-800' : score >= 70 ? 'bg-blue-100 text-blue-800' : score >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-  return <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold', color)}>{score}</span>
+  return <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold', color)}>{score}</span>
 }
 
 // ── Main Component ───────────────────────────────────────────
@@ -375,7 +375,7 @@ export function PriceIntelligencePreview() {
               <tab.icon className="h-4 w-4" />
               {tab.label}
               {tab.id === 'alerts' && (
-                <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-100 text-red-700 rounded-full">{anomalies.filter(a => a.severity !== 'info').length}</span>
+                <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-100 text-red-700 rounded">{anomalies.filter(a => a.severity !== 'info').length}</span>
               )}
             </button>
           ))}
@@ -1055,7 +1055,7 @@ function AlertsTab() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm">{anomaly.material}</span>
                     <span className={cn(
-                      'text-xs px-1.5 py-0.5 rounded-full font-medium',
+                      'text-xs px-1.5 py-0.5 rounded font-medium',
                       anomaly.severity === 'alert' ? 'bg-red-100 text-red-700' : anomaly.severity === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
                     )}>
                       {anomaly.severity === 'alert' ? 'ALERT' : anomaly.severity === 'warning' ? 'WARNING' : 'INFO'} &middot; +{anomaly.deviation}%
@@ -1244,7 +1244,7 @@ function QuotesTab() {
               </div>
               <div className="text-right">
                 <span className={cn(
-                  'text-xs px-2 py-0.5 rounded-full',
+                  'text-xs px-2 py-0.5 rounded',
                   rs.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
                 )}>
                   {rs.status}

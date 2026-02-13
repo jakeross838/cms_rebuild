@@ -555,7 +555,7 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
 
   return (
     <div className={cn(
-      "rounded-lg p-4",
+      "rounded-lg p-3",
       metric.status === 'success' ? "bg-green-50" :
       metric.status === 'warning' ? "bg-amber-50" :
       metric.status === 'danger' ? "bg-red-50" :
@@ -1095,14 +1095,14 @@ export function SafetyPreview() {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-gray-500">Connected to:</span>
               {[
-                { label: 'Daily Logs', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-                { label: 'Vendor Scorecards', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-                { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-                { label: 'Document Storage', color: 'bg-green-50 text-green-700 border-green-200' },
-                { label: 'Scheduling', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-                { label: 'Notifications', color: 'bg-pink-50 text-pink-700 border-pink-200' },
+                { label: 'Daily Logs', color: 'bg-blue-50 text-blue-700' },
+                { label: 'Vendor Scorecards', color: 'bg-orange-50 text-orange-700' },
+                { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700' },
+                { label: 'Document Storage', color: 'bg-green-50 text-green-700' },
+                { label: 'Scheduling', color: 'bg-indigo-50 text-indigo-700' },
+                { label: 'Notifications', color: 'bg-pink-50 text-pink-700' },
               ].map(badge => (
-                <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded border flex items-center gap-1", badge.color)}>
+                <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded flex items-center gap-1", badge.color)}>
                   <Link2 className="h-3 w-3" />
                   {badge.label}
                 </span>

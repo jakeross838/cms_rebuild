@@ -1092,11 +1092,11 @@ export function TimeClockPreview() {
       </div>
 
       {/* AI Insights Footer Bar */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-blue-200 px-4 py-3">
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-700">
-            <span className="font-medium text-blue-800">Time Intelligence:</span>{' '}
+          <Sparkles className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-amber-700">
+            <span className="font-medium text-amber-800">Time Intelligence:</span>{' '}
             Lisa Martinez trending to 48h this week ($48.84/hr burdened OT).
             Marcus entry #6 outside geofence - offline sync.
             2 timesheets pending Monday noon deadline.

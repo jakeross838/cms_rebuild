@@ -565,7 +565,7 @@ export function DrawsPreview() {
               <h3 className="font-semibold text-gray-900">Draw Requests</h3>
               <span className="text-sm text-gray-500">{mockDraws.length} draws across {projects.length} projects</span>
               {revisionCount > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <RotateCcw className="h-3 w-3" />
                   {revisionCount} revision{revisionCount !== 1 ? 's' : ''} needed
                 </span>

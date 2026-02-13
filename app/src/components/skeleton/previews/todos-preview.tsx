@@ -1110,13 +1110,13 @@ export function TodosPreview() {
       )}
 
       {/* AI Suggestions Bar */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-blue-200 px-4 py-3">
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-blue-600" />
-            <span className="font-medium text-sm text-blue-800">AI Task Intelligence:</span>
+            <Sparkles className="h-4 w-4 text-amber-600" />
+            <span className="font-medium text-sm text-amber-800">AI Task Intelligence:</span>
           </div>
-          <div className="text-sm text-blue-700 flex-1">
+          <div className="text-sm text-amber-700 flex-1">
             <div className="space-y-2">
               <div className="flex items-start gap-2">
                 <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium flex-shrink-0 mt-0.5">Workload</span>
@@ -1127,24 +1127,24 @@ export function TodosPreview() {
                 <p>TSK-010 (Draw Request #4) is blocked -- the framing milestone inspection needs to pass first. Link: inspection task TSK-001 is the prerequisite.</p>
               </div>
               <div className="flex items-start gap-2">
-                <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium flex-shrink-0 mt-0.5">Suggestion</span>
+                <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium flex-shrink-0 mt-0.5">Suggestion</span>
                 <p>Based on the Smith Residence schedule, you should create a task for "Order countertop material" by Feb 20 to meet the cabinet install date. Lead time is typically 3-4 weeks.</p>
               </div>
             </div>
             <div className="flex items-center gap-2 mt-3 flex-wrap">
-              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded">
+              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 rounded">
                 <Plus className="h-3 w-3" />
                 Create Suggested Task
               </button>
-              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded">
+              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 rounded">
                 <Send className="h-3 w-3" />
                 Delegate to Team
               </button>
-              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded">
+              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 rounded">
                 <Pause className="h-3 w-3" />
                 Snooze Suggestions
               </button>
-              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded">
+              <button className="flex items-center gap-1 px-2 py-1 text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 rounded">
                 <CheckCircle2 className="h-3 w-3" />
                 Dismiss All
               </button>

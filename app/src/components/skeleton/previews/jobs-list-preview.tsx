@@ -176,7 +176,7 @@ function JobCard({ job }: { job: Job }) {
           <span className="text-sm text-gray-600">{job.pmAssigned}</span>
         </div>
         <span className={cn(
-          "text-xs px-2 py-1 rounded-full font-medium",
+          "text-xs px-2 py-1 rounded font-medium",
           statusConfig.bgLight,
           statusConfig.textColor
         )}>

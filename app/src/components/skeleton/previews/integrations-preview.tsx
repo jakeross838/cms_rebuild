@@ -826,35 +826,35 @@ export function IntegrationsPreview() {
       {/* Stats Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-green-50 rounded-lg p-2.5">
+          <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-green-600 text-xs">
               <Activity className="h-3.5 w-3.5" />
               System Health
             </div>
             <div className="text-lg font-bold text-green-700 mt-0.5">99.2%</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2.5">
+          <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-blue-600 text-xs">
               <BarChart3 className="h-3.5 w-3.5" />
               API Calls (Month)
             </div>
             <div className="text-lg font-bold text-blue-700 mt-0.5">16,268</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-2.5">
+          <div className="bg-gray-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-gray-500 text-xs">
               <Server className="h-3.5 w-3.5" />
               Avg Response
             </div>
             <div className="text-lg font-bold text-gray-900 mt-0.5">142ms</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2.5">
+          <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-purple-600 text-xs">
               <Webhook className="h-3.5 w-3.5" />
               Webhooks Active
             </div>
             <div className="text-lg font-bold text-purple-700 mt-0.5">{mockWebhooks.length}</div>
           </div>
-          <div className="bg-amber-50 rounded-lg p-2.5">
+          <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-amber-600 text-xs">
               <AlertTriangle className="h-3.5 w-3.5" />
               Sync Warnings

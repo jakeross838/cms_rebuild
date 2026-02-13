@@ -409,7 +409,7 @@ function SummaryHeader({ job }: { job: JobOverview }) {
             <div className="flex items-center gap-3 flex-wrap">
               <h2 className="text-xl font-bold text-gray-900">{job.name}</h2>
               <span className={cn(
-                "text-xs px-2.5 py-1 rounded-full font-medium",
+                "text-xs px-2.5 py-1 rounded font-medium",
                 statusConfig.bgLight,
                 statusConfig.textColor
               )}>
@@ -837,7 +837,7 @@ function QuickLinksGrid({ links }: { links: QuickLink[] }) {
 
 function AIInsightsBar() {
   return (
-    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-6 py-4">
+    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
       <div className="flex items-start gap-3">
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="p-1.5 bg-amber-100 rounded-lg">

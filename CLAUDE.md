@@ -158,6 +158,8 @@ For each module (e.g., Module 09 — Budget & Cost Tracking):
 
 ## Code Conventions
 
+**Full standards in `docs/standards.md` — read it before writing any code.**
+
 - **Path alias:** Always use `@/` imports, never relative `../`
 - **Components:** `app/src/components/` — organized by feature (skeleton/, ui/, layout/)
 - **Config:** `app/src/config/` — data structures like navigation, feature flags
@@ -166,6 +168,8 @@ For each module (e.g., Module 09 — Budget & Cost Tracking):
 - **Styling:** Tailwind CSS utility classes, use `cn()` from `@/lib/utils` for conditional classes
 - **TypeScript:** No `any` types, explicit return types, use `type` imports
 - **API routes:** Use `createApiHandler` wrapper, include rate limiting, validate with Zod
+- **UI patterns:** Status badges use `rounded` (not `rounded-full`), warnings use `amber-` (not `yellow-`), AI bars use amber gradient, stats cards use `p-3`
+- **Mock data:** ISO dates (`'2026-01-15'`), 2025-2026 range, all statuses represented
 
 ---
 
@@ -210,6 +214,7 @@ npm run validate            # Full validation (types + all vitest + e2e)
 
 | Purpose | Location |
 |---------|----------|
+| **UI & Code Standards** | **`docs/standards.md`** |
 | Module specs (50) | `docs/modules/01-*.md` through `50-*.md` |
 | Architecture docs (11) | `docs/architecture/*.md` |
 | Gap tracker | `docs/checklists/gap-tracker.json` |

@@ -113,7 +113,7 @@ interface DailyLog {
 const mockDailyLogs: DailyLog[] = [
   {
     id: '1',
-    date: 'Feb 12, 2026',
+    date: '2026-02-12',
     dayOfWeek: 'Thursday',
     status: 'draft',
     isImmutable: false,
@@ -141,7 +141,7 @@ const mockDailyLogs: DailyLog[] = [
   },
   {
     id: '2',
-    date: 'Feb 11, 2026',
+    date: '2026-02-11',
     dayOfWeek: 'Wednesday',
     status: 'submitted',
     isImmutable: true,
@@ -173,7 +173,7 @@ const mockDailyLogs: DailyLog[] = [
   },
   {
     id: '3',
-    date: 'Feb 10, 2026',
+    date: '2026-02-10',
     dayOfWeek: 'Tuesday',
     status: 'approved',
     isImmutable: true,
@@ -204,7 +204,7 @@ const mockDailyLogs: DailyLog[] = [
   },
   {
     id: '4',
-    date: 'Feb 9, 2026',
+    date: '2026-02-09',
     dayOfWeek: 'Monday',
     status: 'approved',
     isImmutable: true,
@@ -237,7 +237,7 @@ const mockDailyLogs: DailyLog[] = [
   },
   {
     id: '5',
-    date: 'Feb 7, 2026',
+    date: '2026-02-07',
     dayOfWeek: 'Friday',
     status: 'approved',
     isImmutable: true,
@@ -270,7 +270,7 @@ const mockDailyLogs: DailyLog[] = [
   },
   {
     id: '6',
-    date: 'Feb 6, 2026',
+    date: '2026-02-06',
     dayOfWeek: 'Thursday',
     status: 'returned',
     isImmutable: false,
@@ -292,6 +292,14 @@ const mockDailyLogs: DailyLog[] = [
     scheduleUpdates: 0,
   },
 ]
+
+function formatDate(isoDate: string): { day: string; month: string } {
+  const d = new Date(isoDate + 'T00:00:00')
+  return {
+    day: String(d.getDate()),
+    month: d.toLocaleString('en-US', { month: 'short' }),
+  }
+}
 
 const weatherIcons = {
   sunny: Sun,
@@ -351,8 +359,8 @@ function DailyLogCard({ log }: { log: DailyLog }) {
         <div className="flex items-start gap-4">
           {/* Date */}
           <div className="text-center min-w-[60px]">
-            <div className="text-2xl font-bold text-gray-900">{log.date.split(' ')[1].replace(',', '')}</div>
-            <div className="text-xs text-gray-500 uppercase">{log.date.split(' ')[0]}</div>
+            <div className="text-2xl font-bold text-gray-900">{formatDate(log.date).day}</div>
+            <div className="text-xs text-gray-500 uppercase">{formatDate(log.date).month}</div>
             <div className="text-xs text-gray-400">{log.dayOfWeek}</div>
           </div>
 
@@ -763,27 +771,27 @@ export function DailyLogsPreview() {
       {/* Summary Stats Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-2 text-center">
+          <div className="bg-gray-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-gray-900">{mockDailyLogs.length}</div>
             <div className="text-xs text-gray-500">Logs</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2 text-center">
+          <div className="bg-blue-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-blue-700">{totalHours}</div>
             <div className="text-xs text-blue-600">Hours</div>
           </div>
-          <div className="bg-green-50 rounded-lg p-2 text-center">
+          <div className="bg-green-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-green-700">{approvedCount}</div>
             <div className="text-xs text-green-600">Approved</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2 text-center">
+          <div className="bg-purple-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-purple-700">{avgCrew}</div>
             <div className="text-xs text-purple-600">Avg Crew</div>
           </div>
-          <div className={cn("rounded-lg p-2 text-center", totalIssues > 0 ? "bg-amber-50" : "bg-gray-50")}>
+          <div className={cn("rounded-lg p-3 text-center", totalIssues > 0 ? "bg-amber-50" : "bg-gray-50")}>
             <div className={cn("text-lg font-bold", totalIssues > 0 ? "text-amber-700" : "text-gray-700")}>{totalIssues}</div>
             <div className={cn("text-xs", totalIssues > 0 ? "text-amber-600" : "text-gray-500")}>Issues</div>
           </div>
-          <div className="bg-indigo-50 rounded-lg p-2 text-center">
+          <div className="bg-indigo-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-indigo-700">{totalPhotos}</div>
             <div className="text-xs text-indigo-600">Photos</div>
           </div>

@@ -260,7 +260,7 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
       <div className="flex items-center justify-between text-xs text-gray-500">
         <div className="flex items-center gap-2">
           <span className={cn(
-            "px-2 py-0.5 rounded-full font-medium",
+            "px-2 py-0.5 rounded font-medium",
             dashboard.visibility === 'personal' ? "bg-blue-100 text-blue-700" :
             dashboard.visibility === 'team' ? "bg-green-100 text-green-700" :
             "bg-purple-100 text-purple-700"
@@ -368,7 +368,7 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
         <div className="flex items-center gap-3">
           <h4 className="font-semibold text-gray-900">{dashboard.name}</h4>
           <span className={cn(
-            "text-xs px-2 py-0.5 rounded-full font-medium",
+            "text-xs px-2 py-0.5 rounded font-medium",
             dashboard.visibility === 'personal' ? "bg-blue-100 text-blue-700" :
             dashboard.visibility === 'team' ? "bg-green-100 text-green-700" :
             "bg-purple-100 text-purple-700"

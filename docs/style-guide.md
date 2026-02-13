@@ -1,5 +1,9 @@
 # RossOS Style Guide
 
+**Full UI & code standards are in `docs/standards.md`.** This file covers the design system foundation.
+
+---
+
 ## Design System
 
 - **Component library:** shadcn/ui (new-york style)
@@ -22,7 +26,7 @@ Browse available components: https://ui.shadcn.com/docs/components
 
 ## Color Tokens
 
-Always use semantic tokens. Never use hardcoded Tailwind color classes (e.g., `bg-gray-200`, `text-blue-600`) for theme-dependent UI.
+Always use semantic tokens for theme-dependent UI. Never use hardcoded Tailwind color classes (e.g., `bg-gray-200`, `text-blue-600`) for chrome/layout.
 
 ### Background
 
@@ -74,18 +78,12 @@ Always use semantic tokens. Never use hardcoded Tailwind color classes (e.g., `b
 
 ## Status Color Exceptions
 
-Status indicator colors are **exempt** from the semantic token rule. These are data-driven, not theme colors:
+Status indicator colors are **exempt** from the semantic token rule. These are data-driven, not theme colors. See `docs/standards.md` Section 7 for the full color convention table.
 
-```
-bg-green-100 text-green-800   (active, approved)
-bg-yellow-100 text-yellow-800 (on hold, warning)
-bg-red-100 text-red-800       (cancelled, rejected)
-bg-blue-100 text-blue-800     (pre-construction)
-bg-purple-100 text-purple-800 (warranty, accountant pending)
-bg-orange-100 text-orange-800 (needs matching)
-```
-
-Phase indicator colors in the skeleton sidebar also stay hardcoded.
+Key rules:
+- Use `amber-` for warnings/pending — **never** `yellow-`
+- Text intensity: always `-700`
+- Background intensity: `-100` for status badges, `-50` for connection badges
 
 ## Component Variants
 

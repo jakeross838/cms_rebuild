@@ -363,7 +363,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h4 className="font-medium text-gray-900">{inspection.type}</h4>
-              <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium", config.color)}>
+              <span className={cn("text-xs px-2 py-0.5 rounded font-medium", config.color)}>
                 {config.label}
               </span>
               {inspection.reinspectionOf && (

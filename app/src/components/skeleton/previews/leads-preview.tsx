@@ -475,35 +475,35 @@ export function LeadsPipelinePreview() {
       {/* Stats Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
             <DollarSign className="h-4 w-4 text-blue-500" />
             <div>
               <div className="text-sm font-semibold text-blue-700">{formatCurrency(pipelineValue)}</div>
               <div className="text-[10px] text-blue-600">Pipeline Value</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
             <TrendingUp className="h-4 w-4 text-green-500" />
             <div>
               <div className="text-sm font-semibold text-green-700">{formatCurrency(weightedValue)}</div>
               <div className="text-[10px] text-green-600">Weighted Value</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-amber-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg">
             <Sparkles className="h-4 w-4 text-amber-500" />
             <div>
               <div className="text-sm font-semibold text-amber-700">{hotLeads}</div>
               <div className="text-[10px] text-amber-600">Hot Leads (85+)</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-red-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg">
             <AlertTriangle className="h-4 w-4 text-red-500" />
             <div>
               <div className="text-sm font-semibold text-red-700">{staleLeads}</div>
               <div className="text-[10px] text-red-600">Stale (7+ days)</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg">
             <Target className="h-4 w-4 text-purple-500" />
             <div>
               <div className="text-sm font-semibold text-purple-700">{winRate}%</div>

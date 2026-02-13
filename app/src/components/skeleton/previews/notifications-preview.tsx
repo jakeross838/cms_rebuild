@@ -444,18 +444,18 @@ export function NotificationsPreview() {
         <div className="flex items-center gap-3 mb-3">
           <h3 className="font-semibold text-gray-900">Notification Center</h3>
           {unreadCount > 0 && (
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">
               {unreadCount} unread
             </span>
           )}
           {criticalCount > 0 && (
-            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" />
               {criticalCount} critical
             </span>
           )}
           {highCount > 0 && (
-            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
               {urgentCount + highCount} urgent/high
             </span>
           )}

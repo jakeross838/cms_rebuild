@@ -380,7 +380,7 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
                 Sub-tier of {waiver.parentVendor}
               </span>
             )}
-            <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1", status.bgColor, status.color)}>
+            <span className={cn("text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1", status.bgColor, status.color)}>
               <StatusIcon className="h-3 w-3" />
               {status.label}
             </span>
@@ -586,13 +586,13 @@ export function LienWaiversPreview() {
               <h3 className="font-semibold text-gray-900">Lien Waivers</h3>
               <span className="text-sm text-gray-500">{mockLienWaivers.length} waivers | {formatCurrency(mockLienWaivers.reduce((sum, w) => sum + w.amount, 0))} total</span>
               {highRiskCount > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <Shield className="h-3 w-3" />
                   {highRiskCount} high risk
                 </span>
               )}
               {subTierCount > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600 font-medium flex items-center gap-1">
                   <Layers className="h-3 w-3" />
                   {subTierCount} sub-tier
                 </span>
@@ -677,7 +677,7 @@ export function LienWaiversPreview() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-sm">
             <span className="text-gray-500">Enforcement:</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
+            <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium">
               Strict - Payments blocked without waiver
             </span>
           </div>

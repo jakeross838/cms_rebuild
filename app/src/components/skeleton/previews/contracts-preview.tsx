@@ -204,7 +204,7 @@ const mockContracts: Contract[] = [
 
 const statusConfig: Record<ContractStatus, { label: string; color: string; icon: typeof FileText }> = {
   draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
-  internal_review: { label: 'Internal Review', color: 'bg-yellow-100 text-yellow-700', icon: BookOpen },
+  internal_review: { label: 'Internal Review', color: 'bg-amber-100 text-amber-700', icon: BookOpen },
   sent: { label: 'Sent', color: 'bg-blue-100 text-blue-700', icon: Send },
   signed: { label: 'Signed', color: 'bg-purple-100 text-purple-700', icon: PenTool },
   active: { label: 'Active', color: 'bg-green-100 text-green-700', icon: CheckCircle },
@@ -428,35 +428,35 @@ export function ContractsPreview() {
       {/* Quick Stats */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-amber-50 rounded-lg p-2.5">
+          <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-amber-600 text-xs mb-1">
               <Clock className="h-3.5 w-3.5" />
               Pending Signature
             </div>
             <div className="text-xl font-bold text-amber-700">{pendingSignature}</div>
           </div>
-          <div className="bg-green-50 rounded-lg p-2.5">
+          <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-green-600 text-xs mb-1">
               <CheckCircle className="h-3.5 w-3.5" />
               Active
             </div>
             <div className="text-xl font-bold text-green-700">{activeContracts}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2.5">
+          <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-blue-600 text-xs mb-1">
               <DollarSign className="h-3.5 w-3.5" />
               Owner Value
             </div>
             <div className="text-xl font-bold text-blue-700">{formatCurrency(totalContractValue)}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2.5">
+          <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-purple-600 text-xs mb-1">
               <Building2 className="h-3.5 w-3.5" />
               Sub Value
             </div>
             <div className="text-xl font-bold text-purple-700">{formatCurrency(totalSubValue)}</div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-2.5">
+          <div className="bg-orange-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-orange-600 text-xs mb-1">
               <AlertCircle className="h-3.5 w-3.5" />
               Verbal Directives

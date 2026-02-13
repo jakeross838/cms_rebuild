@@ -817,18 +817,18 @@ export function OverviewPreview() {
       </div>
 
       {/* Company Health Summary */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-t border-green-200 px-4 py-3">
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <span className="font-medium text-sm text-green-800">Company Health:</span>
+            <Sparkles className="h-4 w-4 text-amber-600" />
+            <span className="font-medium text-sm text-amber-800">Company Health:</span>
           </div>
-          <p className="text-sm text-green-700">
+          <p className="text-sm text-amber-700">
             18 active jobs on track. Revenue is 12.5% above target this month.
             Cash position strong with $1.8M in receivables actively being collected.
             Team productivity up 8% with new scheduling optimization.
             Pipeline shows $3.25M in opportunities with 60% average conversion rate.
-            <span className="ml-1 text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-medium">AI-generated</span>
+            <span className="ml-1 text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-medium">AI-generated</span>
           </p>
         </div>
       </div>

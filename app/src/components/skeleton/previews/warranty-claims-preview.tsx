@@ -659,13 +659,13 @@ export function WarrantyClaimsPreview() {
       </div>
 
       {/* AI Pattern Detection */}
-      <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-t border-blue-200 px-4 py-3">
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-blue-600" />
-            <span className="font-medium text-sm text-blue-900">AI Warranty Intelligence:</span>
+            <Sparkles className="h-4 w-4 text-amber-600" />
+            <span className="font-medium text-sm text-amber-800">AI Warranty Intelligence:</span>
           </div>
-          <div className="space-y-1 text-sm text-blue-800">
+          <div className="space-y-1 text-sm text-amber-700">
             <p>&#x2022; 3 PGT window seal failures this quarter (lot 2024-B) -- recommend proactive batch inspection across all affected projects</p>
             <p>&#x2022; HVAC cooling claims spike May-September. Pre-allocate vendor capacity for warm months.</p>
             <p>&#x2022; Cabinet alignment adjustments resolve 95% of cases -- schedule routine 6-month adjustments proactively</p>

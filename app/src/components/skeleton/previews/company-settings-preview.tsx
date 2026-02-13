@@ -251,7 +251,7 @@ function CompanyProfileForm() {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Subscription Plan</label>
         <div className="flex items-center gap-3">
-          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Professional Plan</span>
+          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">Professional Plan</span>
           <span className="text-xs text-gray-500">Active since Jan 2026</span>
         </div>
       </div>
@@ -440,7 +440,7 @@ function WorkflowsSection() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">Configurable approval chains per entity type. Thresholds determine who approves at what dollar amount.</p>
-        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium flex items-center gap-1">
+        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded font-medium flex items-center gap-1">
           <AlertTriangle className="h-3 w-3" />
           Not reviewed in 90+ days
         </span>
@@ -528,7 +528,7 @@ function NumberingSection() {
             <div className="flex items-center justify-between mb-1">
               <h5 className="font-medium text-sm text-gray-900">{np.label}</h5>
               <span className={cn(
-                "text-xs px-2 py-0.5 rounded-full font-medium",
+                "text-xs px-2 py-0.5 rounded font-medium",
                 np.scope === 'global' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
               )}>
                 {np.scope === 'global' ? 'Global Sequence' : 'Per-Project Sequence'}
@@ -621,7 +621,7 @@ function UsersForm() {
                 </td>
                 <td className="px-4 py-3">
                   <span className={cn(
-                    "text-xs px-2 py-1 rounded-full font-medium",
+                    "text-xs px-2 py-1 rounded font-medium",
                     member.status === 'active' ? "bg-green-100 text-green-700" :
                     member.status === 'invited' ? "bg-amber-100 text-amber-700" :
                     member.status === 'deactivated' ? "bg-red-100 text-red-700" :

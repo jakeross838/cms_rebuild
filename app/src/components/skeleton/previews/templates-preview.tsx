@@ -662,13 +662,13 @@ export function TemplatesPreview() {
       )}
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-t border-blue-200 px-4 py-3">
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-blue-600" />
-            <span className="font-medium text-sm text-blue-800">AI Insights:</span>
+            <Sparkles className="h-4 w-4 text-amber-600" />
+            <span className="font-medium text-sm text-amber-800">AI Insights:</span>
           </div>
-          <div className="flex-1 text-sm text-blue-700 space-y-1">
+          <div className="flex-1 text-sm text-amber-700 space-y-1">
             <p>SC mechanic lien statute updated Jan 2026 - 2 templates need clause updates for compliance. Review recommended.</p>
             <p>Standard Cost-Plus with GMP is your most-used contract. Consider publishing to the marketplace to help other SC builders.</p>
             <p>"Florida Builder Starter Pack" is trending in the marketplace (234 installs). Regional packs for your state are available.</p>
