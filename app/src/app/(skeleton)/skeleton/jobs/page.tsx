@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { JobsListPreview } from '@/components/skeleton/previews/jobs-list-preview'
-import { Eye, BookOpen } from 'lucide-react'
+import { Eye, BookOpen, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [
@@ -23,6 +24,15 @@ export default function JobsListSkeleton() {
         <button onClick={() => setActiveTab('spec')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors', activeTab === 'spec' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent')}>
           <BookOpen className="h-4 w-4" />Specification
         </button>
+        <div className="ml-auto">
+          <Link
+            href="/skeleton/jobs/1"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          >
+            Enter Job View
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
       {activeTab === 'preview' ? <JobsListPreview /> : <PageSpec
       title="Jobs List"
