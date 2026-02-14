@@ -34,6 +34,7 @@ import {
   Camera,
   AlertCircle,
   MapPinned,
+  Circle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
@@ -989,6 +990,23 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
   const [photoIndex, setPhotoIndex] = useState(0)
   const [checklistModalOpen, setChecklistModalOpen] = useState(false)
   const [breakdownModalOpen, setBreakdownModalOpen] = useState(false)
+  const [inlineChecklistOpen, setInlineChecklistOpen] = useState(false)
+
+  // Inline checklist state
+  const categoryKey2 = equipment.category as keyof CategoryChecklists
+  const inlineChecklist = maintenanceChecklists[categoryKey2]
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
+    if (!inlineChecklist) return {}
+    // If checklist was previously completed, mark all as checked
+    if (equipment.checklistCompleted) {
+      return Object.fromEntries(inlineChecklist.map(item => [item.id, true]))
+    }
+    return {}
+  })
+
+  const toggleCheckedItem = (id: string) => {
+    setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }))
+  }
 
   // Calculate maintenance overdue
   const maintenanceOverdue = isMaintenanceOverdue(equipment.nextMaintenance)
@@ -1071,6 +1089,14 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               </h4>
               <div className="flex items-center gap-2 mt-0.5 text-sm text-gray-500">
                 <span className="font-mono">{equipment.assetTag}</span>
+                <button
+                  onClick={() => setQrModalOpen(true)}
+                  className="flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 hover:bg-gray-200 rounded text-xs text-gray-500 transition-colors"
+                  title={`QR Code: ${equipment.assetTag}`}
+                >
+                  <QrCode className="h-3 w-3" />
+                  <span className="text-[10px] font-medium">QR</span>
+                </button>
                 {equipment.serialNumber && equipment.serialNumber !== 'N/A - Rental' && (
                   <span className="text-xs text-gray-400">SN: {equipment.serialNumber.slice(0, 10)}...</span>
                 )}
@@ -1084,24 +1110,26 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
 
         {/* Photo Gallery Thumbnails */}
         {equipment.photoUrls && equipment.photoUrls.length > 0 && (
-          <div className="flex gap-2 mb-3">
+          <div className="flex items-center gap-1.5 mb-3">
             {equipment.photoUrls.slice(0, 3).map((photo, idx) => (
               <button
                 key={idx}
                 onClick={() => openPhoto(idx)}
-                className="w-16 h-12 bg-gray-100 rounded border border-gray-200 flex items-center justify-center hover:border-blue-400 transition-colors overflow-hidden"
+                className="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center hover:border-blue-400 hover:bg-gray-50 transition-colors"
+                title={photo.split('/').pop()}
               >
-                <Image className="h-5 w-5 text-gray-400" />
+                <Camera className="h-4 w-4 text-gray-400" />
               </button>
             ))}
             {equipment.photoUrls.length > 3 && (
               <button
                 onClick={() => openPhoto(3)}
-                className="w-16 h-12 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-xs text-gray-500 hover:border-blue-400"
+                className="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs font-medium text-gray-500 hover:border-blue-400 hover:bg-gray-50 transition-colors"
               >
                 +{equipment.photoUrls.length - 3}
               </button>
             )}
+            <span className="text-[10px] text-gray-400 ml-1">{equipment.photoUrls.length} photo{equipment.photoUrls.length !== 1 ? 's' : ''}</span>
           </div>
         )}
 
@@ -1199,15 +1227,72 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
 
         {/* Checklist Status */}
         {hasChecklist && (
-          <div className="mb-3 flex items-center gap-2 text-xs">
-            <FileText className="h-3.5 w-3.5 text-gray-400" />
-            {equipment.checklistCompleted ? (
-              <span className="text-green-600 flex items-center gap-1">
-                <CheckCircle className="h-3 w-3" />
-                Checklist completed {equipment.checklistCompletedDate ? formatDate(equipment.checklistCompletedDate) : ''}
-              </span>
-            ) : (
-              <span className="text-amber-600">Checklist pending</span>
+          <div className="mb-3">
+            <button
+              onClick={() => setInlineChecklistOpen(!inlineChecklistOpen)}
+              className="flex items-center gap-2 text-xs w-full group"
+            >
+              <FileText className="h-3.5 w-3.5 text-gray-400" />
+              {equipment.checklistCompleted ? (
+                <span className="text-green-600 flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3" />
+                  Checklist completed {equipment.checklistCompletedDate ? formatDate(equipment.checklistCompletedDate) : ''}
+                </span>
+              ) : (
+                <span className="text-amber-600">
+                  Checklist pending ({inlineChecklist ? Object.values(checkedItems).filter(Boolean).length : 0}/{inlineChecklist?.length ?? 0})
+                </span>
+              )}
+              <ChevronRight className={cn(
+                "h-3 w-3 text-gray-400 ml-auto transition-transform",
+                inlineChecklistOpen && "rotate-90"
+              )} />
+            </button>
+
+            {/* Inline Maintenance Checklist */}
+            {inlineChecklistOpen && inlineChecklist && (
+              <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden">
+                <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-700">{equipment.category} Checklist</span>
+                    <span className={cn(
+                      "text-[10px] font-medium px-1.5 py-0.5 rounded",
+                      Object.values(checkedItems).filter(Boolean).length === inlineChecklist.length
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-500"
+                    )}>
+                      {Object.values(checkedItems).filter(Boolean).length}/{inlineChecklist.length}
+                    </span>
+                  </div>
+                </div>
+                <div className="divide-y divide-gray-100">
+                  {inlineChecklist.map(item => {
+                    const isChecked = !!checkedItems[item.id]
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => toggleCheckedItem(item.id)}
+                        className={cn(
+                          "flex items-center gap-2.5 w-full px-3 py-2 text-left transition-colors",
+                          isChecked ? "bg-green-50/50" : "hover:bg-gray-50"
+                        )}
+                      >
+                        {isChecked ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-gray-300 flex-shrink-0" />
+                        )}
+                        <span className={cn(
+                          "text-xs",
+                          isChecked ? "text-green-700 line-through" : "text-gray-700"
+                        )}>
+                          {item.item}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             )}
           </div>
         )}

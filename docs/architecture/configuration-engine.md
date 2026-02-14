@@ -10,7 +10,8 @@ This document addresses the following gap analysis items:
 | 1: SaaS Architecture | GAP-036 through GAP-050 | Regional Variability (configuration aspects) |
 | 6: Data Isolation & Privacy | GAP-155 through GAP-169 | Privacy-relevant configuration |
 | 41: Multi-Entity & Scaling | GAP-574 through GAP-580 | Multi-entity configuration inheritance |
-| 42: Geographic Variability | GAP-581 through GAP-590 | Regional configuration |
+| 42: Geographic Variability | GAP-581 through GAP-590 | Regional configuration (detailed in Section 14) |
+| 43: Regulatory, Tax & Insurance | GAP-547 through GAP-557 | Tax, payroll, insurance compliance (Section 15) |
 
 Every gap item is referenced by its number (e.g., GAP-016) and given a decision, approach, or "DECISION NEEDED" designation. Items primarily addressed in `multi-tenancy-design.md` are cross-referenced rather than duplicated.
 
@@ -1444,12 +1445,1179 @@ The current system has:
 | GAP-578 | Section 11 | See multi-tenancy-design.md Section 12.3 |
 | GAP-579 | Section 11.1 | Decided: Locked settings for franchise model |
 | GAP-580 | Section 11 | See multi-tenancy-design.md Section 12.5 |
-| GAP-581-590 | Section 4.21 | Decided: Regional config via jurisdiction DB |
+| GAP-547 | Section 15.1 | Decided: Three-tier tax config with per-category applicability |
+| GAP-548 | Section 15.2 | Decided: Per-project tax from jurisdiction; multi-state reporting |
+| GAP-549 | Section 15.3 | Decided: TaxJar/Avalara API with cache; fallback to jurisdictions table |
+| GAP-550 | Section 15.4 | Decided: Per-project/client exemption records with certificate storage |
+| GAP-551 | Section 15.5 | Decided: Track vendor payments; generate 1099-NEC summaries |
+| GAP-552 | Section 15.6 | Decided: Not a payroll system; integrate with ADP/Gusto/QBO Payroll |
+| GAP-553 | Section 15.7 | Decided: Jurisdiction insurance requirements; vendor compliance checking |
+| GAP-554 | Section 15.8 | Decided: Per-state WC requirements; vendor certificate tracking |
+| GAP-555 | Section 15.9 | Decided: Per-project Builder's Risk with coverage adequacy checks |
+| GAP-556 | Section 15.10 | Decided: Per-project additional insured requirements; vendor verification |
+| GAP-557 | Section 15.11 | Decided: Auto-generated insurance audit report from platform data |
+| GAP-581 | Section 14.1 | Decided: Tiered data sourcing with annual professional review |
+| GAP-582 | Section 14.2 | Decided: Builder-configurable permit workflows; 200 metro templates |
+| GAP-583 | Section 14.3 | Decided: Visual Crossing API; three use cases with caching |
+| GAP-584 | Section 14.4 | Decided: No platform DB; vendor-reported lead times + AI prediction |
+| GAP-585 | Section 14.5 | Decided: Platform labor shortage index + builder-sourced rate data |
+| GAP-586 | Section 14.6 | Decided: Risk profile display from jurisdiction data; insurance prompts |
+| GAP-587 | Section 14.7 | Decided: Foundation type per project; region-informed defaults |
+| GAP-588 | Section 14.8 | Decided: Climate zone drives insulation specs, inspection checklists |
+| GAP-589 | Section 14.9 | Decided: WUI classification drives compliance checklists and material flags |
+| GAP-590 | Section 14.10 | Decided: SDC drives structural costs, inspections, and engineering prompts |
+| GAP-581-590 | Section 4.21 | Summary: Regional config via jurisdiction DB (details in Section 14) |
 
 ---
 
-*Document Version: 2.0*
+## 14. Regional Variability (GAP-581 through GAP-590) -- Detailed Implementation
+
+This section provides concrete implementation details for the regional variability gap items introduced in Section 4.21. Where Section 4.21 defines which settings are regional and how they map to the jurisdictions table, this section specifies the data sourcing strategy, update procedures, API behavior, and user-facing experience for each regional concern.
+
+---
+
+### 14.1 Building Code Database Maintenance (GAP-581)
+
+**Question:** Building codes differ by state and jurisdiction. How do you maintain a database of code requirements?
+
+**Decision: Tiered data sourcing with annual professional review.**
+
+The platform does NOT attempt to be an authoritative building code reference. Instead, it provides a "good enough for project planning" reference database that helps builders select the correct code edition for their jurisdiction and auto-populates inspection checklists.
+
+**Data sourcing strategy:**
+
+| Data Type | Source | Update Frequency | Responsibility |
+|-----------|--------|-----------------|---------------|
+| ICC code editions by state | ICC website + manual research | Annually (codes update on 3-year cycle) | Platform team |
+| State adoption status | ICC/state DOB websites | Semi-annually | Platform team |
+| Local amendments | Builder-reported + verified | As reported | Community + platform review |
+| Inspection checklists per code | Platform-authored, builder-customizable | At code edition changes | Platform team + builder overrides |
+
+**Implementation:**
+
+```sql
+-- Building code reference table (platform-maintained, not tenant-scoped)
+CREATE TABLE building_code_references (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Identification
+  code_family TEXT NOT NULL,              -- 'IRC', 'IBC', 'IECC', 'NEC', 'UPC', 'IMC'
+  edition_year INTEGER NOT NULL,          -- 2018, 2021, 2024
+  state TEXT NOT NULL,                    -- State that adopted this edition
+  effective_date DATE,                    -- When the state adopted it
+
+  -- Amendments
+  has_local_amendments BOOLEAN DEFAULT false,
+  amendment_notes TEXT,                   -- Summary of key local differences
+  amendment_url TEXT,                     -- Link to official amendment document
+
+  -- Inspection checklists (platform-provided templates)
+  inspection_checklist_template_id UUID REFERENCES document_templates(id),
+
+  -- Metadata
+  last_verified_at TIMESTAMPTZ,
+  verified_by TEXT,                       -- 'platform_team', 'community', 'builder_reported'
+  source_url TEXT,
+
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+
+  UNIQUE(code_family, edition_year, state)
+);
+```
+
+**How builders use it:**
+
+1. When creating a project, the builder selects the project address (state + county + municipality).
+2. The system looks up the jurisdiction's `building_code_edition` (e.g., "2021 IRC") from the `jurisdictions` table.
+3. The matching `building_code_references` row provides the inspection checklist template.
+4. The builder can accept the auto-populated checklist or customize it for their specific project.
+5. If the builder discovers the platform's code edition is wrong for their jurisdiction, they submit a correction via a "Report incorrect data" link. Platform team reviews and updates.
+
+**What the platform explicitly does NOT do:**
+- Provide full code text (that is copyrighted by ICC)
+- Interpret code requirements for specific building designs
+- Guarantee code data accuracy (disclaimer in ToS)
+- Replace the builder's responsibility to verify codes with their local AHJ (Authority Having Jurisdiction)
+
+---
+
+### 14.2 Municipality-Specific Permit Processes (GAP-582)
+
+**Question:** Permit processes vary by municipality. How do you handle that?
+
+**Decision: Builder-configurable permit workflows with platform-provided templates for common jurisdictions.**
+
+The platform cannot maintain permit process data for every US municipality (there are 19,000+). Instead, it provides:
+
+1. **Permit workflow templates** for the 200 largest metro areas (covering ~80% of new construction by volume).
+2. **A builder-configurable permit tracker** for any jurisdiction, even those without a platform-provided template.
+3. **Community-contributed permit process notes** that builders in the same jurisdiction can opt to share.
+
+**Permit tracking data model:**
+
+```sql
+-- Per-project permit tracking (tenant-scoped)
+CREATE TABLE permits (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+
+  -- Permit details
+  permit_type TEXT NOT NULL,              -- 'building', 'electrical', 'plumbing', 'mechanical',
+                                          -- 'grading', 'fire', 'environmental', 'demo', 'other'
+  permit_number TEXT,
+  jurisdiction_name TEXT,                 -- "City of Dallas Building Dept"
+  jurisdiction_contact TEXT,              -- Phone/email for the permit office
+
+  -- Process tracking
+  application_date DATE,
+  submitted_date DATE,
+  review_status TEXT DEFAULT 'not_started'
+    CHECK (review_status IN ('not_started', 'preparing', 'submitted', 'in_review',
+                              'corrections_needed', 'approved', 'issued', 'expired', 'closed')),
+  approved_date DATE,
+  issued_date DATE,
+  expiration_date DATE,
+
+  -- Cost
+  permit_fee DECIMAL(12,2),
+  impact_fee DECIMAL(12,2),
+
+  -- Submission details
+  submission_type TEXT,                   -- 'online', 'in_person', 'mail'
+  portal_url TEXT,                        -- URL for online permit portal
+  required_documents JSONB DEFAULT '[]',  -- ['site_plan', 'structural_drawings', 'energy_calc']
+
+  -- Notes
+  notes TEXT,
+  inspector_name TEXT,
+  inspector_phone TEXT,
+
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_permits_company ON permits(company_id);
+CREATE INDEX idx_permits_job ON permits(job_id);
+CREATE INDEX idx_permits_status ON permits(company_id, review_status);
+```
+
+**Jurisdiction permit templates** (platform-maintained, not tenant-scoped):
+
+```sql
+CREATE TABLE permit_process_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  jurisdiction_state TEXT NOT NULL,
+  jurisdiction_municipality TEXT NOT NULL,
+
+  -- Process info
+  permit_portal_url TEXT,
+  submission_type TEXT,                   -- 'online', 'in_person', 'combined'
+  typical_review_days INTEGER,
+  typical_total_days INTEGER,            -- From application to issuance
+
+  -- Required documents by permit type
+  required_documents JSONB,              -- { "building": ["site_plan", "floor_plans", ...], ... }
+
+  -- Fee schedule
+  fee_schedule JSONB,                    -- { "building": { "base": 500, "per_sqft": 0.25 }, ... }
+
+  -- Tips
+  process_notes TEXT,                    -- "Submit plans on Tuesdays for fastest turnaround"
+  common_correction_items TEXT[],        -- Known things they flag in review
+
+  last_verified_at TIMESTAMPTZ,
+  source TEXT,                           -- 'platform_team', 'builder_contributed'
+
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+
+  UNIQUE(jurisdiction_state, jurisdiction_municipality)
+);
+```
+
+**User experience:** When a builder creates a permit record and enters the jurisdiction, the system checks for a matching `permit_process_templates` row. If found, it pre-populates the submission type, portal URL, typical timeline, and required document checklist. The builder can modify any pre-populated value.
+
+---
+
+### 14.3 Weather Data for All US Regions (GAP-583)
+
+**Question:** How do you handle weather data for all US regions?
+
+**Decision: Single weather API integration (Visual Crossing) with three data use cases.**
+
+**API selection rationale:** Visual Crossing provides historical, current, and forecast weather data via a single REST API. Pricing is per-request with a generous free tier (1,000 requests/day). Alternative: OpenWeatherMap (comparable, slightly cheaper at scale). The integration is behind an abstraction layer so the provider can be swapped.
+
+**Three weather data use cases:**
+
+| Use Case | Data Source | Update Frequency | Consumer |
+|----------|-----------|-----------------|----------|
+| **Daily log auto-fill** | Current conditions at project address | On daily log creation (1 API call per log) | Daily Logs module (Module 08) |
+| **Schedule weather overlay** | 14-day forecast at project address | Daily refresh per active project | Scheduling module (Module 07) |
+| **Historical weather analysis** | Past weather for date range + location | On-demand for reporting | Schedule Intelligence (Module 25), Reporting |
+
+**Implementation:**
+
+```typescript
+// server/integrations/weather.ts
+
+interface WeatherService {
+  getCurrentConditions(lat: number, lng: number): Promise<WeatherData>;
+  getForecast(lat: number, lng: number, days: number): Promise<ForecastData[]>;
+  getHistorical(lat: number, lng: number, startDate: string, endDate: string): Promise<WeatherData[]>;
+}
+
+interface WeatherData {
+  date: string;
+  tempHigh: number;          // Fahrenheit
+  tempLow: number;
+  conditions: string;        // 'clear', 'partly_cloudy', 'rain', 'snow', 'thunderstorm', etc.
+  precipChance: number;      // 0-100
+  precipAmount: number;      // inches
+  windSpeed: number;         // mph
+  humidity: number;          // 0-100
+  isWorkable: boolean;       // Platform-computed: temp > 32 AND precipChance < 70 AND windSpeed < 35
+}
+```
+
+**Caching strategy:**
+- Current conditions cached for 30 minutes per project location (rounded to 0.1 degree lat/lng).
+- Forecasts cached for 6 hours.
+- Historical data cached indefinitely (past weather does not change).
+- Redis key pattern: `weather:{lat}:{lng}:{type}:{date}`.
+
+**Cost controls:**
+- Weather API calls are rate-limited to 500/day per tenant (covers ~100 active projects with headroom).
+- Historical lookups are batched (one call per date range, not per day).
+- Geocoding (address to lat/lng) is done once per project and cached on the `jobs` table: `latitude DECIMAL(9,6)`, `longitude DECIMAL(9,6)`.
+
+---
+
+### 14.4 Material Availability by Region (GAP-584)
+
+**Question:** What about material availability by region?
+
+**Decision: The platform does NOT maintain a material availability database.** Material availability is too volatile (changes weekly with supply chain conditions) and too granular (depends on specific suppliers, not regions) for a platform-maintained dataset to be useful.
+
+**What the platform does instead:**
+
+1. **Vendor-reported lead times:** The vendor management module (Module 10) tracks historical lead times per vendor per material category. Over time, this builds a per-builder picture of material availability in their market.
+
+2. **AI-powered lead time estimates:** The AI engine (Module 25) uses the builder's historical PO-to-delivery data to predict lead times for new orders. These predictions are regional by nature because each builder works with local suppliers.
+
+3. **Schedule impact flags:** When a scheduled task depends on materials with historically long lead times (>4 weeks), the scheduling module flags this as a risk and suggests ordering earlier.
+
+4. **Community benchmarks (future):** Builders who opt into benchmarking contribute anonymized lead time data. The platform aggregates this by region and material category (e.g., "Average window lead time in Texas: 8 weeks, based on 23 builders"). This is a Phase 2 feature requiring sufficient data volume.
+
+**Supplier API integrations (future roadmap):**
+
+| Supplier Type | Integration | Timeline |
+|--------------|-------------|----------|
+| Lumber yards (84 Lumber, etc.) | Inventory/pricing API | Post-launch, if API available |
+| Window/door manufacturers | Lead time API | Post-launch, if API available |
+| Appliance distributors | Availability API | Post-launch, if API available |
+
+These integrations are speculative and depend on supplier willingness to provide APIs. The platform is designed to work fully without them.
+
+---
+
+### 14.5 Regional Labor Market Conditions (GAP-585)
+
+**Question:** How do you handle regional labor market conditions?
+
+**Decision: Platform-maintained labor shortage index plus builder-sourced rate data.**
+
+**Labor shortage index** (stored in `jurisdictions.labor_shortage_index`):
+- Scale: 1.0 (abundant labor) to 10.0 (severe shortage)
+- Updated quarterly by the platform team using BLS data, NAHB surveys, and industry reports
+- Used by the scheduling AI to adjust timeline estimates (higher shortage index = longer task durations)
+
+**Builder-sourced labor rate data:**
+- Each builder tracks their own labor costs via cost codes (labor line items on budgets and invoices)
+- The benchmarking system (Section 13 of multi-tenancy-design.md) aggregates anonymized labor costs by region
+- Builders who opt in can see "Your framing labor cost ($18.50/sqft) vs. regional median ($16.20/sqft)" comparisons
+
+**What the platform does NOT do:**
+- Maintain a database of prevailing wage rates by trade (this is the builder's responsibility; rates are entered per their own agreements)
+- Provide labor sourcing or staffing services
+- Track union vs. non-union labor markets (this is configuration the builder sets in their own cost structure)
+
+**Prevailing wage flag:** The `jurisdictions` table includes `prevailing_wage_required BOOLEAN`. When a project is in a prevailing-wage jurisdiction, the platform displays a warning banner on the project and prompts the builder to verify their labor rates meet prevailing wage requirements. The platform does NOT enforce prevailing wage rates because they vary by trade and are updated frequently by the DOL.
+
+---
+
+### 14.6 Natural Disaster Considerations (GAP-586)
+
+**Question:** What about natural disaster considerations by region?
+
+**Decision: Risk profile display and insurance/compliance prompts, not predictive disaster modeling.**
+
+The `jurisdictions` table stores static risk classifications:
+
+| Risk Type | Field | Values | Source |
+|-----------|-------|--------|--------|
+| Hurricane | `wind_speed_design` | Integer (mph) | ASCE 7 wind speed maps |
+| Flood | `flood_zone` | FEMA zone codes ('A', 'AE', 'V', 'X', etc.) | FEMA NFIP maps |
+| Wildfire | `wildfire_risk_zone` | WUI classification ('WUI', 'non-WUI', 'moderate', 'high', 'very_high') | State fire agency maps |
+| Seismic | `seismic_design_category` | 'A' through 'F' | USGS/ASCE 7 |
+| Tornado | `environmental_regulations` JSONB | Tornado alley flag + design wind speed | FEMA/NOAA |
+
+**How the platform uses this data:**
+
+1. **Project creation:** When a project address is entered, the system looks up the jurisdiction and displays a "Risk Profile" card showing applicable natural hazard risks. This is informational -- it helps the builder and their insurance agent understand what coverage is needed.
+
+2. **Insurance compliance:** If the project is in a flood zone, the platform flags that flood insurance may be required and adds a compliance checklist item. If in a wildfire zone, it flags WUI construction requirements.
+
+3. **Cost estimation:** The estimating engine (Module 20) adjusts cost estimates based on risk zone. Projects in seismic category D-F include foundation and framing cost premiums. Projects in wind zones >130 mph include hurricane-rated window and roofing costs.
+
+4. **Construction requirements prompts:** Based on the risk profile, the platform suggests relevant inspection checklist items (e.g., "Hurricane strap inspection" for high-wind zones, "Defensible space inspection" for wildfire zones).
+
+---
+
+### 14.7 Foundation Types by Region (GAP-587)
+
+**Question:** How do you handle building on different foundation types?
+
+**Decision: Foundation type is a project-level field with region-informed defaults and cost code templates.**
+
+**Implementation:**
+
+The `jobs` table includes:
+```sql
+ALTER TABLE jobs ADD COLUMN foundation_type TEXT
+  CHECK (foundation_type IN (
+    'slab_on_grade', 'crawlspace', 'full_basement', 'daylight_basement',
+    'piling', 'pier_and_beam', 'post_tension_slab', 'helical_pier',
+    'raft', 'strip_footing', 'other'
+  ));
+```
+
+The `jurisdictions.common_foundation_types` JSONB field stores the typical foundation types for that region:
+```json
+// Texas (Dallas area)
+["slab_on_grade", "post_tension_slab", "pier_and_beam"]
+
+// Minnesota
+["full_basement", "daylight_basement"]
+
+// Coastal Florida
+["piling", "slab_on_grade"]
+
+// Appalachia
+["crawlspace", "full_basement"]
+```
+
+**User experience:**
+1. When creating a project, the foundation type dropdown is pre-sorted to show the region's common types first.
+2. The estimating engine (Module 20) uses foundation type to select the appropriate cost assembly (a slab estimate is very different from a full basement estimate).
+3. The inspection checklist auto-includes foundation-specific inspections (e.g., "Post-tension cable inspection" for post-tension slabs, "Moisture barrier inspection" for crawlspaces).
+4. Budget templates include foundation-type-specific cost codes (e.g., "03-30-00 Cast-in-Place Concrete" for slabs vs. "31-63-00 Bored Piles" for pier foundations).
+
+---
+
+### 14.8 Energy Code by Climate Zone (GAP-588)
+
+**Question:** What about energy code requirements that vary by climate zone?
+
+**Decision: Climate zone and energy code edition tracked per jurisdiction, with compliance checklist integration.**
+
+The IECC (International Energy Conservation Code) divides the US into 8 climate zones. Each zone has different insulation, window, and HVAC efficiency requirements.
+
+**Data stored in `jurisdictions`:**
+- `climate_zone TEXT` -- '1' through '8' (with moisture designations: '4A', '4B', '4C', etc.)
+- `energy_code TEXT` -- e.g., '2021 IECC', '2018 IECC', 'Title 24' (California)
+
+**How the platform uses this:**
+
+1. **Estimating:** The estimating engine adjusts insulation specs and costs based on climate zone. Zone 1 (Miami) needs R-13 walls; Zone 7 (Minnesota) needs R-21 walls. These affect material quantities and costs.
+
+2. **Inspection checklists:** Energy code compliance inspections are auto-generated based on the project's climate zone: insulation inspection, blower door test, duct leakage test, HERS rating (if required by jurisdiction).
+
+3. **Selections module:** The selections module (Module 21) flags when a client selects a window or HVAC system that does not meet the project's energy code requirements (e.g., selecting a single-pane window in Climate Zone 5).
+
+4. **Documentation:** The platform provides a printable "Energy Code Compliance Summary" per project that lists the applicable requirements and how the project meets them. This is a builder convenience feature, not a code official document.
+
+**California exception:** California uses Title 24 instead of IECC. The platform handles this by allowing `energy_code = 'Title 24 2022'` as a valid value and providing California-specific compliance checklists.
+
+---
+
+### 14.9 Wildfire Zone Construction (GAP-589)
+
+**Question:** How do you handle builders who work in wildfire zones?
+
+**Decision: WUI (Wildland-Urban Interface) classification drives compliance checklists and material requirements.**
+
+**Data:** `jurisdictions.wildfire_risk_zone` stores the WUI classification. This is sourced from state fire agency maps (CalFire in California, equivalent agencies in other states).
+
+**Platform behavior when a project is in a wildfire zone:**
+
+1. **Project flag:** A prominent "WUI Zone" badge appears on the project dashboard with the risk level (moderate, high, very high).
+
+2. **Compliance checklist:** Auto-generated checklist items for WUI construction:
+   - Defensible space clearance (30-foot and 100-foot zones)
+   - Class A fire-rated roofing material
+   - Ember-resistant vents
+   - Non-combustible exterior siding or ignition-resistant materials
+   - Tempered glass or multi-pane windows
+   - Fire-resistant landscaping plan
+
+3. **Material selections:** The selections module flags non-compliant materials. If a client selects wood siding in a "very high" WUI zone, the system shows a warning: "Wood siding may not meet WUI requirements in this zone. Consider fiber cement or stucco."
+
+4. **Insurance prompt:** The system adds an insurance compliance item: "Verify that Builder's Risk policy includes wildfire coverage for WUI zone project."
+
+5. **Inspection items:** WUI-specific inspections are added to the project's inspection schedule: defensible space inspection, fire-resistive construction inspection, ventilation screening inspection.
+
+---
+
+### 14.10 High-Seismic Zone Construction (GAP-590)
+
+**Question:** What about builders in high-seismic zones?
+
+**Decision: Seismic Design Category (SDC) from `jurisdictions.seismic_design_category` drives structural requirements and cost adjustments.**
+
+**Seismic Design Categories:**
+
+| Category | Risk Level | Typical Areas | Platform Impact |
+|----------|-----------|---------------|----------------|
+| A | Very low | Central US, most of East Coast | No special requirements |
+| B | Low | Most of Eastern US | Minor requirements |
+| C | Moderate | Pacific Northwest (some areas) | Moderate structural requirements |
+| D | High | Most of California, Pacific NW | Significant structural requirements |
+| E | Very high | Near major fault lines | Maximum structural requirements |
+| F | Near-fault | Within 1km of known active fault | Maximum + site-specific study required |
+
+**Platform behavior for SDC D, E, or F:**
+
+1. **Project flag:** "Seismic Zone D/E/F" badge on project dashboard.
+
+2. **Cost adjustments:** The estimating engine applies a seismic cost multiplier to structural line items:
+   - SDC D: +8-15% on foundation and framing
+   - SDC E: +15-25% on foundation and framing
+   - SDC F: +25-40% on foundation and framing + geotechnical study line item
+
+3. **Inspection checklist additions:**
+   - Special inspection: structural steel connections
+   - Special inspection: concrete placement
+   - Special inspection: masonry
+   - Holdown and anchor bolt inspection
+   - Shear wall nailing inspection
+   - Moment frame connection inspection (if applicable)
+
+4. **Structural engineering prompt:** For SDC D+ projects, the system prompts: "Projects in Seismic Design Category D or higher typically require engineered structural plans. Have structural engineering plans been completed?" with a checklist item.
+
+5. **Foundation type influence:** SDC D+ jurisdictions typically show "post_tension_slab" or "reinforced_slab" as preferred foundation types rather than "slab_on_grade."
+
+---
+
+## 15. Regulatory, Tax & Insurance (GAP-547 through GAP-557)
+
+This section specifies how the platform handles the complex intersection of construction, tax law, and insurance requirements that vary by state, by project, and by builder structure.
+
+---
+
+### 15.1 Sales Tax on Construction by State (GAP-547)
+
+**Question:** Sales tax on construction varies by state. How do you handle it?
+
+**Decision: Three-tier tax configuration (jurisdiction default, company override, project override) with per-category tax applicability.**
+
+Construction sales tax is not a single rate. It varies along three dimensions:
+1. **Rate:** Varies by state, county, and municipality
+2. **What is taxed:** Some states tax materials only; others tax labor; some tax the total contract
+3. **Who pays:** In some states, the builder pays use tax on materials; in others, the client pays sales tax on the finished structure
+
+**Tax configuration schema:**
+
+```json
+// Stored in companies.settings.tax or company_config
+{
+  "config_domain": "tax",
+  "config_key": "sales_tax_defaults",
+  "config_value": {
+    "default_rate": 8.25,                    // Percent, from jurisdiction or manual entry
+    "tax_model": "materials_only",           // 'materials_only', 'labor_and_materials',
+                                              // 'total_contract', 'use_tax'
+    "applies_to": {
+      "materials": true,
+      "labor": false,
+      "equipment_rental": false,
+      "subcontractor": false,
+      "overhead_and_profit": false
+    },
+    "exempt_categories": [                   // Cost code categories exempt from tax
+      "permits_and_fees",
+      "insurance",
+      "engineering"
+    ],
+    "auto_calculate_on_invoices": true,      // Show tax as a line item on invoices
+    "auto_calculate_on_estimates": true,     // Include tax estimate in proposals
+    "tax_included_in_subcontractor_bids": true  // Subs already include tax in their prices
+  }
+}
+```
+
+**State tax model defaults** (platform-maintained, builder-overridable):
+
+| State | Tax Model | Rate Range | Materials | Labor | Notes |
+|-------|-----------|-----------|-----------|-------|-------|
+| TX | Materials only | 6.25-8.25% | Yes | No | Builder pays use tax on materials purchased |
+| CA | Materials + fixture labor | 7.25-10.75% | Yes | Partial | Tax applies to "fixtures" installation labor |
+| FL | Materials only | 6.0-7.5% | Yes | No | Some counties exempt residential construction |
+| NY | Materials + some labor | 4.0-8.875% | Yes | Partial | Capital improvements exempt from labor tax |
+| WA | Total contract | 0% sales + B&O tax | N/A | N/A | Washington uses Business & Occupation tax instead |
+
+The platform pre-populates the tax model based on the builder's primary state but always allows override because local interpretations vary.
+
+---
+
+### 15.2 Multi-State Builders (GAP-548)
+
+**Question:** What about builders who operate in multiple states?
+
+**Decision: Tax configuration is per-project, not per-company. Each project inherits its tax settings from its jurisdiction, which may differ from the builder's home state.**
+
+**Implementation:**
+
+When a builder creates a project in a different state than their home office:
+
+1. The system detects that the project state differs from the company's state.
+2. The project's `jobs.settings.tax` is auto-populated from the `jurisdictions` table for the project's location.
+3. A notification alerts the builder: "This project is in [State]. Tax rules differ from your home state. Review tax settings for this project."
+4. The builder reviews and confirms or adjusts the tax settings.
+
+**Multi-state tax reporting:**
+
+The platform generates tax reports grouped by jurisdiction:
+
+```
+Tax Summary Report — Q1 2026
+------------------------------------------
+Texas Projects (3 projects):
+  Materials tax collected:    $47,200
+  Tax rate applied:           8.25%
+
+Colorado Projects (1 project):
+  Materials tax collected:    $12,800
+  Labor tax collected:         $3,200
+  Tax rate applied:           7.65%
+
+Total tax liability:          $63,200
+```
+
+**State registration prompts:** When a builder creates their first project in a new state, the platform displays a warning: "You are creating a project in [State] for the first time. You may need to register for a sales tax permit in this state. Consult your accountant." This is informational only -- the platform does not track state tax registrations.
+
+---
+
+### 15.3 Tax Rate Lookups by Address (GAP-549)
+
+**Question:** How do you handle tax rate lookups by address?
+
+**Decision: Integration with a tax rate API (TaxJar or Avalara) for address-level tax rate resolution, with fallback to the jurisdictions table.**
+
+**Implementation:**
+
+```typescript
+// server/integrations/tax-rate.ts
+
+interface TaxRateService {
+  getRateByAddress(address: string, city: string, state: string, zip: string): Promise<TaxRateResult>;
+}
+
+interface TaxRateResult {
+  combinedRate: number;          // Total rate (state + county + city + special)
+  stateRate: number;
+  countyRate: number;
+  cityRate: number;
+  specialRate: number;           // Special taxing districts
+  freightTaxable: boolean;
+  jurisdiction: string;          // Human-readable jurisdiction name
+}
+```
+
+**Rate resolution order:**
+1. **Project-level override:** If the builder has manually set a tax rate on this project, use it. (Builder knows best.)
+2. **Tax API lookup:** If the project has a valid address, query the tax rate API. Cache the result for 30 days (tax rates change infrequently).
+3. **Jurisdictions table:** Fall back to the `jurisdictions.sales_tax_rate` for the project's state/county.
+4. **Company default:** Fall back to the company's default tax rate.
+5. **Zero:** If nothing is configured, tax is zero (the builder must configure it).
+
+**Cost management:** Tax API calls are expensive at scale. To control costs:
+- Cache tax rates per ZIP code for 30 days.
+- Batch lookups: when a builder creates multiple projects in the same area, one API call covers all.
+- Only call the API when a project is created or its address changes, not on every invoice.
+- Free tier builders use the jurisdictions table (no API calls). Paid tier builders get API-backed rates.
+
+---
+
+### 15.4 Tax Exemption Management (GAP-550)
+
+**Question:** What about tax exemption management?
+
+**Decision: Per-project and per-client tax exemption tracking with certificate storage.**
+
+**Scenarios where tax exemptions apply:**
+- Government projects (federal, state, local government clients are tax-exempt)
+- Non-profit projects (churches, hospitals, schools)
+- Resale exemptions (builder purchasing materials for resale in some states)
+- Enterprise zone exemptions (some jurisdictions offer tax breaks for construction in designated areas)
+
+**Data model:**
+
+```sql
+CREATE TABLE tax_exemptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+
+  -- Scope: applies to a client, a project, or company-wide
+  client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+  job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+  -- If both NULL, applies to all projects (e.g., resale exemption)
+
+  -- Exemption details
+  exemption_type TEXT NOT NULL CHECK (exemption_type IN (
+    'government', 'nonprofit', 'resale', 'enterprise_zone',
+    'agricultural', 'manufacturing', 'other'
+  )),
+  exemption_number TEXT,                -- Certificate or exemption number
+  issuing_state TEXT,
+
+  -- Validity
+  effective_date DATE NOT NULL,
+  expiration_date DATE,                 -- NULL = no expiration
+
+  -- Certificate document
+  certificate_file_id UUID REFERENCES files(id),
+
+  -- Status
+  is_active BOOLEAN DEFAULT true,
+
+  -- Metadata
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_tax_exemptions_company ON tax_exemptions(company_id);
+CREATE INDEX idx_tax_exemptions_job ON tax_exemptions(job_id);
+CREATE INDEX idx_tax_exemptions_client ON tax_exemptions(client_id);
+```
+
+**Runtime behavior:**
+- When calculating tax on an invoice or estimate, the system checks for applicable exemptions on the project and client.
+- If an exemption exists and is active, tax is reduced to zero (or the exempt portion is excluded).
+- Invoices and estimates show the exemption reference (e.g., "Tax exempt: Certificate #EX-12345, State of Texas").
+- Expiring exemptions trigger a notification 30 days before expiration: "Tax exemption certificate for [Client] expires on [Date]. Obtain renewed certificate."
+
+---
+
+### 15.5 1099 Reporting (GAP-551)
+
+**Question:** How do you handle 1099 reporting that varies by builder?
+
+**Decision: Platform tracks vendor payment totals and generates 1099-NEC data; builder or their accountant files via QuickBooks or tax software.**
+
+**Implementation:**
+
+The `vendors` table already includes `is_1099 BOOLEAN` and `tax_id_encrypted TEXT`. The platform adds:
+
+```sql
+-- Annual 1099 summary (materialized from invoice/payment data)
+CREATE TABLE vendor_1099_summaries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  vendor_id UUID NOT NULL REFERENCES vendors(id) ON DELETE CASCADE,
+  tax_year INTEGER NOT NULL,
+
+  -- Payment totals
+  total_payments DECIMAL(14,2) NOT NULL DEFAULT 0,
+  total_1099_reportable DECIMAL(14,2) NOT NULL DEFAULT 0,
+
+  -- Vendor info snapshot (at time of generation)
+  vendor_name TEXT NOT NULL,
+  vendor_tax_id_encrypted TEXT,
+  vendor_address TEXT,
+  vendor_city TEXT,
+  vendor_state TEXT,
+  vendor_zip TEXT,
+
+  -- Status
+  is_1099_required BOOLEAN GENERATED ALWAYS AS (total_1099_reportable >= 600) STORED,
+  filing_status TEXT DEFAULT 'pending'
+    CHECK (filing_status IN ('pending', 'generated', 'filed', 'corrected')),
+
+  -- Export tracking
+  exported_at TIMESTAMPTZ,
+  exported_format TEXT,                  -- 'csv', 'quickbooks', 'efile'
+
+  UNIQUE(company_id, vendor_id, tax_year)
+);
+
+CREATE INDEX idx_1099_company_year ON vendor_1099_summaries(company_id, tax_year);
+```
+
+**1099 generation workflow (annual, triggered in January):**
+
+1. The system calculates total payments per vendor for the prior tax year by summing all `invoices` with `status = 'paid'` grouped by `vendor_id`.
+2. Only vendors with `is_1099 = true` are included.
+3. Only payments >= $600 in the aggregate are flagged as 1099-reportable.
+4. Materials-only payments are excluded in some configurations (configurable: `company_config.config_domain = '1099'`, `config_key = 'include_materials'`).
+5. The builder reviews the summary report, corrects any vendor addresses or tax IDs, and exports.
+
+**Export formats:**
+- CSV for manual filing or import into tax software
+- QuickBooks sync (if QBO integration is active, 1099 data maps to QBO's 1099 tracking)
+- IRS FIRE e-file format (future -- requires IRS TCC registration)
+
+**What the platform does NOT do:**
+- File 1099s on behalf of the builder (too much legal liability)
+- Provide tax advice on whether a payment is 1099-reportable
+- Validate TIN (Taxpayer Identification Number) against IRS databases (future: TIN matching API integration)
+
+---
+
+### 15.6 Payroll Tax for W-2 Employees (GAP-552)
+
+**Question:** What about payroll tax for builders with W-2 employees?
+
+**Decision: RossOS is NOT a payroll system. Payroll tax is handled by integration with dedicated payroll providers.**
+
+**Rationale:** Payroll processing involves withholding calculations, quarterly filings (Form 941), state unemployment tax (SUTA rates vary by employer), workers' comp premium calculations, garnishment processing, and benefit deductions. This is a specialized domain with strict compliance requirements. Building a payroll engine would be a multi-year effort that distracts from the core construction management mission.
+
+**What the platform provides:**
+
+1. **Time entry data** (Module 34: HR & Workforce): Employees log hours via the daily log or time tracking module. This data is the input to payroll.
+
+2. **Payroll integration exports:** Time entry data is exported in formats compatible with major payroll providers:
+   - **ADP**: CSV import format matching ADP's time import template
+   - **Gusto**: API integration (Gusto provides a public API)
+   - **QuickBooks Payroll**: Via the QuickBooks integration (Module 16)
+   - **Paychex**: CSV import format
+   - **Generic CSV**: For any other payroll provider
+
+3. **Labor cost tracking:** After payroll is processed in the external system, the builder imports the payroll cost data back into RossOS for job costing. This can be automated via QuickBooks sync or manually entered.
+
+4. **Burdened labor rate calculation:** The platform stores the builder's burdened labor rate (base pay + payroll taxes + benefits + workers' comp) as a configurable cost per hour per role. This is used for estimating and job costing, not for actual payroll processing.
+
+```json
+{
+  "config_domain": "labor_rates",
+  "config_key": "burdened_rates",
+  "config_value": {
+    "rates": [
+      { "role": "carpenter", "base_rate": 32.00, "burden_multiplier": 1.35, "burdened_rate": 43.20 },
+      { "role": "laborer", "base_rate": 22.00, "burden_multiplier": 1.35, "burdened_rate": 29.70 },
+      { "role": "electrician", "base_rate": 45.00, "burden_multiplier": 1.40, "burdened_rate": 63.00 },
+      { "role": "superintendent", "base_rate": 55.00, "burden_multiplier": 1.30, "burdened_rate": 71.50 }
+    ],
+    "burden_includes": {
+      "fica": 7.65,
+      "futa": 0.6,
+      "suta": 2.7,
+      "workers_comp": 8.5,
+      "health_insurance": 6.0,
+      "retirement": 3.0,
+      "pto": 4.5
+    }
+  }
+}
+```
+
+---
+
+### 15.7 Insurance Requirements by State (GAP-553)
+
+**Question:** Insurance requirements vary by state. How do you handle it?
+
+**Decision: The platform tracks insurance requirements per jurisdiction and validates vendor compliance against those requirements.**
+
+**State insurance requirements** (stored in `jurisdictions` table):
+
+```sql
+-- Already defined in jurisdictions table:
+-- min_gl_coverage INTEGER           -- Minimum general liability ($)
+-- min_wc_coverage INTEGER           -- Minimum workers' comp
+-- required_endorsements JSONB       -- Required policy endorsements
+```
+
+**Extended insurance configuration per jurisdiction:**
+
+```json
+// jurisdictions.required_endorsements example for California
+{
+  "general_liability": {
+    "min_per_occurrence": 1000000,
+    "min_aggregate": 2000000,
+    "required_endorsements": [
+      "CG 20 10 - Additional Insured",
+      "CG 20 37 - Additional Insured (Completed Operations)"
+    ]
+  },
+  "workers_compensation": {
+    "required": true,
+    "state_fund_available": true,
+    "exemption_available_below_employees": 0   // No exemption in CA
+  },
+  "auto_liability": {
+    "min_combined_single_limit": 1000000
+  },
+  "contractors_license_bond": {
+    "required": true,
+    "min_amount": 25000
+  }
+}
+```
+
+**Vendor compliance tracking:**
+
+The vendor management module (Module 10) already tracks insurance certificates per vendor. The platform enhances this with jurisdiction-aware compliance checking:
+
+1. When a vendor is added to a project, the system checks the vendor's insurance against the project's jurisdiction requirements.
+2. If the vendor's GL coverage is below the jurisdiction minimum, a compliance warning appears: "Vendor [Name] has $500,000 GL coverage. The minimum for [Jurisdiction] is $1,000,000."
+3. If the vendor's workers' comp certificate is expired or missing, the system blocks PO creation (configurable -- some builders enforce this strictly, others treat it as a warning).
+4. The builder can set company-level insurance minimums that are higher than the jurisdiction requirements (e.g., "All vendors must carry $2M GL regardless of state minimum").
+
+---
+
+### 15.8 Workers' Compensation Requirements (GAP-554)
+
+**Question:** What about workers' compensation requirements by state?
+
+**Decision: Per-state WC requirements tracked in the jurisdictions table, with vendor certificate tracking and expiration alerts.**
+
+**State WC variation points:**
+
+| Variation | Examples | How Platform Handles |
+|-----------|---------|---------------------|
+| WC required vs. optional | TX: optional for most; CA: always required | `jurisdictions.required_endorsements.workers_compensation.required` |
+| Employee count threshold | FL: required at 1+ construction employees; AL: required at 5+ | `jurisdictions.required_endorsements.workers_compensation.exemption_available_below_employees` |
+| State fund vs. private | OH, WA, WY: state fund only; most states: private market | Informational display only |
+| Experience mod rating | All states; affects premium calculation | Tracked on `vendors` table as `experience_mod_rate DECIMAL(4,2)` |
+| Monopolistic states | OH, ND, WA, WY: must use state fund | Informational flag |
+
+**Vendor WC tracking:**
+
+```sql
+-- Already on the vendors insurance tracking (Module 10)
+-- This extends the vendor_insurance table concept
+
+CREATE TABLE vendor_insurance_certificates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  vendor_id UUID NOT NULL REFERENCES vendors(id) ON DELETE CASCADE,
+
+  -- Certificate details
+  certificate_type TEXT NOT NULL CHECK (certificate_type IN (
+    'general_liability', 'workers_compensation', 'auto_liability',
+    'umbrella', 'professional_liability', 'pollution_liability',
+    'builders_risk', 'inland_marine', 'other'
+  )),
+  carrier_name TEXT,
+  policy_number TEXT,
+
+  -- Coverage
+  per_occurrence_limit DECIMAL(14,2),
+  aggregate_limit DECIMAL(14,2),
+
+  -- Validity
+  effective_date DATE NOT NULL,
+  expiration_date DATE NOT NULL,
+
+  -- Additional insured
+  additional_insured BOOLEAN DEFAULT false,
+  additional_insured_endorsement TEXT,    -- Endorsement number
+
+  -- WC-specific
+  experience_mod_rate DECIMAL(4,2),      -- For WC certificates
+
+  -- Certificate document
+  certificate_file_id UUID REFERENCES files(id),
+
+  -- Compliance status (computed)
+  is_compliant BOOLEAN DEFAULT true,
+  compliance_notes TEXT,
+
+  -- Alerts
+  expiration_alert_sent_at TIMESTAMPTZ,
+
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_vendor_insurance_company ON vendor_insurance_certificates(company_id);
+CREATE INDEX idx_vendor_insurance_vendor ON vendor_insurance_certificates(vendor_id);
+CREATE INDEX idx_vendor_insurance_expiration ON vendor_insurance_certificates(expiration_date);
+```
+
+**Expiration alert workflow:**
+1. Nightly job scans for certificates expiring within 30 days.
+2. Sends notification to the builder's designated insurance contact (usually office staff).
+3. At 14 days, sends a reminder.
+4. At 0 days (expired), marks the vendor as "insurance lapsed" and optionally blocks new PO creation for that vendor (configurable per company).
+
+---
+
+### 15.9 Builder's Risk Insurance per Project (GAP-555)
+
+**Question:** How do you handle Builder's Risk insurance tracking per project?
+
+**Decision: Per-project insurance tracking with coverage verification and expiration management.**
+
+Builder's Risk insurance is a project-specific policy that covers the structure during construction. It is typically purchased per project and expires at completion or a fixed date.
+
+**Data model:**
+
+```sql
+CREATE TABLE project_insurance (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+
+  -- Policy details
+  policy_type TEXT NOT NULL CHECK (policy_type IN (
+    'builders_risk', 'general_liability_project_specific',
+    'pollution', 'wrap_up', 'ocip', 'ccip', 'other'
+  )),
+  carrier_name TEXT NOT NULL,
+  policy_number TEXT NOT NULL,
+  agent_name TEXT,
+  agent_phone TEXT,
+  agent_email TEXT,
+
+  -- Coverage
+  coverage_amount DECIMAL(14,2) NOT NULL,   -- Total insured value
+  deductible DECIMAL(14,2),
+  premium DECIMAL(14,2),
+
+  -- Coverage details
+  covers_theft BOOLEAN DEFAULT true,
+  covers_flood BOOLEAN DEFAULT false,
+  covers_earthquake BOOLEAN DEFAULT false,
+  covers_wind BOOLEAN DEFAULT true,
+  covers_soft_costs BOOLEAN DEFAULT false,   -- Architect fees, permits during delay
+
+  -- Validity
+  effective_date DATE NOT NULL,
+  expiration_date DATE NOT NULL,
+
+  -- Coverage should match or exceed project value
+  project_value_at_inception DECIMAL(14,2),
+
+  -- Status
+  status TEXT DEFAULT 'active'
+    CHECK (status IN ('pending', 'active', 'expired', 'cancelled', 'claimed')),
+
+  -- Document
+  policy_file_id UUID REFERENCES files(id),
+
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_project_insurance_company ON project_insurance(company_id);
+CREATE INDEX idx_project_insurance_job ON project_insurance(job_id);
+CREATE INDEX idx_project_insurance_expiration ON project_insurance(expiration_date);
+```
+
+**Platform behavior:**
+
+1. **Project creation prompt:** When a new project is created with a contract value exceeding $100,000 (configurable threshold), the system prompts: "Do you have Builder's Risk insurance for this project?"
+
+2. **Coverage adequacy check:** If the project's current budget exceeds the Builder's Risk coverage amount, a warning appears: "Project budget ($1.2M) exceeds Builder's Risk coverage ($1.0M). Consider increasing coverage."
+
+3. **Change order impact:** When a change order increases the project value, the system checks if the new value exceeds coverage and alerts if so.
+
+4. **Expiration tracking:** Builder's Risk policies typically expire 12 months after effective date. The system alerts at 60, 30, and 14 days before expiration. If the project is not yet complete at expiration, the builder needs to extend the policy.
+
+5. **Lender requirement:** If the project has a construction loan, the lender typically requires Builder's Risk. The system tracks this as a lender compliance requirement alongside the draw request process (Module 15).
+
+---
+
+### 15.10 Additional Insured Endorsements (GAP-556)
+
+**Question:** What about tracking additional insured endorsements?
+
+**Decision: Additional insured status is tracked per vendor insurance certificate, per project, with automated verification.**
+
+**Why this matters:** General contractors require their subcontractors to name them as "additional insured" on the sub's GL policy. This protects the GC if the sub causes damage or injury. Lenders often require the same. Managing this across dozens of vendors and multiple projects is a major administrative burden.
+
+**Implementation:**
+
+The `vendor_insurance_certificates` table (Section 15.8) already includes `additional_insured BOOLEAN` and `additional_insured_endorsement TEXT`. The platform adds project-level additional insured tracking:
+
+```sql
+CREATE TABLE additional_insured_requirements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+
+  -- Who needs to be named as additional insured
+  insured_entity_name TEXT NOT NULL,        -- "Ross Built LLC" or "First National Bank"
+  insured_entity_type TEXT NOT NULL CHECK (insured_entity_type IN (
+    'builder', 'lender', 'owner', 'architect', 'other'
+  )),
+
+  -- Requirements
+  required_endorsements TEXT[] NOT NULL DEFAULT ARRAY['CG 20 10', 'CG 20 37'],
+  min_coverage_per_occurrence DECIMAL(14,2),
+  min_coverage_aggregate DECIMAL(14,2),
+
+  -- Status
+  is_active BOOLEAN DEFAULT true,
+
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_ai_requirements_job ON additional_insured_requirements(job_id);
+```
+
+**Vendor compliance workflow:**
+
+1. When a vendor is assigned to a project (via PO or bid award), the system checks the vendor's insurance certificates.
+2. For each `additional_insured_requirements` row on the project, the system verifies that the vendor has a certificate naming that entity as additional insured.
+3. If the endorsement is missing, a compliance task is created: "Request additional insured endorsement from [Vendor] naming [Entity] for project [Project]."
+4. The vendor portal (Module 30) allows vendors to upload updated certificates directly.
+5. When a new certificate is uploaded, the system re-checks compliance and clears the task if requirements are met.
+
+**Compliance dashboard:**
+
+The insurance compliance dashboard (accessible from project settings) shows:
+
+```
+Project: Custom Home - 123 Oak Lane
+Additional Insured Requirements:
+  [x] Ross Built LLC — 14/14 vendors compliant
+  [x] First National Bank — 14/14 vendors compliant
+
+Vendor Compliance Status:
+  [x] ABC Plumbing — GL current, WC current, AI endorsements verified
+  [x] XYZ Electric — GL current, WC current, AI endorsements verified
+  [!] 123 Framing — WC expires in 12 days
+  [x] ... (11 more vendors)
+```
+
+---
+
+### 15.11 Annual Insurance Audit Data Preparation (GAP-557)
+
+**Question:** How do you handle the annual insurance audit data preparation?
+
+**Decision: Platform generates a pre-formatted insurance audit report from project and payroll data, reducing a week-long manual process to hours.**
+
+**What an insurance audit requires:** Each year, the builder's insurance carrier audits the prior year to determine the actual premium owed (vs. the estimated premium paid). The auditor needs:
+
+1. **Total payroll by employee classification** (carpenters, laborers, supervisors, etc.)
+2. **Total subcontractor payments** (separated by insured vs. uninsured subs)
+3. **Total revenue by project type** (new construction vs. remodel, residential vs. commercial)
+4. **Certificate of insurance status for all subs** (insured subs are excluded from the builder's WC premium calculation)
+
+**Insurance audit report generator:**
+
+```typescript
+// server/reports/insurance-audit.ts
+
+interface InsuranceAuditReport {
+  auditPeriod: { start: string; end: string };
+
+  // Payroll summary by classification
+  payrollByClassification: {
+    classCode: string;          // NCCI class code: '5403' (carpentry), '5651' (roofing), etc.
+    description: string;
+    totalPayroll: number;
+    employeeCount: number;
+  }[];
+
+  // Subcontractor payments
+  subcontractorPayments: {
+    vendorName: string;
+    totalPaid: number;
+    hasValidGL: boolean;
+    hasValidWC: boolean;
+    isInsured: boolean;         // Has both valid GL and WC
+  }[];
+
+  // Revenue by project type
+  revenueByProjectType: {
+    projectType: string;        // 'custom_home', 'remodel', 'commercial', etc.
+    totalRevenue: number;
+    projectCount: number;
+  }[];
+
+  // Summary
+  totalInsuredSubPayments: number;     // Excluded from premium calc
+  totalUninsuredSubPayments: number;   // Included in premium calc
+  totalPayroll: number;
+  totalRevenue: number;
+}
+```
+
+**Data sources within the platform:**
+
+| Audit Data Need | Platform Source |
+|----------------|---------------|
+| Payroll by classification | Time entries (Module 34) + employee classification field |
+| Subcontractor payments | Invoices with `status = 'paid'` grouped by vendor, filtered by `vendor.is_1099 = true` |
+| Sub insurance status | `vendor_insurance_certificates` -- check if GL and WC were valid during the audit period |
+| Revenue by project type | Jobs with `project_type` field + total invoiced to client (draws) |
+
+**Workflow:**
+
+1. Builder navigates to Reports > Insurance Audit.
+2. Selects the audit period (typically the prior policy year).
+3. Platform generates the report pulling from all relevant data.
+4. Builder reviews, makes corrections (e.g., reclassify an employee, note that a sub was insured but certificate was not uploaded).
+5. Exports as PDF + Excel for the insurance auditor.
+
+**What the builder still needs to do manually:**
+- Verify NCCI classification codes for employees (the platform stores them but the builder must confirm accuracy)
+- Provide W-2 documentation (from their payroll provider)
+- Handle disputes with the auditor on classifications or coverage determinations
+- Provide the actual insurance policy documents
+
+**Configuration:**
+
+```json
+{
+  "config_domain": "insurance_audit",
+  "config_key": "settings",
+  "config_value": {
+    "employee_classifications": [
+      { "role": "carpenter", "ncci_code": "5403", "description": "Carpentry" },
+      { "role": "laborer", "ncci_code": "5437", "description": "Framing" },
+      { "role": "superintendent", "ncci_code": "5606", "description": "Contractor Executive Supervisor" },
+      { "role": "office", "ncci_code": "8810", "description": "Clerical" }
+    ],
+    "policy_year_start_month": 3,         // Some policies are not calendar year
+    "sub_threshold_for_inclusion": 0,     // Include all subs, or only those paid > threshold
+    "auto_generate_reminder_days": 30     // Remind builder N days before audit typically occurs
+  }
+}
+```
+
+---
+
+### 15.12 Regulatory/Tax/Insurance Gap Coverage Summary
+
+| Gap Item | Section | Decision Summary |
+|----------|---------|-----------------|
+| GAP-547 | 15.1 | Three-tier tax config (jurisdiction, company, project) with per-category applicability |
+| GAP-548 | 15.2 | Per-project tax settings auto-populated from project jurisdiction; multi-state reporting |
+| GAP-549 | 15.3 | TaxJar/Avalara API integration with cache; fallback to jurisdictions table |
+| GAP-550 | 15.4 | Per-project and per-client exemption records with certificate storage and expiration alerts |
+| GAP-551 | 15.5 | Track vendor payments, generate 1099-NEC summaries; builder files via QBO or tax software |
+| GAP-552 | 15.6 | Not a payroll system; integrates with ADP/Gusto/QBO Payroll; tracks burdened labor rates |
+| GAP-553 | 15.7 | Jurisdiction insurance requirements in DB; vendor compliance checking against minimums |
+| GAP-554 | 15.8 | Per-state WC requirements; vendor certificate tracking with expiration alerts |
+| GAP-555 | 15.9 | Per-project Builder's Risk tracking with coverage adequacy checks and expiration alerts |
+| GAP-556 | 15.10 | Per-project additional insured requirements; vendor compliance verification per endorsement |
+| GAP-557 | 15.11 | Auto-generated insurance audit report from platform data; payroll, sub payments, revenue |
+
+---
+
+*Document Version: 2.1*
 *Created: 2026-02-11*
-*Last Updated: 2026-02-11*
-*Status: Comprehensive design covering all configuration, customization, workflow, regional variability, and multi-entity configuration gap items.*
+*Last Updated: 2026-02-13*
+*Status: Comprehensive design covering all configuration, customization, workflow, regional variability, multi-entity configuration, regulatory, tax, and insurance gap items. Sections 14-15 add detailed implementation specifications for all regional variability items (GAP-581 through GAP-590) and all regulatory/tax/insurance items (GAP-547 through GAP-557).*
 *Sources: data-model.md, system-architecture.md, claude-code-blueprint.md (Rules 1 and 6), gap-analysis-expanded.md (Sections 1, 6, 41-43)*

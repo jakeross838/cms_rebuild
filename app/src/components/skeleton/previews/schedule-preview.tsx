@@ -577,7 +577,7 @@ function WeekendShading({ timelineStart, totalDays, timelineWidth, zoom, height 
         return (
           <div
             key={i}
-            className="absolute top-0 h-full bg-gray-100"
+            className="absolute top-0 h-full bg-gray-200/30"
             style={{ left: `${pos}%`, width: `${width}%` }}
           />
         )
@@ -965,9 +965,19 @@ function DependencyArrows({ dependencies, itemMap, timelineStart, totalDays, row
         const marker = markerMap[type]
         const midXPct = x1Pct + 0.3
 
-        // Calculate label position
-        const labelX = (x1Pct + x2Pct) / 2
-        const labelY = (y1 + y2) / 2 - 8
+        // Calculate badge position at midpoint of the arrow path
+        const badgeXPct = (x1Pct + x2Pct) / 2
+        const badgeY = (y1 + y2) / 2 - 8
+
+        // Badge colors: use lighter fill behind the type label
+        const badgeFillMap: Record<DependencyType, string> = {
+          FS: '#dbeafe', // blue-100
+          SS: '#dcfce7', // green-100
+          FF: '#ffedd5', // orange-100
+          SF: '#f3e8ff', // purple-100
+        }
+        const badgeFill = isCritical ? '#fee2e2' : badgeFillMap[type]
+        const badgeStroke = isCritical ? '#fca5a5' : color
 
         return (
           <g key={key}>
@@ -979,18 +989,33 @@ function DependencyArrows({ dependencies, itemMap, timelineStart, totalDays, row
               markerEnd={marker}
               opacity={0.7}
             />
-            {/* Dependency type label */}
-            <text
-              x={`${labelX}%`}
-              y={labelY}
-              fontSize="9"
-              fill={color}
-              textAnchor="middle"
-              fontWeight="500"
-              className="select-none"
-            >
-              {type}
-            </text>
+            {/* Dependency type badge pill */}
+            <g className="select-none">
+              <rect
+                x={`${badgeXPct}%`}
+                y={badgeY - 7}
+                width="22"
+                height="14"
+                rx="7"
+                ry="7"
+                fill={badgeFill}
+                stroke={badgeStroke}
+                strokeWidth="0.75"
+                opacity={0.95}
+                transform={`translate(-11, 0)`}
+              />
+              <text
+                x={`${badgeXPct}%`}
+                y={badgeY + 2}
+                fontSize="8"
+                fill={color}
+                textAnchor="middle"
+                fontWeight="600"
+                letterSpacing="0.3"
+              >
+                {type}
+              </text>
+            </g>
           </g>
         )
       })}

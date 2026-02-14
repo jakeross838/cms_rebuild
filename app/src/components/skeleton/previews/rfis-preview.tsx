@@ -278,7 +278,7 @@ const responseTypeConfig: Record<ResponseType, { label: string; color: string; b
   answer: { label: 'Answer', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   clarification_request: { label: 'Clarification', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: HelpCircle },
   partial: { label: 'Partial', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: RotateCcw },
-  forward: { label: 'Forward', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: ArrowRight },
+  forward: { label: 'Forwarded', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: ArrowRight },
 }
 
 // ── Sub-Components ──────────────────────────────────────────
@@ -507,6 +507,9 @@ function RFICard({ rfi }: { rfi: RFI }) {
                 <Flag className="h-3 w-3" />
                 {priority.label}
               </span>
+              {rfi.responses.length > 0 && rfi.responses.map((resp, idx) => (
+                <ResponseTypeBadge key={idx} type={resp.responseType} />
+              ))}
             </div>
             <h4 className="font-medium text-gray-900 mt-1 line-clamp-2">{rfi.subject}</h4>
           </div>

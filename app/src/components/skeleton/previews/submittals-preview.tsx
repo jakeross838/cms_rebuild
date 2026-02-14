@@ -32,6 +32,8 @@ import {
   PenLine,
   FileDown,
   BadgeCheck,
+  Layers,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FilterBar } from '@/components/skeleton/filter-bar'
@@ -874,6 +876,7 @@ export function SubmittalsPreview() {
   const [specFilter, setSpecFilter] = useState<string>('all')
   const [tradeFilter, setTradeFilter] = useState<string>('all')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [viewMode, setViewMode] = useState<'flat' | 'grouped'>('grouped')
   const { search, setSearch, activeTab, setActiveTab, activeSort, setActiveSort, sortDirection, toggleSortDirection } = useFilterState()
 
   const filteredSubmittals = sortItems(
@@ -951,6 +954,23 @@ export function SubmittalsPreview() {
   const handleExport = () => {
     console.log('Exporting:', Array.from(selectedIds))
     // Implementation would go here
+  }
+
+  const handleBulkAssign = () => {
+    console.log('Assigning:', Array.from(selectedIds))
+    // Implementation would go here
+  }
+
+  // Derived selection state for "select all" checkbox in header
+  const allFilteredSelected = filteredSubmittals.length > 0 && filteredSubmittals.every(s => selectedIds.has(s.id))
+  const someFilteredSelected = filteredSubmittals.some(s => selectedIds.has(s.id))
+
+  const handleToggleSelectAll = () => {
+    if (allFilteredSelected) {
+      clearSelection()
+    } else {
+      selectAll()
+    }
   }
 
   // ── Stats ────────────────────────────────────────────────────
@@ -1083,6 +1103,40 @@ export function SubmittalsPreview() {
           resultCount={filteredSubmittals.length}
           totalCount={mockSubmittals.length}
         />
+        {/* Select All Checkbox + View Mode Toggle */}
+        <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <button
+              onClick={handleToggleSelectAll}
+              className={cn(
+                'w-5 h-5 rounded border flex items-center justify-center transition-colors',
+                allFilteredSelected
+                  ? 'bg-blue-500 border-blue-500 text-white'
+                  : someFilteredSelected
+                  ? 'bg-blue-200 border-blue-400'
+                  : 'border-gray-300 hover:border-blue-400'
+              )}
+            >
+              {allFilteredSelected && <Check className="h-3 w-3" />}
+              {someFilteredSelected && !allFilteredSelected && <div className="w-2 h-0.5 bg-blue-500" />}
+            </button>
+            <span className="text-xs text-gray-600">
+              {allFilteredSelected ? 'Deselect all' : `Select all ${filteredSubmittals.length} submittals`}
+            </span>
+          </label>
+          <button
+            onClick={() => setViewMode(viewMode === 'flat' ? 'grouped' : 'flat')}
+            className={cn(
+              'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors',
+              viewMode === 'grouped'
+                ? 'bg-purple-50 border-purple-200 text-purple-700'
+                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+            )}
+          >
+            <Layers className="h-3.5 w-3.5" />
+            {viewMode === 'grouped' ? 'Grouped by Package' : 'Flat List'}
+          </button>
+        </div>
       </div>
 
       {/* Bulk Select Bar */}
@@ -1106,6 +1160,13 @@ export function SubmittalsPreview() {
           >
             <PenLine className="h-4 w-4" />
             Request Revision
+          </button>
+          <button
+            onClick={handleBulkAssign}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+          >
+            <Users className="h-4 w-4" />
+            Bulk Assign
           </button>
           <button
             onClick={handleExport}
@@ -1200,25 +1261,39 @@ export function SubmittalsPreview() {
 
       {/* Submittals Grid */}
       <div className="p-4 grid grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
-        {/* Render packages first */}
-        {packages.map(pkg => (
-          <PackageGroup
-            key={pkg.id}
-            pkg={pkg}
-            selectedIds={selectedIds}
-            onToggleSelect={toggleSelect}
-          />
-        ))}
+        {viewMode === 'grouped' ? (
+          <>
+            {/* Render packages first */}
+            {packages.map(pkg => (
+              <PackageGroup
+                key={pkg.id}
+                pkg={pkg}
+                selectedIds={selectedIds}
+                onToggleSelect={toggleSelect}
+              />
+            ))}
 
-        {/* Render ungrouped submittals */}
-        {ungroupedSubmittals.map(submittal => (
-          <SubmittalCard
-            key={submittal.id}
-            submittal={submittal}
-            isSelected={selectedIds.has(submittal.id)}
-            onToggleSelect={toggleSelect}
-          />
-        ))}
+            {/* Render ungrouped submittals */}
+            {ungroupedSubmittals.map(submittal => (
+              <SubmittalCard
+                key={submittal.id}
+                submittal={submittal}
+                isSelected={selectedIds.has(submittal.id)}
+                onToggleSelect={toggleSelect}
+              />
+            ))}
+          </>
+        ) : (
+          /* Flat list view — all submittals without package grouping */
+          filteredSubmittals.map(submittal => (
+            <SubmittalCard
+              key={submittal.id}
+              submittal={submittal}
+              isSelected={selectedIds.has(submittal.id)}
+              onToggleSelect={toggleSelect}
+            />
+          ))
+        )}
 
         {filteredSubmittals.length === 0 && (
           <div className="col-span-2 text-center py-8 text-gray-400">

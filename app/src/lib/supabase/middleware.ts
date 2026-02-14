@@ -39,7 +39,8 @@ export async function updateSession(request: NextRequest) {
 
   const isPublicRoute = request.nextUrl.pathname === '/' ||
                         request.nextUrl.pathname.startsWith('/portal') ||
-                        request.nextUrl.pathname.startsWith('/skeleton')
+                        request.nextUrl.pathname.startsWith('/skeleton') ||
+                        request.nextUrl.pathname.startsWith('/api/docs')
 
   if (!user && !isAuthRoute && !isPublicRoute) {
     const url = request.nextUrl.clone()

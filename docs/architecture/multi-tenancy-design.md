@@ -1390,13 +1390,13 @@ These are Year 2+ features for enterprise tier only.
 | GAP-167 | Section 14.9 | Decided: Legal process with tenant notification |
 | GAP-168 | Section 14.10 | Decided: US-only default, regional for enterprise |
 | GAP-169 | Section 9.1 | Decided: 270 days post-lapse, 37 days post-delete |
-| GAP-574 | Section 12.2 | Decided: Separate company records per LLC |
-| GAP-575 | Section 12.2 | Decided: Child companies with cross-referral |
-| GAP-576 | Section 12.2 | Decided: Division entity type |
-| GAP-577 | Section 12.2 | Decided: Brand entity type |
-| GAP-578 | Section 12.3 | DECISION NEEDED: M&A data merge process |
-| GAP-579 | Section 12.4 | Decided: Franchise hierarchy model |
-| GAP-580 | Section 12.5 | Decided: Tier-based growth path |
+| GAP-574 | Sections 12.2, 24.1 | Decided: Separate company records per LLC; detailed runtime behavior, API, and billing model |
+| GAP-575 | Sections 12.2, 24.2 | Decided: Child companies with cross-referral; referral tracking table and workflow |
+| GAP-576 | Sections 12.2, 24.3 | Decided: Division entity type; project transfer procedure, vendor sharing, division-level P&L |
+| GAP-577 | Sections 12.2, 24.4 | Decided: Brand entity type; brand as presentation layer, brand_id on jobs |
+| GAP-578 | Sections 12.3, 24.5 | RESOLVED: Three-phase M&A process (Attach, Harmonize, Merge) as managed service |
+| GAP-579 | Sections 12.4, 24.6 | Decided: Franchise hierarchy with locked/unlocked config split; onboarding flow |
+| GAP-580 | Sections 12.5, 24.7 | Decided: Tier-based growth path; concrete triggers, automatic structural transitions |
 | GAP-581 | Section 19.4 | Decided: Jurisdiction building code DB |
 | GAP-582 | Section 19.5 | Decided: Per-jurisdiction permit config |
 | GAP-583 | Section 19.8 | Decided: Single weather API integration |
@@ -1421,7 +1421,7 @@ These are Year 2+ features for enterprise tier only.
 | Gap Item | Question | Section |
 |----------|----------|---------|
 | GAP-162 | When to pursue SOC 2 Type II certification? | 14.6 |
-| GAP-578 | How to handle M&A data merge (managed service details)? | 12.3 |
+| ~~GAP-578~~ | ~~How to handle M&A data merge?~~ RESOLVED: Three-phase managed service | 24.5 |
 | GAP-581/038 | Who maintains the building code database? | 19.4 |
 | GAP-011 | Should automatic weekly exports be free or paid? | 15 |
 | GAP-043/044 | Platform-maintained cost index vs. crowd-sourced only? | 19.9 |
@@ -1429,8 +1429,313 @@ These are Year 2+ features for enterprise tier only.
 
 ---
 
-*Document Version: 2.0*
+## 24. Multi-Entity Scaling (GAP-574 through GAP-580) -- Detailed Implementation
+
+This section provides concrete implementation details for the multi-entity gap items introduced in Section 12. Where Section 12 defines the data model and hierarchy, this section specifies the runtime behavior, migration procedures, API contracts, and edge-case handling that a developer needs to build and ship each feature.
+
+---
+
+### 24.1 Builders with Multiple LLCs (GAP-574)
+
+**Scenario:** Ross Built LLC also owns Ross Development LLC and Ross Remodeling LLC. Each LLC files its own taxes, has its own insurance, and may use different vendor terms. But the owner (Jake Ross) wants a single login and consolidated reporting.
+
+**Decision:** Each LLC is a separate `companies` row with `parent_company_id` pointing to a single parent holding entity. The parent entity may or may not be a real LLC itself -- it can be a virtual "group" entity that exists solely for organizational purposes.
+
+**Data model:**
+
+```sql
+-- Parent entity (may be virtual -- no real-world legal entity)
+INSERT INTO companies (id, name, entity_type, parent_company_id)
+VALUES ('group-uuid', 'Ross Built Group', 'primary', NULL);
+
+-- Each LLC
+INSERT INTO companies (id, name, legal_name, tax_id_encrypted, entity_type, parent_company_id)
+VALUES
+  ('llc1-uuid', 'Ross Built LLC', 'Ross Built LLC', 'enc_ein_1', 'subsidiary', 'group-uuid'),
+  ('llc2-uuid', 'Ross Development LLC', 'Ross Development LLC', 'enc_ein_2', 'subsidiary', 'group-uuid'),
+  ('llc3-uuid', 'Ross Remodeling LLC', 'Ross Remodeling LLC', 'enc_ein_3', 'subsidiary', 'group-uuid');
+```
+
+**Runtime behavior:**
+
+| Concern | Behavior |
+|---------|----------|
+| **Login** | Jake authenticates once. JWT contains `company_id` of his last-used LLC. A company switcher in the top nav lists all LLCs he belongs to. Switching issues a new JWT via token refresh. |
+| **Financial isolation** | Each LLC has its own invoices, POs, draws, budgets. No cross-LLC financial data is visible by default. QuickBooks connections are per-LLC (one QBO company per LLC). |
+| **Vendor sharing** | `shared_vendor_pool = true` on each child means vendors created in one LLC are readable (but not editable) from sibling LLCs. When a shared vendor is used in LLC-2, a local reference (vendor_id) is created in LLC-2's scope. Insurance and compliance tracking remain per-LLC. |
+| **Consolidated reporting** | Jake, authenticated at the parent "group" level, can run cross-entity reports that aggregate revenue, job count, and profitability across all LLCs. These reports show summary rows per LLC, never commingled line items. The API enforces that only users with `owner` role at the parent level can access cross-entity reporting endpoints. |
+| **Cost codes** | Each LLC inherits cost codes from the parent. LLC-specific codes can be added. The configuration engine resolves cost codes by walking up the hierarchy (Section 3.2 of configuration-engine.md). |
+
+**API endpoints for multi-entity:**
+
+```
+GET  /api/entities                    -- List all entities the user has membership in
+POST /api/entities/switch/:companyId  -- Switch active entity (returns new JWT)
+GET  /api/entities/consolidated/dashboard  -- Parent-level consolidated metrics
+GET  /api/entities/consolidated/reports    -- Cross-entity reports (parent owner only)
+```
+
+**Billing:** The parent entity is the billing entity. One Stripe subscription covers all child LLCs. The subscription tier is determined by the total user count across all children. Per-child billing is not supported (too complex for v1).
+
+---
+
+### 24.2 Construction Company Plus Real Estate Company (GAP-575)
+
+**Scenario:** A builder owns both a construction company and a real estate brokerage. The real estate company refers clients to the construction company, and vice versa.
+
+**Decision:** Two child companies under one parent, with a dedicated cross-entity referral mechanism.
+
+**Data model additions:**
+
+```sql
+-- Referral tracking between sibling entities
+CREATE TABLE cross_entity_referrals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  target_company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+
+  -- What was referred
+  referral_type TEXT NOT NULL CHECK (referral_type IN ('lead', 'client', 'vendor')),
+  source_entity_type TEXT NOT NULL,   -- 'lead', 'client'
+  source_entity_id UUID NOT NULL,
+  target_entity_id UUID,              -- NULL until accepted and created in target company
+
+  -- Tracking
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined', 'converted')),
+  notes TEXT,
+  referred_by UUID REFERENCES users(id),
+
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_referrals_source ON cross_entity_referrals(source_company_id);
+CREATE INDEX idx_referrals_target ON cross_entity_referrals(target_company_id);
+```
+
+**Behavior:** When the real estate company closes a deal and the client wants to build, a referral is created that pushes the client's contact info to the construction company as a new lead. The referral is tracked for reporting (referral conversion rate, revenue attributed to referrals). No financial data crosses the boundary -- only contact information and referral metadata.
+
+**What the platform does NOT do:** RossOS is a construction management platform. The real estate company entity uses RossOS only for the CRM/lead pipeline module (Module 36). Full real estate transaction management (MLS, closing docs, commission tracking) is out of scope. The real estate entity would use a dedicated real estate platform alongside RossOS.
+
+---
+
+### 24.3 Multiple Offices (GAP-576)
+
+**Scenario:** A builder has offices in Dallas, Austin, and Houston. Each office has its own project managers, superintendents, and vendor relationships. The owner wants office-level P&L reports but also company-wide reporting.
+
+**Decision:** Each office is a `division` entity type under the parent company. Divisions share the same legal entity (same EIN, same insurance policy) but operate with separate data scopes.
+
+**Concrete behavior:**
+
+| Concern | Behavior |
+|---------|----------|
+| **User assignment** | Each user has a `user_company_membership` to one or more divisions. A PM in Dallas cannot see Austin's projects unless they also have Austin membership. |
+| **Vendor relationships** | `shared_vendor_pool = true` by default for divisions (same legal entity, same vendor agreements). Division-specific vendor notes and performance ratings are scoped to the division. |
+| **Cost codes** | Identical across divisions (inherited from parent). If a division needs a unique code, it adds one locally. |
+| **Reporting** | Division-level P&L is a filter on the parent's reporting engine: `WHERE company_id = :divisionId`. Parent-level P&L aggregates all divisions. |
+| **Branding** | All divisions share the parent's branding by default. A division can override `logo_url` and `primary_color` if it operates under a slightly different visual identity (e.g., "Ross Built - Dallas" vs "Ross Built - Austin"). |
+| **Projects** | Each project belongs to exactly one division. A project cannot span divisions. If a project is transferred between offices (e.g., Austin PM takes over a Dallas project), the project's `company_id` is updated to the new division, and all child records follow via cascade. This is an admin-only operation with audit logging. |
+
+**Project transfer procedure:**
+
+```sql
+-- Admin-only: Transfer project from one division to another
+-- Wrapped in a transaction, logged to activity_logs
+BEGIN;
+  UPDATE jobs SET company_id = :targetDivisionId WHERE id = :jobId AND company_id = :sourceDivisionId;
+  -- All child records (budgets, invoices, POs, etc.) follow via FK cascade if using
+  -- company_id on child records, OR remain linked via job_id if indirectly scoped.
+  INSERT INTO activity_logs (company_id, entity_type, entity_id, action, details, performed_by)
+  VALUES (:targetDivisionId, 'job', :jobId, 'transferred',
+    jsonb_build_object('from_division', :sourceDivisionId, 'to_division', :targetDivisionId),
+    :adminUserId);
+COMMIT;
+```
+
+---
+
+### 24.4 Different Brand Names (GAP-577)
+
+**Scenario:** A builder operates as "Ross Built Custom Homes" for high-end custom work and "Affordable Living by Ross" for production homes. Same company, same employees, different client-facing identity.
+
+**Decision:** Each brand is a `brand` entity type. Brands share the parent's data by default but override client-facing presentation.
+
+**What brands control:**
+
+| Aspect | Brand-Specific? | Implementation |
+|--------|----------------|----------------|
+| Logo | Yes | `companies.logo_url` override on brand entity |
+| Colors | Yes | `companies.primary_color`, `secondary_color` override |
+| Client portal URL | Yes | Custom subdomain: `rosscustom.rossos.com` vs `affordable.rossos.com` |
+| Client portal content | Yes | Portal settings (what to show/hide) configured per brand |
+| Proposal/contract templates | Yes | `document_templates` scoped to brand's `company_id` |
+| Email sender name | Yes | `companies.settings.email_sender_name` per brand |
+| Internal data | No | Projects, vendors, cost codes, employees are shared with parent |
+| Financial reporting | Filtered | Reports can filter by brand (projects tagged with `brand_id` on the job) |
+
+**Implementation detail:** Rather than making brands fully separate data scopes (which would duplicate employees, vendors, and cost codes), brands are a "presentation layer" on top of the parent's data. Projects are assigned to a brand via a `brand_id` field on the `jobs` table:
+
+```sql
+ALTER TABLE jobs ADD COLUMN brand_id UUID REFERENCES companies(id);
+-- brand_id references a companies row where entity_type = 'brand'
+-- NULL brand_id = default/parent brand
+```
+
+This way, vendors and employees do not need to be duplicated across brands. The brand only controls what the client sees.
+
+---
+
+### 24.5 Mergers and Acquisitions (GAP-578)
+
+**Decision: RESOLVED.** The M&A process is a managed service (not self-service) with the following concrete procedure:
+
+**Phase 1: Attach (Day 1-7)**
+
+The acquired company becomes a child entity of the acquiring company. No data is moved or merged. The acquiring company's owner gains read-only visibility into the acquired company's data via the parent-child RLS policy.
+
+```sql
+-- Attach acquired company as child
+UPDATE companies
+SET parent_company_id = :acquiringCompanyId,
+    entity_type = 'subsidiary'
+WHERE id = :acquiredCompanyId;
+```
+
+**Phase 2: Harmonize (Week 2-4)**
+
+A platform-provided migration tool runs the following harmonization steps. Each step produces a preview report before execution and requires explicit confirmation:
+
+1. **Vendor deduplication:** Match vendors between entities by `tax_id_encrypted` (exact match) and `name` (fuzzy match, Levenshtein distance <= 2). Present matches for human review. Confirmed matches merge the acquired vendor's history into the acquiring vendor's record.
+
+2. **Cost code mapping:** Present the acquired company's cost codes alongside the acquiring company's codes. The admin maps each acquired code to an existing code or marks it as "keep as-is." Mapped codes are rewritten on all historical records (invoices, budget lines, PO line items) in a single transaction.
+
+3. **User deduplication:** Users with the same email get their acquired-company membership deactivated and an acquiring-company membership created. Users with different emails are simply given new memberships in the acquiring company.
+
+4. **Client transfer:** Clients from the acquired company are copied to the acquiring company. Projects remain associated with their original client records.
+
+**Phase 3: Merge (Optional, Week 4+)**
+
+If the acquiring company wants to fully absorb the acquired company (eliminate it as a separate entity):
+
+1. All projects are transferred to the acquiring company via the project transfer procedure (Section 24.3).
+2. All remaining data (invoices, POs, draws, daily logs) is re-parented to the acquiring company.
+3. The acquired company is soft-deleted.
+4. An immutable audit record documents the entire merge.
+
+**Constraints:**
+- The merge is irreversible after Phase 3 execution.
+- Full data export of the acquired company is mandatory before Phase 3 begins.
+- Estimated time: 2-8 hours of platform team effort depending on data volume.
+- Pricing: included in Enterprise tier; billed per-engagement for other tiers.
+
+---
+
+### 24.6 Franchise Models (GAP-579)
+
+**Scenario:** A franchisor licenses their brand, processes, and templates to independent builder-operators across the country. The franchisor wants consistency and visibility without controlling day-to-day operations.
+
+**Decision:** Franchise support uses `entity_type = 'franchise'` with locked configuration inheritance.
+
+**What the franchisor controls (locked settings):**
+
+| Setting | Lock Level | Franchisor's Control |
+|---------|-----------|---------------------|
+| Branding (logo, colors) | Locked | Franchisee cannot change brand identity |
+| Document templates (proposals, contracts) | Locked | Franchisee must use approved templates |
+| Approval workflow minimums | Locked | "Invoice approval required above $5,000" cannot be relaxed |
+| Cost code structure | Locked | Standard codes must be used; franchisee can add but not remove |
+| Client portal content | Locked | Portal shows franchisor-approved content structure |
+| Terminology | Locked | Consistent terminology across franchise network |
+| Reporting templates | Locked | Standardized reporting format |
+
+**What the franchisee controls (unlocked):**
+
+| Setting | Franchisee's Control |
+|---------|---------------------|
+| Users and roles | Hire, assign, manage their own team |
+| Vendors | Own vendor relationships and pricing |
+| Projects | Full autonomy over project management |
+| Financial data | Private by default; franchisor sees aggregated metrics only |
+| Notification preferences | Own alert settings |
+| Additional custom fields | Can add (not remove) custom fields |
+| Local jurisdiction settings | Override for their specific market |
+
+**Franchisor reporting dashboard:**
+
+The franchisor sees an aggregated dashboard with:
+- Total projects across all franchisees (count, not details)
+- Revenue bands (franchisee revenue bucketed, not exact figures)
+- Completion rates and average project duration
+- Customer satisfaction scores (if portal feedback is enabled)
+- Compliance status (are franchisees using required templates?)
+
+The franchisor does NOT see:
+- Individual project financials
+- Vendor names or pricing
+- Employee details
+- Client names
+
+**Access escalation:** A franchisee can grant the franchisor temporary access to specific project data for support purposes. This uses the same time-limited impersonation mechanism as platform admin access (Section 14.8), with audit logging.
+
+**Onboarding a new franchisee:**
+
+```
+1. Franchisor creates a franchise invitation (email + territory)
+2. Franchisee signs up via invitation link
+3. Platform creates a new company with:
+   - entity_type = 'franchise'
+   - parent_company_id = franchisor's company_id
+   - All locked settings copied from franchisor
+   - Standard cost codes, templates, and workflows pre-loaded
+4. Franchisee completes onboarding wizard (company info, users, first project)
+5. Franchisor is notified of activation
+```
+
+---
+
+### 24.7 Small-to-Large Growth Transitions (GAP-580)
+
+**Scenario:** A one-person builder signs up on the free tier, builds 3 homes a year, and over 5 years grows to a 40-person company doing $50M annually. The platform must never become a bottleneck.
+
+**Decision:** Growth is handled through tier upgrades, feature unlocks, and structural transitions. No data migration is ever required.
+
+**Growth path with concrete triggers:**
+
+| Trigger Event | Platform Response | User Action Required |
+|--------------|-------------------|---------------------|
+| Builder adds 2nd user | Prompt: "You're growing! Consider the Professional tier for team features." | Optional upgrade |
+| Builder exceeds 5 active projects | Soft nudge to Professional tier (no blocking) | Optional upgrade |
+| Builder adds 6th user | Professional tier required (free tier limit: 5 users) | Required upgrade |
+| Builder creates first division | Business tier required (multi-entity feature) | Required upgrade |
+| Builder needs API access | Enterprise tier required | Required upgrade |
+| Builder exceeds 50 users | Enterprise tier required | Required upgrade |
+| Builder needs custom integrations | Enterprise tier + professional services | Contact sales |
+
+**Structural transitions that happen automatically:**
+
+1. **Single user to team:** When the 2nd user is added, the approval workflow feature activates. The platform suggests setting up an approval chain but does not require it.
+
+2. **Single project to multi-project:** When the 2nd active project is created, the dashboard switches from single-project view to multi-project view with project selector. This is automatic.
+
+3. **Simple to complex approvals:** When invoice volume exceeds 50/month, the platform suggests adding an approval workflow step. This is a nudge, not a requirement.
+
+4. **Single entity to multi-entity:** When the builder creates a division/subsidiary, the configuration inheritance engine activates. Existing settings become the parent-level defaults. This is seamless -- no data restructuring.
+
+5. **Standard to custom:** When the builder outgrows standard cost codes or status workflows, custom field and workflow configuration becomes available (Business tier). Their existing data is untouched; new configuration layers on top.
+
+**What never changes regardless of size:**
+- The database schema is the same for a 1-person and 50-person builder
+- The API contract is the same
+- The URL structure is the same
+- Historical data is never restructured
+- The builder's `company_id` never changes
+
+**Performance at scale:** The system is designed for tenants with up to 500 users, 1,000 active projects, 100,000 invoices, and 1,000,000 photos. Beyond this, dedicated infrastructure (Enterprise isolation, Section 22) is recommended. Indexing strategy (Section 21.1) ensures query performance remains consistent regardless of tenant data volume.
+
+---
+
+*Document Version: 2.1*
 *Created: 2026-02-11*
-*Last Updated: 2026-02-11*
-*Status: Comprehensive design covering all multi-tenancy, data isolation, multi-entity, geographic variability, and disaster recovery gap items.*
+*Last Updated: 2026-02-13*
+*Status: Comprehensive design covering all multi-tenancy, data isolation, multi-entity, geographic variability, and disaster recovery gap items. Section 24 adds detailed implementation specifications for all multi-entity scaling items (GAP-574 through GAP-580).*
 *Sources: data-model.md, system-architecture.md, gap-analysis-expanded.md (Sections 1, 6, 41-43)*
