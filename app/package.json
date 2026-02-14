@@ -16,6 +16,7 @@
     "test:unit": "vitest run tests/unit/",
     "test:integration": "vitest run tests/integration/",
     "test:acceptance": "vitest run tests/acceptance/",
+    "test:ci": "vitest run --reporter=verbose --coverage",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "validate": "npm run typecheck && npm run lint && npm run test",

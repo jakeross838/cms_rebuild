@@ -1,7 +1,12 @@
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { isServer } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, isServer } from '@tanstack/react-query'
+
+
+import { AuthProvider } from '@/lib/auth/auth-context'
+import type { PermissionsMode, UserProfile } from '@/types/auth'
+
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -26,12 +31,30 @@ function getQueryClient() {
   }
 }
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps {
+  children: React.ReactNode
+  initialUser?: SupabaseUser | null
+  initialProfile?: UserProfile | null
+  permissionsMode?: PermissionsMode
+}
+
+export default function Providers({
+  children,
+  initialUser = null,
+  initialProfile = null,
+  permissionsMode = 'open',
+}: ProvidersProps) {
   const queryClient = getQueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <AuthProvider
+        initialUser={initialUser}
+        initialProfile={initialProfile}
+        permissionsMode={permissionsMode}
+      >
+        {children}
+      </AuthProvider>
     </QueryClientProvider>
   )
 }

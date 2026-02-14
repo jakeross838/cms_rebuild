@@ -7,6 +7,8 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
+
+import { canPerform, resolvePermissions } from '@/lib/auth/permissions'
 import { recordMetric, createLogger, recordAudit } from '@/lib/monitoring'
 import {
   checkCombinedRateLimit,
@@ -15,10 +17,14 @@ import {
   type RATE_LIMITS,
 } from '@/lib/rate-limit'
 import { createClient } from '@/lib/supabase/server'
+import type { PermissionsMode } from '@/types/auth'
+import type { UserRole } from '@/types/database'
+
+import type { z } from 'zod'
 
 type RateLimitType = keyof typeof RATE_LIMITS
 
-interface ApiContext {
+export interface ApiContext {
   user: {
     id: string
     companyId: string
@@ -28,13 +34,18 @@ interface ApiContext {
   companyId: string | null
   requestId: string
   startTime: number
+  validatedBody?: unknown
 }
 
-interface ApiHandlerOptions {
+export interface ApiHandlerOptions {
   rateLimit?: RateLimitType
   requireAuth?: boolean
   requiredRoles?: string[]
   auditAction?: string
+  /** Zod schema to validate request body (POST/PATCH/PUT only) */
+  schema?: z.ZodType
+  /** Permission string to check (e.g., 'jobs:create:all') */
+  permission?: string
 }
 
 type ApiHandler = (
@@ -51,6 +62,8 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
     requireAuth = true,
     requiredRoles,
     auditAction,
+    schema,
+    permission,
   } = options
 
   return async (req: NextRequest): Promise<NextResponse | Response> => {
@@ -154,10 +167,59 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         }
       }
 
-      // 5. Execute handler
+      // 5. Schema validation (POST/PATCH/PUT only)
+      if (schema && ['POST', 'PATCH', 'PUT'].includes(req.method)) {
+        let body: unknown
+        try {
+          body = await req.clone().json()
+        } catch {
+          return NextResponse.json(
+            { error: 'Bad Request', message: 'Invalid JSON body', requestId },
+            { status: 400 }
+          )
+        }
+
+        const result = schema.safeParse(body)
+        if (!result.success) {
+          const errors: Record<string, string[]> = {}
+          for (const issue of result.error.issues) {
+            const path = issue.path.join('.') || '_root'
+            if (!errors[path]) errors[path] = []
+            errors[path].push(issue.message)
+          }
+          return NextResponse.json(
+            { error: 'Validation Error', message: 'Request body validation failed', errors, requestId },
+            { status: 400 }
+          )
+        }
+        ctx.validatedBody = result.data
+      }
+
+      // 6. Permission check
+      if (permission && ctx.user) {
+        // Get company permissions_mode from settings
+        const supabase = await createClient()
+        const { data: company } = await supabase
+          .from('companies')
+          .select('settings')
+          .eq('id', ctx.companyId!)
+          .single() as { data: { settings: Record<string, unknown> | null } | null; error: unknown }
+
+        const permissionsMode = (company?.settings?.permissions_mode as PermissionsMode) || 'open'
+        const userPermissions = resolvePermissions(ctx.user.role as UserRole)
+
+        if (!canPerform(ctx.user.role as UserRole, userPermissions, permission, permissionsMode)) {
+          return NextResponse.json(
+            { error: 'Forbidden', message: 'Insufficient permissions', requestId },
+            { status: 403 }
+          )
+        }
+      }
+
+      // 7. Execute handler
       const response = await handler(req, ctx)
 
-      // 6. Record metrics
+      // 8. Record metrics
       const responseTime = performance.now() - startTime
       recordMetric({
         companyId: ctx.companyId || undefined,
@@ -167,7 +229,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         responseTimeMs: Math.round(responseTime),
       })
 
-      // 7. Audit logging (if configured)
+      // 9. Audit logging (if configured)
       if (auditAction && ctx.user) {
         const body = req.method !== 'GET' ? await req.clone().json().catch(() => null) : null
 

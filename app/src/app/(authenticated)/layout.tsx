@@ -1,7 +1,13 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+
+import Providers from '@/app/providers'
 import { Sidebar } from '@/components/layout/sidebar'
 import { TopNav } from '@/components/layout/top-nav'
+import { createClient } from '@/lib/supabase/server'
+import type { PermissionsMode, UserProfile } from '@/types/auth'
+import type { User, Company } from '@/types/database'
+
+type ProfileWithCompany = User & { companies: Company | null }
 
 export default async function AuthenticatedLayout({
   children,
@@ -16,27 +22,67 @@ export default async function AuthenticatedLayout({
   }
 
   // Fetch user profile from our users table
-  const { data: profile } = await supabase
+  const { data: rawProfile } = await supabase
     .from('users')
     .select('*, companies(*)')
     .eq('id', user.id)
     .single()
 
+  const profile = rawProfile as unknown as ProfileWithCompany | null
+
+  // Extract permissions_mode from company settings
+  const companySettings = profile?.companies?.settings as Record<string, unknown> | null
+  const permissionsMode = (companySettings?.permissions_mode as PermissionsMode) || 'open'
+
+  // Map profile to UserProfile shape for AuthProvider
+  const userProfile: UserProfile | null = profile
+    ? {
+        id: profile.id,
+        company_id: profile.company_id,
+        email: profile.email,
+        name: profile.name,
+        role: profile.role,
+        phone: profile.phone,
+        avatar_url: profile.avatar_url,
+        is_active: profile.is_active,
+        last_login_at: profile.last_login_at ?? null,
+        preferences: profile.preferences as Record<string, unknown> | null,
+        deleted_at: profile.deleted_at ?? null,
+        created_at: profile.created_at,
+        updated_at: profile.updated_at,
+      }
+    : null
+
+  // Transform for Sidebar/TopNav props (companies: null → undefined)
+  const sidebarUser = profile
+    ? {
+        name: profile.name,
+        role: profile.role,
+        companies: profile.companies ? { name: profile.companies.name } : undefined,
+      }
+    : null
+
   return (
-    <div className="flex h-screen bg-muted">
-      {/* Sidebar */}
-      <Sidebar user={profile} />
+    <Providers
+      initialUser={user}
+      initialProfile={userProfile}
+      permissionsMode={permissionsMode}
+    >
+      <div className="flex h-screen bg-muted">
+        {/* Sidebar */}
+        <Sidebar user={sidebarUser} />
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top navigation */}
-        <TopNav user={profile} />
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Top navigation */}
+          <TopNav user={sidebarUser} />
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
+          {/* Page content */}
+          <main className="flex-1 overflow-y-auto p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </Providers>
   )
 }

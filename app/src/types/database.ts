@@ -75,6 +75,9 @@ export interface Database {
           phone: string | null
           avatar_url: string | null
           is_active: boolean
+          last_login_at: string | null
+          preferences: Json | null
+          deleted_at: string | null
           created_at: string
           updated_at: string
         }
@@ -87,6 +90,9 @@ export interface Database {
           phone?: string | null
           avatar_url?: string | null
           is_active?: boolean
+          last_login_at?: string | null
+          preferences?: Json | null
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -99,6 +105,9 @@ export interface Database {
           phone?: string | null
           avatar_url?: string | null
           is_active?: boolean
+          last_login_at?: string | null
+          preferences?: Json | null
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -511,6 +520,111 @@ export interface Database {
           created_at?: string
         }
       }
+      roles: {
+        Row: {
+          id: string
+          company_id: string
+          name: string
+          description: string | null
+          base_role: UserRole
+          is_system: boolean
+          permissions: Json
+          field_overrides: Json
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          name: string
+          description?: string | null
+          base_role: UserRole
+          is_system?: boolean
+          permissions?: Json
+          field_overrides?: Json
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          name?: string
+          description?: string | null
+          base_role?: UserRole
+          is_system?: boolean
+          permissions?: Json
+          field_overrides?: Json
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+      }
+      auth_audit_log: {
+        Row: {
+          id: string
+          company_id: string
+          user_id: string | null
+          event_type: string
+          ip_address: string | null
+          user_agent: string | null
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          user_id?: string | null
+          event_type: string
+          ip_address?: string | null
+          user_agent?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          user_id?: string | null
+          event_type?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+      }
+      project_user_roles: {
+        Row: {
+          id: string
+          company_id: string
+          user_id: string
+          job_id: string
+          role_id: string | null
+          role_override: UserRole | null
+          granted_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          user_id: string
+          job_id: string
+          role_id?: string | null
+          role_override?: UserRole | null
+          granted_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          user_id?: string
+          job_id?: string
+          role_id?: string | null
+          role_override?: UserRole | null
+          granted_by?: string
+          created_at?: string
+        }
+      }
       gl_accounts: {
         Row: {
           id: string
@@ -668,3 +782,6 @@ export type AuditLog = Tables<'audit_log'>
 export type GlAccount = Tables<'gl_accounts'>
 export type GlJournalEntry = Tables<'gl_journal_entries'>
 export type GlJournalLine = Tables<'gl_journal_lines'>
+export type RoleRow = Tables<'roles'>
+export type AuthAuditLogRow = Tables<'auth_audit_log'>
+export type ProjectUserRoleRow = Tables<'project_user_roles'>
