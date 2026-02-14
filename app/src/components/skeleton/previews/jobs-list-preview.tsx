@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import {
   Building2,
   MapPin,
@@ -128,7 +129,7 @@ function JobCard({ job }: { job: Job }) {
   const statusConfig = getStatusConfig(job.status)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <Link href={`/skeleton/jobs/${job.id}`} className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
           <div className={cn("p-2 rounded-lg", statusConfig.bgLight)}>
@@ -191,7 +192,7 @@ function JobCard({ job }: { job: Job }) {
           <span className="text-xs text-amber-700">{job.alert}</span>
         </div>
       )}
-    </div>
+    </Link>
   )
 }
 
