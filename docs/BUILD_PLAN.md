@@ -1,6 +1,7 @@
 # RossOS — Full 50-Module Build Plan
-**Generated:** 2026-02-14
+**Generated:** 2026-02-14 | **Updated:** 2026-02-14
 **Starting State:** Phase 0B + Module 01 complete, committed, pushed
+**Next Step:** Phase 0C (Foundation Hardening) — fix architectural gaps before Module 02
 
 ---
 
@@ -35,6 +36,102 @@
 - Tests: 113 passing (permissions, middleware, acceptance)
 - CI/CD: GitHub Actions pipeline
 - 67+ skeleton UI pages with mock data
+
+---
+
+## Phase 0C — Foundation Hardening (Pre-Module Build)
+**Purpose:** Fix architectural gaps found during Context7 audit against latest docs for Next.js 16, Supabase SSR, Tailwind CSS v4, and TanStack React Query v5.
+**Depends on:** Phase 0B + Module 01 (complete)
+**Must complete before:** Any Module 02+ work begins
+
+### 0C-1: Enforce Soft-Delete Architecture (HIGH)
+**Problem:** Core tables (`companies`, `clients`, `jobs`, `vendors`, `invoices`, `draws`, `cost_codes`) lack `deleted_at` columns. Only `users` and `roles` have them. Architecture rule says "Soft delete only — nothing is permanently deleted" but the schema doesn't enforce it.
+
+- **Migration:** Add `deleted_at TIMESTAMPTZ DEFAULT NULL` to `companies`, `clients`, `jobs`, `vendors`, `invoices`, `draws`, `cost_codes`
+- **Index:** Add partial index `WHERE deleted_at IS NULL` on `company_id` for each table (replaces full-table scans with active-only scans)
+- **Trigger:** Add `updated_at` trigger to all tables that don't have one
+
+### 0C-2: Fix RLS Policies for Soft-Delete + Remove DELETE Policies (HIGH)
+**Problem:** Existing RLS SELECT policies return soft-deleted rows. DELETE policies exist on tables where hard delete should never happen.
+
+- **Drop** all `FOR DELETE` policies on: `clients`, `jobs`, `vendors`, `invoices`, `draws`
+- **Replace** all `FOR SELECT` policies with versions that include `AND deleted_at IS NULL`
+- **Add** a new `FOR UPDATE` pattern on each table that restricts setting `deleted_at` to authorized roles only (owner/admin)
+- **Keep** `users_delete_by_owner` only if needed for Supabase auth cascade — otherwise replace with soft-delete
+- **Verify** `FORCE ROW LEVEL SECURITY` remains on all tables
+
+### 0C-3: Add Environment Variable Validation (MEDIUM)
+**Problem:** All env var references use `process.env.VAR!` with non-null assertions. Missing vars produce cryptic runtime errors instead of clear startup failures.
+
+- Create `src/lib/env.ts` with Zod schema validating all required env vars
+- Required vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server only)
+- Export typed `env` object used everywhere instead of raw `process.env`
+- Fail-fast at import time with descriptive error messages
+- Update `server.ts`, `client.ts`, `middleware.ts`, and `createApiHandler` to use `env`
+
+### 0C-4: Add HydrationBoundary SSR Prefetch Pattern (MEDIUM)
+**Problem:** TanStack React Query v5 docs show App Router pages should use `HydrationBoundary` + `dehydrate` to pass prefetched data from Server Components to Client Components. Without this, every authenticated page fires client-side queries and shows loading spinners.
+
+- Create `src/lib/query/get-query-client.ts` — server-side `getQueryClient()` factory (per TanStack docs)
+- Update `(authenticated)/layout.tsx` to prefetch user profile data server-side with `queryClient.prefetchQuery()` and wrap children in `<HydrationBoundary state={dehydrate(queryClient)}>`
+- Document the pattern in `docs/standards.md` so all future pages use it
+- Example pattern for any page:
+  ```tsx
+  // Server Component
+  const queryClient = getQueryClient()
+  queryClient.prefetchQuery({ queryKey: ['resource'], queryFn: fetchResource })
+  return <HydrationBoundary state={dehydrate(queryClient)}><ClientPage /></HydrationBoundary>
+  ```
+
+### 0C-5: Fix Duplicate Supabase Client in createApiHandler (MEDIUM)
+**Problem:** `createApiHandler` in `src/lib/api/middleware.ts` creates a Supabase client at line 103 for auth, then creates a second one at line 201 for permission checks. Wasteful — should reuse.
+
+- Hoist the Supabase client creation to the top of the `try` block
+- Pass the same client instance to both auth check and permissions check
+- Consider exposing the client on `ApiContext` so handlers can reuse it too:
+  ```ts
+  interface ApiContext {
+    supabase: SupabaseClient<Database>  // add this
+    user: { ... } | null
+    companyId: string | null
+    // ...
+  }
+  ```
+
+### 0C-6: Plan JWT-Based company_id for RLS Performance (MEDIUM)
+**Problem:** `get_current_company_id()` does a `SELECT company_id FROM users WHERE id = auth.uid()` on every RLS policy evaluation. At target scale (10K+ companies, 1M+ users), this adds a table lookup per row checked.
+
+- **Phase 0C (plan only):** Document the migration path from table-lookup to JWT-based `company_id`
+- **Future migration:** Store `company_id` in Supabase `app_metadata` on signup/company-switch
+- **Future RLS function:** `auth.jwt() -> 'app_metadata' ->> 'company_id'` — zero table lookups
+- **Blockers:** Requires Supabase Auth hook or trigger to set `app_metadata` on user creation
+- **Risk mitigation:** Keep the table-lookup function as a fallback; swap atomically when ready
+- **Action now:** Add a comment in the RLS migration documenting this planned optimization
+
+### 0C-7: Rename Supabase Env Vars to New Convention (LOW)
+**Problem:** Supabase renamed `NEXT_PUBLIC_SUPABASE_ANON_KEY` to `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Old name still works but may be deprecated.
+
+- Update `.env.local`, `.env.example`, and all code references
+- Update `env.ts` validation schema (from 0C-3) to accept either name with deprecation warning
+- Update Vercel/deployment env var configuration
+
+### 0C-8: Add loading.tsx and unauthorized.tsx (LOW)
+**Problem:** No streaming/suspense loading states during navigation. Next.js 16 supports `unauthorized()` function with `unauthorized.tsx` for clean 401 handling.
+
+- Create `src/app/loading.tsx` — skeleton/spinner for root layout transitions
+- Create `src/app/(authenticated)/loading.tsx` — skeleton for authenticated route transitions
+- Create `src/app/unauthorized.tsx` — styled 401 page for Next.js `unauthorized()` function
+- Optionally add `loading.tsx` to high-traffic route groups (jobs, invoices, etc.)
+
+### 0C Validation Checklist
+- [ ] All core tables have `deleted_at` column
+- [ ] No `FOR DELETE` RLS policies remain (except auth cascade if needed)
+- [ ] All `FOR SELECT` policies filter `deleted_at IS NULL`
+- [ ] Env vars validated at startup with Zod — app fails fast if missing
+- [ ] HydrationBoundary pattern documented and wired in authenticated layout
+- [ ] Single Supabase client instance in createApiHandler
+- [ ] `loading.tsx` and `unauthorized.tsx` exist
+- [ ] All changes pass `tsc --noEmit` + `vitest run`
 
 ---
 
