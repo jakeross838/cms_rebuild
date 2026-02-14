@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS public.job_queue (
 
 -- Enable RLS
 ALTER TABLE public.job_queue ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.job_queue FORCE ROW LEVEL SECURITY;
 
 -- RLS policies
 CREATE POLICY "job_queue_select_own_company"
@@ -35,15 +36,16 @@ CREATE POLICY "job_queue_insert_own_company"
 ON public.job_queue FOR INSERT
 WITH CHECK (company_id = public.get_current_company_id());
 
--- Only service role can update/delete jobs (for worker)
-CREATE POLICY "job_queue_update_service_role"
+-- Users can only update their own company's jobs
+CREATE POLICY "job_queue_update_own_company"
 ON public.job_queue FOR UPDATE
-USING (true)
-WITH CHECK (true);
+USING (company_id = public.get_current_company_id())
+WITH CHECK (company_id = public.get_current_company_id());
 
-CREATE POLICY "job_queue_delete_service_role"
+-- Only admins can delete queue jobs
+CREATE POLICY "job_queue_delete_own_company"
 ON public.job_queue FOR DELETE
-USING (true);
+USING (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']));
 
 -- ============================================================================
 -- INDEXES FOR JOB QUEUE
@@ -95,11 +97,7 @@ CREATE TABLE IF NOT EXISTS public.audit_log (
 
 -- Enable RLS
 ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
-
--- Users can only see their company's audit log
-CREATE POLICY "audit_log_select_own_company"
-ON public.audit_log FOR SELECT
-USING (company_id = public.get_current_company_id());
+ALTER TABLE public.audit_log FORCE ROW LEVEL SECURITY;
 
 -- Only admins can view audit logs
 CREATE POLICY "audit_log_select_admin"
@@ -109,10 +107,10 @@ USING (
   AND public.user_has_role(ARRAY['owner', 'admin'])
 );
 
--- Service role can insert audit logs
-CREATE POLICY "audit_log_insert"
+-- Audit log inserts restricted to own company
+CREATE POLICY "audit_log_insert_own_company"
 ON public.audit_log FOR INSERT
-WITH CHECK (true);
+WITH CHECK (company_id = public.get_current_company_id());
 
 -- Indexes for audit log
 CREATE INDEX idx_audit_log_company ON public.audit_log(company_id, created_at DESC);
@@ -141,6 +139,18 @@ CREATE INDEX idx_api_metrics_company ON public.api_metrics(company_id, created_a
 CREATE INDEX idx_api_metrics_endpoint ON public.api_metrics(endpoint, created_at DESC);
 CREATE INDEX idx_api_metrics_slow ON public.api_metrics(response_time_ms DESC)
 WHERE response_time_ms > 1000;
+
+-- Enable RLS on api_metrics
+ALTER TABLE public.api_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.api_metrics FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY "api_metrics_select_own_company"
+ON public.api_metrics FOR SELECT
+USING (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']));
+
+CREATE POLICY "api_metrics_insert_own_company"
+ON public.api_metrics FOR INSERT
+WITH CHECK (company_id = public.get_current_company_id());
 
 -- Auto-cleanup: Delete metrics older than 30 days
 -- (Run via cron job)

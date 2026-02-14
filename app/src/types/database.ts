@@ -1,5 +1,5 @@
-// Database types - will be generated from Supabase later
-// For now, define core types manually based on SYSTEM_DESIGN.md
+// Database types - will be generated from Supabase later via `npm run db:generate`
+// For now, define core types manually based on migration schema
 
 export type Json =
   | string
@@ -16,20 +16,53 @@ export interface Database {
         Row: {
           id: string
           name: string
+          legal_name: string | null
+          email: string | null
+          phone: string | null
+          website: string | null
+          address: string | null
+          city: string | null
+          state: string | null
+          zip: string | null
+          logo_url: string | null
+          primary_color: string | null
           settings: Json | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           name: string
+          legal_name?: string | null
+          email?: string | null
+          phone?: string | null
+          website?: string | null
+          address?: string | null
+          city?: string | null
+          state?: string | null
+          zip?: string | null
+          logo_url?: string | null
+          primary_color?: string | null
           settings?: Json | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           name?: string
+          legal_name?: string | null
+          email?: string | null
+          phone?: string | null
+          website?: string | null
+          address?: string | null
+          city?: string | null
+          state?: string | null
+          zip?: string | null
+          logo_url?: string | null
+          primary_color?: string | null
           settings?: Json | null
           created_at?: string
+          updated_at?: string
         }
       }
       users: {
@@ -38,33 +71,36 @@ export interface Database {
           company_id: string
           email: string
           name: string
-          role: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
+          role: UserRole
           phone: string | null
           avatar_url: string | null
           is_active: boolean
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           company_id: string
           email: string
           name: string
-          role?: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
+          role?: UserRole
           phone?: string | null
           avatar_url?: string | null
           is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           company_id?: string
           email?: string
           name?: string
-          role?: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
+          role?: UserRole
           phone?: string | null
           avatar_url?: string | null
           is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
       }
       clients: {
@@ -79,7 +115,9 @@ export interface Database {
           state: string | null
           zip: string | null
           notes: string | null
+          is_active: boolean
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -92,7 +130,9 @@ export interface Database {
           state?: string | null
           zip?: string | null
           notes?: string | null
+          is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -105,7 +145,9 @@ export interface Database {
           state?: string | null
           zip?: string | null
           notes?: string | null
+          is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
       }
       jobs: {
@@ -119,13 +161,15 @@ export interface Database {
           city: string | null
           state: string | null
           zip: string | null
-          status: 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
+          status: JobStatus
           contract_amount: number | null
-          contract_type: 'fixed_price' | 'cost_plus' | 'time_materials' | null
+          contract_type: ContractType | null
           start_date: string | null
           target_completion: string | null
           actual_completion: string | null
           notes: string | null
+          version: number
+          currency_code: string
           created_at: string
           updated_at: string
         }
@@ -139,13 +183,15 @@ export interface Database {
           city?: string | null
           state?: string | null
           zip?: string | null
-          status?: 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
+          status?: JobStatus
           contract_amount?: number | null
-          contract_type?: 'fixed_price' | 'cost_plus' | 'time_materials' | null
+          contract_type?: ContractType | null
           start_date?: string | null
           target_completion?: string | null
           actual_completion?: string | null
           notes?: string | null
+          version?: number
+          currency_code?: string
           created_at?: string
           updated_at?: string
         }
@@ -159,13 +205,15 @@ export interface Database {
           city?: string | null
           state?: string | null
           zip?: string | null
-          status?: 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
+          status?: JobStatus
           contract_amount?: number | null
-          contract_type?: 'fixed_price' | 'cost_plus' | 'time_materials' | null
+          contract_type?: ContractType | null
           start_date?: string | null
           target_completion?: string | null
           actual_completion?: string | null
           notes?: string | null
+          version?: number
+          currency_code?: string
           created_at?: string
           updated_at?: string
         }
@@ -186,6 +234,7 @@ export interface Database {
           notes: string | null
           is_active: boolean
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -202,6 +251,7 @@ export interface Database {
           notes?: string | null
           is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -218,6 +268,7 @@ export interface Database {
           notes?: string | null
           is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
       }
       invoices: {
@@ -228,10 +279,12 @@ export interface Database {
           vendor_id: string | null
           invoice_number: string | null
           amount: number
-          status: 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied'
+          status: InvoiceStatus
           invoice_date: string | null
           due_date: string | null
           notes: string | null
+          version: number
+          currency_code: string
           created_at: string
           updated_at: string
         }
@@ -242,10 +295,12 @@ export interface Database {
           vendor_id?: string | null
           invoice_number?: string | null
           amount: number
-          status?: 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied'
+          status?: InvoiceStatus
           invoice_date?: string | null
           due_date?: string | null
           notes?: string | null
+          version?: number
+          currency_code?: string
           created_at?: string
           updated_at?: string
         }
@@ -256,10 +311,12 @@ export interface Database {
           vendor_id?: string | null
           invoice_number?: string | null
           amount?: number
-          status?: 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied'
+          status?: InvoiceStatus
           invoice_date?: string | null
           due_date?: string | null
           notes?: string | null
+          version?: number
+          currency_code?: string
           created_at?: string
           updated_at?: string
         }
@@ -271,10 +328,12 @@ export interface Database {
           job_id: string
           draw_number: number
           amount: number
-          status: 'draft' | 'pending_approval' | 'approved' | 'submitted' | 'funded' | 'rejected'
+          status: DrawStatus
           submitted_date: string | null
           funded_date: string | null
           notes: string | null
+          version: number
+          currency_code: string
           created_at: string
           updated_at: string
         }
@@ -284,10 +343,12 @@ export interface Database {
           job_id: string
           draw_number?: number
           amount: number
-          status?: 'draft' | 'pending_approval' | 'approved' | 'submitted' | 'funded' | 'rejected'
+          status?: DrawStatus
           submitted_date?: string | null
           funded_date?: string | null
           notes?: string | null
+          version?: number
+          currency_code?: string
           created_at?: string
           updated_at?: string
         }
@@ -297,12 +358,259 @@ export interface Database {
           job_id?: string
           draw_number?: number
           amount?: number
-          status?: 'draft' | 'pending_approval' | 'approved' | 'submitted' | 'funded' | 'rejected'
+          status?: DrawStatus
           submitted_date?: string | null
           funded_date?: string | null
           notes?: string | null
+          version?: number
+          currency_code?: string
           created_at?: string
           updated_at?: string
+        }
+      }
+      cost_codes: {
+        Row: {
+          id: string
+          company_id: string
+          code: string
+          description: string
+          category: string | null
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          code: string
+          description: string
+          category?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          code?: string
+          description?: string
+          category?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+      }
+      job_assignments: {
+        Row: {
+          id: string
+          company_id: string
+          job_id: string
+          user_id: string
+          role: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          job_id: string
+          user_id: string
+          role?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          job_id?: string
+          user_id?: string
+          role?: string | null
+          created_at?: string
+        }
+      }
+      job_queue: {
+        Row: {
+          id: string
+          company_id: string
+          type: string
+          payload: Json
+          status: string
+          priority: number
+          attempts: number
+          max_attempts: number
+          run_at: string
+          started_at: string | null
+          completed_at: string | null
+          error: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          type: string
+          payload?: Json
+          status?: string
+          priority?: number
+          attempts?: number
+          max_attempts?: number
+          run_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+          error?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          type?: string
+          payload?: Json
+          status?: string
+          priority?: number
+          attempts?: number
+          max_attempts?: number
+          run_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+          error?: string | null
+          created_at?: string
+        }
+      }
+      audit_log: {
+        Row: {
+          id: string
+          company_id: string
+          user_id: string | null
+          action: string
+          entity_type: string | null
+          entity_id: string | null
+          old_data: Json | null
+          new_data: Json | null
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          user_id?: string | null
+          action: string
+          entity_type?: string | null
+          entity_id?: string | null
+          old_data?: Json | null
+          new_data?: Json | null
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          user_id?: string | null
+          action?: string
+          entity_type?: string | null
+          entity_id?: string | null
+          old_data?: Json | null
+          new_data?: Json | null
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+      }
+      gl_accounts: {
+        Row: {
+          id: string
+          company_id: string
+          account_code: string
+          account_name: string
+          account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
+          parent_id: string | null
+          is_active: boolean
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          account_code: string
+          account_name: string
+          account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
+          parent_id?: string | null
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          account_code?: string
+          account_name?: string
+          account_type?: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
+          parent_id?: string | null
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+        }
+      }
+      gl_journal_entries: {
+        Row: {
+          id: string
+          company_id: string
+          entry_date: string
+          description: string
+          reference_type: string | null
+          reference_id: string | null
+          is_reversed: boolean
+          reversed_by: string | null
+          posted_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          entry_date: string
+          description: string
+          reference_type?: string | null
+          reference_id?: string | null
+          is_reversed?: boolean
+          reversed_by?: string | null
+          posted_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          entry_date?: string
+          description?: string
+          reference_type?: string | null
+          reference_id?: string | null
+          is_reversed?: boolean
+          reversed_by?: string | null
+          posted_by?: string | null
+          created_at?: string
+        }
+      }
+      gl_journal_lines: {
+        Row: {
+          id: string
+          journal_entry_id: string
+          account_id: string
+          debit: number
+          credit: number
+          description: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          journal_entry_id: string
+          account_id: string
+          debit?: number
+          credit?: number
+          description?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          journal_entry_id?: string
+          account_id?: string
+          debit?: number
+          credit?: number
+          description?: string | null
+          created_at?: string
         }
       }
     }
@@ -310,15 +618,36 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_company_id: {
+        Args: Record<string, never>
+        Returns: string
+      }
+      user_has_role: {
+        Args: { required_role: string }
+        Returns: boolean
+      }
+      allocate_amount: {
+        Args: { total: number; parts: number }
+        Returns: number[]
+      }
     }
     Enums: {
-      job_status: 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
-      user_role: 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
-      contract_type: 'fixed_price' | 'cost_plus' | 'time_materials'
+      job_status: JobStatus
+      user_role: UserRole
+      contract_type: ContractType
+      invoice_status: InvoiceStatus
+      draw_status: DrawStatus
+      account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
     }
   }
 }
+
+// Enum types
+export type UserRole = 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
+export type JobStatus = 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
+export type ContractType = 'fixed_price' | 'cost_plus' | 'time_materials'
+export type InvoiceStatus = 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied'
+export type DrawStatus = 'draft' | 'pending_approval' | 'approved' | 'submitted' | 'funded' | 'rejected'
 
 // Helper types
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
@@ -333,3 +662,9 @@ export type Vendor = Tables<'vendors'>
 export type Company = Tables<'companies'>
 export type Invoice = Tables<'invoices'>
 export type Draw = Tables<'draws'>
+export type CostCode = Tables<'cost_codes'>
+export type JobAssignment = Tables<'job_assignments'>
+export type AuditLog = Tables<'audit_log'>
+export type GlAccount = Tables<'gl_accounts'>
+export type GlJournalEntry = Tables<'gl_journal_entries'>
+export type GlJournalLine = Tables<'gl_journal_lines'>

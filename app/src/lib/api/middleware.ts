@@ -5,15 +5,16 @@
  * for scalable API endpoints.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { type NextRequest, NextResponse } from 'next/server'
+
+import { recordMetric, createLogger, recordAudit } from '@/lib/monitoring'
 import {
   checkCombinedRateLimit,
   applyRateLimitHeaders,
   isTrustedRequest,
   type RATE_LIMITS,
 } from '@/lib/rate-limit'
-import { recordMetric, createLogger, recordAudit } from '@/lib/monitoring'
+import { createClient } from '@/lib/supabase/server'
 
 type RateLimitType = keyof typeof RATE_LIMITS
 
@@ -56,6 +57,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
     const requestId = crypto.randomUUID()
     const startTime = performance.now()
     const logger = createLogger({ requestId })
+    const trusted = isTrustedRequest(req)
 
     // Initialize context
     const ctx: ApiContext = {
@@ -66,25 +68,20 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
     }
 
     try {
-      // 1. Rate limiting (skip for trusted sources)
-      if (!isTrustedRequest(req)) {
-        const rateLimitResult = await checkCombinedRateLimit(
-          req,
-          ctx.user?.id,
-          ctx.companyId || undefined,
-          rateLimit
-        )
+      // 1. Pre-auth IP rate limiting (skip for trusted sources)
+      if (!trusted) {
+        const ipResult = await checkCombinedRateLimit(req, undefined, undefined, rateLimit)
 
-        if (!rateLimitResult.success) {
+        if (!ipResult.success) {
           const response = NextResponse.json(
             {
               error: 'Too Many Requests',
-              message: `Rate limit exceeded. Retry after ${rateLimitResult.retryAfter} seconds.`,
+              message: `Rate limit exceeded. Retry after ${ipResult.retryAfter} seconds.`,
               requestId,
             },
             { status: 429 }
           )
-          return applyRateLimitHeaders(response, rateLimitResult)
+          return applyRateLimitHeaders(response, ipResult)
         }
       }
 
@@ -122,7 +119,29 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         }
         ctx.companyId = profile.company_id
 
-        // 3. Role-based access control
+        // 3. Post-auth rate limiting (user + company scoped)
+        if (!trusted) {
+          const userResult = await checkCombinedRateLimit(
+            req,
+            ctx.user.id,
+            ctx.companyId,
+            rateLimit
+          )
+
+          if (!userResult.success) {
+            const response = NextResponse.json(
+              {
+                error: 'Too Many Requests',
+                message: `Rate limit exceeded. Retry after ${userResult.retryAfter} seconds.`,
+                requestId,
+              },
+              { status: 429 }
+            )
+            return applyRateLimitHeaders(response, userResult)
+          }
+        }
+
+        // 4. Role-based access control
         if (requiredRoles && !requiredRoles.includes(profile.role)) {
           return NextResponse.json(
             {
@@ -135,10 +154,10 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         }
       }
 
-      // 4. Execute handler
+      // 5. Execute handler
       const response = await handler(req, ctx)
 
-      // 5. Record metrics
+      // 6. Record metrics
       const responseTime = performance.now() - startTime
       recordMetric({
         companyId: ctx.companyId || undefined,
@@ -148,7 +167,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         responseTimeMs: Math.round(responseTime),
       })
 
-      // 6. Audit logging (if configured)
+      // 7. Audit logging (if configured)
       if (auditAction && ctx.user) {
         const body = req.method !== 'GET' ? await req.clone().json().catch(() => null) : null
 

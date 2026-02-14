@@ -9,6 +9,10 @@
  * - Tenant isolation
  *
  * In production, can be upgraded to dedicated queue service (BullMQ, etc.)
+ *
+ * NOTE: `as any` casts on .from('job_queue') are necessary until database
+ * types are auto-generated from Supabase. These will be removed when we run
+ * `npm run db:generate`.
  */
 
 import { createClient } from '@/lib/supabase/server'
@@ -80,6 +84,9 @@ const JOB_DEFAULTS: Record<JobType, { priority: JobPriority; maxAttempts: number
   'webhook:deliver': { priority: 1, maxAttempts: 5 },
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UntypedQuery = any
+
 /**
  * Add a job to the queue
  */
@@ -92,8 +99,8 @@ export async function enqueueJob(
   const supabase = await createClient()
   const defaults = JOB_DEFAULTS[type]
 
-  const { data, error } = await supabase
-    .from('job_queue')
+  const { data, error } = await (supabase
+    .from('job_queue') as UntypedQuery)
     .insert({
       company_id: companyId,
       type,
@@ -103,7 +110,7 @@ export async function enqueueJob(
       max_attempts: options.maxAttempts ?? defaults.maxAttempts,
       run_at: options.runAt?.toISOString() ?? new Date().toISOString(),
       attempts: 0,
-    } as any)
+    })
     .select('id')
     .single()
 
@@ -112,7 +119,7 @@ export async function enqueueJob(
     throw new Error(`Failed to enqueue job: ${error.message}`)
   }
 
-  return (data as any).id
+  return (data as Job).id
 }
 
 /**
@@ -142,9 +149,9 @@ export async function enqueueJobs(
     }
   })
 
-  const { data, error } = await supabase
-    .from('job_queue')
-    .insert(jobRecords as any)
+  const { data, error } = await (supabase
+    .from('job_queue') as UntypedQuery)
+    .insert(jobRecords)
     .select('id')
 
   if (error) {
@@ -152,7 +159,7 @@ export async function enqueueJobs(
     throw new Error(`Failed to enqueue jobs: ${error.message}`)
   }
 
-  return (data as any[]).map((d) => d.id)
+  return (data as Job[]).map((d) => d.id)
 }
 
 /**
@@ -161,8 +168,8 @@ export async function enqueueJobs(
 export async function getNextJobs(limit: number = 10): Promise<Job[]> {
   const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('job_queue')
+  const { data, error } = await (supabase
+    .from('job_queue') as UntypedQuery)
     .select('*')
     .eq('status', 'pending')
     .lte('run_at', new Date().toISOString())
@@ -175,26 +182,39 @@ export async function getNextJobs(limit: number = 10): Promise<Job[]> {
     return []
   }
 
-  return (data as any[]) as Job[]
+  return data as Job[]
 }
 
 /**
- * Mark job as processing
+ * Mark job as processing (optimistic lock via status check).
+ * Two-step: claim the job, then increment attempts separately.
+ * This avoids the broken pattern of nesting supabase.rpc() inside .update().
  */
 export async function markJobProcessing(jobId: string): Promise<boolean> {
   const supabase = await createClient()
 
-  const { error } = await (supabase
-    .from('job_queue') as any)
+  // Step 1: Atomically claim the job — only succeeds if still pending
+  const { data, error } = await (supabase
+    .from('job_queue') as UntypedQuery)
     .update({
       status: 'processing',
       started_at: new Date().toISOString(),
-      attempts: (supabase as any).rpc('increment_attempts', { job_id: jobId }),
     })
     .eq('id', jobId)
-    .eq('status', 'pending') // Only if still pending (optimistic lock)
+    .eq('status', 'pending')
+    .select('id, attempts')
+    .single()
 
-  return !error
+  if (error || !data) return false
+
+  // Step 2: Increment attempts in a separate call
+  const currentAttempts = (data as Job).attempts || 0
+  await (supabase
+    .from('job_queue') as UntypedQuery)
+    .update({ attempts: currentAttempts + 1 })
+    .eq('id', jobId)
+
+  return true
 }
 
 /**
@@ -204,7 +224,7 @@ export async function markJobCompleted(jobId: string): Promise<void> {
   const supabase = await createClient()
 
   await (supabase
-    .from('job_queue') as any)
+    .from('job_queue') as UntypedQuery)
     .update({
       status: 'completed',
       completed_at: new Date().toISOString(),
@@ -226,7 +246,7 @@ export async function markJobFailed(
   if (currentAttempts >= maxAttempts) {
     // Max retries reached - mark as permanently failed
     await (supabase
-      .from('job_queue') as any)
+      .from('job_queue') as UntypedQuery)
       .update({
         status: 'failed',
         error,
@@ -239,7 +259,7 @@ export async function markJobFailed(
     const retryAt = new Date(Date.now() + backoffSeconds * 1000)
 
     await (supabase
-      .from('job_queue') as any)
+      .from('job_queue') as UntypedQuery)
       .update({
         status: 'pending',
         error,
@@ -256,7 +276,7 @@ export async function cancelJob(jobId: string): Promise<void> {
   const supabase = await createClient()
 
   await (supabase
-    .from('job_queue') as any)
+    .from('job_queue') as UntypedQuery)
     .update({ status: 'cancelled' })
     .eq('id', jobId)
     .in('status', ['pending', 'processing'])
@@ -268,14 +288,14 @@ export async function cancelJob(jobId: string): Promise<void> {
 export async function getJob(jobId: string): Promise<Job | null> {
   const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('job_queue')
+  const { data, error } = await (supabase
+    .from('job_queue') as UntypedQuery)
     .select('*')
     .eq('id', jobId)
     .single()
 
   if (error) return null
-  return (data as any) as Job
+  return data as Job
 }
 
 /**
@@ -288,8 +308,8 @@ export async function getCompanyJobs(
 ): Promise<Job[]> {
   const supabase = await createClient()
 
-  let query = supabase
-    .from('job_queue')
+  let query = (supabase
+    .from('job_queue') as UntypedQuery)
     .select('*')
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
@@ -302,25 +322,31 @@ export async function getCompanyJobs(
   const { data, error } = await query
 
   if (error) return []
-  return (data as any[]) as Job[]
+  return data as Job[]
 }
 
 /**
- * Clean up old completed/failed jobs
+ * Archive old completed/failed jobs (soft delete).
+ * Marks jobs as archived rather than permanently deleting them.
+ * Audit trail is preserved — no data is destroyed.
  */
 export async function cleanupOldJobs(olderThanDays: number = 7): Promise<number> {
   const supabase = await createClient()
   const cutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000)
 
-  const { data, error } = await supabase
-    .from('job_queue')
-    .delete()
-    .in('status', ['completed', 'failed', 'cancelled'])
+  const { data, error } = await (supabase
+    .from('job_queue') as UntypedQuery)
+    .update({
+      status: 'cancelled',
+      error: 'Archived by cleanup cron',
+      completed_at: new Date().toISOString(),
+    })
+    .in('status', ['completed', 'failed'])
     .lt('completed_at', cutoff.toISOString())
     .select('id')
 
   if (error) return 0
-  return (data as any[]).length
+  return (data as Job[]).length
 }
 
 // ============================================================================

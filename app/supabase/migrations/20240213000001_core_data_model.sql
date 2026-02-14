@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS vendors (
   license_number TEXT,
   license_expiration DATE,
   insurance_expiration DATE,
-  gl_coverage_amount DECIMAL(12,2),
+  gl_coverage_amount DECIMAL(14,2),
   workers_comp_expiration DATE,
   payment_terms TEXT DEFAULT 'Net 30',
   default_cost_code_id UUID REFERENCES cost_codes(id),
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     CHECK (status IN ('lead', 'pre_construction', 'active', 'on_hold', 'completed', 'warranty', 'closed', 'cancelled')),
   contract_type TEXT DEFAULT 'fixed_price'
     CHECK (contract_type IN ('fixed_price', 'cost_plus', 'time_materials')),
-  contract_amount DECIMAL(12,2),
+  contract_amount DECIMAL(14,2),
   cost_plus_markup DECIMAL(5,2),
   start_date DATE,
   target_completion DATE,
@@ -196,12 +196,12 @@ CREATE TABLE IF NOT EXISTS jobs (
   bedrooms INTEGER,
   bathrooms DECIMAL(3,1),
   stories DECIMAL(3,1),
-  budget_total DECIMAL(12,2) DEFAULT 0,
-  committed_total DECIMAL(12,2) DEFAULT 0,
-  invoiced_total DECIMAL(12,2) DEFAULT 0,
-  paid_total DECIMAL(12,2) DEFAULT 0,
-  billed_total DECIMAL(12,2) DEFAULT 0,
-  received_total DECIMAL(12,2) DEFAULT 0,
+  budget_total DECIMAL(14,2) DEFAULT 0,
+  committed_total DECIMAL(14,2) DEFAULT 0,
+  invoiced_total DECIMAL(14,2) DEFAULT 0,
+  paid_total DECIMAL(14,2) DEFAULT 0,
+  billed_total DECIMAL(14,2) DEFAULT 0,
+  received_total DECIMAL(14,2) DEFAULT 0,
   settings JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -272,92 +272,69 @@ CREATE INDEX IF NOT EXISTS idx_snapshots_entity
   ON entity_snapshots(entity_type, entity_id);
 
 -- =====================================================================
--- SECTION 9: RLS HELPER FUNCTIONS
--- =====================================================================
-
-CREATE OR REPLACE FUNCTION get_current_company_id()
-RETURNS UUID AS $$
-  SELECT (auth.jwt() -> 'user_metadata' ->> 'company_id')::UUID;
-$$ LANGUAGE SQL STABLE;
-
-CREATE OR REPLACE FUNCTION user_has_role(required_roles TEXT[])
-RETURNS BOOLEAN AS $$
-  SELECT (auth.jwt() -> 'user_metadata' ->> 'role') = ANY(required_roles);
-$$ LANGUAGE SQL STABLE;
-
--- =====================================================================
 -- SECTION 10: RLS POLICIES
+-- (Section 9 removed: dangerous JWT-based helper functions that overwrote
+--  safe database-lookup versions from migration 20240212000001)
+-- (Policies for companies, users, vendors, clients, jobs are defined in
+--  migration 20240212000001 — only tables unique to this migration below)
 -- =====================================================================
 
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+-- Only enable RLS on tables not already covered by migration 20240212000001
 ALTER TABLE cost_codes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE vendors ENABLE ROW LEVEL SECURITY;
-ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
-ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE job_assignments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE entity_change_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE entity_snapshots ENABLE ROW LEVEL SECURITY;
 
--- Companies
-CREATE POLICY "Users can view their company" ON companies
-  FOR SELECT USING (id = get_current_company_id());
-
-CREATE POLICY "Owners can update their company" ON companies
-  FOR UPDATE USING (id = get_current_company_id() AND user_has_role(ARRAY['owner']));
-
--- Users
-CREATE POLICY "Users can view company users" ON users
-  FOR SELECT USING (company_id = get_current_company_id());
-
-CREATE POLICY "Admins can manage users" ON users
-  FOR ALL USING (company_id = get_current_company_id() AND user_has_role(ARRAY['owner', 'admin']));
-
 -- Cost Codes
-CREATE POLICY "Users can view cost codes" ON cost_codes
-  FOR SELECT USING (company_id = get_current_company_id());
+CREATE POLICY "cost_codes_select_own_company" ON cost_codes
+  FOR SELECT USING (company_id = public.get_current_company_id());
 
-CREATE POLICY "Admins can manage cost codes" ON cost_codes
-  FOR ALL USING (company_id = get_current_company_id() AND user_has_role(ARRAY['owner', 'admin']));
+CREATE POLICY "cost_codes_insert_own_company" ON cost_codes
+  FOR INSERT WITH CHECK (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']));
 
--- Vendors
-CREATE POLICY "Users can view vendors" ON vendors
-  FOR SELECT USING (company_id = get_current_company_id());
+CREATE POLICY "cost_codes_update_own_company" ON cost_codes
+  FOR UPDATE USING (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']))
+  WITH CHECK (company_id = public.get_current_company_id());
 
-CREATE POLICY "Users can manage vendors" ON vendors
-  FOR ALL USING (company_id = get_current_company_id());
+CREATE POLICY "cost_codes_delete_own_company" ON cost_codes
+  FOR DELETE USING (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']));
 
--- Clients
-CREATE POLICY "Users can view clients" ON clients
-  FOR SELECT USING (company_id = get_current_company_id());
-
-CREATE POLICY "Users can manage clients" ON clients
-  FOR ALL USING (company_id = get_current_company_id());
-
--- Jobs
-CREATE POLICY "Users can view company jobs" ON jobs
-  FOR SELECT USING (company_id = get_current_company_id());
-
-CREATE POLICY "Users can manage jobs" ON jobs
-  FOR ALL USING (company_id = get_current_company_id());
-
--- Job Assignments
-CREATE POLICY "Users can view assignments" ON job_assignments
+-- Job Assignments (scoped through jobs table)
+CREATE POLICY "job_assignments_select" ON job_assignments
   FOR SELECT USING (
-    EXISTS (SELECT 1 FROM jobs WHERE jobs.id = job_assignments.job_id AND jobs.company_id = get_current_company_id())
+    EXISTS (SELECT 1 FROM jobs WHERE jobs.id = job_assignments.job_id AND jobs.company_id = public.get_current_company_id())
   );
 
-CREATE POLICY "Users can manage assignments" ON job_assignments
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM jobs WHERE jobs.id = job_assignments.job_id AND jobs.company_id = get_current_company_id())
+CREATE POLICY "job_assignments_insert" ON job_assignments
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM jobs WHERE jobs.id = job_assignments.job_id AND jobs.company_id = public.get_current_company_id())
+    AND public.user_has_role(ARRAY['owner', 'admin', 'pm'])
   );
 
--- Audit tables (read-only for users)
-CREATE POLICY "Users can view change logs" ON entity_change_log
-  FOR SELECT USING (company_id = get_current_company_id());
+CREATE POLICY "job_assignments_update" ON job_assignments
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM jobs WHERE jobs.id = job_assignments.job_id AND jobs.company_id = public.get_current_company_id())
+    AND public.user_has_role(ARRAY['owner', 'admin', 'pm'])
+  );
 
-CREATE POLICY "Users can view snapshots" ON entity_snapshots
-  FOR SELECT USING (company_id = get_current_company_id());
+CREATE POLICY "job_assignments_delete" ON job_assignments
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM jobs WHERE jobs.id = job_assignments.job_id AND jobs.company_id = public.get_current_company_id())
+    AND public.user_has_role(ARRAY['owner', 'admin'])
+  );
+
+-- Audit tables (read-only for admins, insert by service role only)
+CREATE POLICY "entity_change_log_select" ON entity_change_log
+  FOR SELECT USING (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']));
+
+CREATE POLICY "entity_snapshots_select" ON entity_snapshots
+  FOR SELECT USING (company_id = public.get_current_company_id() AND public.user_has_role(ARRAY['owner', 'admin']));
+
+-- FORCE RLS on all tables (ensures even service role respects policies unless explicitly bypassed)
+ALTER TABLE cost_codes FORCE ROW LEVEL SECURITY;
+ALTER TABLE job_assignments FORCE ROW LEVEL SECURITY;
+ALTER TABLE entity_change_log FORCE ROW LEVEL SECURITY;
+ALTER TABLE entity_snapshots FORCE ROW LEVEL SECURITY;
 
 -- =====================================================================
 -- SECTION 11: UPDATED_AT TRIGGERS

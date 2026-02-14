@@ -10,9 +10,12 @@
  * - Company ID (aggregate limit per tenant)
  */
 
+import { type NextRequest, NextResponse } from 'next/server'
+
+import { timingSafeEqual } from 'crypto'
+
 // @ts-expect-error @vercel/kv not installed yet
 import { kv } from '@vercel/kv'
-import { NextRequest, NextResponse } from 'next/server'
 
 // Rate limit configurations for different endpoints
 export const RATE_LIMITS = {
@@ -20,26 +23,37 @@ export const RATE_LIMITS = {
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 10,
+    failClosed: true, // Auth must NEVER fail open
   },
   // API endpoints (standard)
   api: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 100,
+    failClosed: false,
   },
   // Heavy operations (file uploads, AI processing)
   heavy: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 10,
+    failClosed: false,
   },
   // Search/autocomplete
   search: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 60,
+    failClosed: false,
+  },
+  // Financial operations (invoices, draws, payments)
+  financial: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 30,
+    failClosed: true, // Financial ops must NEVER fail open
   },
   // Company-wide aggregate limit
   companyAggregate: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 1000, // Per company total
+    failClosed: false,
   },
 } as const
 
@@ -146,7 +160,19 @@ export async function checkRateLimit(
     }
   } catch (error) {
     console.error('Rate limit check error:', error)
-    // Fail open - allow request on error
+
+    // Fail-closed for security-sensitive endpoints (auth, financial)
+    if (config.failClosed) {
+      return {
+        success: false,
+        limit: config.maxRequests,
+        remaining: 0,
+        reset: now + config.windowMs,
+        retryAfter: Math.ceil(config.windowMs / 1000),
+      }
+    }
+
+    // Fail open for non-sensitive endpoints
     return {
       success: true,
       limit: config.maxRequests,
@@ -256,9 +282,24 @@ const TRUSTED_IPS = new Set(
   (process.env.TRUSTED_IPS || '').split(',').filter(Boolean)
 )
 
-const TRUSTED_API_KEYS = new Set(
-  (process.env.TRUSTED_API_KEYS || '').split(',').filter(Boolean)
-)
+/**
+ * Timing-safe comparison for API keys.
+ * Prevents timing attacks that could leak key characters.
+ */
+function timingSafeApiKeyCheck(provided: string, trusted: string): boolean {
+  try {
+    const a = Buffer.from(provided, 'utf-8')
+    const b = Buffer.from(trusted, 'utf-8')
+    if (a.length !== b.length) {
+      // Compare against self to keep constant time even on length mismatch
+      timingSafeEqual(a, a)
+      return false
+    }
+    return timingSafeEqual(a, b)
+  } catch {
+    return false
+  }
+}
 
 /**
  * Check if request is from trusted source
@@ -268,7 +309,10 @@ export function isTrustedRequest(req: NextRequest): boolean {
   if (TRUSTED_IPS.has(ip)) return true
 
   const apiKey = req.headers.get('x-api-key')
-  if (apiKey && TRUSTED_API_KEYS.has(apiKey)) return true
+  if (apiKey) {
+    const trustedKeys = (process.env.TRUSTED_API_KEYS || '').split(',').filter(Boolean)
+    return trustedKeys.some((key) => timingSafeApiKeyCheck(apiKey, key))
+  }
 
   return false
 }

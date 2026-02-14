@@ -2,9 +2,10 @@
  * Cleanup Cron Job
  *
  * Runs daily to clean up old data:
- * - Old completed/failed jobs from queue
+ * - Old completed/failed jobs from queue (soft delete / archive)
  * - Old API metrics
- * - Expired cache entries
+ *
+ * IMPORTANT: Audit logs are NEVER deleted (7-year financial retention).
  *
  * To configure in vercel.json:
  * {
@@ -15,10 +16,11 @@
  * }
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
+
+import { createLogger } from '@/lib/monitoring'
 import { cleanupOldJobs } from '@/lib/queue'
 import { createClient } from '@/lib/supabase/server'
-import { createLogger } from '@/lib/monitoring'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -26,24 +28,23 @@ export const maxDuration = 60
 const logger = createLogger({ service: 'cleanup' })
 
 export async function GET(req: NextRequest) {
-  // Verify cron secret
+  // Verify cron secret — REQUIRED in all environments
   const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const results = {
-    jobsDeleted: 0,
+    jobsArchived: 0,
     metricsDeleted: 0,
-    auditLogsDeleted: 0,
   }
 
   try {
-    // 1. Clean up old jobs (older than 7 days)
-    results.jobsDeleted = await cleanupOldJobs(7)
-    logger.info(`Cleaned up ${results.jobsDeleted} old jobs`)
+    // 1. Archive old jobs (older than 7 days) — soft delete
+    results.jobsArchived = await cleanupOldJobs(7)
+    logger.info(`Archived ${results.jobsArchived} old jobs`)
 
     // 2. Clean up old metrics (older than 30 days)
     const supabase = await createClient()
@@ -52,16 +53,8 @@ export async function GET(req: NextRequest) {
     results.metricsDeleted = metricsData || 0
     logger.info(`Cleaned up ${results.metricsDeleted} old metrics`)
 
-    // 3. Clean up old audit logs (older than 90 days)
-    const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
-    const { data: auditData } = await supabase
-      .from('audit_log')
-      .delete()
-      .lt('created_at', cutoff.toISOString())
-      .select('id')
-
-    results.auditLogsDeleted = auditData?.length || 0
-    logger.info(`Cleaned up ${results.auditLogsDeleted} old audit logs`)
+    // NOTE: Audit logs are NEVER deleted.
+    // Financial SaaS requires 7-year retention minimum.
 
     return NextResponse.json({
       success: true,
