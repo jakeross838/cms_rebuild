@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { AIAssistantPanel } from './ai-assistant-panel'
 
 interface PortalMilestone {
   id: string
@@ -411,30 +412,9 @@ export function PortalPreview() {
         </div>
       </div>
 
-      {/* AI Chat Bot Preview */}
-      <div className="mx-6 mb-6 p-4 bg-gradient-to-r from-purple-50 to-stone-50 border border-warm-200 rounded-lg">
-        <div className="flex items-start gap-3">
-          <div className="h-8 w-8 rounded-full bg-warm-100 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-stone-600" />
-          </div>
-          <div className="flex-1">
-            <h4 className="font-medium text-warm-900 mb-1">Have Questions About Your Project?</h4>
-            <p className="text-sm text-warm-600 mb-3">
-              Ask me anything -- "When will my windows be installed?", "What selections are due?", or "How does the tile upgrade affect my budget?"
-            </p>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Ask a question about your home..."
-                className="flex-1 px-3 py-2 text-sm border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
-                readOnly
-              />
-              <button className="px-4 py-2 bg-stone-700 text-white text-sm rounded-lg hover:bg-stone-800">
-                Ask
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* AI Assistant Panel */}
+      <div className="mx-6 mb-6">
+        <AIAssistantPanel projectName="Smith Residence" defaultExpanded={true} />
       </div>
 
       {/* Notification Preferences Banner */}
