@@ -46,18 +46,19 @@ describe('Design System Plan Adherence', () => {
       expect(css).toContain('@custom-variant dark')
     })
 
-    test('globals.css uses neutral primary (not blue)', () => {
+    test('globals.css uses BuildDesk stone-blue primary (not generic blue)', () => {
       const css = readFile('src/app/globals.css')
       // Old blue primary was 221.2 83.2% 53.3%
       expect(css).not.toContain('221.2 83.2% 53.3%')
-      // New neutral primary should be 0 0% 9%
-      expect(css).toContain('--primary: 0 0% 9%')
+      // BuildDesk stone-700 primary: 198 27% 31%
+      expect(css).toContain('--primary: 198 27% 31%')
     })
 
     test('globals.css has .dark class variables', () => {
       const css = readFile('src/app/globals.css')
       expect(css).toContain('.dark {')
-      expect(css).toContain('--background: 0 0% 3.9%')
+      // BuildDesk warm-toned dark mode background
+      expect(css).toContain('--background: 36 5% 16%')
     })
 
     test('globals.css has chart color tokens', () => {
@@ -170,11 +171,14 @@ describe('Design System Plan Adherence', () => {
       expect(unified).toContain('text-accent-foreground')
     })
 
-    test('sidebar uses sidebar tokens', () => {
+    test('sidebar uses semantic tokens (not hardcoded colors)', () => {
       const sidebar = readFile('src/components/layout/sidebar.tsx')
-      expect(sidebar).toContain('bg-sidebar-background')
-      expect(sidebar).toContain('border-sidebar-border')
-      expect(sidebar).toContain('bg-sidebar-accent')
+      // Sidebar uses semantic theme tokens (bg-card, bg-primary, text-foreground)
+      expect(sidebar).toContain('bg-card')
+      expect(sidebar).toContain('border-border')
+      expect(sidebar).toContain('text-foreground')
+      // No hardcoded gray/blue colors
+      expect(sidebar).not.toMatch(/bg-gray-|bg-blue-|text-gray-|text-blue-/)
     })
 
     test('buttons do not have explicit blue overrides', () => {

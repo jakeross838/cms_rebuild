@@ -257,17 +257,17 @@ const mockRFIs: RFI[] = [
 // ── Status & Priority Config ────────────────────────────────
 
 const statusConfig: Record<RFIStatus, { label: string; color: string; dotColor: string }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600', dotColor: 'bg-gray-400' },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700', dotColor: 'bg-blue-500' },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600', dotColor: 'bg-warm-400' },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', dotColor: 'bg-stone-500' },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700', dotColor: 'bg-amber-500' },
   response_received: { label: 'Response Received', color: 'bg-indigo-100 text-indigo-700', dotColor: 'bg-indigo-500' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700', dotColor: 'bg-green-500' },
-  closed: { label: 'Closed', color: 'bg-gray-100 text-gray-600', dotColor: 'bg-gray-400' },
+  closed: { label: 'Closed', color: 'bg-warm-100 text-warm-600', dotColor: 'bg-warm-400' },
 }
 
 const priorityConfig: Record<RFIPriority, { label: string; color: string; bgColor: string; sla: string }> = {
-  low: { label: 'Low', color: 'text-gray-500', bgColor: 'bg-gray-100', sla: '14 day SLA' },
-  standard: { label: 'Standard', color: 'text-blue-600', bgColor: 'bg-blue-50', sla: '7 day SLA' },
+  low: { label: 'Low', color: 'text-warm-500', bgColor: 'bg-warm-100', sla: '14 day SLA' },
+  standard: { label: 'Standard', color: 'text-stone-600', bgColor: 'bg-stone-50', sla: '7 day SLA' },
   urgent: { label: 'Urgent', color: 'text-amber-600', bgColor: 'bg-amber-50', sla: '3 day SLA' },
   critical: { label: 'Critical', color: 'text-red-600', bgColor: 'bg-red-50', sla: '24 hour SLA' },
 }
@@ -277,7 +277,7 @@ const priorityConfig: Record<RFIPriority, { label: string; color: string; bgColo
 const responseTypeConfig: Record<ResponseType, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
   answer: { label: 'Answer', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   clarification_request: { label: 'Clarification', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: HelpCircle },
-  partial: { label: 'Partial', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: RotateCcw },
+  partial: { label: 'Partial', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: RotateCcw },
   forward: { label: 'Forwarded', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: ArrowRight },
 }
 
@@ -346,7 +346,7 @@ function ResponseWorkflowButtons({ rfi }: { rfi: RFI }) {
     <div className="flex items-center gap-2 flex-wrap">
       {isOpen && (
         <>
-          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-md transition-colors">
+          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-stone-50 text-stone-700 hover:bg-stone-100 rounded-md transition-colors">
             <Bell className="h-3 w-3" />
             Send Reminder
           </button>
@@ -417,7 +417,7 @@ function ImpactBadges({ rfi }: { rfi: RFI }) {
         </span>
       )}
       {rfi.linkedScheduleTask && (
-        <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded flex items-center gap-0.5">
+        <span className="text-xs px-1.5 py-0.5 bg-stone-50 text-stone-700 rounded flex items-center gap-0.5">
           <Calendar className="h-3 w-3" />
           {rfi.linkedScheduleTask}
         </span>
@@ -481,7 +481,7 @@ function RFICard({ rfi }: { rfi: RFI }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
-      isOverdue ? "border-red-200" : "border-gray-200"
+      isOverdue ? "border-red-200" : "border-warm-200"
     )}>
       {/* SLA Escalation Warning - Prominent Position */}
       <SLAEscalationWarning rfi={rfi} />
@@ -499,7 +499,7 @@ function RFICard({ rfi }: { rfi: RFI }) {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-mono text-sm text-gray-500">{rfi.number}</span>
+              <span className="font-mono text-sm text-warm-500">{rfi.number}</span>
               <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium", status.color)}>
                 {status.label}
               </span>
@@ -511,30 +511,30 @@ function RFICard({ rfi }: { rfi: RFI }) {
                 <ResponseTypeBadge key={idx} type={resp.responseType} />
               ))}
             </div>
-            <h4 className="font-medium text-gray-900 mt-1 line-clamp-2">{rfi.subject}</h4>
+            <h4 className="font-medium text-warm-900 mt-1 line-clamp-2">{rfi.subject}</h4>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded flex-shrink-0">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded flex-shrink-0">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* Routing info */}
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="flex items-center gap-2 text-sm">
-          <User className="h-3.5 w-3.5 text-gray-400" />
+          <User className="h-3.5 w-3.5 text-warm-400" />
           <div className="truncate">
-            <span className="text-gray-500">From: </span>
-            <span className="text-gray-700">{rfi.from.name}</span>
-            <span className="text-gray-400 text-xs ml-1">({rfi.from.company})</span>
+            <span className="text-warm-500">From: </span>
+            <span className="text-warm-700">{rfi.from.name}</span>
+            <span className="text-warm-400 text-xs ml-1">({rfi.from.company})</span>
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <ArrowRight className="h-3.5 w-3.5 text-gray-400" />
+          <ArrowRight className="h-3.5 w-3.5 text-warm-400" />
           <div className="truncate">
-            <span className="text-gray-500">To: </span>
-            <span className="text-gray-700">{rfi.routing[0]?.recipientName}</span>
-            <span className="text-gray-400 text-xs ml-1">({rfi.routing[0]?.recipientRole})</span>
+            <span className="text-warm-500">To: </span>
+            <span className="text-warm-700">{rfi.routing[0]?.recipientName}</span>
+            <span className="text-warm-400 text-xs ml-1">({rfi.routing[0]?.recipientRole})</span>
           </div>
         </div>
       </div>
@@ -542,7 +542,7 @@ function RFICard({ rfi }: { rfi: RFI }) {
       {/* References */}
       <div className="flex items-center gap-3 mb-3 flex-wrap">
         {rfi.drawingReference && (
-          <span className="text-xs text-blue-600 flex items-center gap-1">
+          <span className="text-xs text-stone-600 flex items-center gap-1">
             <MapPin className="h-3 w-3" />
             {rfi.drawingReference}
           </span>
@@ -560,12 +560,12 @@ function RFICard({ rfi }: { rfi: RFI }) {
           </span>
         )}
         {rfi.photoCount > 0 && (
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-warm-500">
             {rfi.photoCount} photo{rfi.photoCount > 1 ? 's' : ''}
           </span>
         )}
         {rfi.tradeCategory && (
-          <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+          <span className="text-xs px-2 py-0.5 bg-warm-100 text-warm-600 rounded">
             {rfi.tradeCategory}
           </span>
         )}
@@ -603,16 +603,16 @@ function RFICard({ rfi }: { rfi: RFI }) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5 text-gray-500">
+          <div className="flex items-center gap-1.5 text-warm-500">
             <Calendar className="h-3.5 w-3.5" />
             <span>{rfi.dateSubmitted}</span>
           </div>
           {isOpen && (
             <div className={cn(
               "flex items-center gap-1.5",
-              isOverdue ? "text-red-600" : "text-gray-500"
+              isOverdue ? "text-red-600" : "text-warm-500"
             )}>
               <Clock className="h-3.5 w-3.5" />
               <span>{rfi.daysOpen}d open</span>
@@ -626,7 +626,7 @@ function RFICard({ rfi }: { rfi: RFI }) {
             </div>
           )}
         </div>
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-warm-400">
           Due: {rfi.dueDate}
         </div>
       </div>
@@ -738,12 +738,12 @@ export function RFIsPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">RFIs - Smith Residence</h3>
-          <span className="text-sm text-gray-500">{mockRFIs.length} total</span>
+          <h3 className="font-semibold text-warm-900">RFIs - Smith Residence</h3>
+          <span className="text-sm text-warm-500">{mockRFIs.length} total</span>
           {overdueRFIs > 0 && (
             <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" />
@@ -805,21 +805,21 @@ export function RFIsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <MessageSquare className="h-4 w-4" />
               Open RFIs
             </div>
-            <div className="text-2xl font-bold text-blue-700 mt-1">{openRFIs}</div>
+            <div className="text-2xl font-bold text-stone-700 mt-1">{openRFIs}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-600 text-sm">
               <Clock className="h-4 w-4" />
               Avg Response
             </div>
-            <div className="text-2xl font-bold text-gray-900 mt-1">{avgResponseTime}d</div>
+            <div className="text-2xl font-bold text-warm-900 mt-1">{avgResponseTime}d</div>
           </div>
           <div className={cn("rounded-lg p-3", overdueRFIs > 0 ? "bg-red-50" : "bg-green-50")}>
             <div className={cn("flex items-center gap-2 text-sm", overdueRFIs > 0 ? "text-red-600" : "text-green-600")}>
@@ -860,7 +860,7 @@ export function RFIsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="RFI Intelligence"
           features={aiFeatures}
@@ -875,7 +875,7 @@ export function RFIsPreview() {
             <RFICard key={rfi.id} rfi={rfi} />
           ))
         ) : (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-warm-400">
             No RFIs match the selected filters
           </div>
         )}

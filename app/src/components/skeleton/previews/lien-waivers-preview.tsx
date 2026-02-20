@@ -290,12 +290,12 @@ const mockLienWaivers: LienWaiver[] = [
 ]
 
 const statusConfig: Record<WaiverStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  draft: { label: 'Draft', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: FileText },
-  requested: { label: 'Requested', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: Send },
+  draft: { label: 'Draft', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: FileText },
+  requested: { label: 'Requested', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Send },
   submitted: { label: 'Submitted', color: 'text-indigo-700', bgColor: 'bg-indigo-100', icon: FileCheck },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
-  void: { label: 'Void', color: 'text-gray-500', bgColor: 'bg-gray-100', icon: Ban },
+  void: { label: 'Void', color: 'text-warm-500', bgColor: 'bg-warm-100', icon: Ban },
   missing: { label: 'Missing', color: 'text-red-700', bgColor: 'bg-red-100', icon: AlertTriangle },
 }
 
@@ -344,8 +344,8 @@ function ComplianceRiskBadge({ risk }: { risk: LienWaiver['complianceRisk'] }) {
 function SignatureBadge({ type }: { type: SignatureType }) {
   if (type === 'pending') return null
   const config = {
-    electronic: { label: 'E-Signed', color: 'text-blue-600 bg-blue-50' },
-    wet: { label: 'Wet Signature', color: 'text-gray-600 bg-gray-100' },
+    electronic: { label: 'E-Signed', color: 'text-stone-600 bg-stone-50' },
+    wet: { label: 'Wet Signature', color: 'text-warm-600 bg-warm-100' },
     notarized: { label: 'Notarized', color: 'text-purple-600 bg-purple-50' },
     pending: { label: '', color: '' },
   }
@@ -367,16 +367,16 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
   return (
     <div className={cn(
       "bg-white border rounded-lg p-4 hover:shadow-md transition-shadow",
-      "border-gray-200",
+      "border-warm-200",
       waiver.complianceRisk === 'high' && "border-l-4 border-l-red-500",
       waiver.paymentHold && waiver.complianceRisk !== 'high' && "border-l-4 border-l-amber-500"
     )}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-medium text-gray-900">{waiver.vendorName}</span>
+            <span className="font-medium text-warm-900">{waiver.vendorName}</span>
             {waiver.tier === 'sub_tier' && (
-              <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded flex items-center gap-1">
+              <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded flex items-center gap-1">
                 <Layers className="h-3 w-3" />
                 Sub-tier of {waiver.parentVendor}
               </span>
@@ -398,40 +398,40 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
           </div>
 
           <div className="grid grid-cols-4 gap-x-4 gap-y-1 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <DollarSign className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <DollarSign className="h-4 w-4 text-warm-400" />
               <span className="font-semibold">{formatCurrency(waiver.amount)}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <ClipboardList className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <ClipboardList className="h-4 w-4 text-warm-400" />
               <span>Draw #{waiver.drawNumber}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Building2 className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <Building2 className="h-4 w-4 text-warm-400" />
               <span>{waiver.jobName}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <MapPin className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <MapPin className="h-4 w-4 text-warm-400" />
               <span>{waiver.stateCode}</span>
               {waiver.isStatutoryForm && (
-                <span className="text-xs text-gray-400">(Statutory)</span>
+                <span className="text-xs text-warm-400">(Statutory)</span>
               )}
             </div>
           </div>
 
           <div className="mt-2 flex items-center gap-3 text-sm flex-wrap">
-            <span className="text-xs text-gray-500 flex items-center gap-1">
+            <span className="text-xs text-warm-500 flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Through: {formatDate(waiver.throughDate)}
             </span>
             {waiver.invoiceNumber && (
-              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 {waiver.invoiceNumber}
               </span>
             )}
             <SignatureBadge type={waiver.signatureType} />
             {waiver.remindersSent > 0 && (
-              <span className="text-xs text-gray-400 flex items-center gap-1">
+              <span className="text-xs text-warm-400 flex items-center gap-1">
                 <Bell className="h-3 w-3" />
                 {waiver.remindersSent} reminder{waiver.remindersSent !== 1 ? 's' : ''} sent
               </span>
@@ -441,7 +441,7 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
                 "text-xs px-1.5 py-0.5 rounded font-medium",
                 waiver.lienDeadlineDays <= 30 ? "bg-red-100 text-red-700" :
                 waiver.lienDeadlineDays <= 60 ? "bg-amber-100 text-amber-700" :
-                "bg-gray-100 text-gray-600"
+                "bg-warm-100 text-warm-600"
               )}>
                 Lien deadline: {waiver.lienDeadlineDays}d
               </span>
@@ -450,7 +450,7 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded",
                 waiver.preliminaryNoticeStatus === 'confirmed' ? "bg-green-50 text-green-600" :
-                waiver.preliminaryNoticeStatus === 'sent' ? "bg-blue-50 text-blue-600" :
+                waiver.preliminaryNoticeStatus === 'sent' ? "bg-stone-50 text-stone-600" :
                 "bg-red-50 text-red-600"
               )}>
                 Prelim: {waiver.preliminaryNoticeStatus}
@@ -477,8 +477,8 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
         <div className="flex items-start gap-4 ml-4">
           <div className="text-right">
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-3.5 w-3.5 text-gray-400" />
-              <span className="text-gray-500">Requested {formatDate(waiver.dateRequested)}</span>
+              <Calendar className="h-3.5 w-3.5 text-warm-400" />
+              <span className="text-warm-500">Requested {formatDate(waiver.dateRequested)}</span>
             </div>
             {waiver.status === 'approved' && waiver.dateReceived && (
               <div className="text-xs text-green-600 mt-1">
@@ -490,25 +490,25 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
                 "text-xs mt-1",
                 daysSinceRequested > 14 ? "text-red-600" :
                 daysSinceRequested > 7 ? "text-amber-600" :
-                "text-gray-500"
+                "text-warm-500"
               )}>
                 {daysSinceRequested} days ago
               </div>
             )}
             {waiver.nextReminderDate && (waiver.status === 'requested' || waiver.status === 'submitted') && (
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="text-xs text-warm-400 mt-1">
                 Next reminder: {formatDate(waiver.nextReminderDate)}
               </div>
             )}
           </div>
-          <button className="p-1.5 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1.5 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
       </div>
 
       {(waiver.status === 'requested' || waiver.status === 'missing' || waiver.status === 'draft') && (
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+        <div className="mt-3 pt-3 border-t border-warm-100 flex items-center justify-end gap-2">
           {(waiver.status === 'requested' || waiver.status === 'missing') && (
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50">
               <Bell className="h-3.5 w-3.5" />
@@ -516,12 +516,12 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
             </button>
           )}
           {waiver.status === 'draft' && (
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-700 border border-stone-200 rounded-lg hover:bg-stone-50">
               <Send className="h-3.5 w-3.5" />
               Send Request
             </button>
           )}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
             <FileCheck className="h-3.5 w-3.5" />
             Mark Received
           </button>
@@ -578,14 +578,14 @@ export function LienWaiversPreview() {
   const collectionProgress = Math.round((approvedCount / totalWaivers) * 100)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Lien Waivers</h3>
-              <span className="text-sm text-gray-500">{mockLienWaivers.length} waivers | {formatCurrency(mockLienWaivers.reduce((sum, w) => sum + w.amount, 0))} total</span>
+              <h3 className="font-semibold text-warm-900">Lien Waivers</h3>
+              <span className="text-sm text-warm-500">{mockLienWaivers.length} waivers | {formatCurrency(mockLienWaivers.reduce((sum, w) => sum + w.amount, 0))} total</span>
               {highRiskCount > 0 && (
                 <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <Shield className="h-3 w-3" />
@@ -593,7 +593,7 @@ export function LienWaiversPreview() {
                 </span>
               )}
               {subTierCount > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-warm-100 text-warm-600 font-medium flex items-center gap-1">
                   <Layers className="h-3 w-3" />
                   {subTierCount} sub-tier
                 </span>
@@ -601,15 +601,15 @@ export function LienWaiversPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Users className="h-4 w-4" />
               Bulk Request
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               Request Waiver
             </button>
@@ -618,7 +618,7 @@ export function LienWaiversPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -627,45 +627,45 @@ export function LienWaiversPreview() {
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(approvedAmount)}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Clock className="h-4 w-4" />
               Pending ({pendingCount})
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{formatCurrency(pendingAmount)}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{formatCurrency(pendingAmount)}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            missingCount > 0 ? "bg-red-50" : "bg-gray-50"
+            missingCount > 0 ? "bg-red-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-sm",
-              missingCount > 0 ? "text-red-600" : "text-gray-600"
+              missingCount > 0 ? "text-red-600" : "text-warm-600"
             )}>
               {missingCount > 0 ? <AlertTriangle className="h-4 w-4" /> : <FileCheck className="h-4 w-4" />}
               Missing ({missingCount})
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              missingCount > 0 ? "text-red-700" : "text-gray-700"
+              missingCount > 0 ? "text-red-700" : "text-warm-700"
             )}>
               {missingCount > 0 ? formatCurrency(missingAmount) : '$0'}
             </div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            paymentHoldCount > 0 ? "bg-amber-50" : "bg-gray-50"
+            paymentHoldCount > 0 ? "bg-amber-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-sm",
-              paymentHoldCount > 0 ? "text-amber-600" : "text-gray-600"
+              paymentHoldCount > 0 ? "text-amber-600" : "text-warm-600"
             )}>
               <Ban className="h-4 w-4" />
               Payment Holds
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              paymentHoldCount > 0 ? "text-amber-700" : "text-gray-700"
+              paymentHoldCount > 0 ? "text-amber-700" : "text-warm-700"
             )}>
               {paymentHoldCount} invoice{paymentHoldCount !== 1 ? 's' : ''}
             </div>
@@ -674,23 +674,23 @@ export function LienWaiversPreview() {
       </div>
 
       {/* Enforcement Level Banner */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-sm">
-            <span className="text-gray-500">Enforcement:</span>
+            <span className="text-warm-500">Enforcement:</span>
             <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium">
               Strict - Payments blocked without waiver
             </span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <span className="text-gray-500">State:</span>
-            <span className="text-xs text-gray-600">FL (Statutory forms required)</span>
+            <span className="text-warm-500">State:</span>
+            <span className="text-xs text-warm-600">FL (Statutory forms required)</span>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -753,7 +753,7 @@ export function LienWaiversPreview() {
           <WaiverRow key={waiver.id} waiver={waiver} />
         ))}
         {filteredWaivers.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No lien waivers match your filters
           </div>
         )}
@@ -797,7 +797,7 @@ export function LienWaiversPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI-Powered Lien Waiver Management"
           columns={2}

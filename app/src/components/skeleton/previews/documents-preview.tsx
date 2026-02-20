@@ -72,7 +72,7 @@ interface FolderItem {
 }
 
 const mockFolders: FolderItem[] = [
-  { id: '1', name: 'Plans & Specifications', filesCount: 24, color: 'bg-blue-100 text-blue-600', subfolders: ['Architectural', 'Structural', 'MEP', 'Civil'] },
+  { id: '1', name: 'Plans & Specifications', filesCount: 24, color: 'bg-stone-100 text-stone-600', subfolders: ['Architectural', 'Structural', 'MEP', 'Civil'] },
   { id: '2', name: 'Permits & Inspections', filesCount: 12, color: 'bg-green-100 text-green-600' },
   { id: '3', name: 'Contracts', filesCount: 8, color: 'bg-purple-100 text-purple-600' },
   { id: '4', name: 'Insurance & Compliance', filesCount: 9, color: 'bg-orange-100 text-orange-600' },
@@ -81,7 +81,7 @@ const mockFolders: FolderItem[] = [
   { id: '7', name: 'Submittals', filesCount: 14, color: 'bg-indigo-100 text-indigo-600' },
   { id: '8', name: 'Photos', filesCount: 156, color: 'bg-amber-100 text-amber-600' },
   { id: '9', name: 'Correspondence', filesCount: 11, color: 'bg-cyan-100 text-cyan-600' },
-  { id: '10', name: 'Closeout', filesCount: 3, color: 'bg-gray-100 text-gray-600' },
+  { id: '10', name: 'Closeout', filesCount: 3, color: 'bg-warm-100 text-warm-600' },
 ]
 
 const mockFiles: DocumentFile[] = [
@@ -378,27 +378,27 @@ const fileTypeIcons: Record<string, typeof File> = {
 
 const fileTypeColors: Record<string, string> = {
   pdf: 'text-red-500',
-  doc: 'text-blue-500',
+  doc: 'text-stone-500',
   xls: 'text-green-500',
   jpg: 'text-purple-500',
   png: 'text-purple-500',
   zip: 'text-amber-500',
   dwg: 'text-orange-500',
-  other: 'text-gray-500',
+  other: 'text-warm-500',
 }
 
 const approvalStatusConfig: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600' },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700' },
-  under_review: { label: 'Under Review', color: 'bg-yellow-100 text-yellow-700' },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600' },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700' },
+  under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700' },
   revisions_requested: { label: 'Revisions Requested', color: 'bg-orange-100 text-orange-700' },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700' },
 }
 
 const extractionStatusConfig: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Pending', color: 'bg-gray-100 text-gray-600' },
-  processing: { label: 'Processing', color: 'bg-blue-100 text-blue-600' },
+  pending: { label: 'Pending', color: 'bg-warm-100 text-warm-600' },
+  processing: { label: 'Processing', color: 'bg-stone-100 text-stone-600' },
   completed: { label: 'Extracted', color: 'bg-green-100 text-green-600' },
   failed: { label: 'Failed', color: 'bg-red-100 text-red-600' },
 }
@@ -428,31 +428,31 @@ function FolderCard({ folder, isSelected, onClick }: { folder: FolderItem; isSel
       className={cn(
         "flex items-center gap-3 p-3 rounded-lg border transition-all text-left w-full",
         isSelected
-          ? "border-blue-300 bg-blue-50 ring-2 ring-blue-200"
-          : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+          ? "border-stone-300 bg-stone-50 ring-2 ring-stone-200"
+          : "border-warm-200 bg-white hover:border-warm-300 hover:shadow-sm"
       )}
     >
       <div className={cn("p-2 rounded-lg", folder.color)}>
         {isSelected ? <FolderOpen className="h-5 w-5" /> : <Folder className="h-5 w-5" />}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-gray-900 truncate text-sm">{folder.name}</div>
-        <div className="text-xs text-gray-500">{folder.filesCount} files</div>
+        <div className="font-medium text-warm-900 truncate text-sm">{folder.name}</div>
+        <div className="text-xs text-warm-500">{folder.filesCount} files</div>
       </div>
-      <ChevronRight className={cn("h-4 w-4 text-gray-400 transition-transform", isSelected && "rotate-90")} />
+      <ChevronRight className={cn("h-4 w-4 text-warm-400 transition-transform", isSelected && "rotate-90")} />
     </button>
   )
 }
 
 function FileRow({ file }: { file: DocumentFile }) {
   const FileIcon = fileTypeIcons[file.type] || File
-  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+  const iconColor = fileTypeColors[file.type] || 'text-warm-500'
   const isExpiringSoon = file.expiresAt && daysUntil(file.expiresAt) <= 90
 
   return (
     <div className={cn(
       "flex items-center gap-4 p-3 bg-white rounded-lg border hover:shadow-sm transition-shadow cursor-pointer group",
-      file.status === 'archived' ? "border-gray-200 opacity-60" : "border-gray-200",
+      file.status === 'archived' ? "border-warm-200 opacity-60" : "border-warm-200",
       file.status === 'legal_hold' ? "border-amber-300 bg-amber-50/30" : "",
     )}>
       <div className={cn("flex-shrink-0", iconColor)}>
@@ -461,9 +461,9 @@ function FileRow({ file }: { file: DocumentFile }) {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-900 truncate">{file.name}</span>
+          <span className="font-medium text-warm-900 truncate">{file.name}</span>
           {file.version > 1 && (
-            <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
               <History className="h-3 w-3" />
               v{file.version}
             </span>
@@ -475,7 +475,7 @@ function FileRow({ file }: { file: DocumentFile }) {
             </span>
           )}
           {file.status === 'archived' && (
-            <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">Archived</span>
+            <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded">Archived</span>
           )}
           {file.status === 'legal_hold' && (
             <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
@@ -484,7 +484,7 @@ function FileRow({ file }: { file: DocumentFile }) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+        <div className="flex items-center gap-3 text-xs text-warm-500 mt-0.5">
           <span className="uppercase font-medium">{file.type}</span>
           <span>{file.size}</span>
           {file.aiClassification && (
@@ -503,7 +503,7 @@ function FileRow({ file }: { file: DocumentFile }) {
             </span>
           )}
           {file.ingestedVia && file.ingestedVia !== 'upload' && (
-            <span className="text-xs text-gray-400 flex items-center gap-0.5">
+            <span className="text-xs text-warm-400 flex items-center gap-0.5">
               via {ingestMethodConfig[file.ingestedVia]?.label}
             </span>
           )}
@@ -514,7 +514,7 @@ function FileRow({ file }: { file: DocumentFile }) {
             {file.linkedEntities.map((entity, idx) => (
               <span
                 key={idx}
-                className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded"
+                className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded"
               >
                 {entity.label}
               </span>
@@ -524,11 +524,11 @@ function FileRow({ file }: { file: DocumentFile }) {
         {/* Tags */}
         {file.tags.length > 0 && (
           <div className="flex items-center gap-1 mt-1">
-            <Tag className="h-3 w-3 text-gray-400" />
+            <Tag className="h-3 w-3 text-warm-400" />
             {file.tags.slice(0, 3).map((tag, idx) => (
-              <span key={idx} className="text-xs text-gray-500">{tag}{idx < Math.min(file.tags.length, 3) - 1 ? ',' : ''}</span>
+              <span key={idx} className="text-xs text-warm-500">{tag}{idx < Math.min(file.tags.length, 3) - 1 ? ',' : ''}</span>
             ))}
-            {file.tags.length > 3 && <span className="text-xs text-gray-400">+{file.tags.length - 3}</span>}
+            {file.tags.length > 3 && <span className="text-xs text-warm-400">+{file.tags.length - 3}</span>}
           </div>
         )}
         {/* Approval workflow status */}
@@ -554,28 +554,28 @@ function FileRow({ file }: { file: DocumentFile }) {
         )}
       </div>
 
-      <div className="hidden md:flex items-center gap-1.5 text-sm text-gray-500">
+      <div className="hidden md:flex items-center gap-1.5 text-sm text-warm-500">
         <Calendar className="h-3.5 w-3.5" />
         <span>{formatDate(file.dateModified)}</span>
       </div>
 
-      <div className="hidden md:flex items-center gap-1.5 text-sm text-gray-500 min-w-[120px]">
+      <div className="hidden md:flex items-center gap-1.5 text-sm text-warm-500 min-w-[120px]">
         <User className="h-3.5 w-3.5" />
         <span className="truncate">{file.uploadedBy}</span>
       </div>
 
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="Preview">
-          <Eye className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="Preview">
+          <Eye className="h-4 w-4 text-warm-400" />
         </button>
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="Download">
-          <Download className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="Download">
+          <Download className="h-4 w-4 text-warm-400" />
         </button>
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="Share">
-          <Share2 className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="Share">
+          <Share2 className="h-4 w-4 text-warm-400" />
         </button>
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="More">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="More">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
     </div>
@@ -682,13 +682,13 @@ export function DocumentsPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Documents & Files</h3>
-          <span className="text-sm text-gray-500">{totalFiles} active files | {totalSizeFormatted} used</span>
-          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+          <h3 className="font-semibold text-warm-900">Documents & Files</h3>
+          <span className="text-sm text-warm-500">{totalFiles} active files | {totalSizeFormatted} used</span>
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
             {storagePercent}% of {storageQuota} GB quota
           </span>
         </div>
@@ -755,24 +755,24 @@ export function DocumentsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <File className="h-4 w-4" />
               Total Files
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalFiles}</div>
-            <div className="text-xs text-gray-400 mt-0.5">{recentUploads} added this week</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalFiles}</div>
+            <div className="text-xs text-warm-400 mt-0.5">{recentUploads} added this week</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <HardDrive className="h-4 w-4" />
               Storage
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{totalSizeFormatted}</div>
-            <div className="w-full bg-blue-200 rounded-full h-1.5 mt-1">
-              <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${Math.min(storagePercent, 100)}%` }} />
+            <div className="text-xl font-bold text-stone-700 mt-1">{totalSizeFormatted}</div>
+            <div className="w-full bg-stone-200 rounded-full h-1.5 mt-1">
+              <div className="bg-stone-600 h-1.5 rounded-full" style={{ width: `${Math.min(storagePercent, 100)}%` }} />
             </div>
           </div>
           <div className={cn("rounded-lg p-3", expiringCount > 0 ? "bg-amber-50" : "bg-green-50")}>
@@ -781,7 +781,7 @@ export function DocumentsPreview() {
               Expiring
             </div>
             <div className={cn("text-xl font-bold mt-1", expiringCount > 0 ? "text-amber-700" : "text-green-700")}>{expiringCount}</div>
-            <div className="text-xs text-gray-400 mt-0.5">within 90 days</div>
+            <div className="text-xs text-warm-400 mt-0.5">within 90 days</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-purple-600 text-sm">
@@ -789,7 +789,7 @@ export function DocumentsPreview() {
               Submittals
             </div>
             <div className="text-xl font-bold text-purple-700 mt-1">{pendingApprovalCount}</div>
-            <div className="text-xs text-gray-400 mt-0.5">pending review</div>
+            <div className="text-xs text-warm-400 mt-0.5">pending review</div>
           </div>
           <div className="bg-indigo-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-indigo-600 text-sm">
@@ -797,7 +797,7 @@ export function DocumentsPreview() {
               AI Processed
             </div>
             <div className="text-xl font-bold text-indigo-700 mt-1">{aiProcessedCount}</div>
-            <div className="text-xs text-gray-400 mt-0.5">of {mockFiles.length} total</div>
+            <div className="text-xs text-warm-400 mt-0.5">of {mockFiles.length} total</div>
           </div>
         </div>
       </div>
@@ -805,22 +805,22 @@ export function DocumentsPreview() {
       {/* Main Content */}
       <div className="flex">
         {/* Folder Sidebar */}
-        <div className="w-64 border-r border-gray-200 bg-white p-3 space-y-2 max-h-[450px] overflow-y-auto">
+        <div className="w-64 border-r border-warm-200 bg-white p-3 space-y-2 max-h-[450px] overflow-y-auto">
           <button
             onClick={() => setSelectedFolder(null)}
             className={cn(
               "flex items-center gap-3 p-3 rounded-lg border transition-all text-left w-full",
               selectedFolder === null
-                ? "border-blue-300 bg-blue-50 ring-2 ring-blue-200"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+                ? "border-stone-300 bg-stone-50 ring-2 ring-stone-200"
+                : "border-warm-200 bg-white hover:border-warm-300 hover:shadow-sm"
             )}
           >
-            <div className="p-2 rounded-lg bg-gray-100 text-gray-600">
+            <div className="p-2 rounded-lg bg-warm-100 text-warm-600">
               <Folder className="h-5 w-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium text-gray-900">All Files</div>
-              <div className="text-xs text-gray-500">{mockFiles.length} files</div>
+              <div className="font-medium text-warm-900">All Files</div>
+              <div className="text-xs text-warm-500">{mockFiles.length} files</div>
             </div>
           </button>
           {mockFolders.map(folder => (
@@ -833,14 +833,14 @@ export function DocumentsPreview() {
           ))}
 
           {/* Email Inbox Section */}
-          <div className="pt-2 border-t border-gray-200">
-            <button className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-300 text-left w-full hover:bg-gray-50">
+          <div className="pt-2 border-t border-warm-200">
+            <button className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-warm-300 text-left w-full hover:bg-warm-50">
               <div className="p-2 rounded-lg bg-cyan-100 text-cyan-600">
                 <Mail className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 text-sm">Email Inbox</div>
-                <div className="text-xs text-gray-500">3 new documents</div>
+                <div className="font-medium text-warm-900 text-sm">Email Inbox</div>
+                <div className="text-xs text-warm-500">3 new documents</div>
               </div>
             </button>
           </div>
@@ -854,7 +854,7 @@ export function DocumentsPreview() {
                 <FileRow key={file.id} file={file} />
               ))
             ) : (
-              <div className="text-center py-12 text-gray-400">
+              <div className="text-center py-12 text-warm-400">
                 <File className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p className="text-sm">No files match your search</p>
               </div>

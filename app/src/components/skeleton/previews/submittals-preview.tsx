@@ -397,8 +397,8 @@ const mockSubmittals: Submittal[] = [
 // ── Config ────────────────────────────────────────────────────
 
 const statusConfig: Record<SubmittalStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  pending: { label: 'Pending', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: FileText },
-  submitted: { label: 'Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: Send },
+  pending: { label: 'Pending', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: FileText },
+  submitted: { label: 'Submitted', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Send },
   under_review: { label: 'Under Review', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: Eye },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   approved_as_noted: { label: 'Approved as Noted', color: 'text-emerald-700', bgColor: 'bg-emerald-100', icon: CheckCircle },
@@ -508,9 +508,9 @@ function ReviewStampBadge({ stamp }: { stamp: ReviewStamp }) {
       <div className={cn('text-xs px-2 py-1 rounded flex items-center gap-1.5', config.bgColor)}>
         <Stamp className="h-3 w-3" />
         <span className={cn('font-medium', config.color)}>{config.label}</span>
-        <span className="text-gray-500">by {stamp.reviewerName}</span>
+        <span className="text-warm-500">by {stamp.reviewerName}</span>
         {stamp.licenseNumber && (
-          <span className="text-gray-400 font-mono text-[10px]">({stamp.licenseNumber})</span>
+          <span className="text-warm-400 font-mono text-[10px]">({stamp.licenseNumber})</span>
         )}
       </div>
       {stamp.digitalSignature && (
@@ -522,7 +522,7 @@ function ReviewStampBadge({ stamp }: { stamp: ReviewStamp }) {
 
 function DistributionIndicator({ distribution }: { distribution: SubmittalDistribution[] }) {
   if (distribution.length === 0) return (
-    <span className="text-xs text-gray-400 italic">Not yet distributed</span>
+    <span className="text-xs text-warm-400 italic">Not yet distributed</span>
   )
 
   const viewed = distribution.filter(d => d.viewedAt).length
@@ -531,7 +531,7 @@ function DistributionIndicator({ distribution }: { distribution: SubmittalDistri
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1 text-xs text-gray-500">
+      <div className="flex items-center gap-1 text-xs text-warm-500">
         <Eye className="h-3 w-3" />
         <span>{viewed}/{distribution.length} viewed</span>
       </div>
@@ -542,7 +542,7 @@ function DistributionIndicator({ distribution }: { distribution: SubmittalDistri
         </div>
       )}
       {ballInCourt && (
-        <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+        <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">
           Ball: {ballInCourt.recipientName}
         </span>
       )}
@@ -576,7 +576,7 @@ function ConnectionBadges({ submittal }: { submittal: Submittal }) {
           'text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1',
           submittal.scheduleDependency.critical
             ? 'bg-red-50 text-red-700'
-            : 'bg-blue-50 text-blue-700'
+            : 'bg-stone-50 text-stone-700'
         )}>
           <CalendarClock className="h-2.5 w-2.5" />
           {submittal.scheduleDependency.taskName}
@@ -605,10 +605,10 @@ function LeadTimeDisplay({ submittal }: { submittal: Submittal }) {
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-1 text-xs">
-        <Truck className="h-3 w-3 text-gray-400" />
-        <span className="text-gray-600">Lead Time: {submittal.leadTimeDays} days</span>
-        <span className="text-gray-400">|</span>
-        <span className="text-gray-500">Est. delivery: {expectedDelivery}</span>
+        <Truck className="h-3 w-3 text-warm-400" />
+        <span className="text-warm-600">Lead Time: {submittal.leadTimeDays} days</span>
+        <span className="text-warm-400">|</span>
+        <span className="text-warm-500">Est. delivery: {expectedDelivery}</span>
       </div>
       {leadTimeRisk?.isAtRisk && (
         <div className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
@@ -651,8 +651,8 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
   return (
     <div className={cn(
       'bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer',
-      isOverdue ? 'border-red-200' : 'border-gray-200',
-      isSelected && 'ring-2 ring-blue-500 border-blue-300'
+      isOverdue ? 'border-red-200' : 'border-warm-200',
+      isSelected && 'ring-2 ring-stone-500 border-stone-300'
     )}>
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
@@ -666,40 +666,40 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
             className={cn(
               'w-5 h-5 rounded border flex items-center justify-center transition-colors',
               isSelected
-                ? 'bg-blue-500 border-blue-500 text-white'
-                : 'border-gray-300 hover:border-blue-400'
+                ? 'bg-stone-500 border-stone-500 text-white'
+                : 'border-warm-300 hover:border-stone-400'
             )}
           >
             {isSelected && <Check className="h-3 w-3" />}
           </button>
-          <span className="font-mono font-semibold text-gray-900">{submittal.number}</span>
-          <span className="text-xs text-gray-400">Rev {submittal.revision}</span>
+          <span className="font-mono font-semibold text-warm-900">{submittal.number}</span>
+          <span className="text-xs text-warm-400">Rev {submittal.revision}</span>
           <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1', statusInfo.bgColor, statusInfo.color)}>
             <StatusIcon className="h-3 w-3" />
             {statusInfo.label}
           </span>
           <DueStatusBadge requiredDate={submittal.requiredDate} status={submittal.status} />
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-700 mb-2 line-clamp-2">{submittal.description}</p>
+      <p className="text-sm text-warm-700 mb-2 line-clamp-2">{submittal.description}</p>
 
       {/* Spec + Vendor + Trade */}
       <div className="space-y-1.5 mb-2">
-        <div className="flex items-center gap-1.5 text-xs text-gray-600">
-          <Hash className="h-3 w-3 text-gray-400" />
+        <div className="flex items-center gap-1.5 text-xs text-warm-600">
+          <Hash className="h-3 w-3 text-warm-400" />
           <span>{submittal.specSection}</span>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-xs text-gray-600">
-            <Building2 className="h-3 w-3 text-gray-400" />
+          <div className="flex items-center gap-1.5 text-xs text-warm-600">
+            <Building2 className="h-3 w-3 text-warm-400" />
             <span>{submittal.vendor}</span>
           </div>
-          <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{submittal.tradeCategory}</span>
+          <span className="text-[10px] bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">{submittal.tradeCategory}</span>
         </div>
       </div>
 
@@ -718,7 +718,7 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
         <div className="mb-2">
           <ReviewStampBadge stamp={latestStamp} />
           {latestStamp.comments && (
-            <p className="text-[11px] text-gray-500 mt-1 ml-5 italic line-clamp-2">"{latestStamp.comments}"</p>
+            <p className="text-[11px] text-warm-500 mt-1 ml-5 italic line-clamp-2">"{latestStamp.comments}"</p>
           )}
         </div>
       )}
@@ -731,7 +731,7 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
       )}
 
       {/* Footer: dates, docs */}
-      <div className="flex items-center gap-3 pt-2 border-t border-gray-100 text-xs text-gray-600 flex-wrap">
+      <div className="flex items-center gap-3 pt-2 border-t border-warm-100 text-xs text-warm-600 flex-wrap">
         <div className="flex items-center gap-1">
           <Calendar className="h-3 w-3" />
           <span>{formatDate(submittal.dateSubmitted)}</span>
@@ -741,7 +741,7 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
           <span className={cn(
             submittal.daysInReview > 14 ? 'text-red-600 font-medium' :
             submittal.daysInReview > 10 ? 'text-amber-600 font-medium' :
-            'text-gray-500'
+            'text-warm-500'
           )}>
             {submittal.daysInReview}d in review
           </span>
@@ -815,10 +815,10 @@ function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
   }
 
   return (
-    <div className="col-span-2 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="col-span-2 bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Package Header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 cursor-pointer hover:bg-gray-50"
+        className="flex items-center justify-between px-4 py-3 bg-white border-b border-warm-200 cursor-pointer hover:bg-warm-50"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
@@ -830,23 +830,23 @@ function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
             className={cn(
               'w-5 h-5 rounded border flex items-center justify-center transition-colors',
               allSelected
-                ? 'bg-blue-500 border-blue-500 text-white'
+                ? 'bg-stone-500 border-stone-500 text-white'
                 : someSelected
-                ? 'bg-blue-200 border-blue-400'
-                : 'border-gray-300 hover:border-blue-400'
+                ? 'bg-stone-200 border-stone-400'
+                : 'border-warm-300 hover:border-stone-400'
             )}
           >
             {allSelected && <Check className="h-3 w-3" />}
-            {someSelected && !allSelected && <div className="w-2 h-0.5 bg-blue-500" />}
+            {someSelected && !allSelected && <div className="w-2 h-0.5 bg-stone-500" />}
           </button>
           {isExpanded ? (
-            <ChevronDown className="h-4 w-4 text-gray-500" />
+            <ChevronDown className="h-4 w-4 text-warm-500" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-gray-500" />
+            <ChevronRight className="h-4 w-4 text-warm-500" />
           )}
           <Package className="h-4 w-4 text-purple-500" />
-          <span className="font-medium text-gray-900">{pkg.name}</span>
-          <span className="text-xs text-gray-500">({pkg.submittals.length} items)</span>
+          <span className="font-medium text-warm-900">{pkg.name}</span>
+          <span className="text-xs text-warm-500">({pkg.submittals.length} items)</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Package</span>
@@ -1045,13 +1045,13 @@ export function SubmittalsPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Submittals - Smith Residence</h3>
-          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{totalSubmittals} Total</span>
-          <span className="text-sm text-gray-500">{approvedCount} approved | {pendingReview} pending review</span>
+          <h3 className="font-semibold text-warm-900">Submittals - Smith Residence</h3>
+          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">{totalSubmittals} Total</span>
+          <span className="text-sm text-warm-500">{approvedCount} approved | {pendingReview} pending review</span>
         </div>
         <FilterBar
           search={search}
@@ -1104,23 +1104,23 @@ export function SubmittalsPreview() {
           totalCount={mockSubmittals.length}
         />
         {/* Select All Checkbox + View Mode Toggle */}
-        <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-3 pt-2 border-t border-warm-100">
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <button
               onClick={handleToggleSelectAll}
               className={cn(
                 'w-5 h-5 rounded border flex items-center justify-center transition-colors',
                 allFilteredSelected
-                  ? 'bg-blue-500 border-blue-500 text-white'
+                  ? 'bg-stone-500 border-stone-500 text-white'
                   : someFilteredSelected
-                  ? 'bg-blue-200 border-blue-400'
-                  : 'border-gray-300 hover:border-blue-400'
+                  ? 'bg-stone-200 border-stone-400'
+                  : 'border-warm-300 hover:border-stone-400'
               )}
             >
               {allFilteredSelected && <Check className="h-3 w-3" />}
-              {someFilteredSelected && !allFilteredSelected && <div className="w-2 h-0.5 bg-blue-500" />}
+              {someFilteredSelected && !allFilteredSelected && <div className="w-2 h-0.5 bg-stone-500" />}
             </button>
-            <span className="text-xs text-gray-600">
+            <span className="text-xs text-warm-600">
               {allFilteredSelected ? 'Deselect all' : `Select all ${filteredSubmittals.length} submittals`}
             </span>
           </label>
@@ -1130,7 +1130,7 @@ export function SubmittalsPreview() {
               'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors',
               viewMode === 'grouped'
                 ? 'bg-purple-50 border-purple-200 text-purple-700'
-                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                : 'bg-white border-warm-200 text-warm-600 hover:bg-warm-50'
             )}
           >
             <Layers className="h-3.5 w-3.5" />
@@ -1163,14 +1163,14 @@ export function SubmittalsPreview() {
           </button>
           <button
             onClick={handleBulkAssign}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-100 rounded-lg transition-colors"
           >
             <Users className="h-4 w-4" />
             Bulk Assign
           </button>
           <button
             onClick={handleExport}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-warm-600 hover:bg-warm-100 rounded-lg transition-colors"
           >
             <FileDown className="h-4 w-4" />
             Export
@@ -1179,14 +1179,14 @@ export function SubmittalsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <ClipboardList className="h-3.5 w-3.5" />
               Total
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{totalSubmittals}</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{totalSubmittals}</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-xs">
@@ -1204,54 +1204,54 @@ export function SubmittalsPreview() {
           </div>
           <div className={cn(
             'rounded-lg p-3',
-            overdueCount > 0 ? 'bg-red-50' : 'bg-blue-50'
+            overdueCount > 0 ? 'bg-red-50' : 'bg-stone-50'
           )}>
             <div className={cn(
               'flex items-center gap-2 text-xs',
-              overdueCount > 0 ? 'text-red-600' : 'text-blue-600'
+              overdueCount > 0 ? 'text-red-600' : 'text-stone-600'
             )}>
               {overdueCount > 0 ? <AlertTriangle className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
               {overdueCount > 0 ? 'Overdue' : 'Avg Review'}
             </div>
             <div className={cn(
               'text-lg font-bold mt-1',
-              overdueCount > 0 ? 'text-red-700' : 'text-blue-700'
+              overdueCount > 0 ? 'text-red-700' : 'text-stone-700'
             )}>
               {overdueCount > 0 ? overdueCount : `${avgDaysInReview}d`}
             </div>
           </div>
           <div className={cn(
             'rounded-lg p-3',
-            posOnHold > 0 ? 'bg-amber-50' : 'bg-gray-50'
+            posOnHold > 0 ? 'bg-amber-50' : 'bg-warm-50'
           )}>
             <div className={cn(
               'flex items-center gap-2 text-xs',
-              posOnHold > 0 ? 'text-amber-600' : 'text-gray-500'
+              posOnHold > 0 ? 'text-amber-600' : 'text-warm-500'
             )}>
               <ShoppingCart className="h-3.5 w-3.5" />
               POs on Hold
             </div>
             <div className={cn(
               'text-lg font-bold mt-1',
-              posOnHold > 0 ? 'text-amber-700' : 'text-gray-900'
+              posOnHold > 0 ? 'text-amber-700' : 'text-warm-900'
             )}>
               {posOnHold}
             </div>
           </div>
           <div className={cn(
             'rounded-lg p-3',
-            criticalPathItems > 0 ? 'bg-red-50' : 'bg-gray-50'
+            criticalPathItems > 0 ? 'bg-red-50' : 'bg-warm-50'
           )}>
             <div className={cn(
               'flex items-center gap-2 text-xs',
-              criticalPathItems > 0 ? 'text-red-600' : 'text-gray-500'
+              criticalPathItems > 0 ? 'text-red-600' : 'text-warm-500'
             )}>
               <CalendarClock className="h-3.5 w-3.5" />
               Critical Path
             </div>
             <div className={cn(
               'text-lg font-bold mt-1',
-              criticalPathItems > 0 ? 'text-red-700' : 'text-gray-900'
+              criticalPathItems > 0 ? 'text-red-700' : 'text-warm-900'
             )}>
               {criticalPathItems}
             </div>
@@ -1296,14 +1296,14 @@ export function SubmittalsPreview() {
         )}
 
         {filteredSubmittals.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400">
+          <div className="col-span-2 text-center py-8 text-warm-400">
             No submittals match the selected filters
           </div>
         )}
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Submittal Intelligence"
           features={aiFeatures}

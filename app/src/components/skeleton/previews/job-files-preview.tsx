@@ -86,7 +86,7 @@ interface UploadingFile {
 }
 
 const mockFolders: FolderItem[] = [
-  { id: '1', name: 'Plans & Specifications', filesCount: 18, color: 'bg-blue-100 text-blue-600' },
+  { id: '1', name: 'Plans & Specifications', filesCount: 18, color: 'bg-stone-100 text-stone-600' },
   { id: '2', name: 'Permits & Inspections', filesCount: 8, color: 'bg-green-100 text-green-600' },
   { id: '3', name: 'Contracts', filesCount: 5, color: 'bg-purple-100 text-purple-600' },
   { id: '4', name: 'Insurance & Compliance', filesCount: 7, color: 'bg-orange-100 text-orange-600' },
@@ -406,26 +406,26 @@ const fileTypeIcons: Record<string, typeof File> = {
 
 const fileTypeColors: Record<string, string> = {
   pdf: 'text-red-500',
-  doc: 'text-blue-500',
+  doc: 'text-stone-500',
   xls: 'text-green-500',
   jpg: 'text-purple-500',
   png: 'text-purple-500',
   zip: 'text-amber-500',
   dwg: 'text-orange-500',
-  other: 'text-gray-500',
+  other: 'text-warm-500',
 }
 
 const thumbnailColors: Record<string, string> = {
-  plan: 'bg-blue-100',
+  plan: 'bg-stone-100',
   permit: 'bg-green-100',
   cad: 'bg-orange-100',
   photo: 'bg-purple-100',
 }
 
 const approvalStatusConfig: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600' },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700' },
-  under_review: { label: 'Under Review', color: 'bg-yellow-100 text-yellow-700' },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600' },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700' },
+  under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700' },
   revisions_requested: { label: 'Revisions Req.', color: 'bg-orange-100 text-orange-700' },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700' },
@@ -461,26 +461,26 @@ function FolderCard({ folder, isSelected, onClick }: { folder: FolderItem; isSel
       className={cn(
         "flex items-center gap-3 p-3 rounded-lg border transition-all text-left w-full",
         isSelected
-          ? "border-blue-300 bg-blue-50 ring-2 ring-blue-200"
-          : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+          ? "border-stone-300 bg-stone-50 ring-2 ring-stone-200"
+          : "border-warm-200 bg-white hover:border-warm-300 hover:shadow-sm"
       )}
     >
       <div className={cn("p-2 rounded-lg", folder.color)}>
         {isSelected ? <FolderOpen className="h-5 w-5" /> : <Folder className="h-5 w-5" />}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-gray-900 truncate text-sm">{folder.name}</div>
-        <div className="text-xs text-gray-500">{folder.filesCount} files</div>
+        <div className="font-medium text-warm-900 truncate text-sm">{folder.name}</div>
+        <div className="text-xs text-warm-500">{folder.filesCount} files</div>
       </div>
-      <ChevronRight className={cn("h-4 w-4 text-gray-400 transition-transform", isSelected && "rotate-90")} />
+      <ChevronRight className={cn("h-4 w-4 text-warm-400 transition-transform", isSelected && "rotate-90")} />
     </button>
   )
 }
 
 function FileThumbnail({ file }: { file: DocumentFile }) {
   const FileIcon = fileTypeIcons[file.type] || File
-  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
-  const bgColor = file.thumbnail ? thumbnailColors[file.thumbnail] : 'bg-gray-100'
+  const iconColor = fileTypeColors[file.type] || 'text-warm-500'
+  const bgColor = file.thumbnail ? thumbnailColors[file.thumbnail] : 'bg-warm-100'
 
   return (
     <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0", bgColor)}>
@@ -511,10 +511,10 @@ function FileRow({
       className={cn(
         "flex items-center gap-4 p-3 rounded-lg border transition-all cursor-pointer group",
         isSelected
-          ? "bg-blue-50 border-blue-300 ring-2 ring-blue-200"
+          ? "bg-stone-50 border-stone-300 ring-2 ring-stone-200"
           : file.status === 'archived'
-            ? "bg-gray-50 border-gray-200 opacity-60"
-            : "bg-white border-gray-200 hover:shadow-sm hover:border-gray-300"
+            ? "bg-warm-50 border-warm-200 opacity-60"
+            : "bg-white border-warm-200 hover:shadow-sm hover:border-warm-300"
       )}
     >
       {/* Checkbox for bulk selection */}
@@ -523,7 +523,7 @@ function FileRow({
           type="checkbox"
           checked={isChecked}
           onChange={(e) => onCheckChange(e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-warm-300 text-stone-600 focus:ring-stone-500"
         />
       </div>
 
@@ -532,9 +532,9 @@ function FileRow({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-900 truncate">{file.name}</span>
+            <span className="font-medium text-warm-900 truncate">{file.name}</span>
             {file.version > 1 && (
-              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <History className="h-3 w-3" />
                 v{file.version}
               </span>
@@ -552,10 +552,10 @@ function FileRow({
               </span>
             )}
             {file.status === 'archived' && (
-              <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">Archived</span>
+              <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded">Archived</span>
             )}
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+          <div className="flex items-center gap-3 text-xs text-warm-500 mt-0.5">
             <span className="uppercase font-medium">{file.type}</span>
             <span>{file.size}</span>
             {file.aiClassification && (
@@ -566,13 +566,13 @@ function FileRow({
             {file.extractionStatus !== 'completed' && (
               <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded",
-                file.extractionStatus === 'processing' ? "bg-blue-100 text-blue-600 animate-pulse" : "bg-gray-100 text-gray-600"
+                file.extractionStatus === 'processing' ? "bg-stone-100 text-stone-600 animate-pulse" : "bg-warm-100 text-warm-600"
               )}>
                 {file.extractionStatus === 'processing' ? 'AI Processing...' : file.extractionStatus}
               </span>
             )}
             {file.ingestedVia !== 'upload' && (
-              <span className="text-xs text-gray-400 flex items-center gap-0.5">
+              <span className="text-xs text-warm-400 flex items-center gap-0.5">
                 <Mail className="h-3 w-3" />
                 via {file.ingestedVia}
               </span>
@@ -582,7 +582,7 @@ function FileRow({
           {file.linkedEntities.length > 0 && (
             <div className="flex items-center gap-1.5 mt-1 flex-wrap">
               {file.linkedEntities.map((entity, idx) => (
-                <span key={idx} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                <span key={idx} className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   {entity.label}
                 </span>
               ))}
@@ -611,12 +611,12 @@ function FileRow({
           )}
         </div>
 
-        <div className="hidden md:flex items-center gap-1.5 text-sm text-gray-500">
+        <div className="hidden md:flex items-center gap-1.5 text-sm text-warm-500">
           <Calendar className="h-3.5 w-3.5" />
           <span>{formatDate(file.dateModified)}</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-1.5 text-sm text-gray-500 min-w-[120px]">
+        <div className="hidden md:flex items-center gap-1.5 text-sm text-warm-500 min-w-[120px]">
           <User className="h-3.5 w-3.5" />
           <span className="truncate">{file.uploadedBy}</span>
         </div>
@@ -624,23 +624,23 @@ function FileRow({
 
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
-          className="p-1.5 hover:bg-gray-100 rounded"
+          className="p-1.5 hover:bg-warm-100 rounded"
           title="Preview"
           onClick={(e) => {
             e.stopPropagation()
             onPreviewClick()
           }}
         >
-          <Eye className="h-4 w-4 text-gray-400" />
+          <Eye className="h-4 w-4 text-warm-400" />
         </button>
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="Download">
-          <Download className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="Download">
+          <Download className="h-4 w-4 text-warm-400" />
         </button>
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="Share">
-          <Share2 className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="Share">
+          <Share2 className="h-4 w-4 text-warm-400" />
         </button>
-        <button className="p-1.5 hover:bg-gray-100 rounded" title="More">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1.5 hover:bg-warm-100 rounded" title="More">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
     </div>
@@ -649,27 +649,27 @@ function FileRow({
 
 function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () => void }) {
   const FileIcon = fileTypeIcons[file.type] || File
-  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+  const iconColor = fileTypeColors[file.type] || 'text-warm-500'
 
   return (
-    <div className="w-80 border-l border-gray-200 bg-white p-4 space-y-4 max-h-[450px] overflow-y-auto">
+    <div className="w-80 border-l border-warm-200 bg-white p-4 space-y-4 max-h-[450px] overflow-y-auto">
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">File Details</h4>
-        <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-          <X className="h-4 w-4 text-gray-400" />
+        <h4 className="font-semibold text-warm-900">File Details</h4>
+        <button onClick={onClose} className="p-1 hover:bg-warm-100 rounded">
+          <X className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* File Preview */}
-      <div className="bg-gray-100 rounded-lg p-6 flex items-center justify-center">
+      <div className="bg-warm-100 rounded-lg p-6 flex items-center justify-center">
         <FileIcon className={cn("h-16 w-16", iconColor)} />
       </div>
 
       {/* File Name */}
       <div>
-        <div className="text-sm font-medium text-gray-900 break-words">{file.name}</div>
+        <div className="text-sm font-medium text-warm-900 break-words">{file.name}</div>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-xs text-gray-500 uppercase">{file.type} File</span>
+          <span className="text-xs text-warm-500 uppercase">{file.type} File</span>
           {file.aiClassification && (
             <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
               {file.aiClassification.replace(/_/g, ' ')}
@@ -681,43 +681,43 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
       {/* Details Grid */}
       <div className="space-y-3 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-500">Size</span>
-          <span className="text-gray-900 font-medium">{file.size}</span>
+          <span className="text-warm-500">Size</span>
+          <span className="text-warm-900 font-medium">{file.size}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Uploaded by</span>
-          <span className="text-gray-900 font-medium">{file.uploadedBy}</span>
+          <span className="text-warm-500">Uploaded by</span>
+          <span className="text-warm-900 font-medium">{file.uploadedBy}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Date</span>
-          <span className="text-gray-900 font-medium">{formatDate(file.dateModified)}</span>
+          <span className="text-warm-500">Date</span>
+          <span className="text-warm-900 font-medium">{formatDate(file.dateModified)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Version</span>
-          <span className="text-gray-900 font-medium">v{file.version}</span>
+          <span className="text-warm-500">Version</span>
+          <span className="text-warm-900 font-medium">v{file.version}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Category</span>
-          <span className="text-gray-900 font-medium">{file.category}</span>
+          <span className="text-warm-500">Category</span>
+          <span className="text-warm-900 font-medium">{file.category}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Ingested via</span>
-          <span className="text-gray-900 font-medium capitalize">{file.ingestedVia}</span>
+          <span className="text-warm-500">Ingested via</span>
+          <span className="text-warm-900 font-medium capitalize">{file.ingestedVia}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">AI Extraction</span>
+          <span className="text-warm-500">AI Extraction</span>
           <span className={cn(
             "text-xs px-1.5 py-0.5 rounded font-medium",
             file.extractionStatus === 'completed' ? "bg-green-100 text-green-600" :
-            file.extractionStatus === 'processing' ? "bg-blue-100 text-blue-600" :
-            "bg-gray-100 text-gray-600"
+            file.extractionStatus === 'processing' ? "bg-stone-100 text-stone-600" :
+            "bg-warm-100 text-warm-600"
           )}>
             {file.extractionStatus}
           </span>
         </div>
         {file.aiConfidence !== undefined && (
           <div className="flex justify-between">
-            <span className="text-gray-500">AI Confidence</span>
+            <span className="text-warm-500">AI Confidence</span>
             <span className={cn(
               "font-medium",
               file.aiConfidence >= 0.9 ? "text-green-600" : file.aiConfidence >= 0.8 ? "text-amber-600" : "text-red-600"
@@ -728,12 +728,12 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
         )}
         {file.expiresAt && (
           <div className="flex justify-between">
-            <span className="text-gray-500">Expires</span>
+            <span className="text-warm-500">Expires</span>
             <span className={cn(
               "font-medium",
               daysUntil(file.expiresAt) <= 30 ? "text-red-600" :
               daysUntil(file.expiresAt) <= 90 ? "text-amber-600" :
-              "text-gray-900"
+              "text-warm-900"
             )}>
               {formatDate(file.expiresAt)}
             </span>
@@ -744,10 +744,10 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
       {/* Tags */}
       {file.tags.length > 0 && (
         <div>
-          <div className="text-sm text-gray-500 mb-1">Tags</div>
+          <div className="text-sm text-warm-500 mb-1">Tags</div>
           <div className="flex flex-wrap gap-1">
             {file.tags.map((tag, idx) => (
-              <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+              <span key={idx} className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
                 {tag}
               </span>
             ))}
@@ -758,10 +758,10 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
       {/* Linked Entities */}
       {file.linkedEntities.length > 0 && (
         <div>
-          <div className="text-sm text-gray-500 mb-1">Linked Records</div>
+          <div className="text-sm text-warm-500 mb-1">Linked Records</div>
           <div className="flex flex-wrap gap-1">
             {file.linkedEntities.map((entity, idx) => (
-              <span key={idx} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded flex items-center gap-0.5">
+              <span key={idx} className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded flex items-center gap-0.5">
                 <ExternalLink className="h-3 w-3" />
                 {entity.label}
               </span>
@@ -772,10 +772,10 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
 
       {/* Sharing */}
       <div>
-        <div className="text-sm text-gray-500 mb-1">Sharing</div>
+        <div className="text-sm text-warm-500 mb-1">Sharing</div>
         <div className="space-y-1 text-xs">
           <div className="flex items-center gap-1.5">
-            <Eye className={cn("h-3.5 w-3.5", file.portalVisible ? "text-green-500" : "text-gray-400")} />
+            <Eye className={cn("h-3.5 w-3.5", file.portalVisible ? "text-green-500" : "text-warm-400")} />
             <span>{file.portalVisible ? 'Visible in client portal' : 'Hidden from client portal'}</span>
           </div>
           {file.sharedWithVendors.length > 0 && (
@@ -788,21 +788,21 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
       </div>
 
       {/* Actions */}
-      <div className="space-y-2 pt-2 border-t border-gray-200">
-        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+      <div className="space-y-2 pt-2 border-t border-warm-200">
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-warm-700 hover:bg-warm-50 rounded-lg">
           <Eye className="h-4 w-4" />
           Preview
         </button>
-        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-warm-700 hover:bg-warm-50 rounded-lg">
           <Download className="h-4 w-4" />
           Download
         </button>
-        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-warm-700 hover:bg-warm-50 rounded-lg">
           <Share2 className="h-4 w-4" />
           Share
         </button>
         {file.version > 1 && (
-          <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+          <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-warm-700 hover:bg-warm-50 rounded-lg">
             <History className="h-4 w-4" />
             Version History ({file.version} versions)
           </button>
@@ -819,31 +819,31 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
 // Upload Progress Bar Component
 function UploadProgressBar({ file, onCancel }: { file: UploadingFile; onCancel: () => void }) {
   return (
-    <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg">
-      <div className="p-2 bg-blue-100 rounded">
-        <CloudUpload className="h-4 w-4 text-blue-600" />
+    <div className="flex items-center gap-3 p-3 bg-white border border-warm-200 rounded-lg">
+      <div className="p-2 bg-stone-100 rounded">
+        <CloudUpload className="h-4 w-4 text-stone-600" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-sm font-medium text-gray-900 truncate">{file.name}</span>
-          <span className="text-xs text-gray-500">{formatFileSize(file.size)}</span>
+          <span className="text-sm font-medium text-warm-900 truncate">{file.name}</span>
+          <span className="text-xs text-warm-500">{formatFileSize(file.size)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="flex-1 h-2 bg-warm-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-600 rounded-full transition-all duration-300"
+              className="h-full bg-stone-600 rounded-full transition-all duration-300"
               style={{ width: `${file.progress}%` }}
             />
           </div>
-          <span className="text-xs font-medium text-blue-600 w-10 text-right">{file.progress}%</span>
+          <span className="text-xs font-medium text-stone-600 w-10 text-right">{file.progress}%</span>
         </div>
       </div>
       <button
         onClick={onCancel}
-        className="p-1 hover:bg-gray-100 rounded"
+        className="p-1 hover:bg-warm-100 rounded"
         title="Cancel upload"
       >
-        <X className="h-4 w-4 text-gray-400" />
+        <X className="h-4 w-4 text-warm-400" />
       </button>
     </div>
   )
@@ -866,17 +866,17 @@ function StorageQuotaBar() {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-3">
+    <div className="bg-white border border-warm-200 rounded-lg p-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <HardDrive className={cn("h-4 w-4", getTextColor())} />
-          <span className="text-sm font-medium text-gray-700">Storage</span>
+          <span className="text-sm font-medium text-warm-700">Storage</span>
         </div>
         <span className={cn("text-sm font-medium", getTextColor())}>
           {STORAGE_USED_GB} GB of {STORAGE_TOTAL_GB} GB used
         </span>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-2 bg-warm-200 rounded-full overflow-hidden">
         <div
           className={cn("h-full rounded-full transition-all", getProgressColor())}
           style={{ width: `${usagePercent}%` }}
@@ -889,43 +889,43 @@ function StorageQuotaBar() {
 // Document Preview Modal
 function DocumentPreviewModal({ file, onClose }: { file: DocumentFile; onClose: () => void }) {
   const FileIcon = fileTypeIcons[file.type] || File
-  const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+  const iconColor = fileTypeColors[file.type] || 'text-warm-500'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-warm-200">
           <div className="flex items-center gap-3">
             <FileIcon className={cn("h-5 w-5", iconColor)} />
-            <span className="font-medium text-gray-900">{file.name}</span>
+            <span className="font-medium text-warm-900">{file.name}</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded"
+            className="p-1 hover:bg-warm-100 rounded"
           >
-            <X className="h-5 w-5 text-gray-500" />
+            <X className="h-5 w-5 text-warm-500" />
           </button>
         </div>
 
         {/* Preview Content */}
-        <div className="flex flex-col items-center justify-center py-16 px-8 bg-gray-50">
-          <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-200 mb-4">
+        <div className="flex flex-col items-center justify-center py-16 px-8 bg-warm-50">
+          <div className="p-6 bg-white rounded-2xl shadow-sm border border-warm-200 mb-4">
             <FileText className="h-20 w-20 text-red-400" />
           </div>
-          <p className="text-lg font-medium text-gray-700 mb-1">Preview coming soon</p>
-          <p className="text-sm text-gray-500">Document preview functionality is in development</p>
+          <p className="text-lg font-medium text-warm-700 mb-1">Preview coming soon</p>
+          <p className="text-sm text-warm-500">Document preview functionality is in development</p>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-4 py-3 border-t border-gray-200">
+        <div className="flex items-center justify-end gap-3 px-4 py-3 border-t border-warm-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+            className="px-4 py-2 text-sm text-warm-700 hover:bg-warm-100 rounded-lg"
           >
             Close
           </button>
-          <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2">
+          <button className="px-4 py-2 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700 flex items-center gap-2">
             <Download className="h-4 w-4" />
             Download
           </button>
@@ -940,11 +940,11 @@ function UploadDropzone({ fileCount, totalSize }: { fileCount: number; totalSize
   const isSizeValid = totalSize <= MAX_FILE_SIZE_MB * 1024 * 1024
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-colors cursor-pointer">
-      <CloudUpload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-      <div className="text-sm font-medium text-gray-900">Drop files here or click to upload</div>
-      <div className="text-xs text-gray-500 mt-1">PDF, DOC, XLS, DWG, JPG, PNG up to 500MB</div>
-      <div className="text-xs text-gray-400 mt-1">Files auto-classified by AI and filed to the correct folder</div>
+    <div className="border-2 border-dashed border-warm-300 rounded-lg p-6 text-center hover:border-stone-400 hover:bg-stone-50/50 transition-colors cursor-pointer">
+      <CloudUpload className="h-10 w-10 text-warm-400 mx-auto mb-3" />
+      <div className="text-sm font-medium text-warm-900">Drop files here or click to upload</div>
+      <div className="text-xs text-warm-500 mt-1">PDF, DOC, XLS, DWG, JPG, PNG up to 500MB</div>
+      <div className="text-xs text-warm-400 mt-1">Files auto-classified by AI and filed to the correct folder</div>
 
       {/* Validation indicators */}
       <div className="flex items-center justify-center gap-4 mt-3">
@@ -964,7 +964,7 @@ function UploadDropzone({ fileCount, totalSize }: { fileCount: number; totalSize
         </div>
       </div>
 
-      <button className="mt-3 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+      <button className="mt-3 px-4 py-2 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
         Browse Files
       </button>
     </div>
@@ -973,31 +973,31 @@ function UploadDropzone({ fileCount, totalSize }: { fileCount: number; totalSize
 
 function RecentFilesSection({ files, onSelectFile }: { files: DocumentFile[]; onSelectFile: (file: DocumentFile) => void }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className="bg-white border border-warm-200 rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-          <Clock className="h-4 w-4 text-gray-500" />
+        <h4 className="font-semibold text-warm-900 flex items-center gap-2">
+          <Clock className="h-4 w-4 text-warm-500" />
           Recent Files
         </h4>
-        <button className="text-sm text-blue-600 hover:text-blue-700">View All</button>
+        <button className="text-sm text-stone-600 hover:text-stone-700">View All</button>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {files.map(file => {
           const FileIcon = fileTypeIcons[file.type] || File
-          const iconColor = fileTypeColors[file.type] || 'text-gray-500'
+          const iconColor = fileTypeColors[file.type] || 'text-warm-500'
           return (
             <button
               key={file.id}
               onClick={() => onSelectFile(file)}
-              className="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-left"
+              className="flex items-center gap-2 p-2 rounded-lg border border-warm-200 hover:border-warm-300 hover:bg-warm-50 text-left"
             >
               <FileIcon className={cn("h-5 w-5 flex-shrink-0", iconColor)} />
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-medium text-gray-900 truncate">{file.name}</div>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="text-sm font-medium text-warm-900 truncate">{file.name}</div>
+                <div className="flex items-center gap-2 text-xs text-warm-500">
                   <span>{formatDate(file.dateModified)}</span>
                   {file.ingestedVia !== 'upload' && (
-                    <span className="text-gray-400">via {file.ingestedVia}</span>
+                    <span className="text-warm-400">via {file.ingestedVia}</span>
                   )}
                 </div>
               </div>
@@ -1016,7 +1016,7 @@ function AIFeaturesSection() {
       name: 'OCR & Text Extraction',
       description: 'Extract text from PDFs, images, and scans for full-text search',
       status: 'Active',
-      color: 'text-blue-600 bg-blue-100',
+      color: 'text-stone-600 bg-stone-100',
     },
     {
       icon: Wand2,
@@ -1063,14 +1063,14 @@ function AIFeaturesSection() {
       </div>
       <div className="grid grid-cols-3 gap-2">
         {aiFeatures.map(feature => (
-          <div key={feature.name} className="bg-white rounded-lg p-3 border border-gray-200">
+          <div key={feature.name} className="bg-white rounded-lg p-3 border border-warm-200">
             <div className="flex items-center gap-2 mb-1">
               <div className={cn("p-1.5 rounded", feature.color)}>
                 <feature.icon className="h-3.5 w-3.5" />
               </div>
-              <span className="text-sm font-medium text-gray-900">{feature.name}</span>
+              <span className="text-sm font-medium text-warm-900">{feature.name}</span>
             </div>
-            <p className="text-xs text-gray-500">{feature.description}</p>
+            <p className="text-xs text-warm-500">{feature.description}</p>
           </div>
         ))}
       </div>
@@ -1201,12 +1201,12 @@ export function JobFilesPreview() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Job Files</h3>
-          <span className="text-sm text-gray-500">{totalFiles} files | {totalSizeFormatted} total</span>
+          <h3 className="font-semibold text-warm-900">Job Files</h3>
+          <span className="text-sm text-warm-500">{totalFiles} files | {totalSizeFormatted} total</span>
           {expiringCount > 0 && (
             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" />
@@ -1214,7 +1214,7 @@ export function JobFilesPreview() {
             </span>
           )}
           {pendingApprovalCount > 0 && (
-            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">
+            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
               {pendingApprovalCount} pending review
             </span>
           )}
@@ -1283,13 +1283,13 @@ export function JobFilesPreview() {
 
       {/* Upload Dropzone */}
       {showUploadZone && (
-        <div className="bg-white border-b border-gray-200 px-4 py-4 space-y-3">
+        <div className="bg-white border-b border-warm-200 px-4 py-4 space-y-3">
           <UploadDropzone fileCount={0} totalSize={0} />
 
           {/* Upload progress indicators */}
           {uploadingFiles.length > 0 && (
             <div className="space-y-2">
-              <div className="text-sm font-medium text-gray-700">Uploading {uploadingFiles.length} file{uploadingFiles.length > 1 ? 's' : ''}...</div>
+              <div className="text-sm font-medium text-warm-700">Uploading {uploadingFiles.length} file{uploadingFiles.length > 1 ? 's' : ''}...</div>
               {uploadingFiles.map(file => (
                 <UploadProgressBar
                   key={file.id}
@@ -1303,28 +1303,28 @@ export function JobFilesPreview() {
       )}
 
       {/* Storage Quota */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <StorageQuotaBar />
       </div>
 
       {/* Bulk Selection Bar */}
       {selectedFileIds.size > 0 && (
-        <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <div className="bg-white border-b border-warm-200 px-4 py-2">
           <BulkSelectBar
             selectedCount={selectedFileIds.size}
             totalCount={filteredFiles.length}
             onSelectAll={handleSelectAll}
             onClearSelection={handleClearSelection}
           >
-            <button className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1.5">
+            <button className="px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700 flex items-center gap-1.5">
               <Archive className="h-4 w-4" />
               Download ZIP
             </button>
-            <button className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-1.5">
+            <button className="px-3 py-1.5 text-sm bg-warm-100 text-warm-700 rounded-lg hover:bg-warm-200 flex items-center gap-1.5">
               <Tag className="h-4 w-4" />
               Bulk Tag
             </button>
-            <button className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-1.5">
+            <button className="px-3 py-1.5 text-sm bg-warm-100 text-warm-700 rounded-lg hover:bg-warm-200 flex items-center gap-1.5">
               <Share2 className="h-4 w-4" />
               Bulk Share
             </button>
@@ -1337,21 +1337,21 @@ export function JobFilesPreview() {
       )}
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <File className="h-4 w-4" />
               Total Files
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalFiles}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalFiles}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <HardDrive className="h-4 w-4" />
               Storage Used
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{totalSizeFormatted}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{totalSizeFormatted}</div>
           </div>
           <div className={cn("rounded-lg p-3", expiringCount > 0 ? "bg-amber-50" : "bg-green-50")}>
             <div className={cn("flex items-center gap-2 text-sm", expiringCount > 0 ? "text-amber-600" : "text-green-600")}>
@@ -1380,22 +1380,22 @@ export function JobFilesPreview() {
       {/* Main Content */}
       <div className="flex">
         {/* Folder Sidebar */}
-        <div className="w-64 border-r border-gray-200 bg-white p-3 space-y-2 max-h-[450px] overflow-y-auto">
+        <div className="w-64 border-r border-warm-200 bg-white p-3 space-y-2 max-h-[450px] overflow-y-auto">
           <button
             onClick={() => setSelectedFolder(null)}
             className={cn(
               "flex items-center gap-3 p-3 rounded-lg border transition-all text-left w-full",
               selectedFolder === null
-                ? "border-blue-300 bg-blue-50 ring-2 ring-blue-200"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+                ? "border-stone-300 bg-stone-50 ring-2 ring-stone-200"
+                : "border-warm-200 bg-white hover:border-warm-300 hover:shadow-sm"
             )}
           >
-            <div className="p-2 rounded-lg bg-gray-100 text-gray-600">
+            <div className="p-2 rounded-lg bg-warm-100 text-warm-600">
               <Folder className="h-5 w-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium text-gray-900">All Files</div>
-              <div className="text-xs text-gray-500">{mockFiles.length} files</div>
+              <div className="font-medium text-warm-900">All Files</div>
+              <div className="text-xs text-warm-500">{mockFiles.length} files</div>
             </div>
           </button>
           {mockFolders.map(folder => (
@@ -1424,7 +1424,7 @@ export function JobFilesPreview() {
                 />
               ))
             ) : (
-              <div className="text-center py-12 text-gray-400">
+              <div className="text-center py-12 text-warm-400">
                 <File className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p className="text-sm">No files match your search</p>
               </div>
@@ -1442,12 +1442,12 @@ export function JobFilesPreview() {
       </div>
 
       {/* Document AI Insights Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <DocumentAIInsightsPanel />
       </div>
 
       {/* Recent Files & AI Features Section */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <div className="grid grid-cols-2 gap-4">
           <RecentFilesSection files={recentFiles} onSelectFile={setSelectedFile} />
           <AIFeaturesSection />

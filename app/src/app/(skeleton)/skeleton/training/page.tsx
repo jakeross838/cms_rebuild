@@ -66,7 +66,7 @@ export default function TrainingCertificationPage() {
       {/* Progress Overview */}
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground"><BookOpen className="h-4 w-4 text-blue-600" />Courses Completed</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground"><BookOpen className="h-4 w-4 text-stone-600" />Courses Completed</div>
           <div className="text-2xl font-bold mt-1">{completedCourses} / {totalCourses}</div>
           <div className="text-xs text-muted-foreground mt-1">{Math.round((completedCourses / totalCourses) * 100)}% complete</div>
         </div>
@@ -114,7 +114,7 @@ export default function TrainingCertificationPage() {
                 <div className="flex-1">
                   <div className="font-medium flex items-center gap-2">
                     {course.title}
-                    <span className={cn('text-xs px-1.5 py-0.5 rounded', course.level === 'Beginner' ? 'bg-green-100 text-green-700' : course.level === 'Intermediate' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700')}>{course.level}</span>
+                    <span className={cn('text-xs px-1.5 py-0.5 rounded', course.level === 'Beginner' ? 'bg-green-100 text-green-700' : course.level === 'Intermediate' ? 'bg-stone-100 text-stone-700' : 'bg-purple-100 text-purple-700')}>{course.level}</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">{course.modules} modules -- {course.duration}</div>
                   {course.progress > 0 && course.progress < 100 && (
@@ -182,7 +182,7 @@ export default function TrainingCertificationPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-amber-50 to-amber-50 border border-amber-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-amber-600 mt-0.5" />
           <div>

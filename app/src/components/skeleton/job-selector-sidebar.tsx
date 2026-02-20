@@ -39,10 +39,10 @@ const mockJobs: Job[] = [
 // ── Status indicator colors ───────────────────────────────────
 
 const statusColors: Record<Job['status'], string> = {
-  'pre-con': 'bg-yellow-500',
+  'pre-con': 'bg-amber-500',
   'active': 'bg-green-500',
   'closeout': 'bg-orange-500',
-  'complete': 'bg-blue-500',
+  'complete': 'bg-stone-500',
   'warranty': 'bg-red-500',
 }
 

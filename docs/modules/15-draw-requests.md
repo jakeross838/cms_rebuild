@@ -430,7 +430,7 @@ POST   /api/v2/projects/:id/lender-contacts # Add lender contact
 ## Dependencies
 
 - **Module 9:** Budget & Cost Tracking (schedule of values source data, cost tracking)
-- **Module 11:** Basic Invoicing (approved invoices for draw assembly, retainage data)
+- **Module 11:** Native Accounting (GL/AP/AR) (approved invoices for draw assembly, retainage data)
 - **Module 14:** Lien Waivers (waiver package for supporting documents)
 - **Module 6:** Document Storage (generated PDFs, supporting document storage)
 - **Module 13:** Scheduling (percent complete data for auto-generation)

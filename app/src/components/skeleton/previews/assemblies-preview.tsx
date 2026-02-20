@@ -359,8 +359,8 @@ const mockAssemblies: Assembly[] = [
 const categories = ['All', 'Kitchen', 'Bathroom', 'Exterior', 'MEP', 'Interior', 'Structural']
 
 const tierConfig = {
-  Builder: { color: 'bg-gray-100 text-gray-700', label: 'Builder' },
-  Standard: { color: 'bg-blue-100 text-blue-700', label: 'Standard' },
+  Builder: { color: 'bg-warm-100 text-warm-700', label: 'Builder' },
+  Standard: { color: 'bg-stone-100 text-stone-700', label: 'Standard' },
   Premium: { color: 'bg-purple-100 text-purple-700', label: 'Premium' },
   Luxury: { color: 'bg-amber-100 text-amber-700', label: 'Luxury' },
 }
@@ -386,9 +386,9 @@ function Modal({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[80vh] overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h3 className="font-semibold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-4 w-4 text-gray-500" />
+          <h3 className="font-semibold text-warm-900">{title}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-warm-100 rounded">
+            <X className="h-4 w-4 text-warm-500" />
           </button>
         </div>
         <div className="p-4 overflow-y-auto max-h-[60vh]">
@@ -406,25 +406,25 @@ function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Import Assemblies">
       <div className="space-y-4">
-        <p className="text-sm text-gray-600">Import assemblies from CSV or Excel files.</p>
+        <p className="text-sm text-warm-600">Import assemblies from CSV or Excel files.</p>
         <div
           className={cn(
             "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
-            isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
+            isDragging ? "border-stone-500 bg-stone-50" : "border-warm-300"
           )}
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={(e) => { e.preventDefault(); setIsDragging(false) }}
         >
-          <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700">Drop files here or click to browse</p>
-          <p className="text-xs text-gray-500 mt-1">Supports CSV and Excel (.xlsx) files</p>
+          <Upload className="h-10 w-10 text-warm-400 mx-auto mb-3" />
+          <p className="text-sm font-medium text-warm-700">Drop files here or click to browse</p>
+          <p className="text-xs text-warm-500 mt-1">Supports CSV and Excel (.xlsx) files</p>
           <input type="file" className="hidden" accept=".csv,.xlsx,.xls" />
-          <button className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+          <button className="mt-4 px-4 py-2 bg-stone-600 text-white text-sm rounded hover:bg-stone-700">
             Select File
           </button>
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-warm-500">
           <p className="font-medium mb-1">Required columns:</p>
           <p>Name, Category, Default Tier, Total Cost, Parameter Unit, Cost Per Unit</p>
         </div>
@@ -438,19 +438,19 @@ function ExportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Export Assemblies">
       <div className="space-y-3">
-        <p className="text-sm text-gray-600">Choose export format:</p>
-        <button className="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 text-left">
+        <p className="text-sm text-warm-600">Choose export format:</p>
+        <button className="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-warm-50 text-left">
           <FileText className="h-5 w-5 text-green-600" />
           <div>
-            <div className="font-medium text-gray-900">Export as CSV</div>
-            <div className="text-xs text-gray-500">Compatible with Excel, Google Sheets</div>
+            <div className="font-medium text-warm-900">Export as CSV</div>
+            <div className="text-xs text-warm-500">Compatible with Excel, Google Sheets</div>
           </div>
         </button>
-        <button className="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 text-left">
-          <FileText className="h-5 w-5 text-blue-600" />
+        <button className="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-warm-50 text-left">
+          <FileText className="h-5 w-5 text-stone-600" />
           <div>
-            <div className="font-medium text-gray-900">Export as Excel</div>
-            <div className="text-xs text-gray-500">Native .xlsx format with formatting</div>
+            <div className="font-medium text-warm-900">Export as Excel</div>
+            <div className="text-xs text-warm-500">Native .xlsx format with formatting</div>
           </div>
         </button>
       </div>
@@ -465,20 +465,20 @@ function UsageLocationsModal({ isOpen, onClose, assembly }: { isOpen: boolean; o
       <div className="space-y-3">
         {assembly.usageLocations && assembly.usageLocations.length > 0 ? (
           assembly.usageLocations.map((location, idx) => (
-            <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <div key={idx} className="flex items-center gap-3 p-3 bg-warm-50 rounded-lg">
+              <MapPin className="h-4 w-4 text-warm-400 flex-shrink-0" />
               <div className="flex-1">
-                <div className="font-medium text-gray-900">{location.jobName}</div>
-                <div className="text-sm text-gray-500">{location.phase}</div>
+                <div className="font-medium text-warm-900">{location.jobName}</div>
+                <div className="text-sm text-warm-500">{location.phase}</div>
               </div>
-              <div className="text-xs text-gray-400">Added {location.dateAdded}</div>
+              <div className="text-xs text-warm-400">Added {location.dateAdded}</div>
             </div>
           ))
         ) : (
-          <p className="text-sm text-gray-500 text-center py-4">No usage locations recorded</p>
+          <p className="text-sm text-warm-500 text-center py-4">No usage locations recorded</p>
         )}
         {assembly.usageCount > (assembly.usageLocations?.length || 0) && (
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-warm-500 text-center">
             ... and {assembly.usageCount - (assembly.usageLocations?.length || 0)} more locations
           </p>
         )}
@@ -507,7 +507,7 @@ function TierComparisonModal({ isOpen, onClose, assembly }: { isOpen: boolean; o
               key={tier}
               className={cn(
                 "flex items-center justify-between p-3 rounded-lg border",
-                isDefault ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"
+                isDefault ? "bg-stone-50 border-stone-200" : "bg-white border-warm-200"
               )}
             >
               <div className="flex items-center gap-3">
@@ -515,11 +515,11 @@ function TierComparisonModal({ isOpen, onClose, assembly }: { isOpen: boolean; o
                   {tierCfg.label}
                 </span>
                 {isDefault && (
-                  <span className="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded">Current</span>
+                  <span className="text-xs bg-stone-600 text-white px-1.5 py-0.5 rounded">Current</span>
                 )}
               </div>
               <div className="text-right">
-                <div className="font-medium text-gray-900">{formatCurrencyFull(price)}</div>
+                <div className="font-medium text-warm-900">{formatCurrencyFull(price)}</div>
                 {!isDefault && (
                   <div className={cn("text-xs", diff > 0 ? "text-red-600" : "text-green-600")}>
                     {diff > 0 ? '+' : ''}{formatCurrency(diff)}
@@ -560,12 +560,12 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
       <div className={cn(
         "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow",
         !assembly.isActive && "opacity-60 border-dashed",
-        assembly.isActive && "border-gray-200",
+        assembly.isActive && "border-warm-200",
       )}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-medium text-gray-500 uppercase bg-gray-100 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-warm-500 uppercase bg-warm-100 px-1.5 py-0.5 rounded">
                 {assembly.category}
               </span>
               {assembly.isFavorite && (
@@ -593,7 +593,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                 </span>
               )}
             </div>
-            <h4 className="font-medium text-gray-900">{assembly.name}</h4>
+            <h4 className="font-medium text-warm-900">{assembly.name}</h4>
           </div>
           {/* Quick Tier Swap Dropdown */}
           <div className="relative">
@@ -619,13 +619,13 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                       key={tier}
                       onClick={() => handleTierChange(tier)}
                       className={cn(
-                        "w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-50",
-                        selectedTier === tier && "bg-gray-50"
+                        "w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-warm-50",
+                        selectedTier === tier && "bg-warm-50"
                       )}
                     >
                       <div className="flex items-center gap-2">
                         <span className={cn("px-1.5 py-0.5 rounded font-medium", cfg.color)}>{cfg.label}</span>
-                        {tier === assembly.defaultTier && <span className="text-gray-400">(default)</span>}
+                        {tier === assembly.defaultTier && <span className="text-warm-400">(default)</span>}
                       </div>
                       {diff !== 0 && (
                         <span className={cn(diff > 0 ? "text-red-600" : "text-green-600")}>
@@ -651,33 +651,33 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
           </div>
         )}
 
-        <p className="text-sm text-gray-500 mb-3 line-clamp-2">{assembly.description}</p>
+        <p className="text-sm text-warm-500 mb-3 line-clamp-2">{assembly.description}</p>
 
         <div className="flex items-center gap-4 mb-3 text-sm">
           <div className="flex items-center gap-1.5">
-            <Layers className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-600">{assembly.lineItems} items</span>
+            <Layers className="h-4 w-4 text-warm-400" />
+            <span className="text-warm-600">{assembly.lineItems} items</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <DollarSign className="h-4 w-4 text-gray-400" />
-            <span className="font-medium text-gray-900">{formatCurrency(currentPrice)}</span>
+            <DollarSign className="h-4 w-4 text-warm-400" />
+            <span className="font-medium text-warm-900">{formatCurrency(currentPrice)}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Ruler className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-600">{formatCurrency(assembly.costPerUnit)}/{assembly.parameterUnit}</span>
+            <Ruler className="h-4 w-4 text-warm-400" />
+            <span className="text-warm-600">{formatCurrency(assembly.costPerUnit)}/{assembly.parameterUnit}</span>
           </div>
         </div>
 
         {/* Cost History */}
         {assembly.costHistory && (
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+          <div className="flex items-center gap-2 text-xs text-warm-500 mb-3">
             <BarChart3 className="h-3 w-3" />
             <span>
               60 days: <span className={assembly.costHistory.sixtyDays >= 0 ? "text-red-600" : "text-green-600"}>
                 {assembly.costHistory.sixtyDays >= 0 ? '+' : ''}{assembly.costHistory.sixtyDays}%
               </span>
             </span>
-            <span className="text-gray-300">|</span>
+            <span className="text-warm-300">|</span>
             <span>
               6 months: <span className={assembly.costHistory.sixMonths >= 0 ? "text-red-600" : "text-green-600"}>
                 {assembly.costHistory.sixMonths >= 0 ? '+' : ''}{assembly.costHistory.sixMonths}%
@@ -687,7 +687,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
         )}
 
         {assembly.wasteFactorApplied && (
-          <div className="flex items-center gap-1 text-xs text-gray-400 mb-3">
+          <div className="flex items-center gap-1 text-xs text-warm-400 mb-3">
             <RefreshCw className="h-3 w-3" />
             <span>Waste factors applied</span>
           </div>
@@ -698,16 +698,16 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
           <div className="mb-3">
             <button
               onClick={() => setShowCostDetails(!showCostDetails)}
-              className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1"
             >
               {showCostDetails ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               View Details
             </button>
             {showCostDetails && (
-              <div className="mt-2 p-2 bg-gray-50 rounded text-xs space-y-1">
+              <div className="mt-2 p-2 bg-warm-50 rounded text-xs space-y-1">
                 {assembly.costChangeDetails.map((detail, idx) => (
                   <div key={idx} className="flex justify-between">
-                    <span className="text-gray-600">{detail.item}</span>
+                    <span className="text-warm-600">{detail.item}</span>
                     <span className={detail.change >= 0 ? "text-red-600" : "text-green-600"}>
                       {detail.change >= 0 ? '+' : ''}{formatCurrency(Math.abs(detail.change))} ({detail.percentage >= 0 ? '+' : ''}{detail.percentage}%)
                     </span>
@@ -718,16 +718,16 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-3 border-t border-warm-100">
           <div className="flex items-center gap-3">
             <span className={cn("text-xs px-2 py-1 rounded font-medium", tierCfg.color)}>
               {tierCfg.label}
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-warm-500">
               Used {assembly.usageCount}x
             </span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-gray-400">
+          <div className="flex items-center gap-1 text-xs text-warm-400">
             <Clock className="h-3.5 w-3.5" />
             {assembly.lastUsed}
           </div>
@@ -742,20 +742,20 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
 
         {/* Expandable Line Items Section */}
         {assembly.sampleItems && assembly.sampleItems.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 pt-3 border-t border-warm-100">
             <button
               onClick={() => setShowLineItems(!showLineItems)}
-              className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700"
+              className="flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-700"
             >
               {showLineItems ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
               <Layers className="h-3.5 w-3.5" />
               View Line Items ({assembly.sampleItems.length})
             </button>
             {showLineItems && (
-              <div className="mt-2 bg-gray-50 rounded-lg p-2">
+              <div className="mt-2 bg-warm-50 rounded-lg p-2">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="text-gray-500 border-b border-gray-200">
+                    <tr className="text-warm-500 border-b border-warm-200">
                       <th className="text-left py-1 px-1">Name</th>
                       <th className="text-right py-1 px-1">Qty</th>
                       <th className="text-right py-1 px-1">Unit Cost</th>
@@ -764,11 +764,11 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                   </thead>
                   <tbody>
                     {displayedItems.map((item, idx) => (
-                      <tr key={idx} className="border-b border-gray-100 last:border-0">
-                        <td className="py-1.5 px-1 text-gray-700">{item.description}</td>
-                        <td className="py-1.5 px-1 text-right text-gray-600">{item.qtyPerUnit} {item.unit}</td>
-                        <td className="py-1.5 px-1 text-right text-gray-600">{formatCurrency(item.unitCost)}</td>
-                        <td className="py-1.5 px-1 text-right font-medium text-gray-900">
+                      <tr key={idx} className="border-b border-warm-100 last:border-0">
+                        <td className="py-1.5 px-1 text-warm-700">{item.description}</td>
+                        <td className="py-1.5 px-1 text-right text-warm-600">{item.qtyPerUnit} {item.unit}</td>
+                        <td className="py-1.5 px-1 text-right text-warm-600">{formatCurrency(item.unitCost)}</td>
+                        <td className="py-1.5 px-1 text-right font-medium text-warm-900">
                           {formatCurrency(item.qtyPerUnit * item.unitCost)}
                         </td>
                       </tr>
@@ -776,7 +776,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                   </tbody>
                 </table>
                 {remainingItems > 0 && (
-                  <p className="text-xs text-gray-500 mt-2 text-center">... and {remainingItems} more items</p>
+                  <p className="text-xs text-warm-500 mt-2 text-center">... and {remainingItems} more items</p>
                 )}
               </div>
             )}
@@ -784,32 +784,32 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
           <button
             onClick={() => setShowTierComparison(true)}
-            className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
+            className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"
           >
             <ArrowUpDown className="h-3.5 w-3.5" />
             Compare Tiers
           </button>
           <button
             onClick={() => setShowUsageModal(true)}
-            className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
+            className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"
           >
             <MapPin className="h-3.5 w-3.5" />
             Where Used
           </button>
         </div>
         <div className="flex items-center gap-2 mt-2">
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
             <Copy className="h-3.5 w-3.5" />
             Clone
           </button>
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
             <Edit2 className="h-3.5 w-3.5" />
             Edit
           </button>
-          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700">
             <Package className="h-3.5 w-3.5" />
             Use in Estimate
           </button>
@@ -834,7 +834,7 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
 
   return (
     <tr className={cn(
-      "hover:bg-gray-50",
+      "hover:bg-warm-50",
       !assembly.isActive && "opacity-60",
     )}>
       <td className="py-3 px-4">
@@ -844,7 +844,7 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
           )}
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-900">{assembly.name}</span>
+              <span className="font-medium text-warm-900">{assembly.name}</span>
               {!assembly.isActive && (
                 <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded">Inactive</span>
               )}
@@ -852,16 +852,16 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
                 <span title="Contains nested assemblies"><Layers className="h-3.5 w-3.5 text-indigo-500" /></span>
               )}
             </div>
-            <div className="text-xs text-gray-500">{assembly.description}</div>
+            <div className="text-xs text-warm-500">{assembly.description}</div>
           </div>
         </div>
       </td>
       <td className="py-3 px-4">
-        <span className="text-xs font-medium text-gray-500 uppercase bg-gray-100 px-1.5 py-0.5 rounded">
+        <span className="text-xs font-medium text-warm-500 uppercase bg-warm-100 px-1.5 py-0.5 rounded">
           {assembly.category}
         </span>
       </td>
-      <td className="py-3 px-4 text-center text-sm text-gray-600">{assembly.lineItems}</td>
+      <td className="py-3 px-4 text-center text-sm text-warm-600">{assembly.lineItems}</td>
       <td className="py-3 px-4">
         <div className="relative">
           <button
@@ -880,12 +880,12 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
                     key={tier}
                     onClick={() => { setSelectedTier(tier); setShowTierDropdown(false) }}
                     className={cn(
-                      "w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50",
-                      selectedTier === tier && "bg-gray-50"
+                      "w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-warm-50",
+                      selectedTier === tier && "bg-warm-50"
                     )}
                   >
                     <span className={cn("px-1.5 py-0.5 rounded font-medium", cfg.color)}>{cfg.label}</span>
-                    {selectedTier === tier && <Check className="h-3 w-3 text-blue-600" />}
+                    {selectedTier === tier && <Check className="h-3 w-3 text-stone-600" />}
                   </button>
                 )
               })}
@@ -895,7 +895,7 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
       </td>
       <td className="py-3 px-4 text-right">
         <div className="flex items-center justify-end gap-1">
-          <span className="font-medium text-gray-900">{formatCurrency(currentPrice)}</span>
+          <span className="font-medium text-warm-900">{formatCurrency(currentPrice)}</span>
           {tierDiff !== 0 && (
             <span className={cn("text-xs", tierDiff > 0 ? "text-red-600" : "text-green-600")}>
               ({tierDiff > 0 ? '+' : ''}{formatCurrency(tierDiff)})
@@ -908,13 +908,13 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
             <span className="text-xs text-green-600">{assembly.costChange}%</span>
           )}
         </div>
-        <div className="text-xs text-gray-400">{formatCurrency(assembly.costPerUnit)}/{assembly.parameterUnit}</div>
+        <div className="text-xs text-warm-400">{formatCurrency(assembly.costPerUnit)}/{assembly.parameterUnit}</div>
       </td>
-      <td className="py-3 px-4 text-center text-sm text-gray-600">{assembly.usageCount}</td>
-      <td className="py-3 px-4 text-right text-sm text-gray-500">{assembly.lastUsed}</td>
+      <td className="py-3 px-4 text-center text-sm text-warm-600">{assembly.usageCount}</td>
+      <td className="py-3 px-4 text-right text-sm text-warm-500">{assembly.lastUsed}</td>
       <td className="py-3 px-4">
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <ChevronRight className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <ChevronRight className="h-4 w-4 text-warm-400" />
         </button>
       </td>
     </tr>
@@ -980,22 +980,22 @@ export function AssembliesPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="mb-3">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Assemblies & Templates</h3>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+            <h3 className="font-semibold text-warm-900">Assemblies & Templates</h3>
+            <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
               {totalAssemblies} active
             </span>
             {inactiveCount > 0 && (
-              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
+              <span className="text-xs bg-warm-100 text-warm-500 px-2 py-0.5 rounded">
                 {inactiveCount} inactive
               </span>
             )}
           </div>
-          <div className="text-sm text-gray-500 mt-0.5">
+          <div className="text-sm text-warm-500 mt-0.5">
             Reusable building blocks for estimates -- parameterized recipes that auto-calculate child items
           </div>
         </div>
@@ -1038,35 +1038,35 @@ export function AssembliesPreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-7 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <Package className="h-4 w-4" />
               Active
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalAssemblies}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalAssemblies}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <DollarSign className="h-4 w-4" />
               Total Value
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalValue)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalValue)}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <BarChart3 className="h-4 w-4" />
               Total Usage
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalUsage}x</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalUsage}x</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <Star className="h-4 w-4" />
               Favorites
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{favorites}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{favorites}</div>
           </div>
           <div className="bg-indigo-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-indigo-600 text-sm">
@@ -1077,36 +1077,36 @@ export function AssembliesPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            withCostIncreases > 0 ? "bg-red-50" : "bg-gray-50"
+            withCostIncreases > 0 ? "bg-red-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-sm",
-              withCostIncreases > 0 ? "text-red-600" : "text-gray-500"
+              withCostIncreases > 0 ? "text-red-600" : "text-warm-500"
             )}>
               <TrendingUp className="h-4 w-4" />
               Cost Increases
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              withCostIncreases > 0 ? "text-red-700" : "text-gray-900"
+              withCostIncreases > 0 ? "text-red-700" : "text-warm-900"
             )}>
               {withCostIncreases}
             </div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            withCostDecreases > 0 ? "bg-green-50" : "bg-gray-50"
+            withCostDecreases > 0 ? "bg-green-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-sm",
-              withCostDecreases > 0 ? "text-green-600" : "text-gray-500"
+              withCostDecreases > 0 ? "text-green-600" : "text-warm-500"
             )}>
               <TrendingDown className="h-4 w-4" />
               Cost Decreases
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              withCostDecreases > 0 ? "text-green-700" : "text-gray-900"
+              withCostDecreases > 0 ? "text-green-700" : "text-warm-900"
             )}>
               {withCostDecreases}
             </div>
@@ -1115,7 +1115,7 @@ export function AssembliesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Assembly Insights"
           features={aiFeatures}
@@ -1130,7 +1130,7 @@ export function AssembliesPreview() {
             <AssemblyCard key={assembly.id} assembly={assembly} />
           ))}
           {filteredAssemblies.length === 0 && (
-            <div className="col-span-3 text-center py-12 text-gray-500">
+            <div className="col-span-3 text-center py-12 text-warm-500">
               No assemblies match the current filters
             </div>
           )}
@@ -1138,19 +1138,19 @@ export function AssembliesPreview() {
       ) : (
         <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100 border-b border-gray-200 sticky top-0">
+            <thead className="bg-warm-100 border-b border-warm-200 sticky top-0">
               <tr>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Assembly</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Category</th>
-                <th className="text-center py-3 px-4 font-medium text-gray-600">Items</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Default Tier</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Total Cost</th>
-                <th className="text-center py-3 px-4 font-medium text-gray-600">Usage</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Last Used</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Assembly</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Category</th>
+                <th className="text-center py-3 px-4 font-medium text-warm-600">Items</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Default Tier</th>
+                <th className="text-right py-3 px-4 font-medium text-warm-600">Total Cost</th>
+                <th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th>
+                <th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th>
                 <th className="w-10"></th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
+            <tbody className="bg-white divide-y divide-warm-100">
               {filteredAssemblies.map(assembly => (
                 <AssemblyRow key={assembly.id} assembly={assembly} />
               ))}
@@ -1160,10 +1160,10 @@ export function AssembliesPreview() {
       )}
 
       {/* Cross-Module Connection Badges */}
-      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-500 font-medium">Connected:</span>
-          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="text-warm-500 font-medium">Connected:</span>
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Package className="h-3 w-3" />
             Selections Catalog
           </span>

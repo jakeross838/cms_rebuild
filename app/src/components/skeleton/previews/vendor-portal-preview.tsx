@@ -450,8 +450,8 @@ const mockPunchItems: PunchItem[] = [
 // ---------------------------------------------------------------------------
 
 const invoiceStatusConfig: Record<InvoiceStatus, { label: string; color: string; icon: typeof Clock }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600', icon: FileText },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700', icon: Clock },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600', icon: FileText },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: Clock },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700', icon: Clock },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   scheduled: { label: 'Scheduled', color: 'bg-purple-100 text-purple-700', icon: CalendarClock },
@@ -555,9 +555,9 @@ export function VendorPortalPreview() {
   }
 
   return (
-    <div className="bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-100 rounded-lg border border-warm-200 overflow-hidden">
       {/* Vendor Portal Header */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-900 px-6 py-4">
+      <div className="bg-gradient-to-r from-stone-700 to-stone-900 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center">
@@ -565,25 +565,25 @@ export function VendorPortalPreview() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-white">Vendor Portal</h1>
-              <p className="text-sm text-blue-100">ABC Electric & Mechanical</p>
+              <p className="text-sm text-stone-100">ABC Electric & Mechanical</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-blue-100">Welcome, James Miller</p>
+            <p className="text-sm text-stone-100">Welcome, James Miller</p>
             <div className="flex items-center gap-2 justify-end mt-0.5">
-              <span className="text-xs text-blue-200">Trades: Electrical, HVAC</span>
-              <span className="text-blue-400">|</span>
-              <span className="text-xs text-blue-200">{mockBuilderRelationships.filter(b => b.status === 'approved').length} Active Builders</span>
+              <span className="text-xs text-stone-200">Trades: Electrical, HVAC</span>
+              <span className="text-stone-400">|</span>
+              <span className="text-xs text-stone-200">{mockBuilderRelationships.filter(b => b.status === 'approved').length} Active Builders</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Multi-Builder Selector */}
-      <div className="bg-blue-50 border-b border-blue-200 px-6 py-2">
+      <div className="bg-stone-50 border-b border-stone-200 px-6 py-2">
         <div className="flex items-center gap-3 text-sm">
-          <Building2 className="h-4 w-4 text-blue-600" />
-          <span className="text-blue-700 font-medium">Builder Relationships:</span>
+          <Building2 className="h-4 w-4 text-stone-600" />
+          <span className="text-stone-700 font-medium">Builder Relationships:</span>
           <div className="flex items-center gap-2 flex-wrap">
             {mockBuilderRelationships.map(rel => (
               <span
@@ -626,15 +626,15 @@ export function VendorPortalPreview() {
       )}
 
       {/* Quick Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-warm-200 px-6 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+          <div className="bg-stone-50 rounded-lg p-3 border border-stone-200">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-medium text-blue-600 uppercase">Active POs</p>
-              <FileText className="h-4 w-4 text-blue-600" />
+              <p className="text-xs font-medium text-stone-600 uppercase">Active POs</p>
+              <FileText className="h-4 w-4 text-stone-600" />
             </div>
-            <p className="text-2xl font-bold text-blue-900">{activePOs}</p>
-            <p className="text-xs text-blue-700 mt-1">Value: {formatCurrency(totalPOValue)}</p>
+            <p className="text-2xl font-bold text-stone-900">{activePOs}</p>
+            <p className="text-xs text-stone-700 mt-1">Value: {formatCurrency(totalPOValue)}</p>
           </div>
 
           <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
@@ -685,7 +685,7 @@ export function VendorPortalPreview() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200 px-4">
+      <div className="bg-white border-b border-warm-200 px-4">
         <div className="flex items-center gap-1 overflow-x-auto">
           {tabs.map(tab => {
             const Icon = tab.icon
@@ -696,8 +696,8 @@ export function VendorPortalPreview() {
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-3 text-sm whitespace-nowrap border-b-2 transition-colors",
                   activeTab === tab.id
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
+                    ? "border-stone-600 text-stone-600"
+                    : "border-transparent text-warm-600 hover:text-warm-900"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -707,7 +707,7 @@ export function VendorPortalPreview() {
                     "text-xs px-1.5 py-0.5 rounded-full font-medium",
                     tab.urgent
                       ? "bg-red-100 text-red-700"
-                      : "bg-gray-100 text-gray-600"
+                      : "bg-warm-100 text-warm-600"
                   )}>
                     {tab.badge}
                   </span>
@@ -724,41 +724,41 @@ export function VendorPortalPreview() {
           {/* Two-Week Look-Ahead */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Two-Week Look-Ahead</h3>
-              <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <h3 className="text-lg font-semibold text-warm-900">Two-Week Look-Ahead</h3>
+              <button className="text-sm text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 Full Schedule <ChevronRight className="h-4 w-4" />
               </button>
             </div>
             <div className="space-y-3">
               {mockScheduleTasks.map(task => (
                 <div key={task.id} className={cn(
-                  "bg-white border rounded-lg p-4 hover:border-blue-300 transition-colors",
+                  "bg-white border rounded-lg p-4 hover:border-stone-300 transition-colors",
                   task.acknowledgmentStatus === 'reschedule_requested' ? 'border-amber-300' :
-                  task.acknowledgmentStatus === 'pending' ? 'border-blue-300' : 'border-gray-200'
+                  task.acknowledgmentStatus === 'pending' ? 'border-stone-300' : 'border-warm-200'
                 )}>
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h4 className="font-medium text-gray-900">{task.taskDescription}</h4>
-                      <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+                      <h4 className="font-medium text-warm-900">{task.taskDescription}</h4>
+                      <div className="flex items-center gap-3 text-sm text-warm-500 mt-1">
                         <span className="flex items-center gap-1">
                           <Building2 className="h-3.5 w-3.5" />
                           {task.projectName}
                         </span>
-                        <span className="text-gray-300">|</span>
-                        <span className="text-xs text-gray-400">{task.builderName}</span>
+                        <span className="text-warm-300">|</span>
+                        <span className="text-xs text-warm-400">{task.builderName}</span>
                       </div>
                     </div>
                     <span className={cn(
                       'text-xs px-2 py-1 rounded-full font-medium',
                       task.acknowledgmentStatus === 'acknowledged' ? 'bg-green-100 text-green-700' :
-                      task.acknowledgmentStatus === 'pending' ? 'bg-blue-100 text-blue-700' :
+                      task.acknowledgmentStatus === 'pending' ? 'bg-stone-100 text-stone-700' :
                       'bg-amber-100 text-amber-700'
                     )}>
                       {task.acknowledgmentStatus === 'acknowledged' ? 'Acknowledged' :
                        task.acknowledgmentStatus === 'pending' ? 'Pending Ack' : 'Reschedule Req'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 text-sm text-warm-600">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5" />
                       {formatDate(task.startDate)} - {formatDate(task.endDate)}
@@ -769,16 +769,16 @@ export function VendorPortalPreview() {
                     </span>
                   </div>
                   {task.dependencies.length > 0 && (
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-warm-500">
                       <span className="font-medium">Dependencies:</span> {task.dependencies.join(', ')}
                     </div>
                   )}
                   {task.acknowledgmentStatus === 'pending' && (
                     <div className="mt-3 flex items-center gap-2">
-                      <button className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                      <button className="px-3 py-1.5 bg-stone-600 text-white text-sm rounded-lg hover:bg-stone-700">
                         Acknowledge
                       </button>
-                      <button className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">
+                      <button className="px-3 py-1.5 bg-warm-100 text-warm-700 text-sm rounded-lg hover:bg-warm-200">
                         Request Reschedule
                       </button>
                     </div>
@@ -791,31 +791,31 @@ export function VendorPortalPreview() {
           {/* Active POs Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Active Purchase Orders</h3>
-              <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <h3 className="text-lg font-semibold text-warm-900">Active Purchase Orders</h3>
+              <button className="text-sm text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 View All <ChevronRight className="h-4 w-4" />
               </button>
             </div>
             <div className="space-y-3">
               {mockPOs.map(po => (
-                <div key={po.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                <div key={po.id} className="bg-white border border-warm-200 rounded-lg p-4 hover:border-stone-300 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-gray-900">{po.poNumber}</h4>
+                        <h4 className="font-medium text-warm-900">{po.poNumber}</h4>
                         {po.changeOrders > 0 && (
                           <span className="text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">{po.changeOrders} CO</span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500">{po.projectName} - {po.description}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{po.builderName}</p>
+                      <p className="text-sm text-warm-500">{po.projectName} - {po.description}</p>
+                      <p className="text-xs text-warm-400 mt-0.5">{po.builderName}</p>
                     </div>
                     <span className={cn(
                       'px-3 py-1 text-xs font-medium rounded-full',
-                      po.status === 'pending_acknowledgment' ? 'bg-yellow-100 text-yellow-800' :
+                      po.status === 'pending_acknowledgment' ? 'bg-amber-100 text-amber-800' :
                       po.status === 'acknowledged' ? 'bg-green-100 text-green-800' :
-                      po.status === 'partially_received' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
+                      po.status === 'partially_received' ? 'bg-stone-100 text-stone-800' :
+                      'bg-warm-100 text-warm-800'
                     )}>
                       {po.status === 'pending_acknowledgment' ? 'Pending Ack' :
                        po.status === 'acknowledged' ? 'Acknowledged' :
@@ -825,24 +825,24 @@ export function VendorPortalPreview() {
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex gap-6">
                       <div>
-                        <p className="text-gray-500">Amount</p>
-                        <p className="font-semibold text-gray-900">{formatCurrency(po.amount)}</p>
+                        <p className="text-warm-500">Amount</p>
+                        <p className="font-semibold text-warm-900">{formatCurrency(po.amount)}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Due Date</p>
-                        <p className="font-semibold text-gray-900">{formatDate(po.deliveryDate)}</p>
+                        <p className="text-warm-500">Due Date</p>
+                        <p className="font-semibold text-warm-900">{formatDate(po.deliveryDate)}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Line Items</p>
-                        <p className="font-semibold text-gray-900">{po.lineItems}</p>
+                        <p className="text-warm-500">Line Items</p>
+                        <p className="font-semibold text-warm-900">{po.lineItems}</p>
                       </div>
                     </div>
                     {po.status === 'pending_acknowledgment' ? (
-                      <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                      <button className="px-4 py-2 bg-stone-600 text-white text-sm rounded-lg hover:bg-stone-700">
                         Acknowledge
                       </button>
                     ) : (
-                      <button className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">
+                      <button className="px-4 py-2 bg-warm-100 text-warm-700 text-sm rounded-lg hover:bg-warm-200">
                         View Details
                       </button>
                     )}
@@ -855,8 +855,8 @@ export function VendorPortalPreview() {
           {/* Bid Requests Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Open Bid Requests</h3>
-              <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <h3 className="text-lg font-semibold text-warm-900">Open Bid Requests</h3>
+              <button className="text-sm text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 Bid History <ChevronRight className="h-4 w-4" />
               </button>
             </div>
@@ -915,27 +915,27 @@ export function VendorPortalPreview() {
 
           {/* Recent Payment Activity */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Payment Activity</h3>
+            <h3 className="text-lg font-semibold text-warm-900 mb-4">Recent Payment Activity</h3>
             <div className="space-y-2">
               {mockInvoices.slice(0, 4).map(inv => {
                 const statusInfo = invoiceStatusConfig[inv.status]
                 const StatusIcon = statusInfo.icon
                 return (
-                  <div key={inv.id} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
+                  <div key={inv.id} className="flex items-center justify-between p-4 bg-white border border-warm-200 rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-gray-900">{inv.invoiceNumber}</h4>
+                        <h4 className="font-medium text-warm-900">{inv.invoiceNumber}</h4>
                         <span className={cn('text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1', statusInfo.color)}>
                           <StatusIcon className="h-3 w-3" />
                           {statusInfo.label}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500">{inv.projectName} - {inv.poNumber}</p>
-                      <p className="text-xs text-gray-400">{inv.builderName}</p>
+                      <p className="text-sm text-warm-500">{inv.projectName} - {inv.poNumber}</p>
+                      <p className="text-xs text-warm-400">{inv.builderName}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">{formatCurrency(inv.amount)}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="font-semibold text-warm-900">{formatCurrency(inv.amount)}</p>
+                      <p className="text-xs text-warm-500">
                         Retainage: {formatCurrency(inv.retainageHeld)} | Net: {formatCurrency(inv.netAmount)}
                       </p>
                       {inv.paidAt && (
@@ -954,8 +954,8 @@ export function VendorPortalPreview() {
           {/* Lien Waivers */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Lien Waivers</h3>
-              <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <h3 className="text-lg font-semibold text-warm-900">Lien Waivers</h3>
+              <button className="text-sm text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 View All <ChevronRight className="h-4 w-4" />
               </button>
             </div>
@@ -963,23 +963,23 @@ export function VendorPortalPreview() {
               {mockLienWaivers.map(waiver => (
                 <div key={waiver.id} className={cn(
                   "flex items-center justify-between p-3 bg-white border rounded-lg",
-                  waiver.status === 'pending_signature' ? 'border-amber-300' : 'border-gray-200'
+                  waiver.status === 'pending_signature' ? 'border-amber-300' : 'border-warm-200'
                 )}>
                   <div className="flex items-center gap-3">
                     <PenTool className={cn(
                       'h-5 w-5',
                       waiver.status === 'pending_signature' ? 'text-amber-600' :
-                      waiver.status === 'signed' ? 'text-blue-600' : 'text-green-600'
+                      waiver.status === 'signed' ? 'text-stone-600' : 'text-green-600'
                     )} />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{waiver.projectName}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm font-medium text-warm-900">{waiver.projectName}</p>
+                      <p className="text-xs text-warm-500">
                         {waiver.waiverType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} - Through {formatDate(waiver.throughDate)}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-gray-900">{formatCurrency(waiver.amount)}</span>
+                    <span className="text-sm font-semibold text-warm-900">{formatCurrency(waiver.amount)}</span>
                     {waiver.status === 'pending_signature' ? (
                       <button className="px-3 py-1.5 bg-amber-600 text-white text-xs rounded-lg hover:bg-amber-700">
                         Sign Now
@@ -987,7 +987,7 @@ export function VendorPortalPreview() {
                     ) : (
                       <span className={cn(
                         'text-xs px-2 py-1 rounded-full font-medium',
-                        waiver.status === 'signed' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                        waiver.status === 'signed' ? 'bg-stone-100 text-stone-700' : 'bg-green-100 text-green-700'
                       )}>
                         {waiver.status === 'signed' ? 'Signed' : 'Verified'}
                       </span>
@@ -1002,32 +1002,32 @@ export function VendorPortalPreview() {
           {mockPunchItems.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Assigned Punch Items</h3>
-                <span className="text-sm text-gray-500">{mockPunchItems.filter(p => p.status !== 'completed').length} open</span>
+                <h3 className="text-lg font-semibold text-warm-900">Assigned Punch Items</h3>
+                <span className="text-sm text-warm-500">{mockPunchItems.filter(p => p.status !== 'completed').length} open</span>
               </div>
               <div className="space-y-2">
                 {mockPunchItems.map(item => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
+                  <div key={item.id} className="flex items-center justify-between p-3 bg-white border border-warm-200 rounded-lg">
                     <div className="flex items-center gap-3">
                       <ClipboardList className={cn(
                         'h-5 w-5',
                         item.status === 'assigned' ? 'text-amber-600' :
-                        item.status === 'in_progress' ? 'text-blue-600' : 'text-green-600'
+                        item.status === 'in_progress' ? 'text-stone-600' : 'text-green-600'
                       )} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{item.description}</p>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <p className="text-sm font-medium text-warm-900">{item.description}</p>
+                        <div className="flex items-center gap-2 text-xs text-warm-500">
                           <span>{item.projectName}</span>
-                          <span className="text-gray-300">|</span>
+                          <span className="text-warm-300">|</span>
                           <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{item.location}</span>
-                          <span className="text-gray-300">|</span>
+                          <span className="text-warm-300">|</span>
                           <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{item.photos} photo{item.photos !== 1 ? 's' : ''}</span>
                         </div>
                       </div>
                     </div>
                     <button className={cn(
                       'px-3 py-1.5 text-xs rounded-lg',
-                      item.status === 'assigned' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-green-600 text-white hover:bg-green-700'
+                      item.status === 'assigned' ? 'bg-stone-600 text-white hover:bg-stone-700' : 'bg-green-600 text-white hover:bg-green-700'
                     )}>
                       {item.status === 'assigned' ? 'Start Work' : 'Mark Complete'}
                     </button>
@@ -1039,7 +1039,7 @@ export function VendorPortalPreview() {
 
           {/* Compliance Documents Summary */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Compliance Documents</h3>
+            <h3 className="text-lg font-semibold text-warm-900 mb-4">Compliance Documents</h3>
             <div className="space-y-2">
               {mockComplianceDocs.map(doc => {
                 const statusInfo = complianceStatusConfig[doc.status]
@@ -1047,7 +1047,7 @@ export function VendorPortalPreview() {
                   <div key={doc.id} className={cn(
                     "flex items-center justify-between p-3 bg-white border rounded-lg",
                     doc.status === 'expired' || doc.status === 'missing' ? 'border-red-200' :
-                    doc.status === 'expiring_soon' ? 'border-amber-200' : 'border-gray-200'
+                    doc.status === 'expiring_soon' ? 'border-amber-200' : 'border-warm-200'
                   )}>
                     <div className="flex items-center gap-3">
                       {doc.status === 'current' ? (
@@ -1058,9 +1058,9 @@ export function VendorPortalPreview() {
                         <FileCheck className={cn('h-5 w-5', doc.status === 'expiring_soon' ? 'text-amber-600' : 'text-red-600')} />
                       )}
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{complianceDocTypeLabels[doc.type]}</p>
+                        <p className="text-sm font-medium text-warm-900">{complianceDocTypeLabels[doc.type]}</p>
                         {doc.fileName ? (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-warm-500">
                             {doc.fileName}
                             {doc.expirationDate && ` - Expires ${formatDate(doc.expirationDate)}`}
                           </p>
@@ -1068,7 +1068,7 @@ export function VendorPortalPreview() {
                           <p className="text-xs text-red-500">Not uploaded</p>
                         )}
                         {doc.policyNumber && (
-                          <p className="text-xs text-gray-400">Policy: {doc.policyNumber}</p>
+                          <p className="text-xs text-warm-400">Policy: {doc.policyNumber}</p>
                         )}
                       </div>
                     </div>
@@ -1077,7 +1077,7 @@ export function VendorPortalPreview() {
                         {statusInfo.label}
                       </span>
                       {(doc.status === 'expired' || doc.status === 'missing' || doc.status === 'expiring_soon') && (
-                        <button className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700">
+                        <button className="px-3 py-1.5 bg-stone-600 text-white text-xs rounded-lg hover:bg-stone-700">
                           {doc.status === 'missing' ? 'Upload' : 'Renew'}
                         </button>
                       )}
@@ -1088,26 +1088,26 @@ export function VendorPortalPreview() {
             </div>
 
             {/* Upload Area */}
-            <div className="mt-4 bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:bg-blue-100 transition-colors cursor-pointer">
-              <Upload className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <h4 className="font-medium text-blue-900 mb-1">Upload Documents</h4>
-              <p className="text-sm text-blue-700 mb-3">Insurance certificates, W-9, licenses, bonds, or safety certifications</p>
-              <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 inline-block">
+            <div className="mt-4 bg-stone-50 border-2 border-dashed border-stone-300 rounded-lg p-6 text-center hover:bg-stone-100 transition-colors cursor-pointer">
+              <Upload className="h-8 w-8 text-stone-600 mx-auto mb-2" />
+              <h4 className="font-medium text-stone-900 mb-1">Upload Documents</h4>
+              <p className="text-sm text-stone-700 mb-3">Insurance certificates, W-9, licenses, bonds, or safety certifications</p>
+              <button className="px-4 py-2 bg-stone-600 text-white text-sm rounded-lg hover:bg-stone-700 inline-block">
                 Select Files
               </button>
-              <p className="text-xs text-blue-600 mt-3">Or drag and drop files here</p>
+              <p className="text-xs text-stone-600 mt-3">Or drag and drop files here</p>
             </div>
           </div>
 
           {/* AI Assistant */}
-          <div className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg">
+          <div className="p-4 bg-gradient-to-r from-indigo-50 to-stone-50 border border-indigo-200 rounded-lg">
             <div className="flex items-start gap-3">
               <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
                 <Sparkles className="h-4 w-4 text-indigo-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-medium text-gray-900 mb-1">AI Portal Assistant</h4>
-                <div className="space-y-1 text-sm text-gray-600">
+                <h4 className="font-medium text-warm-900 mb-1">AI Portal Assistant</h4>
+                <div className="space-y-1 text-sm text-warm-600">
                   <p>&#x2022; Your COI expires in 8 days - uploading a renewal will auto-notify all connected builders</p>
                   <p>&#x2022; Invoice INV-2026-065 was rejected for missing certified payroll - attach document and resubmit</p>
                   <p>&#x2022; Bid for Johnson Warehouse is due in 8 days - 4 documents available for review</p>
@@ -1123,33 +1123,33 @@ export function VendorPortalPreview() {
       {activeTab === 'schedule' && (
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-semibold text-gray-900">My Schedule - All Projects</h3>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" /> Coastal Custom Homes</span>
+            <h3 className="text-lg font-semibold text-warm-900">My Schedule - All Projects</h3>
+            <div className="flex items-center gap-2 text-sm text-warm-500">
+              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-stone-500" /> Coastal Custom Homes</span>
               <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" /> Palmetto Builders</span>
             </div>
           </div>
           {mockScheduleTasks.map(task => (
             <div key={task.id} className={cn(
               "bg-white border rounded-lg p-4",
-              task.builderName === 'Coastal Custom Homes' ? 'border-l-4 border-l-blue-500' : 'border-l-4 border-l-emerald-500'
+              task.builderName === 'Coastal Custom Homes' ? 'border-l-4 border-l-stone-500' : 'border-l-4 border-l-emerald-500'
             )}>
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="font-medium text-gray-900">{task.taskDescription}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{task.projectName} ({task.builderName})</p>
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mt-2">
+                  <h4 className="font-medium text-warm-900">{task.taskDescription}</h4>
+                  <p className="text-sm text-warm-600 mt-1">{task.projectName} ({task.builderName})</p>
+                  <div className="flex items-center gap-4 text-sm text-warm-500 mt-2">
                     <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{formatDate(task.startDate)} - {formatDate(task.endDate)}</span>
                     <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{task.location}</span>
                   </div>
                   {task.dependencies.length > 0 && (
-                    <p className="text-xs text-gray-400 mt-1">Dependencies: {task.dependencies.join(', ')}</p>
+                    <p className="text-xs text-warm-400 mt-1">Dependencies: {task.dependencies.join(', ')}</p>
                   )}
                 </div>
                 <span className={cn(
                   'text-xs px-2 py-1 rounded-full font-medium',
                   task.acknowledgmentStatus === 'acknowledged' ? 'bg-green-100 text-green-700' :
-                  task.acknowledgmentStatus === 'pending' ? 'bg-blue-100 text-blue-700' :
+                  task.acknowledgmentStatus === 'pending' ? 'bg-stone-100 text-stone-700' :
                   'bg-amber-100 text-amber-700'
                 )}>
                   {task.acknowledgmentStatus === 'acknowledged' ? 'Acknowledged' :
@@ -1169,29 +1169,29 @@ export function VendorPortalPreview() {
       {activeTab === 'pos' && (
         <div className="p-6 space-y-3">
           {mockPOs.map(po => (
-            <div key={po.id} className="bg-white border border-gray-200 rounded-lg p-4">
+            <div key={po.id} className="bg-white border border-warm-200 rounded-lg p-4">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-medium text-gray-900">{po.poNumber}</span>
+                    <span className="font-mono font-medium text-warm-900">{po.poNumber}</span>
                     {po.changeOrders > 0 && <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">{po.changeOrders} CO</span>}
                   </div>
-                  <p className="text-sm text-gray-600">{po.description}</p>
-                  <p className="text-xs text-gray-400">{po.projectName} - {po.builderName}</p>
+                  <p className="text-sm text-warm-600">{po.description}</p>
+                  <p className="text-xs text-warm-400">{po.projectName} - {po.builderName}</p>
                 </div>
                 <span className={cn(
                   'text-xs px-2 py-1 rounded-full font-medium',
-                  po.status === 'pending_acknowledgment' ? 'bg-yellow-100 text-yellow-800' :
+                  po.status === 'pending_acknowledgment' ? 'bg-amber-100 text-amber-800' :
                   po.status === 'acknowledged' ? 'bg-green-100 text-green-800' :
-                  po.status === 'partially_received' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                  po.status === 'partially_received' ? 'bg-stone-100 text-stone-800' : 'bg-warm-100 text-warm-800'
                 )}>
                   {po.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                 </span>
               </div>
               <div className="flex items-center gap-6 text-sm">
-                <div><span className="text-gray-500">Amount:</span> <span className="font-semibold">{formatCurrency(po.amount)}</span></div>
-                <div><span className="text-gray-500">Delivery:</span> <span className="font-semibold">{formatDate(po.deliveryDate)}</span></div>
-                <div><span className="text-gray-500">Items:</span> <span className="font-semibold">{po.lineItems}</span></div>
+                <div><span className="text-warm-500">Amount:</span> <span className="font-semibold">{formatCurrency(po.amount)}</span></div>
+                <div><span className="text-warm-500">Delivery:</span> <span className="font-semibold">{formatDate(po.deliveryDate)}</span></div>
+                <div><span className="text-warm-500">Items:</span> <span className="font-semibold">{po.lineItems}</span></div>
               </div>
             </div>
           ))}
@@ -1202,8 +1202,8 @@ export function VendorPortalPreview() {
       {activeTab === 'invoices' && (
         <div className="p-6 space-y-3">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-gray-900">My Invoices</h3>
-            <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">+ Submit Invoice</button>
+            <h3 className="font-semibold text-warm-900">My Invoices</h3>
+            <button className="px-4 py-2 bg-stone-600 text-white text-sm rounded-lg hover:bg-stone-700">+ Submit Invoice</button>
           </div>
           {mockInvoices.map(inv => {
             const statusInfo = invoiceStatusConfig[inv.status]
@@ -1211,23 +1211,23 @@ export function VendorPortalPreview() {
             return (
               <div key={inv.id} className={cn(
                 "bg-white border rounded-lg p-4",
-                inv.status === 'rejected' ? 'border-red-300' : 'border-gray-200'
+                inv.status === 'rejected' ? 'border-red-300' : 'border-warm-200'
               )}>
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-medium text-gray-900">{inv.invoiceNumber}</span>
+                      <span className="font-mono font-medium text-warm-900">{inv.invoiceNumber}</span>
                       <span className={cn('text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1', statusInfo.color)}>
                         <StatusIcon className="h-3 w-3" />{statusInfo.label}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{inv.projectName} - Against {inv.poNumber}</p>
-                    <p className="text-xs text-gray-400">{inv.builderName}</p>
+                    <p className="text-sm text-warm-600">{inv.projectName} - Against {inv.poNumber}</p>
+                    <p className="text-xs text-warm-400">{inv.builderName}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatCurrency(inv.amount)}</p>
-                    <p className="text-xs text-gray-500">Retainage: {formatCurrency(inv.retainageHeld)}</p>
-                    <p className="text-xs text-gray-500">Net: {formatCurrency(inv.netAmount)}</p>
+                    <p className="font-semibold text-warm-900">{formatCurrency(inv.amount)}</p>
+                    <p className="text-xs text-warm-500">Retainage: {formatCurrency(inv.retainageHeld)}</p>
+                    <p className="text-xs text-warm-500">Net: {formatCurrency(inv.netAmount)}</p>
                   </div>
                 </div>
                 {inv.rejectionReason && (
@@ -1248,30 +1248,30 @@ export function VendorPortalPreview() {
       {activeTab === 'bids' && (
         <div className="p-6 space-y-3">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-gray-900">Bid Invitations</h3>
-            <span className="text-sm text-gray-500">{mockBids.filter(b => b.status === 'open').length} open | {mockBids.filter(b => b.status === 'awarded').length} awarded</span>
+            <h3 className="font-semibold text-warm-900">Bid Invitations</h3>
+            <span className="text-sm text-warm-500">{mockBids.filter(b => b.status === 'open').length} open | {mockBids.filter(b => b.status === 'awarded').length} awarded</span>
           </div>
           {mockBids.map(bid => (
             <div key={bid.id} className={cn(
               "bg-white border rounded-lg p-4",
               bid.status === 'open' ? 'border-red-200 bg-red-50/30' :
-              bid.status === 'awarded' ? 'border-green-200 bg-green-50/30' : 'border-gray-200'
+              bid.status === 'awarded' ? 'border-green-200 bg-green-50/30' : 'border-warm-200'
             )}>
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h4 className="font-medium text-gray-900">{bid.scope}</h4>
-                  <p className="text-sm text-gray-600">{bid.projectName} - {bid.builderName}</p>
+                  <h4 className="font-medium text-warm-900">{bid.scope}</h4>
+                  <p className="text-sm text-warm-600">{bid.projectName} - {bid.builderName}</p>
                 </div>
                 <span className={cn(
                   'text-xs px-2 py-1 rounded-full font-medium',
                   bid.status === 'open' ? 'bg-red-100 text-red-700' :
                   bid.status === 'awarded' ? 'bg-green-100 text-green-700' :
-                  bid.status === 'submitted' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                  bid.status === 'submitted' ? 'bg-stone-100 text-stone-700' : 'bg-warm-100 text-warm-700'
                 )}>
                   {bid.status.replace(/\b\w/g, c => c.toUpperCase())}
                 </span>
               </div>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-4 text-sm text-warm-600">
                 <span>Est: {formatCurrency(bid.estimatedValue)}</span>
                 <span>Due: {formatDate(bid.dueDate)}</span>
                 <span>{bid.documentsCount} docs</span>
@@ -1285,19 +1285,19 @@ export function VendorPortalPreview() {
       {/* Lien Waivers Tab */}
       {activeTab === 'lien_waivers' && (
         <div className="p-6 space-y-3">
-          <h3 className="font-semibold text-gray-900 mb-2">Lien Waivers</h3>
+          <h3 className="font-semibold text-warm-900 mb-2">Lien Waivers</h3>
           {mockLienWaivers.map(waiver => (
             <div key={waiver.id} className={cn(
               "bg-white border rounded-lg p-4",
-              waiver.status === 'pending_signature' ? 'border-amber-300' : 'border-gray-200'
+              waiver.status === 'pending_signature' ? 'border-amber-300' : 'border-warm-200'
             )}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-gray-900">{waiver.projectName}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-medium text-warm-900">{waiver.projectName}</p>
+                  <p className="text-sm text-warm-600">
                     {waiver.waiverType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                   </p>
-                  <p className="text-xs text-gray-500">Through: {formatDate(waiver.throughDate)} | Amount: {formatCurrency(waiver.amount)}</p>
+                  <p className="text-xs text-warm-500">Through: {formatDate(waiver.throughDate)} | Amount: {formatCurrency(waiver.amount)}</p>
                 </div>
                 {waiver.status === 'pending_signature' ? (
                   <button className="px-4 py-2 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 flex items-center gap-1">
@@ -1306,7 +1306,7 @@ export function VendorPortalPreview() {
                 ) : (
                   <span className={cn(
                     'text-xs px-2 py-1 rounded-full font-medium',
-                    waiver.status === 'signed' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                    waiver.status === 'signed' ? 'bg-stone-100 text-stone-700' : 'bg-green-100 text-green-700'
                   )}>
                     {waiver.status === 'signed' ? 'Signed' : 'Verified'}
                   </span>
@@ -1321,12 +1321,12 @@ export function VendorPortalPreview() {
       {activeTab === 'documents' && (
         <div className="p-6 space-y-3">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-gray-900">Compliance Documents</h3>
+            <h3 className="font-semibold text-warm-900">Compliance Documents</h3>
             <div className="flex items-center gap-2">
               {(['green', 'yellow', 'red'] as const).map(status => {
                 const count = mockBuilderRelationships.filter(b => b.complianceStatus === status).length
                 return (
-                  <span key={status} className="flex items-center gap-1 text-xs text-gray-600">
+                  <span key={status} className="flex items-center gap-1 text-xs text-warm-600">
                     <span className={cn('h-2 w-2 rounded-full', status === 'green' ? 'bg-green-500' : status === 'yellow' ? 'bg-amber-500' : 'bg-red-500')} />
                     {count} builder{count !== 1 ? 's' : ''}
                   </span>
@@ -1340,7 +1340,7 @@ export function VendorPortalPreview() {
               <div key={doc.id} className={cn(
                 "bg-white border rounded-lg p-4",
                 doc.status === 'expired' || doc.status === 'missing' ? 'border-red-200' :
-                doc.status === 'expiring_soon' ? 'border-amber-200' : 'border-gray-200'
+                doc.status === 'expiring_soon' ? 'border-amber-200' : 'border-warm-200'
               )}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -1348,11 +1348,11 @@ export function VendorPortalPreview() {
                      doc.status === 'missing' ? <AlertTriangle className="h-5 w-5 text-red-600" /> :
                      <FileCheck className={cn('h-5 w-5', doc.status === 'expiring_soon' ? 'text-amber-600' : 'text-red-600')} />}
                     <div>
-                      <p className="font-medium text-gray-900">{complianceDocTypeLabels[doc.type]}</p>
-                      {doc.fileName && <p className="text-sm text-gray-500">{doc.fileName}</p>}
-                      {doc.expirationDate && <p className="text-xs text-gray-400">Expires: {formatDate(doc.expirationDate)}</p>}
-                      {doc.coverageAmount && <p className="text-xs text-gray-400">Coverage: {formatCurrency(doc.coverageAmount)}</p>}
-                      {doc.policyNumber && <p className="text-xs text-gray-400">Policy: {doc.policyNumber}</p>}
+                      <p className="font-medium text-warm-900">{complianceDocTypeLabels[doc.type]}</p>
+                      {doc.fileName && <p className="text-sm text-warm-500">{doc.fileName}</p>}
+                      {doc.expirationDate && <p className="text-xs text-warm-400">Expires: {formatDate(doc.expirationDate)}</p>}
+                      {doc.coverageAmount && <p className="text-xs text-warm-400">Coverage: {formatCurrency(doc.coverageAmount)}</p>}
+                      {doc.policyNumber && <p className="text-xs text-warm-400">Policy: {doc.policyNumber}</p>}
                     </div>
                   </div>
                   <span className={cn('text-xs px-2 py-1 rounded-full font-medium', statusInfo.color)}>{statusInfo.label}</span>
@@ -1366,13 +1366,13 @@ export function VendorPortalPreview() {
       {/* Punch Items Tab */}
       {activeTab === 'punch' && (
         <div className="p-6 space-y-3">
-          <h3 className="font-semibold text-gray-900 mb-2">Assigned Punch Items</h3>
+          <h3 className="font-semibold text-warm-900 mb-2">Assigned Punch Items</h3>
           {mockPunchItems.map(item => (
-            <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4">
+            <div key={item.id} className="bg-white border border-warm-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium text-gray-900">{item.description}</h4>
-                  <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+                  <h4 className="font-medium text-warm-900">{item.description}</h4>
+                  <div className="flex items-center gap-3 text-sm text-warm-500 mt-1">
                     <span>{item.projectName}</span>
                     <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{item.location}</span>
                     <span className="flex items-center gap-1"><Camera className="h-3.5 w-3.5" />{item.photos} photo{item.photos !== 1 ? 's' : ''}</span>
@@ -1382,7 +1382,7 @@ export function VendorPortalPreview() {
                   <span className={cn(
                     'text-xs px-2 py-1 rounded-full font-medium',
                     item.status === 'assigned' ? 'bg-amber-100 text-amber-700' :
-                    item.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                    item.status === 'in_progress' ? 'bg-stone-100 text-stone-700' : 'bg-green-100 text-green-700'
                   )}>
                     {item.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                   </span>
@@ -1397,14 +1397,14 @@ export function VendorPortalPreview() {
       )}
 
       {/* Footer */}
-      <div className="bg-gray-50 border-t border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between text-sm text-gray-500">
+      <div className="bg-warm-50 border-t border-warm-200 px-6 py-4">
+        <div className="flex items-center justify-between text-sm text-warm-500">
           <div className="flex items-center gap-4">
             <span>Last updated: 2 minutes ago</span>
             <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> (843) 555-0100</span>
             <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> support@rossos.com</span>
           </div>
-          <span className="text-xs text-gray-400">English | Espa&ntilde;ol</span>
+          <span className="text-xs text-warm-400">English | Espa&ntilde;ol</span>
         </div>
       </div>
 

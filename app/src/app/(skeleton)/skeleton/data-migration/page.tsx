@@ -211,7 +211,7 @@ export default function DataMigrationPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-cyan-50 to-stone-50 border border-cyan-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-cyan-600 mt-0.5" />
           <div>

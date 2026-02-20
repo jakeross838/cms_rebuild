@@ -221,7 +221,7 @@ const quickActions: QuickAction[] = [
     title: 'Start New Job',
     description: 'Create and setup a new project',
     icon: Briefcase,
-    color: 'bg-blue-100 text-blue-600',
+    color: 'bg-stone-100 text-stone-600',
     shortcut: 'Ctrl+N',
   },
   {
@@ -301,10 +301,10 @@ const teamActivity: TeamMember[] = [
 ]
 
 const pipelineData: PipelineItem[] = [
-  { id: '1', stage: 'Leads', count: 12, value: '$580K', color: 'bg-blue-500', conversionRate: '42%' },
-  { id: '2', stage: 'Estimates', count: 8, value: '$820K', color: 'bg-blue-400', conversionRate: '63%' },
-  { id: '3', stage: 'Proposals', count: 5, value: '$1.2M', color: 'bg-blue-300', conversionRate: '60%' },
-  { id: '4', stage: 'Contracts', count: 3, value: '$650K', color: 'bg-blue-200', conversionRate: '100%' },
+  { id: '1', stage: 'Leads', count: 12, value: '$580K', color: 'bg-stone-500', conversionRate: '42%' },
+  { id: '2', stage: 'Estimates', count: 8, value: '$820K', color: 'bg-stone-400', conversionRate: '63%' },
+  { id: '3', stage: 'Proposals', count: 5, value: '$1.2M', color: 'bg-stone-300', conversionRate: '60%' },
+  { id: '4', stage: 'Contracts', count: 3, value: '$650K', color: 'bg-stone-200', conversionRate: '100%' },
 ]
 
 const needsAttentionItems: NeedsAttentionItem[] = [
@@ -399,7 +399,7 @@ const aiFeaturesData = [
 // ---------------------------------------------------------------------------
 
 const cardColorClasses = {
-  blue: { bg: 'bg-blue-50', icon: 'bg-blue-100 text-blue-600', text: 'text-blue-600' },
+  blue: { bg: 'bg-stone-50', icon: 'bg-stone-100 text-stone-600', text: 'text-stone-600' },
   green: { bg: 'bg-green-50', icon: 'bg-green-100 text-green-600', text: 'text-green-600' },
   amber: { bg: 'bg-amber-50', icon: 'bg-amber-100 text-amber-600', text: 'text-amber-600' },
   purple: { bg: 'bg-purple-50', icon: 'bg-purple-100 text-purple-600', text: 'text-purple-600' },
@@ -443,18 +443,18 @@ function MetricCardComponent({ card }: { card: MetricCard }) {
           {card.sparkline && <MiniSparkline data={card.sparkline} color={card.color} />}
           <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
-            card.trend === 'up' ? "text-green-600" : card.trend === 'down' ? "text-red-600" : "text-gray-600"
+            card.trend === 'up' ? "text-green-600" : card.trend === 'down' ? "text-red-600" : "text-warm-600"
           )}>
             {card.trend === 'up' ? <ArrowUpRight className="h-3 w-3" /> : card.trend === 'down' ? <ArrowDownRight className="h-3 w-3" /> : null}
             {card.change > 0 ? '+' : ''}{Math.abs(card.change)}%
           </div>
         </div>
       </div>
-      <div className="text-2xl font-bold text-gray-900">{card.value}</div>
-      <div className="text-sm text-gray-500 mt-1">{card.label}</div>
-      <div className="text-xs text-gray-400 mt-0.5">{card.changeLabel}</div>
+      <div className="text-2xl font-bold text-warm-900">{card.value}</div>
+      <div className="text-sm text-warm-500 mt-1">{card.label}</div>
+      <div className="text-xs text-warm-400 mt-0.5">{card.changeLabel}</div>
       {card.drillDownTo && (
-        <div className="mt-1 flex items-center gap-1 text-xs text-blue-500">
+        <div className="mt-1 flex items-center gap-1 text-xs text-stone-500">
           <ExternalLink className="h-3 w-3" />
           Click to drill down
         </div>
@@ -465,11 +465,11 @@ function MetricCardComponent({ card }: { card: MetricCard }) {
 
 function AIInsightsPanel() {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-amber-600" />
-          <h4 className="font-medium text-gray-900 text-sm">AI Insights & Alerts</h4>
+          <h4 className="font-medium text-warm-900 text-sm">AI Insights & Alerts</h4>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">
@@ -480,12 +480,12 @@ function AIInsightsPanel() {
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {aiInsights.map(insight => (
           <div
             key={insight.id}
             className={cn(
-              "px-4 py-3 hover:bg-gray-50 cursor-pointer",
+              "px-4 py-3 hover:bg-warm-50 cursor-pointer",
               insight.severity === 'high' && 'bg-red-50/30'
             )}
           >
@@ -502,23 +502,23 @@ function AIInsightsPanel() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-medium text-sm text-gray-900">{insight.title}</span>
+                  <span className="font-medium text-sm text-warm-900">{insight.title}</span>
                   {insight.actionable && (
                     <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Actionable</span>
                   )}
-                  <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{insight.category}</span>
+                  <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">{insight.category}</span>
                   {insight.relatedJobId && (
-                    <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{insight.relatedJobId}</span>
+                    <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{insight.relatedJobId}</span>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{insight.description}</p>
+                <p className="text-xs text-warm-500 mt-1">{insight.description}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all insights
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -532,46 +532,46 @@ function NeedsAttentionPanel() {
     switch (urgency) {
       case 'critical': return { bg: 'bg-red-100 text-red-700', dot: 'bg-red-500' }
       case 'high': return { bg: 'bg-amber-100 text-amber-700', dot: 'bg-amber-500' }
-      case 'medium': return { bg: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' }
+      case 'medium': return { bg: 'bg-stone-100 text-stone-700', dot: 'bg-stone-500' }
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4 text-red-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Needs Attention</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Needs Attention</h4>
           </div>
           <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">
             {needsAttentionItems.length} items
           </span>
         </div>
-        <p className="text-xs text-gray-400 mt-1">Prioritized by urgency and age - dismiss or snooze</p>
+        <p className="text-xs text-warm-400 mt-1">Prioritized by urgency and age - dismiss or snooze</p>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {needsAttentionItems.map(item => {
           const urgencyConfig = getUrgencyConfig(item.urgency)
           const Icon = item.icon
           return (
-            <div key={item.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+            <div key={item.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-start gap-3">
                 <div className={cn("p-1.5 rounded-lg mt-0.5", urgencyConfig.bg)}>
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm text-gray-900">{item.title}</span>
+                    <span className="font-medium text-sm text-warm-900">{item.title}</span>
                     <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", urgencyConfig.bg)}>{item.urgency}</span>
                     {item.jobRef && (
-                      <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{item.jobRef}</span>
+                      <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{item.jobRef}</span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                  <p className="text-xs text-warm-500 mt-0.5">{item.description}</p>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-warm-400">
                     <span>{item.module}</span>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-warm-300">|</span>
                     <span>{item.age} old</span>
                   </div>
                 </div>
@@ -586,34 +586,34 @@ function NeedsAttentionPanel() {
 
 function QuickActionsPanel() {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-blue-600" />
-          <h4 className="font-medium text-gray-900 text-sm">Quick Actions</h4>
-          <span className="text-xs text-gray-400">3-click rule: complete common tasks fast</span>
+          <Zap className="h-4 w-4 text-stone-600" />
+          <h4 className="font-medium text-warm-900 text-sm">Quick Actions</h4>
+          <span className="text-xs text-warm-400">3-click rule: complete common tasks fast</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {quickActions.map(action => {
           const Icon = action.icon
           return (
-            <div key={action.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <div key={action.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("p-2 rounded-lg", action.color)}>
                     <Icon className="h-4 w-4" />
                   </div>
                   <div>
-                    <div className="font-medium text-sm text-gray-900">{action.title}</div>
-                    <div className="text-xs text-gray-500">{action.description}</div>
+                    <div className="font-medium text-sm text-warm-900">{action.title}</div>
+                    <div className="text-xs text-warm-500">{action.description}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {action.shortcut && (
-                    <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-mono">{action.shortcut}</span>
+                    <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded font-mono">{action.shortcut}</span>
                   )}
-                  <ArrowRight className="h-4 w-4 text-gray-300" />
+                  <ArrowRight className="h-4 w-4 text-warm-300" />
                 </div>
               </div>
             </div>
@@ -628,42 +628,42 @@ function TeamActivityPanel() {
   const getStatusConfig = (status: TeamMember['status']) => {
     switch (status) {
       case 'online': return { dot: 'bg-green-500', label: 'Online' }
-      case 'field': return { dot: 'bg-blue-500', label: 'In Field' }
-      case 'offline': return { dot: 'bg-gray-400', label: 'Offline' }
+      case 'field': return { dot: 'bg-stone-500', label: 'In Field' }
+      case 'offline': return { dot: 'bg-warm-400', label: 'Offline' }
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-purple-600" />
-          <h4 className="font-medium text-gray-900 text-sm">Team Activity</h4>
+          <h4 className="font-medium text-warm-900 text-sm">Team Activity</h4>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {teamActivity.map(member => {
           const statusConfig = getStatusConfig(member.status)
           return (
-            <div key={member.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <div key={member.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-stone-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
                       {member.avatar}
                     </div>
                     <div className={cn("absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white", statusConfig.dot)} />
                   </div>
                   <div>
-                    <div className="font-medium text-sm text-gray-900">{member.name}</div>
-                    <div className="text-xs text-gray-500">{member.role}</div>
+                    <div className="font-medium text-sm text-warm-900">{member.name}</div>
+                    <div className="text-xs text-warm-500">{member.role}</div>
                     {member.currentActivity && (
-                      <div className="text-xs text-gray-400 mt-0.5">{member.currentActivity}</div>
+                      <div className="text-xs text-warm-400 mt-0.5">{member.currentActivity}</div>
                     )}
                   </div>
                 </div>
                 {member.activeJobs > 0 && (
-                  <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                  <div className="flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-700 rounded text-xs font-medium">
                     <Briefcase className="h-3 w-3" />
                     {member.activeJobs}
                   </div>
@@ -673,8 +673,8 @@ function TeamActivityPanel() {
           )
         })}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View team directory
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -688,16 +688,16 @@ function PipelineSummary() {
   const totalCount = pipelineData.reduce((sum, item) => sum + item.count, 0)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="h-4 w-4 text-green-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Sales Pipeline</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Sales Pipeline</h4>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">{totalCount} opportunities</span>
-            <span className="text-sm font-semibold text-gray-900">{totalValue}</span>
+            <span className="text-xs text-warm-400">{totalCount} opportunities</span>
+            <span className="text-sm font-semibold text-warm-900">{totalValue}</span>
           </div>
         </div>
       </div>
@@ -707,17 +707,17 @@ function PipelineSummary() {
             <div key={item.id}>
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <div className="text-sm font-medium text-gray-900">{item.stage}</div>
-                  <div className="text-xs text-gray-500">{item.count} opportunities</div>
+                  <div className="text-sm font-medium text-warm-900">{item.stage}</div>
+                  <div className="text-xs text-warm-500">{item.count} opportunities</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-900">{item.value}</div>
+                  <div className="text-sm font-semibold text-warm-900">{item.value}</div>
                   {item.conversionRate && (
-                    <div className="text-xs text-gray-400">{item.conversionRate} conversion</div>
+                    <div className="text-xs text-warm-400">{item.conversionRate} conversion</div>
                   )}
                 </div>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
+              <div className="w-full bg-warm-100 rounded-full h-2">
                 <div
                   className={cn("h-full rounded-full", item.color)}
                   style={{ width: `${(item.count / 12) * 100}%` }}
@@ -727,8 +727,8 @@ function PipelineSummary() {
           ))}
         </div>
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View pipeline
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -741,40 +741,40 @@ function MeetingPrep() {
   const getStatusConfig = (status: MeetingAgendaItem['status']) => {
     switch (status) {
       case 'alert': return 'bg-red-100 text-red-700'
-      case 'update': return 'bg-blue-100 text-blue-700'
+      case 'update': return 'bg-stone-100 text-stone-700'
       case 'decision': return 'bg-amber-100 text-amber-700'
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-indigo-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Weekly Meeting Prep</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Weekly Meeting Prep</h4>
           </div>
           <button className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-medium hover:bg-indigo-200">
             Generate Agenda
           </button>
         </div>
-        <p className="text-xs text-gray-400 mt-1">Auto-generated from project data</p>
+        <p className="text-xs text-warm-400 mt-1">Auto-generated from project data</p>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {meetingAgendaItems.map(item => (
-          <div key={item.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+          <div key={item.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-start gap-2">
               <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium mt-0.5 flex-shrink-0", getStatusConfig(item.status))}>
                 {item.status}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-700">{item.topic}</p>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-400">
+                <p className="text-sm text-warm-700">{item.topic}</p>
+                <div className="flex items-center gap-2 mt-0.5 text-xs text-warm-400">
                   <span>{item.source}</span>
                   {item.jobRef && (
                     <>
-                      <span className="text-gray-300">|</span>
-                      <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{item.jobRef}</span>
+                      <span className="text-warm-300">|</span>
+                      <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{item.jobRef}</span>
                     </>
                   )}
                 </div>
@@ -793,35 +793,35 @@ function MeetingPrep() {
 
 export function OverviewPreview() {
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Company Overview</h3>
+              <h3 className="font-semibold text-warm-900">Company Overview</h3>
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">All Systems Operational</span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-3">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-3">
               <span>Real-time metrics and actionable insights</span>
-              <span className="text-gray-300">|</span>
+              <span className="text-warm-300">|</span>
               <span className="flex items-center gap-1">
                 <Sun className="h-3.5 w-3.5 text-amber-500" />
                 72F Sunny - Wilmington, NC
               </span>
-              <span className="text-gray-300">|</span>
-              <span className="flex items-center gap-1 text-gray-400">
+              <span className="text-warm-300">|</span>
+              <span className="flex items-center gap-1 text-warm-400">
                 <Calendar className="h-3.5 w-3.5" />
                 Feb 12, 2026
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Clock className="h-4 w-4" />
               Today
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <TrendingUp className="h-4 w-4" />
               Full Report
             </button>
@@ -830,7 +830,7 @@ export function OverviewPreview() {
       </div>
 
       {/* Key Metrics Row with Sparklines */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
           {metricCards.map(card => (
             <MetricCardComponent key={card.id} card={card} />
@@ -857,7 +857,7 @@ export function OverviewPreview() {
 
       {/* AI Features Panel Section */}
       <div className="px-4 pb-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
           <AIFeaturesPanel
             title="AI-Powered Features"
             features={aiFeaturesData}

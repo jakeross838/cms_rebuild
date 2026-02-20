@@ -167,16 +167,16 @@ function CashFlowChart() {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-medium text-gray-900 text-sm">30-Day Cash Flow Forecast</h4>
+        <h4 className="font-medium text-warm-900 text-sm">30-Day Cash Flow Forecast</h4>
         <div className="flex items-center gap-4 text-xs">
           <span className="flex items-center gap-1">
-            <span className="w-3 h-0.5 bg-blue-500 rounded" />
+            <span className="w-3 h-0.5 bg-stone-500 rounded" />
             Projected
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 bg-blue-100 rounded" />
+            <span className="w-3 h-3 bg-stone-100 rounded" />
             Range
           </span>
           <span className="flex items-center gap-1">
@@ -188,7 +188,7 @@ function CashFlowChart() {
 
       <div className="relative h-48">
         {/* Y-axis labels */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-between text-xs text-gray-500">
+        <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-between text-xs text-warm-500">
           <span>{formatCurrency(maxValue)}</span>
           <span>{formatCurrency((maxValue + minValue) / 2)}</span>
           <span>{formatCurrency(minValue)}</span>
@@ -229,7 +229,7 @@ function CashFlowChart() {
                 <div
                   className={cn(
                     "absolute w-3 h-3 rounded-full border-2 border-white shadow-sm cursor-pointer z-10",
-                    week.status === 'healthy' ? "bg-blue-500" :
+                    week.status === 'healthy' ? "bg-stone-500" :
                     week.status === 'warning' ? "bg-amber-500" : "bg-red-500"
                   )}
                   style={{ bottom: `${100 - getYPosition(week.closingBalance)}%`, transform: 'translateY(50%)' }}
@@ -240,7 +240,7 @@ function CashFlowChart() {
           </div>
 
           {/* X-axis labels */}
-          <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-xs text-gray-500">
+          <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-xs text-warm-500">
             {weeks.map(week => (
               <span key={week.id} className="text-center flex-1">{week.weekLabel}</span>
             ))}
@@ -256,8 +256,8 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
     <>
       <tr
         className={cn(
-          "hover:bg-gray-50 cursor-pointer",
-          expanded && "bg-blue-50",
+          "hover:bg-warm-50 cursor-pointer",
+          expanded && "bg-stone-50",
           week.status === 'warning' && "bg-amber-50/50",
           week.status === 'danger' && "bg-red-50/50"
         )}
@@ -266,19 +266,19 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
         <td className="py-3 px-4">
           <div className="flex items-center gap-2">
             {expanded ? (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-warm-400" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-warm-400" />
             )}
             <div>
-              <span className="font-medium text-gray-900">{week.weekLabel}</span>
-              <div className="text-xs text-gray-500">{week.startDate} - {week.endDate}</div>
+              <span className="font-medium text-warm-900">{week.weekLabel}</span>
+              <div className="text-xs text-warm-500">{week.startDate} - {week.endDate}</div>
             </div>
             {week.status === 'warning' && <AlertTriangle className="h-4 w-4 text-amber-500" />}
             {week.status === 'danger' && <AlertTriangle className="h-4 w-4 text-red-500" />}
           </div>
         </td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(week.openingBalance)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(week.openingBalance)}</td>
         <td className="py-3 px-3 text-right">
           <div className="flex items-center justify-end gap-1 text-green-600">
             <ArrowUpRight className="h-3 w-3" />
@@ -307,31 +307,31 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
             {week.confidence}%
           </span>
         </td>
-        <td className="py-3 px-3 text-right text-xs text-gray-500">
+        <td className="py-3 px-3 text-right text-xs text-warm-500">
           {formatCurrency(week.lowScenario)} - {formatCurrency(week.highScenario)}
         </td>
       </tr>
       {expanded && (
-        <tr className="bg-blue-50/50">
+        <tr className="bg-stone-50/50">
           <td colSpan={7} className="py-4 px-8">
             <div className="grid grid-cols-2 gap-6">
               {/* Inflows */}
               <div>
-                <h5 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <h5 className="text-sm font-medium text-warm-700 mb-2 flex items-center gap-2">
                   <ArrowUpRight className="h-4 w-4 text-green-500" />
                   Expected Inflows
                 </h5>
                 <div className="space-y-2">
                   {week.inflows.map((inflow, idx) => (
                     <div key={idx} className="flex items-center justify-between text-sm bg-white rounded p-2">
-                      <span className="text-gray-700">{inflow.source}</span>
+                      <span className="text-warm-700">{inflow.source}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-green-600 font-medium">{formatCurrency(inflow.amount)}</span>
                         <span className={cn(
                           "text-xs px-1.5 py-0.5 rounded",
                           inflow.probability >= 90 ? "bg-green-100 text-green-600" :
                           inflow.probability >= 75 ? "bg-amber-100 text-amber-600" :
-                          "bg-gray-100 text-gray-600"
+                          "bg-warm-100 text-warm-600"
                         )}>
                           {inflow.probability}%
                         </span>
@@ -342,7 +342,7 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
               </div>
               {/* Outflows */}
               <div>
-                <h5 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <h5 className="text-sm font-medium text-warm-700 mb-2 flex items-center gap-2">
                   <ArrowDownRight className="h-4 w-4 text-red-500" />
                   Expected Outflows
                 </h5>
@@ -350,8 +350,8 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
                   {week.outflows.map((outflow, idx) => (
                     <div key={idx} className="flex items-center justify-between text-sm bg-white rounded p-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-700">{outflow.vendor}</span>
-                        <span className="text-xs text-gray-400">{outflow.type}</span>
+                        <span className="text-warm-700">{outflow.vendor}</span>
+                        <span className="text-xs text-warm-400">{outflow.type}</span>
                         {outflow.lienWaiverStatus === 'pending' && (
                           <span className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Lien waiver pending</span>
                         )}
@@ -452,13 +452,13 @@ export function CashFlowPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Cash Flow Forecast</h3>
+              <h3 className="font-semibold text-warm-900">Cash Flow Forecast</h3>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded font-medium",
                 weeksWithWarning === 0 ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
@@ -466,14 +466,14 @@ export function CashFlowPreview() {
                 {weeksWithWarning === 0 ? 'Healthy' : `${weeksWithWarning} Week${weeksWithWarning > 1 ? 's' : ''} Need Attention`}
               </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-2">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-2">
               <Clock className="h-4 w-4" />
               Updated 10 minutes ago
             </div>
           </div>
           <div className="flex items-center gap-2">
             {/* Time Horizon Selector (Gap #87) */}
-            <select className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600">
+            <select className="px-3 py-1.5 text-sm border border-warm-200 rounded-lg bg-white text-warm-600">
               <option>30 Days</option>
               <option>60 Days</option>
               <option>90 Days</option>
@@ -481,26 +481,26 @@ export function CashFlowPreview() {
               <option>Custom Range</option>
             </select>
             {/* Granularity Toggle */}
-            <select className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600">
+            <select className="px-3 py-1.5 text-sm border border-warm-200 rounded-lg bg-white text-warm-600">
               <option>Weekly</option>
               <option>Monthly</option>
             </select>
             {/* Bank Account Selector (Gap #435) */}
-            <select className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600">
+            <select className="px-3 py-1.5 text-sm border border-warm-200 rounded-lg bg-white text-warm-600">
               <option>All Accounts</option>
               <option>Operating Account</option>
               <option>Trust Account</option>
               <option>Payroll Account</option>
             </select>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <GitBranch className="h-4 w-4" />
               What-If
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <RefreshCw className="h-4 w-4" />
               Refresh
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
@@ -509,7 +509,7 @@ export function CashFlowPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -526,15 +526,15 @@ export function CashFlowPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Current Cash
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(currentCash)}</div>
-            <div className="text-xs text-gray-500 mt-0.5">Operating acct</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(currentCash)}</div>
+            <div className="text-xs text-warm-500 mt-0.5">Operating acct</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -553,7 +553,7 @@ export function CashFlowPreview() {
             )}>
               {cashChange >= 0 ? '+' : ''}{formatCurrency(cashChange)}
             </div>
-            <div className="text-xs text-gray-500 mt-0.5">{cashChangePercent.toFixed(1)}%</div>
+            <div className="text-xs text-warm-500 mt-0.5">{cashChangePercent.toFixed(1)}%</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -561,7 +561,7 @@ export function CashFlowPreview() {
               Total Inflows
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(totalInflows)}</div>
-            <div className="text-xs text-gray-500 mt-0.5">Draws + payments</div>
+            <div className="text-xs text-warm-500 mt-0.5">Draws + payments</div>
           </div>
           <div className="bg-red-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -569,7 +569,7 @@ export function CashFlowPreview() {
               Total Outflows
             </div>
             <div className="text-xl font-bold text-red-700 mt-1">{formatCurrency(totalOutflows)}</div>
-            <div className="text-xs text-gray-500 mt-0.5">AP + payroll + subs</div>
+            <div className="text-xs text-warm-500 mt-0.5">AP + payroll + subs</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-sm">
@@ -594,25 +594,25 @@ export function CashFlowPreview() {
       </div>
 
       {/* Chart */}
-      <div className="p-4 bg-white border-b border-gray-200">
+      <div className="p-4 bg-white border-b border-warm-200">
         <CashFlowChart />
       </div>
 
       {/* Detail Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 border-b border-gray-200">
+          <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Period</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Opening</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Inflows</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Outflows</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Closing</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600">Confidence</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Range</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">Period</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Opening</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Inflows</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Outflows</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Closing</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600">Confidence</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Range</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-white divide-y divide-warm-100">
             {mockCashFlowWeeks.map(week => (
               <WeekDetailRow
                 key={week.id}
@@ -626,15 +626,15 @@ export function CashFlowPreview() {
       </div>
 
       {/* Scenario Modeling Summary */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
+      <div className="bg-white border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <GitBranch className="h-4 w-4 text-purple-500" />
-            <span className="font-medium text-gray-700">Scenario Modeling:</span>
+            <span className="font-medium text-warm-700">Scenario Modeling:</span>
           </div>
-          <div className="flex items-center gap-6 text-gray-600">
+          <div className="flex items-center gap-6 text-warm-600">
             <span>Best Case: <span className="font-semibold text-green-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].highScenario)}</span></span>
-            <span>Likely: <span className="font-semibold text-blue-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].closingBalance)}</span></span>
+            <span>Likely: <span className="font-semibold text-stone-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].closingBalance)}</span></span>
             <span>Worst Case: <span className="font-semibold text-red-600">{formatCurrency(mockCashFlowWeeks[mockCashFlowWeeks.length - 1].lowScenario)}</span></span>
             <button className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1">
               Run What-If <ChevronRight className="h-3 w-3" />
@@ -644,9 +644,9 @@ export function CashFlowPreview() {
       </div>
 
       {/* Historical Accuracy */}
-      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>Forecast accuracy (last 12 weeks): <span className="font-semibold text-gray-700">87%</span> within projected range</span>
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
+        <div className="flex items-center justify-between text-xs text-warm-500">
+          <span>Forecast accuracy (last 12 weeks): <span className="font-semibold text-warm-700">87%</span> within projected range</span>
           <span>Seasonal pattern: Collections slow 15% in Q1 historically</span>
         </div>
       </div>
@@ -673,7 +673,7 @@ export function CashFlowPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Cash Flow Intelligence"
           features={aiFeatures}

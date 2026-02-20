@@ -320,7 +320,7 @@ This document identifies potential gaps, "what-if" scenarios, and missing pieces
 - **What if a builder's accounting practices don't align with the platform's assumptions?** The chart of accounts mapping is a good start, but there may be other differences that need to be accounted for.
 - **Logical Gap:** The three-column tracking (Budgeted, Committed, Actual) is powerful, but it needs to be very clearly defined how each of these numbers is calculated and what transactions affect them.
 
-### Module 11: Basic Invoicing
+### Module 11: Native Accounting (GL/AP/AR)
 
 #### Identified Gaps & Future Considerations:
 

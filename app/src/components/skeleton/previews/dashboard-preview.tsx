@@ -435,9 +435,9 @@ const clientMessages: ClientMessage[] = [
 
 const cardColorClasses = {
   blue: {
-    bg: 'bg-blue-50',
-    icon: 'bg-blue-100 text-blue-600',
-    text: 'text-blue-600',
+    bg: 'bg-stone-50',
+    icon: 'bg-stone-100 text-stone-600',
+    text: 'text-stone-600',
   },
   green: {
     bg: 'bg-green-50',
@@ -511,9 +511,9 @@ function SummaryCardComponent({ card }: { card: SummaryCard }) {
           </div>
         </div>
       </div>
-      <div className="text-2xl font-bold text-gray-900">{card.value}</div>
-      <div className="text-sm text-gray-500 mt-1">{card.label}</div>
-      <div className="text-xs text-gray-400 mt-0.5">{card.changeLabel}</div>
+      <div className="text-2xl font-bold text-warm-900">{card.value}</div>
+      <div className="text-sm text-warm-500 mt-1">{card.label}</div>
+      <div className="text-xs text-warm-400 mt-0.5">{card.changeLabel}</div>
     </div>
   )
 }
@@ -525,19 +525,19 @@ function ChartPlaceholder({ title, icon: Icon, height = "h-48", chartType = "bar
   chartType?: 'bar' | 'line' | 'pie'
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-medium text-gray-900 text-sm">{title}</h4>
-        <Icon className="h-4 w-4 text-gray-400" />
+        <h4 className="font-medium text-warm-900 text-sm">{title}</h4>
+        <Icon className="h-4 w-4 text-warm-400" />
       </div>
-      <div className={cn("bg-gray-50 rounded-lg flex items-center justify-center", height)}>
+      <div className={cn("bg-warm-50 rounded-lg flex items-center justify-center", height)}>
         <div className="text-center">
           {chartType === 'bar' && (
             <div className="flex justify-center gap-1 mb-2">
               {[40, 65, 45, 80, 55, 70, 90, 60, 75, 85, 50, 95].map((h, i) => (
                 <div
                   key={i}
-                  className="w-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t"
+                  className="w-4 bg-gradient-to-t from-stone-500 to-stone-300 rounded-t"
                   style={{ height: `${h}%`, maxHeight: '120px' }}
                 />
               ))}
@@ -602,7 +602,7 @@ function ChartPlaceholder({ title, icon: Icon, height = "h-48", chartType = "bar
               </svg>
             </div>
           )}
-          <span className="text-xs text-gray-400">Chart visualization</span>
+          <span className="text-xs text-warm-400">Chart visualization</span>
         </div>
       </div>
     </div>
@@ -613,44 +613,44 @@ function OvernightAlertWidget({ alerts }: { alerts: OvernightAlert[] }) {
   const getCategoryConfig = (category: OvernightAlert['category']) => {
     switch (category) {
       case 'action_required': return { bg: 'bg-red-50', text: 'text-red-700', badge: 'bg-red-100 text-red-700', icon: ShieldAlert }
-      case 'informational': return { bg: 'bg-blue-50', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-700', icon: Bell }
+      case 'informational': return { bg: 'bg-stone-50', text: 'text-stone-700', badge: 'bg-stone-100 text-stone-700', icon: Bell }
       case 'resolved': return { bg: 'bg-green-50', text: 'text-green-700', badge: 'bg-green-100 text-green-700', icon: CheckSquare }
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Moon className="h-4 w-4 text-indigo-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Overnight Summary</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Overnight Summary</h4>
           </div>
           <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-medium">
             {alerts.filter(a => a.category === 'action_required').length} need action
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {alerts.map(alert => {
           const config = getCategoryConfig(alert.category)
           const AlertIcon = config.icon
           return (
-            <div key={alert.id} className={cn("px-4 py-2.5 hover:bg-gray-50 cursor-pointer", alert.category === 'action_required' && 'bg-red-50/30')}>
+            <div key={alert.id} className={cn("px-4 py-2.5 hover:bg-warm-50 cursor-pointer", alert.category === 'action_required' && 'bg-red-50/30')}>
               <div className="flex items-start gap-3">
                 <div className={cn("p-1 rounded-lg mt-0.5", config.badge)}>
                   <AlertIcon className="h-3 w-3" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-700">{alert.message}</p>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                  <p className="text-sm text-warm-700">{alert.message}</p>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-warm-400">
                     <span>{alert.source}</span>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-warm-300">|</span>
                     <span>{alert.timestamp}</span>
                     {alert.jobRef && (
                       <>
-                        <span className="text-gray-300">|</span>
-                        <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{alert.jobRef}</span>
+                        <span className="text-warm-300">|</span>
+                        <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{alert.jobRef}</span>
                       </>
                     )}
                   </div>
@@ -685,8 +685,8 @@ function CashPositionWidget({ data }: { data: CashPosition }) {
     <div className={cn("rounded-lg border p-4", status.bg, status.border)}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Wallet className="h-4 w-4 text-gray-600" />
-          <h4 className="font-medium text-gray-900 text-sm">Daily Cash Position</h4>
+          <Wallet className="h-4 w-4 text-warm-600" />
+          <h4 className="font-medium text-warm-900 text-sm">Daily Cash Position</h4>
         </div>
         <span className={cn("text-xs px-2 py-0.5 rounded font-medium", status.text, data.status === 'green' ? 'bg-green-100' : data.status === 'yellow' ? 'bg-amber-100' : 'bg-red-100')}>
           {status.label}
@@ -694,27 +694,27 @@ function CashPositionWidget({ data }: { data: CashPosition }) {
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Bank Balance</span>
-          <span className="text-sm font-semibold text-gray-900">{formatCurrency(data.bankBalance)}</span>
+          <span className="text-sm text-warm-600">Bank Balance</span>
+          <span className="text-sm font-semibold text-warm-900">{formatCurrency(data.bankBalance)}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Due Out Today</span>
+          <span className="text-sm text-warm-600">Due Out Today</span>
           <span className="text-sm font-medium text-red-600">-{formatCurrency(data.dueOutToday)}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Due Out This Week</span>
+          <span className="text-sm text-warm-600">Due Out This Week</span>
           <span className="text-sm font-medium text-red-600">-{formatCurrency(data.dueOutThisWeek)}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Draws Pending</span>
+          <span className="text-sm text-warm-600">Draws Pending</span>
           <span className="text-sm font-medium text-green-600">+{formatCurrency(data.drawsPending)}</span>
         </div>
-        <div className="border-t border-gray-200 pt-2 flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-900">Net Position</span>
-          <span className="text-base font-bold text-gray-900">{formatCurrency(data.netPosition)}</span>
+        <div className="border-t border-warm-200 pt-2 flex items-center justify-between">
+          <span className="text-sm font-medium text-warm-900">Net Position</span>
+          <span className="text-base font-bold text-warm-900">{formatCurrency(data.netPosition)}</span>
         </div>
       </div>
-      <button className="mt-3 text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <button className="mt-3 text-xs text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
         View cash flow forecast
         <ChevronRight className="h-3 w-3" />
       </button>
@@ -729,36 +729,36 @@ function VendorFollowUpWidget({ items }: { items: VendorFollowUp[] }) {
       case 'overdue_invoice': return { label: 'Invoice', bg: 'bg-amber-100 text-amber-700', icon: FileWarning }
       case 'overdue_bid': return { label: 'Bid', bg: 'bg-orange-100 text-orange-700', icon: Clock }
       case 'unanswered_rfi': return { label: 'RFI', bg: 'bg-purple-100 text-purple-700', icon: MessageSquare }
-      case 'unacknowledged_bid': return { label: 'Bid Inv.', bg: 'bg-blue-100 text-blue-700', icon: Mail }
+      case 'unacknowledged_bid': return { label: 'Bid Inv.', bg: 'bg-stone-100 text-stone-700', icon: Mail }
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-orange-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Vendor Follow-Up</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Vendor Follow-Up</h4>
           </div>
           <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-medium">
             {items.length} items
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {items.map(item => {
           const config = getCategoryConfig(item.category)
           return (
-            <div key={item.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+            <div key={item.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm text-gray-900">{item.vendorName}</span>
+                    <span className="font-medium text-sm text-warm-900">{item.vendorName}</span>
                     <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", config.bg)}>{config.label}</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
-                  <span className="text-xs text-gray-400">{item.job}</span>
+                  <p className="text-xs text-warm-500 mt-0.5">{item.description}</p>
+                  <span className="text-xs text-warm-400">{item.job}</span>
                 </div>
                 <span className="text-xs font-medium text-red-600 flex-shrink-0">{item.daysOverdue}d overdue</span>
               </div>
@@ -766,8 +766,8 @@ function VendorFollowUpWidget({ items }: { items: VendorFollowUp[] }) {
           )
         })}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all vendor items
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -778,31 +778,31 @@ function VendorFollowUpWidget({ items }: { items: VendorFollowUp[] }) {
 
 function ClientQueueWidget({ messages }: { messages: ClientMessage[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4 text-cyan-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Client Messages</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Client Messages</h4>
           </div>
           <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded font-medium">
             {messages.filter(m => m.type === 'portal_message').length} awaiting
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {messages.map(msg => (
-          <div key={msg.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+          <div key={msg.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-gray-900">{msg.clientName}</span>
+                  <span className="font-medium text-sm text-warm-900">{msg.clientName}</span>
                   {msg.type === 'meeting' && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Meeting</span>
+                    <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded">Meeting</span>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5 truncate">{msg.preview}</p>
-                <span className="text-xs text-gray-400">{msg.job}</span>
+                <p className="text-xs text-warm-500 mt-0.5 truncate">{msg.preview}</p>
+                <span className="text-xs text-warm-400">{msg.job}</span>
               </div>
               <div className="flex-shrink-0 text-right">
                 {msg.type === 'portal_message' && (
@@ -814,7 +814,7 @@ function ClientQueueWidget({ messages }: { messages: ClientMessage[] }) {
                   </span>
                 )}
                 {msg.type === 'meeting' && (
-                  <span className="text-xs text-gray-500">{msg.waitTime}</span>
+                  <span className="text-xs text-warm-500">{msg.waitTime}</span>
                 )}
               </div>
             </div>
@@ -830,14 +830,14 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-700'
       case 'medium': return 'bg-amber-100 text-amber-700'
-      case 'low': return 'bg-gray-100 text-gray-600'
+      case 'low': return 'bg-warm-100 text-warm-600'
     }
   }
 
   const getTypeColor = (type: TaskDue['type']) => {
     switch (type) {
       case 'approval': return 'bg-green-50 text-green-600'
-      case 'task': return 'bg-blue-50 text-blue-600'
+      case 'task': return 'bg-stone-50 text-stone-600'
       case 'rfi': return 'bg-purple-50 text-purple-600'
       case 'inspection': return 'bg-amber-50 text-amber-600'
       case 'selection': return 'bg-pink-50 text-pink-600'
@@ -846,31 +846,31 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckSquare className="h-4 w-4 text-blue-600" />
-            <h4 className="font-medium text-gray-900 text-sm">My Day - Due Today</h4>
+            <CheckSquare className="h-4 w-4 text-stone-600" />
+            <h4 className="font-medium text-warm-900 text-sm">My Day - Due Today</h4>
           </div>
-          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">
+          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-medium">
             {tasks.length} items
           </span>
         </div>
-        <p className="text-xs text-gray-400 mt-1">Cross-project priority queue sorted by urgency</p>
+        <p className="text-xs text-warm-400 mt-1">Cross-project priority queue sorted by urgency</p>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {tasks.map(task => (
-          <div key={task.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          <div key={task.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="font-medium text-gray-900 text-sm">{task.title}</div>
-                <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                <div className="font-medium text-warm-900 text-sm">{task.title}</div>
+                <div className="text-xs text-warm-500 mt-0.5 flex items-center gap-2 flex-wrap">
                   <span className="flex items-center gap-1">
                     <Building2 className="h-3 w-3" />
                     {task.job}
                   </span>
-                  <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{task.jobId}</span>
+                  <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{task.jobId}</span>
                   <span className="flex items-center gap-1">
                     <User className="h-3 w-3" />
                     {task.assignee}
@@ -886,7 +886,7 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
                     {task.priority}
                   </span>
                 </div>
-                <span className="text-xs text-gray-500 flex items-center gap-1">
+                <span className="text-xs text-warm-500 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {task.dueTime}
                 </span>
@@ -895,8 +895,8 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all tasks
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -907,30 +907,30 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
 
 function InspectionsList({ inspections }: { inspections: UpcomingInspection[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ClipboardCheck className="h-4 w-4 text-green-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Upcoming Inspections</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Upcoming Inspections</h4>
           </div>
           <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
             {inspections.length} scheduled
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {inspections.map(inspection => (
-          <div key={inspection.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          <div key={inspection.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-start justify-between">
               <div>
-                <div className="font-medium text-gray-900 text-sm">{inspection.type}</div>
-                <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                <div className="font-medium text-warm-900 text-sm">{inspection.type}</div>
+                <div className="text-xs text-warm-500 mt-0.5 flex items-center gap-2">
                   <span className="flex items-center gap-1">
                     <Building2 className="h-3 w-3" />
                     {inspection.job}
                   </span>
-                  <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{inspection.jobId}</span>
+                  <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{inspection.jobId}</span>
                 </div>
                 {inspection.permitRef && (
                   <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mt-1 inline-block">
@@ -939,8 +939,8 @@ function InspectionsList({ inspections }: { inspections: UpcomingInspection[] })
                 )}
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium text-gray-900">{inspection.date}</div>
-                <div className="text-xs text-gray-500">{inspection.time}</div>
+                <div className="text-sm font-medium text-warm-900">{inspection.date}</div>
+                <div className="text-xs text-warm-500">{inspection.time}</div>
                 {inspection.status === 'confirmed' && (
                   <div className="flex items-center gap-1 text-xs text-green-600 mt-1 justify-end">
                     <CheckSquare className="h-3 w-3" />
@@ -958,8 +958,8 @@ function InspectionsList({ inspections }: { inspections: UpcomingInspection[] })
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all inspections
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -983,7 +983,7 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
 
   const getTypeColor = (type: RecentActivity['type']) => {
     switch (type) {
-      case 'job': return 'bg-blue-100 text-blue-600'
+      case 'job': return 'bg-stone-100 text-stone-600'
       case 'invoice': return 'bg-green-100 text-green-600'
       case 'change-order': return 'bg-amber-100 text-amber-600'
       case 'document': return 'bg-purple-100 text-purple-600'
@@ -994,37 +994,37 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 text-purple-600" />
-            <h4 className="font-medium text-gray-900 text-sm">Recent Activity</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Recent Activity</h4>
           </div>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {activities.map(activity => {
           const Icon = getTypeIcon(activity.type)
           return (
-            <div key={activity.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <div key={activity.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-start gap-3">
                 <div className={cn("p-1.5 rounded-lg", getTypeColor(activity.type))}>
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-warm-900">
                     <span className="font-medium">{activity.action}</span>
-                    <span className="text-gray-500"> - {activity.subject}</span>
+                    <span className="text-warm-500"> - {activity.subject}</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                  <div className="text-xs text-warm-500 mt-0.5 flex items-center gap-2">
                     <span>{activity.user}</span>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-warm-300">|</span>
                     <span>{activity.timestamp}</span>
                     {activity.jobRef && (
                       <>
-                        <span className="text-gray-300">|</span>
-                        <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{activity.jobRef}</span>
+                        <span className="text-warm-300">|</span>
+                        <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{activity.jobRef}</span>
                       </>
                     )}
                   </div>
@@ -1034,8 +1034,8 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
           )
         })}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all activity
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -1053,10 +1053,10 @@ function PendingApprovalsBar() {
   ]
 
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-3">
+    <div className="bg-white border-b border-warm-200 px-4 py-3">
       <div className="flex items-center gap-2 mb-2">
         <Bell className="h-4 w-4 text-amber-600" />
-        <span className="text-sm font-medium text-gray-700">Pending Approvals</span>
+        <span className="text-sm font-medium text-warm-700">Pending Approvals</span>
         <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
           {approvals.reduce((sum, a) => sum + a.count, 0)} total
         </span>
@@ -1083,20 +1083,20 @@ function PendingApprovalsBar() {
 
 export function DashboardPreview() {
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Company Dashboard</h3>
+              <h3 className="font-semibold text-warm-900">Company Dashboard</h3>
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">All Systems Operational</span>
-              <span className="flex items-center gap-1 text-xs text-gray-400">
+              <span className="flex items-center gap-1 text-xs text-warm-400">
                 <RefreshCw className="h-3 w-3" />
                 Auto-refresh: 5 min
               </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 February 12, 2026
@@ -1112,15 +1112,15 @@ export function DashboardPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Calendar className="h-4 w-4" />
               This Month
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Eye className="h-4 w-4" />
               Customize
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <BarChart3 className="h-4 w-4" />
               Full Report
             </button>
@@ -1132,7 +1132,7 @@ export function DashboardPreview() {
       <PendingApprovalsBar />
 
       {/* Summary Cards with Sparklines */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
           {summaryCards.map(card => (
             <SummaryCardComponent key={card.id} card={card} />
@@ -1186,7 +1186,7 @@ export function DashboardPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="px-4 py-4 bg-white border-t border-gray-200">
+      <div className="px-4 py-4 bg-white border-t border-warm-200">
         <AIFeaturesPanel
           title="Dashboard AI Features"
           columns={2}

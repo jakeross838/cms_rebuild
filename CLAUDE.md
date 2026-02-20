@@ -6,13 +6,13 @@
 - **Stack:** Next.js 16 (App Router) + Supabase + Tailwind CSS v4 + TypeScript
 - **App directory:** `app/` (all code, configs, and tests live here)
 - **Source:** `app/src/` with `@/` path alias
-- **Docs:** `docs/` — 50 module specs across 6 phases, 11 architecture docs, gap tracker
+- **Docs:** `docs/` — 52 module specs across 6 phases, 16 architecture docs, gap tracker
 - **Skeleton:** `app/src/app/(skeleton)/skeleton/` — 93 page UI prototypes with mock data
 - **Supabase:** Project ID `yprbbomuhugtgyqmrnhr`, name `RossOS`
 
 ---
 
-## Build Phases (50 modules, 6 phases)
+## Build Phases (52 modules, 6 phases)
 
 **Build in order. Each phase depends on the previous.**
 
@@ -26,26 +26,28 @@
 | 05 | Notification Engine | Real-time notifications, email, in-app alerts |
 | 06 | Document Storage | File upload, folders, S3/Supabase storage |
 
-### Phase 2 — Construction Core (Modules 07-12)
+### Phase 2 — Construction Core (Modules 07-12, 51)
 | # | Module | What it builds |
 |---|--------|---------------|
 | 07 | Scheduling & Calendar | Gantt chart, calendar, dependencies, weather |
 | 08 | Daily Logs | Voice-to-text field updates, crew tracking |
 | 09 | Budget & Cost Tracking | Budget lines, cost codes, variance analysis |
 | 10 | Vendor Management | Vendor directory, insurance, contacts |
-| 11 | Basic Invoicing | Invoice processing, approval workflow |
+| 11 | Native Accounting (GL/AP/AR) | Full general ledger, accounts payable, accounts receivable, bank reconciliation |
 | 12 | Basic Client Portal | Client login, project visibility, photo sharing |
+| 51 | Time Tracking & Labor | GPS clock in/out, crew time entry, overtime, payroll export |
 
-### Phase 3 — Financial Power (Modules 13-19)
+### Phase 3 — Financial Power (Modules 13-19, 52)
 | # | Module | What it builds |
 |---|--------|---------------|
 | 13 | AI Invoice Processing | OCR extraction, line-item matching, auto-coding |
 | 14 | Lien Waivers | Conditional/unconditional, tracking, compliance |
 | 15 | Draw Requests | AIA-format draws, lender submission |
-| 16 | QuickBooks Integration | Two-way sync, entity mapping |
+| 16 | QuickBooks Integration | Optional two-way sync with external accounting (QBO, Xero, Sage) |
 | 17 | Change Orders | Scope changes, approval chains, budget impact |
 | 18 | Purchase Orders | PO creation, receiving, budget gate |
 | 19 | Financial Reporting | P&L, cash flow, WIP, profitability |
+| 52 | Inventory & Materials | Warehouse/job site inventory, receiving, transfers, consumption tracking |
 
 ### Phase 4 — Intelligence (Modules 20-28)
 | # | Module | What it builds |

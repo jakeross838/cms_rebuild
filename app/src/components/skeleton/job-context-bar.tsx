@@ -62,7 +62,7 @@ export function JobContextBar() {
             className={cn(
               'px-2 py-1 text-xs font-medium rounded-full',
               mockJob.health === 'good' && 'bg-green-100 text-green-700',
-              mockJob.health === 'warning' && 'bg-yellow-100 text-yellow-700',
+              mockJob.health === 'warning' && 'bg-amber-100 text-amber-700',
               mockJob.health === 'critical' && 'bg-red-100 text-red-700'
             )}
           >

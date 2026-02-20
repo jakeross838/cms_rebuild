@@ -204,20 +204,20 @@ const mockContracts: Contract[] = [
 ]
 
 const statusConfig: Record<ContractStatus, { label: string; color: string; icon: typeof FileText }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   internal_review: { label: 'Internal Review', color: 'bg-amber-100 text-amber-700', icon: BookOpen },
-  sent: { label: 'Sent', color: 'bg-blue-100 text-blue-700', icon: Send },
+  sent: { label: 'Sent', color: 'bg-stone-100 text-stone-700', icon: Send },
   signed: { label: 'Signed', color: 'bg-purple-100 text-purple-700', icon: PenTool },
   active: { label: 'Active', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-  complete: { label: 'Closeout', color: 'bg-gray-100 text-gray-600', icon: CheckCircle },
+  complete: { label: 'Closeout', color: 'bg-warm-100 text-warm-600', icon: CheckCircle },
   amended: { label: 'Amended', color: 'bg-orange-100 text-orange-700', icon: FileText },
 }
 
 const signatureConfig = {
   pending: { label: 'Awaiting Signature', color: 'text-amber-600', icon: Clock },
-  client_signed: { label: 'Client Signed', color: 'text-blue-600', icon: PenTool },
+  client_signed: { label: 'Client Signed', color: 'text-stone-600', icon: PenTool },
   fully_signed: { label: 'Fully Executed', color: 'text-green-600', icon: CheckCircle },
-  not_required: { label: 'Not Sent', color: 'text-gray-400', icon: FileText },
+  not_required: { label: 'Not Sent', color: 'text-warm-400', icon: FileText },
 }
 
 const typeConfig: Record<ContractType, { label: string; color: string }> = {
@@ -229,7 +229,7 @@ const typeConfig: Record<ContractType, { label: string; color: string }> = {
 }
 
 const partyLabels: Record<PartyType, { label: string; color: string }> = {
-  owner: { label: 'Owner', color: 'bg-blue-50 text-blue-700' },
+  owner: { label: 'Owner', color: 'bg-stone-50 text-stone-700' },
   subcontractor: { label: 'Subcontract', color: 'bg-green-50 text-green-700' },
   vendor: { label: 'Vendor', color: 'bg-orange-50 text-orange-700' },
   precon: { label: 'Pre-Con', color: 'bg-purple-50 text-purple-700' },
@@ -255,20 +255,20 @@ function ContractCard({ contract }: { contract: Contract }) {
   const SignatureIcon = signature.icon
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <div className="bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <h4 className="font-medium text-gray-900">{contract.projectName}</h4>
-            <span className="text-[10px] text-gray-400 font-mono">{contract.contractNumber}</span>
+            <h4 className="font-medium text-warm-900">{contract.projectName}</h4>
+            <span className="text-[10px] text-warm-400 font-mono">{contract.contractNumber}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 text-sm text-warm-500">
             <User className="h-3.5 w-3.5" />
             <span>{contract.clientName}</span>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
@@ -293,45 +293,45 @@ function ContractCard({ contract }: { contract: Contract }) {
 
       <div className="space-y-1.5 mb-3">
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1.5 text-gray-600">
+          <div className="flex items-center gap-1.5 text-warm-600">
             <DollarSign className="h-3.5 w-3.5" />
             <span>Contract Value</span>
           </div>
-          <span className="font-semibold text-gray-900">{formatCurrency(contract.contractValue)}</span>
+          <span className="font-semibold text-warm-900">{formatCurrency(contract.contractValue)}</span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1.5 text-gray-600">
+          <div className="flex items-center gap-1.5 text-warm-600">
             <Calendar className="h-3.5 w-3.5" />
             <span>Date</span>
           </div>
-          <span className="text-gray-700">{formatDate(contract.date)}</span>
+          <span className="text-warm-700">{formatDate(contract.date)}</span>
         </div>
         {contract.retainagePct > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 text-xs">Retainage</span>
-            <span className="text-gray-700 text-xs">{contract.retainagePct}%</span>
+            <span className="text-warm-600 text-xs">Retainage</span>
+            <span className="text-warm-700 text-xs">{contract.retainagePct}%</span>
           </div>
         )}
         {contract.templateName && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5 text-xs text-warm-500">
             <Layers className="h-3 w-3" />
             <span>{contract.templateName}</span>
             {contract.clauseCount && (
-              <span className="text-gray-400">({contract.clauseCount} clauses)</span>
+              <span className="text-warm-400">({contract.clauseCount} clauses)</span>
             )}
           </div>
         )}
         {contract.lenderName && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5 text-xs text-warm-500">
             <Landmark className="h-3 w-3" />
             <span>{contract.lenderName}</span>
             {contract.drawScheduleType && (
-              <span className="text-gray-400">({contract.drawScheduleType} draws)</span>
+              <span className="text-warm-400">({contract.drawScheduleType} draws)</span>
             )}
           </div>
         )}
         {contract.warrantyTerms && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5 text-xs text-warm-500">
             <Shield className="h-3 w-3" />
             <span className="truncate" title={contract.warrantyTerms}>{contract.warrantyTerms}</span>
           </div>
@@ -354,16 +354,16 @@ function ContractCard({ contract }: { contract: Contract }) {
       {contract.closeoutProgress !== undefined && contract.closeoutProgress > 0 && (
         <div className="mb-2">
           <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-gray-500">Closeout Progress</span>
-            <span className="font-medium text-gray-700">{contract.closeoutProgress}%</span>
+            <span className="text-warm-500">Closeout Progress</span>
+            <span className="font-medium text-warm-700">{contract.closeoutProgress}%</span>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-1.5">
+          <div className="w-full bg-warm-100 rounded-full h-1.5">
             <div className="bg-green-500 h-1.5 rounded-full" style={{ width: `${contract.closeoutProgress}%` }} />
           </div>
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className={cn("flex items-center gap-1.5 text-sm", signature.color)}>
           <FileSignature className="h-4 w-4" />
           <SignatureIcon className="h-3.5 w-3.5" />
@@ -371,10 +371,10 @@ function ContractCard({ contract }: { contract: Contract }) {
         </div>
         <div className="flex items-center gap-2">
           {contract.state && (
-            <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">{contract.state}</span>
+            <span className="text-[10px] text-warm-400 bg-warm-50 px-1.5 py-0.5 rounded">{contract.state}</span>
           )}
           {contract.daysSinceSent && contract.status === 'sent' && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-warm-500">
               {contract.daysSinceSent}d ago
             </span>
           )}
@@ -417,17 +417,17 @@ export function ContractsPreview() {
   const verbalDirectives = mockContracts.reduce((sum, c) => sum + (c.changeDirectives || 0), 0)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-gray-900">Contracts & Agreements</h3>
-          <span className="text-sm text-gray-500">{mockContracts.length} contracts | {formatCurrency(totalContractValue)} owner value</span>
+          <h3 className="font-semibold text-warm-900">Contracts & Agreements</h3>
+          <span className="text-sm text-warm-500">{mockContracts.length} contracts | {formatCurrency(totalContractValue)} owner value</span>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-amber-600 text-xs mb-1">
@@ -443,12 +443,12 @@ export function ContractsPreview() {
             </div>
             <div className="text-xl font-bold text-green-700">{activeContracts}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-blue-600 text-xs mb-1">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs mb-1">
               <DollarSign className="h-3.5 w-3.5" />
               Owner Value
             </div>
-            <div className="text-xl font-bold text-blue-700">{formatCurrency(totalContractValue)}</div>
+            <div className="text-xl font-bold text-stone-700">{formatCurrency(totalContractValue)}</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-purple-600 text-xs mb-1">
@@ -468,27 +468,27 @@ export function ContractsPreview() {
       </div>
 
       {/* E-Signature & Compliance Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <FileSignature className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-gray-700">E-Signature</span>
+              <span className="text-sm text-warm-700">E-Signature</span>
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">DocuSign Connected</span>
             </div>
             <div className="flex items-center gap-2">
               <Scale className="h-4 w-4 text-indigo-600" />
-              <span className="text-sm text-gray-700">State Compliance</span>
+              <span className="text-sm text-warm-700">State Compliance</span>
               <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">SC Clauses Active</span>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-4 text-xs text-warm-500">
             <span className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-green-500" />
               {mockContracts.filter(c => c.signatureStatus === 'fully_signed').length} executed
             </span>
             <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
+              <div className="w-2 h-2 rounded-full bg-stone-500" />
               {mockContracts.filter(c => c.signatureStatus === 'client_signed').length} client signed
             </span>
             <span className="flex items-center gap-1">
@@ -500,10 +500,10 @@ export function ContractsPreview() {
       </div>
 
       {/* Cross-Module Connections */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-gray-500 font-medium">Connections:</span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded">
+          <span className="text-warm-500 font-medium">Connections:</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded">
             <DollarSign className="h-3 w-3" />
             Budget (Module 9)
           </span>
@@ -527,7 +527,7 @@ export function ContractsPreview() {
       </div>
 
       {/* Status Tabs + FilterBar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -563,7 +563,7 @@ export function ContractsPreview() {
           <ContractCard key={contract.id} contract={contract} />
         ))}
         {filtered.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="col-span-2 text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No contracts found
           </div>
         )}
@@ -586,7 +586,7 @@ export function ContractsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Contract AI Features"
           columns={2}

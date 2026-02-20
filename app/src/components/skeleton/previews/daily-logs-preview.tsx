@@ -311,24 +311,24 @@ const weatherIcons = {
 }
 
 const weatherColors = {
-  sunny: 'text-yellow-500 bg-yellow-50',
-  cloudy: 'text-gray-500 bg-gray-100',
-  rainy: 'text-blue-500 bg-blue-50',
+  sunny: 'text-amber-500 bg-amber-50',
+  cloudy: 'text-warm-500 bg-warm-100',
+  rainy: 'text-stone-500 bg-stone-50',
   snowy: 'text-cyan-500 bg-cyan-50',
   windy: 'text-teal-500 bg-teal-50',
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600', icon: Pencil },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700', icon: FileText },
-  in_review: { label: 'In Review', color: 'bg-yellow-100 text-yellow-700', icon: Eye },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600', icon: Pencil },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: FileText },
+  in_review: { label: 'In Review', color: 'bg-amber-100 text-amber-700', icon: Eye },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   returned: { label: 'Returned', color: 'bg-orange-100 text-orange-700', icon: RotateCcw },
 }
 
 const severityConfig: Record<string, { color: string }> = {
-  low: { color: 'bg-gray-100 text-gray-600' },
-  medium: { color: 'bg-yellow-100 text-yellow-700' },
+  low: { color: 'bg-warm-100 text-warm-600' },
+  medium: { color: 'bg-amber-100 text-amber-700' },
   high: { color: 'bg-orange-100 text-orange-700' },
   critical: { color: 'bg-red-100 text-red-700' },
 }
@@ -354,15 +354,15 @@ function DailyLogCard({ log }: { log: DailyLog }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
-      log.status === 'returned' ? "border-orange-300" : "border-gray-200",
+      log.status === 'returned' ? "border-orange-300" : "border-warm-200",
     )}>
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           {/* Date */}
           <div className="text-center min-w-[60px]">
-            <div className="text-2xl font-bold text-gray-900">{formatDate(log.date).day}</div>
-            <div className="text-xs text-gray-500 uppercase">{formatDate(log.date).month}</div>
-            <div className="text-xs text-gray-400">{log.dayOfWeek}</div>
+            <div className="text-2xl font-bold text-warm-900">{formatDate(log.date).day}</div>
+            <div className="text-xs text-warm-500 uppercase">{formatDate(log.date).month}</div>
+            <div className="text-xs text-warm-400">{log.dayOfWeek}</div>
           </div>
 
           {/* Weather */}
@@ -381,7 +381,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
               </div>
             )}
             {log.weather.source === 'api' && (
-              <div className="text-[10px] text-gray-400 mt-0.5">auto</div>
+              <div className="text-[10px] text-warm-400 mt-0.5">auto</div>
             )}
           </div>
 
@@ -394,7 +394,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                 {statusCfg.label}
               </span>
               {log.isImmutable && (
-                <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   <Lock className="h-3 w-3" />
                   Immutable
                 </span>
@@ -411,7 +411,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                 </span>
               )}
               {log.scheduleUpdates > 0 && (
-                <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   {log.scheduleUpdates} schedule update{log.scheduleUpdates > 1 ? 's' : ''}
                 </span>
               )}
@@ -420,7 +420,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
             {/* Work performed summary */}
             <div className="space-y-0.5">
               {log.workPerformed.slice(0, 2).map((work, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm text-gray-700">
+                <div key={idx} className="flex items-center gap-2 text-sm text-warm-700">
                   <span className="truncate">{work.description}</span>
                   {work.percentComplete !== undefined && (
                     <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded flex-shrink-0">
@@ -430,7 +430,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                 </div>
               ))}
               {log.workPerformed.length > 2 && (
-                <div className="text-xs text-gray-400">+{log.workPerformed.length - 2} more work items</div>
+                <div className="text-xs text-warm-400">+{log.workPerformed.length - 2} more work items</div>
               )}
             </div>
 
@@ -442,15 +442,15 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                     <span className={cn("px-1.5 py-0.5 rounded", severityConfig[issue.severity]?.color)}>
                       {issue.severity}
                     </span>
-                    <span className="text-gray-500">{issueCategoryLabels[issue.category]}</span>
-                    <span className="text-gray-600 truncate">{issue.description}</span>
+                    <span className="text-warm-500">{issueCategoryLabels[issue.category]}</span>
+                    <span className="text-warm-600 truncate">{issue.description}</span>
                     {issue.scheduleImpactDays && issue.scheduleImpactDays > 0 && (
                       <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded flex-shrink-0">
                         -{issue.scheduleImpactDays}d
                       </span>
                     )}
                     {issue.triggeredEntity && (
-                      <span className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded flex-shrink-0">
+                      <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded flex-shrink-0">
                         {issue.triggeredEntity}
                       </span>
                     )}
@@ -463,11 +463,11 @@ function DailyLogCard({ log }: { log: DailyLog }) {
             {log.deliveries.length > 0 && (
               <div className="mt-1">
                 {log.deliveries.map((delivery, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
-                    <Truck className="h-3 w-3 text-gray-400" />
+                  <div key={idx} className="flex items-center gap-2 text-xs text-warm-600">
+                    <Truck className="h-3 w-3 text-warm-400" />
                     <span className="truncate">{delivery.description}</span>
                     {delivery.poMatched && (
-                      <span className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded flex-shrink-0">
+                      <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded flex-shrink-0">
                         {delivery.poMatched}
                       </span>
                     )}
@@ -485,7 +485,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
             {log.visitors.length > 0 && (
               <div className="mt-1">
                 {log.visitors.map((visitor, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs text-gray-500">
+                  <div key={idx} className="flex items-center gap-2 text-xs text-warm-500">
                     <HardHat className="h-3 w-3" />
                     <span>{visitor.name} ({visitor.company}) -- {visitor.purpose}</span>
                   </div>
@@ -503,7 +503,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
 
             {/* AI summaries */}
             {log.aiSummary && (
-              <p className="text-xs text-blue-600 mt-1.5 flex items-center gap-1">
+              <p className="text-xs text-stone-600 mt-1.5 flex items-center gap-1">
                 <Sparkles className="h-3 w-3 flex-shrink-0" />
                 <span>{log.aiSummary}</span>
               </p>
@@ -511,37 +511,37 @@ function DailyLogCard({ log }: { log: DailyLog }) {
           </div>
         </div>
 
-        <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0" />
+        <ChevronRight className="h-5 w-5 text-warm-400 flex-shrink-0" />
       </div>
 
       {/* Stats Row */}
-      <div className="flex items-center gap-6 mt-3 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <Users className="h-4 w-4 text-gray-400" />
+      <div className="flex items-center gap-6 mt-3 pt-3 border-t border-warm-100">
+        <div className="flex items-center gap-1.5 text-sm text-warm-600">
+          <Users className="h-4 w-4 text-warm-400" />
           <span className="font-medium">{totalManpower}</span>
-          <span className="text-gray-400">crew</span>
-          <span className="text-xs text-gray-400">
+          <span className="text-warm-400">crew</span>
+          <span className="text-xs text-warm-400">
             ({log.manpower.map(m => m.vendorName).join(', ')})
           </span>
         </div>
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <Clock className="h-4 w-4 text-gray-400" />
+        <div className="flex items-center gap-1.5 text-sm text-warm-600">
+          <Clock className="h-4 w-4 text-warm-400" />
           <span className="font-medium">{totalHours}</span>
-          <span className="text-gray-400">hours</span>
+          <span className="text-warm-400">hours</span>
         </div>
         <div className={cn(
           "flex items-center gap-1.5 text-sm",
-          photoBelowMinimum ? "text-amber-600" : "text-gray-600"
+          photoBelowMinimum ? "text-amber-600" : "text-warm-600"
         )}>
-          <Camera className={cn("h-4 w-4", photoBelowMinimum ? "text-amber-500" : "text-gray-400")} />
+          <Camera className={cn("h-4 w-4", photoBelowMinimum ? "text-amber-500" : "text-warm-400")} />
           <span className="font-medium">{log.photosCount}</span>
-          <span className={photoBelowMinimum ? "text-amber-500" : "text-gray-400"}>
+          <span className={photoBelowMinimum ? "text-amber-500" : "text-warm-400"}>
             photos {photoBelowMinimum ? `(min ${log.photoMinimum})` : ''}
           </span>
           {photoBelowMinimum && <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
         </div>
         {log.submittedBy && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-400 ml-auto">
+          <div className="flex items-center gap-1.5 text-xs text-warm-400 ml-auto">
             Submitted by {log.submittedBy} at {log.submittedAt}
             {log.reviewedBy && <span>| Reviewed by {log.reviewedBy}</span>}
           </div>
@@ -593,22 +593,22 @@ export function DailyLogsPreview() {
   const hasMissingLog = true // Feb 8 (Saturday) would be expected if work calendar includes it
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Daily Logs - Smith Residence</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{mockDailyLogs.length} entries this week</span>
+              <h3 className="font-semibold text-warm-900">Daily Logs - Smith Residence</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">{mockDailyLogs.length} entries this week</span>
               {draftCount > 0 && (
-                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{draftCount} draft</span>
+                <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">{draftCount} draft</span>
               )}
               {returnedCount > 0 && (
                 <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">{returnedCount} returned</span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 {totalHours} total hours
@@ -628,7 +628,7 @@ export function DailyLogsPreview() {
                 </span>
               )}
               {weatherDelayDays > 0 && (
-                <span className="flex items-center gap-1 text-blue-600">
+                <span className="flex items-center gap-1 text-stone-600">
                   <CloudRain className="h-4 w-4" />
                   {weatherDelayDays}d weather delay
                 </span>
@@ -639,7 +639,7 @@ export function DailyLogsPreview() {
       </div>
 
       {/* Quick Entry Form */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsRecording(!isRecording)}
@@ -647,7 +647,7 @@ export function DailyLogsPreview() {
               "flex items-center justify-center w-12 h-12 rounded-full transition-all",
               isRecording
                 ? "bg-red-500 text-white animate-pulse"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                : "bg-warm-100 text-warm-600 hover:bg-warm-200"
             )}
             title="Voice-to-text dictation"
           >
@@ -658,8 +658,8 @@ export function DailyLogsPreview() {
               type="text"
               placeholder={isRecording ? "Listening... Describe today's work" : "Quick entry: Describe today's work or click mic to dictate..."}
               className={cn(
-                "w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
-                isRecording ? "border-red-300 bg-red-50" : "border-gray-200"
+                "w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500",
+                isRecording ? "border-red-300 bg-red-50" : "border-warm-200"
               )}
             />
             {isRecording && (
@@ -675,38 +675,38 @@ export function DailyLogsPreview() {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-3 text-sm text-gray-500">
-            <div className="flex items-center gap-1.5 bg-yellow-50 px-2.5 py-1.5 rounded-lg">
-              <Thermometer className="h-4 w-4 text-yellow-600" />
-              <span className="font-medium text-yellow-700">72°F</span>
-              <Sun className="h-4 w-4 text-yellow-500" />
-              <span className="text-xs text-yellow-600">auto</span>
+          <div className="flex items-center gap-3 text-sm text-warm-500">
+            <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1.5 rounded-lg">
+              <Thermometer className="h-4 w-4 text-amber-600" />
+              <span className="font-medium text-amber-700">72°F</span>
+              <Sun className="h-4 w-4 text-amber-500" />
+              <span className="text-xs text-amber-600">auto</span>
             </div>
           </div>
         </div>
         {/* Quick action buttons */}
         <div className="flex items-center gap-2 mt-3">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-warm-200 rounded-lg text-warm-600 hover:bg-warm-50">
             <Camera className="h-3.5 w-3.5" />
             Quick Photo
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-warm-200 rounded-lg text-warm-600 hover:bg-warm-50">
             <AlertTriangle className="h-3.5 w-3.5" />
             Report Issue
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-warm-200 rounded-lg text-warm-600 hover:bg-warm-50">
             <Truck className="h-3.5 w-3.5" />
             Log Delivery
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-warm-200 rounded-lg text-warm-600 hover:bg-warm-50">
             <ClipboardCheck className="h-3.5 w-3.5" />
             Inspection
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-warm-200 rounded-lg text-warm-600 hover:bg-warm-50">
             <Shield className="h-3.5 w-3.5" />
             Safety Obs.
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-warm-200 rounded-lg text-warm-600 hover:bg-warm-50">
             <HardHat className="h-3.5 w-3.5" />
             Visitor
           </button>
@@ -714,7 +714,7 @@ export function DailyLogsPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -770,15 +770,15 @@ export function DailyLogsPreview() {
       </div>
 
       {/* Summary Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-gray-900">{mockDailyLogs.length}</div>
-            <div className="text-xs text-gray-500">Logs</div>
+          <div className="bg-warm-50 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-warm-900">{mockDailyLogs.length}</div>
+            <div className="text-xs text-warm-500">Logs</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-blue-700">{totalHours}</div>
-            <div className="text-xs text-blue-600">Hours</div>
+          <div className="bg-stone-50 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-stone-700">{totalHours}</div>
+            <div className="text-xs text-stone-600">Hours</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-green-700">{approvedCount}</div>
@@ -788,9 +788,9 @@ export function DailyLogsPreview() {
             <div className="text-lg font-bold text-purple-700">{avgCrew}</div>
             <div className="text-xs text-purple-600">Avg Crew</div>
           </div>
-          <div className={cn("rounded-lg p-3 text-center", totalIssues > 0 ? "bg-amber-50" : "bg-gray-50")}>
-            <div className={cn("text-lg font-bold", totalIssues > 0 ? "text-amber-700" : "text-gray-700")}>{totalIssues}</div>
-            <div className={cn("text-xs", totalIssues > 0 ? "text-amber-600" : "text-gray-500")}>Issues</div>
+          <div className={cn("rounded-lg p-3 text-center", totalIssues > 0 ? "bg-amber-50" : "bg-warm-50")}>
+            <div className={cn("text-lg font-bold", totalIssues > 0 ? "text-amber-700" : "text-warm-700")}>{totalIssues}</div>
+            <div className={cn("text-xs", totalIssues > 0 ? "text-amber-600" : "text-warm-500")}>Issues</div>
           </div>
           <div className="bg-indigo-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-indigo-700">{totalPhotos}</div>
@@ -805,8 +805,8 @@ export function DailyLogsPreview() {
           <DailyLogCard key={log.id} log={log} />
         ))}
         {filteredLogs.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+          <div className="text-center py-12 text-warm-500">
+            <FileText className="h-12 w-12 mx-auto mb-3 text-warm-300" />
             <p>No daily logs found matching your criteria</p>
           </div>
         )}
@@ -835,7 +835,7 @@ export function DailyLogsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features for Daily Logs"
           features={[

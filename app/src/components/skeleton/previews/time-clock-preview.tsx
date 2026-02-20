@@ -393,9 +393,9 @@ function StatusBadge({ status }: { status: TimeEntry['status'] }) {
       label: 'Approved',
     },
     pending: {
-      bg: 'bg-yellow-100',
-      text: 'text-yellow-700',
-      border: 'border-yellow-200',
+      bg: 'bg-amber-100',
+      text: 'text-amber-700',
+      border: 'border-amber-200',
       icon: Clock,
       label: 'Pending',
     },
@@ -434,8 +434,8 @@ function StatusBadge({ status }: { status: TimeEntry['status'] }) {
 
 function TimesheetStatusBadge({ status }: { status: TimesheetSummary['status'] }) {
   const config: Record<TimesheetSummary['status'], { bg: string; text: string; label: string }> = {
-    draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Draft' },
-    submitted: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Submitted' },
+    draft: { bg: 'bg-warm-100', text: 'text-warm-700', label: 'Draft' },
+    submitted: { bg: 'bg-stone-100', text: 'text-stone-700', label: 'Submitted' },
     approved: { bg: 'bg-green-100', text: 'text-green-700', label: 'Approved' },
     rejected: { bg: 'bg-red-100', text: 'text-red-700', label: 'Rejected' },
     amended: { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Amended' },
@@ -450,13 +450,13 @@ function TimesheetStatusBadge({ status }: { status: TimesheetSummary['status'] }
 
 function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white border border-warm-200 rounded-lg p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h4 className="font-semibold text-gray-900">{employee.name}</h4>
-          <p className="text-xs text-gray-500">{employee.role}</p>
+          <h4 className="font-semibold text-warm-900">{employee.name}</h4>
+          <p className="text-xs text-warm-500">{employee.role}</p>
           {employee.crew && (
-            <p className="text-xs text-blue-600 flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-stone-600 flex items-center gap-1 mt-0.5">
               <Users className="h-3 w-3" /> {employee.crew}
             </p>
           )}
@@ -470,7 +470,7 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
               'w-3 h-3 rounded-full',
               employee.status === 'clocked-in' ? 'bg-green-500 animate-pulse' :
               employee.status === 'on-break' ? 'bg-amber-500' :
-              'bg-gray-300'
+              'bg-warm-300'
             )}
           />
         </div>
@@ -478,35 +478,35 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
 
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div>
-          <div className="text-lg font-bold text-gray-900">{employee.hoursThisWeek}h</div>
-          <div className="text-xs text-gray-500">This Week</div>
+          <div className="text-lg font-bold text-warm-900">{employee.hoursThisWeek}h</div>
+          <div className="text-xs text-warm-500">This Week</div>
         </div>
         <div>
-          <div className={cn("text-lg font-bold", employee.overtimeHours > 0 ? "text-orange-600" : "text-gray-400")}>
+          <div className={cn("text-lg font-bold", employee.overtimeHours > 0 ? "text-orange-600" : "text-warm-400")}>
             {employee.overtimeHours}h
           </div>
-          <div className="text-xs text-gray-500">Overtime</div>
+          <div className="text-xs text-warm-500">Overtime</div>
         </div>
         <div>
-          <div className="text-lg font-bold text-gray-900">{employee.jobsWorked}</div>
-          <div className="text-xs text-gray-500">Jobs</div>
+          <div className="text-lg font-bold text-warm-900">{employee.jobsWorked}</div>
+          <div className="text-xs text-warm-500">Jobs</div>
         </div>
       </div>
 
       {/* Labor burden */}
-      <div className="bg-gray-50 rounded p-2 mb-3">
+      <div className="bg-warm-50 rounded p-2 mb-3">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-gray-500">Base: ${employee.baseWage.toFixed(2)}/hr</span>
-          <span className="font-medium text-gray-700">Burdened: ${employee.burdenedRate.toFixed(2)}/hr</span>
+          <span className="text-warm-500">Base: ${employee.baseWage.toFixed(2)}/hr</span>
+          <span className="font-medium text-warm-700">Burdened: ${employee.burdenedRate.toFixed(2)}/hr</span>
         </div>
-        <div className="text-xs text-gray-400 mt-0.5">{employee.workersCompClass}</div>
+        <div className="text-xs text-warm-400 mt-0.5">{employee.workersCompClass}</div>
       </div>
 
-      <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+      <div className="pt-3 border-t border-warm-100 flex items-center justify-between">
         <div>
-          <p className="text-xs text-gray-600">{employee.lastClockTime}</p>
+          <p className="text-xs text-warm-600">{employee.lastClockTime}</p>
           {employee.currentJob && (
-            <p className="text-xs text-gray-400 flex items-center gap-1">
+            <p className="text-xs text-warm-400 flex items-center gap-1">
               <MapPin className="h-3 w-3" /> {employee.currentJob}
             </p>
           )}
@@ -515,7 +515,7 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
           "text-xs px-2 py-0.5 rounded",
           employee.status === 'clocked-in' ? "bg-green-100 text-green-700" :
           employee.status === 'on-break' ? "bg-amber-100 text-amber-700" :
-          "bg-gray-100 text-gray-600"
+          "bg-warm-100 text-warm-600"
         )}>
           {employee.status === 'clocked-in' ? 'Active' :
            employee.status === 'on-break' ? 'On Break' : 'Off'}
@@ -560,20 +560,20 @@ export function TimeClockPreview() {
   const crews = Array.from(new Set(mockEmployees.filter(e => e.crew).map(e => e.crew!)))
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-warm-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Time Clock Management</h3>
-            <p className="text-sm text-gray-500 mt-0.5">Week of February 10, 2026 (Pay Period: Biweekly)</p>
+            <h3 className="text-lg font-semibold text-warm-900">Time Clock Management</h3>
+            <p className="text-sm text-warm-500 mt-0.5">Week of February 10, 2026 (Pay Period: Biweekly)</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <FileText className="h-4 w-4" />
               Payroll Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Clock className="h-4 w-4" />
               Manual Entry
             </button>
@@ -582,15 +582,15 @@ export function TimeClockPreview() {
       </div>
 
       {/* Stats Row */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-warm-200 px-6 py-4">
         <div className="grid grid-cols-6 gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Clock className="h-5 w-5 text-blue-600" />
+            <div className="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-900">{totalHoursToday.toFixed(1)}h</div>
-              <div className="text-xs text-gray-500">Hours Today</div>
+              <div className="text-2xl font-bold text-warm-900">{totalHoursToday.toFixed(1)}h</div>
+              <div className="text-xs text-warm-500">Hours Today</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -598,8 +598,8 @@ export function TimeClockPreview() {
               <Users className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-900">{clockedInCount}</div>
-              <div className="text-xs text-gray-500">Clocked In</div>
+              <div className="text-2xl font-bold text-warm-900">{clockedInCount}</div>
+              <div className="text-xs text-warm-500">Clocked In</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -608,7 +608,7 @@ export function TimeClockPreview() {
             </div>
             <div>
               <div className="text-2xl font-bold text-orange-600">{overtimeHours}h</div>
-              <div className="text-xs text-gray-500">OT This Week</div>
+              <div className="text-xs text-warm-500">OT This Week</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -616,8 +616,8 @@ export function TimeClockPreview() {
               <Zap className={cn("h-5 w-5", flaggedEntries > 0 ? "text-red-600" : "text-green-600")} />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-900">{flaggedEntries}</div>
-              <div className="text-xs text-gray-500">Flagged</div>
+              <div className="text-2xl font-bold text-warm-900">{flaggedEntries}</div>
+              <div className="text-xs text-warm-500">Flagged</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -626,28 +626,28 @@ export function TimeClockPreview() {
             </div>
             <div>
               <div className="text-2xl font-bold text-emerald-600">{gpsVerifiedPct}%</div>
-              <div className="text-xs text-gray-500">GPS Verified</div>
+              <div className="text-xs text-warm-500">GPS Verified</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center", pendingTimesheets > 0 ? "bg-blue-100" : "bg-gray-100")}>
-              <FileText className={cn("h-5 w-5", pendingTimesheets > 0 ? "text-blue-600" : "text-gray-500")} />
+            <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center", pendingTimesheets > 0 ? "bg-stone-100" : "bg-warm-100")}>
+              <FileText className={cn("h-5 w-5", pendingTimesheets > 0 ? "text-stone-600" : "text-warm-500")} />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-900">{pendingTimesheets}</div>
-              <div className="text-xs text-gray-500">Timesheets Pending</div>
+              <div className="text-2xl font-bold text-warm-900">{pendingTimesheets}</div>
+              <div className="text-xs text-warm-500">Timesheets Pending</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Cross-module connection badges */}
-      <div className="bg-white border-b border-gray-200 px-6 py-2">
+      <div className="bg-white border-b border-warm-200 px-6 py-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-gray-500">Connected to:</span>
+          <span className="text-xs text-warm-500">Connected to:</span>
           {[
             { label: 'Budget & Cost Tracking', color: 'bg-green-50 text-green-700 border-green-200' },
-            { label: 'Daily Logs', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+            { label: 'Daily Logs', color: 'bg-stone-50 text-stone-700 border-stone-200' },
             { label: 'Financial Reporting', color: 'bg-purple-50 text-purple-700 border-purple-200' },
             { label: 'Scheduling', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
             { label: 'Payroll Export', color: 'bg-orange-50 text-orange-700 border-orange-200' },
@@ -661,7 +661,7 @@ export function TimeClockPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-2">
+      <div className="bg-white border-b border-warm-200 px-6 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -735,57 +735,57 @@ export function TimeClockPreview() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Employee</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Job Site</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">In / Out</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Hours</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">OT</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Cost Code</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">GPS</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                    <th className="text-center py-3 px-4 font-medium text-gray-700">Actions</th>
+                  <tr className="border-b border-warm-200 bg-warm-50">
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">Employee</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">Job Site</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">In / Out</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">Hours</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">OT</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">Cost Code</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">GPS</th>
+                    <th className="text-left py-3 px-4 font-medium text-warm-700">Status</th>
+                    <th className="text-center py-3 px-4 font-medium text-warm-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredEntries.map(entry => (
-                    <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr key={entry.id} className="border-b border-warm-100 hover:bg-warm-50">
                       <td className="py-3 px-4">
-                        <div className="font-medium text-gray-900">{entry.employeeName}</div>
-                        <div className="text-xs text-gray-400 flex items-center gap-1">
+                        <div className="font-medium text-warm-900">{entry.employeeName}</div>
+                        <div className="text-xs text-warm-400 flex items-center gap-1">
                           {entry.isOfflineEntry && (
                             <span className="flex items-center gap-0.5 text-amber-600">
                               <WifiOff className="h-3 w-3" /> Offline
                             </span>
                           )}
                           {entry.photoVerification && (
-                            <span className="flex items-center gap-0.5 text-blue-600">
+                            <span className="flex items-center gap-0.5 text-stone-600">
                               <Camera className="h-3 w-3" /> Photo
                             </span>
                           )}
                           {entry.driveTime && (
-                            <span className="text-gray-400">+{entry.driveTime}min drive</span>
+                            <span className="text-warm-400">+{entry.driveTime}min drive</span>
                           )}
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-gray-600">{entry.jobSite}</td>
-                      <td className="py-3 px-4 text-gray-600">
+                      <td className="py-3 px-4 text-warm-600">{entry.jobSite}</td>
+                      <td className="py-3 px-4 text-warm-600">
                         <div>{entry.clockInTime}</div>
-                        <div className="text-xs text-gray-400">{entry.clockOutTime}</div>
+                        <div className="text-xs text-warm-400">{entry.clockOutTime}</div>
                       </td>
-                      <td className="py-3 px-4 font-medium text-gray-900">{entry.hoursWorked}h</td>
+                      <td className="py-3 px-4 font-medium text-warm-900">{entry.hoursWorked}h</td>
                       <td className="py-3 px-4">
                         {entry.overtimeHours > 0 ? (
                           <span className="text-orange-600 font-medium">{entry.overtimeHours}h</span>
                         ) : (
-                          <span className="text-gray-300">-</span>
+                          <span className="text-warm-300">-</span>
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-medium">
+                        <span className="px-2 py-1 bg-stone-50 text-stone-700 rounded text-xs font-medium">
                           {entry.costCode}
                         </span>
-                        <div className="text-xs text-gray-400 mt-0.5">{entry.costCodeDescription}</div>
+                        <div className="text-xs text-warm-400 mt-0.5">{entry.costCodeDescription}</div>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-1">
@@ -794,10 +794,10 @@ export function TimeClockPreview() {
                               "h-4 w-4",
                               entry.geofenceStatus === 'inside' ? "text-green-500" :
                               entry.geofenceStatus === 'outside' ? "text-red-500" :
-                              "text-gray-400"
+                              "text-warm-400"
                             )} />
                           ) : (
-                            <span className="text-xs text-gray-400">N/A</span>
+                            <span className="text-xs text-warm-400">N/A</span>
                           )}
                           {entry.geofenceStatus === 'outside' && (
                             <AlertTriangle className="h-3 w-3 text-red-500" />
@@ -808,7 +808,7 @@ export function TimeClockPreview() {
                         <StatusBadge status={entry.status} />
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <button className="text-gray-400 hover:text-gray-600">
+                        <button className="text-warm-400 hover:text-warm-600">
                           <MoreVertical className="h-4 w-4" />
                         </button>
                       </td>
@@ -824,8 +824,8 @@ export function TimeClockPreview() {
         {activeTab === 'timesheets' && (
           <div className="p-6 space-y-4">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900">Weekly Timesheets (Feb 3 - Feb 9)</h4>
-              <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <h4 className="font-semibold text-warm-900">Weekly Timesheets (Feb 3 - Feb 9)</h4>
+              <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 Batch Approve <ArrowRight className="h-3 w-3" />
               </button>
             </div>
@@ -834,54 +834,54 @@ export function TimeClockPreview() {
                 "border rounded-lg p-4",
                 ts.status === 'rejected' ? "border-red-200 bg-red-50" :
                 ts.status === 'approved' ? "border-green-200 bg-green-50" :
-                "border-gray-200 bg-white"
+                "border-warm-200 bg-white"
               )}>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h5 className="font-semibold text-gray-900">{ts.employeeName}</h5>
-                    <p className="text-xs text-gray-500">{ts.periodStart} - {ts.periodEnd}</p>
+                    <h5 className="font-semibold text-warm-900">{ts.employeeName}</h5>
+                    <p className="text-xs text-warm-500">{ts.periodStart} - {ts.periodEnd}</p>
                     {ts.submittedAt && (
-                      <p className="text-xs text-gray-400">Submitted: {ts.submittedAt}</p>
+                      <p className="text-xs text-warm-400">Submitted: {ts.submittedAt}</p>
                     )}
                   </div>
                   <TimesheetStatusBadge status={ts.status} />
                 </div>
 
                 <div className="grid grid-cols-5 gap-3 mb-3">
-                  <div className="bg-white rounded p-2 border border-gray-100">
-                    <div className="text-xs text-gray-500">Regular</div>
-                    <div className="font-bold text-gray-900">{ts.totalRegularHours}h</div>
+                  <div className="bg-white rounded p-2 border border-warm-100">
+                    <div className="text-xs text-warm-500">Regular</div>
+                    <div className="font-bold text-warm-900">{ts.totalRegularHours}h</div>
                   </div>
-                  <div className="bg-white rounded p-2 border border-gray-100">
-                    <div className="text-xs text-gray-500">Overtime</div>
-                    <div className={cn("font-bold", ts.totalOvertimeHours > 0 ? "text-orange-600" : "text-gray-400")}>
+                  <div className="bg-white rounded p-2 border border-warm-100">
+                    <div className="text-xs text-warm-500">Overtime</div>
+                    <div className={cn("font-bold", ts.totalOvertimeHours > 0 ? "text-orange-600" : "text-warm-400")}>
                       {ts.totalOvertimeHours}h
                     </div>
                   </div>
-                  <div className="bg-white rounded p-2 border border-gray-100">
-                    <div className="text-xs text-gray-500">PTO</div>
-                    <div className={cn("font-bold", ts.totalPtoHours > 0 ? "text-blue-600" : "text-gray-400")}>
+                  <div className="bg-white rounded p-2 border border-warm-100">
+                    <div className="text-xs text-warm-500">PTO</div>
+                    <div className={cn("font-bold", ts.totalPtoHours > 0 ? "text-stone-600" : "text-warm-400")}>
                       {ts.totalPtoHours}h
                     </div>
                   </div>
-                  <div className="bg-white rounded p-2 border border-gray-100">
-                    <div className="text-xs text-gray-500">Labor Cost</div>
-                    <div className="font-bold text-gray-900">${ts.laborCost.toLocaleString()}</div>
+                  <div className="bg-white rounded p-2 border border-warm-100">
+                    <div className="text-xs text-warm-500">Labor Cost</div>
+                    <div className="font-bold text-warm-900">${ts.laborCost.toLocaleString()}</div>
                   </div>
-                  <div className="bg-white rounded p-2 border border-gray-100">
-                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="bg-white rounded p-2 border border-warm-100">
+                    <div className="text-xs text-warm-500 flex items-center gap-1">
                       Burdened <DollarSign className="h-3 w-3" />
                     </div>
-                    <div className="font-bold text-gray-900">${ts.burdenedCost.toLocaleString()}</div>
+                    <div className="font-bold text-warm-900">${ts.burdenedCost.toLocaleString()}</div>
                   </div>
                 </div>
 
                 {/* Project breakdown */}
                 <div className="mb-3">
-                  <div className="text-xs text-gray-500 mb-1">Project Breakdown:</div>
+                  <div className="text-xs text-warm-500 mb-1">Project Breakdown:</div>
                   <div className="flex flex-wrap gap-2">
                     {ts.projectBreakdown.map((pb, i) => (
-                      <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded flex items-center gap-1">
+                      <span key={i} className="text-xs bg-warm-100 text-warm-700 px-2 py-1 rounded flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
                         {pb.job}: {pb.hours}h ({pb.costCode})
                       </span>
@@ -896,8 +896,8 @@ export function TimeClockPreview() {
                 )}
 
                 {ts.status === 'submitted' && (
-                  <div className="flex items-center gap-2 justify-end pt-3 border-t border-gray-100">
-                    <button className="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100">
+                  <div className="flex items-center gap-2 justify-end pt-3 border-t border-warm-100">
+                    <button className="px-3 py-1.5 text-sm font-medium text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-100">
                       Reject
                     </button>
                     <button className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
@@ -906,7 +906,7 @@ export function TimeClockPreview() {
                   </div>
                 )}
                 {ts.approvedBy && (
-                  <div className="text-xs text-green-600 pt-2 border-t border-gray-100">
+                  <div className="text-xs text-green-600 pt-2 border-t border-warm-100">
                     Approved by {ts.approvedBy}
                   </div>
                 )}
@@ -919,21 +919,21 @@ export function TimeClockPreview() {
         {activeTab === 'pending' && (
           <div className="p-6">
             <div className="mb-6">
-              <h4 className="font-semibold text-gray-900 mb-4">Entries Pending Review</h4>
+              <h4 className="font-semibold text-warm-900 mb-4">Entries Pending Review</h4>
               <div className="space-y-3">
                 {mockTimeEntries
                   .filter(e => e.status !== 'approved')
                   .map(entry => (
                     <div key={entry.id} className={cn(
                       "border rounded-lg p-4",
-                      entry.status === 'flagged' ? "border-red-200 bg-red-50" : "border-gray-200 bg-gray-50"
+                      entry.status === 'flagged' ? "border-red-200 bg-red-50" : "border-warm-200 bg-warm-50"
                     )}>
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h5 className="font-semibold text-gray-900">{entry.employeeName}</h5>
-                          <p className="text-sm text-gray-600">{entry.jobSite}</p>
+                          <h5 className="font-semibold text-warm-900">{entry.employeeName}</h5>
+                          <p className="text-sm text-warm-600">{entry.jobSite}</p>
                           {entry.location && (
-                            <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                            <div className="flex items-center gap-1 text-xs text-warm-500 mt-1">
                               <MapPin className="h-3 w-3" />
                               {entry.location}
                               {entry.gpsVerified && entry.geofenceStatus === 'inside' && (
@@ -952,26 +952,26 @@ export function TimeClockPreview() {
                         <StatusBadge status={entry.status} />
                       </div>
 
-                      <div className="grid grid-cols-5 gap-4 mb-3 pt-3 border-t border-gray-200">
+                      <div className="grid grid-cols-5 gap-4 mb-3 pt-3 border-t border-warm-200">
                         <div>
-                          <p className="text-xs text-gray-500">Clock In</p>
-                          <p className="font-medium text-gray-900">{entry.clockInTime}</p>
+                          <p className="text-xs text-warm-500">Clock In</p>
+                          <p className="font-medium text-warm-900">{entry.clockInTime}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Clock Out</p>
-                          <p className="font-medium text-gray-900">{entry.clockOutTime}</p>
+                          <p className="text-xs text-warm-500">Clock Out</p>
+                          <p className="font-medium text-warm-900">{entry.clockOutTime}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Hours</p>
-                          <p className="font-medium text-gray-900">{entry.hoursWorked}h</p>
+                          <p className="text-xs text-warm-500">Hours</p>
+                          <p className="font-medium text-warm-900">{entry.hoursWorked}h</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Break</p>
-                          <p className="font-medium text-gray-900">{entry.breakMinutes}m</p>
+                          <p className="text-xs text-warm-500">Break</p>
+                          <p className="font-medium text-warm-900">{entry.breakMinutes}m</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Cost Code</p>
-                          <p className="font-medium text-blue-700">{entry.costCode}</p>
+                          <p className="text-xs text-warm-500">Cost Code</p>
+                          <p className="font-medium text-stone-700">{entry.costCode}</p>
                         </div>
                       </div>
 
@@ -983,12 +983,12 @@ export function TimeClockPreview() {
                           </span>
                         )}
                         {entry.photoVerification && (
-                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+                          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
                             <Camera className="h-3 w-3" /> Photo Verified
                           </span>
                         )}
                         {entry.driveTime && (
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                          <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
                             Drive time: {entry.driveTime}min
                           </span>
                         )}
@@ -1001,13 +1001,13 @@ export function TimeClockPreview() {
                         </div>
                       )}
                       {entry.notes && (
-                        <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                        <div className="mb-3 p-2 bg-stone-50 border border-stone-200 rounded text-xs text-stone-700">
                           Employee note: {entry.notes}
                         </div>
                       )}
 
                       <div className="flex items-center gap-2 justify-end">
-                        <button className="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100">
+                        <button className="px-3 py-1.5 text-sm font-medium text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-100">
                           Reject
                         </button>
                         <button className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
@@ -1030,25 +1030,25 @@ export function TimeClockPreview() {
                   key={idx}
                   className={cn(
                     'border rounded-lg p-4 flex items-start gap-3',
-                    insight.type === 'warning' && 'bg-yellow-50 border-yellow-200',
+                    insight.type === 'warning' && 'bg-amber-50 border-amber-200',
                     insight.type === 'alert' && 'bg-red-50 border-red-200',
-                    insight.type === 'info' && 'bg-blue-50 border-blue-200',
+                    insight.type === 'info' && 'bg-stone-50 border-stone-200',
                     insight.type === 'success' && 'bg-green-50 border-green-200'
                   )}
                 >
                   <div className="flex-shrink-0 mt-0.5">
-                    {insight.type === 'warning' && <AlertTriangle className="h-5 w-5 text-yellow-600" />}
+                    {insight.type === 'warning' && <AlertTriangle className="h-5 w-5 text-amber-600" />}
                     {insight.type === 'alert' && <AlertCircle className="h-5 w-5 text-red-600" />}
-                    {insight.type === 'info' && <AlertCircle className="h-5 w-5 text-blue-600" />}
+                    {insight.type === 'info' && <AlertCircle className="h-5 w-5 text-stone-600" />}
                     {insight.type === 'success' && <CheckCircle className="h-5 w-5 text-green-600" />}
                   </div>
                   <div className="flex-1">
                     <h5
                       className={cn(
                         'font-semibold',
-                        insight.type === 'warning' && 'text-yellow-900',
+                        insight.type === 'warning' && 'text-amber-900',
                         insight.type === 'alert' && 'text-red-900',
-                        insight.type === 'info' && 'text-blue-900',
+                        insight.type === 'info' && 'text-stone-900',
                         insight.type === 'success' && 'text-green-900'
                       )}
                     >
@@ -1057,9 +1057,9 @@ export function TimeClockPreview() {
                     <p
                       className={cn(
                         'text-sm mt-0.5',
-                        insight.type === 'warning' && 'text-yellow-700',
+                        insight.type === 'warning' && 'text-amber-700',
                         insight.type === 'alert' && 'text-red-700',
-                        insight.type === 'info' && 'text-blue-700',
+                        insight.type === 'info' && 'text-stone-700',
                         insight.type === 'success' && 'text-green-700'
                       )}
                     >
@@ -1071,12 +1071,12 @@ export function TimeClockPreview() {
             </div>
 
             {/* AI Features Summary */}
-            <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+            <div className="mt-8 bg-gradient-to-r from-stone-50 to-indigo-50 border border-stone-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <Sparkles className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <Sparkles className="h-5 w-5 text-stone-600 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <h5 className="font-semibold text-blue-900 mb-2">AI-Powered Time Management</h5>
-                  <ul className="space-y-1 text-sm text-blue-700">
+                  <h5 className="font-semibold text-stone-900 mb-2">AI-Powered Time Management</h5>
+                  <ul className="space-y-1 text-sm text-stone-700">
                     <li>GPS geofence verification with auto-suggest job site based on proximity</li>
                     <li>Anomaly detection: unusual hours, break patterns, geofence violations</li>
                     <li>Automated break reminders based on state-specific labor laws (SC/FL/NC)</li>
@@ -1093,7 +1093,7 @@ export function TimeClockPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-6 py-6">
+      <div className="bg-white border-t border-warm-200 px-6 py-6">
         <AIFeaturesPanel
           title="AI-Powered Time Management"
           columns={2}

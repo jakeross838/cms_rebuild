@@ -319,7 +319,7 @@ function DateRangeSelector({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"
+        className="flex items-center gap-2 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50"
       >
         <Calendar className="h-4 w-4" />
         <span className="font-medium">{dateRangePresets.find(p => p.key === selectedRange)?.label}</span>
@@ -327,7 +327,7 @@ function DateRangeSelector({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
+        <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg border border-warm-200 shadow-lg z-10">
           <div className="py-1">
             {dateRangePresets.map(preset => (
               <button
@@ -337,8 +337,8 @@ function DateRangeSelector({
                   setIsOpen(false)
                 }}
                 className={cn(
-                  "w-full text-left px-3 py-2 text-sm hover:bg-gray-50",
-                  selectedRange === preset.key ? "bg-blue-50 text-blue-700" : "text-gray-700"
+                  "w-full text-left px-3 py-2 text-sm hover:bg-warm-50",
+                  selectedRange === preset.key ? "bg-stone-50 text-stone-700" : "text-warm-700"
                 )}
               >
                 {preset.label}
@@ -369,7 +369,7 @@ function KPICard({
   color?: 'blue' | 'green' | 'amber' | 'purple'
 }) {
   const colorClasses = {
-    blue: { bg: 'bg-blue-50', icon: 'bg-blue-100 text-blue-600' },
+    blue: { bg: 'bg-stone-50', icon: 'bg-stone-100 text-stone-600' },
     green: { bg: 'bg-green-50', icon: 'bg-green-100 text-green-600' },
     amber: { bg: 'bg-amber-50', icon: 'bg-amber-100 text-amber-600' },
     purple: { bg: 'bg-purple-50', icon: 'bg-purple-100 text-purple-600' },
@@ -384,16 +384,16 @@ function KPICard({
         {trend && delta !== undefined && (
           <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
-            trend === 'up' ? "text-green-600" : trend === 'down' ? "text-red-600" : "text-gray-500"
+            trend === 'up' ? "text-green-600" : trend === 'down' ? "text-red-600" : "text-warm-500"
           )}>
             {trend === 'up' ? <TrendingUp className="h-3 w-3" /> : trend === 'down' ? <TrendingDown className="h-3 w-3" /> : null}
             {delta > 0 ? '+' : ''}{delta.toFixed(1)}%
           </div>
         )}
       </div>
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
-      <div className="text-sm text-gray-600 mt-1">{label}</div>
-      {subLabel && <div className="text-xs text-gray-400 mt-0.5">{subLabel}</div>}
+      <div className="text-2xl font-bold text-warm-900">{value}</div>
+      <div className="text-sm text-warm-600 mt-1">{label}</div>
+      {subLabel && <div className="text-xs text-warm-400 mt-0.5">{subLabel}</div>}
     </div>
   )
 }
@@ -402,22 +402,22 @@ function TradeFTQChart({ trades }: { trades: TradeFTQScore[] }) {
   const maxScore = 100
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900">FTQ by Trade</h4>
-        <BarChart3 className="h-4 w-4 text-gray-400" />
+        <h4 className="font-semibold text-warm-900">FTQ by Trade</h4>
+        <BarChart3 className="h-4 w-4 text-warm-400" />
       </div>
       <div className="space-y-3">
         {trades.map(trade => (
           <div key={trade.id} className="flex items-center gap-3">
-            <div className="w-20 text-sm font-medium text-gray-700 truncate">{trade.trade}</div>
-            <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden relative">
+            <div className="w-20 text-sm font-medium text-warm-700 truncate">{trade.trade}</div>
+            <div className="flex-1 h-6 bg-warm-100 rounded-full overflow-hidden relative">
               <div
                 className={cn("h-full rounded-full transition-all", getBarColor(trade.ftqScore))}
                 style={{ width: `${(trade.ftqScore / maxScore) * 100}%` }}
               />
               {/* Benchmark line at 90% */}
-              <div className="absolute top-0 bottom-0 w-0.5 bg-gray-400" style={{ left: '90%' }} />
+              <div className="absolute top-0 bottom-0 w-0.5 bg-warm-400" style={{ left: '90%' }} />
             </div>
             <div className={cn("w-12 text-sm font-semibold text-right", getScoreColor(trade.ftqScore))}>
               {trade.ftqScore}%
@@ -429,8 +429,8 @@ function TradeFTQChart({ trades }: { trades: TradeFTQScore[] }) {
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-end gap-4 mt-3 text-xs text-gray-500">
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-gray-400" /> 90% Benchmark</span>
+      <div className="flex items-center justify-end gap-4 mt-3 text-xs text-warm-500">
+        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-warm-400" /> 90% Benchmark</span>
       </div>
     </div>
   )
@@ -461,56 +461,56 @@ function ProjectFTQTable({ projects }: { projects: ProjectFTQScore[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-200">
-        <h4 className="font-semibold text-gray-900">FTQ by Project</h4>
+    <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+      <div className="px-4 py-3 border-b border-warm-200">
+        <h4 className="font-semibold text-warm-900">FTQ by Project</h4>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-warm-50 border-b border-warm-200">
             <tr>
               <th
-                className="text-left py-2 px-4 font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
+                className="text-left py-2 px-4 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('project')}
               >
                 Project
               </th>
               <th
-                className="text-left py-2 px-3 font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
+                className="text-left py-2 px-3 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('phase')}
               >
                 Phase
               </th>
               <th
-                className="text-right py-2 px-3 font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
+                className="text-right py-2 px-3 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('ftqScore')}
               >
                 FTQ Score
               </th>
-              <th className="text-center py-2 px-3 font-medium text-gray-600">Trend</th>
+              <th className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
               <th
-                className="text-right py-2 px-3 font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
+                className="text-right py-2 px-3 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('inspections')}
               >
                 Inspections
               </th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Last Updated</th>
+              <th className="text-left py-2 px-3 font-medium text-warm-600">Last Updated</th>
               <th className="py-2 px-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-warm-100">
             {sortedProjects.map(project => (
               <tr
                 key={project.id}
                 className={cn(
-                  "hover:bg-gray-50 cursor-pointer",
+                  "hover:bg-warm-50 cursor-pointer",
                   project.ftqScore < 85 && "bg-red-50/30"
                 )}
               >
                 <td className="py-3 px-4">
-                  <span className="font-medium text-gray-900">{project.project}</span>
+                  <span className="font-medium text-warm-900">{project.project}</span>
                 </td>
-                <td className="py-3 px-3 text-gray-600">{project.phase}</td>
+                <td className="py-3 px-3 text-warm-600">{project.phase}</td>
                 <td className="py-3 px-3 text-right">
                   <span className={cn("font-semibold", getScoreColor(project.ftqScore))}>
                     {formatPercent(project.ftqScore)}
@@ -531,19 +531,19 @@ function ProjectFTQTable({ projects }: { projects: ProjectFTQScore[] }) {
                       </>
                     )}
                     {project.trend === 'stable' && (
-                      <span className="text-xs text-gray-400">--</span>
+                      <span className="text-xs text-warm-400">--</span>
                     )}
                   </div>
                 </td>
-                <td className="py-3 px-3 text-right text-gray-600">
+                <td className="py-3 px-3 text-right text-warm-600">
                   <span className="text-green-600">{project.passed}</span>
                   {' / '}
                   <span className="text-red-600">{project.failed}</span>
-                  <span className="text-gray-400 ml-1">({project.inspections})</span>
+                  <span className="text-warm-400 ml-1">({project.inspections})</span>
                 </td>
-                <td className="py-3 px-3 text-gray-500 text-sm">{project.lastUpdated}</td>
+                <td className="py-3 px-3 text-warm-500 text-sm">{project.lastUpdated}</td>
                 <td className="py-3 px-3">
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-warm-400" />
                 </td>
               </tr>
             ))}
@@ -556,12 +556,12 @@ function ProjectFTQTable({ projects }: { projects: ProjectFTQScore[] }) {
 
 function FTQTrendChart({ data }: { data: TrendDataPoint[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900">FTQ Trend Over Time</h4>
-        <LineChart className="h-4 w-4 text-gray-400" />
+        <h4 className="font-semibold text-warm-900">FTQ Trend Over Time</h4>
+        <LineChart className="h-4 w-4 text-warm-400" />
       </div>
-      <div className="h-48 bg-gray-50 rounded-lg flex items-end justify-between px-4 pb-4 relative">
+      <div className="h-48 bg-warm-50 rounded-lg flex items-end justify-between px-4 pb-4 relative">
         {/* Benchmark line */}
         <div className="absolute left-0 right-0 border-t-2 border-dashed border-amber-400" style={{ bottom: `${90 * 1.6}px` }}>
           <span className="absolute right-2 -top-3 text-xs text-amber-600 bg-white px-1">90% Benchmark</span>
@@ -577,16 +577,16 @@ function FTQTrendChart({ data }: { data: TrendDataPoint[] }) {
               )}
               style={{ height: `${point.ftqScore * 1.6}px` }}
             >
-              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-700">
+              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-medium text-warm-700">
                 {point.ftqScore}%
               </span>
               {point.annotation && (
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 whitespace-nowrap bg-white px-1 rounded">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-warm-500 whitespace-nowrap bg-white px-1 rounded">
                   {point.annotation}
                 </span>
               )}
             </div>
-            <span className="text-xs text-gray-500">{point.date}</span>
+            <span className="text-xs text-warm-500">{point.date}</span>
           </div>
         ))}
       </div>
@@ -598,7 +598,7 @@ function VendorRankingsTable({ vendors, type }: { vendors: VendorRanking[]; type
   const filteredVendors = vendors.filter(v => type === 'top' ? v.isTop : !v.isTop)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
       <div className={cn(
         "px-4 py-3 border-b",
         type === 'top' ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"
@@ -619,30 +619,30 @@ function VendorRankingsTable({ vendors, type }: { vendors: VendorRanking[]; type
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-warm-50 border-b border-warm-200">
             <tr>
-              <th className="text-left py-2 px-3 font-medium text-gray-600 w-12">Rank</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Vendor</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Trade</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">FTQ</th>
-              <th className="text-center py-2 px-3 font-medium text-gray-600">Trend</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">Inspections</th>
+              <th className="text-left py-2 px-3 font-medium text-warm-600 w-12">Rank</th>
+              <th className="text-left py-2 px-3 font-medium text-warm-600">Vendor</th>
+              <th className="text-left py-2 px-3 font-medium text-warm-600">Trade</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">FTQ</th>
+              <th className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">Inspections</th>
               <th className="py-2 px-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-warm-100">
             {filteredVendors.map(vendor => (
-              <tr key={vendor.rank} className="hover:bg-gray-50 cursor-pointer">
+              <tr key={vendor.rank} className="hover:bg-warm-50 cursor-pointer">
                 <td className="py-2 px-3">
                   <span className={cn(
                     "inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold",
-                    type === 'top' && vendor.rank <= 3 ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                    type === 'top' && vendor.rank <= 3 ? "bg-green-100 text-green-700" : "bg-warm-100 text-warm-600"
                   )}>
                     {vendor.rank}
                   </span>
                 </td>
-                <td className="py-2 px-3 font-medium text-gray-900">{vendor.vendor}</td>
-                <td className="py-2 px-3 text-gray-600">{vendor.trade}</td>
+                <td className="py-2 px-3 font-medium text-warm-900">{vendor.vendor}</td>
+                <td className="py-2 px-3 text-warm-600">{vendor.trade}</td>
                 <td className="py-2 px-3 text-right">
                   <span className={cn("font-semibold", getScoreColor(vendor.ftqScore))}>
                     {formatPercent(vendor.ftqScore)}
@@ -654,15 +654,15 @@ function VendorRankingsTable({ vendors, type }: { vendors: VendorRanking[]; type
                     {vendor.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-500" />}
                     <span className={cn(
                       "text-xs",
-                      vendor.trendDelta > 0 ? "text-green-600" : vendor.trendDelta < 0 ? "text-red-600" : "text-gray-400"
+                      vendor.trendDelta > 0 ? "text-green-600" : vendor.trendDelta < 0 ? "text-red-600" : "text-warm-400"
                     )}>
                       {vendor.trendDelta > 0 ? '+' : ''}{vendor.trendDelta.toFixed(1)}%
                     </span>
                   </div>
                 </td>
-                <td className="py-2 px-3 text-right text-gray-600">{vendor.inspections}</td>
+                <td className="py-2 px-3 text-right text-warm-600">{vendor.inspections}</td>
                 <td className="py-2 px-3">
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
+                  <ExternalLink className="h-4 w-4 text-warm-400" />
                 </td>
               </tr>
             ))}
@@ -717,16 +717,16 @@ function AlertCard({ alert }: { alert: FTQAlert }) {
 
 function RecentInspectionsList({ inspections }: { inspections: RecentInspection[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-gray-900">Recent Inspections</h4>
-          <span className="text-xs text-gray-500">{inspections.length} inspections</span>
+          <h4 className="font-semibold text-warm-900">Recent Inspections</h4>
+          <span className="text-xs text-warm-500">{inspections.length} inspections</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100 max-h-[350px] overflow-y-auto">
+      <div className="divide-y divide-warm-100 max-h-[350px] overflow-y-auto">
         {inspections.map(inspection => (
-          <div key={inspection.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          <div key={inspection.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3">
                 <div className={cn(
@@ -740,9 +740,9 @@ function RecentInspectionsList({ inspections }: { inspections: RecentInspection[
                   )}
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">{inspection.project}</div>
-                  <div className="text-sm text-gray-600">{inspection.inspectionType}</div>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                  <div className="font-medium text-warm-900">{inspection.project}</div>
+                  <div className="text-sm text-warm-600">{inspection.inspectionType}</div>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-warm-500">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {inspection.timestamp}
@@ -772,8 +772,8 @@ function RecentInspectionsList({ inspections }: { inspections: RecentInspection[
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all inspections
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -791,13 +791,13 @@ export function FTQDashboardPreview() {
   const passRate = Math.round((mockCompanyFTQ.passedInspections / mockCompanyFTQ.inspectionsThisPeriod) * 100)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">First-Time Quality Dashboard</h3>
+              <h3 className="font-semibold text-warm-900">First-Time Quality Dashboard</h3>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded font-medium",
                 mockCompanyFTQ.score >= 90 ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
@@ -805,7 +805,7 @@ export function FTQDashboardPreview() {
                 {mockCompanyFTQ.score >= 90 ? 'Above Benchmark' : 'Below Benchmark'}
               </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 As of February 12, 2026
@@ -816,7 +816,7 @@ export function FTQDashboardPreview() {
               </span>
               <span className={cn(
                 "flex items-center gap-1",
-                mockCompanyFTQ.trend === 'up' ? "text-green-600" : "text-gray-500"
+                mockCompanyFTQ.trend === 'up' ? "text-green-600" : "text-warm-500"
               )}>
                 {mockCompanyFTQ.trend === 'up' && <TrendingUp className="h-4 w-4" />}
                 FTQ {mockCompanyFTQ.trend === 'up' ? 'improving' : 'stable'}
@@ -825,7 +825,7 @@ export function FTQDashboardPreview() {
           </div>
           <div className="flex items-center gap-2">
             <DateRangeSelector selectedRange={dateRange} onRangeChange={setDateRange} />
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
@@ -834,7 +834,7 @@ export function FTQDashboardPreview() {
       </div>
 
       {/* Top-Level KPIs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
           <KPICard
             label="Company FTQ Score"
@@ -869,7 +869,7 @@ export function FTQDashboardPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -912,7 +912,7 @@ export function FTQDashboardPreview() {
       <div className="px-4 pb-4">
         <div className="flex items-center gap-2 mb-3">
           <AlertCircle className="h-4 w-4 text-amber-500" />
-          <h4 className="font-semibold text-gray-900">Low FTQ Alerts</h4>
+          <h4 className="font-semibold text-warm-900">Low FTQ Alerts</h4>
           <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
             {mockAlerts.length} items need attention
           </span>
@@ -939,17 +939,17 @@ export function FTQDashboardPreview() {
       </div>
 
       {/* Summary Footer */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
+      <div className="bg-white border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
-            <ClipboardCheck className="h-4 w-4 text-gray-400" />
-            <span className="font-medium text-gray-700">Period Summary:</span>
+            <ClipboardCheck className="h-4 w-4 text-warm-400" />
+            <span className="font-medium text-warm-700">Period Summary:</span>
           </div>
-          <div className="flex items-center gap-6 text-gray-600">
+          <div className="flex items-center gap-6 text-warm-600">
             <span>Pass Rate: <span className="font-semibold text-green-600">{passRate}%</span></span>
-            <span>Total Inspections: <span className="font-semibold text-gray-900">{mockCompanyFTQ.inspectionsThisPeriod}</span></span>
-            <span>Active Projects: <span className="font-semibold text-gray-900">{mockCompanyFTQ.activeProjects}</span></span>
-            <span>Vendors Tracked: <span className="font-semibold text-gray-900">{mockVendorRankings.length}</span></span>
+            <span>Total Inspections: <span className="font-semibold text-warm-900">{mockCompanyFTQ.inspectionsThisPeriod}</span></span>
+            <span>Active Projects: <span className="font-semibold text-warm-900">{mockCompanyFTQ.activeProjects}</span></span>
+            <span>Vendors Tracked: <span className="font-semibold text-warm-900">{mockVendorRankings.length}</span></span>
           </div>
         </div>
       </div>

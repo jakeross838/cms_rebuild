@@ -90,12 +90,12 @@ const categories: TemplateCategory[] = ['Contracts', 'Proposals', 'Purchase Orde
 
 const categoryColors: Record<string, string> = {
   Contracts: 'bg-purple-100 text-purple-700',
-  Proposals: 'bg-blue-100 text-blue-700',
+  Proposals: 'bg-stone-100 text-stone-700',
   'Purchase Orders': 'bg-green-100 text-green-700',
   'Change Orders': 'bg-orange-100 text-orange-700',
   Subcontracts: 'bg-teal-100 text-teal-700',
   'Pre-Con Agreements': 'bg-indigo-100 text-indigo-700',
-  Letters: 'bg-gray-100 text-gray-700',
+  Letters: 'bg-warm-100 text-warm-700',
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -148,7 +148,7 @@ const mockQualityTemplates: QualityTemplate[] = [
   { id: 'q12', name: 'Custom Luxury Finishes Checklist', trade: 'General', phase: 'Final', itemCount: 95, sectionCount: 12, isSystem: false, rating: 4.9, cloneCount: 47, ftqRatedItems: 78, ftqTotalItems: 95, conditionalRules: 8, measurementCheckpoints: 6, supervisorApprovals: 2, source: 'marketplace', description: 'Premium finish inspection for luxury custom homes with high-end materials', sections: ['Stone & Tile', 'Custom Millwork', 'Hardware', 'Lighting', 'Appliances', 'Smart Home', 'Audio/Visual', 'Pool/Spa', 'Landscaping', 'Final Details', 'Client Presentation', 'Documentation'], sampleItems: ['Stone seams aligned and minimal', 'Custom millwork finish flawless', 'High-end hardware properly adjusted', 'Lighting scenes programmed', 'Smart home integration tested'], lastUpdated: 'Feb 1, 2026', version: '1.5', marketplaceRating: 4.9, marketplaceInstalls: 47, publisherName: 'Luxury Builder Network', price: 79 },
 ]
 
-const qualityTradeColors: Record<QualityTrade, string> = { Foundation: 'bg-stone-100 text-stone-700', Framing: 'bg-amber-100 text-amber-700', Electrical: 'bg-yellow-100 text-yellow-700', Plumbing: 'bg-blue-100 text-blue-700', HVAC: 'bg-cyan-100 text-cyan-700', Insulation: 'bg-pink-100 text-pink-700', Drywall: 'bg-slate-100 text-slate-700', General: 'bg-gray-100 text-gray-700', Safety: 'bg-red-100 text-red-700' }
+const qualityTradeColors: Record<QualityTrade, string> = { Foundation: 'bg-stone-100 text-stone-700', Framing: 'bg-amber-100 text-amber-700', Electrical: 'bg-amber-100 text-amber-700', Plumbing: 'bg-stone-100 text-stone-700', HVAC: 'bg-cyan-100 text-cyan-700', Insulation: 'bg-pink-100 text-pink-700', Drywall: 'bg-slate-100 text-slate-700', General: 'bg-warm-100 text-warm-700', Safety: 'bg-red-100 text-red-700' }
 const qualityPhaseColors: Record<QualityPhase, string> = { Rough: 'bg-orange-100 text-orange-700', 'Pre-Drywall': 'bg-purple-100 text-purple-700', Final: 'bg-green-100 text-green-700', Walkthrough: 'bg-indigo-100 text-indigo-700', Startup: 'bg-teal-100 text-teal-700' }
 const qualityTrades: QualityTrade[] = ['Foundation', 'Framing', 'Electrical', 'Plumbing', 'HVAC', 'Insulation', 'Drywall', 'General', 'Safety']
 const qualityPhases: QualityPhase[] = ['Rough', 'Pre-Drywall', 'Final', 'Walkthrough', 'Startup']
@@ -160,35 +160,35 @@ const qualityPhases: QualityPhase[] = ['Rough', 'Pre-Drywall', 'Final', 'Walkthr
 function TemplateCard({ template }: { template: Template }) {
   const isMarketplace = template.source === 'marketplace'
   return (
-    <div className={cn("bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer", isMarketplace ? "border-blue-200" : "border-gray-200")}>
+    <div className={cn("bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer", isMarketplace ? "border-stone-200" : "border-warm-200")}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', categoryColors[template.category])}>{template.category}</span>
             {template.isFavorite && <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />}
-            {template.isDefault && <span className="text-xs font-medium text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">Default</span>}
-            {template.source === 'platform' && <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />Official</span>}
+            {template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}
+            {template.source === 'platform' && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />Official</span>}
             {isMarketplace && <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
             {template.isLegallyReviewed && <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded flex items-center gap-0.5" title={`Reviewed ${template.reviewedDate}`}><Shield className="h-3 w-3" />Reviewed</span>}
           </div>
-          <h4 className="font-medium text-gray-900">{template.name}</h4>
-          <span className="text-[10px] text-gray-400">v{template.version}</span>
+          <h4 className="font-medium text-warm-900">{template.name}</h4>
+          <span className="text-[10px] text-warm-400">v{template.version}</span>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded"><MoreHorizontal className="h-4 w-4 text-gray-400" /></button>
+        <button className="p-1 hover:bg-warm-100 rounded"><MoreHorizontal className="h-4 w-4 text-warm-400" /></button>
       </div>
-      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{template.description}</p>
+      <p className="text-sm text-warm-500 mb-3 line-clamp-2">{template.description}</p>
       <div className="flex items-center gap-3 mb-2 text-sm flex-wrap">
-        <div className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-600 text-xs">{template.pages}p</span></div>
-        <div className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-600 text-xs">{template.variables} vars</span></div>
-        <div className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-600 text-xs">{template.clauseCount} clauses</span></div>
-        <div className="flex items-center gap-1.5"><Edit className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-600 text-xs">{template.signatureFields} sig</span></div>
+        <div className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.pages}p</span></div>
+        <div className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.variables} vars</span></div>
+        <div className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.clauseCount} clauses</span></div>
+        <div className="flex items-center gap-1.5"><Edit className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.signatureFields} sig</span></div>
       </div>
-      {template.stateApplicability && template.stateApplicability.length > 0 && <div className="flex items-center gap-1.5 mb-2"><MapPin className="h-3 w-3 text-gray-400" />{template.stateApplicability.map(state => <span key={state} className="text-[10px] px-1 py-0.5 bg-gray-100 text-gray-600 rounded">{state}</span>)}</div>}
-      {isMarketplace && <div className="flex items-center gap-3 mb-2 text-xs"><div className="flex items-center gap-1"><Star className="h-3 w-3 text-amber-400 fill-amber-400" /><span className="font-medium text-gray-700">{template.marketplaceRating}</span></div><span className="text-gray-400">{template.marketplaceInstalls} installs</span><span className="text-gray-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-gray-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div>}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100"><div className="flex items-center gap-2">{!isMarketplace && <><span className="text-xs text-gray-500">Used {template.usageCount}x</span><span className="text-xs text-gray-400">|</span><div className="flex items-center gap-1 text-xs text-gray-500"><Clock className="h-3.5 w-3.5" />{template.lastUsed}</div></>}</div></div>
+      {template.stateApplicability && template.stateApplicability.length > 0 && <div className="flex items-center gap-1.5 mb-2"><MapPin className="h-3 w-3 text-warm-400" />{template.stateApplicability.map(state => <span key={state} className="text-[10px] px-1 py-0.5 bg-warm-100 text-warm-600 rounded">{state}</span>)}</div>}
+      {isMarketplace && <div className="flex items-center gap-3 mb-2 text-xs"><div className="flex items-center gap-1"><Star className="h-3 w-3 text-amber-400 fill-amber-400" /><span className="font-medium text-warm-700">{template.marketplaceRating}</span></div><span className="text-warm-400">{template.marketplaceInstalls} installs</span><span className="text-warm-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-warm-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div>}
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100"><div className="flex items-center gap-2">{!isMarketplace && <><span className="text-xs text-warm-500">Used {template.usageCount}x</span><span className="text-xs text-warm-400">|</span><div className="flex items-center gap-1 text-xs text-warm-500"><Clock className="h-3.5 w-3.5" />{template.lastUsed}</div></>}</div></div>
       {template.aiSuggestion && <div className="mt-3 p-2 rounded-md bg-amber-50 flex items-start gap-2 text-xs"><Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" /><span className="text-amber-700">{template.aiSuggestion}</span></div>}
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-        {isMarketplace ? (<><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"><Download className="h-3.5 w-3.5" />{template.price === 0 ? 'Install' : `Buy $${template.price}`}</button></>) : (<><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"><Copy className="h-3.5 w-3.5" />Clone</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"><Edit className="h-3.5 w-3.5" />Edit</button></>)}
+      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
+        {isMarketplace ? (<><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700"><Download className="h-3.5 w-3.5" />{template.price === 0 ? 'Install' : `Buy $${template.price}`}</button></>) : (<><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Copy className="h-3.5 w-3.5" />Clone</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700"><Edit className="h-3.5 w-3.5" />Edit</button></>)}
       </div>
     </div>
   )
@@ -196,16 +196,16 @@ function TemplateCard({ template }: { template: Template }) {
 
 function TemplateRow({ template }: { template: Template }) {
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="py-3 px-4"><div className="flex items-center gap-2">{template.isFavorite && <Star className="h-4 w-4 text-amber-400 fill-amber-400" />}<div><div className="font-medium text-gray-900 flex items-center gap-2">{template.name}{template.isDefault && <span className="text-xs font-medium text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">Default</span>}{template.source === 'marketplace' && <ShoppingBag className="h-3.5 w-3.5 text-indigo-500" />}{template.isLegallyReviewed && <Shield className="h-3.5 w-3.5 text-green-500" />}</div><div className="text-xs text-gray-500">{template.description}</div></div></div></td>
+    <tr className="hover:bg-warm-50">
+      <td className="py-3 px-4"><div className="flex items-center gap-2">{template.isFavorite && <Star className="h-4 w-4 text-amber-400 fill-amber-400" />}<div><div className="font-medium text-warm-900 flex items-center gap-2">{template.name}{template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}{template.source === 'marketplace' && <ShoppingBag className="h-3.5 w-3.5 text-indigo-500" />}{template.isLegallyReviewed && <Shield className="h-3.5 w-3.5 text-green-500" />}</div><div className="text-xs text-warm-500">{template.description}</div></div></div></td>
       <td className="py-3 px-4"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', categoryColors[template.category])}>{template.category}</span></td>
-      <td className="py-3 px-4 text-center text-xs text-gray-600">{template.pages}p</td>
-      <td className="py-3 px-4 text-center text-xs text-gray-600">{template.variables}</td>
-      <td className="py-3 px-4 text-center text-xs text-gray-600">{template.clauseCount}</td>
-      <td className="py-3 px-4 text-center text-xs text-gray-600">{template.usageCount}x</td>
-      <td className="py-3 px-4 text-center text-xs text-gray-500">v{template.version}</td>
-      <td className="py-3 px-4 text-right text-xs text-gray-500">{template.lastUsed}</td>
-      <td className="py-3 px-4"><button className="p-1 hover:bg-gray-100 rounded"><ChevronRight className="h-4 w-4 text-gray-400" /></button></td>
+      <td className="py-3 px-4 text-center text-xs text-warm-600">{template.pages}p</td>
+      <td className="py-3 px-4 text-center text-xs text-warm-600">{template.variables}</td>
+      <td className="py-3 px-4 text-center text-xs text-warm-600">{template.clauseCount}</td>
+      <td className="py-3 px-4 text-center text-xs text-warm-600">{template.usageCount}x</td>
+      <td className="py-3 px-4 text-center text-xs text-warm-500">v{template.version}</td>
+      <td className="py-3 px-4 text-right text-xs text-warm-500">{template.lastUsed}</td>
+      <td className="py-3 px-4"><button className="p-1 hover:bg-warm-100 rounded"><ChevronRight className="h-4 w-4 text-warm-400" /></button></td>
     </tr>
   )
 }
@@ -217,27 +217,27 @@ function TemplateRow({ template }: { template: Template }) {
 function QualityTemplateCard({ template, onPreview }: { template: QualityTemplate; onPreview: (template: QualityTemplate) => void }) {
   const isMarketplace = template.source === 'marketplace'
   return (
-    <div className={cn("bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer", isMarketplace ? "border-indigo-200" : "border-gray-200")}>
+    <div className={cn("bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer", isMarketplace ? "border-indigo-200" : "border-warm-200")}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span>
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>
-            {template.isSystem && <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}
+            {template.isSystem && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}
             {isMarketplace && <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
           </div>
-          <h4 className="font-medium text-gray-900">{template.name}</h4>
-          <span className="text-[10px] text-gray-400">v{template.version}</span>
+          <h4 className="font-medium text-warm-900">{template.name}</h4>
+          <span className="text-[10px] text-warm-400">v{template.version}</span>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded"><MoreHorizontal className="h-4 w-4 text-gray-400" /></button>
+        <button className="p-1 hover:bg-warm-100 rounded"><MoreHorizontal className="h-4 w-4 text-warm-400" /></button>
       </div>
-      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{template.description}</p>
-      <div className="flex items-center gap-3 mb-2 text-sm flex-wrap"><div className="flex items-center gap-1.5"><CheckSquare className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-600 text-xs">{template.itemCount} items</span></div><div className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-600 text-xs">{template.sectionCount} sections</span></div></div>
-      <div className="flex items-center gap-2 mb-2"><div className="flex items-center gap-0.5">{[1,2,3,4,5].map(star => <Star key={star} className={cn("h-3 w-3", star <= Math.round(template.rating) ? "text-amber-400 fill-amber-400" : "text-gray-300")} />)}</div><span className="text-xs text-gray-600">{template.rating.toFixed(1)}</span></div>
-      <div className="flex items-center gap-1.5 mb-2 text-xs text-gray-500"><Users className="h-3 w-3" /><span>Used by {template.cloneCount} builders</span></div>
+      <p className="text-sm text-warm-500 mb-3 line-clamp-2">{template.description}</p>
+      <div className="flex items-center gap-3 mb-2 text-sm flex-wrap"><div className="flex items-center gap-1.5"><CheckSquare className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.itemCount} items</span></div><div className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.sectionCount} sections</span></div></div>
+      <div className="flex items-center gap-2 mb-2"><div className="flex items-center gap-0.5">{[1,2,3,4,5].map(star => <Star key={star} className={cn("h-3 w-3", star <= Math.round(template.rating) ? "text-amber-400 fill-amber-400" : "text-warm-300")} />)}</div><span className="text-xs text-warm-600">{template.rating.toFixed(1)}</span></div>
+      <div className="flex items-center gap-1.5 mb-2 text-xs text-warm-500"><Users className="h-3 w-3" /><span>Used by {template.cloneCount} builders</span></div>
       <div className="flex items-center gap-1.5 mb-2 text-xs"><Target className="h-3 w-3 text-green-500" /><span className="text-green-700">FTQ Rated: {template.ftqRatedItems} of {template.ftqTotalItems} items</span></div>
-      {isMarketplace && template.marketplaceRating && <div className="flex items-center gap-3 mb-2 text-xs"><span className="text-gray-400">{template.marketplaceInstalls} installs</span><span className="text-gray-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-gray-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div>}
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100"><button onClick={() => onPreview(template)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"><Copy className="h-3.5 w-3.5" />{isMarketplace ? (template.price === 0 ? 'Install' : `Buy $${template.price}`) : 'Clone / Use'}</button></div>
+      {isMarketplace && template.marketplaceRating && <div className="flex items-center gap-3 mb-2 text-xs"><span className="text-warm-400">{template.marketplaceInstalls} installs</span><span className="text-warm-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-warm-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div>}
+      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100"><button onClick={() => onPreview(template)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700"><Copy className="h-3.5 w-3.5" />{isMarketplace ? (template.price === 0 ? 'Install' : `Buy $${template.price}`) : 'Clone / Use'}</button></div>
     </div>
   )
 }
@@ -246,30 +246,30 @@ function QualityTemplatePreviewModal({ template, onClose }: { template: QualityT
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        <div className="flex items-start justify-between p-4 border-b border-gray-200">
+        <div className="flex items-start justify-between p-4 border-b border-warm-200">
           <div>
-            <div className="flex items-center gap-2 mb-1 flex-wrap"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>{template.isSystem && <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}</div>
-            <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
-            <p className="text-sm text-gray-500 mt-1">{template.description}</p>
+            <div className="flex items-center gap-2 mb-1 flex-wrap"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>{template.isSystem && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}</div>
+            <h3 className="text-lg font-semibold text-warm-900">{template.name}</h3>
+            <p className="text-sm text-warm-500 mt-1">{template.description}</p>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded"><X className="h-5 w-5 text-gray-400" /></button>
+          <button onClick={onClose} className="p-1 hover:bg-warm-100 rounded"><X className="h-5 w-5 text-warm-400" /></button>
         </div>
         <div className="p-4 overflow-y-auto max-h-[60vh]">
           <div className="grid grid-cols-4 gap-3 mb-4">
-            <div className="bg-gray-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-gray-900">{template.itemCount}</div><div className="text-xs text-gray-500">Items</div></div>
-            <div className="bg-gray-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-gray-900">{template.sectionCount}</div><div className="text-xs text-gray-500">Sections</div></div>
-            <div className="bg-gray-50 rounded-lg p-2.5 text-center"><div className="flex items-center justify-center gap-0.5">{[1,2,3,4,5].map(star => <Star key={star} className={cn("h-3 w-3", star <= Math.round(template.rating) ? "text-amber-400 fill-amber-400" : "text-gray-300")} />)}</div><div className="text-xs text-gray-500">{template.rating.toFixed(1)} Rating</div></div>
-            <div className="bg-gray-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-gray-900">{template.cloneCount}</div><div className="text-xs text-gray-500">Builders</div></div>
+            <div className="bg-warm-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-warm-900">{template.itemCount}</div><div className="text-xs text-warm-500">Items</div></div>
+            <div className="bg-warm-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-warm-900">{template.sectionCount}</div><div className="text-xs text-warm-500">Sections</div></div>
+            <div className="bg-warm-50 rounded-lg p-2.5 text-center"><div className="flex items-center justify-center gap-0.5">{[1,2,3,4,5].map(star => <Star key={star} className={cn("h-3 w-3", star <= Math.round(template.rating) ? "text-amber-400 fill-amber-400" : "text-warm-300")} />)}</div><div className="text-xs text-warm-500">{template.rating.toFixed(1)} Rating</div></div>
+            <div className="bg-warm-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-warm-900">{template.cloneCount}</div><div className="text-xs text-warm-500">Builders</div></div>
           </div>
           <div className="grid grid-cols-3 gap-3 mb-4">
             {template.conditionalRules > 0 && <div className="flex items-center gap-2 p-2.5 bg-purple-50 rounded-lg"><GitBranch className="h-4 w-4 text-purple-600" /><div><div className="text-sm font-medium text-purple-700">Conditional Rules</div><div className="text-xs text-purple-600">Contains {template.conditionalRules} branching rules</div></div></div>}
-            {template.measurementCheckpoints > 0 && <div className="flex items-center gap-2 p-2.5 bg-blue-50 rounded-lg"><Ruler className="h-4 w-4 text-blue-600" /><div><div className="text-sm font-medium text-blue-700">Measurements</div><div className="text-xs text-blue-600">Contains {template.measurementCheckpoints} checkpoints</div></div></div>}
+            {template.measurementCheckpoints > 0 && <div className="flex items-center gap-2 p-2.5 bg-stone-50 rounded-lg"><Ruler className="h-4 w-4 text-stone-600" /><div><div className="text-sm font-medium text-stone-700">Measurements</div><div className="text-xs text-stone-600">Contains {template.measurementCheckpoints} checkpoints</div></div></div>}
             {template.supervisorApprovals > 0 && <div className="flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg"><UserCheck className="h-4 w-4 text-amber-600" /><div><div className="text-sm font-medium text-amber-700">Approvals</div><div className="text-xs text-amber-600">Requires {template.supervisorApprovals} supervisor sign-offs</div></div></div>}
           </div>
-          <div className="mb-4"><h4 className="text-sm font-semibold text-gray-900 mb-2">Sections ({template.sectionCount})</h4><div className="flex flex-wrap gap-2">{template.sections.map((section, idx) => <span key={idx} className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded">{section}</span>)}</div></div>
-          <div><h4 className="text-sm font-semibold text-gray-900 mb-2">Sample Items</h4><ul className="space-y-1.5">{template.sampleItems.map((item, idx) => <li key={idx} className="flex items-start gap-2 text-sm text-gray-600"><CheckSquare className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" /><span>{item}</span></li>)}</ul></div>
+          <div className="mb-4"><h4 className="text-sm font-semibold text-warm-900 mb-2">Sections ({template.sectionCount})</h4><div className="flex flex-wrap gap-2">{template.sections.map((section, idx) => <span key={idx} className="text-xs px-2 py-1 bg-warm-100 text-warm-700 rounded">{section}</span>)}</div></div>
+          <div><h4 className="text-sm font-semibold text-warm-900 mb-2">Sample Items</h4><ul className="space-y-1.5">{template.sampleItems.map((item, idx) => <li key={idx} className="flex items-start gap-2 text-sm text-warm-600"><CheckSquare className="h-4 w-4 text-warm-400 mt-0.5 flex-shrink-0" /><span>{item}</span></li>)}</ul></div>
         </div>
-        <div className="p-4 border-t border-gray-200 flex items-center gap-3"><button onClick={onClose} className="flex-1 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Close</button><button className="flex-1 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"><Copy className="h-4 w-4" />Clone Template</button></div>
+        <div className="p-4 border-t border-warm-200 flex items-center gap-3"><button onClick={onClose} className="flex-1 px-4 py-2 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">Close</button><button className="flex-1 px-4 py-2 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700 flex items-center justify-center gap-2"><Copy className="h-4 w-4" />Clone Template</button></div>
       </div>
     </div>
   )
@@ -277,12 +277,12 @@ function QualityTemplatePreviewModal({ template, onClose }: { template: QualityT
 
 function QualityFiltersPanel({ activeTrade, setActiveTrade, activePhase, setActivePhase, activeSource, setActiveSource, minRating, setMinRating }: { activeTrade: string; setActiveTrade: (t: string) => void; activePhase: string; setActivePhase: (p: string) => void; activeSource: string; setActiveSource: (s: string) => void; minRating: number; setMinRating: (r: number) => void }) {
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-3">
+    <div className="bg-white border-b border-warm-200 px-4 py-3">
       <div className="flex items-center gap-6 text-xs">
-        <div className="flex items-center gap-2"><span className="text-gray-500 font-medium">Trade:</span><select value={activeTrade} onChange={e => setActiveTrade(e.target.value)} className="text-xs border border-gray-200 rounded px-2 py-1 bg-white"><option value="all">All Trades</option>{qualityTrades.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-        <div className="flex items-center gap-2"><span className="text-gray-500 font-medium">Phase:</span><select value={activePhase} onChange={e => setActivePhase(e.target.value)} className="text-xs border border-gray-200 rounded px-2 py-1 bg-white"><option value="all">All Phases</option>{qualityPhases.map(p => <option key={p} value={p}>{p}</option>)}</select></div>
-        <div className="flex items-center gap-2"><span className="text-gray-500 font-medium">Source:</span><select value={activeSource} onChange={e => setActiveSource(e.target.value)} className="text-xs border border-gray-200 rounded px-2 py-1 bg-white"><option value="all">All Sources</option><option value="system">System</option><option value="custom">Custom</option><option value="marketplace">Marketplace</option></select></div>
-        <div className="flex items-center gap-2"><span className="text-gray-500 font-medium">Rating:</span><select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="text-xs border border-gray-200 rounded px-2 py-1 bg-white"><option value={0}>Any</option><option value={4}>4+ stars</option><option value={3}>3+ stars</option></select></div>
+        <div className="flex items-center gap-2"><span className="text-warm-500 font-medium">Trade:</span><select value={activeTrade} onChange={e => setActiveTrade(e.target.value)} className="text-xs border border-warm-200 rounded px-2 py-1 bg-white"><option value="all">All Trades</option>{qualityTrades.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+        <div className="flex items-center gap-2"><span className="text-warm-500 font-medium">Phase:</span><select value={activePhase} onChange={e => setActivePhase(e.target.value)} className="text-xs border border-warm-200 rounded px-2 py-1 bg-white"><option value="all">All Phases</option>{qualityPhases.map(p => <option key={p} value={p}>{p}</option>)}</select></div>
+        <div className="flex items-center gap-2"><span className="text-warm-500 font-medium">Source:</span><select value={activeSource} onChange={e => setActiveSource(e.target.value)} className="text-xs border border-warm-200 rounded px-2 py-1 bg-white"><option value="all">All Sources</option><option value="system">System</option><option value="custom">Custom</option><option value="marketplace">Marketplace</option></select></div>
+        <div className="flex items-center gap-2"><span className="text-warm-500 font-medium">Rating:</span><select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="text-xs border border-warm-200 rounded px-2 py-1 bg-white"><option value={0}>Any</option><option value={4}>4+ stars</option><option value={3}>3+ stars</option></select></div>
       </div>
     </div>
   )
@@ -290,13 +290,13 @@ function QualityFiltersPanel({ activeTrade, setActiveTrade, activePhase, setActi
 
 function CreateNewTemplateSection() {
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 px-4 py-4">
-      <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><Plus className="h-4 w-4 text-blue-600" />Create New Quality Template</h4>
+    <div className="bg-gradient-to-r from-stone-50 to-indigo-50 border-b border-stone-200 px-4 py-4">
+      <h4 className="text-sm font-semibold text-warm-900 mb-3 flex items-center gap-2"><Plus className="h-4 w-4 text-stone-600" />Create New Quality Template</h4>
       <div className="grid grid-cols-4 gap-3">
-        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"><FileText className="h-5 w-5 text-gray-500" /><span className="text-xs font-medium text-gray-700">Create from Scratch</span></button>
-        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"><Copy className="h-5 w-5 text-blue-500" /><span className="text-xs font-medium text-gray-700">Clone System Template</span></button>
-        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"><Upload className="h-5 w-5 text-green-500" /><span className="text-xs font-medium text-gray-700">Import from File</span></button>
-        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"><Wand2 className="h-5 w-5 text-purple-500" /><span className="text-xs font-medium text-gray-700">AI-Generate Template</span></button>
+        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-stone-300 hover:shadow-sm transition-all"><FileText className="h-5 w-5 text-warm-500" /><span className="text-xs font-medium text-warm-700">Create from Scratch</span></button>
+        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-stone-300 hover:shadow-sm transition-all"><Copy className="h-5 w-5 text-stone-500" /><span className="text-xs font-medium text-warm-700">Clone System Template</span></button>
+        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-stone-300 hover:shadow-sm transition-all"><Upload className="h-5 w-5 text-green-500" /><span className="text-xs font-medium text-warm-700">Import from File</span></button>
+        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-purple-300 hover:shadow-sm transition-all"><Wand2 className="h-5 w-5 text-purple-500" /><span className="text-xs font-medium text-warm-700">AI-Generate Template</span></button>
       </div>
     </div>
   )
@@ -325,17 +325,17 @@ function QualityChecklistsSection() {
   const totalItems = mockQualityTemplates.reduce((sum, t) => sum + t.itemCount, 0)
 
   return (
-    <div className="border-t border-gray-200">
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+    <div className="border-t border-warm-200">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3"><ClipboardCheck className="h-5 w-5 text-green-600" /><h3 className="font-semibold text-gray-900">Quality Checklists</h3><span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">{mockQualityTemplates.length} templates</span></div>
-          <div className="flex items-center gap-2"><input type="text" placeholder="Search quality templates..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /><button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700"><Plus className="h-3.5 w-3.5" />New Template</button></div>
+          <div className="flex items-center gap-3"><ClipboardCheck className="h-5 w-5 text-green-600" /><h3 className="font-semibold text-warm-900">Quality Checklists</h3><span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">{mockQualityTemplates.length} templates</span></div>
+          <div className="flex items-center gap-2"><input type="text" placeholder="Search quality templates..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="text-sm border border-warm-200 rounded-lg px-3 py-1.5 w-64 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:border-transparent" /><button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded-lg hover:bg-stone-700"><Plus className="h-3.5 w-3.5" />New Template</button></div>
         </div>
       </div>
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-blue-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-blue-600 text-xs"><Award className="h-3.5 w-3.5" />System Templates</div><div className="text-lg font-bold text-blue-700 mt-0.5">{systemTemplates}</div></div>
-          <div className="bg-gray-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-gray-500 text-xs"><FileText className="h-3.5 w-3.5" />Custom Templates</div><div className="text-lg font-bold text-gray-900 mt-0.5">{customTemplates}</div></div>
+          <div className="bg-stone-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-stone-600 text-xs"><Award className="h-3.5 w-3.5" />System Templates</div><div className="text-lg font-bold text-stone-700 mt-0.5">{systemTemplates}</div></div>
+          <div className="bg-warm-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-warm-500 text-xs"><FileText className="h-3.5 w-3.5" />Custom Templates</div><div className="text-lg font-bold text-warm-900 mt-0.5">{customTemplates}</div></div>
           <div className="bg-indigo-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-indigo-600 text-xs"><ShoppingBag className="h-3.5 w-3.5" />Marketplace</div><div className="text-lg font-bold text-indigo-700 mt-0.5">{marketplaceTemplates}</div></div>
           <div className="bg-green-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-green-600 text-xs"><CheckSquare className="h-3.5 w-3.5" />Total Items</div><div className="text-lg font-bold text-green-700 mt-0.5">{totalItems}</div></div>
           <div className="bg-amber-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-amber-600 text-xs"><Target className="h-3.5 w-3.5" />FTQ Coverage</div><div className="text-lg font-bold text-amber-700 mt-0.5">87%</div></div>
@@ -343,8 +343,8 @@ function QualityChecklistsSection() {
       </div>
       <QualityFiltersPanel activeTrade={activeTrade} setActiveTrade={setActiveTrade} activePhase={activePhase} setActivePhase={setActivePhase} activeSource={activeSource} setActiveSource={setActiveSource} minRating={minRating} setMinRating={setMinRating} />
       <CreateNewTemplateSection />
-      <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto bg-gray-50">{filteredTemplates.map(t => <QualityTemplateCard key={t.id} template={t} onPreview={setSelectedTemplate} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-gray-500">No quality templates match your filters</div>}</div>
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto bg-warm-50">{filteredTemplates.map(t => <QualityTemplateCard key={t.id} template={t} onPreview={setSelectedTemplate} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-warm-500">No quality templates match your filters</div>}</div>
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel title="AI Features for Quality Checklists" columns={2} features={[
           { feature: 'Template Recommendations', trigger: 'On project start', insight: 'AI suggests relevant quality checklists based on project type, scope, and regional requirements for your current job.', severity: 'info', action: { label: 'Get Recommendations', onClick: () => {} } },
           { feature: 'Custom Template Generation', trigger: 'On demand', insight: 'AI creates a custom quality checklist from your project specifications, drawings, and scope documents.', severity: 'success', action: { label: 'Generate Template', onClick: () => {} } },
@@ -375,35 +375,35 @@ export function TemplatesPreview() {
   const withAISuggestions = mockTemplates.filter(t => t.aiSuggestion).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-1">
-          <button onClick={() => setMainSection('documents')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors', mainSection === 'documents' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100')}><FileText className="h-4 w-4" />Document Templates</button>
-          <button onClick={() => setMainSection('quality')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors', mainSection === 'quality' ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-gray-100')}><ClipboardCheck className="h-4 w-4" />Quality Checklists<span className="text-xs bg-green-600 text-white px-1.5 py-0.5 rounded-full">{mockQualityTemplates.length}</span></button>
+          <button onClick={() => setMainSection('documents')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors', mainSection === 'documents' ? 'bg-stone-100 text-stone-700' : 'text-warm-600 hover:bg-warm-100')}><FileText className="h-4 w-4" />Document Templates</button>
+          <button onClick={() => setMainSection('quality')} className={cn('flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors', mainSection === 'quality' ? 'bg-green-100 text-green-700' : 'text-warm-600 hover:bg-warm-100')}><ClipboardCheck className="h-4 w-4" />Quality Checklists<span className="text-xs bg-green-600 text-white px-1.5 py-0.5 rounded-full">{mockQualityTemplates.length}</span></button>
         </div>
       </div>
 
       {mainSection === 'quality' ? <QualityChecklistsSection /> : (
         <>
-          <div className="bg-white border-b border-gray-200 px-4 py-3">
-            <div className="flex items-center gap-3 mb-3"><h3 className="font-semibold text-gray-900">Document Templates & Marketplace</h3><span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{builderTemplates} builder + {marketplaceTemplates} marketplace</span></div>
+          <div className="bg-white border-b border-warm-200 px-4 py-3">
+            <div className="flex items-center gap-3 mb-3"><h3 className="font-semibold text-warm-900">Document Templates & Marketplace</h3><span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">{builderTemplates} builder + {marketplaceTemplates} marketplace</span></div>
             <FilterBar search={search} onSearchChange={setSearch} searchPlaceholder="Search templates, publishers..." tabs={[{ key: 'all', label: 'All', count: mockTemplates.length }, ...categories.map(c => ({ key: c, label: c, count: mockTemplates.filter(t => t.category === c).length })), { key: 'marketplace', label: 'Marketplace', count: marketplaceTemplates }]} activeTab={activeTab} onTabChange={setActiveTab} sortOptions={[{ value: 'name', label: 'Name' }, { value: 'usageCount', label: 'Usage' }, { value: 'pages', label: 'Pages' }, { value: 'lastUpdated', label: 'Last Updated' }, { value: 'clauseCount', label: 'Clauses' }, { value: 'marketplaceRating', label: 'Rating' }]} activeSort={activeSort} onSortChange={setActiveSort} sortDirection={sortDirection} onSortDirectionChange={toggleSortDirection} viewMode={viewMode} onViewModeChange={setViewMode} actions={[{ icon: Plus, label: 'New Template', onClick: () => {}, variant: 'primary' }, { icon: Upload, label: 'Publish', onClick: () => {} }]} resultCount={filteredTemplates.length} totalCount={mockTemplates.length} />
           </div>
-          <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="bg-white border-b border-warm-200 px-4 py-3">
             <div className="grid grid-cols-5 gap-3">
-              <div className="bg-gray-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-gray-500 text-xs"><FileText className="h-3.5 w-3.5" />Builder Templates</div><div className="text-lg font-bold text-gray-900 mt-0.5">{builderTemplates}</div></div>
-              <div className="bg-gray-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-gray-500 text-xs"><TrendingUp className="h-3.5 w-3.5" />Total Usage</div><div className="text-lg font-bold text-gray-900 mt-0.5">{totalUsage}x</div></div>
+              <div className="bg-warm-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-warm-500 text-xs"><FileText className="h-3.5 w-3.5" />Builder Templates</div><div className="text-lg font-bold text-warm-900 mt-0.5">{builderTemplates}</div></div>
+              <div className="bg-warm-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-warm-500 text-xs"><TrendingUp className="h-3.5 w-3.5" />Total Usage</div><div className="text-lg font-bold text-warm-900 mt-0.5">{totalUsage}x</div></div>
               <div className="bg-green-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-green-600 text-xs"><Shield className="h-3.5 w-3.5" />Legally Reviewed</div><div className="text-lg font-bold text-green-700 mt-0.5">{legallyReviewed}</div></div>
               <div className="bg-indigo-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-indigo-600 text-xs"><ShoppingBag className="h-3.5 w-3.5" />Marketplace</div><div className="text-lg font-bold text-indigo-700 mt-0.5">{marketplaceTemplates}</div></div>
-              <div className={cn('rounded-lg p-2.5', withAISuggestions > 0 ? 'bg-amber-50' : 'bg-gray-50')}><div className={cn('flex items-center gap-1.5 text-xs', withAISuggestions > 0 ? 'text-amber-600' : 'text-gray-500')}><Sparkles className="h-3.5 w-3.5" />AI Suggestions</div><div className={cn('text-lg font-bold mt-0.5', withAISuggestions > 0 ? 'text-amber-700' : 'text-gray-900')}>{withAISuggestions}</div></div>
+              <div className={cn('rounded-lg p-2.5', withAISuggestions > 0 ? 'bg-amber-50' : 'bg-warm-50')}><div className={cn('flex items-center gap-1.5 text-xs', withAISuggestions > 0 ? 'text-amber-600' : 'text-warm-500')}><Sparkles className="h-3.5 w-3.5" />AI Suggestions</div><div className={cn('text-lg font-bold mt-0.5', withAISuggestions > 0 ? 'text-amber-700' : 'text-warm-900')}>{withAISuggestions}</div></div>
             </div>
           </div>
-          <div className="bg-white border-b border-gray-200 px-4 py-2">
-            <div className="flex items-center gap-3 text-xs"><span className="text-gray-500 font-medium">Connections:</span><span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded"><FileText className="h-3 w-3" />Contracts (Module 38)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded"><BookOpen className="h-3 w-3" />Estimating (Module 20)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded"><Globe className="h-3 w-3" />Marketplace (Module 48)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded"><Tag className="h-3 w-3" />State Compliance</span></div>
+          <div className="bg-white border-b border-warm-200 px-4 py-2">
+            <div className="flex items-center gap-3 text-xs"><span className="text-warm-500 font-medium">Connections:</span><span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded"><FileText className="h-3 w-3" />Contracts (Module 38)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded"><BookOpen className="h-3 w-3" />Estimating (Module 20)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded"><Globe className="h-3 w-3" />Marketplace (Module 48)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded"><Tag className="h-3 w-3" />State Compliance</span></div>
           </div>
-          {viewMode === 'grid' ? <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto">{filteredTemplates.map(t => <TemplateCard key={t.id} template={t} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-gray-500">No templates match your search</div>}</div> : <div className="overflow-x-auto max-h-[500px] overflow-y-auto"><table className="w-full text-sm"><thead className="bg-gray-100 border-b border-gray-200 sticky top-0"><tr><th className="text-left py-3 px-4 font-medium text-gray-600">Template</th><th className="text-left py-3 px-4 font-medium text-gray-600">Category</th><th className="text-center py-3 px-4 font-medium text-gray-600">Pages</th><th className="text-center py-3 px-4 font-medium text-gray-600">Variables</th><th className="text-center py-3 px-4 font-medium text-gray-600">Clauses</th><th className="text-center py-3 px-4 font-medium text-gray-600">Usage</th><th className="text-center py-3 px-4 font-medium text-gray-600">Version</th><th className="text-right py-3 px-4 font-medium text-gray-600">Last Used</th><th className="w-10"></th></tr></thead><tbody className="bg-white divide-y divide-gray-100">{filteredTemplates.map(t => <TemplateRow key={t.id} template={t} />)}</tbody></table></div>}
+          {viewMode === 'grid' ? <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto">{filteredTemplates.map(t => <TemplateCard key={t.id} template={t} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-warm-500">No templates match your search</div>}</div> : <div className="overflow-x-auto max-h-[500px] overflow-y-auto"><table className="w-full text-sm"><thead className="bg-warm-100 border-b border-warm-200 sticky top-0"><tr><th className="text-left py-3 px-4 font-medium text-warm-600">Template</th><th className="text-left py-3 px-4 font-medium text-warm-600">Category</th><th className="text-center py-3 px-4 font-medium text-warm-600">Pages</th><th className="text-center py-3 px-4 font-medium text-warm-600">Variables</th><th className="text-center py-3 px-4 font-medium text-warm-600">Clauses</th><th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th><th className="text-center py-3 px-4 font-medium text-warm-600">Version</th><th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th><th className="w-10"></th></tr></thead><tbody className="bg-white divide-y divide-warm-100">{filteredTemplates.map(t => <TemplateRow key={t.id} template={t} />)}</tbody></table></div>}
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3"><div className="flex items-start gap-3"><div className="flex items-center gap-2 flex-shrink-0"><Sparkles className="h-4 w-4 text-amber-600" /><span className="font-medium text-sm text-amber-800">AI Insights:</span></div><div className="flex-1 text-sm text-amber-700 space-y-1"><p>SC mechanic lien statute updated Jan 2026 - 2 templates need clause updates for compliance. Review recommended.</p><p>Standard Cost-Plus with GMP is your most-used contract. Consider publishing to the marketplace to help other SC builders.</p><p>"Florida Builder Starter Pack" is trending in the marketplace (234 installs). Regional packs for your state are available.</p></div></div></div>
-          <div className="bg-white border-t border-gray-200 px-4 py-4">
+          <div className="bg-white border-t border-warm-200 px-4 py-4">
             <AIFeaturesPanel title="AI Features for Templates" columns={2} features={[
               { feature: 'Usage Analytics', trigger: 'Daily', insight: 'Shows most/least used templates to identify which templates drive value and which may need retirement or updates.', severity: 'info', action: { label: 'View Report', onClick: () => {} } },
               { feature: 'Version Tracking', trigger: 'Real-time', insight: 'Identifies outdated template versions and tracks changes across template revisions for compliance auditing.', severity: 'warning', action: { label: 'Review Versions', onClick: () => {} } },

@@ -121,12 +121,12 @@ Where N = number of stat cards (typically 5-7).
 
 ### Stat Card
 ```tsx
-<div className="bg-gray-50 rounded-lg p-3">
-  <div className="flex items-center gap-2 text-gray-600 text-xs">
+<div className="bg-warm-50 rounded-lg p-3">
+  <div className="flex items-center gap-2 text-warm-600 text-xs">
     <Icon className="h-3.5 w-3.5" />
     Label
   </div>
-  <div className="text-xl font-bold text-gray-900 mt-1">Value</div>
+  <div className="text-xl font-bold text-warm-900 mt-1">Value</div>
 </div>
 ```
 
@@ -147,7 +147,7 @@ Where N = number of stat cards (typically 5-7).
 - Label text: `text-xs`
 - Value text: `text-xl font-bold`
 - Grid gap: `gap-3`
-- Sub-metric: `<div className="text-xs text-gray-500 mt-0.5">sub-info</div>`
+- Sub-metric: `<div className="text-xs text-warm-500 mt-0.5">sub-info</div>`
 
 ---
 
@@ -204,14 +204,14 @@ Every preview with AI features should have an AI Insights bar at the bottom. Sta
 ### Status Color Config Pattern
 ```tsx
 const statusConfig: Record<Status, { label: string; className: string; icon: LucideIcon }> = {
-  draft:     { label: 'Draft',     className: 'bg-gray-100 text-gray-700',    icon: FileText },
+  draft:     { label: 'Draft',     className: 'bg-warm-100 text-warm-700',    icon: FileText },
   pending:   { label: 'Pending',   className: 'bg-amber-100 text-amber-700',  icon: Clock },
-  active:    { label: 'Active',    className: 'bg-blue-100 text-blue-700',    icon: Play },
+  active:    { label: 'Active',    className: 'bg-stone-100 text-stone-700',  icon: Play },
   approved:  { label: 'Approved',  className: 'bg-green-100 text-green-700',  icon: CheckCircle },
   rejected:  { label: 'Rejected',  className: 'bg-red-100 text-red-700',     icon: XCircle },
   on_hold:   { label: 'On Hold',   className: 'bg-orange-100 text-orange-700', icon: Pause },
   complete:  { label: 'Complete',  className: 'bg-emerald-100 text-emerald-700', icon: Check },
-  archived:  { label: 'Archived',  className: 'bg-gray-100 text-gray-700',    icon: Archive },
+  archived:  { label: 'Archived',  className: 'bg-warm-100 text-warm-700',    icon: Archive },
 }
 ```
 
@@ -240,9 +240,9 @@ Used to show linked records from other modules (e.g., an invoice linked to a PO)
 ### Color by Module Type
 | Module Type | Color | Example |
 |-------------|-------|---------|
-| Financial (invoices, POs, budgets) | `blue` | `bg-blue-50 text-blue-700` |
+| Financial (invoices, POs, budgets) | `stone` | `bg-stone-50 text-stone-700` |
 | Schedule/field ops | `purple` | `bg-purple-50 text-purple-700` |
-| Documents/files | `gray` | `bg-gray-50 text-gray-700` |
+| Documents/files | `warm` | `bg-warm-50 text-warm-700` |
 | Vendors/contacts | `teal` | `bg-teal-50 text-teal-700` |
 | Inspections/permits | `cyan` | `bg-cyan-50 text-cyan-700` |
 | Client/portal | `emerald` | `bg-emerald-50 text-emerald-700` |
@@ -252,20 +252,40 @@ Used to show linked records from other modules (e.g., an invoice linked to a PO)
 
 ## 7. Color Conventions
 
-### Semantic Status Colors (hardcoded — exempt from theme tokens)
+### BuildDesk Design System v2.0
+
+The entire codebase uses the BuildDesk palette. **Do not introduce arbitrary Tailwind colors.**
+
+#### Primary Palette
+| Scale | Purpose | Example |
+|-------|---------|---------|
+| `stone-*` (50–950) | Primary action color (stone blue) | `bg-stone-700`, `text-stone-600`, `border-stone-200` |
+| `sand-*` (50–900) | Accent / CTA color (warm sand) | `bg-sand-600`, `text-sand-700` |
+| `warm-*` (0–950) | Neutral grays (warm-toned) | `bg-warm-50`, `text-warm-700`, `border-warm-200` |
+
+#### Semantic Status Colors
 
 | Semantic | Background | Text | When to Use |
 |----------|-----------|------|-------------|
 | Success/Approved | `bg-green-100` | `text-green-700` | Approved, complete, active, passing |
 | Warning/Pending | `bg-amber-100` | `text-amber-700` | Pending, under review, expiring soon |
 | Error/Rejected | `bg-red-100` | `text-red-700` | Rejected, overdue, expired, critical, failed |
-| Info/Active | `bg-blue-100` | `text-blue-700` | In progress, submitted, informational |
-| Neutral/Draft | `bg-gray-100` | `text-gray-700` | Draft, default, inactive, archived |
+| Info/Active | `bg-stone-100` | `text-stone-700` | In progress, submitted, informational |
+| Neutral/Draft | `bg-warm-100` | `text-warm-700` | Draft, default, inactive, archived |
 | Hold/Amended | `bg-orange-100` | `text-orange-700` | On hold, amended, paused |
 | Special/Signed | `bg-purple-100` | `text-purple-700` | Signed, e-signature, calibration |
 | Complete/Done | `bg-emerald-100` | `text-emerald-700` | Fully complete, verified |
 
-### NEVER use `yellow-` — always use `amber-` for warnings/pending states.
+#### BuildDesk Semantic Tokens (from globals.css)
+
+| Token | Color | Usage |
+|-------|-------|-------|
+| `bg-success-bg` / `text-success-dark` | Green | Success states in getStatusColor() |
+| `bg-warning-bg` / `text-warning-dark` | Gold | Warning states |
+| `bg-danger-bg` / `text-danger-dark` | Red | Error/danger states |
+| `bg-info-bg` / `text-info-dark` | Blue-gray | Info states |
+
+### NEVER use `gray-`, `blue-`, or `yellow-` Tailwind defaults. Use `warm-`, `stone-`, and `amber-` respectively.
 
 ### Text Color Intensity
 - Badge text: `-700` (always)
@@ -274,12 +294,20 @@ Used to show linked records from other modules (e.g., an invoice linked to a PO)
 - Stat card label: `-600`
 
 ### Theme Tokens (for chrome/layout — NOT data colors)
-Use semantic tokens from `docs/style-guide.md` for:
 - Page backgrounds: `bg-background`
 - Card surfaces: `bg-card`
 - Primary text: `text-foreground`
 - Secondary text: `text-muted-foreground`
 - Borders: `border-border`
+- Primary action: `bg-primary` / `text-primary`
+
+### Typography
+- **Display / Headings**: Source Serif 4 (via `font-display` CSS var) — editorial warmth
+- **Body / UI**: IBM Plex Sans (via `font-sans` CSS var) — highly legible
+- Use `font-display` class for heading text, `font-sans` (default) for body
+
+### Shadows
+Use BuildDesk shadows from globals.css: `shadow-xs`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`
 
 ---
 
@@ -597,7 +625,7 @@ npx playwright test tests/e2e/     # Browser tests
 | Pattern | Standard | Never |
 |---------|----------|-------|
 | Status badge shape | `rounded` | `rounded-full` |
-| Warning color | `amber-` | `yellow-` |
+| Warning color | `amber-` | `yellow-`, `gray-`, `blue-` |
 | Badge text intensity | `-700` | `-600` or `-800` |
 | Stats card padding | `p-3` | p-2, p-2.5, p-4 |
 | AI bar gradient | `from-amber-50 to-orange-50` | blue, green, purple |

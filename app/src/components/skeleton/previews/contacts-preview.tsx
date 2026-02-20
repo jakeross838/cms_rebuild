@@ -407,13 +407,13 @@ const mockContacts: Contact[] = [
 const contactTypeConfig: Record<ContactType, { label: string; bgColor: string; textColor: string }> = {
   client: { label: 'Client', bgColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
   vendor: { label: 'Vendor', bgColor: 'bg-orange-100', textColor: 'text-orange-700' },
-  architect: { label: 'Architect', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
+  architect: { label: 'Architect', bgColor: 'bg-stone-100', textColor: 'text-stone-700' },
   engineer: { label: 'Engineer', bgColor: 'bg-green-100', textColor: 'text-green-700' },
   designer: { label: 'Designer', bgColor: 'bg-pink-100', textColor: 'text-pink-700' },
   lender: { label: 'Lender', bgColor: 'bg-violet-100', textColor: 'text-violet-700' },
   realtor: { label: 'Realtor', bgColor: 'bg-rose-100', textColor: 'text-rose-700' },
   inspector: { label: 'Inspector', bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
-  other: { label: 'Other', bgColor: 'bg-gray-100', textColor: 'text-gray-700' },
+  other: { label: 'Other', bgColor: 'bg-warm-100', textColor: 'text-warm-700' },
 }
 
 const categories = ['All', 'client', 'vendor', 'architect', 'engineer', 'designer', 'lender', 'realtor', 'inspector', 'other'] as const
@@ -427,7 +427,7 @@ function ContactCard({ contact }: { contact: Contact }) {
 
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer",
+      "bg-white rounded-lg border border-warm-200 p-4 hover:shadow-md transition-shadow cursor-pointer",
       contact.status === 'archived' && "opacity-60"
     )}>
       <div className="flex items-start justify-between mb-3">
@@ -440,58 +440,58 @@ function ContactCard({ contact }: { contact: Contact }) {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-gray-900">
+              <h4 className="font-medium text-warm-900">
                 {contact.displayName}
               </h4>
               {contact.isFavorite && (
                 <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
               )}
               {contact.status === 'archived' && (
-                <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded flex items-center gap-1">
+                <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded flex items-center gap-1">
                   <Archive className="h-3 w-3" />
                   Archived
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500">{contact.title}</p>
+            <p className="text-sm text-warm-500">{contact.title}</p>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       <div className="space-y-1.5 mb-3">
         {contact.companyName && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Building className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-sm text-warm-600">
+            <Building className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
             <span>{contact.companyName}</span>
           </div>
         )}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Mail className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Mail className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
           <span className="truncate">{contact.email}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Phone className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Phone className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
           <span>{contact.phone}</span>
           {contact.mobile && (
             <>
-              <span className="text-gray-300">|</span>
-              <Smartphone className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+              <span className="text-warm-300">|</span>
+              <Smartphone className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
               <span>{contact.mobile}</span>
             </>
           )}
         </div>
         {contact.website && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Globe className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-sm text-warm-600">
+            <Globe className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
             <span className="truncate">{contact.website}</span>
           </div>
         )}
         {contact.address && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-sm text-warm-600">
+            <MapPin className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
             <span className="truncate">{contact.address}</span>
           </div>
         )}
@@ -501,7 +501,7 @@ function ContactCard({ contact }: { contact: Contact }) {
       {contact.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-3">
           {contact.tags.map(tag => (
-            <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+            <span key={tag} className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">
               {tag}
             </span>
           ))}
@@ -512,7 +512,7 @@ function ContactCard({ contact }: { contact: Contact }) {
       {contact.contactType === 'vendor' && (
         <div className="bg-orange-50 rounded p-2 mb-3 space-y-1">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-500 flex items-center gap-1">
+            <span className="text-warm-500 flex items-center gap-1">
               <Shield className="h-3 w-3" /> Insurance:
             </span>
             <span className={cn(
@@ -525,7 +525,7 @@ function ContactCard({ contact }: { contact: Contact }) {
             </span>
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-500 flex items-center gap-1">
+            <span className="text-warm-500 flex items-center gap-1">
               <FileText className="h-3 w-3" /> W-9:
             </span>
             <span className={cn(
@@ -537,10 +537,10 @@ function ContactCard({ contact }: { contact: Contact }) {
           </div>
           {contact.paymentTerms && (
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500 flex items-center gap-1">
+              <span className="text-warm-500 flex items-center gap-1">
                 <CreditCard className="h-3 w-3" /> Terms:
               </span>
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-warm-700">
                 {contact.paymentTerms === 'net_30' ? 'Net 30' :
                  contact.paymentTerms === 'net_15' ? 'Net 15' :
                  contact.paymentTerms === 'due_on_receipt' ? 'Due on Receipt' :
@@ -550,10 +550,10 @@ function ContactCard({ contact }: { contact: Contact }) {
           )}
           {contact.licenseNumber && (
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500 flex items-center gap-1">
+              <span className="text-warm-500 flex items-center gap-1">
                 <Briefcase className="h-3 w-3" /> License:
               </span>
-              <span className="font-medium text-gray-700">{contact.licenseNumber}</span>
+              <span className="font-medium text-warm-700">{contact.licenseNumber}</span>
             </div>
           )}
         </div>
@@ -563,15 +563,15 @@ function ContactCard({ contact }: { contact: Contact }) {
       {contact.contactType === 'client' && contact.clientSource && (
         <div className="bg-emerald-50 rounded p-2 mb-3 space-y-1">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-500 flex items-center gap-1">
+            <span className="text-warm-500 flex items-center gap-1">
               <UserPlus className="h-3 w-3" /> Source:
             </span>
-            <span className="font-medium text-gray-700 capitalize">{contact.clientSource}</span>
+            <span className="font-medium text-warm-700 capitalize">{contact.clientSource}</span>
           </div>
           {contact.referredBy && (
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500">Referred by:</span>
-              <span className="font-medium text-gray-700">{contact.referredBy}</span>
+              <span className="text-warm-500">Referred by:</span>
+              <span className="font-medium text-warm-700">{contact.referredBy}</span>
             </div>
           )}
         </div>
@@ -579,14 +579,14 @@ function ContactCard({ contact }: { contact: Contact }) {
 
       {/* License for non-vendors (architects, engineers, inspectors) */}
       {contact.contactType !== 'vendor' && contact.contactType !== 'client' && contact.licenseNumber && (
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+        <div className="flex items-center gap-2 text-xs text-warm-500 mb-3">
           <Briefcase className="h-3 w-3" />
-          License: <span className="font-medium text-gray-700">{contact.licenseNumber}</span>
+          License: <span className="font-medium text-warm-700">{contact.licenseNumber}</span>
         </div>
       )}
 
       {/* Footer: type badge + project count + module badge */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2">
           <span className={cn(
             "text-xs px-2 py-1 rounded font-medium",
@@ -594,9 +594,9 @@ function ContactCard({ contact }: { contact: Contact }) {
           )}>
             {typeStyle.label}
           </span>
-          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">Module 3</span>
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">Module 3</span>
         </div>
-        <span className="text-xs text-gray-500 flex items-center gap-1">
+        <span className="text-xs text-warm-500 flex items-center gap-1">
           <Users className="h-3 w-3" />
           {contact.projectAssignments.length} project{contact.projectAssignments.length !== 1 ? 's' : ''}
         </span>
@@ -606,32 +606,32 @@ function ContactCard({ contact }: { contact: Contact }) {
       {contact.projectAssignments.length > 0 && (
         <div className="mt-2 space-y-0.5">
           {contact.projectAssignments.slice(0, 3).map(pa => (
-            <div key={pa.projectId} className="flex items-center justify-between text-xs text-gray-500">
+            <div key={pa.projectId} className="flex items-center justify-between text-xs text-warm-500">
               <span className="truncate flex items-center gap-1">
                 <ExternalLink className="h-3 w-3" />
                 {pa.projectName}
-                {pa.isPrimary && <span className="text-blue-500 font-medium">(Primary)</span>}
+                {pa.isPrimary && <span className="text-stone-500 font-medium">(Primary)</span>}
               </span>
               {pa.contractAmount && (
-                <span className="font-medium text-gray-600">${pa.contractAmount.toLocaleString()}</span>
+                <span className="font-medium text-warm-600">${pa.contractAmount.toLocaleString()}</span>
               )}
             </div>
           ))}
           {contact.projectAssignments.length > 3 && (
-            <div className="text-xs text-blue-600">+{contact.projectAssignments.length - 3} more</div>
+            <div className="text-xs text-stone-600">+{contact.projectAssignments.length - 3} more</div>
           )}
         </div>
       )}
 
       {/* Action buttons */}
       <div className="flex gap-2 mt-3">
-        <button className="flex-1 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+        <button className="flex-1 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700">
           Call
         </button>
-        <button className="flex-1 py-1.5 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+        <button className="flex-1 py-1.5 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200">
           Email
         </button>
-        <button className="flex-1 py-1.5 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+        <button className="flex-1 py-1.5 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200">
           View Profile
         </button>
       </div>
@@ -670,13 +670,13 @@ export function ContactsPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-gray-900">Contacts Directory</h3>
-          <span className="text-sm text-gray-500">{activeContacts.length} active contacts</span>
-          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">Module 3</span>
+          <h3 className="font-semibold text-warm-900">Contacts Directory</h3>
+          <span className="text-sm text-warm-500">{activeContacts.length} active contacts</span>
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">Module 3</span>
           {vendorsWithExpiringInsurance > 0 && (
             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
               <Shield className="h-3 w-3" />
@@ -687,7 +687,7 @@ export function ContactsPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -722,7 +722,7 @@ export function ContactsPreview() {
               "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
               showFavoritesOnly
                 ? "bg-amber-100 text-amber-700"
-                : "text-gray-600 hover:bg-gray-100"
+                : "text-warm-600 hover:bg-warm-100"
             )}
           >
             <Star className={cn("h-4 w-4", showFavoritesOnly && "fill-amber-500")} />
@@ -733,8 +733,8 @@ export function ContactsPreview() {
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
               showArchived
-                ? "bg-gray-200 text-gray-700"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-warm-200 text-warm-700"
+                : "text-warm-600 hover:bg-warm-100"
             )}
           >
             <Archive className="h-4 w-4" />
@@ -744,15 +744,15 @@ export function ContactsPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2.5">
+      <div className="bg-white border-b border-warm-200 px-4 py-2.5">
         <div className="flex items-center gap-4 text-sm flex-wrap">
-          <span className="text-gray-500">Active: <span className="font-medium text-gray-900">{activeContacts.length}</span></span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Favorites: <span className="font-medium text-gray-900">{favoriteCount}</span></span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Project Links: <span className="font-medium text-gray-900">{totalProjectLinks}</span></span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Types:
+          <span className="text-warm-500">Active: <span className="font-medium text-warm-900">{activeContacts.length}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500">Favorites: <span className="font-medium text-warm-900">{favoriteCount}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500">Project Links: <span className="font-medium text-warm-900">{totalProjectLinks}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500">Types:
             {Object.entries(
               mockContacts.filter(c => c.status === 'active').reduce<Record<string, number>>((acc, c) => {
                 acc[c.contactType] = (acc[c.contactType] || 0) + 1
@@ -764,8 +764,8 @@ export function ContactsPreview() {
               </span>
             ))}
           </span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Archived: <span className="font-medium text-gray-900">{archivedContacts.length}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500">Archived: <span className="font-medium text-warm-900">{archivedContacts.length}</span></span>
         </div>
       </div>
 
@@ -775,7 +775,7 @@ export function ContactsPreview() {
           <ContactCard key={contact.id} contact={contact} />
         ))}
         {filtered.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="col-span-2 text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No contacts found
           </div>
         )}
@@ -797,7 +797,7 @@ export function ContactsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features for Contacts"
           columns={2}

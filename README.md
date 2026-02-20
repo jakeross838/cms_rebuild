@@ -27,8 +27,8 @@ RossOS is an all-in-one Construction Intelligence Platform for custom home build
 | Phase | Name | Modules | Status |
 |-------|------|---------|--------|
 | 1 | Foundation | 01-06: Auth, Config Engine, Core Data Model, Nav/Search, Notifications, Document Storage | Not Started |
-| 2 | Construction Core | 07-12: Scheduling, Daily Logs, Budget/Cost Tracking, Vendor Mgmt, Basic Invoicing, Basic Client Portal | Not Started |
-| 3 | Financial Power | 13-19: Invoice AI, Lien Waivers, Draw Requests, QuickBooks, Change Orders, Purchase Orders, Financial Reporting | Not Started |
+| 2 | Construction Core | 07-12, 51: Scheduling, Daily Logs, Budget/Cost Tracking, Vendor Mgmt, Native Accounting (GL/AP/AR), Basic Client Portal, Time Tracking | Not Started |
+| 3 | Financial Power | 13-19, 52: Invoice AI, Lien Waivers, Draw Requests, QuickBooks Integration, Change Orders, Purchase Orders, Financial Reporting, Inventory & Materials | Not Started |
 | 4 | Intelligence | 20-25: Estimating Engine, Selection Mgmt, Vendor Performance, Price Intelligence, AI Document Processing, Schedule Intelligence | Not Started |
 | 5 | Full Platform | 26-40: Bid Mgmt, RFI, Punch Lists, Full Client Portal, Vendor Portal, Warranty, Permitting, Safety, HR, Equipment, Lead/CRM, Marketing, Contracts/eSign, Advanced Reporting, Mobile App | Not Started |
 | 6 | Scale & Sell | 41-50: Onboarding, Data Migration, Subscription Billing, White Label, API Marketplace, Customer Support, Training, Template Marketplace, Platform Analytics, Marketing Website | Not Started |
@@ -59,7 +59,7 @@ RossOS is an all-in-one Construction Intelligence Platform for custom home build
 | Document Intelligence | [docs/architecture/document-intelligence.md](docs/architecture/document-intelligence.md) | OCR, classification, extraction, search |
 | System Connections | [docs/architecture/system-connections.md](docs/architecture/system-connections.md) | External integrations, webhooks, sync strategies |
 
-### Modules (50)
+### Modules (52)
 
 | # | Module | Phase | Path |
 |---|--------|-------|------|
@@ -73,7 +73,7 @@ RossOS is an all-in-one Construction Intelligence Platform for custom home build
 | 08 | Daily Logs | 2 | [docs/modules/08-daily-logs.md](docs/modules/08-daily-logs.md) |
 | 09 | Budget & Cost Tracking | 2 | [docs/modules/09-budget-cost-tracking.md](docs/modules/09-budget-cost-tracking.md) |
 | 10 | Vendor Management | 2 | [docs/modules/10-vendor-management.md](docs/modules/10-vendor-management.md) |
-| 11 | Basic Invoicing | 2 | [docs/modules/11-basic-invoicing.md](docs/modules/11-basic-invoicing.md) |
+| 11 | Native Accounting (GL/AP/AR) | 2 | [docs/modules/11-native-accounting.md](docs/modules/11-native-accounting.md) |
 | 12 | Basic Client Portal | 2 | [docs/modules/12-basic-client-portal.md](docs/modules/12-basic-client-portal.md) |
 | 13 | Invoice AI | 3 | [docs/modules/13-invoice-ai.md](docs/modules/13-invoice-ai.md) |
 | 14 | Lien Waivers | 3 | [docs/modules/14-lien-waivers.md](docs/modules/14-lien-waivers.md) |
@@ -113,6 +113,8 @@ RossOS is an all-in-one Construction Intelligence Platform for custom home build
 | 48 | Template Marketplace | 6 | [docs/modules/48-template-marketplace.md](docs/modules/48-template-marketplace.md) |
 | 49 | Platform Analytics | 6 | [docs/modules/49-platform-analytics.md](docs/modules/49-platform-analytics.md) |
 | 50 | Marketing Website | 6 | [docs/modules/50-marketing-website.md](docs/modules/50-marketing-website.md) |
+| 51 | Time Tracking & Labor | 2 | [docs/modules/51-time-tracking.md](docs/modules/51-time-tracking.md) |
+| 52 | Inventory & Materials | 3 | [docs/modules/52-inventory-management.md](docs/modules/52-inventory-management.md) |
 
 ### UI & Design
 

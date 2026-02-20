@@ -416,9 +416,9 @@ const mockPurchaseOrders: PurchaseOrder[] = [
 ]
 
 const statusConfig: Record<PurchaseOrder['status'], { label: string; color: string; icon: typeof FileText }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   pending_approval: { label: 'Pending Approval', color: 'bg-amber-100 text-amber-700', icon: Clock },
-  approved: { label: 'Approved', color: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
+  approved: { label: 'Approved', color: 'bg-stone-100 text-stone-700', icon: CheckCircle2 },
   sent: { label: 'Sent', color: 'bg-indigo-100 text-indigo-700', icon: Send },
   acknowledged: { label: 'Acknowledged', color: 'bg-purple-100 text-purple-700', icon: Inbox },
   partial_delivery: { label: 'Partial Delivery', color: 'bg-orange-100 text-orange-700', icon: Package },
@@ -429,8 +429,8 @@ const statusConfig: Record<PurchaseOrder['status'], { label: string; color: stri
 }
 
 const poTypeConfig: Record<PurchaseOrder['poType'], { label: string; color: string }> = {
-  standard: { label: 'Standard', color: 'bg-gray-50 text-gray-600' },
-  blanket: { label: 'Blanket', color: 'bg-blue-50 text-blue-600' },
+  standard: { label: 'Standard', color: 'bg-warm-50 text-warm-600' },
+  blanket: { label: 'Blanket', color: 'bg-stone-50 text-stone-600' },
   emergency: { label: 'Emergency', color: 'bg-red-50 text-red-600' },
 }
 
@@ -438,7 +438,7 @@ const matchStatusConfig: Record<string, { label: string; color: string }> = {
   full_match: { label: 'Matched', color: 'text-green-600' },
   partial_match: { label: 'Partial', color: 'text-amber-600' },
   variance: { label: 'Variance', color: 'text-red-600' },
-  pending: { label: 'Pending', color: 'text-gray-500' },
+  pending: { label: 'Pending', color: 'text-warm-500' },
 }
 
 const vendors = [...new Set(mockPurchaseOrders.map(po => po.vendorName))]
@@ -464,16 +464,16 @@ function POCard({ po }: { po: PurchaseOrder }) {
 
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      "bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       po.isEmergency && "border-l-4 border-l-red-400",
-      po.poType === 'blanket' && "border-l-4 border-l-blue-400",
+      po.poType === 'blanket' && "border-l-4 border-l-stone-400",
       po.status === 'cancelled' && "opacity-60",
     )}>
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="font-semibold text-gray-900">{po.poNumber}</h4>
+            <h4 className="font-semibold text-warm-900">{po.poNumber}</h4>
             <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1", config.color)}>
               <StatusIcon className="h-3 w-3" />
               {config.label}
@@ -485,29 +485,29 @@ function POCard({ po }: { po: PurchaseOrder }) {
               </span>
             )}
             {po.versionNumber > 1 && (
-              <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+              <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
                 <GitBranch className="h-3 w-3" />
                 v{po.versionNumber}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 mt-1 text-sm text-warm-500">
             <Building2 className="h-3.5 w-3.5" />
             <span>{po.vendorName}</span>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* Job & Details */}
       <div className="space-y-1.5 mb-3">
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
+        <div className="flex items-center gap-1.5 text-sm text-warm-600">
           <Briefcase className="h-3.5 w-3.5" />
           <span>{po.jobName}</span>
         </div>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex items-center gap-4 text-sm text-warm-600">
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />
             <span>{formatDate(po.issueDate)}</span>
@@ -518,29 +518,29 @@ function POCard({ po }: { po: PurchaseOrder }) {
               <span>{po.itemsCount} items</span>
             </div>
           )}
-          <span className="text-xs text-gray-400">{po.paymentTerms}</span>
+          <span className="text-xs text-warm-400">{po.paymentTerms}</span>
         </div>
         {po.expectedDelivery && po.status !== 'fully_received' && po.status !== 'invoiced' && po.status !== 'closed' && (
-          <div className="flex items-center gap-1.5 text-sm text-gray-600">
+          <div className="flex items-center gap-1.5 text-sm text-warm-600">
             <Truck className="h-3.5 w-3.5" />
             <span>Expected: {formatDate(po.expectedDelivery)}</span>
             {po.requiredByDate && (
-              <span className="text-xs text-gray-400">(Need by: {formatDate(po.requiredByDate)})</span>
+              <span className="text-xs text-warm-400">(Need by: {formatDate(po.requiredByDate)})</span>
             )}
           </div>
         )}
         {/* Tracking number display */}
         {po.trackingNumber && po.carrier && (
-          <div className="flex items-center gap-1.5 text-sm text-gray-600">
+          <div className="flex items-center gap-1.5 text-sm text-warm-600">
             <Truck className="h-3.5 w-3.5" />
-            <span className="text-xs text-gray-500">{carrierNames[po.carrier]}:</span>
-            <span className="text-xs font-mono text-gray-700">{po.trackingNumber}</span>
+            <span className="text-xs text-warm-500">{carrierNames[po.carrier]}:</span>
+            <span className="text-xs font-mono text-warm-700">{po.trackingNumber}</span>
             {po.carrier !== 'freight' && (
               <a
                 href={carrierLinks[po.carrier](po.trackingNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-0.5"
+                className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-0.5"
                 onClick={(e) => e.stopPropagation()}
               >
                 Track Shipment
@@ -579,11 +579,11 @@ function POCard({ po }: { po: PurchaseOrder }) {
       {/* Receiving progress for partial/received */}
       {(po.status === 'partial_delivery' || po.status === 'fully_received') && (
         <div className="mb-3">
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+          <div className="flex items-center justify-between text-xs text-warm-500 mb-1">
             <span>Received</span>
             <span>{po.receivedPct}%{po.backorderedItems > 0 && ` (${po.backorderedItems} backordered)`}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
+          <div className="w-full bg-warm-200 rounded-full h-1.5">
             <div
               className={cn(
                 "h-1.5 rounded-full transition-all",
@@ -603,25 +603,25 @@ function POCard({ po }: { po: PurchaseOrder }) {
 
       {/* Blanket PO gauge */}
       {po.poType === 'blanket' && po.blanketLimit && po.blanketUsed !== undefined && (
-        <div className="mb-3 p-2 bg-blue-50 rounded">
-          <div className="flex items-center justify-between text-xs text-blue-700 mb-1">
+        <div className="mb-3 p-2 bg-stone-50 rounded">
+          <div className="flex items-center justify-between text-xs text-stone-700 mb-1">
             <span className="flex items-center gap-1">
               <Gauge className="h-3 w-3" />
               Blanket Usage
             </span>
             <span>{formatCurrency(po.blanketUsed)} / {formatCurrency(po.blanketLimit)}</span>
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-2">
+          <div className="w-full bg-stone-200 rounded-full h-2">
             <div
               className={cn(
                 "h-2 rounded-full transition-all",
                 (po.blanketUsed / po.blanketLimit) > 0.8 ? "bg-red-500" :
-                (po.blanketUsed / po.blanketLimit) > 0.6 ? "bg-amber-500" : "bg-blue-500"
+                (po.blanketUsed / po.blanketLimit) > 0.6 ? "bg-amber-500" : "bg-stone-500"
               )}
               style={{ width: `${Math.min((po.blanketUsed / po.blanketLimit) * 100, 100)}%` }}
             />
           </div>
-          <div className="text-xs text-blue-600 mt-1">
+          <div className="text-xs text-stone-600 mt-1">
             {formatCurrency(po.blanketLimit - po.blanketUsed)} remaining
           </div>
         </div>
@@ -636,14 +636,14 @@ function POCard({ po }: { po: PurchaseOrder }) {
       )}
 
       {/* Amount section */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div>
-          <div className="flex items-center gap-1.5 text-lg font-semibold text-gray-900">
-            <DollarSign className="h-4 w-4 text-gray-500" />
+          <div className="flex items-center gap-1.5 text-lg font-semibold text-warm-900">
+            <DollarSign className="h-4 w-4 text-warm-500" />
             {formatCurrency(po.totalAmount)}
           </div>
           {po.invoicedAmount > 0 && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-warm-500">
               Invoiced: {formatCurrency(po.invoicedAmount)}
               {po.remainingAmount > 0 && ` | Remaining: ${formatCurrency(po.remainingAmount)}`}
             </div>
@@ -663,7 +663,7 @@ function POCard({ po }: { po: PurchaseOrder }) {
             </span>
           )}
           {po.status === 'draft' && (
-            <button className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
+            <button className="text-xs text-stone-600 font-medium hover:text-stone-700 flex items-center gap-1">
               <Send className="h-3 w-3" />
               Submit
             </button>
@@ -679,7 +679,7 @@ function POCard({ po }: { po: PurchaseOrder }) {
 
       {/* Cross-module badges */}
       <div className="flex items-center gap-2 flex-wrap mt-2">
-        <span className="text-xs bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">{po.costCode}</span>
+        <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{po.costCode}</span>
         {po.changeOrderNumber && (
           <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Link2 className="h-3 w-3" />
@@ -802,13 +802,13 @@ export function PurchaseOrdersPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Purchase Orders</h3>
-            <span className="text-sm text-gray-500">{mockPurchaseOrders.length} total</span>
+            <h3 className="font-semibold text-warm-900">Purchase Orders</h3>
+            <span className="text-sm text-warm-500">{mockPurchaseOrders.length} total</span>
             {emergencyCount > 0 && (
               <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded inline-flex items-center gap-1">
                 <ShieldAlert className="h-3 w-3" />
@@ -817,21 +817,21 @@ export function PurchaseOrdersPreview() {
             )}
           </div>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-warm-500">
           Committed: {formatCurrency(totalCommitted)} of {formatCurrency(projectBudget)} budget ({commitmentPct}%)
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-xs">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-xs">
               <DollarSign className="h-3.5 w-3.5" />
               Total Committed
             </div>
-            <div className="text-lg font-bold text-blue-700 mt-1">{formatCurrency(totalCommitted)}</div>
-            <div className="text-xs text-blue-500">{activePOs.length} active POs</div>
+            <div className="text-lg font-bold text-stone-700 mt-1">{formatCurrency(totalCommitted)}</div>
+            <div className="text-xs text-stone-500">{activePOs.length} active POs</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-xs">
@@ -851,22 +851,22 @@ export function PurchaseOrdersPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            backorderedTotal > 0 ? "bg-orange-50" : "bg-gray-50"
+            backorderedTotal > 0 ? "bg-orange-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-xs",
-              backorderedTotal > 0 ? "text-orange-600" : "text-gray-500"
+              backorderedTotal > 0 ? "text-orange-600" : "text-warm-500"
             )}>
               <AlertCircle className="h-3.5 w-3.5" />
               Backordered
             </div>
             <div className={cn(
               "text-lg font-bold mt-1",
-              backorderedTotal > 0 ? "text-orange-700" : "text-gray-900"
+              backorderedTotal > 0 ? "text-orange-700" : "text-warm-900"
             )}>
               {backorderedTotal} items
             </div>
-            <div className="text-xs text-gray-400">across {mockPurchaseOrders.filter(po => po.backorderedItems > 0).length} POs</div>
+            <div className="text-xs text-warm-400">across {mockPurchaseOrders.filter(po => po.backorderedItems > 0).length} POs</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-xs">
@@ -880,7 +880,7 @@ export function PurchaseOrdersPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -946,8 +946,8 @@ export function PurchaseOrdersPreview() {
           <POCard key={po.id} po={po} />
         ))}
         {filtered.length === 0 && (
-          <div className="col-span-2 text-center py-12 text-gray-500">
-            <Package className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <div className="col-span-2 text-center py-12 text-warm-500">
+            <Package className="h-12 w-12 mx-auto text-warm-300 mb-3" />
             <p>No purchase orders match your filters</p>
           </div>
         )}

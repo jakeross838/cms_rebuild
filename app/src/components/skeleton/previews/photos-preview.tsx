@@ -90,7 +90,7 @@ const mockPhotos: Photo[] = [
     phase: 'Rough-In',
     trade: 'Waterproofing',
     room: 'Exterior - Windows',
-    color: 'bg-blue-300',
+    color: 'bg-stone-300',
     qualityScore: 0.87,
     clientSuitable: false,
     isMilestone: false,
@@ -120,7 +120,7 @@ const mockPhotos: Photo[] = [
     phase: 'Rough-In',
     trade: 'Electrical',
     room: 'Garage',
-    color: 'bg-yellow-300',
+    color: 'bg-amber-300',
     qualityScore: 0.88,
     clientSuitable: false,
     isMilestone: false,
@@ -135,7 +135,7 @@ const mockPhotos: Photo[] = [
     phase: 'Rough-In',
     trade: 'Electrical',
     room: 'Master Bedroom',
-    color: 'bg-yellow-400',
+    color: 'bg-amber-400',
     qualityScore: 0.82,
     clientSuitable: false,
     isMilestone: false,
@@ -168,7 +168,7 @@ const mockPhotos: Photo[] = [
     phase: 'Rough-In',
     trade: 'Plumbing',
     room: 'Master Bath',
-    color: 'bg-blue-400',
+    color: 'bg-stone-400',
     qualityScore: 0.90,
     clientSuitable: true,
     isMilestone: true,
@@ -184,7 +184,7 @@ const mockPhotos: Photo[] = [
     phase: 'Framing',
     trade: 'Framing',
     room: 'Staging Area',
-    color: 'bg-gray-400',
+    color: 'bg-warm-400',
     qualityScore: 0.62,
     clientSuitable: false,
     isMilestone: false,
@@ -246,7 +246,7 @@ const mockPhotos: Photo[] = [
     phase: 'Foundation',
     trade: 'Concrete',
     room: 'Exterior - Front',
-    color: 'bg-gray-500',
+    color: 'bg-warm-500',
     qualityScore: 0.91,
     clientSuitable: true,
     isMilestone: false,
@@ -281,11 +281,11 @@ const rooms = [
 ]
 
 const phaseColors: Record<string, string> = {
-  'Foundation': 'bg-gray-100 text-gray-700',
+  'Foundation': 'bg-warm-100 text-warm-700',
   'Framing': 'bg-amber-100 text-amber-700',
-  'Rough-In': 'bg-yellow-100 text-yellow-700',
-  'Electrical': 'bg-yellow-100 text-yellow-700',
-  'Plumbing': 'bg-blue-100 text-blue-700',
+  'Rough-In': 'bg-amber-100 text-amber-700',
+  'Electrical': 'bg-amber-100 text-amber-700',
+  'Plumbing': 'bg-stone-100 text-stone-700',
   'Insulation': 'bg-pink-100 text-pink-700',
   'Drywall': 'bg-purple-100 text-purple-700',
   'Finish': 'bg-green-100 text-green-700',
@@ -293,10 +293,10 @@ const phaseColors: Record<string, string> = {
 
 const tradeColors: Record<string, string> = {
   'Framing': 'bg-amber-50 text-amber-600',
-  'Electrical': 'bg-yellow-50 text-yellow-600',
-  'Plumbing': 'bg-blue-50 text-blue-600',
+  'Electrical': 'bg-amber-50 text-amber-600',
+  'Plumbing': 'bg-stone-50 text-stone-600',
   'Waterproofing': 'bg-cyan-50 text-cyan-600',
-  'Concrete': 'bg-gray-50 text-gray-600',
+  'Concrete': 'bg-warm-50 text-warm-600',
   'HVAC': 'bg-teal-50 text-teal-600',
 }
 
@@ -315,7 +315,7 @@ function PhotoCard({
     <div
       className={cn(
         "relative group rounded-lg overflow-hidden border-2 transition-all cursor-pointer",
-        isSelected ? "border-blue-500 ring-2 ring-blue-200" : "border-transparent hover:border-gray-300",
+        isSelected ? "border-stone-500 ring-2 ring-stone-200" : "border-transparent hover:border-warm-300",
         photo.isDuplicate && "opacity-50",
       )}
       onClick={bulkSelectMode ? onToggleSelect : undefined}
@@ -332,10 +332,10 @@ function PhotoCard({
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           {!bulkSelectMode && (
             <div className="flex items-center gap-2">
-              <button className="px-3 py-1.5 bg-white text-gray-900 text-sm rounded-lg font-medium hover:bg-gray-100">
+              <button className="px-3 py-1.5 bg-white text-warm-900 text-sm rounded-lg font-medium hover:bg-warm-100">
                 View
               </button>
-              <button className="p-1.5 bg-white/80 text-gray-700 rounded-lg hover:bg-white">
+              <button className="p-1.5 bg-white/80 text-warm-700 rounded-lg hover:bg-white">
                 <Pencil className="h-4 w-4" />
               </button>
             </div>
@@ -347,9 +347,9 @@ function PhotoCard({
       {bulkSelectMode && (
         <div className="absolute top-2 left-2">
           {isSelected ? (
-            <CheckSquare className="h-5 w-5 text-blue-500 bg-white rounded" />
+            <CheckSquare className="h-5 w-5 text-stone-500 bg-white rounded" />
           ) : (
-            <Square className="h-5 w-5 text-gray-400 bg-white/80 rounded" />
+            <Square className="h-5 w-5 text-warm-400 bg-white/80 rounded" />
           )}
         </div>
       )}
@@ -357,7 +357,7 @@ function PhotoCard({
       {/* Top-right badges */}
       <div className="absolute top-2 right-2 flex items-center gap-1">
         {photo.isMilestone && (
-          <span className="bg-yellow-400 text-yellow-900 p-1 rounded">
+          <span className="bg-amber-400 text-amber-900 p-1 rounded">
             <Award className="h-3.5 w-3.5" />
           </span>
         )}
@@ -381,10 +381,10 @@ function PhotoCard({
       {/* Info overlay */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
         <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", phaseColors[photo.phase] || 'bg-gray-100 text-gray-700')}>
+          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", phaseColors[photo.phase] || 'bg-warm-100 text-warm-700')}>
             {photo.phase}
           </span>
-          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", tradeColors[photo.trade] || 'bg-gray-50 text-gray-600')}>
+          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", tradeColors[photo.trade] || 'bg-warm-50 text-warm-600')}>
             {photo.trade}
           </span>
         </div>
@@ -400,7 +400,7 @@ function PhotoCard({
           {/* Cross-module links */}
           <div className="flex items-center gap-1">
             {photo.dailyLogId && (
-              <span className="text-[10px] bg-blue-500/80 text-white px-1 py-0.5 rounded">
+              <span className="text-[10px] bg-stone-500/80 text-white px-1 py-0.5 rounded">
                 {photo.dailyLogId}
               </span>
             )}
@@ -472,20 +472,20 @@ export function PhotosPreview() {
   const linkedToPunchList = mockPhotos.filter(p => p.punchItemId).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Project Photos</h3>
-          <span className="text-sm text-gray-500">{totalPhotos} photos | Last upload: Feb 12, 2026</span>
+          <h3 className="font-semibold text-warm-900">Project Photos</h3>
+          <span className="text-sm text-warm-500">{totalPhotos} photos | Last upload: Feb 12, 2026</span>
           {milestoneCount > 0 && (
-            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
               <Award className="h-3 w-3" />
               {milestoneCount} milestones
             </span>
           )}
           {duplicateCount > 0 && (
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+            <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
               {duplicateCount} duplicate{duplicateCount > 1 ? 's' : ''}
             </span>
           )}
@@ -547,37 +547,37 @@ export function PhotosPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-2 text-center">
-            <div className="text-lg font-bold text-gray-900">{totalPhotos}</div>
-            <div className="text-xs text-gray-500">Total</div>
+          <div className="bg-warm-50 rounded-lg p-2 text-center">
+            <div className="text-lg font-bold text-warm-900">{totalPhotos}</div>
+            <div className="text-xs text-warm-500">Total</div>
           </div>
           <div className="bg-green-50 rounded-lg p-2 text-center">
             <div className="text-lg font-bold text-green-700">{clientReadyCount}</div>
             <div className="text-xs text-green-600">Client Ready</div>
           </div>
-          <div className="bg-yellow-50 rounded-lg p-2 text-center">
-            <div className="text-lg font-bold text-yellow-700">{milestoneCount}</div>
-            <div className="text-xs text-yellow-600">Milestones</div>
+          <div className="bg-amber-50 rounded-lg p-2 text-center">
+            <div className="text-lg font-bold text-amber-700">{milestoneCount}</div>
+            <div className="text-xs text-amber-600">Milestones</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2 text-center">
-            <div className="text-lg font-bold text-blue-700">{avgQuality}%</div>
-            <div className="text-xs text-blue-600">Avg Quality</div>
+          <div className="bg-stone-50 rounded-lg p-2 text-center">
+            <div className="text-lg font-bold text-stone-700">{avgQuality}%</div>
+            <div className="text-xs text-stone-600">Avg Quality</div>
           </div>
           <div className="bg-indigo-50 rounded-lg p-2 text-center">
             <div className="text-lg font-bold text-indigo-700">{fromDailyLogs}</div>
             <div className="text-xs text-indigo-600">From Logs</div>
           </div>
-          <div className={cn("rounded-lg p-2 text-center", lowQualityCount > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("text-lg font-bold", lowQualityCount > 0 ? "text-red-700" : "text-gray-700")}>{lowQualityCount}</div>
-            <div className={cn("text-xs", lowQualityCount > 0 ? "text-red-600" : "text-gray-500")}>Low Quality</div>
+          <div className={cn("rounded-lg p-2 text-center", lowQualityCount > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("text-lg font-bold", lowQualityCount > 0 ? "text-red-700" : "text-warm-700")}>{lowQualityCount}</div>
+            <div className={cn("text-xs", lowQualityCount > 0 ? "text-red-600" : "text-warm-500")}>Low Quality</div>
           </div>
         </div>
       </div>
 
       {/* Bulk Select Toggle Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+      <div className="bg-white border-b border-warm-200 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -589,22 +589,22 @@ export function PhotosPreview() {
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors",
               bulkSelectMode
-                ? "bg-blue-100 text-blue-700 border border-blue-200"
-                : "text-gray-600 border border-gray-200 hover:bg-gray-50"
+                ? "bg-stone-100 text-stone-700 border border-stone-200"
+                : "text-warm-600 border border-warm-200 hover:bg-warm-50"
             )}
           >
             <CheckSquare className="h-4 w-4" />
             Bulk Select
           </button>
           {/* Legend */}
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            <span className="flex items-center gap-1"><Award className="h-3.5 w-3.5 text-yellow-500" /> Milestone</span>
+          <div className="flex items-center gap-3 text-xs text-warm-500">
+            <span className="flex items-center gap-1"><Award className="h-3.5 w-3.5 text-amber-500" /> Milestone</span>
             <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5 text-green-500" /> Client Ready</span>
             <span className="flex items-center gap-1"><Layers className="h-3.5 w-3.5 text-red-400" /> Duplicate</span>
             <span className="flex items-center gap-1"><AlertTriangle className="h-3.5 w-3.5 text-red-500" /> Low Quality</span>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-warm-500">
           <Camera className="h-3.5 w-3.5" />
           {linkedToPunchList > 0 && <span>{linkedToPunchList} linked to punch list</span>}
         </div>
@@ -612,20 +612,20 @@ export function PhotosPreview() {
 
       {/* Bulk Actions Bar (when in bulk select mode) */}
       {bulkSelectMode && (
-        <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 flex items-center justify-between">
+        <div className="bg-stone-50 border-b border-stone-200 px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-blue-700 font-medium">
+            <span className="text-sm text-stone-700 font-medium">
               {selectedPhotos.size} selected
             </span>
             <button
               onClick={selectAll}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
+              className="text-sm text-stone-600 hover:text-stone-800 underline"
             >
               Select All
             </button>
             <button
               onClick={deselectAll}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
+              className="text-sm text-stone-600 hover:text-stone-800 underline"
             >
               Deselect All
             </button>
@@ -636,7 +636,7 @@ export function PhotosPreview() {
                 "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg",
                 selectedPhotos.size > 0
                   ? "text-green-600 border border-green-200 hover:bg-green-50"
-                  : "text-gray-400 border border-gray-200 cursor-not-allowed"
+                  : "text-warm-400 border border-warm-200 cursor-not-allowed"
               )}
               disabled={selectedPhotos.size === 0}
             >
@@ -647,8 +647,8 @@ export function PhotosPreview() {
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg",
                 selectedPhotos.size > 0
-                  ? "text-gray-600 border border-gray-200 hover:bg-white"
-                  : "text-gray-400 border border-gray-200 cursor-not-allowed"
+                  ? "text-warm-600 border border-warm-200 hover:bg-white"
+                  : "text-warm-400 border border-warm-200 cursor-not-allowed"
               )}
               disabled={selectedPhotos.size === 0}
             >
@@ -659,8 +659,8 @@ export function PhotosPreview() {
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg",
                 selectedPhotos.size > 0
-                  ? "text-gray-600 border border-gray-200 hover:bg-white"
-                  : "text-gray-400 border border-gray-200 cursor-not-allowed"
+                  ? "text-warm-600 border border-warm-200 hover:bg-white"
+                  : "text-warm-400 border border-warm-200 cursor-not-allowed"
               )}
               disabled={selectedPhotos.size === 0}
             >
@@ -672,7 +672,7 @@ export function PhotosPreview() {
                 "flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg",
                 selectedPhotos.size > 0
                   ? "text-red-600 border border-red-200 hover:bg-red-50"
-                  : "text-gray-400 border border-gray-200 cursor-not-allowed"
+                  : "text-warm-400 border border-warm-200 cursor-not-allowed"
               )}
               disabled={selectedPhotos.size === 0}
             >
@@ -698,7 +698,7 @@ export function PhotosPreview() {
         </div>
 
         {filteredPhotos.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-warm-400">
             <Image className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p className="text-sm">No photos match your filters</p>
           </div>
@@ -734,7 +734,7 @@ export function PhotosPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Photo Features"
           columns={2}

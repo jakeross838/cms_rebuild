@@ -125,7 +125,7 @@ const taskTypeConfig: Record<string, { icon: typeof Wrench; label: string; color
   work: {
     icon: Wrench,
     label: 'Work',
-    color: 'bg-blue-100 text-blue-700 border-blue-200',
+    color: 'bg-stone-100 text-stone-700 border-stone-200',
   },
   meeting: {
     icon: HardHat,
@@ -145,7 +145,7 @@ const taskTypeConfig: Record<string, { icon: typeof Wrench; label: string; color
 }
 
 const jobColors: Record<string, string> = {
-  'Smith Residence': 'border-l-blue-500',
+  'Smith Residence': 'border-l-stone-500',
   'Johnson Remodel': 'border-l-green-500',
   'Harbor View Custom': 'border-l-purple-500',
   'Coastal Retreat': 'border-l-amber-500',
@@ -154,9 +154,9 @@ const jobColors: Record<string, string> = {
 function WeatherIcon({ condition }: { condition: string }) {
   switch (condition) {
     case 'sunny': return <Sun className="h-3.5 w-3.5 text-amber-500" />
-    case 'partly-cloudy': return <Cloud className="h-3.5 w-3.5 text-gray-400" />
-    case 'cloudy': return <Cloud className="h-3.5 w-3.5 text-gray-500" />
-    case 'rain': return <CloudRain className="h-3.5 w-3.5 text-blue-500" />
+    case 'partly-cloudy': return <Cloud className="h-3.5 w-3.5 text-warm-400" />
+    case 'cloudy': return <Cloud className="h-3.5 w-3.5 text-warm-500" />
+    case 'rain': return <CloudRain className="h-3.5 w-3.5 text-stone-500" />
     case 'storm': return <Zap className="h-3.5 w-3.5 text-red-500" />
     default: return <Sun className="h-3.5 w-3.5 text-amber-500" />
   }
@@ -169,7 +169,7 @@ function TaskCard({ task }: { task: CalendarTask }) {
   return (
     <div
       className={cn(
-        "text-xs p-1.5 rounded border-l-2 bg-white border border-gray-100 hover:shadow-sm transition-shadow cursor-pointer",
+        "text-xs p-1.5 rounded border-l-2 bg-white border border-warm-100 hover:shadow-sm transition-shadow cursor-pointer",
         jobColors[task.jobName],
         task.status === 'completed' && "opacity-60",
         task.status === 'blocked' && "bg-red-50 border-red-200",
@@ -181,13 +181,13 @@ function TaskCard({ task }: { task: CalendarTask }) {
         <span className="font-medium truncate">{task.jobName}</span>
         {task.isCriticalPath && <Zap className="h-2.5 w-2.5 text-red-500 flex-shrink-0" />}
         {task.status === 'overdue' && <AlertTriangle className="h-2.5 w-2.5 text-red-600 flex-shrink-0" />}
-        {task.status === 'blocked' && <CloudRain className="h-2.5 w-2.5 text-blue-600 flex-shrink-0" />}
+        {task.status === 'blocked' && <CloudRain className="h-2.5 w-2.5 text-stone-600 flex-shrink-0" />}
       </div>
       {task.vendor && (
-        <div className="text-gray-500 truncate">{task.vendor}</div>
+        <div className="text-warm-500 truncate">{task.vendor}</div>
       )}
       {task.time && (
-        <div className="text-gray-400 text-[10px]">{task.time}</div>
+        <div className="text-warm-400 text-[10px]">{task.time}</div>
       )}
     </div>
   )
@@ -213,9 +213,9 @@ function CalendarDay({
   return (
     <div
       className={cn(
-        "min-h-[120px] p-1 border-r border-b border-gray-100",
-        !isCurrentMonth && "bg-gray-50",
-        isToday && "bg-blue-50",
+        "min-h-[120px] p-1 border-r border-b border-warm-100",
+        !isCurrentMonth && "bg-warm-50",
+        isToday && "bg-stone-50",
         weather?.impactsOutdoorWork && isCurrentMonth && "bg-red-50/30",
       )}
     >
@@ -223,9 +223,9 @@ function CalendarDay({
         <div
           className={cn(
             "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full",
-            isToday && "bg-blue-600 text-white",
-            !isToday && isCurrentMonth && "text-gray-900",
-            !isCurrentMonth && "text-gray-400"
+            isToday && "bg-stone-600 text-white",
+            !isToday && isCurrentMonth && "text-warm-900",
+            !isCurrentMonth && "text-warm-400"
           )}
         >
           {day}
@@ -233,7 +233,7 @@ function CalendarDay({
         {weather && isCurrentMonth && (
           <div className="flex items-center gap-0.5" title={`${weather.high}F / ${weather.low}F, ${weather.condition}, Wind: ${weather.windMph}mph`}>
             <WeatherIcon condition={weather.condition} />
-            <span className="text-[10px] text-gray-400">{weather.high}°</span>
+            <span className="text-[10px] text-warm-400">{weather.high}°</span>
             {weather.impactsOutdoorWork && (
               <AlertTriangle className="h-2.5 w-2.5 text-red-400" />
             )}
@@ -245,7 +245,7 @@ function CalendarDay({
           <TaskCard key={task.id} task={task} />
         ))}
         {remainingCount > 0 && (
-          <div className="text-xs text-gray-500 text-center py-0.5 hover:text-blue-600 cursor-pointer">
+          <div className="text-xs text-warm-500 text-center py-0.5 hover:text-stone-600 cursor-pointer">
             +{remainingCount} more
           </div>
         )}
@@ -305,14 +305,14 @@ export function CalendarPreview() {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Operations Calendar</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              <h3 className="font-semibold text-warm-900">Operations Calendar</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
                 {filteredTasks.length} events
               </span>
               {overdueTasks > 0 && (
@@ -328,12 +328,12 @@ export function CalendarPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('calendar')}
                 className={cn(
                   "p-2",
-                  viewMode === 'calendar' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
+                  viewMode === 'calendar' ? "bg-stone-50 text-stone-600" : "text-warm-400 hover:bg-warm-50"
                 )}
               >
                 <Calendar className="h-4 w-4" />
@@ -342,13 +342,13 @@ export function CalendarPreview() {
                 onClick={() => setViewMode('list')}
                 className={cn(
                   "p-2",
-                  viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50"
+                  viewMode === 'list' ? "bg-stone-50 text-stone-600" : "text-warm-400 hover:bg-warm-50"
                 )}
               >
                 <List className="h-4 w-4" />
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               Add Event
             </button>
@@ -384,15 +384,15 @@ export function CalendarPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-7 gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Clock className="h-5 w-5 text-blue-600" />
+            <div className="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{tasksThisWeek}</div>
-              <div className="text-xs text-gray-500">This Week</div>
+              <div className="text-xl font-bold text-warm-900">{tasksThisWeek}</div>
+              <div className="text-xs text-warm-500">This Week</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -400,8 +400,8 @@ export function CalendarPreview() {
               <ClipboardCheck className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{inspectionsScheduled}</div>
-              <div className="text-xs text-gray-500">Inspections</div>
+              <div className="text-xl font-bold text-warm-900">{inspectionsScheduled}</div>
+              <div className="text-xs text-warm-500">Inspections</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -409,8 +409,8 @@ export function CalendarPreview() {
               <Truck className="h-5 w-5 text-amber-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{deliveriesExpected}</div>
-              <div className="text-xs text-gray-500">Deliveries</div>
+              <div className="text-xl font-bold text-warm-900">{deliveriesExpected}</div>
+              <div className="text-xs text-warm-500">Deliveries</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -418,8 +418,8 @@ export function CalendarPreview() {
               <Building2 className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{mockJobs.length}</div>
-              <div className="text-xs text-gray-500">Active Jobs</div>
+              <div className="text-xl font-bold text-warm-900">{mockJobs.length}</div>
+              <div className="text-xs text-warm-500">Active Jobs</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -428,7 +428,7 @@ export function CalendarPreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-red-600">{criticalPathTasks}</div>
-              <div className="text-xs text-gray-500">Critical Path</div>
+              <div className="text-xs text-warm-500">Critical Path</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -436,26 +436,26 @@ export function CalendarPreview() {
               <ThermometerSun className={cn("h-5 w-5", weatherImpactDays > 0 ? "text-red-600" : "text-green-600")} />
             </div>
             <div>
-              <div className={cn("text-xl font-bold", weatherImpactDays > 0 ? "text-red-600" : "text-gray-900")}>{weatherImpactDays}</div>
-              <div className="text-xs text-gray-500">Weather Days</div>
+              <div className={cn("text-xl font-bold", weatherImpactDays > 0 ? "text-red-600" : "text-warm-900")}>{weatherImpactDays}</div>
+              <div className="text-xs text-warm-500">Weather Days</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Users className="h-5 w-5 text-blue-600" />
+            <div className="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Users className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{mockTasks.filter(t => t.taskType === 'meeting').length}</div>
-              <div className="text-xs text-gray-500">Meetings</div>
+              <div className="text-xl font-bold text-warm-900">{mockTasks.filter(t => t.taskType === 'meeting').length}</div>
+              <div className="text-xs text-warm-500">Meetings</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Schedule Health Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-4 text-xs">
-          <span className="text-gray-500 font-medium">Schedule Health:</span>
+          <span className="text-warm-500 font-medium">Schedule Health:</span>
           {mockJobs.map(job => (
             <div key={job.id} className="flex items-center gap-1.5">
               <div className={cn(
@@ -463,7 +463,7 @@ export function CalendarPreview() {
                 job.scheduleHealth === 'on-track' ? 'bg-green-500' :
                 job.scheduleHealth === 'at-risk' ? 'bg-amber-500' : 'bg-red-500'
               )} />
-              <span className="text-gray-600">{job.name}</span>
+              <span className="text-warm-600">{job.name}</span>
               <span className={cn(
                 "font-medium",
                 job.scheduleHealth === 'on-track' ? 'text-green-600' :
@@ -477,27 +477,27 @@ export function CalendarPreview() {
       </div>
 
       {/* Calendar Navigation */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+      <div className="bg-white border-b border-warm-200 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-            <ChevronLeft className="h-5 w-5 text-gray-600" />
+          <button className="p-1.5 hover:bg-warm-100 rounded-lg transition-colors">
+            <ChevronLeft className="h-5 w-5 text-warm-600" />
           </button>
-          <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-            <ChevronRight className="h-5 w-5 text-gray-600" />
+          <button className="p-1.5 hover:bg-warm-100 rounded-lg transition-colors">
+            <ChevronRight className="h-5 w-5 text-warm-600" />
           </button>
-          <h4 className="font-semibold text-gray-900 ml-2">February 2026</h4>
+          <h4 className="font-semibold text-warm-900 ml-2">February 2026</h4>
         </div>
         <div className="flex items-center gap-3">
-          <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+          <button className="text-sm text-stone-600 hover:text-stone-700 font-medium">
             Today
           </button>
-          <span className="text-gray-300">|</span>
-          <button className="text-sm text-gray-600 hover:text-blue-600 flex items-center gap-1">
+          <span className="text-warm-300">|</span>
+          <button className="text-sm text-warm-600 hover:text-stone-600 flex items-center gap-1">
             <Eye className="h-3.5 w-3.5" />
             2-Week Look-Ahead
           </button>
-          <span className="text-gray-300">|</span>
-          <button className="text-sm text-gray-600 hover:text-blue-600 flex items-center gap-1">
+          <span className="text-warm-300">|</span>
+          <button className="text-sm text-warm-600 hover:text-stone-600 flex items-center gap-1">
             <Wind className="h-3.5 w-3.5" />
             Weather Overlay
           </button>
@@ -507,11 +507,11 @@ export function CalendarPreview() {
       {/* Calendar Grid */}
       <div className="bg-white">
         {/* Week day headers */}
-        <div className="grid grid-cols-7 border-b border-gray-200">
+        <div className="grid grid-cols-7 border-b border-warm-200">
           {weekDays.map(day => (
             <div
               key={day}
-              className="text-center py-2 text-sm font-medium text-gray-500 border-r border-gray-100 last:border-r-0"
+              className="text-center py-2 text-sm font-medium text-warm-500 border-r border-warm-100 last:border-r-0"
             >
               {day}
             </div>
@@ -534,10 +534,10 @@ export function CalendarPreview() {
       </div>
 
       {/* Legend */}
-      <div className="bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-6 text-xs text-gray-500">
+      <div className="bg-white border-t border-warm-200 px-4 py-2">
+        <div className="flex items-center gap-6 text-xs text-warm-500">
           <div className="flex items-center gap-1.5">
-            <Wrench className="h-3.5 w-3.5 text-blue-600" />
+            <Wrench className="h-3.5 w-3.5 text-stone-600" />
             <span>Work</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -565,8 +565,8 @@ export function CalendarPreview() {
             <span className="text-red-500">Critical Path</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Eye className="h-3.5 w-3.5 text-gray-400" />
-            <span className="text-gray-400">Completed dimmed</span>
+            <Eye className="h-3.5 w-3.5 text-warm-400" />
+            <span className="text-warm-400">Completed dimmed</span>
           </div>
         </div>
       </div>

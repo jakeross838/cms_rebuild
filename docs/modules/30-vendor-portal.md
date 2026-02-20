@@ -343,7 +343,7 @@ Guided experience for new vendors joining the platform.
 - **Module 1: Auth & Access** — Vendor role authentication and multi-builder access control
 - **Module 10: Contact/Vendor Management** — Vendor records and builder-vendor relationships
 - **Module 26: Bid Management** — Bid package data for bid response submission
-- **Module 11: Basic Invoicing** — Invoice processing and payment tracking
+- **Module 11: Native Accounting (GL/AP/AR)** — Invoice processing and payment tracking
 - **Module 14: Lien Waivers** — Waiver generation and compliance tracking
 - **Module 7: Scheduling** — Schedule task data for vendor task visibility
 - **Module 20: Purchasing** — Purchase order data

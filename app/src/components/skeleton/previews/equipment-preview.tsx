@@ -536,18 +536,18 @@ const mockRentals: RentalEquipment[] = [
 
 const statusConfig: Record<Equipment['status'], { label: string; color: string; icon: React.ElementType }> = {
   available: { label: 'Available', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-  deployed: { label: 'Deployed', color: 'bg-blue-100 text-blue-700', icon: MapPin },
+  deployed: { label: 'Deployed', color: 'bg-stone-100 text-stone-700', icon: MapPin },
   maintenance: { label: 'Maintenance', color: 'bg-amber-100 text-amber-700', icon: Wrench },
   repair: { label: 'Repair', color: 'bg-orange-100 text-orange-700', icon: Settings },
-  retired: { label: 'Retired', color: 'bg-gray-100 text-gray-500', icon: Settings },
+  retired: { label: 'Retired', color: 'bg-warm-100 text-warm-500', icon: Settings },
   lost_stolen: { label: 'Lost/Stolen', color: 'bg-red-100 text-red-700', icon: ShieldAlert },
 }
 
 const categoryConfig: Record<Equipment['category'], { icon: React.ElementType; color: string; bg: string }> = {
-  Vehicle: { icon: Truck, color: 'text-blue-600', bg: 'bg-blue-100' },
+  Vehicle: { icon: Truck, color: 'text-stone-600', bg: 'bg-stone-100' },
   'Heavy Equipment': { icon: Settings, color: 'text-amber-600', bg: 'bg-amber-100' },
   'Power Tool': { icon: PenTool, color: 'text-purple-600', bg: 'bg-purple-100' },
-  'Hand Tool': { icon: Wrench, color: 'text-gray-600', bg: 'bg-gray-100' },
+  'Hand Tool': { icon: Wrench, color: 'text-warm-600', bg: 'bg-warm-100' },
   Safety: { icon: Shield, color: 'text-red-600', bg: 'bg-red-100' },
 }
 
@@ -666,29 +666,29 @@ function QRCodeModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-900">Equipment QR Code</h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-5 w-5 text-gray-400" />
+          <h3 className="font-semibold text-warm-900">Equipment QR Code</h3>
+          <button onClick={onClose} className="p-1 hover:bg-warm-100 rounded">
+            <X className="h-5 w-5 text-warm-400" />
           </button>
         </div>
 
         <div className="flex flex-col items-center">
-          <div className="border-2 border-gray-200 p-4 rounded-lg mb-4">
+          <div className="border-2 border-warm-200 p-4 rounded-lg mb-4">
             <QRCodeSVG data={qrData} size={160} />
           </div>
 
           <div className="text-center mb-4">
-            <div className="font-medium text-gray-900">{equipment.name}</div>
-            <div className="text-sm text-gray-500 font-mono">{equipment.assetTag}</div>
-            <div className="text-xs text-gray-400 mt-1">SN: {equipment.serialNumber}</div>
+            <div className="font-medium text-warm-900">{equipment.name}</div>
+            <div className="text-sm text-warm-500 font-mono">{equipment.assetTag}</div>
+            <div className="text-xs text-warm-400 mt-1">SN: {equipment.serialNumber}</div>
           </div>
 
           <div className="flex gap-2 w-full">
-            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Printer className="h-4 w-4" />
               Print QR
             </button>
-            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50">
+            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-warm-200 text-warm-700 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Download
             </button>
@@ -726,17 +726,17 @@ function PhotoGalleryModal({
       <div className="relative max-w-4xl w-full mx-4" onClick={e => e.stopPropagation()}>
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 p-2 text-white hover:text-gray-300"
+          className="absolute -top-10 right-0 p-2 text-white hover:text-warm-300"
         >
           <X className="h-6 w-6" />
         </button>
 
-        <div className="bg-gray-900 rounded-lg overflow-hidden">
-          <div className="relative aspect-video bg-gray-800 flex items-center justify-center">
+        <div className="bg-warm-900 rounded-lg overflow-hidden">
+          <div className="relative aspect-video bg-warm-800 flex items-center justify-center">
             {/* Placeholder for actual image */}
             <div className="text-center">
-              <Image className="h-16 w-16 text-gray-600 mx-auto mb-2" />
-              <div className="text-gray-400 text-sm">{photos[currentIndex]}</div>
+              <Image className="h-16 w-16 text-warm-600 mx-auto mb-2" />
+              <div className="text-warm-400 text-sm">{photos[currentIndex]}</div>
             </div>
 
             {photos.length > 1 && (
@@ -759,7 +759,7 @@ function PhotoGalleryModal({
 
           <div className="p-4">
             <div className="text-white font-medium">{equipmentName}</div>
-            <div className="text-gray-400 text-sm">
+            <div className="text-warm-400 text-sm">
               Photo {currentIndex + 1} of {photos.length}
             </div>
           </div>
@@ -800,17 +800,17 @@ function ChecklistModal({
       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="font-semibold text-gray-900">Maintenance Checklist</h3>
-            <p className="text-sm text-gray-500">{equipment.name}</p>
+            <h3 className="font-semibold text-warm-900">Maintenance Checklist</h3>
+            <p className="text-sm text-warm-500">{equipment.name}</p>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-5 w-5 text-gray-400" />
+          <button onClick={onClose} className="p-1 hover:bg-warm-100 rounded">
+            <X className="h-5 w-5 text-warm-400" />
           </button>
         </div>
 
         <div className="mb-4">
           <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-gray-600">Progress</span>
+            <span className="text-warm-600">Progress</span>
             <span className={cn(
               "font-medium",
               allCompleted ? "text-green-600" : "text-amber-600"
@@ -818,7 +818,7 @@ function ChecklistModal({
               {completedCount} / {items.length} complete
             </span>
           </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-warm-200 rounded-full overflow-hidden">
             <div
               className={cn(
                 "h-full transition-all",
@@ -837,18 +837,18 @@ function ChecklistModal({
                 "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
                 item.completed
                   ? "bg-green-50 border-green-200"
-                  : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                  : "bg-warm-50 border-warm-200 hover:bg-warm-100"
               )}
             >
               <input
                 type="checkbox"
                 checked={item.completed}
                 onChange={() => toggleItem(item.id)}
-                className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                className="h-4 w-4 rounded border-warm-300 text-green-600 focus:ring-green-500"
               />
               <span className={cn(
                 "text-sm",
-                item.completed ? "text-green-700 line-through" : "text-gray-700"
+                item.completed ? "text-green-700 line-through" : "text-warm-700"
               )}>
                 {item.item}
               </span>
@@ -861,7 +861,7 @@ function ChecklistModal({
             "w-full py-2 rounded-lg font-medium transition-colors",
             allCompleted
               ? "bg-green-600 text-white hover:bg-green-700"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-warm-100 text-warm-400 cursor-not-allowed"
           )}
           disabled={!allCompleted}
         >
@@ -924,11 +924,11 @@ function BreakdownModal({
       <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="font-semibold text-gray-900">Report Equipment Breakdown</h3>
-            <p className="text-sm text-gray-500">{equipment.name} ({equipment.assetTag})</p>
+            <h3 className="font-semibold text-warm-900">Report Equipment Breakdown</h3>
+            <p className="text-sm text-warm-500">{equipment.name} ({equipment.assetTag})</p>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-5 w-5 text-gray-400" />
+          <button onClick={onClose} className="p-1 hover:bg-warm-100 rounded">
+            <X className="h-5 w-5 text-warm-400" />
           </button>
         </div>
 
@@ -944,12 +944,12 @@ function BreakdownModal({
             />
 
             {/* AI Suggestion */}
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="mt-4 p-3 bg-stone-50 border border-stone-200 rounded-lg">
               <div className="flex items-start gap-2">
-                <Sparkles className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <Sparkles className="h-4 w-4 text-stone-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-sm font-medium text-blue-800">AI Suggestion: Available Alternatives</div>
-                  <ul className="mt-1 text-sm text-blue-700 space-y-1">
+                  <div className="text-sm font-medium text-stone-800">AI Suggestion: Available Alternatives</div>
+                  <ul className="mt-1 text-sm text-stone-700 space-y-1">
                     <li>- Bobcat S650 (in yard, available immediately)</li>
                     <li>- Rental: Sunbelt has Cat 303 ($450/day, 2hr delivery)</li>
                   </ul>
@@ -960,13 +960,13 @@ function BreakdownModal({
         ) : (
           <div className="text-center py-6">
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-            <h4 className="font-medium text-gray-900 mb-1">Breakdown Reported</h4>
-            <p className="text-sm text-gray-500 mb-4">
+            <h4 className="font-medium text-warm-900 mb-1">Breakdown Reported</h4>
+            <p className="text-sm text-warm-500 mb-4">
               Maintenance team has been notified. Estimated response: 2 hours.
             </p>
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              className="px-4 py-2 bg-warm-100 text-warm-700 rounded-lg hover:bg-warm-200"
             >
               Close
             </button>
@@ -1041,7 +1041,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
   return (
     <>
       <div className={cn(
-        "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+        "bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
         equipment.status === 'maintenance' && "border-amber-200",
         equipment.status === 'repair' && "border-orange-200",
         equipment.status === 'lost_stolen' && "border-red-300 bg-red-50",
@@ -1081,30 +1081,30 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               <CategoryIcon className={cn("h-5 w-5", categoryCfg.color)} />
             </div>
             <div>
-              <h4 className="font-medium text-gray-900">
+              <h4 className="font-medium text-warm-900">
                 {equipment.name}
                 {equipment.isRental && (
                   <span className="ml-1.5 text-xs bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">Rental</span>
                 )}
               </h4>
-              <div className="flex items-center gap-2 mt-0.5 text-sm text-gray-500">
+              <div className="flex items-center gap-2 mt-0.5 text-sm text-warm-500">
                 <span className="font-mono">{equipment.assetTag}</span>
                 <button
                   onClick={() => setQrModalOpen(true)}
-                  className="flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 hover:bg-gray-200 rounded text-xs text-gray-500 transition-colors"
+                  className="flex items-center gap-1 px-1.5 py-0.5 bg-warm-100 hover:bg-warm-200 rounded text-xs text-warm-500 transition-colors"
                   title={`QR Code: ${equipment.assetTag}`}
                 >
                   <QrCode className="h-3 w-3" />
                   <span className="text-[10px] font-medium">QR</span>
                 </button>
                 {equipment.serialNumber && equipment.serialNumber !== 'N/A - Rental' && (
-                  <span className="text-xs text-gray-400">SN: {equipment.serialNumber.slice(0, 10)}...</span>
+                  <span className="text-xs text-warm-400">SN: {equipment.serialNumber.slice(0, 10)}...</span>
                 )}
               </div>
             </div>
           </div>
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
 
@@ -1115,46 +1115,46 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               <button
                 key={idx}
                 onClick={() => openPhoto(idx)}
-                className="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center hover:border-blue-400 hover:bg-gray-50 transition-colors"
+                className="w-10 h-10 bg-warm-100 rounded-lg border border-warm-200 flex items-center justify-center hover:border-stone-400 hover:bg-warm-50 transition-colors"
                 title={photo.split('/').pop()}
               >
-                <Camera className="h-4 w-4 text-gray-400" />
+                <Camera className="h-4 w-4 text-warm-400" />
               </button>
             ))}
             {equipment.photoUrls.length > 3 && (
               <button
                 onClick={() => openPhoto(3)}
-                className="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs font-medium text-gray-500 hover:border-blue-400 hover:bg-gray-50 transition-colors"
+                className="w-10 h-10 bg-warm-100 rounded-lg border border-warm-200 flex items-center justify-center text-xs font-medium text-warm-500 hover:border-stone-400 hover:bg-warm-50 transition-colors"
               >
                 +{equipment.photoUrls.length - 3}
               </button>
             )}
-            <span className="text-[10px] text-gray-400 ml-1">{equipment.photoUrls.length} photo{equipment.photoUrls.length !== 1 ? 's' : ''}</span>
+            <span className="text-[10px] text-warm-400 ml-1">{equipment.photoUrls.length} photo{equipment.photoUrls.length !== 1 ? 's' : ''}</span>
           </div>
         )}
 
-        <div className="text-sm text-gray-600 mb-3">
+        <div className="text-sm text-warm-600 mb-3">
           {equipment.make} {equipment.model} ({equipment.year})
         </div>
 
         {equipment.currentJob && (
           <div className="flex items-center gap-2 mb-2 text-sm">
-            <MapPin className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-700">{equipment.currentJob}</span>
+            <MapPin className="h-4 w-4 text-warm-400" />
+            <span className="text-warm-700">{equipment.currentJob}</span>
           </div>
         )}
 
         {equipment.assignedTo && (
           <div className="flex items-center gap-2 mb-2 text-sm">
-            <User className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-700">{equipment.assignedTo}</span>
+            <User className="h-4 w-4 text-warm-400" />
+            <span className="text-warm-700">{equipment.assignedTo}</span>
           </div>
         )}
 
         {equipment.usage && (
           <div className="flex items-center gap-2 mb-2 text-sm">
-            <Gauge className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-700">{equipment.usage}</span>
+            <Gauge className="h-4 w-4 text-warm-400" />
+            <span className="text-warm-700">{equipment.usage}</span>
             {equipment.utilizationRate !== undefined && (
               <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded font-medium",
@@ -1169,12 +1169,12 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
         )}
 
         {equipment.gpsEnabled && (
-          <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
+          <div className="flex items-center gap-2 mb-2 text-xs text-warm-500">
             <Navigation className={cn(
               "h-3.5 w-3.5",
               equipment.geofenceStatus === 'inside' ? "text-green-500" :
               equipment.geofenceStatus === 'outside' ? "text-red-500" :
-              "text-gray-400"
+              "text-warm-400"
             )} />
             <span>{equipment.gpsLastLocation}</span>
           </div>
@@ -1211,7 +1211,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
 
         {/* Checkout info */}
         {equipment.checkoutStatus === 'checked_out' && !equipment.isRental && (
-          <div className="mb-2 text-xs text-gray-500 flex items-center gap-1">
+          <div className="mb-2 text-xs text-warm-500 flex items-center gap-1">
             <Package className="h-3 w-3" />
             Checked out: {equipment.checkoutDate ? formatDate(equipment.checkoutDate) : ''}
             {equipment.expectedReturnDate && <span> (Return: {formatDate(equipment.expectedReturnDate)})</span>}
@@ -1232,7 +1232,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               onClick={() => setInlineChecklistOpen(!inlineChecklistOpen)}
               className="flex items-center gap-2 text-xs w-full group"
             >
-              <FileText className="h-3.5 w-3.5 text-gray-400" />
+              <FileText className="h-3.5 w-3.5 text-warm-400" />
               {equipment.checklistCompleted ? (
                 <span className="text-green-600 flex items-center gap-1">
                   <CheckCircle className="h-3 w-3" />
@@ -1244,28 +1244,28 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
                 </span>
               )}
               <ChevronRight className={cn(
-                "h-3 w-3 text-gray-400 ml-auto transition-transform",
+                "h-3 w-3 text-warm-400 ml-auto transition-transform",
                 inlineChecklistOpen && "rotate-90"
               )} />
             </button>
 
             {/* Inline Maintenance Checklist */}
             {inlineChecklistOpen && inlineChecklist && (
-              <div className="mt-2 border border-gray-200 rounded-lg overflow-hidden">
-                <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+              <div className="mt-2 border border-warm-200 rounded-lg overflow-hidden">
+                <div className="px-3 py-2 bg-warm-50 border-b border-warm-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-700">{equipment.category} Checklist</span>
+                    <span className="text-xs font-medium text-warm-700">{equipment.category} Checklist</span>
                     <span className={cn(
                       "text-[10px] font-medium px-1.5 py-0.5 rounded",
                       Object.values(checkedItems).filter(Boolean).length === inlineChecklist.length
                         ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-500"
+                        : "bg-warm-100 text-warm-500"
                     )}>
                       {Object.values(checkedItems).filter(Boolean).length}/{inlineChecklist.length}
                     </span>
                   </div>
                 </div>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-warm-100">
                   {inlineChecklist.map(item => {
                     const isChecked = !!checkedItems[item.id]
                     return (
@@ -1274,17 +1274,17 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
                         onClick={() => toggleCheckedItem(item.id)}
                         className={cn(
                           "flex items-center gap-2.5 w-full px-3 py-2 text-left transition-colors",
-                          isChecked ? "bg-green-50/50" : "hover:bg-gray-50"
+                          isChecked ? "bg-green-50/50" : "hover:bg-warm-50"
                         )}
                       >
                         {isChecked ? (
                           <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                         ) : (
-                          <Circle className="h-4 w-4 text-gray-300 flex-shrink-0" />
+                          <Circle className="h-4 w-4 text-warm-300 flex-shrink-0" />
                         )}
                         <span className={cn(
                           "text-xs",
-                          isChecked ? "text-green-700 line-through" : "text-gray-700"
+                          isChecked ? "text-green-700 line-through" : "text-warm-700"
                         )}>
                           {item.item}
                         </span>
@@ -1300,24 +1300,24 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
         {/* Value and depreciation */}
         {!equipment.isRental && (
           <div className="mb-3 grid grid-cols-3 gap-2 text-xs">
-            <div className="bg-gray-50 rounded p-1.5 text-center">
-              <div className="text-gray-500">Purchased</div>
-              <div className="font-medium text-gray-900">{formatCurrency(equipment.purchasePrice)}</div>
+            <div className="bg-warm-50 rounded p-1.5 text-center">
+              <div className="text-warm-500">Purchased</div>
+              <div className="font-medium text-warm-900">{formatCurrency(equipment.purchasePrice)}</div>
             </div>
-            <div className="bg-gray-50 rounded p-1.5 text-center">
-              <div className="text-gray-500">Book Value</div>
-              <div className="font-medium text-gray-900">{formatCurrency(equipment.currentValue)}</div>
+            <div className="bg-warm-50 rounded p-1.5 text-center">
+              <div className="text-warm-500">Book Value</div>
+              <div className="font-medium text-warm-900">{formatCurrency(equipment.currentValue)}</div>
             </div>
             {equipment.costPerHour && (
-              <div className="bg-gray-50 rounded p-1.5 text-center">
-                <div className="text-gray-500">Cost/Hr</div>
-                <div className="font-medium text-gray-900">${equipment.costPerHour.toFixed(2)}</div>
+              <div className="bg-warm-50 rounded p-1.5 text-center">
+                <div className="text-warm-500">Cost/Hr</div>
+                <div className="font-medium text-warm-900">${equipment.costPerHour.toFixed(2)}</div>
               </div>
             )}
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-3 border-t border-warm-100">
           <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", statusCfg.color)}>
             <StatusIcon className="h-3.5 w-3.5" />
             {statusCfg.label}
@@ -1326,7 +1326,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
             {equipment.nextMaintenance && (
               <span className={cn(
                 "text-xs flex items-center gap-1",
-                maintenanceOverdue ? "text-red-600 font-medium" : "text-gray-500"
+                maintenanceOverdue ? "text-red-600 font-medium" : "text-warm-500"
               )}>
                 <Calendar className="h-3 w-3" />
                 {formatDate(equipment.nextMaintenance)}
@@ -1336,22 +1336,22 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
         </div>
 
         {equipment.aiNote && (
-          <div className="mt-3 p-2 rounded-md bg-blue-50 flex items-start gap-2 text-xs">
-            <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-blue-500" />
-            <span className="text-blue-700">{equipment.aiNote}</span>
+          <div className="mt-3 p-2 rounded-md bg-stone-50 flex items-start gap-2 text-xs">
+            <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-stone-500" />
+            <span className="text-stone-700">{equipment.aiNote}</span>
           </div>
         )}
 
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
           {equipment.status === 'available' && (
-            <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+            <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700">
               <MapPin className="h-3.5 w-3.5" />
               Deploy to Job
             </button>
           )}
           {equipment.status === 'deployed' && (
             <>
-              <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+              <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
                 <CheckCircle className="h-3.5 w-3.5" />
                 Return / Check In
               </button>
@@ -1381,7 +1381,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
           )}
           <button
             onClick={() => setQrModalOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
+            className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"
           >
             <QrCode className="h-3.5 w-3.5" />
           </button>
@@ -1478,14 +1478,14 @@ export function EquipmentPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Equipment & Assets</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              <h3 className="font-semibold text-warm-900">Equipment & Assets</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
                 {totalEquipment} owned + {rentalCount} rented
               </span>
               {overdueMaintenanceCount > 0 && (
@@ -1495,12 +1495,12 @@ export function EquipmentPreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               Track equipment, tools, vehicles, rentals, maintenance, and depreciation
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <FileText className="h-4 w-4" />
               Depreciation Report
             </button>
@@ -1509,22 +1509,22 @@ export function EquipmentPreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-7 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Settings className="h-3.5 w-3.5" />
               Total Owned
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalEquipment}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalEquipment}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <DollarSign className="h-3.5 w-3.5" />
               Book Value
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalValue)}</div>
-            <div className="text-xs text-gray-400">of {formatCurrency(totalPurchaseValue)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalValue)}</div>
+            <div className="text-xs text-warm-400">of {formatCurrency(totalPurchaseValue)}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-xs">
@@ -1533,19 +1533,19 @@ export function EquipmentPreview() {
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{availableCount}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-xs">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-xs">
               <MapPin className="h-3.5 w-3.5" />
               Deployed
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{deployedCount}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{deployedCount}</div>
           </div>
-          <div className={cn("rounded-lg p-3", maintenanceCount > 0 ? "bg-amber-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-xs", maintenanceCount > 0 ? "text-amber-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", maintenanceCount > 0 ? "bg-amber-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-xs", maintenanceCount > 0 ? "text-amber-600" : "text-warm-500")}>
               <Wrench className="h-3.5 w-3.5" />
               Maintenance
             </div>
-            <div className={cn("text-xl font-bold mt-1", maintenanceCount > 0 ? "text-amber-700" : "text-gray-900")}>
+            <div className={cn("text-xl font-bold mt-1", maintenanceCount > 0 ? "text-amber-700" : "text-warm-900")}>
               {maintenanceCount}
             </div>
           </div>
@@ -1568,11 +1568,11 @@ export function EquipmentPreview() {
       </div>
 
       {/* Cross-module connections */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-gray-500">Connected to:</span>
+          <span className="text-xs text-warm-500">Connected to:</span>
           {[
-            { label: 'Jobs (Cost Allocation)', color: 'bg-blue-50 text-blue-700' },
+            { label: 'Jobs (Cost Allocation)', color: 'bg-stone-50 text-stone-700' },
             { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700' },
             { label: 'Financial Reporting', color: 'bg-green-50 text-green-700' },
             { label: 'Vendor Management', color: 'bg-orange-50 text-orange-700' },
@@ -1588,7 +1588,7 @@ export function EquipmentPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -1657,8 +1657,8 @@ export function EquipmentPreview() {
               </div>
             )}
             {filteredEquipment.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <Settings className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="text-center py-12 text-warm-500">
+                <Settings className="h-12 w-12 mx-auto mb-3 text-warm-300" />
                 <p>No equipment matches the current filters</p>
               </div>
             )}
@@ -1677,42 +1677,42 @@ export function EquipmentPreview() {
                 <div className="text-lg font-bold text-red-700">{mockRentals.filter(r => r.status === 'overdue').length}</div>
                 <div className="text-xs text-red-600">Overdue Returns</div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-gray-700">${mockRentals.reduce((sum, r) => sum + r.totalCostToDate, 0).toLocaleString()}</div>
-                <div className="text-xs text-gray-500">Total Rental Spend</div>
+              <div className="bg-warm-50 rounded-lg p-3 text-center">
+                <div className="text-lg font-bold text-warm-700">${mockRentals.reduce((sum, r) => sum + r.totalCostToDate, 0).toLocaleString()}</div>
+                <div className="text-xs text-warm-500">Total Rental Spend</div>
               </div>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-warm-50">
                   <tr>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Equipment</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Vendor</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Project</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Rate</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Days</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Cost</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Return</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Status</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Equipment</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Vendor</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Project</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Rate</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Days</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Cost</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Return</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {mockRentals.map(rental => (
-                    <tr key={rental.id} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="py-2 px-3 font-medium text-gray-900">{rental.description}</td>
-                      <td className="py-2 px-3 text-gray-600">{rental.vendor}</td>
-                      <td className="py-2 px-3 text-gray-600">{rental.project}</td>
-                      <td className="py-2 px-3 text-gray-600">{rental.rentalRate}/{rental.ratePeriod.slice(0, 1)}</td>
-                      <td className="py-2 px-3 text-gray-600">{rental.daysRented}</td>
-                      <td className="py-2 px-3 font-medium text-gray-900">${rental.totalCostToDate.toLocaleString()}</td>
-                      <td className="py-2 px-3 text-gray-600">{formatDate(rental.expectedReturnDate)}</td>
+                    <tr key={rental.id} className="border-t border-warm-100 hover:bg-warm-50">
+                      <td className="py-2 px-3 font-medium text-warm-900">{rental.description}</td>
+                      <td className="py-2 px-3 text-warm-600">{rental.vendor}</td>
+                      <td className="py-2 px-3 text-warm-600">{rental.project}</td>
+                      <td className="py-2 px-3 text-warm-600">{rental.rentalRate}/{rental.ratePeriod.slice(0, 1)}</td>
+                      <td className="py-2 px-3 text-warm-600">{rental.daysRented}</td>
+                      <td className="py-2 px-3 font-medium text-warm-900">${rental.totalCostToDate.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-warm-600">{formatDate(rental.expectedReturnDate)}</td>
                       <td className="py-2 px-3">
                         <span className={cn(
                           "text-xs px-2 py-0.5 rounded font-medium",
                           rental.status === 'active' ? "bg-green-100 text-green-700" :
                           rental.status === 'overdue' ? "bg-red-100 text-red-700" :
                           rental.status === 'pending_return' ? "bg-amber-100 text-amber-700" :
-                          "bg-gray-100 text-gray-600"
+                          "bg-warm-100 text-warm-600"
                         )}>
                           {rental.status === 'active' ? 'Active' :
                            rental.status === 'overdue' ? 'Overdue' :
@@ -1726,12 +1726,12 @@ export function EquipmentPreview() {
               </table>
             </div>
             {/* Rent vs Own insight */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
               <div className="flex items-start gap-2">
-                <Sparkles className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <Sparkles className="h-5 w-5 text-stone-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h5 className="font-medium text-blue-800 text-sm">Rent vs. Own Analysis</h5>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <h5 className="font-medium text-stone-800 text-sm">Rent vs. Own Analysis</h5>
+                  <p className="text-sm text-stone-700 mt-1">
                     You have spent $14,200 renting skid steers in the last 12 months.
                     A comparable Bobcat S650 purchase would cost $52,000 with estimated annual operating cost of $8,000.
                     At current rental frequency, ownership breaks even in 2.8 years.
@@ -1767,8 +1767,8 @@ export function EquipmentPreview() {
                             OVERDUE
                           </span>
                         )}
-                        <span className="font-mono text-xs text-gray-500">{eq.assetTag}</span>
-                        <span className="text-sm font-medium text-gray-900">{eq.name}</span>
+                        <span className="font-mono text-xs text-warm-500">{eq.assetTag}</span>
+                        <span className="text-sm font-medium text-warm-900">{eq.name}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {overdue ? (
@@ -1776,7 +1776,7 @@ export function EquipmentPreview() {
                         ) : (
                           <span className="text-xs text-amber-700">{eq.maintenanceNote}</span>
                         )}
-                        <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                        <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                           Schedule <ChevronRight className="h-3 w-3" />
                         </button>
                       </div>
@@ -1787,52 +1787,52 @@ export function EquipmentPreview() {
             </div>
 
             {/* Maintenance log */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-200">
-                <h5 className="font-medium text-gray-900">Recent Maintenance Log</h5>
+            <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-warm-200">
+                <h5 className="font-medium text-warm-900">Recent Maintenance Log</h5>
               </div>
               <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-warm-50">
                   <tr>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Equipment</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Type</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Description</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Date</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Provider</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Parts</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Labor</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-gray-500">Total</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Equipment</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Type</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Description</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Date</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Provider</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Parts</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Labor</th>
+                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {mockMaintenanceLogs.map(log => (
-                    <tr key={log.id} className="border-t border-gray-100 hover:bg-gray-50">
+                    <tr key={log.id} className="border-t border-warm-100 hover:bg-warm-50">
                       <td className="py-2 px-3">
-                        <div className="font-medium text-gray-900">{log.equipmentName}</div>
-                        <div className="text-xs text-gray-400 font-mono">{log.assetTag}</div>
+                        <div className="font-medium text-warm-900">{log.equipmentName}</div>
+                        <div className="text-xs text-warm-400 font-mono">{log.assetTag}</div>
                       </td>
                       <td className="py-2 px-3">
                         <span className={cn(
                           "text-xs px-2 py-0.5 rounded font-medium",
                           log.maintenanceType === 'preventive' ? "bg-green-100 text-green-700" :
                           log.maintenanceType === 'corrective' ? "bg-red-100 text-red-700" :
-                          log.maintenanceType === 'inspection' ? "bg-blue-100 text-blue-700" :
+                          log.maintenanceType === 'inspection' ? "bg-stone-100 text-stone-700" :
                           "bg-purple-100 text-purple-700"
                         )}>
                           {log.maintenanceType}
                         </span>
                       </td>
-                      <td className="py-2 px-3 text-gray-600 text-xs">{log.description}</td>
-                      <td className="py-2 px-3 text-gray-600">{formatDate(log.performedDate)}</td>
-                      <td className="py-2 px-3 text-gray-600">{log.serviceProvider}</td>
-                      <td className="py-2 px-3 text-gray-600">${log.partsCost}</td>
-                      <td className="py-2 px-3 text-gray-600">${log.laborCost}</td>
-                      <td className="py-2 px-3 font-medium text-gray-900">${log.totalCost}</td>
+                      <td className="py-2 px-3 text-warm-600 text-xs">{log.description}</td>
+                      <td className="py-2 px-3 text-warm-600">{formatDate(log.performedDate)}</td>
+                      <td className="py-2 px-3 text-warm-600">{log.serviceProvider}</td>
+                      <td className="py-2 px-3 text-warm-600">${log.partsCost}</td>
+                      <td className="py-2 px-3 text-warm-600">${log.laborCost}</td>
+                      <td className="py-2 px-3 font-medium text-warm-900">${log.totalCost}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div className="px-4 py-2 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
+              <div className="px-4 py-2 border-t border-warm-200 bg-warm-50 text-xs text-warm-500">
                 Total maintenance cost (shown): ${mockMaintenanceLogs.reduce((sum, l) => sum + l.totalCost, 0).toLocaleString()}
               </div>
             </div>
@@ -1841,7 +1841,7 @@ export function EquipmentPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="border-t border-gray-200">
+      <div className="border-t border-warm-200">
         <AIFeaturesPanel
           title="Equipment Intelligence"
           features={aiFeatures}

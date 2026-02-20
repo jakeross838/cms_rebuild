@@ -27,7 +27,7 @@ export default function JobsListSkeleton() {
         <div className="ml-auto">
           <Link
             href="/skeleton/jobs/1"
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-stone-600 text-white hover:bg-stone-700 transition-colors"
           >
             Enter Job View
             <ArrowRight className="h-4 w-4" />

@@ -524,15 +524,15 @@ const mockChecklistSections: ChecklistSection[] = [
 const statusConfig = {
   not_started: {
     label: 'Not Started',
-    color: 'bg-gray-100 text-gray-700',
+    color: 'bg-warm-100 text-warm-700',
     icon: Clock,
-    iconColor: 'text-gray-500',
+    iconColor: 'text-warm-500',
   },
   in_progress: {
     label: 'In Progress',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-stone-100 text-stone-700',
     icon: Clock,
-    iconColor: 'text-blue-500',
+    iconColor: 'text-stone-500',
   },
   pending_approval: {
     label: 'Pending Approval',
@@ -565,16 +565,16 @@ function ProgressBar({ completed, total, className }: { completed: number; total
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-warm-200 rounded-full overflow-hidden">
         <div
           className={cn(
             'h-full rounded-full transition-all',
-            percentage === 100 ? 'bg-green-500' : percentage >= 50 ? 'bg-blue-500' : 'bg-amber-500'
+            percentage === 100 ? 'bg-green-500' : percentage >= 50 ? 'bg-stone-500' : 'bg-amber-500'
           )}
           style={{ width: `${percentage}%` }}
         />
       </div>
-      <span className="text-xs text-gray-500 whitespace-nowrap">
+      <span className="text-xs text-warm-500 whitespace-nowrap">
         {completed} of {total}
       </span>
     </div>
@@ -584,7 +584,7 @@ function ProgressBar({ completed, total, className }: { completed: number; total
 function FTQBadge({ score, size = 'default' }: { score: number; size?: 'default' | 'large' }) {
   const getColor = () => {
     if (score >= 95) return 'bg-green-100 text-green-700 border-green-200'
-    if (score >= 85) return 'bg-blue-100 text-blue-700 border-blue-200'
+    if (score >= 85) return 'bg-stone-100 text-stone-700 border-stone-200'
     if (score >= 75) return 'bg-amber-100 text-amber-700 border-amber-200'
     return 'bg-red-100 text-red-700 border-red-200'
   }
@@ -613,11 +613,11 @@ function StarRating({ rating }: { rating: number }) {
           key={star}
           className={cn(
             'h-3 w-3',
-            star <= Math.floor(rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'
+            star <= Math.floor(rating) ? 'text-amber-400 fill-amber-400' : 'text-warm-300'
           )}
         />
       ))}
-      <span className="ml-1 text-xs text-gray-500">{rating.toFixed(1)}</span>
+      <span className="ml-1 text-xs text-warm-500">{rating.toFixed(1)}</span>
     </div>
   )
 }
@@ -627,7 +627,7 @@ function InspectionCard({ inspection }: { inspection: ActiveInspection }) {
   const StatusIcon = config.icon
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer">
+    <div className="bg-white rounded-lg border border-warm-200 p-4 hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
           <div
@@ -638,14 +638,14 @@ function InspectionCard({ inspection }: { inspection: ActiveInspection }) {
                 : inspection.status === 'pending_approval'
                 ? 'bg-amber-50'
                 : inspection.status === 'in_progress'
-                ? 'bg-blue-50'
-                : 'bg-gray-50'
+                ? 'bg-stone-50'
+                : 'bg-warm-50'
             )}
           >
             <StatusIcon className={cn('h-5 w-5', config.iconColor)} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900">{inspection.name}</h4>
+            <h4 className="font-medium text-warm-900">{inspection.name}</h4>
             <div className="flex items-center gap-2 mt-1">
               <span className={cn('text-xs px-2 py-0.5 rounded font-medium', config.color)}>
                 {config.label}
@@ -654,12 +654,12 @@ function InspectionCard({ inspection }: { inspection: ActiveInspection }) {
             </div>
           </div>
         </div>
-        <ChevronRight className="h-5 w-5 text-gray-400" />
+        <ChevronRight className="h-5 w-5 text-warm-400" />
       </div>
 
       <ProgressBar completed={inspection.completedItems} total={inspection.totalItems} className="mb-3" />
 
-      <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
+      <div className="flex items-center gap-4 text-sm text-warm-500 flex-wrap">
         <span className="flex items-center gap-1">
           <User className="h-3.5 w-3.5" />
           {inspection.assignedInspector}
@@ -670,16 +670,16 @@ function InspectionCard({ inspection }: { inspection: ActiveInspection }) {
         </span>
       </div>
 
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
         <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
           <Tag className="h-3 w-3" />
           {inspection.trade}
         </span>
-        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded flex items-center gap-1">
+        <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded flex items-center gap-1">
           <Layers className="h-3 w-3" />
           {inspection.phase}
         </span>
-        <span className="text-xs text-gray-400 ml-auto flex items-center gap-1">
+        <span className="text-xs text-warm-400 ml-auto flex items-center gap-1">
           <Building2 className="h-3 w-3" />
           {inspection.projectName}
         </span>
@@ -690,26 +690,26 @@ function InspectionCard({ inspection }: { inspection: ActiveInspection }) {
 
 function TemplateCard({ template, onClone }: { template: ChecklistTemplate; onClone: () => void }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-warm-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h4 className="font-medium text-gray-900">{template.name}</h4>
+            <h4 className="font-medium text-warm-900">{template.name}</h4>
             <span
               className={cn(
                 'text-xs px-2 py-0.5 rounded font-medium',
-                template.isSystem ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                template.isSystem ? 'bg-stone-100 text-stone-700' : 'bg-purple-100 text-purple-700'
               )}
             >
               {template.isSystem ? 'System' : 'Custom'}
             </span>
           </div>
-          <p className="text-sm text-gray-500 line-clamp-2">{template.description}</p>
+          <p className="text-sm text-warm-500 line-clamp-2">{template.description}</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
-        <span className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded">
+      <div className="flex items-center gap-4 mt-3 text-sm text-warm-500">
+        <span className="flex items-center gap-1 bg-warm-100 px-2 py-0.5 rounded">
           <Tag className="h-3 w-3" />
           {template.tradeCategory}
         </span>
@@ -719,14 +719,14 @@ function TemplateCard({ template, onClone }: { template: ChecklistTemplate; onCl
         </span>
       </div>
 
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-warm-100">
         <div className="flex items-center gap-3">
           <StarRating rating={template.rating} />
-          <span className="text-xs text-gray-400">{template.usageCount} uses</span>
+          <span className="text-xs text-warm-400">{template.usageCount} uses</span>
         </div>
         <button
           onClick={onClone}
-          className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded transition-colors"
+          className="flex items-center gap-1 px-2 py-1 text-xs text-stone-600 hover:bg-stone-50 rounded transition-colors"
         >
           <Copy className="h-3 w-3" />
           Clone
@@ -745,9 +745,9 @@ function FTQDashboardContent() {
     <div className="space-y-6">
       {/* Top Stats */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">Overall FTQ Score</span>
+            <span className="text-sm text-warm-500">Overall FTQ Score</span>
             <div className="flex items-center gap-1 text-green-600">
               {trendDirection === 'up' ? (
                 <TrendingUp className="h-4 w-4" />
@@ -757,47 +757,47 @@ function FTQDashboardContent() {
               <span className="text-xs font-medium">+{trendValue}%</span>
             </div>
           </div>
-          <div className="text-4xl font-bold text-gray-900">{overallFTQ}%</div>
-          <p className="text-xs text-gray-500 mt-1">Last 30 days</p>
+          <div className="text-4xl font-bold text-warm-900">{overallFTQ}%</div>
+          <p className="text-xs text-warm-500 mt-1">Last 30 days</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <span className="text-sm text-gray-500">Total Inspections</span>
-          <div className="text-3xl font-bold text-gray-900 mt-2">347</div>
-          <p className="text-xs text-gray-500 mt-1">This month</p>
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
+          <span className="text-sm text-warm-500">Total Inspections</span>
+          <div className="text-3xl font-bold text-warm-900 mt-2">347</div>
+          <p className="text-xs text-warm-500 mt-1">This month</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <span className="text-sm text-gray-500">Pass Rate</span>
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
+          <span className="text-sm text-warm-500">Pass Rate</span>
           <div className="text-3xl font-bold text-green-600 mt-2">94.2%</div>
-          <p className="text-xs text-gray-500 mt-1">First-time pass</p>
+          <p className="text-xs text-warm-500 mt-1">First-time pass</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <span className="text-sm text-gray-500">Active Alerts</span>
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
+          <span className="text-sm text-warm-500">Active Alerts</span>
           <div className="text-3xl font-bold text-amber-600 mt-2">{mockLowFTQAlerts.length}</div>
-          <p className="text-xs text-gray-500 mt-1">Below threshold</p>
+          <p className="text-xs text-warm-500 mt-1">Below threshold</p>
         </div>
       </div>
 
       {/* FTQ by Trade - Bar Chart Mock */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded-lg border border-warm-200 p-4">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="font-medium text-gray-900 flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-blue-600" />
+          <h4 className="font-medium text-warm-900 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-stone-600" />
             FTQ Score by Trade
           </h4>
-          <span className="text-xs text-gray-500">Based on {mockFTQByTrade.reduce((a, t) => a + t.inspectionCount, 0)} inspections</span>
+          <span className="text-xs text-warm-500">Based on {mockFTQByTrade.reduce((a, t) => a + t.inspectionCount, 0)} inspections</span>
         </div>
         <div className="space-y-3">
           {mockFTQByTrade.map((trade) => (
             <div key={trade.trade} className="flex items-center gap-3">
-              <span className="w-24 text-sm text-gray-600">{trade.trade}</span>
-              <div className="flex-1 h-6 bg-gray-100 rounded overflow-hidden">
+              <span className="w-24 text-sm text-warm-600">{trade.trade}</span>
+              <div className="flex-1 h-6 bg-warm-100 rounded overflow-hidden">
                 <div
                   className={cn(
                     'h-full rounded transition-all flex items-center justify-end pr-2',
-                    trade.score >= 95 ? 'bg-green-500' : trade.score >= 85 ? 'bg-blue-500' : 'bg-amber-500'
+                    trade.score >= 95 ? 'bg-green-500' : trade.score >= 85 ? 'bg-stone-500' : 'bg-amber-500'
                   )}
                   style={{ width: `${trade.score}%` }}
                 >
@@ -807,8 +807,8 @@ function FTQDashboardContent() {
               <div className="w-16 flex items-center gap-1">
                 {trade.trend === 'up' && <TrendingUp className="h-3 w-3 text-green-500" />}
                 {trade.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-500" />}
-                {trade.trend === 'stable' && <span className="text-xs text-gray-400">--</span>}
-                <span className="text-xs text-gray-500">({trade.inspectionCount})</span>
+                {trade.trend === 'stable' && <span className="text-xs text-warm-400">--</span>}
+                <span className="text-xs text-warm-500">({trade.inspectionCount})</span>
               </div>
             </div>
           ))}
@@ -817,14 +817,14 @@ function FTQDashboardContent() {
 
       <div className="grid grid-cols-2 gap-4">
         {/* FTQ by Project */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h4 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
+          <h4 className="font-medium text-warm-900 mb-4 flex items-center gap-2">
             <Building2 className="h-4 w-4 text-purple-600" />
             FTQ by Project
           </h4>
           <table className="w-full">
             <thead>
-              <tr className="text-xs text-gray-500 border-b border-gray-100">
+              <tr className="text-xs text-warm-500 border-b border-warm-100">
                 <th className="text-left pb-2 font-medium">Project</th>
                 <th className="text-center pb-2 font-medium">FTQ</th>
                 <th className="text-center pb-2 font-medium">Pass Rate</th>
@@ -833,13 +833,13 @@ function FTQDashboardContent() {
             </thead>
             <tbody>
               {mockFTQByProject.map((project) => (
-                <tr key={project.projectName} className="border-b border-gray-50 last:border-0">
-                  <td className="py-2 text-sm text-gray-900">{project.projectName}</td>
+                <tr key={project.projectName} className="border-b border-warm-50 last:border-0">
+                  <td className="py-2 text-sm text-warm-900">{project.projectName}</td>
                   <td className="py-2 text-center">
                     <FTQBadge score={project.score} />
                   </td>
-                  <td className="py-2 text-center text-sm text-gray-600">{project.passRate}%</td>
-                  <td className="py-2 text-center text-sm text-gray-500">{project.inspectionCount}</td>
+                  <td className="py-2 text-center text-sm text-warm-600">{project.passRate}%</td>
+                  <td className="py-2 text-center text-sm text-warm-500">{project.inspectionCount}</td>
                 </tr>
               ))}
             </tbody>
@@ -848,7 +848,7 @@ function FTQDashboardContent() {
 
         {/* Low FTQ Alerts */}
         <div className="bg-white rounded-lg border border-amber-200 p-4">
-          <h4 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+          <h4 className="font-medium text-warm-900 mb-4 flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             Low FTQ Alerts
             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
@@ -862,10 +862,10 @@ function FTQDashboardContent() {
                 className="p-3 bg-amber-50 border border-amber-100 rounded-lg"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium text-gray-900">{alert.vendorName}</span>
+                  <span className="font-medium text-warm-900">{alert.vendorName}</span>
                   <span className="text-sm text-red-600 font-medium">{alert.ftqScore}% FTQ</span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-gray-500">
+                <div className="flex items-center gap-3 text-xs text-warm-500">
                   <span className="flex items-center gap-1">
                     <Tag className="h-3 w-3" />
                     {alert.trade}
@@ -880,8 +880,8 @@ function FTQDashboardContent() {
       </div>
 
       {/* FTQ Trend Sparkline (simplified mock) */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h4 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white rounded-lg border border-warm-200 p-4">
+        <h4 className="font-medium text-warm-900 mb-4 flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-green-600" />
           FTQ Trend (Last 12 Weeks)
         </h4>
@@ -891,15 +891,15 @@ function FTQDashboardContent() {
               <div
                 className={cn(
                   'w-full rounded-t transition-all',
-                  value >= 93 ? 'bg-green-500' : value >= 90 ? 'bg-blue-500' : 'bg-amber-500'
+                  value >= 93 ? 'bg-green-500' : value >= 90 ? 'bg-stone-500' : 'bg-amber-500'
                 )}
                 style={{ height: `${(value - 85) * 6}px` }}
               />
-              <span className="text-[10px] text-gray-400">W{idx + 1}</span>
+              <span className="text-[10px] text-warm-400">W{idx + 1}</span>
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+        <div className="flex items-center justify-between mt-2 text-xs text-warm-500">
           <span>12 weeks ago: 88%</span>
           <span>Current: 93% (+5.7%)</span>
         </div>
@@ -923,12 +923,12 @@ function ChecklistDetailSection() {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="p-4 border-b border-gray-200 bg-gray-50">
+    <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+      <div className="p-4 border-b border-warm-200 bg-warm-50">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="font-medium text-gray-900">Pre-Pour Foundation Checklist</h4>
-            <p className="text-sm text-gray-500">Smith Residence - Lot 47</p>
+            <h4 className="font-medium text-warm-900">Pre-Pour Foundation Checklist</h4>
+            <p className="text-sm text-warm-500">Smith Residence - Lot 47</p>
           </div>
           <div className="flex items-center gap-3">
             <FTQBadge score={89} />
@@ -937,22 +937,22 @@ function ChecklistDetailSection() {
         </div>
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {mockChecklistSections.map((section) => (
           <div key={section.id}>
             {/* Section Header */}
             <button
               onClick={() => toggleSection(section.id)}
-              className="w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-3 hover:bg-warm-50 transition-colors"
             >
               <div className="flex items-center gap-2">
                 {expandedSections.includes(section.id) ? (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 text-warm-400" />
                 ) : (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                  <ChevronUp className="h-4 w-4 text-warm-400" />
                 )}
-                <span className="font-medium text-gray-900">{section.name}</span>
-                <span className="text-xs text-gray-500">
+                <span className="font-medium text-warm-900">{section.name}</span>
+                <span className="text-xs text-warm-500">
                   ({section.items.filter((i) => i.result).length}/{section.items.length} complete)
                 </span>
               </div>
@@ -966,28 +966,28 @@ function ChecklistDetailSection() {
 
             {/* Section Items */}
             {expandedSections.includes(section.id) && (
-              <div className="border-t border-gray-100">
+              <div className="border-t border-warm-100">
                 {section.items.map((item) => (
                   <div
                     key={item.id}
                     className={cn(
-                      'flex items-center gap-4 px-4 py-3 border-b border-gray-50 last:border-0',
+                      'flex items-center gap-4 px-4 py-3 border-b border-warm-50 last:border-0',
                       item.isApprovalGate && 'bg-purple-50',
                       item.result === 'fail' && 'bg-red-50'
                     )}
                   >
                     {/* Item Number */}
-                    <span className="text-sm font-medium text-gray-500 w-10">{item.number}</span>
+                    <span className="text-sm font-medium text-warm-500 w-10">{item.number}</span>
 
                     {/* Value Type Icon */}
                     <div
                       className={cn(
                         'p-1.5 rounded',
                         item.valueType === 'pass_fail' && 'bg-green-100 text-green-600',
-                        item.valueType === 'measurement' && 'bg-blue-100 text-blue-600',
+                        item.valueType === 'measurement' && 'bg-stone-100 text-stone-600',
                         item.valueType === 'photo' && 'bg-purple-100 text-purple-600',
                         item.valueType === 'signature' && 'bg-amber-100 text-amber-600',
-                        item.valueType === 'text' && 'bg-gray-100 text-gray-600'
+                        item.valueType === 'text' && 'bg-warm-100 text-warm-600'
                       )}
                     >
                       {getValueTypeIcon(item.valueType)}
@@ -996,9 +996,9 @@ function ChecklistDetailSection() {
                     {/* Description + indicators */}
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-900">{item.description}</span>
+                        <span className="text-sm text-warm-900">{item.description}</span>
                         {item.isFTQRated && (
-                          <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+                          <span className="text-[10px] bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">
                             FTQ
                           </span>
                         )}
@@ -1020,7 +1020,7 @@ function ChecklistDetailSection() {
                       </div>
                       {/* Measurement display */}
                       {item.valueType === 'measurement' && item.measurementMin !== undefined && (
-                        <div className="text-xs text-gray-500 mt-0.5">
+                        <div className="text-xs text-warm-500 mt-0.5">
                           Range: {item.measurementMin} - {item.measurementMax} {item.measurementUnit}
                           {item.measurementValue !== undefined && (
                             <span
@@ -1039,7 +1039,7 @@ function ChecklistDetailSection() {
                     {/* Result */}
                     <div className="flex items-center gap-2">
                       {item.hasPhoto && (
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <span className="text-xs text-warm-400 flex items-center gap-1">
                           <Camera className="h-3 w-3" />
                           {item.photoCount}
                         </span>
@@ -1057,12 +1057,12 @@ function ChecklistDetailSection() {
                         </span>
                       )}
                       {item.result === 'na' && (
-                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded font-medium">
+                        <span className="text-xs bg-warm-100 text-warm-500 px-2 py-1 rounded font-medium">
                           N/A
                         </span>
                       )}
                       {item.result === null && (
-                        <span className="text-xs text-gray-400 px-2 py-1">Pending</span>
+                        <span className="text-xs text-warm-400 px-2 py-1">Pending</span>
                       )}
                     </div>
                   </div>
@@ -1110,23 +1110,23 @@ export function QualityChecklistsPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Quality Checklists</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+              <h3 className="font-semibold text-warm-900">Quality Checklists</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
                 <Shield className="h-3 w-3" />
                 FTQ360 Enabled
               </span>
             </div>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-warm-500 mt-0.5">
               Manage quality inspections, templates, and FTQ metrics
             </p>
           </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700 transition-colors">
             <Plus className="h-4 w-4" />
             Create New Checklist
           </button>
@@ -1134,7 +1134,7 @@ export function QualityChecklistsPreview() {
       </div>
 
       {/* Filter Bar with Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -1210,37 +1210,37 @@ export function QualityChecklistsPreview() {
           <div className="space-y-4">
             {/* Quick Stats */}
             <div className="grid grid-cols-5 gap-3">
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
+              <div className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Clock className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm text-gray-500">In Progress</span>
+                  <Clock className="h-4 w-4 text-stone-500" />
+                  <span className="text-sm text-warm-500">In Progress</span>
                 </div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-stone-600">
                   {mockActiveInspections.filter((i) => i.status === 'in_progress').length}
                 </div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
+              <div className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  <span className="text-sm text-gray-500">Pending Approval</span>
+                  <span className="text-sm text-warm-500">Pending Approval</span>
                 </div>
                 <div className="text-2xl font-bold text-amber-600">
                   {mockActiveInspections.filter((i) => i.status === 'pending_approval').length}
                 </div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
+              <div className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  <span className="text-sm text-gray-500">Completed</span>
+                  <span className="text-sm text-warm-500">Completed</span>
                 </div>
                 <div className="text-2xl font-bold text-green-600">
                   {mockActiveInspections.filter((i) => i.status === 'completed').length}
                 </div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
+              <div className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <Target className="h-4 w-4 text-purple-500" />
-                  <span className="text-sm text-gray-500">Avg FTQ</span>
+                  <span className="text-sm text-warm-500">Avg FTQ</span>
                 </div>
                 <div className="text-2xl font-bold text-purple-600">
                   {Math.round(
@@ -1252,12 +1252,12 @@ export function QualityChecklistsPreview() {
                   %
                 </div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
+              <div className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-500">Due Today</span>
+                  <Calendar className="h-4 w-4 text-warm-500" />
+                  <span className="text-sm text-warm-500">Due Today</span>
                 </div>
-                <div className="text-2xl font-bold text-gray-600">
+                <div className="text-2xl font-bold text-warm-600">
                   {mockActiveInspections.filter((i) => i.dueDate === 'Feb 13, 2026').length}
                 </div>
               </div>
@@ -1271,8 +1271,8 @@ export function QualityChecklistsPreview() {
             </div>
 
             {filteredInspections.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="text-center py-12 text-warm-500">
+                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-warm-300" />
                 <p>No inspections found matching your criteria</p>
               </div>
             )}
@@ -1280,8 +1280,8 @@ export function QualityChecklistsPreview() {
             {/* Checklist Detail View */}
             {showDetailView && (
               <div className="mt-6">
-                <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                  <Eye className="h-4 w-4 text-blue-600" />
+                <h4 className="font-medium text-warm-900 mb-3 flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-stone-600" />
                   Checklist Detail View
                 </h4>
                 <ChecklistDetailSection />
@@ -1298,8 +1298,8 @@ export function QualityChecklistsPreview() {
             ))}
 
             {filteredTemplates.length === 0 && (
-              <div className="col-span-3 text-center py-12 text-gray-500">
-                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="col-span-3 text-center py-12 text-warm-500">
+                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-warm-300" />
                 <p>No templates found matching your criteria</p>
               </div>
             )}
@@ -1311,13 +1311,13 @@ export function QualityChecklistsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-t border-blue-200 px-4 py-3">
+      <div className="bg-gradient-to-r from-stone-50 to-purple-50 border-t border-stone-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-blue-600" />
-            <span className="font-medium text-sm text-blue-800">FTQ Intelligence:</span>
+            <Sparkles className="h-4 w-4 text-stone-600" />
+            <span className="font-medium text-sm text-stone-800">FTQ Intelligence:</span>
           </div>
-          <div className="text-sm text-blue-700 space-y-1">
+          <div className="text-sm text-stone-700 space-y-1">
             <p>
               Pre-Drywall inspection Lot 47 is 72% complete. Based on current pace, estimated completion is Feb 14 at 2 PM.
               FTQ score trending strong at 94%.
@@ -1331,7 +1331,7 @@ export function QualityChecklistsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="border-t border-gray-200 px-4 py-4 bg-white">
+      <div className="border-t border-warm-200 px-4 py-4 bg-white">
         <AIFeaturesPanel
           title="Quality AI Features"
           columns={2}

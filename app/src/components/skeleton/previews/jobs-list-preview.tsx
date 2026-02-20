@@ -110,10 +110,10 @@ const mockJobs: Job[] = [
 ]
 
 const statuses = [
-  { id: 'pre-con', label: 'Pre-Con', color: 'bg-blue-500', bgLight: 'bg-blue-50', textColor: 'text-blue-700' },
+  { id: 'pre-con', label: 'Pre-Con', color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
   { id: 'active', label: 'Active', color: 'bg-green-500', bgLight: 'bg-green-50', textColor: 'text-green-700' },
   { id: 'closeout', label: 'Closeout', color: 'bg-amber-500', bgLight: 'bg-amber-50', textColor: 'text-amber-700' },
-  { id: 'complete', label: 'Complete', color: 'bg-gray-500', bgLight: 'bg-gray-100', textColor: 'text-gray-700' },
+  { id: 'complete', label: 'Complete', color: 'bg-warm-500', bgLight: 'bg-warm-100', textColor: 'text-warm-700' },
 ]
 
 function formatCurrency(value: number): string {
@@ -129,29 +129,29 @@ function JobCard({ job }: { job: Job }) {
   const statusConfig = getStatusConfig(job.status)
 
   return (
-    <Link href={`/skeleton/jobs/${job.id}`} className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
+    <Link href={`/skeleton/jobs/${job.id}`} className="bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
           <div className={cn("p-2 rounded-lg", statusConfig.bgLight)}>
             <Building2 className={cn("h-5 w-5", statusConfig.textColor)} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900">{job.name}</h4>
-            <p className="text-sm text-gray-500">{job.client}</p>
+            <h4 className="font-medium text-warm-900">{job.name}</h4>
+            <p className="text-sm text-warm-500">{job.client}</p>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       <div className="space-y-2 mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <MapPin className="h-4 w-4 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <MapPin className="h-4 w-4 text-warm-400" />
           <span className="truncate">{job.address}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <DollarSign className="h-4 w-4 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <DollarSign className="h-4 w-4 text-warm-400" />
           <span className="font-medium">{formatCurrency(job.contractValue)}</span>
         </div>
       </div>
@@ -159,10 +159,10 @@ function JobCard({ job }: { job: Job }) {
       {/* Progress Bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-gray-500">Progress</span>
+          <span className="text-xs text-warm-500">Progress</span>
           <span className={cn("text-xs font-medium", statusConfig.textColor)}>{job.progress}%</span>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-warm-100 rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all", statusConfig.color)}
             style={{ width: `${job.progress}%` }}
@@ -170,12 +170,12 @@ function JobCard({ job }: { job: Job }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-xs font-medium text-blue-700">{job.pmAssigned[0]}</span>
+          <div className="h-6 w-6 rounded-full bg-stone-100 flex items-center justify-center">
+            <span className="text-xs font-medium text-stone-700">{job.pmAssigned[0]}</span>
           </div>
-          <span className="text-sm text-gray-600">{job.pmAssigned}</span>
+          <span className="text-sm text-warm-600">{job.pmAssigned}</span>
         </div>
         <span className={cn(
           "text-xs px-2 py-1 rounded font-medium",
@@ -212,15 +212,15 @@ function StatCard({
   iconBg: string
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", iconBg)}>
           <Icon className={cn("h-5 w-5", iconColor)} />
         </div>
         <div>
-          <p className="text-sm text-gray-500">{label}</p>
-          <p className="text-xl font-semibold text-gray-900">{value}</p>
-          {subValue && <p className="text-xs text-gray-400">{subValue}</p>}
+          <p className="text-sm text-warm-500">{label}</p>
+          <p className="text-xl font-semibold text-warm-900">{value}</p>
+          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
         </div>
       </div>
     </div>
@@ -249,12 +249,12 @@ export function JobsListPreview() {
   const completeJobs = mockJobs.filter(job => job.status === 'complete').length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Jobs</h3>
-          <span className="text-sm text-gray-500">{totalJobs} jobs | {formatCurrency(totalContractValue)} total value</span>
+          <h3 className="font-semibold text-warm-900">Jobs</h3>
+          <span className="text-sm text-warm-500">{totalJobs} jobs | {formatCurrency(totalContractValue)} total value</span>
         </div>
         <FilterBar
           search={search}
@@ -289,14 +289,14 @@ export function JobsListPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="px-4 py-4 bg-white border-b border-gray-200">
+      <div className="px-4 py-4 bg-white border-b border-warm-200">
         <div className="grid grid-cols-5 gap-4">
           <StatCard
             icon={Building2}
             label="Total Jobs"
             value={totalJobs.toString()}
-            iconColor="text-blue-600"
-            iconBg="bg-blue-50"
+            iconColor="text-stone-600"
+            iconBg="bg-stone-50"
           />
           <StatCard
             icon={DollarSign}
@@ -310,8 +310,8 @@ export function JobsListPreview() {
             label="Pre-Construction"
             value={preConJobs.toString()}
             subValue="jobs"
-            iconColor="text-blue-600"
-            iconBg="bg-blue-50"
+            iconColor="text-stone-600"
+            iconBg="bg-stone-50"
           />
           <StatCard
             icon={TrendingUp}
@@ -339,7 +339,7 @@ export function JobsListPreview() {
           ))}
         </div>
         {filtered.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-warm-400">
             <Building2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p>No jobs found matching your criteria</p>
           </div>

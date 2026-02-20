@@ -407,12 +407,12 @@ function ComplianceGradeBadge({ grade }: { grade?: string }) {
   if (!grade) return null
   const styles: Record<string, string> = {
     A: 'bg-green-100 text-green-700 border-green-200',
-    B: 'bg-blue-100 text-blue-700 border-blue-200',
+    B: 'bg-stone-100 text-stone-700 border-stone-200',
     C: 'bg-amber-100 text-amber-700 border-amber-200',
     F: 'bg-red-100 text-red-700 border-red-200',
   }
   return (
-    <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded border', styles[grade] || 'bg-gray-100 text-gray-600')}>
+    <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded border', styles[grade] || 'bg-warm-100 text-warm-600')}>
       {grade}
     </span>
   )
@@ -436,8 +436,8 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
       "bg-white rounded-lg border p-4",
       policy.status === 'expired' ? "border-red-300 bg-red-50" :
       policy.status === 'expiring' ? "border-amber-300 bg-amber-50" :
-      policy.status === 'pending' ? "border-blue-300 bg-blue-50" :
-      "border-gray-200"
+      policy.status === 'pending' ? "border-stone-300 bg-stone-50" :
+      "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -451,37 +451,37 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-gray-900">{policy.entityName}</h4>
+              <h4 className="font-medium text-warm-900">{policy.entityName}</h4>
               <ComplianceGradeBadge grade={policy.complianceGrade} />
             </div>
-            <p className="text-sm text-gray-500">{policy.policyType}</p>
+            <p className="text-sm text-warm-500">{policy.policyType}</p>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <span className="text-xs text-gray-500">Carrier</span>
-          <p className="text-sm font-medium text-gray-900">{policy.carrier}</p>
+          <span className="text-xs text-warm-500">Carrier</span>
+          <p className="text-sm font-medium text-warm-900">{policy.carrier}</p>
         </div>
         <div>
-          <span className="text-xs text-gray-500">Coverage</span>
-          <p className="text-sm font-medium text-gray-900">{formatCurrency(policy.coverage)}</p>
+          <span className="text-xs text-warm-500">Coverage</span>
+          <p className="text-sm font-medium text-warm-900">{formatCurrency(policy.coverage)}</p>
         </div>
         <div>
-          <span className="text-xs text-gray-500">Policy #</span>
-          <p className="text-sm font-mono text-gray-700">{policy.policyNumber}</p>
+          <span className="text-xs text-warm-500">Policy #</span>
+          <p className="text-sm font-mono text-warm-700">{policy.policyNumber}</p>
         </div>
         <div>
-          <span className="text-xs text-gray-500">Expires</span>
+          <span className="text-xs text-warm-500">Expires</span>
           <p className={cn(
             "text-sm font-medium",
             policy.status === 'expired' ? "text-red-600" :
             policy.status === 'expiring' ? "text-amber-600" :
-            "text-gray-900"
+            "text-warm-900"
           )}>
             {formatDate(policy.expirationDate)}
           </p>
@@ -491,8 +491,8 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
       {/* State requirement & minimum check */}
       {policy.minimumRequired && (
         <div className="flex items-center gap-2 mb-2 text-xs">
-          <MapPin className="h-3 w-3 text-gray-400" />
-          <span className="text-gray-500">{policy.stateRequirement} min: {formatCurrency(policy.minimumRequired)}</span>
+          <MapPin className="h-3 w-3 text-warm-400" />
+          <span className="text-warm-500">{policy.stateRequirement} min: {formatCurrency(policy.minimumRequired)}</span>
           {policy.meetsMinimum ? (
             <span className="text-green-600 flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />Meets</span>
           ) : (
@@ -504,7 +504,7 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
       {/* EMR rating for workers comp */}
       {policy.emrRating && (
         <div className="flex items-center gap-2 mb-2 text-xs">
-          <span className="text-gray-500">EMR: </span>
+          <span className="text-warm-500">EMR: </span>
           <span className={cn(
             "font-medium",
             policy.emrRating <= 1.0 ? "text-green-600" :
@@ -514,14 +514,14 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
           </span>
           {policy.emrRating <= 1.0 && <TrendingDown className="h-3 w-3 text-green-500" />}
           {policy.emrRating > 1.2 && <TrendingUp className="h-3 w-3 text-red-500" />}
-          {policy.classCode && <span className="text-gray-400 ml-1">{policy.classCode}</span>}
+          {policy.classCode && <span className="text-warm-400 ml-1">{policy.classCode}</span>}
         </div>
       )}
 
       {/* Deductible for Builders Risk */}
       {policy.deductible && (
         <div className="flex items-center gap-2 mb-2 text-xs">
-          <span className="text-gray-500">Deductible: {formatCurrency(policy.deductible)}</span>
+          <span className="text-warm-500">Deductible: {formatCurrency(policy.deductible)}</span>
         </div>
       )}
 
@@ -529,14 +529,14 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
       {policy.linkedProjects && policy.linkedProjects.length > 0 && (
         <div className="flex flex-wrap items-center gap-1 mb-2">
           {policy.linkedProjects.map(proj => (
-            <span key={proj} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{proj}</span>
+            <span key={proj} className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{proj}</span>
           ))}
         </div>
       )}
 
       <div className="flex items-center gap-2 mb-3">
         {policy.additionalInsured && (
-          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">AI Endorsed</span>
+          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">AI Endorsed</span>
         )}
         {policy.waiverSubrogation && (
           <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">WOS</span>
@@ -557,17 +557,17 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
 
       {/* Notes */}
       {policy.notes && (
-        <div className="text-xs text-gray-500 italic mb-3 bg-gray-50 rounded p-2">
+        <div className="text-xs text-warm-500 italic mb-3 bg-warm-50 rounded p-2">
           {policy.notes}
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-200">
         <span className={cn(
           "text-xs px-2 py-1 rounded font-medium flex items-center gap-1",
           policy.status === 'expired' ? "bg-red-100 text-red-700" :
           policy.status === 'expiring' ? "bg-amber-100 text-amber-700" :
-          policy.status === 'pending' ? "bg-blue-100 text-blue-700" :
+          policy.status === 'pending' ? "bg-stone-100 text-stone-700" :
           "bg-green-100 text-green-700"
         )}>
           {policy.status === 'expired' && <XCircle className="h-3 w-3" />}
@@ -580,10 +580,10 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
            'Active'}
         </span>
         <div className="flex items-center gap-1">
-          <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="View COI">
+          <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="View COI">
             <Eye className="h-4 w-4" />
           </button>
-          <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="Download">
+          <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Download">
             <Download className="h-4 w-4" />
           </button>
           {policy.status === 'expiring' && !policy.renewalRequested && (
@@ -595,7 +595,7 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
       </div>
 
       {policy.renewalRequested && (
-        <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-700 flex items-center gap-2">
+        <div className="mt-3 p-2 bg-stone-50 rounded text-xs text-stone-700 flex items-center gap-2">
           <RefreshCw className="h-3.5 w-3.5" />
           Renewal requested - awaiting response
         </div>
@@ -650,24 +650,24 @@ export function InsurancePreview() {
   const missingAI = mockVendorPolicies.filter(p => p.policyType === 'General Liability' && !p.additionalInsured && p.status !== 'expired').length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-semibold text-gray-900">Insurance & Compliance Tracking</h3>
-            <p className="text-sm text-gray-500">COI management for company, vendors, and per-project Builders Risk</p>
+            <h3 className="font-semibold text-warm-900">Insurance & Compliance Tracking</h3>
+            <p className="text-sm text-warm-500">COI management for company, vendors, and per-project Builders Risk</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Calendar className="h-4 w-4" />
               Monthly Review
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Upload className="h-4 w-4" />
               Upload COI
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               Add Certificate
             </button>
@@ -703,15 +703,15 @@ export function InsurancePreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-7 gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-blue-600" />
+            <div className="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{mockCompanyPolicies.length}</div>
-              <div className="text-xs text-gray-500">Company</div>
+              <div className="text-xl font-bold text-warm-900">{mockCompanyPolicies.length}</div>
+              <div className="text-xs text-warm-500">Company</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -719,8 +719,8 @@ export function InsurancePreview() {
               <Users className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{vendorPolicyCount}</div>
-              <div className="text-xs text-gray-500">Vendor COIs</div>
+              <div className="text-xl font-bold text-warm-900">{vendorPolicyCount}</div>
+              <div className="text-xs text-warm-500">Vendor COIs</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -728,8 +728,8 @@ export function InsurancePreview() {
               <Building2 className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{projectPoliciesActive}</div>
-              <div className="text-xs text-gray-500">Builder&apos;s Risk</div>
+              <div className="text-xl font-bold text-warm-900">{projectPoliciesActive}</div>
+              <div className="text-xs text-warm-500">Builder&apos;s Risk</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -737,8 +737,8 @@ export function InsurancePreview() {
               <CheckCircle2 className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{compliantVendors}</div>
-              <div className="text-xs text-gray-500">Compliant</div>
+              <div className="text-xl font-bold text-warm-900">{compliantVendors}</div>
+              <div className="text-xs text-warm-500">Compliant</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -747,7 +747,7 @@ export function InsurancePreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-amber-600">{expiringCount}</div>
-              <div className="text-xs text-gray-500">Expiring</div>
+              <div className="text-xs text-warm-500">Expiring</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -756,35 +756,35 @@ export function InsurancePreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-red-600">{expiredCount}</div>
-              <div className="text-xs text-gray-500">Expired</div>
+              <div className="text-xs text-warm-500">Expired</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
+            <div className="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{avgCompliance}</div>
-              <div className="text-xs text-gray-500">Avg Grade</div>
+              <div className="text-xl font-bold text-warm-900">{avgCompliance}</div>
+              <div className="text-xs text-warm-500">Avg Grade</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Monthly Review Banner */}
-      <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
+      <div className="bg-stone-50 border-b border-stone-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Calendar className="h-5 w-5 text-blue-600" />
+            <Calendar className="h-5 w-5 text-stone-600" />
             <div>
-              <p className="text-sm font-medium text-blue-800">Monthly Compliance Review — February 2026</p>
-              <p className="text-xs text-blue-600">
+              <p className="text-sm font-medium text-stone-800">Monthly Compliance Review — February 2026</p>
+              <p className="text-xs text-stone-600">
                 This month: {thisMonthExpiring} expiring | Next month: {nextMonthExpiring} expiring |
                 Missing WOS: {missingWOS} | Missing AI endorsement: {missingAI}
               </p>
             </div>
           </div>
-          <button className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button className="px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
             Generate Report
           </button>
         </div>
@@ -815,24 +815,24 @@ export function InsurancePreview() {
           ))}
         </div>
         {filteredPolicies.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No policies found matching your criteria
           </div>
         )}
       </div>
 
       {/* Audit Data Summary */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
+      <div className="bg-white border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <span className="font-medium text-gray-700">Annual Audit Data:</span>
+          <div className="flex items-center gap-4 text-xs text-warm-500">
+            <span className="font-medium text-warm-700">Annual Audit Data:</span>
             <span>Total vendor payments: $1.85M</span>
             <span>|</span>
             <span>5 class codes tracked</span>
             <span>|</span>
             <span>Last audit: Dec 2024</span>
           </div>
-          <button className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          <button className="text-xs text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
             <Download className="h-3.5 w-3.5" />
             Export Audit Report
           </button>

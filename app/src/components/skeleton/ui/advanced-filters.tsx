@@ -146,9 +146,9 @@ export interface PriorityFilterProps {
 const priorities = [
   { id: 'critical', label: 'Critical', color: 'bg-red-500' },
   { id: 'high', label: 'High', color: 'bg-orange-500' },
-  { id: 'medium', label: 'Medium', color: 'bg-yellow-500' },
-  { id: 'low', label: 'Low', color: 'bg-blue-500' },
-  { id: 'none', label: 'None', color: 'bg-gray-400' },
+  { id: 'medium', label: 'Medium', color: 'bg-amber-500' },
+  { id: 'low', label: 'Low', color: 'bg-stone-500' },
+  { id: 'none', label: 'None', color: 'bg-warm-400' },
 ]
 
 export function PriorityFilter({

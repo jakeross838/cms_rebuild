@@ -295,19 +295,19 @@ const mockInvoices: Invoice[] = [
 
 const statusConfig: Record<InvoiceStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
   needs_review: { label: 'Needs Review', color: 'text-orange-700', bgColor: 'bg-orange-100', icon: Eye },
-  ready_for_approval: { label: 'Ready for Approval', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: Clock },
+  ready_for_approval: { label: 'Ready for Approval', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Clock },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   in_draw: { label: 'In Draw', color: 'text-indigo-700', bgColor: 'bg-indigo-100', icon: Receipt },
-  paid: { label: 'Paid', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: CheckCircle },
+  paid: { label: 'Paid', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: CheckCircle },
   disputed: { label: 'Disputed', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
   denied: { label: 'Denied', color: 'text-red-700', bgColor: 'bg-red-100', icon: Ban },
   split: { label: 'Split', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: GitBranch },
-  voided: { label: 'Voided', color: 'text-gray-500', bgColor: 'bg-gray-50', icon: XCircle },
+  voided: { label: 'Voided', color: 'text-warm-500', bgColor: 'bg-warm-50', icon: XCircle },
 }
 
 const invoiceTypeLabels: Record<InvoiceType, { label: string; color: string }> = {
-  standard: { label: 'Standard', color: 'bg-gray-100 text-gray-600' },
-  progress: { label: 'Progress', color: 'bg-blue-50 text-blue-600' },
+  standard: { label: 'Standard', color: 'bg-warm-100 text-warm-600' },
+  progress: { label: 'Progress', color: 'bg-stone-50 text-stone-600' },
   final: { label: 'Final', color: 'bg-green-50 text-green-600' },
   credit_memo: { label: 'Credit Memo', color: 'bg-amber-50 text-amber-600' },
   retainage_release: { label: 'Retainage Release', color: 'bg-purple-50 text-purple-600' },
@@ -350,11 +350,11 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
   const isCreditMemo = invoice.invoiceType === 'credit_memo'
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white border border-warm-200 rounded-lg p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-mono text-sm font-medium text-gray-900">{invoice.invoiceNumber}</span>
+            <span className="font-mono text-sm font-medium text-warm-900">{invoice.invoiceNumber}</span>
             <span className={cn("text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1", status.bgColor, status.color)}>
               <StatusIcon className="h-3 w-3" />
               {status.label}
@@ -374,7 +374,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">Cost Plus</span>
             )}
             {invoice.isAutoCoded && (
-              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Sparkles className="h-2.5 w-2.5" />AI Coded
               </span>
             )}
@@ -386,18 +386,18 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <Building2 className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <Building2 className="h-4 w-4 text-warm-400" />
               <span>{invoice.vendorName}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Briefcase className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <Briefcase className="h-4 w-4 text-warm-400" />
               <span>{invoice.jobName}</span>
             </div>
           </div>
 
           {invoice.description && (
-            <p className="text-sm text-gray-500 mt-2">{invoice.description}</p>
+            <p className="text-sm text-warm-500 mt-2">{invoice.description}</p>
           )}
 
           {/* Cross-module connection badges */}
@@ -419,7 +419,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               </span>
             )}
             {invoice.costCode && (
-              <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-mono">
+              <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded font-mono">
                 {invoice.costCode}
               </span>
             )}
@@ -433,7 +433,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               invoice.lienWaiverStatus === 'received' ? "bg-green-50 text-green-600" :
               invoice.lienWaiverStatus === 'pending' ? "bg-amber-50 text-amber-600" :
               invoice.lienWaiverStatus === 'required' ? "bg-red-50 text-red-600" :
-              "bg-gray-50 text-gray-500"
+              "bg-warm-50 text-warm-500"
             )}>
               <ShieldCheck className="h-3 w-3" />
               LW: {invoice.lienWaiverStatus === 'received' ? 'Received' :
@@ -446,23 +446,23 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               </span>
             )}
             {invoice.approvalStep && invoice.status !== 'paid' && (
-              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 {invoice.approvalStep}
               </span>
             )}
-            <span className="text-xs text-gray-400">{invoice.paymentTerms}</span>
+            <span className="text-xs text-warm-400">{invoice.paymentTerms}</span>
           </div>
 
           {invoice.aiNote && (
             <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-              isWarning ? "bg-amber-50" : "bg-blue-50"
+              isWarning ? "bg-amber-50" : "bg-stone-50"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 mt-0.5 flex-shrink-0",
-                isWarning ? "text-amber-500" : "text-blue-500"
+                isWarning ? "text-amber-500" : "text-stone-500"
               )} />
-              <span className={isWarning ? "text-amber-700" : "text-blue-700"}>
+              <span className={isWarning ? "text-amber-700" : "text-stone-700"}>
                 {invoice.aiNote}
               </span>
             </div>
@@ -471,23 +471,23 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
 
         <div className="flex items-start gap-4 ml-4">
           <div className="text-right">
-            <div className={cn("text-lg font-semibold", isCreditMemo ? "text-green-700" : "text-gray-900")}>
+            <div className={cn("text-lg font-semibold", isCreditMemo ? "text-green-700" : "text-warm-900")}>
               {isCreditMemo ? '(' + formatCurrency(Math.abs(invoice.amount)) + ')' : formatCurrency(invoice.amount)}
             </div>
             {invoice.retainageAmount > 0 && (
-              <div className="text-xs text-gray-500 mt-0.5">
+              <div className="text-xs text-warm-500 mt-0.5">
                 Net: {formatCurrency(invoice.netAmount)}
               </div>
             )}
             <div className="flex items-center gap-2 text-sm mt-1 justify-end">
-              <Calendar className="h-3.5 w-3.5 text-gray-400" />
-              <span className="text-gray-500">Due {formatDate(invoice.dueDate)}</span>
+              <Calendar className="h-3.5 w-3.5 text-warm-400" />
+              <span className="text-warm-500">Due {formatDate(invoice.dueDate)}</span>
               {invoice.status !== 'paid' && invoice.status !== 'voided' && (
                 <span className={cn(
                   "text-xs px-1.5 py-0.5 rounded font-medium",
                   dueInfo.isOverdue ? "bg-red-100 text-red-700" :
                   dueInfo.days <= 7 ? "bg-amber-100 text-amber-700" :
-                  "bg-gray-100 text-gray-600"
+                  "bg-warm-100 text-warm-600"
                 )}>
                   {dueInfo.label}
                 </span>
@@ -499,11 +499,11 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               )}
             </div>
             {invoice.paymentMethod && invoice.status === 'paid' && (
-              <div className="text-xs text-gray-400 mt-0.5 uppercase">{invoice.paymentMethod}</div>
+              <div className="text-xs text-warm-400 mt-0.5 uppercase">{invoice.paymentMethod}</div>
             )}
           </div>
-          <button className="p-1.5 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1.5 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
       </div>
@@ -619,21 +619,21 @@ export function InvoicesPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Invoices</h3>
-              <span className="text-sm text-gray-500">{mockInvoices.length} invoices | {formatCurrency(totalAmount)} total</span>
+              <h3 className="font-semibold text-warm-900">Invoices</h3>
+              <span className="text-sm text-warm-500">{mockInvoices.length} invoices | {formatCurrency(totalAmount)} total</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-5 gap-3">
           <div className="bg-orange-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-orange-600 text-xs font-medium">
@@ -649,12 +649,12 @@ export function InvoicesPreview() {
             </div>
             <div className="text-lg font-bold text-green-700 mt-1">{formatCurrency(approvedAwaitingPayment)}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-xs font-medium">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-xs font-medium">
               <Calendar className="h-3.5 w-3.5" />
               Due This Week
             </div>
-            <div className="text-lg font-bold text-blue-700 mt-1">{formatCurrency(dueThisWeek)}</div>
+            <div className="text-lg font-bold text-stone-700 mt-1">{formatCurrency(dueThisWeek)}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -685,7 +685,7 @@ export function InvoicesPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -750,7 +750,7 @@ export function InvoicesPreview() {
           <InvoiceRow key={invoice.id} invoice={invoice} />
         ))}
         {filtered.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No invoices match your filters
           </div>
         )}

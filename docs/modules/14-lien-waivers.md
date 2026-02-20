@@ -328,7 +328,7 @@ POST   /api/v2/projects/:id/sub-tier-vendors # Add sub-tier vendor
 ## Dependencies
 
 - **Module 10:** Contact/Vendor Management (vendor contact info for sending requests)
-- **Module 11:** Basic Invoicing (payment linkage, payment hold enforcement)
+- **Module 11:** Native Accounting (GL/AP/AR) (payment linkage, payment hold enforcement)
 - **Module 15:** Draw Requests (waiver package assembly for draws)
 - **Module 6:** Document Storage (signed waiver file storage)
 - **Module 1:** Auth & Access (vendor portal token-based access)

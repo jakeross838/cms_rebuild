@@ -33,9 +33,9 @@ interface GapSummary {
 }
 
 const phaseColors: Record<string, string> = {
-  '1': 'bg-blue-100 text-blue-800',
+  '1': 'bg-stone-100 text-stone-800',
   '2': 'bg-green-100 text-green-800',
-  '3': 'bg-yellow-100 text-yellow-800',
+  '3': 'bg-amber-100 text-amber-800',
   '4': 'bg-purple-100 text-purple-800',
   '5': 'bg-orange-100 text-orange-800',
   '6': 'bg-red-100 text-red-800',
@@ -43,21 +43,21 @@ const phaseColors: Record<string, string> = {
 
 const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string; bg: string }> = {
   specified: { icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
-  prototyped: { icon: Paintbrush, color: 'text-blue-600', bg: 'bg-blue-50' },
-  planned: { icon: Circle, color: 'text-gray-400', bg: 'bg-gray-50' },
+  prototyped: { icon: Paintbrush, color: 'text-stone-600', bg: 'bg-stone-50' },
+  planned: { icon: Circle, color: 'text-warm-400', bg: 'bg-warm-50' },
 }
 
 const priorityColors: Record<string, string> = {
   P0: 'text-red-700 bg-red-100',
   P1: 'text-orange-700 bg-orange-100',
-  P2: 'text-yellow-700 bg-yellow-100',
-  P3: 'text-gray-600 bg-gray-100',
+  P2: 'text-amber-700 bg-amber-100',
+  P3: 'text-warm-600 bg-warm-100',
 }
 
 function getPhaseBadge(phase?: string) {
   if (!phase) return null
   const num = phase.match(/(\d)/)?.[1]
-  const color = num ? phaseColors[num] ?? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800'
+  const color = num ? phaseColors[num] ?? 'bg-warm-100 text-warm-800' : 'bg-warm-100 text-warm-800'
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${color}`}>{phase}</span>
 }
 
@@ -186,7 +186,7 @@ export default function DocsIndex() {
                 onClick={() => setGapFilter('all')}
                 className={cn(
                   'p-3 rounded-lg border text-left transition-colors',
-                  gapFilter === 'all' ? 'border-blue-300 bg-blue-50' : 'hover:bg-accent'
+                  gapFilter === 'all' ? 'border-stone-300 bg-stone-50' : 'hover:bg-accent'
                 )}
               >
                 <div className="text-2xl font-bold">{gapSummary.total}</div>
@@ -207,23 +207,23 @@ export default function DocsIndex() {
                 onClick={() => setGapFilter('prototyped')}
                 className={cn(
                   'p-3 rounded-lg border text-left transition-colors',
-                  gapFilter === 'prototyped' ? 'border-blue-300 bg-blue-50' : 'hover:bg-accent'
+                  gapFilter === 'prototyped' ? 'border-stone-300 bg-stone-50' : 'hover:bg-accent'
                 )}
               >
-                <div className="text-2xl font-bold text-blue-600">{gapSummary.prototyped}</div>
+                <div className="text-2xl font-bold text-stone-600">{gapSummary.prototyped}</div>
                 <div className="text-xs text-muted-foreground">Prototyped</div>
-                <div className="text-xs text-blue-600 font-medium">{((gapSummary.prototyped / gapSummary.total) * 100).toFixed(0)}%</div>
+                <div className="text-xs text-stone-600 font-medium">{((gapSummary.prototyped / gapSummary.total) * 100).toFixed(0)}%</div>
               </button>
               <button
                 onClick={() => setGapFilter('planned')}
                 className={cn(
                   'p-3 rounded-lg border text-left transition-colors',
-                  gapFilter === 'planned' ? 'border-gray-300 bg-gray-50' : 'hover:bg-accent'
+                  gapFilter === 'planned' ? 'border-warm-300 bg-warm-50' : 'hover:bg-accent'
                 )}
               >
-                <div className="text-2xl font-bold text-gray-500">{gapSummary.planned}</div>
+                <div className="text-2xl font-bold text-warm-500">{gapSummary.planned}</div>
                 <div className="text-xs text-muted-foreground">Planned</div>
-                <div className="text-xs text-gray-500 font-medium">{((gapSummary.planned / gapSummary.total) * 100).toFixed(0)}%</div>
+                <div className="text-xs text-warm-500 font-medium">{((gapSummary.planned / gapSummary.total) * 100).toFixed(0)}%</div>
               </button>
             </div>
           )}
@@ -231,20 +231,20 @@ export default function DocsIndex() {
           {/* Progress bar */}
           {gapSummary && (
             <div className="space-y-1">
-              <div className="h-2 rounded-full bg-gray-200 overflow-hidden flex">
+              <div className="h-2 rounded-full bg-warm-200 overflow-hidden flex">
                 <div
                   className="bg-green-500 transition-all"
                   style={{ width: `${(gapSummary.specified / gapSummary.total) * 100}%` }}
                 />
                 <div
-                  className="bg-blue-500 transition-all"
+                  className="bg-stone-500 transition-all"
                   style={{ width: `${(gapSummary.prototyped / gapSummary.total) * 100}%` }}
                 />
               </div>
               <div className="flex gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Specified</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" /> Prototyped</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-gray-300" /> Planned</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-stone-500" /> Prototyped</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-warm-300" /> Planned</span>
               </div>
             </div>
           )}
@@ -266,8 +266,8 @@ export default function DocsIndex() {
                     <span className="font-medium text-sm flex-1">{category}</span>
                     <div className="flex items-center gap-2 text-xs">
                       {specCount > 0 && <span className="text-green-600">{specCount} specified</span>}
-                      {protoCount > 0 && <span className="text-blue-600">{protoCount} prototyped</span>}
-                      {planCount > 0 && <span className="text-gray-500">{planCount} planned</span>}
+                      {protoCount > 0 && <span className="text-stone-600">{protoCount} prototyped</span>}
+                      {planCount > 0 && <span className="text-warm-500">{planCount} planned</span>}
                       <span className="text-muted-foreground font-mono">({items.length})</span>
                     </div>
                   </button>
@@ -284,11 +284,11 @@ export default function DocsIndex() {
                               <span>{gap.description}</span>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
-                              <span className={cn('text-xs px-1.5 py-0.5 rounded font-medium', priorityColors[gap.priority] ?? 'bg-gray-100 text-gray-600')}>
+                              <span className={cn('text-xs px-1.5 py-0.5 rounded font-medium', priorityColors[gap.priority] ?? 'bg-warm-100 text-warm-600')}>
                                 {gap.priority}
                               </span>
                               {gap.phase && (
-                                <span className={cn('text-xs px-1.5 py-0.5 rounded-full font-medium', phaseColors[String(gap.phase)] ?? 'bg-gray-100 text-gray-800')}>
+                                <span className={cn('text-xs px-1.5 py-0.5 rounded-full font-medium', phaseColors[String(gap.phase)] ?? 'bg-warm-100 text-warm-800')}>
                                   P{gap.phase}
                                 </span>
                               )}

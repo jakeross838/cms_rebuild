@@ -305,8 +305,8 @@ const mockNotifications: Notification[] = [
 const priorityDotColor: Record<Notification['priority'], string> = {
   critical: 'bg-red-500',
   high: 'bg-amber-500',
-  normal: 'bg-blue-500',
-  low: 'bg-gray-400',
+  normal: 'bg-stone-500',
+  low: 'bg-warm-400',
 }
 
 const notificationIcon: Record<Notification['type'], typeof AlertTriangle> = {
@@ -422,7 +422,7 @@ function NotificationDropdown() {
             <Link
               href="/skeleton/notifications"
               onClick={() => setIsOpen(false)}
-              className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+              className="text-xs text-stone-600 hover:text-stone-700 font-medium"
             >
               View all notifications
             </Link>
@@ -480,7 +480,7 @@ function AccountDropdown() {
           isOpen && 'bg-accent'
         )}
       >
-        <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center">
+        <div className="h-8 w-8 bg-stone-600 rounded-full flex items-center justify-center">
           <span className="text-xs font-semibold text-white">JR</span>
         </div>
       </button>
@@ -490,14 +490,14 @@ function AccountDropdown() {
           {/* User header */}
           <div className="px-4 py-3 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="h-10 w-10 bg-stone-600 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-sm font-semibold text-white">JR</span>
               </div>
               <div className="min-w-0">
                 <div className="font-semibold text-sm text-foreground">Jake Ross</div>
                 <div className="text-xs text-muted-foreground truncate">jake@rossbuilt.com</div>
               </div>
-              <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-medium ml-auto flex-shrink-0">
+              <span className="text-xs px-2 py-0.5 rounded bg-stone-100 text-stone-700 font-medium ml-auto flex-shrink-0">
                 Owner
               </span>
             </div>
@@ -522,7 +522,7 @@ function AccountDropdown() {
                 <Building2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <span className="flex-1 truncate">{company.name}</span>
                 {company.id === currentCompany && (
-                  <Check className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                  <Check className="h-4 w-4 text-stone-600 flex-shrink-0" />
                 )}
               </button>
             ))}
@@ -558,7 +558,7 @@ function AccountDropdown() {
                       <div className="text-xs text-muted-foreground">{role.description}</div>
                     </div>
                     {role.key === currentRole && (
-                      <Check className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Check className="h-4 w-4 text-stone-600 flex-shrink-0 mt-0.5" />
                     )}
                   </button>
                 ))}
@@ -641,7 +641,7 @@ export function UnifiedNav() {
       <div className="flex items-center h-14 px-4">
         {/* ── Logo ── */}
         <Link href="/skeleton" className="flex items-center gap-2 mr-4">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-stone-600 to-stone-800 flex items-center justify-center">
             <Building2 className="h-4 w-4 text-white" />
           </div>
           <span className="font-semibold text-foreground">RossOS</span>

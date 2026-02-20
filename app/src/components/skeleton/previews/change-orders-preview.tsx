@@ -397,8 +397,8 @@ const mockChangeOrders: ChangeOrder[] = [
 ]
 
 const statusConfigMap = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
-  internal_review: { label: 'Internal Review', color: 'bg-blue-100 text-blue-700', icon: Eye },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
+  internal_review: { label: 'Internal Review', color: 'bg-stone-100 text-stone-700', icon: Eye },
   client_presented: { label: 'Client Presented', color: 'bg-indigo-100 text-indigo-700', icon: PenLine },
   negotiation: { label: 'Negotiation', color: 'bg-purple-100 text-purple-700', icon: MessageSquare },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle },
@@ -408,7 +408,7 @@ const statusConfigMap = {
 }
 
 const sourceTypeConfig: Record<ChangeOrder['sourceType'], { label: string; color: string }> = {
-  client_request: { label: 'Client Request', color: 'bg-blue-50 text-blue-700' },
+  client_request: { label: 'Client Request', color: 'bg-stone-50 text-stone-700' },
   field: { label: 'Field Condition', color: 'bg-orange-50 text-orange-700' },
   design_change: { label: 'Design Change', color: 'bg-purple-50 text-purple-700' },
   code_change: { label: 'Code Change', color: 'bg-red-50 text-red-700' },
@@ -501,7 +501,7 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
 
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      "bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       co.isCredit && "border-l-4 border-l-green-400",
       co.status === 'rejected' && "opacity-75",
       co.status === 'withdrawn' && "opacity-60"
@@ -509,26 +509,26 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-mono font-semibold text-gray-900">{co.coNumber}</span>
+          <span className="font-mono font-semibold text-warm-900">{co.coNumber}</span>
           <span className={cn("text-xs px-2 py-0.5 rounded font-medium inline-flex items-center gap-1", statusInfo.color)}>
             <StatusIcon className="h-3 w-3" />
             {statusInfo.label}
           </span>
           {co.versionNumber > 1 && (
-            <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+            <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
               <GitBranch className="h-3 w-3" />
               v{co.versionNumber}
             </span>
           )}
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* Title */}
-      <h4 className="text-sm font-medium text-gray-900 mb-1">{co.title}</h4>
-      <p className="text-xs text-gray-500 mb-3 line-clamp-2">{co.description}</p>
+      <h4 className="text-sm font-medium text-warm-900 mb-1">{co.title}</h4>
+      <p className="text-xs text-warm-500 mb-3 line-clamp-2">{co.description}</p>
 
       {/* Amount & Source */}
       <div className="flex items-center gap-3 mb-3">
@@ -562,25 +562,25 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
       )}
 
       {/* Cost breakdown */}
-      <div className="bg-gray-50 rounded p-2 mb-3 text-xs text-gray-600">
+      <div className="bg-warm-50 rounded p-2 mb-3 text-xs text-warm-600">
         <div className="flex items-center justify-between mb-1">
           <span>Subtotal</span>
           <span className="font-medium">{formatCurrencyPlain(Math.abs(co.subtotal))}</span>
         </div>
-        <div className="flex items-center gap-3 text-gray-400 mb-1">
+        <div className="flex items-center gap-3 text-warm-400 mb-1">
           {co.materialsCost !== 0 && <span>Mat: {formatCurrencyPlain(Math.abs(co.materialsCost))}</span>}
           {co.laborCost !== 0 && <span>Lab: {formatCurrencyPlain(Math.abs(co.laborCost))}</span>}
           {co.equipmentCost !== 0 && <span>Equip: {formatCurrencyPlain(Math.abs(co.equipmentCost))}</span>}
           {co.subcontractorCost !== 0 && <span>Sub: {formatCurrencyPlain(Math.abs(co.subcontractorCost))}</span>}
         </div>
-        <div className="flex items-center justify-between pt-1 border-t border-gray-200">
+        <div className="flex items-center justify-between pt-1 border-t border-warm-200">
           <span>Markup ({co.markupPct}%{co.markupType === 'split_oh_profit' ? ' OH+P' : ''})</span>
           <span className="font-medium">{formatCurrencyPlain(Math.abs(co.markupAmount))}</span>
         </div>
       </div>
 
       {/* Metadata row */}
-      <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-3">
+      <div className="grid grid-cols-3 gap-2 text-xs text-warm-600 mb-3">
         <div className="flex items-center gap-1.5">
           <User className="h-3 w-3" />
           <span className="truncate">{co.initiatedBy.split('(')[0].trim()}</span>
@@ -594,7 +594,7 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
           <span className={cn(
             co.scheduleImpact > 0 ? "text-amber-600 font-medium" :
             co.scheduleImpact < 0 ? "text-green-600 font-medium" :
-            "text-gray-500"
+            "text-warm-500"
           )}>
             {co.scheduleImpact > 0 ? `+${co.scheduleImpact} days` :
              co.scheduleImpact < 0 ? `${co.scheduleImpact} days` :
@@ -622,16 +622,16 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
       {/* Approval progress */}
       {(co.status === 'internal_review' || co.status === 'client_presented') && (
         <div className="mb-3">
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+          <div className="flex items-center justify-between text-xs text-warm-500 mb-1">
             <span className="flex items-center gap-1">
               <ShieldCheck className="h-3 w-3" />
               Approval Progress
             </span>
             <span>{co.approvalProgress.completed}/{co.approvalProgress.total}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
+          <div className="w-full bg-warm-200 rounded-full h-1.5">
             <div
-              className="bg-blue-500 h-1.5 rounded-full transition-all"
+              className="bg-stone-500 h-1.5 rounded-full transition-all"
               style={{ width: `${(co.approvalProgress.completed / co.approvalProgress.total) * 100}%` }}
             />
           </div>
@@ -664,9 +664,9 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
 
       {/* Cross-module badges */}
       <div className="flex items-center gap-2 flex-wrap mb-2">
-        <span className="text-xs bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">{co.costCode}</span>
+        <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{co.costCode}</span>
         {co.rfiNumber && (
-          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Link2 className="h-3 w-3" />
             {co.rfiNumber}
           </span>
@@ -791,16 +791,16 @@ export function ChangeOrdersPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Change Orders - Smith Residence</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{totalCOs} Total</span>
+              <h3 className="font-semibold text-warm-900">Change Orders - Smith Residence</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">{totalCOs} Total</span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               Original Contract: {formatCurrencyPlain(originalContract)} | Revised: {formatCurrencyPlain(revisedContract)}
             </div>
           </div>
@@ -808,15 +808,15 @@ export function ChangeOrdersPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <ClipboardList className="h-3.5 w-3.5" />
               Total COs
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalCOs}</div>
-            <div className="text-xs text-gray-400">{approvedCOs.length} approved</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalCOs}</div>
+            <div className="text-xs text-warm-400">{approvedCOs.length} approved</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -835,7 +835,7 @@ export function ChangeOrdersPreview() {
             )}>
               {formatCurrency(netApprovedAmount)}
             </div>
-            <div className="text-xs text-gray-400">{((netApprovedAmount / originalContract) * 100).toFixed(1)}% of contract</div>
+            <div className="text-xs text-warm-400">{((netApprovedAmount / originalContract) * 100).toFixed(1)}% of contract</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-xs">
@@ -864,16 +864,16 @@ export function ChangeOrdersPreview() {
             )}>
               {totalScheduleImpact > 0 ? `+${totalScheduleImpact}` : totalScheduleImpact} days
             </div>
-            <div className="text-xs text-gray-400">{approvedCOs.filter(co => co.scheduleImpact !== 0).length} COs w/ impact</div>
+            <div className="text-xs text-warm-400">{approvedCOs.filter(co => co.scheduleImpact !== 0).length} COs w/ impact</div>
           </div>
           {/* AI Feature 3: Cause Pattern Detection - Enhanced stat card */}
           <div className={cn(
             "rounded-lg p-3",
-            designErrorPercent > portfolioAvgDesignError * 2 ? "bg-red-50" : "bg-gray-50"
+            designErrorPercent > portfolioAvgDesignError * 2 ? "bg-red-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-xs",
-              designErrorPercent > portfolioAvgDesignError * 2 ? "text-red-600" : "text-gray-500"
+              designErrorPercent > portfolioAvgDesignError * 2 ? "text-red-600" : "text-warm-500"
             )}>
               <BarChart3 className="h-3.5 w-3.5" />
               <span className="flex items-center gap-1">
@@ -885,11 +885,11 @@ export function ChangeOrdersPreview() {
             </div>
             <div className={cn(
               "text-sm font-bold mt-1",
-              designErrorPercent > portfolioAvgDesignError * 2 ? "text-red-700" : "text-gray-900"
+              designErrorPercent > portfolioAvgDesignError * 2 ? "text-red-700" : "text-warm-900"
             )}>
               {topCause?.cause}
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-warm-400">
               {topCause?.count} COs ({formatCurrency(topCause?.amount ?? 0)})
             </div>
             {designErrorPercent > portfolioAvgDesignError && (
@@ -904,7 +904,7 @@ export function ChangeOrdersPreview() {
 
       {/* AI Feature 3: Cause Pattern Detection - Expanded Analysis */}
       {designErrorPercent > portfolioAvgDesignError && (
-        <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="bg-white border-b border-warm-200 px-4 py-3">
           <AIFeatureCard
             feature="Cause Pattern Detection"
             trigger="Daily"
@@ -920,7 +920,7 @@ export function ChangeOrdersPreview() {
       )}
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -985,8 +985,8 @@ export function ChangeOrdersPreview() {
           <ChangeOrderCard key={co.id} co={co} />
         ))}
         {filtered.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400">
-            <ClipboardList className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+          <div className="col-span-2 text-center py-8 text-warm-400">
+            <ClipboardList className="h-12 w-12 mx-auto mb-3 text-warm-300" />
             No change orders match the selected filters
           </div>
         )}

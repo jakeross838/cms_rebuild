@@ -355,9 +355,9 @@ const mockUtilities: UtilityConnection[] = [
 // ---------------------------------------------------------------------------
 
 const statusConfig: Record<PermitStatus, { label: string; color: string; icon: typeof FileText }> = {
-  not_applied: { label: 'Not Applied', color: 'bg-gray-100 text-gray-700', icon: FileText },
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600', icon: FileText },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700', icon: Clock },
+  not_applied: { label: 'Not Applied', color: 'bg-warm-100 text-warm-700', icon: FileText },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600', icon: FileText },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: Clock },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700', icon: Clock },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   issued: { label: 'Issued', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
@@ -437,18 +437,18 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       permit.status === 'expired' ? 'border-red-200' :
       permit.status === 'on_hold' ? 'border-orange-300 border-2' :
-      permit.scheduleDependencies?.length ? 'border-l-4 border-l-amber-400' : 'border-gray-200'
+      permit.scheduleDependencies?.length ? 'border-l-4 border-l-amber-400' : 'border-warm-200'
     )}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-gray-900">{permit.permitType}</span>
+          <span className="font-semibold text-warm-900">{permit.permitType}</span>
           <span className={cn("text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1", statusInfo.color)}>
             <StatusIcon className="h-3 w-3" />
             {statusInfo.label}
           </span>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
@@ -493,45 +493,45 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
       )}
 
       <div className="space-y-2 mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <MapPin className="h-4 w-4 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <MapPin className="h-4 w-4 text-warm-400" />
           <span>{permit.jurisdiction}</span>
           {permit.onlinePortalUrl && (
-            <a className="text-blue-600 hover:text-blue-700 text-xs flex items-center gap-0.5">
+            <a className="text-stone-600 hover:text-stone-700 text-xs flex items-center gap-0.5">
               Portal <ChevronRight className="h-3 w-3" />
             </a>
           )}
         </div>
         {permit.permitNumber && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <FileText className="h-4 w-4 text-gray-400" />
+          <div className="flex items-center gap-2 text-sm text-warm-600">
+            <FileText className="h-4 w-4 text-warm-400" />
             <span className="font-mono">{permit.permitNumber}</span>
           </div>
         )}
         {permit.codeEdition && (
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <Shield className="h-3.5 w-3.5 text-gray-400" />
+          <div className="flex items-center gap-2 text-xs text-warm-500">
+            <Shield className="h-3.5 w-3.5 text-warm-400" />
             <span>{permit.codeEdition}</span>
           </div>
         )}
       </div>
 
       {/* Dates */}
-      <div className="grid grid-cols-2 gap-3 text-xs text-gray-600 pt-3 border-t border-gray-100">
+      <div className="grid grid-cols-2 gap-3 text-xs text-warm-600 pt-3 border-t border-warm-100">
         <div>
-          <span className="text-gray-400">Applied</span>
-          <p className="font-medium text-gray-700">{formatDate(permit.applicationDate)}</p>
+          <span className="text-warm-400">Applied</span>
+          <p className="font-medium text-warm-700">{formatDate(permit.applicationDate)}</p>
         </div>
         <div>
-          <span className="text-gray-400">Issued</span>
-          <p className="font-medium text-gray-700">{formatDate(permit.issuedDate)}</p>
+          <span className="text-warm-400">Issued</span>
+          <p className="font-medium text-warm-700">{formatDate(permit.issuedDate)}</p>
         </div>
         <div>
-          <span className="text-gray-400">Expiration</span>
+          <span className="text-warm-400">Expiration</span>
           <p className={cn(
             "font-medium",
             permit.status === 'expired' ? "text-red-600" :
-            daysUntilExpiration !== null && daysUntilExpiration <= 30 ? "text-amber-600" : "text-gray-700"
+            daysUntilExpiration !== null && daysUntilExpiration <= 30 ? "text-amber-600" : "text-warm-700"
           )}>
             {formatDate(permit.expirationDate)}
             {daysUntilExpiration !== null && daysUntilExpiration > 0 && daysUntilExpiration <= 60 && (
@@ -540,8 +540,8 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
           </p>
         </div>
         <div>
-          <span className="text-gray-400">Fee</span>
-          <p className="font-medium text-gray-700">
+          <span className="text-warm-400">Fee</span>
+          <p className="font-medium text-warm-700">
             {permit.feeActual ? formatCurrency(permit.feeActual) : formatCurrency(permit.feeEstimated)}
             {permit.feeActual && permit.feeActual !== permit.feeEstimated && (
               <span className={cn('ml-1 text-xs', permit.feeActual > permit.feeEstimated ? 'text-red-500' : 'text-green-500')}>
@@ -554,10 +554,10 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
 
       {/* Inspector */}
       {permit.inspector && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+        <div className="mt-2 flex items-center gap-2 text-xs text-warm-500">
           <Building2 className="h-3.5 w-3.5" />
           <span>{permit.inspector}</span>
-          {permit.inspectorPhone && <span className="text-gray-400">{permit.inspectorPhone}</span>}
+          {permit.inspectorPhone && <span className="text-warm-400">{permit.inspectorPhone}</span>}
         </div>
       )}
 
@@ -653,22 +653,22 @@ function TimelineStep({ step, isLast }: { step: typeof timelineSteps[0]; isLast:
         <div className={cn(
           "w-8 h-8 rounded-full flex items-center justify-center",
           step.status === 'completed' ? "bg-green-500 text-white" :
-          step.status === 'current' ? "bg-blue-500 text-white" :
-          "bg-gray-200 text-gray-400"
+          step.status === 'current' ? "bg-stone-500 text-white" :
+          "bg-warm-200 text-warm-400"
         )}>
           {step.status === 'completed' ? (
             <CheckCircle className="h-5 w-5" />
           ) : step.status === 'current' ? (
             <Clock className="h-5 w-5" />
           ) : (
-            <div className="w-2 h-2 rounded-full bg-gray-400" />
+            <div className="w-2 h-2 rounded-full bg-warm-400" />
           )}
         </div>
         <span className={cn(
           "text-xs mt-1 whitespace-nowrap",
           step.status === 'completed' ? "text-green-600 font-medium" :
-          step.status === 'current' ? "text-blue-600 font-medium" :
-          "text-gray-400"
+          step.status === 'current' ? "text-stone-600 font-medium" :
+          "text-warm-400"
         )}>
           {step.label}
         </span>
@@ -676,7 +676,7 @@ function TimelineStep({ step, isLast }: { step: typeof timelineSteps[0]; isLast:
       {!isLast && (
         <div className={cn(
           "w-12 h-0.5 mx-1 -mt-5",
-          step.status === 'completed' ? "bg-green-500" : "bg-gray-200"
+          step.status === 'completed' ? "bg-green-500" : "bg-warm-200"
         )} />
       )}
     </div>
@@ -697,8 +697,8 @@ function COPrerequisiteChecklist({ prerequisites }: { prerequisites: COPrerequis
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Certificate of Occupancy Prerequisites</span>
+          <Shield className="h-4 w-4 text-warm-600" />
+          <span className="text-sm font-medium text-warm-700">Certificate of Occupancy Prerequisites</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={cn(
@@ -709,13 +709,13 @@ function COPrerequisiteChecklist({ prerequisites }: { prerequisites: COPrerequis
           )}>
             {readiness}% Ready
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-warm-500">
             {prerequisites.filter(p => p.status === 'pass').length}/{prerequisites.length} Complete
           </span>
         </div>
       </div>
 
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+      <div className="w-full bg-warm-200 rounded-full h-2 mb-3">
         <div
           className={cn(
             "h-2 rounded-full transition-all",
@@ -732,9 +732,9 @@ function COPrerequisiteChecklist({ prerequisites }: { prerequisites: COPrerequis
           const items = prerequisites.filter(p => p.category === category)
           const passed = items.filter(p => p.status === 'pass').length
           return (
-            <div key={category} className="bg-gray-50 rounded-lg p-2">
+            <div key={category} className="bg-warm-50 rounded-lg p-2">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-medium text-gray-700">{categoryLabels[category]}</span>
+                <span className="text-xs font-medium text-warm-700">{categoryLabels[category]}</span>
                 <span className={cn(
                   'text-[10px] px-1.5 py-0.5 rounded',
                   passed === items.length ? 'bg-green-100 text-green-700' :
@@ -763,7 +763,7 @@ function COPrerequisiteChecklist({ prerequisites }: { prerequisites: COPrerequis
                         {item.name}
                       </span>
                       {item.details && (
-                        <p className="text-gray-500 text-[10px]">{item.details}</p>
+                        <p className="text-warm-500 text-[10px]">{item.details}</p>
                       )}
                     </div>
                   </div>
@@ -787,25 +787,25 @@ function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTr
       'rounded-lg p-2 border text-center',
       utility.status === 'transferred' ? 'bg-purple-50 border-purple-200' :
       utility.status === 'completed' ? 'bg-green-50 border-green-200' :
-      utility.status === 'scheduled' ? 'bg-blue-50 border-blue-200' :
+      utility.status === 'scheduled' ? 'bg-stone-50 border-stone-200' :
       utility.status === 'applied' ? 'bg-amber-50 border-amber-200' :
-      'bg-gray-50 border-gray-200'
+      'bg-warm-50 border-warm-200'
     )}>
       <UtilIcon className={cn(
         'h-4 w-4 mx-auto mb-1',
         utility.status === 'transferred' ? 'text-purple-600' :
         utility.status === 'completed' ? 'text-green-600' :
-        utility.status === 'scheduled' ? 'text-blue-600' :
-        utility.status === 'applied' ? 'text-amber-600' : 'text-gray-400'
+        utility.status === 'scheduled' ? 'text-stone-600' :
+        utility.status === 'applied' ? 'text-amber-600' : 'text-warm-400'
       )} />
-      <p className="text-xs font-medium text-gray-700">{utilityLabels[utility.utilityType]}</p>
-      <p className="text-[10px] text-gray-500">{utility.provider}</p>
+      <p className="text-xs font-medium text-warm-700">{utilityLabels[utility.utilityType]}</p>
+      <p className="text-[10px] text-warm-500">{utility.provider}</p>
       <p className={cn(
         'text-[10px] font-medium mt-0.5',
         utility.status === 'transferred' ? 'text-purple-600' :
         utility.status === 'completed' ? 'text-green-600' :
-        utility.status === 'scheduled' ? 'text-blue-600' :
-        utility.status === 'applied' ? 'text-amber-600' : 'text-gray-400'
+        utility.status === 'scheduled' ? 'text-stone-600' :
+        utility.status === 'applied' ? 'text-amber-600' : 'text-warm-400'
       )}>
         {utility.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
       </p>
@@ -885,14 +885,14 @@ export function PermitsPreview() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Permits - Smith Residence</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{totalPermits} Total</span>
+              <h3 className="font-semibold text-warm-900">Permits - Smith Residence</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">{totalPermits} Total</span>
               {schedulingRisks > 0 && (
                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />
@@ -906,7 +906,7 @@ export function PermitsPreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               {issuedCount} issued | {pendingApproval} pending | {permitsNeeded} not yet applied | CO: {coReadiness}% ready
             </div>
           </div>
@@ -914,16 +914,16 @@ export function PermitsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <FileText className="h-4 w-4" />
               Needs Action
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">
+            <div className="text-xl font-bold text-warm-900 mt-1">
               {permitsNeeded}
-              <span className="text-sm font-normal text-gray-500 ml-1">to apply</span>
+              <span className="text-sm font-normal text-warm-500 ml-1">to apply</span>
             </div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
@@ -940,33 +940,33 @@ export function PermitsPreview() {
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{issuedCount}</div>
           </div>
-          <div className={cn("rounded-lg p-3", onHoldCount > 0 ? "bg-orange-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-sm", onHoldCount > 0 ? "text-orange-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", onHoldCount > 0 ? "bg-orange-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-sm", onHoldCount > 0 ? "text-orange-600" : "text-warm-500")}>
               <PauseCircle className="h-4 w-4" />
               On Hold
             </div>
-            <div className={cn("text-xl font-bold mt-1", onHoldCount > 0 ? "text-orange-700" : "text-gray-900")}>{onHoldCount}</div>
+            <div className={cn("text-xl font-bold mt-1", onHoldCount > 0 ? "text-orange-700" : "text-warm-900")}>{onHoldCount}</div>
           </div>
-          <div className={cn("rounded-lg p-3", expiredCount > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-sm", expiredCount > 0 ? "text-red-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", expiredCount > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-sm", expiredCount > 0 ? "text-red-600" : "text-warm-500")}>
               <AlertTriangle className="h-4 w-4" />
               Expired
             </div>
-            <div className={cn("text-xl font-bold mt-1", expiredCount > 0 ? "text-red-700" : "text-gray-900")}>{expiredCount}</div>
+            <div className={cn("text-xl font-bold mt-1", expiredCount > 0 ? "text-red-700" : "text-warm-900")}>{expiredCount}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Permit Fees
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{formatCurrency(totalFeeActual || totalFeeEstimated)}</div>
-            <div className="text-xs text-blue-600">Est: {formatCurrency(totalFeeEstimated)}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{formatCurrency(totalFeeActual || totalFeeEstimated)}</div>
+            <div className="text-xs text-stone-600">Est: {formatCurrency(totalFeeEstimated)}</div>
           </div>
         </div>
       </div>
 
       {/* AI Feature Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-2 gap-3">
           <AIFeatureCard
             feature="Timeline Intelligence"
@@ -994,12 +994,12 @@ export function PermitsPreview() {
       </div>
 
       {/* Timeline View */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="flex items-center gap-2 mb-3">
-          <Timer className="h-4 w-4 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">Electrical Permit Timeline</span>
-          <span className="text-xs text-gray-400">|</span>
-          <span className="text-xs text-blue-600">Under review - panel schedule pending</span>
+          <Timer className="h-4 w-4 text-warm-500" />
+          <span className="text-sm font-medium text-warm-700">Electrical Permit Timeline</span>
+          <span className="text-xs text-warm-400">|</span>
+          <span className="text-xs text-stone-600">Under review - panel schedule pending</span>
         </div>
         <div className="flex items-start justify-between px-4">
           {timelineSteps.map((step, index) => (
@@ -1009,19 +1009,19 @@ export function PermitsPreview() {
       </div>
 
       {/* CO Tracking with detailed prerequisites */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <COPrerequisiteChecklist prerequisites={mockCOPrerequisites} />
       </div>
 
       {/* Utility Connections with transfer workflow */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-700">Utility Final Connections</span>
+            <Zap className="h-4 w-4 text-warm-600" />
+            <span className="text-sm font-medium text-warm-700">Utility Final Connections</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-500">{utilitiesComplete}/{utilities.length} complete</span>
+            <span className="text-xs text-warm-500">{utilitiesComplete}/{utilities.length} complete</span>
             <span className="text-xs text-purple-600">{utilities.filter(u => u.transferConfirmed).length} transferred</span>
           </div>
         </div>
@@ -1037,7 +1037,7 @@ export function PermitsPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -1111,14 +1111,14 @@ export function PermitsPreview() {
           </div>
         )}
         {filteredPermits.length === 0 && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-warm-400">
             No permits match the selected filters
           </div>
         )}
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           features={[
             {

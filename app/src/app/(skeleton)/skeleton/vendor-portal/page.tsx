@@ -14,13 +14,13 @@ export default function VendorPortalSkeleton() {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-warm-200">
         <button
           onClick={() => setActiveTab('overview')}
           className={`px-6 py-4 text-sm font-medium transition-colors ${
             activeTab === 'overview'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'border-b-2 border-stone-600 text-stone-600'
+              : 'text-warm-600 hover:text-warm-900'
           }`}
         >
           Overview
@@ -29,8 +29,8 @@ export default function VendorPortalSkeleton() {
           onClick={() => setActiveTab('preview')}
           className={`px-6 py-4 text-sm font-medium transition-colors ${
             activeTab === 'preview'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'border-b-2 border-stone-600 text-stone-600'
+              : 'text-warm-600 hover:text-warm-900'
           }`}
         >
           UI Preview
@@ -141,9 +141,9 @@ export default function VendorPortalSkeleton() {
       {/* Preview Tab */}
       {activeTab === 'preview' && (
         <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-semibold text-blue-900 mb-1">Vendor Portal UI Preview</h3>
-            <p className="text-sm text-blue-700">
+          <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+            <h3 className="font-semibold text-stone-900 mb-1">Vendor Portal UI Preview</h3>
+            <p className="text-sm text-stone-700">
               Interactive mockup showing the vendor dashboard with active POs, bid requests, invoice submissions, document uploads, and payment tracking.
             </p>
           </div>

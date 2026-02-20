@@ -312,25 +312,25 @@ const mockCommunications: Communication[] = [
 ]
 
 const typeConfig: Record<CommunicationType, { icon: typeof Mail; label: string; color: string; bgColor: string }> = {
-  email: { icon: Mail, label: 'Email', color: 'text-blue-600', bgColor: 'bg-blue-100' },
+  email: { icon: Mail, label: 'Email', color: 'text-stone-600', bgColor: 'bg-stone-100' },
   call: { icon: Phone, label: 'Call', color: 'text-green-600', bgColor: 'bg-green-100' },
   meeting: { icon: Calendar, label: 'Meeting', color: 'text-purple-600', bgColor: 'bg-purple-100' },
-  note: { icon: FileText, label: 'Note', color: 'text-gray-600', bgColor: 'bg-gray-100' },
+  note: { icon: FileText, label: 'Note', color: 'text-warm-600', bgColor: 'bg-warm-100' },
   sms: { icon: MessageSquare, label: 'SMS', color: 'text-cyan-600', bgColor: 'bg-cyan-100' },
   push: { icon: Bell, label: 'Push', color: 'text-red-600', bgColor: 'bg-red-100' },
   in_app: { icon: Inbox, label: 'In-App', color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
 }
 
 const urgencyConfig: Record<UrgencyLevel, { label: string; color: string; bgColor: string }> = {
-  low: { label: 'Low', color: 'text-gray-500', bgColor: 'bg-gray-100' },
-  normal: { label: 'Normal', color: 'text-blue-600', bgColor: 'bg-blue-50' },
+  low: { label: 'Low', color: 'text-warm-500', bgColor: 'bg-warm-100' },
+  normal: { label: 'Normal', color: 'text-stone-600', bgColor: 'bg-stone-50' },
   high: { label: 'High', color: 'text-amber-600', bgColor: 'bg-amber-50' },
   critical: { label: 'Critical', color: 'text-red-600', bgColor: 'bg-red-50' },
 }
 
 const deliveryStatusConfig: Record<DeliveryStatus, { label: string; icon: typeof CheckCircle; color: string }> = {
-  queued: { label: 'Queued', icon: Clock, color: 'text-gray-400' },
-  sent: { label: 'Sent', icon: Send, color: 'text-blue-500' },
+  queued: { label: 'Queued', icon: Clock, color: 'text-warm-400' },
+  sent: { label: 'Sent', icon: Send, color: 'text-stone-500' },
   delivered: { label: 'Delivered', icon: CheckCircle, color: 'text-green-500' },
   failed: { label: 'Failed', icon: XCircle, color: 'text-red-500' },
   bounced: { label: 'Bounced', icon: AlertTriangle, color: 'text-amber-500' },
@@ -346,7 +346,7 @@ function CommunicationRow({ communication }: { communication: Communication }) {
   return (
     <div className={cn(
       "bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer",
-      !communication.isRead ? "border-blue-200 bg-blue-50/30" : "border-gray-200",
+      !communication.isRead ? "border-stone-200 bg-stone-50/30" : "border-warm-200",
       communication.urgency === 'critical' ? "border-l-4 border-l-red-500" : "",
       communication.urgency === 'high' ? "border-l-4 border-l-amber-400" : "",
     )}>
@@ -361,17 +361,17 @@ function CommunicationRow({ communication }: { communication: Communication }) {
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className={cn("font-medium truncate", !communication.isRead ? "text-gray-900" : "text-gray-700")}>
+                <span className={cn("font-medium truncate", !communication.isRead ? "text-warm-900" : "text-warm-700")}>
                   {communication.subject}
                 </span>
                 {!communication.isRead && (
-                  <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-stone-500 flex-shrink-0" />
                 )}
                 {communication.isImportant && (
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500 flex-shrink-0" />
                 )}
                 {communication.hasAttachment && (
-                  <Paperclip className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <Paperclip className="h-4 w-4 text-warm-400 flex-shrink-0" />
                 )}
                 {communication.urgency !== 'normal' && communication.urgency !== 'low' && (
                   <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", urgency.bgColor, urgency.color)}>
@@ -385,37 +385,37 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+              <div className="flex items-center gap-2 text-sm text-warm-600 mb-2">
                 <span className="flex items-center gap-1">
                   {communication.direction === 'inbound' ? (
                     <>
-                      <User className="h-3.5 w-3.5 text-gray-400" />
+                      <User className="h-3.5 w-3.5 text-warm-400" />
                       <span className="font-medium">{communication.from}</span>
-                      <span className="text-gray-400">({communication.fromRole})</span>
+                      <span className="text-warm-400">({communication.fromRole})</span>
                     </>
                   ) : (
                     <>
-                      <span className="text-gray-400">To:</span>
+                      <span className="text-warm-400">To:</span>
                       <span>{communication.to.join(', ')}</span>
                     </>
                   )}
                 </span>
                 {communication.relatedModule && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                  <span className="text-[10px] px-1.5 py-0.5 bg-warm-100 text-warm-500 rounded">
                     {communication.relatedModule}
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-600 line-clamp-2">{communication.preview}</p>
+              <p className="text-sm text-warm-600 line-clamp-2">{communication.preview}</p>
 
               {/* Delivery Channels */}
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-[10px] text-gray-400">Delivered via:</span>
+                <span className="text-[10px] text-warm-400">Delivered via:</span>
                 {communication.deliveryChannel.map(ch => {
                   const chConfig = typeConfig[ch]
                   const ChIcon = chConfig.icon
                   return (
-                    <span key={ch} className="flex items-center gap-0.5 text-[10px] text-gray-500" title={chConfig.label}>
+                    <span key={ch} className="flex items-center gap-0.5 text-[10px] text-warm-500" title={chConfig.label}>
                       <ChIcon className="h-3 w-3" />
                     </span>
                   )
@@ -441,21 +441,21 @@ function CommunicationRow({ communication }: { communication: Communication }) {
             </div>
 
             <div className="flex flex-col items-end gap-2 flex-shrink-0">
-              <div className="flex items-center gap-1 text-xs text-gray-400">
+              <div className="flex items-center gap-1 text-xs text-warm-400">
                 <Clock className="h-3 w-3" />
                 <span>{communication.timeAgo}</span>
               </div>
               {communication.eventType && (
-                <span className="text-[10px] text-gray-400 font-mono">{communication.eventType}</span>
+                <span className="text-[10px] text-warm-400 font-mono">{communication.eventType}</span>
               )}
               <div className="flex items-center gap-1">
-                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600" title="Reply">
+                <button className="p-1.5 hover:bg-warm-100 rounded text-warm-400 hover:text-warm-600" title="Reply">
                   <Reply className="h-4 w-4" />
                 </button>
-                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600" title="Snooze">
+                <button className="p-1.5 hover:bg-warm-100 rounded text-warm-400 hover:text-warm-600" title="Snooze">
                   <BellOff className="h-4 w-4" />
                 </button>
-                <ChevronRight className="h-4 w-4 text-gray-300" />
+                <ChevronRight className="h-4 w-4 text-warm-300" />
               </div>
             </div>
           </div>
@@ -500,18 +500,18 @@ export function CommunicationsPreview() {
   const failedCount = mockCommunications.filter(c => c.deliveryStatus === 'failed' || c.deliveryStatus === 'bounced').length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Communications - Smith Residence</h3>
+          <h3 className="font-semibold text-warm-900">Communications - Smith Residence</h3>
           {unreadCount > 0 && (
-            <span className="flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full">
               <Bell className="h-3 w-3" />
               {unreadCount} unread
             </span>
           )}
-          <span className="text-sm text-gray-500">47 this month</span>
+          <span className="text-sm text-warm-500">47 this month</span>
           <div className="ml-auto flex items-center gap-2">
             <span className="flex items-center gap-1 text-xs text-green-600" title="SSE Connected">
               <Wifi className="h-3 w-3" />
@@ -590,27 +590,27 @@ export function CommunicationsPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
-          <div className="flex items-center gap-3 p-2 bg-blue-50 rounded-lg">
-            <Bell className="h-5 w-5 text-blue-500" />
+          <div className="flex items-center gap-3 p-2 bg-stone-50 rounded-lg">
+            <Bell className="h-5 w-5 text-stone-500" />
             <div>
-              <div className="text-lg font-semibold text-blue-700">{unreadCount}</div>
-              <div className="text-xs text-blue-600">Unread</div>
+              <div className="text-lg font-semibold text-stone-700">{unreadCount}</div>
+              <div className="text-xs text-stone-600">Unread</div>
             </div>
           </div>
-          <div className={cn("flex items-center gap-3 p-2 rounded-lg", criticalCount > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <AlertTriangle className={cn("h-5 w-5", criticalCount > 0 ? "text-red-500" : "text-gray-400")} />
+          <div className={cn("flex items-center gap-3 p-2 rounded-lg", criticalCount > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <AlertTriangle className={cn("h-5 w-5", criticalCount > 0 ? "text-red-500" : "text-warm-400")} />
             <div>
-              <div className={cn("text-lg font-semibold", criticalCount > 0 ? "text-red-700" : "text-gray-700")}>{criticalCount}</div>
-              <div className={cn("text-xs", criticalCount > 0 ? "text-red-600" : "text-gray-500")}>Critical</div>
+              <div className={cn("text-lg font-semibold", criticalCount > 0 ? "text-red-700" : "text-warm-700")}>{criticalCount}</div>
+              <div className={cn("text-xs", criticalCount > 0 ? "text-red-600" : "text-warm-500")}>Critical</div>
             </div>
           </div>
-          <div className={cn("flex items-center gap-3 p-2 rounded-lg", highCount > 0 ? "bg-amber-50" : "bg-gray-50")}>
-            <Shield className={cn("h-5 w-5", highCount > 0 ? "text-amber-500" : "text-gray-400")} />
+          <div className={cn("flex items-center gap-3 p-2 rounded-lg", highCount > 0 ? "bg-amber-50" : "bg-warm-50")}>
+            <Shield className={cn("h-5 w-5", highCount > 0 ? "text-amber-500" : "text-warm-400")} />
             <div>
-              <div className={cn("text-lg font-semibold", highCount > 0 ? "text-amber-700" : "text-gray-700")}>{highCount}</div>
-              <div className={cn("text-xs", highCount > 0 ? "text-amber-600" : "text-gray-500")}>High Priority</div>
+              <div className={cn("text-lg font-semibold", highCount > 0 ? "text-amber-700" : "text-warm-700")}>{highCount}</div>
+              <div className={cn("text-xs", highCount > 0 ? "text-amber-600" : "text-warm-500")}>High Priority</div>
             </div>
           </div>
           <div className="flex items-center gap-3 p-2 bg-green-50 rounded-lg">
@@ -627,25 +627,25 @@ export function CommunicationsPreview() {
               <div className="text-xs text-orange-600">Action Items</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-            <BarChart3 className="h-5 w-5 text-gray-500" />
+          <div className="flex items-center gap-3 p-2 bg-warm-50 rounded-lg">
+            <BarChart3 className="h-5 w-5 text-warm-500" />
             <div>
-              <div className="text-lg font-semibold text-gray-700">{deliveredCount}/{mockCommunications.length}</div>
-              <div className="text-xs text-gray-500">Delivered</div>
+              <div className="text-lg font-semibold text-warm-700">{deliveredCount}/{mockCommunications.length}</div>
+              <div className="text-xs text-warm-500">Delivered</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Notification Preferences Summary Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-4 text-xs">
-          <span className="text-gray-500 font-medium">Preferences:</span>
+          <span className="text-warm-500 font-medium">Preferences:</span>
           <span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded" title="In-app notifications active">
             <Inbox className="h-3 w-3" />
             In-App: On
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded" title="Email delivery active">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded" title="Email delivery active">
             <Mail className="h-3 w-3" />
             Email: On
           </span>
@@ -657,16 +657,16 @@ export function CommunicationsPreview() {
             <Bell className="h-3 w-3" />
             Push: On
           </span>
-          <span className="text-gray-300">|</span>
-          <span className="flex items-center gap-1 text-gray-500" title="Quiet hours active">
+          <span className="text-warm-300">|</span>
+          <span className="flex items-center gap-1 text-warm-500" title="Quiet hours active">
             <VolumeX className="h-3 w-3" />
             Quiet: 10pm-7am
           </span>
-          <span className="flex items-center gap-1 text-gray-500" title="Digest mode">
+          <span className="flex items-center gap-1 text-warm-500" title="Digest mode">
             <Timer className="h-3 w-3" />
             Digest: Daily 8am
           </span>
-          <span className="flex items-center gap-1 text-gray-500" title="Critical alerts bypass quiet hours">
+          <span className="flex items-center gap-1 text-warm-500" title="Critical alerts bypass quiet hours">
             <Volume2 className="h-3 w-3 text-red-400" />
             Critical bypass: On
           </span>
@@ -674,10 +674,10 @@ export function CommunicationsPreview() {
       </div>
 
       {/* Cross-Module Connections */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-gray-500 font-medium">Connections:</span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded">
+          <span className="text-warm-500 font-medium">Connections:</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded">
             <Globe className="h-3 w-3" />
             All Modules (event emitters)
           </span>
@@ -706,7 +706,7 @@ export function CommunicationsPreview() {
           <CommunicationRow key={communication.id} communication={communication} />
         ))}
         {filteredCommunications.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No communications match your filters
           </div>
         )}
@@ -728,7 +728,7 @@ export function CommunicationsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features for Communications"
           features={[

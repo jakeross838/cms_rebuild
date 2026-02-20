@@ -276,8 +276,8 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
     <>
       <tr
         className={cn(
-          "hover:bg-gray-50 cursor-pointer",
-          expanded && "bg-blue-50",
+          "hover:bg-warm-50 cursor-pointer",
+          expanded && "bg-stone-50",
           marginStatus === 'at-risk' && "bg-amber-50/30",
           marginStatus === 'over-budget' && "bg-red-50/30"
         )}
@@ -286,26 +286,26 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
         <td className="py-3 px-4">
           <div className="flex items-center gap-2">
             {expanded ? (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-warm-400" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-warm-400" />
             )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">{job.name}</span>
+                <span className="font-medium text-warm-900">{job.name}</span>
                 {job.aiNote && <Sparkles className="h-3 w-3 text-amber-500" />}
                 {job.marginTrend === 'declining' && <TrendingDown className="h-3 w-3 text-red-500" />}
                 {job.marginTrend === 'improving' && <TrendingUp className="h-3 w-3 text-green-500" />}
               </div>
-              <span className="text-xs text-gray-500">PM: {job.pm}</span>
+              <span className="text-xs text-warm-500">PM: {job.pm}</span>
             </div>
           </div>
         </td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.revisedContract)}</td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.estimatedCost)}</td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.actualCost)}</td>
-        <td className="py-3 px-3 text-right text-gray-500">{formatCurrency(job.committedCost)}</td>
-        <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(job.projectedCost)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(job.revisedContract)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(job.estimatedCost)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(job.actualCost)}</td>
+        <td className="py-3 px-3 text-right text-warm-500">{formatCurrency(job.committedCost)}</td>
+        <td className="py-3 px-3 text-right font-medium text-warm-900">{formatCurrency(job.projectedCost)}</td>
         <td className="py-3 px-3 text-right">
           <VarianceDisplay variance={job.variance} />
         </td>
@@ -313,7 +313,7 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
           <MarginIndicator margin={job.grossMargin} target={job.targetMargin} />
         </td>
         <td className="py-3 px-3">
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-warm-200 rounded-full h-2">
             <div
               className={cn(
                 "h-2 rounded-full",
@@ -323,64 +323,64 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
               style={{ width: `${job.completionPct}%` }}
             />
           </div>
-          <span className="text-xs text-gray-500">{job.completionPct}%</span>
+          <span className="text-xs text-warm-500">{job.completionPct}%</span>
         </td>
       </tr>
       {expanded && (
-        <tr className="bg-blue-50/50">
+        <tr className="bg-stone-50/50">
           <td colSpan={9} className="py-4 px-8">
             {/* Overhead + Net Profit Summary */}
             <div className="mb-4 grid grid-cols-5 gap-3">
-              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-                <div className="text-xs text-gray-500">Revenue Recognized</div>
-                <div className="text-sm font-semibold text-gray-900">{formatCurrency(job.revenueRecognized)}</div>
+              <div className="bg-white rounded-lg border border-warm-200 p-2.5">
+                <div className="text-xs text-warm-500">Revenue Recognized</div>
+                <div className="text-sm font-semibold text-warm-900">{formatCurrency(job.revenueRecognized)}</div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-                <div className="text-xs text-gray-500">Gross Profit</div>
+              <div className="bg-white rounded-lg border border-warm-200 p-2.5">
+                <div className="text-xs text-warm-500">Gross Profit</div>
                 <div className={cn("text-sm font-semibold", job.grossProfit >= 0 ? "text-green-600" : "text-red-600")}>{formatCurrency(job.grossProfit)}</div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-                <div className="text-xs text-gray-500">Overhead (10% direct)</div>
-                <div className="text-sm font-semibold text-gray-700">{formatCurrency(job.overheadAllocation)}</div>
+              <div className="bg-white rounded-lg border border-warm-200 p-2.5">
+                <div className="text-xs text-warm-500">Overhead (10% direct)</div>
+                <div className="text-sm font-semibold text-warm-700">{formatCurrency(job.overheadAllocation)}</div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-                <div className="text-xs text-gray-500">Net Profit</div>
+              <div className="bg-white rounded-lg border border-warm-200 p-2.5">
+                <div className="text-xs text-warm-500">Net Profit</div>
                 <div className={cn("text-sm font-semibold", job.netProfit >= 0 ? "text-green-600" : "text-red-600")}>{formatCurrency(job.netProfit)}</div>
               </div>
               {job.costPerSqFt && (
-                <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-                  <div className="text-xs text-gray-500">Cost/SF ({job.sqFt?.toLocaleString()} SF)</div>
-                  <div className="text-sm font-semibold text-gray-900">${job.costPerSqFt}/SF</div>
+                <div className="bg-white rounded-lg border border-warm-200 p-2.5">
+                  <div className="text-xs text-warm-500">Cost/SF ({job.sqFt?.toLocaleString()} SF)</div>
+                  <div className="text-sm font-semibold text-warm-900">${job.costPerSqFt}/SF</div>
                 </div>
               )}
             </div>
 
             {job.costBreakdown && (
               <div className="mb-4">
-                <h5 className="text-sm font-medium text-gray-700 mb-2">Variance by Cost Code</h5>
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <h5 className="text-sm font-medium text-warm-700 mb-2">Variance by Cost Code</h5>
+                <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-warm-50">
                       <tr>
-                        <th className="text-left py-2 px-3 font-medium text-gray-600">Cost Code</th>
-                        <th className="text-right py-2 px-3 font-medium text-gray-600">Budget</th>
-                        <th className="text-right py-2 px-3 font-medium text-gray-600">Committed</th>
-                        <th className="text-right py-2 px-3 font-medium text-gray-600">Actual</th>
-                        <th className="text-right py-2 px-3 font-medium text-gray-600">Projected</th>
-                        <th className="text-right py-2 px-3 font-medium text-gray-600">Variance</th>
+                        <th className="text-left py-2 px-3 font-medium text-warm-600">Cost Code</th>
+                        <th className="text-right py-2 px-3 font-medium text-warm-600">Budget</th>
+                        <th className="text-right py-2 px-3 font-medium text-warm-600">Committed</th>
+                        <th className="text-right py-2 px-3 font-medium text-warm-600">Actual</th>
+                        <th className="text-right py-2 px-3 font-medium text-warm-600">Projected</th>
+                        <th className="text-right py-2 px-3 font-medium text-warm-600">Variance</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-warm-100">
                       {job.costBreakdown.map((item, idx) => (
                         <tr key={idx} className={item.isOver ? "bg-red-50/50" : ""}>
                           <td className="py-2 px-3">
-                            <span className="font-mono text-gray-500 mr-2">{item.code}</span>
+                            <span className="font-mono text-warm-500 mr-2">{item.code}</span>
                             {item.name}
                           </td>
-                          <td className="py-2 px-3 text-right text-gray-600">{formatCurrency(item.budget)}</td>
-                          <td className="py-2 px-3 text-right text-gray-500">{formatCurrency(item.committed)}</td>
-                          <td className="py-2 px-3 text-right text-gray-600">{formatCurrency(item.actual)}</td>
-                          <td className="py-2 px-3 text-right text-gray-900 font-medium">{formatCurrency(item.projected)}</td>
+                          <td className="py-2 px-3 text-right text-warm-600">{formatCurrency(item.budget)}</td>
+                          <td className="py-2 px-3 text-right text-warm-500">{formatCurrency(item.committed)}</td>
+                          <td className="py-2 px-3 text-right text-warm-600">{formatCurrency(item.actual)}</td>
+                          <td className="py-2 px-3 text-right text-warm-900 font-medium">{formatCurrency(item.projected)}</td>
                           <td className={cn(
                             "py-2 px-3 text-right font-medium",
                             item.isOver ? "text-red-600" : "text-green-600"
@@ -443,18 +443,18 @@ export function ProfitabilityPreview() {
   const atRiskCount = activeJobs.filter(j => j.grossMargin < j.targetMargin).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Job Profitability</h3>
-              <span className="text-sm text-gray-500">{activeJobs.length} active jobs</span>
+              <h3 className="font-semibold text-warm-900">Job Profitability</h3>
+              <span className="text-sm text-warm-500">{activeJobs.length} active jobs</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
@@ -463,22 +463,22 @@ export function ProfitabilityPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Total Contract Value
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalRevenue)}</div>
-            <div className="text-xs text-gray-500 mt-0.5">Active jobs</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalRevenue)}</div>
+            <div className="text-xs text-warm-500 mt-0.5">Active jobs</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-purple-600 text-sm">
               <BarChart3 className="h-4 w-4" />
               Projected Cost
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalProjectedCost)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalProjectedCost)}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -515,7 +515,7 @@ export function ProfitabilityPreview() {
             )}>
               {avgMargin.toFixed(1)}%
             </div>
-            <div className="text-xs text-gray-500 mt-0.5">Target: 18%</div>
+            <div className="text-xs text-warm-500 mt-0.5">Target: 18%</div>
           </div>
         </div>
       </div>
@@ -533,7 +533,7 @@ export function ProfitabilityPreview() {
       )}
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -566,20 +566,20 @@ export function ProfitabilityPreview() {
       {/* Profitability Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 border-b border-gray-200">
+          <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Job / PM</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Contract</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Est. Cost</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Actual</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Committed</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Projected</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Variance</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Margin</th>
-              <th className="py-3 px-3 font-medium text-gray-600 w-24">Complete</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">Job / PM</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Contract</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Est. Cost</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Actual</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Committed</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Projected</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Variance</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Margin</th>
+              <th className="py-3 px-3 font-medium text-warm-600 w-24">Complete</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-white divide-y divide-warm-100">
             {filteredJobs.map(job => (
               <JobRow
                 key={job.id}
@@ -594,20 +594,20 @@ export function ProfitabilityPreview() {
 
       {/* Profitability Heat Map */}
       <div className="px-4 pb-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h4 className="font-medium text-gray-900 text-sm mb-3">Margin Health Map</h4>
+        <div className="bg-white rounded-lg border border-warm-200 p-4">
+          <h4 className="font-medium text-warm-900 text-sm mb-3">Margin Health Map</h4>
           <div className="flex items-center gap-2">
             {mockJobs.filter(j => j.status === 'active').map(job => (
               <div
                 key={job.id}
                 className={cn(
-                  "flex-1 rounded-lg p-3 text-center cursor-pointer hover:ring-2 hover:ring-blue-300 transition-all",
+                  "flex-1 rounded-lg p-3 text-center cursor-pointer hover:ring-2 hover:ring-stone-300 transition-all",
                   job.grossMargin >= job.targetMargin ? "bg-green-100" :
                   job.grossMargin >= job.targetMargin - 5 ? "bg-amber-100" : "bg-red-100"
                 )}
                 title={`${job.name}: ${job.grossMargin}% margin`}
               >
-                <div className="text-xs font-medium text-gray-700 truncate">{job.name.split(' ')[0]}</div>
+                <div className="text-xs font-medium text-warm-700 truncate">{job.name.split(' ')[0]}</div>
                 <div className={cn(
                   "text-lg font-bold",
                   job.grossMargin >= job.targetMargin ? "text-green-700" :
@@ -615,11 +615,11 @@ export function ProfitabilityPreview() {
                 )}>
                   {job.grossMargin.toFixed(1)}%
                 </div>
-                <div className="text-xs text-gray-500">{job.completionPct}% done</div>
+                <div className="text-xs text-warm-500">{job.completionPct}% done</div>
               </div>
             ))}
           </div>
-          <div className="flex items-center justify-end gap-4 mt-2 text-xs text-gray-500">
+          <div className="flex items-center justify-end gap-4 mt-2 text-xs text-warm-500">
             <span className="flex items-center gap-1"><span className="w-3 h-3 bg-green-100 rounded" /> Above target</span>
             <span className="flex items-center gap-1"><span className="w-3 h-3 bg-amber-100 rounded" /> At risk</span>
             <span className="flex items-center gap-1"><span className="w-3 h-3 bg-red-100 rounded" /> Below target</span>
@@ -628,23 +628,23 @@ export function ProfitabilityPreview() {
       </div>
 
       {/* YTD Summary */}
-      <div className="bg-gray-100 border-t border-gray-200 px-4 py-3">
+      <div className="bg-warm-100 border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-gray-700">YTD Summary:</span>
+          <span className="font-medium text-warm-700">YTD Summary:</span>
           <div className="flex items-center gap-6">
-            <span className="text-gray-600">
-              Revenue: <span className="font-semibold text-gray-900">{formatCurrency(8400000)}</span>
+            <span className="text-warm-600">
+              Revenue: <span className="font-semibold text-warm-900">{formatCurrency(8400000)}</span>
             </span>
-            <span className="text-gray-600">
-              Cost: <span className="font-semibold text-gray-900">{formatCurrency(6900000)}</span>
+            <span className="text-warm-600">
+              Cost: <span className="font-semibold text-warm-900">{formatCurrency(6900000)}</span>
             </span>
-            <span className="text-gray-600">
-              Overhead: <span className="font-semibold text-gray-700">{formatCurrency(690000)}</span>
+            <span className="text-warm-600">
+              Overhead: <span className="font-semibold text-warm-700">{formatCurrency(690000)}</span>
             </span>
-            <span className="text-gray-600">
+            <span className="text-warm-600">
               Net Profit: <span className="font-semibold text-green-600">{formatCurrency(810000)}</span>
             </span>
-            <span className="text-gray-600">
+            <span className="text-warm-600">
               Net Margin: <span className="font-semibold text-green-600">9.6%</span>
             </span>
           </div>
@@ -652,13 +652,13 @@ export function ProfitabilityPreview() {
       </div>
 
       {/* Benchmarking Bar */}
-      <div className="bg-blue-50 border-t border-blue-200 px-4 py-2">
+      <div className="bg-stone-50 border-t border-stone-200 px-4 py-2">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
-            <Target className="h-4 w-4 text-blue-500" />
-            <span className="text-blue-700 font-medium">Benchmarking:</span>
+            <Target className="h-4 w-4 text-stone-500" />
+            <span className="text-stone-700 font-medium">Benchmarking:</span>
           </div>
-          <div className="flex items-center gap-6 text-blue-600">
+          <div className="flex items-center gap-6 text-stone-600">
             <span>Avg cost/SF: <span className="font-semibold">$385</span> (industry: $410)</span>
             <span>Avg margin: <span className="font-semibold">14.8%</span> (industry: 16%)</span>
             <span>CO rate: <span className="font-semibold">5.2%</span> of contract</span>
@@ -683,7 +683,7 @@ export function ProfitabilityPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="px-4 py-4 bg-white border-t border-gray-200">
+      <div className="px-4 py-4 bg-white border-t border-warm-200">
         <AIFeaturesPanel
           title="AI-Powered Profitability Features"
           columns={2}

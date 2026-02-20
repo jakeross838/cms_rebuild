@@ -273,10 +273,10 @@ const mockLineItems: LineItem[] = [
 ]
 
 const statusConfig: Record<EstimateStatus, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700' },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700' },
   pending_approval: { label: 'Pending Approval', color: 'bg-amber-100 text-amber-700' },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
-  sent: { label: 'Sent to Client', color: 'bg-blue-100 text-blue-700' },
+  sent: { label: 'Sent to Client', color: 'bg-stone-100 text-stone-700' },
   expired: { label: 'Expired', color: 'bg-red-100 text-red-700' },
   converted: { label: 'Converted', color: 'bg-purple-100 text-purple-700' },
 }
@@ -289,15 +289,15 @@ const contractTypeLabels: Record<ContractType, string> = {
 }
 
 const itemTypeConfig: Record<ItemType, { label: string; color: string }> = {
-  line: { label: 'LINE', color: 'bg-blue-50 text-blue-700' },
+  line: { label: 'LINE', color: 'bg-stone-50 text-stone-700' },
   allowance: { label: 'ALLOWANCE', color: 'bg-amber-100 text-amber-700' },
   exclusion: { label: 'EXCLUDED', color: 'bg-red-100 text-red-700' },
   alternate: { label: 'ALTERNATE', color: 'bg-purple-100 text-purple-700' },
 }
 
 const tierColors = {
-  builder: 'bg-gray-100 text-gray-700',
-  standard: 'bg-blue-100 text-blue-700',
+  builder: 'bg-warm-100 text-warm-700',
+  standard: 'bg-stone-100 text-stone-700',
   premium: 'bg-purple-100 text-purple-700',
   luxury: 'bg-amber-100 text-amber-700',
 }
@@ -337,26 +337,26 @@ function LineItemCard({ item }: { item: LineItem }) {
       item.itemType === 'allowance' && "border-amber-200",
       item.itemType === 'exclusion' && "border-red-200 bg-red-50/30",
       item.itemType === 'alternate' && "border-purple-200",
-      item.itemType === 'line' && "border-gray-200",
+      item.itemType === 'line' && "border-warm-200",
     )}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
+        className="w-full px-4 py-3 flex items-center justify-between hover:bg-warm-50"
       >
         <div className="flex items-center gap-3">
           {expanded ? (
-            <ChevronDown className="h-4 w-4 text-gray-400" />
+            <ChevronDown className="h-4 w-4 text-warm-400" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-gray-400" />
+            <ChevronRight className="h-4 w-4 text-warm-400" />
           )}
           <div className="text-left">
             <div className="flex items-center gap-2">
               <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", typeConfig.color)}>
                 {typeConfig.label}
               </span>
-              <span className="font-medium text-gray-900">{item.name}</span>
+              <span className="font-medium text-warm-900">{item.name}</span>
               {item.aiSuggested && (
-                <span title="AI-suggested pricing"><Sparkles className="h-3.5 w-3.5 text-blue-500" /></span>
+                <span title="AI-suggested pricing"><Sparkles className="h-3.5 w-3.5 text-stone-500" /></span>
               )}
               {item.altGroup && (
                 <span className="text-xs text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">
@@ -364,7 +364,7 @@ function LineItemCard({ item }: { item: LineItem }) {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-warm-500">
               <span className="font-mono text-xs">{item.costCode}</span>
               <span>-</span>
               <span>{item.selection.name}</span>
@@ -377,16 +377,16 @@ function LineItemCard({ item }: { item: LineItem }) {
             {item.selection.tier.charAt(0).toUpperCase() + item.selection.tier.slice(1)}
           </span>
           {!isExclusion && (
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-warm-600">
               {item.quantity} {item.unit} x ${totalPerUnit.toFixed(2)}
               {item.wasteFactor > 0 && (
-                <span className="text-xs text-gray-400 ml-1">(+{item.wasteFactor}% waste)</span>
+                <span className="text-xs text-warm-400 ml-1">(+{item.wasteFactor}% waste)</span>
               )}
             </span>
           )}
           <span className={cn(
             "font-semibold w-24 text-right",
-            isExclusion ? "text-red-500 line-through" : "text-gray-900"
+            isExclusion ? "text-red-500 line-through" : "text-warm-900"
           )}>
             {isExclusion ? '$0' : formatCurrency(lineTotal)}
           </span>
@@ -394,48 +394,48 @@ function LineItemCard({ item }: { item: LineItem }) {
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 border-t border-gray-100">
+        <div className="px-4 pb-4 border-t border-warm-100">
           <div className="mt-3 grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-medium text-gray-500 uppercase">Selection</label>
+              <label className="text-xs font-medium text-warm-500 uppercase">Selection</label>
               <div className="mt-1 flex items-center gap-2">
-                <select className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select className="flex-1 text-sm border border-warm-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-stone-500">
                   <option>{item.selection.name}</option>
                   <option>Hardie Soffit Panel</option>
                   <option>Brazilian Hardwood</option>
                   <option>Vinyl Soffit</option>
                 </select>
-                <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded">
+                <button className="p-2 text-warm-400 hover:text-warm-600 hover:bg-warm-100 rounded">
                   <Edit2 className="h-4 w-4" />
                 </button>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase">Material</label>
+                <label className="text-xs font-medium text-warm-500 uppercase">Material</label>
                 <div className="mt-1 text-sm">${item.selection.materialCost.toFixed(2)}/{item.unit}</div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase">Labor</label>
+                <label className="text-xs font-medium text-warm-500 uppercase">Labor</label>
                 <div className="mt-1 text-sm">${item.selection.laborCost.toFixed(2)}/{item.unit}</div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase">Waste</label>
+                <label className="text-xs font-medium text-warm-500 uppercase">Waste</label>
                 <div className="mt-1 text-sm">{item.wasteFactor}%</div>
               </div>
             </div>
           </div>
 
           <div className="mt-3 flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-1.5 text-gray-600">
+            <div className="flex items-center gap-1.5 text-warm-600">
               <Clock className="h-4 w-4" />
               <span>{item.selection.leadTime}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-gray-600">
+            <div className="flex items-center gap-1.5 text-warm-600">
               <Package className="h-4 w-4" />
               <span>{item.selection.vendor}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-gray-500">
+            <div className="flex items-center gap-1.5 text-warm-500">
               <Layers className="h-4 w-4" />
               <span className="font-mono text-xs">{item.costCode}</span>
             </div>
@@ -444,13 +444,13 @@ function LineItemCard({ item }: { item: LineItem }) {
           {item.aiNote && (
             <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-              item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "bg-amber-50" : "bg-blue-50"
+              item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "bg-amber-50" : "bg-stone-50"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 mt-0.5 flex-shrink-0",
-                item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-500" : "text-blue-500"
+                item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-500" : "text-stone-500"
               )} />
-              <span className={item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-700" : "text-blue-700"}>
+              <span className={item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-700" : "text-stone-700"}>
                 {item.aiNote}
               </span>
             </div>
@@ -501,17 +501,17 @@ export function EstimatesPreview() {
   const statusCfg = statusConfig[mockHeader.status]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">{mockHeader.name}</h3>
+              <h3 className="font-semibold text-warm-900">{mockHeader.name}</h3>
               <span className={cn("text-xs px-2 py-0.5 rounded font-medium", statusCfg.color)}>
                 {statusCfg.label}
               </span>
-              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded flex items-center gap-1">
+              <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded flex items-center gap-1">
                 <GitBranch className="h-3 w-3" />
                 v{mockHeader.version}
               </span>
@@ -519,9 +519,9 @@ export function EstimatesPreview() {
                 {contractTypeLabels[mockHeader.contractType]}
               </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-3">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-3">
               <span>{mockHeader.projectSf.toLocaleString()} SF | {mockHeader.projectType} | Default: {mockHeader.defaultTier}</span>
-              <span className="text-gray-300">|</span>
+              <span className="text-warm-300">|</span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
                 Valid until {mockHeader.validUntil} ({mockHeader.daysUntilExpiry}d)
@@ -529,11 +529,11 @@ export function EstimatesPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <GitBranch className="h-4 w-4" />
               Compare Versions
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Copy className="h-4 w-4" />
               Clone
             </button>
@@ -541,7 +541,7 @@ export function EstimatesPreview() {
               <Send className="h-4 w-4" />
               Submit for Approval
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <FileText className="h-4 w-4" />
               Convert to Proposal
             </button>
@@ -550,14 +550,14 @@ export function EstimatesPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-7 gap-3">
-          <div className="bg-gray-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <Layers className="h-3.5 w-3.5" />
               Line Items
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-0.5">{totalLineItems}</div>
+            <div className="text-lg font-bold text-warm-900 mt-0.5">{totalLineItems}</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-amber-600 text-xs">
@@ -580,12 +580,12 @@ export function EstimatesPreview() {
             </div>
             <div className="text-lg font-bold text-purple-700 mt-0.5">{alternateItems / 2}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-blue-600 text-xs">
+          <div className="bg-stone-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <Sparkles className="h-3.5 w-3.5" />
               AI-Suggested
             </div>
-            <div className="text-lg font-bold text-blue-700 mt-0.5">{aiSuggestedCount}</div>
+            <div className="text-lg font-bold text-stone-700 mt-0.5">{aiSuggestedCount}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-green-600 text-xs">
@@ -596,25 +596,25 @@ export function EstimatesPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-2.5",
-            leadTimeConcerns > 0 ? "bg-amber-50" : "bg-gray-50"
+            leadTimeConcerns > 0 ? "bg-amber-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              leadTimeConcerns > 0 ? "text-amber-600" : "text-gray-500"
+              leadTimeConcerns > 0 ? "text-amber-600" : "text-warm-500"
             )}>
               <AlertTriangle className="h-3.5 w-3.5" />
               Lead Time Flags
             </div>
             <div className={cn(
               "text-lg font-bold mt-0.5",
-              leadTimeConcerns > 0 ? "text-amber-700" : "text-gray-900"
+              leadTimeConcerns > 0 ? "text-amber-700" : "text-warm-900"
             )}>{leadTimeConcerns}</div>
           </div>
         </div>
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -671,40 +671,40 @@ export function EstimatesPreview() {
       </div>
 
       {/* Summary */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-4 text-sm">
           <div>
-            <div className="text-gray-500">Subtotal</div>
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(subtotal)}</div>
+            <div className="text-warm-500">Subtotal</div>
+            <div className="text-lg font-semibold text-warm-900">{formatCurrency(subtotal)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Overhead ({mockHeader.overheadPct}%)</div>
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(overheadAmount)}</div>
+            <div className="text-warm-500">Overhead ({mockHeader.overheadPct}%)</div>
+            <div className="text-lg font-semibold text-warm-900">{formatCurrency(overheadAmount)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Profit ({mockHeader.profitPct}%)</div>
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(profitAmount)}</div>
+            <div className="text-warm-500">Profit ({mockHeader.profitPct}%)</div>
+            <div className="text-lg font-semibold text-warm-900">{formatCurrency(profitAmount)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Contingency ({mockHeader.contingencyPct}%)</div>
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(contingency)}</div>
+            <div className="text-warm-500">Contingency ({mockHeader.contingencyPct}%)</div>
+            <div className="text-lg font-semibold text-warm-900">{formatCurrency(contingency)}</div>
           </div>
           <div>
-            <div className="text-gray-500">$/SF</div>
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(costPerSf)}</div>
+            <div className="text-warm-500">$/SF</div>
+            <div className="text-lg font-semibold text-warm-900">{formatCurrency(costPerSf)}</div>
           </div>
           <div>
-            <div className="text-gray-500">Grand Total</div>
-            <div className="text-xl font-bold text-blue-600">{formatCurrency(grandTotal)}</div>
+            <div className="text-warm-500">Grand Total</div>
+            <div className="text-xl font-bold text-stone-600">{formatCurrency(grandTotal)}</div>
           </div>
         </div>
       </div>
 
       {/* Cross-Module Connection Badges */}
-      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-500 font-medium">Connected:</span>
-          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="text-warm-500 font-medium">Connected:</span>
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Package className="h-3 w-3" />
             Selections Catalog
           </span>
@@ -757,7 +757,7 @@ export function EstimatesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features"
           columns={2}

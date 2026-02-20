@@ -361,7 +361,7 @@ const mockLeads: Lead[] = [
 ]
 
 const stages = [
-  { id: 'new', label: 'New', color: 'bg-blue-500' },
+  { id: 'new', label: 'New', color: 'bg-stone-500' },
   { id: 'qualified', label: 'Qualified', color: 'bg-cyan-500' },
   { id: 'consultation', label: 'Consultation', color: 'bg-indigo-500' },
   { id: 'proposal', label: 'Proposal', color: 'bg-purple-500' },
@@ -408,16 +408,16 @@ const stageGateRequirements: Record<string, { field: keyof Lead; label: string }
 
 const lotStatusLabels: Record<string, { label: string; color: string }> = {
   owned: { label: 'Lot Owned', color: 'text-green-600' },
-  under_contract: { label: 'Under Contract', color: 'text-blue-600' },
+  under_contract: { label: 'Under Contract', color: 'text-stone-600' },
   looking: { label: 'Lot Shopping', color: 'text-amber-600' },
-  unknown: { label: 'Unknown', color: 'text-gray-400' },
+  unknown: { label: 'Unknown', color: 'text-warm-400' },
 }
 
 const financingStatusLabels: Record<string, { label: string; color: string }> = {
   pre_approved: { label: 'Pre-Approved', color: 'text-green-600' },
   cash: { label: 'Cash Buyer', color: 'text-emerald-600' },
   needs_approval: { label: 'Needs Approval', color: 'text-amber-600' },
-  unknown: { label: 'Unknown', color: 'text-gray-400' },
+  unknown: { label: 'Unknown', color: 'text-warm-400' },
 }
 
 const preferredContactLabels: Record<string, string> = {
@@ -445,9 +445,9 @@ function StageGateValidation({ lead, targetStage }: { lead: Lead; targetStage: s
   const passedCount = validationResults.filter((r) => r.passed).length
 
   return (
-    <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+    <div className="mt-3 p-3 bg-warm-50 rounded-lg border border-warm-200">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-gray-700">
+        <span className="text-xs font-medium text-warm-700">
           Stage Gate: Advance to {stages.find((s) => s.id === targetStage)?.label}
         </span>
         <span
@@ -467,7 +467,7 @@ function StageGateValidation({ lead, targetStage }: { lead: Lead; targetStage: s
             ) : (
               <XCircle className="h-3.5 w-3.5 text-red-400" />
             )}
-            <span className={req.passed ? 'text-gray-600' : 'text-red-600'}>{req.label}</span>
+            <span className={req.passed ? 'text-warm-600' : 'text-red-600'}>{req.label}</span>
           </div>
         ))}
       </div>
@@ -568,7 +568,7 @@ function DuplicateWarning({ lead }: { lead: Lead }) {
             <button className="text-xs px-2 py-1 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded font-medium">
               Merge
             </button>
-            <button className="text-xs px-2 py-1 bg-white hover:bg-gray-50 text-gray-600 rounded border border-gray-200">
+            <button className="text-xs px-2 py-1 bg-white hover:bg-warm-50 text-warm-600 rounded border border-warm-200">
               Keep Separate
             </button>
           </div>
@@ -594,10 +594,10 @@ function LotEvaluationChecklist({ lead }: { lead: Lead }) {
   const completionPercentage = Math.round((completedCount / checklistItems.length) * 100)
 
   return (
-    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+    <div className="mt-3 p-3 bg-stone-50 border border-stone-200 rounded-lg">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-blue-700">Lot Evaluation</span>
-        <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-medium">
+        <span className="text-xs font-medium text-stone-700">Lot Evaluation</span>
+        <span className="text-xs px-2 py-0.5 bg-stone-100 text-stone-700 rounded font-medium">
           {completionPercentage}% Complete
         </span>
       </div>
@@ -605,11 +605,11 @@ function LotEvaluationChecklist({ lead }: { lead: Lead }) {
         {checklistItems.map((item) => (
           <div key={item.key} className="flex items-center gap-1.5 text-xs">
             {item.checked ? (
-              <CheckCircle2 className="h-3 w-3 text-blue-500" />
+              <CheckCircle2 className="h-3 w-3 text-stone-500" />
             ) : (
-              <div className="h-3 w-3 rounded-full border border-blue-300" />
+              <div className="h-3 w-3 rounded-full border border-stone-300" />
             )}
-            <span className={item.checked ? 'text-blue-700' : 'text-blue-500'}>{item.label}</span>
+            <span className={item.checked ? 'text-stone-700' : 'text-stone-500'}>{item.label}</span>
           </div>
         ))}
       </div>
@@ -729,14 +729,14 @@ function LeadAIInsights({ lead }: { lead: Lead }) {
 function ContactFieldsDetail({ lead }: { lead: Lead }) {
   return (
     <div className="space-y-1.5 mb-3">
-      <div className="flex items-center gap-1.5 text-xs text-gray-600">
+      <div className="flex items-center gap-1.5 text-xs text-warm-600">
         <User className="h-3 w-3" />
         <span className="font-medium">{lead.firstName} {lead.lastName}</span>
       </div>
       <div className="flex items-center gap-3">
         <a
           href={`mailto:${lead.email}`}
-          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700"
+          className="flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-700"
         >
           <Mail className="h-3 w-3" />
           <span>{lead.email}</span>
@@ -745,13 +745,13 @@ function ContactFieldsDetail({ lead }: { lead: Lead }) {
       <div className="flex items-center gap-3">
         <a
           href={`tel:${lead.phone.replace(/\D/g, '')}`}
-          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700"
+          className="flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-700"
         >
           <Phone className="h-3 w-3" />
           <span>{lead.phone}</span>
         </a>
       </div>
-      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+      <div className="flex items-center gap-1.5 text-xs text-warm-500">
         <Heart className="h-3 w-3" />
         <span>Preferred: {preferredContactLabels[lead.preferredContactMethod]}</span>
       </div>
@@ -769,14 +769,14 @@ function LeadCard({ lead }: { lead: Lead }) {
   const nextStage = stages[currentStageIndex + 1]
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <div className="bg-white rounded-lg border border-warm-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h4 className="font-medium text-gray-900 text-sm">{lead.name}</h4>
-          <p className="text-xs text-gray-500">{lead.projectType}</p>
+          <h4 className="font-medium text-warm-900 text-sm">{lead.name}</h4>
+          <p className="text-xs text-warm-500">{lead.projectType}</p>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
@@ -787,32 +787,32 @@ function LeadCard({ lead }: { lead: Lead }) {
       <ContactFieldsDetail lead={lead} />
 
       <div className="space-y-1.5 mb-3">
-        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+        <div className="flex items-center gap-1.5 text-xs text-warm-600">
           <DollarSign className="h-3 w-3" />
           <span>{formatCurrency(lead.estimatedValue)}</span>
-          <span className="text-gray-400">|</span>
+          <span className="text-warm-400">|</span>
           <span>{lead.estimatedSf.toLocaleString()} SF</span>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+        <div className="flex items-center gap-1.5 text-xs text-warm-600">
           <MapPin className="h-3 w-3" />
           <span className={lotInfo.color}>{lotInfo.label}</span>
           {lead.preconType === 'design_build' && (
             <>
-              <span className="text-gray-400">|</span>
+              <span className="text-warm-400">|</span>
               <span className="text-indigo-600">Design-Build</span>
             </>
           )}
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+        <div className="flex items-center gap-1.5 text-xs text-warm-600">
           <Landmark className="h-3 w-3" />
           <span className={financingInfo.color}>{financingInfo.label}</span>
         </div>
         {lead.source && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-600">
+          <div className="flex items-center gap-1.5 text-xs text-warm-600">
             <Target className="h-3 w-3" />
             <span>{lead.source}</span>
             {lead.sourceDetail && (
-              <span className="text-gray-400 truncate max-w-[120px]" title={lead.sourceDetail}>
+              <span className="text-warm-400 truncate max-w-[120px]" title={lead.sourceDetail}>
                 - {lead.sourceDetail}
               </span>
             )}
@@ -820,8 +820,8 @@ function LeadCard({ lead }: { lead: Lead }) {
         )}
         {lead.competitor && (
           <div className="flex items-center gap-1.5 text-xs">
-            <Users className="h-3 w-3 text-gray-400" />
-            <span className="text-gray-500">vs {lead.competitor}</span>
+            <Users className="h-3 w-3 text-warm-400" />
+            <span className="text-warm-500">vs {lead.competitor}</span>
             {lead.competitivePosition && (
               <span
                 className={cn(
@@ -841,10 +841,10 @@ function LeadCard({ lead }: { lead: Lead }) {
       </div>
 
       {/* Stage activity */}
-      <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+      <div className="flex items-center gap-2 text-xs text-warm-500 mb-2">
         <Clock className="h-3 w-3" />
         <span>{lead.daysInStage}d in stage</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-warm-300">|</span>
         <span>
           {lead.lastActivityType} - {lead.lastActivityDate}
         </span>
@@ -866,12 +866,12 @@ function LeadCard({ lead }: { lead: Lead }) {
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className="flex items-center gap-1.5">
-          <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-xs font-medium text-blue-700">{lead.assignedTo[0]}</span>
+          <div className="h-5 w-5 rounded-full bg-stone-100 flex items-center justify-center">
+            <span className="text-xs font-medium text-stone-700">{lead.assignedTo[0]}</span>
           </div>
-          <span className="text-xs text-gray-500">{lead.assignedTo}</span>
+          <span className="text-xs text-warm-500">{lead.assignedTo}</span>
         </div>
         <div className="flex items-center gap-2">
           <div
@@ -948,7 +948,7 @@ function LeadCard({ lead }: { lead: Lead }) {
         <>
           <button
             onClick={() => setShowStageGate(!showStageGate)}
-            className="mt-2 w-full flex items-center justify-center gap-2 text-xs font-medium text-gray-600 hover:text-gray-700 py-1.5 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            className="mt-2 w-full flex items-center justify-center gap-2 text-xs font-medium text-warm-600 hover:text-warm-700 py-1.5 px-3 bg-warm-100 hover:bg-warm-200 rounded-lg transition-colors"
           >
             <ArrowRight className="h-3.5 w-3.5" />
             Advance Stage
@@ -989,7 +989,7 @@ function ExtendedFilterBar({
   setAiScoreRange: (value: [number, number]) => void
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+    <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-warm-200">
       <PriorityFilter value={projectTypeFilter} onChange={setProjectTypeFilter} />
       <StatusFilter
         value={lotStatusFilter}
@@ -997,16 +997,16 @@ function ExtendedFilterBar({
         label="Lot Status"
         options={[
           { id: 'owned', label: 'Lot Owned', color: 'bg-green-500' },
-          { id: 'under_contract', label: 'Under Contract', color: 'bg-blue-500' },
+          { id: 'under_contract', label: 'Under Contract', color: 'bg-stone-500' },
           { id: 'looking', label: 'Lot Shopping', color: 'bg-amber-500' },
-          { id: 'unknown', label: 'Unknown', color: 'bg-gray-400' },
+          { id: 'unknown', label: 'Unknown', color: 'bg-warm-400' },
         ]}
       />
 
       <select
         value={financingFilter}
         onChange={(e) => setFinancingFilter(e.target.value)}
-        className="text-xs px-2 py-1.5 border border-gray-200 rounded-lg bg-white"
+        className="text-xs px-2 py-1.5 border border-warm-200 rounded-lg bg-white"
       >
         <option value="">All Financing</option>
         <option value="pre_approved">Pre-Approved</option>
@@ -1018,7 +1018,7 @@ function ExtendedFilterBar({
       <select
         value={sourceFilter}
         onChange={(e) => setSourceFilter(e.target.value)}
-        className="text-xs px-2 py-1.5 border border-gray-200 rounded-lg bg-white"
+        className="text-xs px-2 py-1.5 border border-warm-200 rounded-lg bg-white"
       >
         <option value="">All Sources</option>
         <option value="Referral">Referral</option>
@@ -1029,23 +1029,23 @@ function ExtendedFilterBar({
       </select>
 
       <div className="flex items-center gap-2 text-xs">
-        <span className="text-gray-500">AI Score:</span>
+        <span className="text-warm-500">AI Score:</span>
         <input
           type="number"
           min="0"
           max="100"
           value={aiScoreRange[0]}
           onChange={(e) => setAiScoreRange([parseInt(e.target.value) || 0, aiScoreRange[1]])}
-          className="w-12 px-1.5 py-1 border border-gray-200 rounded text-center"
+          className="w-12 px-1.5 py-1 border border-warm-200 rounded text-center"
         />
-        <span className="text-gray-400">-</span>
+        <span className="text-warm-400">-</span>
         <input
           type="number"
           min="0"
           max="100"
           value={aiScoreRange[1]}
           onChange={(e) => setAiScoreRange([aiScoreRange[0], parseInt(e.target.value) || 100])}
-          className="w-12 px-1.5 py-1 border border-gray-200 rounded text-center"
+          className="w-12 px-1.5 py-1 border border-warm-200 rounded text-center"
         />
       </div>
     </div>
@@ -1110,12 +1110,12 @@ export function LeadsPipelinePreview() {
     ) || 0
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Leads Pipeline</h3>
-          <span className="text-sm text-gray-500">
+          <h3 className="font-semibold text-warm-900">Leads Pipeline</h3>
+          <span className="text-sm text-warm-500">
             {mockLeads.filter((l) => l.status === 'active').length} active | {formatCurrency(pipelineValue)} pipeline
           </span>
         </div>
@@ -1167,13 +1167,13 @@ export function LeadsPipelinePreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
-          <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
-            <DollarSign className="h-4 w-4 text-blue-500" />
+          <div className="flex items-center gap-2 p-3 bg-stone-50 rounded-lg">
+            <DollarSign className="h-4 w-4 text-stone-500" />
             <div>
-              <div className="text-sm font-semibold text-blue-700">{formatCurrency(pipelineValue)}</div>
-              <div className="text-[10px] text-blue-600">Pipeline Value</div>
+              <div className="text-sm font-semibold text-stone-700">{formatCurrency(pipelineValue)}</div>
+              <div className="text-[10px] text-stone-600">Pipeline Value</div>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
@@ -1208,10 +1208,10 @@ export function LeadsPipelinePreview() {
       </div>
 
       {/* Cross-Module Connections */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-gray-500 font-medium">Connections:</span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded">
+          <span className="text-warm-500 font-medium">Connections:</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded">
             <FileText className="h-3 w-3" />
             Estimating
           </span>
@@ -1252,19 +1252,19 @@ export function LeadsPipelinePreview() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div className={cn('h-2 w-2 rounded-full', stage.color)} />
-                    <span className="font-medium text-gray-700 text-sm">{stage.label}</span>
-                    <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                    <span className="font-medium text-warm-700 text-sm">{stage.label}</span>
+                    <span className="text-xs text-warm-400 bg-warm-100 px-1.5 py-0.5 rounded">
                       {stageLeads.length}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-500">{formatCurrency(stageTotal)}</span>
+                  <span className="text-xs text-warm-500">{formatCurrency(stageTotal)}</span>
                 </div>
                 <div className="space-y-3">
                   {stageLeads.map((lead) => (
                     <LeadCard key={lead.id} lead={lead} />
                   ))}
                   {stageLeads.length === 0 && (
-                    <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                    <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
                       No leads in this stage
                     </div>
                   )}
@@ -1276,12 +1276,12 @@ export function LeadsPipelinePreview() {
       </div>
 
       {/* Source ROI Bar */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
-        <h4 className="text-xs font-semibold text-gray-700 mb-2">Lead Source Performance</h4>
+      <div className="bg-white border-t border-warm-200 px-4 py-3">
+        <h4 className="text-xs font-semibold text-warm-700 mb-2">Lead Source Performance</h4>
         <div className="flex items-center gap-3">
           {[
             { source: 'Referral', leads: 3, won: 1, value: '$2.8M', color: 'bg-green-100 text-green-700' },
-            { source: 'Website', leads: 1, won: 0, value: '$250K', color: 'bg-blue-100 text-blue-700' },
+            { source: 'Website', leads: 1, won: 0, value: '$250K', color: 'bg-stone-100 text-stone-700' },
             { source: 'Houzz', leads: 1, won: 0, value: '$320K', color: 'bg-orange-100 text-orange-700' },
             { source: 'Parade', leads: 1, won: 0, value: '$1.2M', color: 'bg-purple-100 text-purple-700' },
             { source: 'Angi', leads: 1, won: 0, value: '$95K', color: 'bg-red-100 text-red-700' },

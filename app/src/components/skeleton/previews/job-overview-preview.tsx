@@ -434,17 +434,17 @@ const mockAIFeatures: AIFeatureCardProps[] = [
 // ---------------------------------------------------------------------------
 
 const statuses = [
-  { id: 'pre-con', label: 'Pre-Construction', color: 'bg-blue-500', bgLight: 'bg-blue-50', textColor: 'text-blue-700' },
+  { id: 'pre-con', label: 'Pre-Construction', color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
   { id: 'active', label: 'Active', color: 'bg-green-500', bgLight: 'bg-green-50', textColor: 'text-green-700' },
   { id: 'closeout', label: 'Closeout', color: 'bg-amber-500', bgLight: 'bg-amber-50', textColor: 'text-amber-700' },
-  { id: 'complete', label: 'Complete', color: 'bg-gray-500', bgLight: 'bg-gray-100', textColor: 'text-gray-700' },
+  { id: 'complete', label: 'Complete', color: 'bg-warm-500', bgLight: 'bg-warm-100', textColor: 'text-warm-700' },
   { id: 'warranty', label: 'Warranty', color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
 ]
 
 const warrantyStatuses = {
-  'in-construction': { label: 'In Construction', color: 'bg-blue-100 text-blue-700' },
+  'in-construction': { label: 'In Construction', color: 'bg-stone-100 text-stone-700' },
   'warranty-period': { label: 'Warranty Period', color: 'bg-purple-100 text-purple-700' },
-  'warranty-expired': { label: 'Warranty Expired', color: 'bg-gray-100 text-gray-600' },
+  'warranty-expired': { label: 'Warranty Expired', color: 'bg-warm-100 text-warm-600' },
 }
 
 const jobTabs: { id: JobTab; label: string }[] = [
@@ -478,16 +478,16 @@ function getActivityIcon(type: ActivityItem['type']) {
 
 function getActivityColor(type: ActivityItem['type']) {
   switch (type) {
-    case 'daily-log': return 'bg-blue-100 text-blue-600'
+    case 'daily-log': return 'bg-stone-100 text-stone-600'
     case 'photo': return 'bg-purple-100 text-purple-600'
     case 'change-order': return 'bg-amber-100 text-amber-600'
     case 'invoice': return 'bg-green-100 text-green-600'
     case 'rfi': return 'bg-cyan-100 text-cyan-600'
     case 'selection': return 'bg-pink-100 text-pink-600'
-    case 'comment': return 'bg-gray-100 text-gray-600'
+    case 'comment': return 'bg-warm-100 text-warm-600'
     case 'inspection': return 'bg-emerald-100 text-emerald-600'
     case 'punch-list': return 'bg-orange-100 text-orange-600'
-    default: return 'bg-gray-100 text-gray-600'
+    default: return 'bg-warm-100 text-warm-600'
   }
 }
 
@@ -495,8 +495,8 @@ function getPriorityConfig(priority: NextStepItem['priority']) {
   switch (priority) {
     case 'urgent': return { color: 'bg-red-100 text-red-700', label: 'Urgent' }
     case 'high': return { color: 'bg-amber-100 text-amber-700', label: 'High' }
-    case 'medium': return { color: 'bg-blue-100 text-blue-700', label: 'Medium' }
-    case 'low': return { color: 'bg-gray-100 text-gray-600', label: 'Low' }
+    case 'medium': return { color: 'bg-stone-100 text-stone-700', label: 'Medium' }
+    case 'low': return { color: 'bg-warm-100 text-warm-600', label: 'Low' }
   }
 }
 
@@ -506,7 +506,7 @@ function getPriorityConfig(priority: NextStepItem['priority']) {
 
 function JobNavigationTabs({ activeTab }: { activeTab: JobTab }) {
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-white border-b border-warm-200">
       <div className="flex items-center gap-1 px-6">
         {jobTabs.map((tab) => (
           <button
@@ -514,8 +514,8 @@ function JobNavigationTabs({ activeTab }: { activeTab: JobTab }) {
             className={cn(
               "px-4 py-3 text-sm font-medium border-b-2 transition-colors",
               activeTab === tab.id
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-stone-500 text-stone-600"
+                : "border-transparent text-warm-500 hover:text-warm-700 hover:border-warm-300"
             )}
           >
             {tab.label}
@@ -537,7 +537,7 @@ function SummaryHeader({ job }: { job: JobOverview }) {
   }
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-white border-b border-warm-200 px-6 py-4">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           <div className={cn("p-3 rounded-xl", statusConfig.bgLight)}>
@@ -545,7 +545,7 @@ function SummaryHeader({ job }: { job: JobOverview }) {
           </div>
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-xl font-bold text-gray-900">{job.name}</h2>
+              <h2 className="text-xl font-bold text-warm-900">{job.name}</h2>
               <span className={cn(
                 "text-xs px-2.5 py-1 rounded font-medium",
                 statusConfig.bgLight,
@@ -553,8 +553,8 @@ function SummaryHeader({ job }: { job: JobOverview }) {
               )}>
                 {statusConfig.label}
               </span>
-              <span className="text-xs text-gray-400 font-mono">{job.jobNumber}</span>
-              <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{job.projectType}</span>
+              <span className="text-xs text-warm-400 font-mono">{job.jobNumber}</span>
+              <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">{job.projectType}</span>
               <span className={cn("text-xs px-2 py-0.5 rounded font-medium", getHealthColor(job.aiHealthScore))}>
                 Health: {job.aiHealthScore}/100
               </span>
@@ -566,29 +566,29 @@ function SummaryHeader({ job }: { job: JobOverview }) {
                 )}
               </span>
             </div>
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+            <div className="flex items-center gap-4 mt-2 text-sm text-warm-600">
               <div className="flex items-center gap-1.5">
-                <User className="h-4 w-4 text-gray-400" />
+                <User className="h-4 w-4 text-warm-400" />
                 <span>{job.client}</span>
-                <a href={`mailto:${job.clientEmail}`} className="text-blue-500 hover:text-blue-600">
+                <a href={`mailto:${job.clientEmail}`} className="text-stone-500 hover:text-stone-600">
                   <Mail className="h-3.5 w-3.5" />
                 </a>
-                <a href={`tel:${job.clientPhone}`} className="text-blue-500 hover:text-blue-600">
+                <a href={`tel:${job.clientPhone}`} className="text-stone-500 hover:text-stone-600">
                   <Phone className="h-3.5 w-3.5" />
                 </a>
               </div>
               <div className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-gray-400" />
+                <MapPin className="h-4 w-4 text-warm-400" />
                 <span>{job.address}, {job.city}, {job.state} {job.zip}</span>
               </div>
             </div>
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+            <div className="flex items-center gap-4 mt-2 text-sm text-warm-500">
               <div className="flex items-center gap-1.5">
-                <Calendar className="h-4 w-4 text-gray-400" />
+                <Calendar className="h-4 w-4 text-warm-400" />
                 <span>Started: {job.startDate}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-gray-400" />
+                <Clock className="h-4 w-4 text-warm-400" />
                 <span>Expected: {job.expectedCompletion}</span>
                 {job.predictedCompletion !== job.expectedCompletion && (
                   <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
@@ -597,25 +597,25 @@ function SummaryHeader({ job }: { job: JobOverview }) {
                 )}
               </div>
               <div className="flex items-center gap-1.5">
-                <Hash className="h-4 w-4 text-gray-400" />
+                <Hash className="h-4 w-4 text-warm-400" />
                 <span>{job.squareFootage.toLocaleString()} SF</span>
               </div>
             </div>
-            <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+            <div className="flex items-center gap-3 mt-2 text-xs text-warm-400">
               <span>{job.subdivision} - {job.lotNumber}</span>
-              <span className="text-gray-300">|</span>
+              <span className="text-warm-300">|</span>
               <span>Day {job.daysSinceStart} of ~{job.daysSinceStart + job.estimatedDaysRemaining}</span>
-              <span className="text-gray-300">|</span>
+              <span className="text-warm-300">|</span>
               <span>~{job.estimatedDaysRemaining} days remaining</span>
             </div>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-sm text-gray-500">Project Manager</div>
-          <div className="font-medium text-gray-900">{job.pmAssigned}</div>
-          <div className="text-sm text-gray-500 mt-1">Superintendent</div>
-          <div className="font-medium text-gray-900">{job.superintendent}</div>
-          <button className="mt-2 text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 justify-end">
+          <div className="text-sm text-warm-500">Project Manager</div>
+          <div className="font-medium text-warm-900">{job.pmAssigned}</div>
+          <div className="text-sm text-warm-500 mt-1">Superintendent</div>
+          <div className="font-medium text-warm-900">{job.superintendent}</div>
+          <button className="mt-2 text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1 justify-end">
             <ExternalLink className="h-3 w-3" />
             Client Portal
           </button>
@@ -629,15 +629,15 @@ function PercentCompleteVisualization({ job }: { job: JobOverview }) {
   const statusConfig = getStatusConfig(job.status)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-semibold text-gray-900">Project Progress</h4>
+        <h4 className="font-semibold text-warm-900">Project Progress</h4>
         <span className={cn("text-2xl font-bold", statusConfig.textColor)}>{job.progress}%</span>
       </div>
 
       {/* Large Progress Bar */}
       <div className="mb-4">
-        <div className="h-6 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-6 bg-warm-100 rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all flex items-center justify-end pr-2", statusConfig.color)}
             style={{ width: `${job.progress}%` }}
@@ -651,21 +651,21 @@ function PercentCompleteVisualization({ job }: { job: JobOverview }) {
 
       {/* Phase Breakdown */}
       <div className="space-y-2">
-        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Progress by Phase</div>
+        <div className="text-xs font-medium text-warm-500 uppercase tracking-wide mb-2">Progress by Phase</div>
         {job.phaseProgress.map((phase, idx) => (
           <div key={idx} className="flex items-center gap-3">
-            <div className="w-32 text-xs text-gray-600 truncate">{phase.phase}</div>
-            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="w-32 text-xs text-warm-600 truncate">{phase.phase}</div>
+            <div className="flex-1 h-2 bg-warm-100 rounded-full overflow-hidden">
               <div
                 className={cn(
                   "h-full rounded-full transition-all",
                   phase.percent === 100 ? "bg-green-500" :
-                  phase.percent > 0 ? "bg-blue-500" : "bg-gray-200"
+                  phase.percent > 0 ? "bg-stone-500" : "bg-warm-200"
                 )}
                 style={{ width: `${phase.percent}%` }}
               />
             </div>
-            <div className="w-10 text-xs text-right text-gray-500">{phase.percent}%</div>
+            <div className="w-10 text-xs text-right text-warm-500">{phase.percent}%</div>
           </div>
         ))}
       </div>
@@ -675,9 +675,9 @@ function PercentCompleteVisualization({ job }: { job: JobOverview }) {
 
 function DocumentShortcuts({ documents }: { documents: DocumentShortcut[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
-        <h4 className="font-semibold text-gray-900 text-sm">Key Documents</h4>
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
+        <h4 className="font-semibold text-warm-900 text-sm">Key Documents</h4>
       </div>
       <div className="p-3">
         <div className="grid grid-cols-5 gap-2">
@@ -686,16 +686,16 @@ function DocumentShortcuts({ documents }: { documents: DocumentShortcut[] }) {
             return (
               <button
                 key={doc.id}
-                className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
+                className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-warm-50 transition-colors group"
               >
-                <div className="p-2 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
-                  <Icon className="h-4 w-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                <div className="p-2 rounded-lg bg-warm-100 group-hover:bg-stone-100 transition-colors">
+                  <Icon className="h-4 w-4 text-warm-600 group-hover:text-stone-600 transition-colors" />
                 </div>
                 <div className="text-center">
-                  <div className="text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                  <div className="text-xs font-medium text-warm-700 group-hover:text-stone-600 transition-colors">
                     {doc.name}
                   </div>
-                  <div className="text-[10px] text-gray-400">{doc.lastUpdated}</div>
+                  <div className="text-[10px] text-warm-400">{doc.lastUpdated}</div>
                 </div>
               </button>
             )
@@ -708,12 +708,12 @@ function DocumentShortcuts({ documents }: { documents: DocumentShortcut[] }) {
 
 function NextStepsCard({ steps }: { steps: NextStepItem[] }) {
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-      <div className="px-4 py-3 border-b border-blue-200">
+    <div className="bg-gradient-to-br from-stone-50 to-indigo-50 rounded-lg border border-stone-200">
+      <div className="px-4 py-3 border-b border-stone-200">
         <div className="flex items-center gap-2">
-          <ListChecks className="h-4 w-4 text-blue-600" />
-          <h4 className="font-semibold text-blue-900 text-sm">Next Steps</h4>
-          <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">AI Recommended</span>
+          <ListChecks className="h-4 w-4 text-stone-600" />
+          <h4 className="font-semibold text-stone-900 text-sm">Next Steps</h4>
+          <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">AI Recommended</span>
         </div>
       </div>
       <div className="p-4">
@@ -722,16 +722,16 @@ function NextStepsCard({ steps }: { steps: NextStepItem[] }) {
             const priorityConfig = getPriorityConfig(step.priority)
             return (
               <div key={step.id} className="flex items-start gap-3 p-2 bg-white/60 rounded-lg">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium flex items-center justify-center">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-stone-100 text-stone-700 text-xs font-medium flex items-center justify-center">
                   {idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-800">{step.action}</p>
+                  <p className="text-sm text-warm-800">{step.action}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className={cn("text-[10px] px-1.5 py-0.5 rounded font-medium", priorityConfig.color)}>
                       {priorityConfig.label}
                     </span>
-                    <span className="text-xs text-gray-500">{step.assignee}</span>
+                    <span className="text-xs text-warm-500">{step.assignee}</span>
                   </div>
                 </div>
               </div>
@@ -750,7 +750,7 @@ function MetricCardComponent({ metric }: { metric: MetricCard }) {
     good: { bg: 'bg-green-50', icon: 'bg-green-100 text-green-600', text: 'text-green-600' },
     warning: { bg: 'bg-amber-50', icon: 'bg-amber-100 text-amber-600', text: 'text-amber-600' },
     critical: { bg: 'bg-red-50', icon: 'bg-red-100 text-red-600', text: 'text-red-600' },
-    neutral: { bg: 'bg-gray-50', icon: 'bg-gray-100 text-gray-600', text: 'text-gray-600' },
+    neutral: { bg: 'bg-warm-50', icon: 'bg-warm-100 text-warm-600', text: 'text-warm-600' },
   }
 
   const colors = statusColors[metric.status]
@@ -764,7 +764,7 @@ function MetricCardComponent({ metric }: { metric: MetricCard }) {
         {metric.trend && (
           <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
-            metric.trend === 'up' ? "text-green-600" : metric.trend === 'down' ? "text-amber-600" : "text-gray-500"
+            metric.trend === 'up' ? "text-green-600" : metric.trend === 'down' ? "text-amber-600" : "text-warm-500"
           )}>
             {metric.trend === 'up' ? <TrendingUp className="h-3 w-3" /> : metric.trend === 'down' ? <TrendingDown className="h-3 w-3" /> : null}
             {metric.trendValue}
@@ -772,14 +772,14 @@ function MetricCardComponent({ metric }: { metric: MetricCard }) {
         )}
       </div>
       <div className="mt-3">
-        <div className="text-2xl font-bold text-gray-900">{metric.value}</div>
-        <div className="text-sm text-gray-600 mt-0.5">{metric.label}</div>
+        <div className="text-2xl font-bold text-warm-900">{metric.value}</div>
+        <div className="text-sm text-warm-600 mt-0.5">{metric.label}</div>
         {metric.subValue && (
-          <div className="text-xs text-gray-400 mt-0.5">{metric.subValue}</div>
+          <div className="text-xs text-warm-400 mt-0.5">{metric.subValue}</div>
         )}
       </div>
       {metric.drillDownTo && (
-        <div className="mt-1 flex items-center gap-1 text-xs text-blue-500">
+        <div className="mt-1 flex items-center gap-1 text-xs text-stone-500">
           <ExternalLink className="h-3 w-3" />
           View details
         </div>
@@ -791,16 +791,16 @@ function MetricCardComponent({ metric }: { metric: MetricCard }) {
 function WeatherWidget({ weather }: { weather: WeatherData }) {
   const CurrentIcon = weather.current.icon
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-semibold text-gray-900 text-sm">Site Weather</h4>
-        <span className="text-xs text-gray-400">Wilmington, NC</span>
+        <h4 className="font-semibold text-warm-900 text-sm">Site Weather</h4>
+        <span className="text-xs text-warm-400">Wilmington, NC</span>
       </div>
       <div className="flex items-center gap-3 mb-3">
         <CurrentIcon className="h-8 w-8 text-amber-500" />
         <div>
-          <div className="text-2xl font-bold text-gray-900">{weather.current.temp}F</div>
-          <div className="text-sm text-gray-500">{weather.current.condition}</div>
+          <div className="text-2xl font-bold text-warm-900">{weather.current.temp}F</div>
+          <div className="text-sm text-warm-500">{weather.current.condition}</div>
         </div>
       </div>
       <div className="space-y-2">
@@ -809,11 +809,11 @@ function WeatherWidget({ weather }: { weather: WeatherData }) {
           return (
             <div key={i} className={cn("flex items-center justify-between px-2 py-1.5 rounded", day.riskFlag ? "bg-red-50" : "")}>
               <div className="flex items-center gap-2">
-                <ForecastIcon className={cn("h-4 w-4", day.riskFlag ? "text-red-500" : "text-gray-400")} />
-                <span className="text-sm text-gray-700">{day.day}</span>
+                <ForecastIcon className={cn("h-4 w-4", day.riskFlag ? "text-red-500" : "text-warm-400")} />
+                <span className="text-sm text-warm-700">{day.day}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">{day.high}F / {day.low}F</span>
+                <span className="text-xs text-warm-500">{day.high}F / {day.low}F</span>
                 {day.riskFlag && (
                   <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Outdoor risk</span>
                 )}
@@ -830,16 +830,16 @@ function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
   const getMilestoneConfig = (status: Milestone['status']) => {
     switch (status) {
       case 'completed': return { icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-100', line: 'bg-green-500' }
-      case 'current': return { icon: Flag, color: 'text-blue-600', bg: 'bg-blue-100', line: 'bg-blue-500' }
-      case 'upcoming': return { icon: Diamond, color: 'text-gray-400', bg: 'bg-gray-100', line: 'bg-gray-300' }
+      case 'current': return { icon: Flag, color: 'text-stone-600', bg: 'bg-stone-100', line: 'bg-stone-500' }
+      case 'upcoming': return { icon: Diamond, color: 'text-warm-400', bg: 'bg-warm-100', line: 'bg-warm-300' }
       case 'at-risk': return { icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-100', line: 'bg-amber-500' }
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
-        <h4 className="font-semibold text-gray-900 text-sm">Key Milestones</h4>
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
+        <h4 className="font-semibold text-warm-900 text-sm">Key Milestones</h4>
       </div>
       <div className="p-4">
         <div className="space-y-3">
@@ -858,7 +858,7 @@ function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
                 </div>
                 <div className="flex-1 flex items-center justify-between">
                   <div>
-                    <span className={cn("text-sm font-medium", milestone.status === 'completed' ? 'text-gray-500' : 'text-gray-900')}>
+                    <span className={cn("text-sm font-medium", milestone.status === 'completed' ? 'text-warm-500' : 'text-warm-900')}>
                       {milestone.name}
                     </span>
                     {milestone.completedDate && (
@@ -866,7 +866,7 @@ function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
                     )}
                   </div>
                   <div className="text-right">
-                    <span className="text-xs text-gray-500">{milestone.date}</span>
+                    <span className="text-xs text-warm-500">{milestone.date}</span>
                     {milestone.predictedDate && milestone.predictedDate !== milestone.date && (
                       <div className="text-xs text-amber-600 font-medium">AI: {milestone.predictedDate}</div>
                     )}
@@ -883,39 +883,39 @@ function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
 
 function TeamRoster({ team }: { team: TeamAssignment[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-gray-900 text-sm">Project Team</h4>
-          <span className="text-xs text-gray-400">{team.length} members</span>
+          <h4 className="font-semibold text-warm-900 text-sm">Project Team</h4>
+          <span className="text-xs text-warm-400">{team.length} members</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {team.map(member => (
-          <div key={member.id} className="px-4 py-2.5 hover:bg-gray-50">
+          <div key={member.id} className="px-4 py-2.5 hover:bg-warm-50">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-gray-900">{member.name}</span>
-                  <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{member.role}</span>
+                  <span className="font-medium text-sm text-warm-900">{member.name}</span>
+                  <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">{member.role}</span>
                   {member.trade && (
-                    <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{member.trade}</span>
+                    <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{member.trade}</span>
                   )}
                 </div>
                 {member.company && (
-                  <span className="text-xs text-gray-400">{member.company}</span>
+                  <span className="text-xs text-warm-400">{member.company}</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
                 <span className={cn(
                   "text-xs px-1.5 py-0.5 rounded font-medium",
                   member.status === 'active' ? "bg-green-100 text-green-700" :
-                  member.status === 'scheduled' ? "bg-blue-100 text-blue-700" :
-                  "bg-gray-100 text-gray-600"
+                  member.status === 'scheduled' ? "bg-stone-100 text-stone-700" :
+                  "bg-warm-100 text-warm-600"
                 )}>
                   {member.status}
                 </span>
-                <a href={`tel:${member.phone}`} className="text-gray-400 hover:text-blue-600">
+                <a href={`tel:${member.phone}`} className="text-warm-400 hover:text-stone-600">
                   <Phone className="h-3.5 w-3.5" />
                 </a>
               </div>
@@ -933,26 +933,26 @@ function RiskRegister({ risks }: { risks: RiskItem[] }) {
       case 'high': return 'bg-red-100 text-red-700'
       case 'medium': return 'bg-amber-100 text-amber-700'
       case 'low': return 'bg-green-100 text-green-700'
-      default: return 'bg-gray-100 text-gray-700'
+      default: return 'bg-warm-100 text-warm-700'
     }
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-gray-900 text-sm">Risk Register</h4>
+          <h4 className="font-semibold text-warm-900 text-sm">Risk Register</h4>
           <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
             {risks.filter(r => r.status === 'open').length} open
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {risks.map(risk => (
-          <div key={risk.id} className="px-4 py-2.5 hover:bg-gray-50">
+          <div key={risk.id} className="px-4 py-2.5 hover:bg-warm-50">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-sm text-gray-700">{risk.description}</p>
+                <p className="text-sm text-warm-700">{risk.description}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", getLikelihoodColor(risk.likelihood))}>
                     L: {risk.likelihood}
@@ -983,23 +983,23 @@ function RiskRegister({ risks }: { risks: RiskItem[] }) {
 
 function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-gray-900">Recent Activity</h4>
-          <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          <h4 className="font-semibold text-warm-900">Recent Activity</h4>
+          <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
             View All
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {activities.map((activity) => {
           const Icon = getActivityIcon(activity.type)
           const colorClass = getActivityColor(activity.type)
 
           return (
-            <div key={activity.id} className="px-4 py-3 hover:bg-gray-50">
+            <div key={activity.id} className="px-4 py-3 hover:bg-warm-50">
               <div className="flex items-start gap-3">
                 <div className={cn("p-2 rounded-lg flex-shrink-0", colorClass)}>
                   <Icon className="h-4 w-4" />
@@ -1007,12 +1007,12 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="font-medium text-gray-900 text-sm">{activity.title}</div>
-                      <div className="text-sm text-gray-600 mt-0.5">{activity.description}</div>
+                      <div className="font-medium text-warm-900 text-sm">{activity.title}</div>
+                      <div className="text-sm text-warm-600 mt-0.5">{activity.description}</div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       {activity.refId && (
-                        <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{activity.refId}</span>
+                        <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{activity.refId}</span>
                       )}
                       {activity.metadata && (
                         <span className={cn(
@@ -1020,14 +1020,14 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
                           activity.type === 'change-order' ? "bg-amber-100 text-amber-700" :
                           activity.type === 'invoice' ? "bg-green-100 text-green-700" :
                           activity.type === 'selection' ? "bg-pink-100 text-pink-700" :
-                          "bg-gray-100 text-gray-600"
+                          "bg-warm-100 text-warm-600"
                         )}>
                           {activity.metadata}
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 mt-1.5 text-xs text-gray-400">
+                  <div className="flex items-center gap-2 mt-1.5 text-xs text-warm-400">
                     <span>{activity.user}</span>
                     <span>-</span>
                     <span>{activity.timestamp}</span>
@@ -1044,9 +1044,9 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
 
 function QuickLinksGrid({ links }: { links: QuickLink[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
-        <h4 className="font-semibold text-gray-900">Quick Links</h4>
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
+        <h4 className="font-semibold text-warm-900">Quick Links</h4>
       </div>
       <div className="p-4">
         <div className="grid grid-cols-6 gap-3">
@@ -1055,11 +1055,11 @@ function QuickLinksGrid({ links }: { links: QuickLink[] }) {
             return (
               <button
                 key={link.id}
-                className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors group relative"
+                className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-warm-50 transition-colors group relative"
               >
                 <div className="relative">
-                  <div className="p-2.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
-                    <Icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                  <div className="p-2.5 rounded-lg bg-warm-100 group-hover:bg-stone-100 transition-colors">
+                    <Icon className="h-5 w-5 text-warm-600 group-hover:text-stone-600 transition-colors" />
                   </div>
                   {link.alert && (
                     <div className={cn("absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white",
@@ -1068,11 +1068,11 @@ function QuickLinksGrid({ links }: { links: QuickLink[] }) {
                   )}
                 </div>
                 <div className="text-center">
-                  <div className="text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                  <div className="text-xs font-medium text-warm-700 group-hover:text-stone-600 transition-colors">
                     {link.label}
                   </div>
                   {link.count !== undefined && (
-                    <div className="text-xs text-gray-400">{link.count}</div>
+                    <div className="text-xs text-warm-400">{link.count}</div>
                   )}
                 </div>
               </button>
@@ -1090,7 +1090,7 @@ function QuickLinksGrid({ links }: { links: QuickLink[] }) {
 
 export function JobOverviewPreview() {
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Summary Header */}
       <SummaryHeader job={mockJob} />
 
@@ -1098,7 +1098,7 @@ export function JobOverviewPreview() {
       <JobNavigationTabs activeTab="overview" />
 
       {/* Key Metrics Cards */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-warm-200 px-6 py-4">
         <div className="grid grid-cols-4 gap-4">
           {mockMetrics.map(metric => (
             <MetricCardComponent key={metric.id} metric={metric} />

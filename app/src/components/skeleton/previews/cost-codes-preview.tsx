@@ -243,8 +243,8 @@ function CostCodeRow({
   return (
     <>
       <tr className={cn(
-        "hover:bg-gray-50 transition-colors",
-        level > 0 && "bg-gray-50/50",
+        "hover:bg-warm-50 transition-colors",
+        level > 0 && "bg-warm-50/50",
         !code.isActive && "opacity-60"
       )}>
         <td className="py-3 px-4">
@@ -255,19 +255,19 @@ function CostCodeRow({
           >
             {hasChildren ? (
               expanded ? (
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-4 w-4 text-warm-400" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-gray-400" />
+                <ChevronRight className="h-4 w-4 text-warm-400" />
               )
             ) : (
               <div className="w-4" />
             )}
-            <span className="font-mono text-sm font-medium text-gray-700">{code.code}</span>
+            <span className="font-mono text-sm font-medium text-warm-700">{code.code}</span>
             {code.system === 'custom' && (
               <span className="text-[10px] bg-cyan-50 text-cyan-600 px-1 py-0.5 rounded">Custom</span>
             )}
             {!code.isActive && (
-              <span className="text-[10px] bg-gray-100 text-gray-500 px-1 py-0.5 rounded flex items-center gap-0.5">
+              <span className="text-[10px] bg-warm-100 text-warm-500 px-1 py-0.5 rounded flex items-center gap-0.5">
                 <Archive className="h-2.5 w-2.5" />
                 Inactive
               </span>
@@ -277,28 +277,28 @@ function CostCodeRow({
         <td className="py-3 px-4">
           <span className={cn(
             "text-sm",
-            level === 0 ? "font-medium text-gray-900" : "text-gray-700"
+            level === 0 ? "font-medium text-warm-900" : "text-warm-700"
           )}>
             {code.name}
           </span>
         </td>
         <td className="py-3 px-3 text-center">
           {code.defaultUnit && (
-            <span className="text-xs text-gray-500 font-mono">{code.defaultUnit}</span>
+            <span className="text-xs text-warm-500 font-mono">{code.defaultUnit}</span>
           )}
         </td>
         <td className="py-3 px-3 text-right">
           {code.defaultUnitCost ? (
-            <span className="text-xs text-gray-600">${code.defaultUnitCost.toFixed(2)}</span>
+            <span className="text-xs text-warm-600">${code.defaultUnitCost.toFixed(2)}</span>
           ) : (
-            <span className="text-xs text-gray-300">-</span>
+            <span className="text-xs text-warm-300">-</span>
           )}
         </td>
         <td className="py-3 px-4">
           {code.qbMapped ? (
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-gray-600">{code.qbAccount}</span>
+              <span className="text-sm text-warm-600">{code.qbAccount}</span>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -308,24 +308,24 @@ function CostCodeRow({
           )}
         </td>
         <td className="py-3 px-3 text-center">
-          <span className="text-sm text-gray-600">{code.defaultMarkup}%</span>
+          <span className="text-sm text-warm-600">{code.defaultMarkup}%</span>
         </td>
         <td className="py-3 px-3 text-center">
           {code.trackLabor ? (
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Yes</span>
+            <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">Yes</span>
           ) : (
-            <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">No</span>
+            <span className="text-xs bg-warm-100 text-warm-500 px-2 py-0.5 rounded">No</span>
           )}
         </td>
         <td className="py-3 px-3">
           <div className="flex items-center gap-2 text-xs">
             {code.linkedBudgetLines > 0 && (
-              <span className="flex items-center gap-0.5 text-gray-500" title="Linked budget lines">
+              <span className="flex items-center gap-0.5 text-warm-500" title="Linked budget lines">
                 <BarChart3 className="h-3 w-3" />{code.linkedBudgetLines}
               </span>
             )}
             {code.linkedPOs > 0 && (
-              <span className="flex items-center gap-0.5 text-blue-500" title="Linked POs">
+              <span className="flex items-center gap-0.5 text-stone-500" title="Linked POs">
                 <ShoppingCart className="h-3 w-3" />{code.linkedPOs}
               </span>
             )}
@@ -337,18 +337,18 @@ function CostCodeRow({
           </div>
         </td>
         <td className="py-3 px-3 text-center">
-          <span className="text-sm text-gray-600">{code.usageCount}</span>
+          <span className="text-sm text-warm-600">{code.usageCount}</span>
         </td>
         <td className="py-3 px-4">
           <div className="flex items-center justify-end gap-1">
-            <button className="p-1.5 hover:bg-gray-100 rounded" title="Edit">
-              <Edit2 className="h-4 w-4 text-gray-400" />
+            <button className="p-1.5 hover:bg-warm-100 rounded" title="Edit">
+              <Edit2 className="h-4 w-4 text-warm-400" />
             </button>
-            <button className="p-1.5 hover:bg-gray-100 rounded" title="Merge">
-              <Merge className="h-4 w-4 text-gray-400" />
+            <button className="p-1.5 hover:bg-warm-100 rounded" title="Merge">
+              <Merge className="h-4 w-4 text-warm-400" />
             </button>
-            <button className="p-1.5 hover:bg-gray-100 rounded" title="More actions">
-              <MoreHorizontal className="h-4 w-4 text-gray-400" />
+            <button className="p-1.5 hover:bg-warm-100 rounded" title="More actions">
+              <MoreHorizontal className="h-4 w-4 text-warm-400" />
             </button>
           </div>
         </td>
@@ -394,13 +394,13 @@ export function CostCodesPreview() {
   })
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="mb-3">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Cost Codes</h3>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+            <h3 className="font-semibold text-warm-900">Cost Codes</h3>
+            <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
               CSI MasterFormat
             </span>
             {customCount > 0 && (
@@ -409,7 +409,7 @@ export function CostCodesPreview() {
               </span>
             )}
           </div>
-          <div className="text-sm text-gray-500 mt-0.5">
+          <div className="text-sm text-warm-500 mt-0.5">
             Hierarchical cost code structure with QuickBooks mapping and unit pricing
           </div>
         </div>
@@ -445,113 +445,113 @@ export function CostCodesPreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Hash className="h-3.5 w-3.5" />
               Total Codes
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{totalCodes}</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{totalCodes}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <FolderTree className="h-3.5 w-3.5" />
               Divisions
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{divisions}</div>
-            <div className="text-[10px] text-gray-400">{csiCount} CSI / {customCount} Custom</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{divisions}</div>
+            <div className="text-[10px] text-warm-400">{csiCount} CSI / {customCount} Custom</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Link2 className="h-3.5 w-3.5" />
               QB Mapped
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">
+            <div className="text-lg font-bold text-warm-900 mt-1">
               {totalCodes - unmappedCodes}
-              <span className="text-sm font-normal text-gray-500">/{totalCodes}</span>
+              <span className="text-sm font-normal text-warm-500">/{totalCodes}</span>
             </div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            unmappedCodes > 0 ? "bg-amber-50" : "bg-gray-50"
+            unmappedCodes > 0 ? "bg-amber-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-xs",
-              unmappedCodes > 0 ? "text-amber-600" : "text-gray-500"
+              unmappedCodes > 0 ? "text-amber-600" : "text-warm-500"
             )}>
               <AlertCircle className="h-3.5 w-3.5" />
               Unmapped
             </div>
             <div className={cn(
               "text-lg font-bold mt-1",
-              unmappedCodes > 0 ? "text-amber-700" : "text-gray-900"
+              unmappedCodes > 0 ? "text-amber-700" : "text-warm-900"
             )}>
               {unmappedCodes}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Ruler className="h-3.5 w-3.5" />
               With Unit Costs
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">
+            <div className="text-lg font-bold text-warm-900 mt-1">
               {mockCostCodes.reduce((sum, c) => sum + (c.children?.filter(ch => ch.defaultUnitCost).length || 0), 0)}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Building2 className="h-3.5 w-3.5" />
               Total Usage
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{totalUsage.toLocaleString()}</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{totalUsage.toLocaleString()}</div>
           </div>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+      <div className="bg-white border-b border-warm-200 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setExpandedCodes(new Set(mockCostCodes.map(c => c.id)))}
-            className="text-sm text-blue-600 hover:text-blue-700"
+            className="text-sm text-stone-600 hover:text-stone-700"
           >
             Expand All
           </button>
           <button
             onClick={() => setExpandedCodes(new Set())}
-            className="text-sm text-blue-600 hover:text-blue-700"
+            className="text-sm text-stone-600 hover:text-stone-700"
           >
             Collapse All
           </button>
-          <span className="text-xs text-gray-300">|</span>
-          <span className="text-xs text-gray-500">Hierarchy: Division &gt; Code &gt; Item (CSI MasterFormat)</span>
+          <span className="text-xs text-warm-300">|</span>
+          <span className="text-xs text-warm-500">Hierarchy: Division &gt; Code &gt; Item (CSI MasterFormat)</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-warm-500">
           <Link2 className="h-4 w-4" />
           <span>QuickBooks synced 2 hours ago</span>
-          <button className="text-blue-600 hover:text-blue-700 ml-2">Sync Now</button>
+          <button className="text-stone-600 hover:text-stone-700 ml-2">Sync Now</button>
         </div>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto max-h-[450px] overflow-y-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 border-b border-gray-200 sticky top-0">
+          <thead className="bg-warm-100 border-b border-warm-200 sticky top-0">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600 w-32">Code</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Name</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600 w-16">Unit</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600 w-20">Unit Cost</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">QuickBooks Account</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600 w-20">Markup</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600 w-20">Labor</th>
-              <th className="text-left py-3 px-3 font-medium text-gray-600 w-24">Links</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600 w-20">Usage</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600 w-32">Code</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">Name</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600 w-16">Unit</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600 w-20">Unit Cost</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">QuickBooks Account</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Markup</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Labor</th>
+              <th className="text-left py-3 px-3 font-medium text-warm-600 w-24">Links</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Usage</th>
               <th className="w-28"></th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-white divide-y divide-warm-100">
             {filteredCodes.map(code => {
               const isExpanded = expandedCodes.has(code.id)
               return (
@@ -598,7 +598,7 @@ export function CostCodesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features for Cost Codes"
           columns={2}

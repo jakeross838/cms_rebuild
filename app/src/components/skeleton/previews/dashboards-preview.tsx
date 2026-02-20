@@ -239,13 +239,13 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
       onClick={onClick}
       className={cn(
         "bg-white rounded-lg border p-4 cursor-pointer transition-all",
-        isSelected ? "border-blue-500 ring-2 ring-blue-100" : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+        isSelected ? "border-stone-500 ring-2 ring-stone-100" : "border-warm-200 hover:border-warm-300 hover:shadow-sm"
       )}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <LayoutDashboard className="h-5 w-5 text-blue-600" />
-          <h4 className="font-medium text-gray-900">{dashboard.name}</h4>
+          <LayoutDashboard className="h-5 w-5 text-stone-600" />
+          <h4 className="font-medium text-warm-900">{dashboard.name}</h4>
           {dashboard.isDefault && (
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
           )}
@@ -253,16 +253,16 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
             <span className="text-xs bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded font-medium">Portal</span>
           )}
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
-      <p className="text-sm text-gray-500 mb-3">{dashboard.description}</p>
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <p className="text-sm text-warm-500 mb-3">{dashboard.description}</p>
+      <div className="flex items-center justify-between text-xs text-warm-500">
         <div className="flex items-center gap-2">
           <span className={cn(
             "px-2 py-0.5 rounded font-medium",
-            dashboard.visibility === 'personal' ? "bg-blue-100 text-blue-700" :
+            dashboard.visibility === 'personal' ? "bg-stone-100 text-stone-700" :
             dashboard.visibility === 'team' ? "bg-green-100 text-green-700" :
             "bg-purple-100 text-purple-700"
           )}>
@@ -270,7 +270,7 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
           </span>
           <span>{dashboard.widgets} widgets</span>
           {dashboard.autoRefresh && (
-            <span className="flex items-center gap-1 text-gray-400">
+            <span className="flex items-center gap-1 text-warm-400">
               <RefreshCw className="h-3 w-3" />
               {dashboard.autoRefresh < 60 ? `${dashboard.autoRefresh}s` : `${dashboard.autoRefresh / 60}m`}
             </span>
@@ -279,14 +279,14 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
         <span>Last viewed: {dashboard.lastViewed}</span>
       </div>
       {dashboard.sharedWith && dashboard.sharedWith.length > 0 && (
-        <div className="mt-2 flex items-center gap-1 text-xs text-gray-400">
+        <div className="mt-2 flex items-center gap-1 text-xs text-warm-400">
           <Share2 className="h-3 w-3" />
           Shared with {dashboard.sharedWith.join(', ')}
         </div>
       )}
       {dashboard.role && (
-        <div className="mt-2 text-xs text-gray-400">
-          <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">Role: {dashboard.role}</span>
+        <div className="mt-2 text-xs text-warm-400">
+          <span className="bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">Role: {dashboard.role}</span>
         </div>
       )}
     </div>
@@ -296,26 +296,26 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
 function TemplateCard({ template }: { template: DashboardTemplate }) {
   const Icon = template.icon
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer">
+    <div className="bg-white rounded-lg border border-warm-200 p-3 hover:border-stone-300 hover:shadow-sm transition-all cursor-pointer">
       <div className="flex items-center gap-2 mb-1">
-        <div className="p-1.5 rounded-lg bg-gray-100">
-          <Icon className="h-4 w-4 text-gray-600" />
+        <div className="p-1.5 rounded-lg bg-warm-100">
+          <Icon className="h-4 w-4 text-warm-600" />
         </div>
-        <h5 className="font-medium text-gray-900 text-sm">{template.name}</h5>
+        <h5 className="font-medium text-warm-900 text-sm">{template.name}</h5>
       </div>
-      <p className="text-xs text-gray-500 mb-2">{template.description}</p>
+      <p className="text-xs text-warm-500 mb-2">{template.description}</p>
       <div className="flex flex-wrap gap-1">
         {template.widgets.slice(0, 4).map((widget, i) => (
-          <span key={i} className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+          <span key={i} className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">
             {widget}
           </span>
         ))}
         {template.widgets.length > 4 && (
-          <span className="text-xs text-gray-400">+{template.widgets.length - 4}</span>
+          <span className="text-xs text-warm-400">+{template.widgets.length - 4}</span>
         )}
       </div>
-      <div className="mt-2 text-xs text-gray-400">
-        Default for: <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{template.role}</span>
+      <div className="mt-2 text-xs text-warm-400">
+        Default for: <span className="bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{template.role}</span>
       </div>
     </div>
   )
@@ -325,14 +325,14 @@ function WidgetLibrary() {
   const categories = [...new Set(availableWidgets.map(w => w.category))]
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-medium text-gray-900">Widget Library</h4>
-        <span className="text-xs text-gray-400">{availableWidgets.length} available</span>
+        <h4 className="font-medium text-warm-900">Widget Library</h4>
+        <span className="text-xs text-warm-400">{availableWidgets.length} available</span>
       </div>
       <div className="flex flex-wrap gap-1 mb-3">
         {categories.map(cat => (
-          <span key={cat} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded cursor-pointer hover:bg-blue-100 hover:text-blue-700">
+          <span key={cat} className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded cursor-pointer hover:bg-stone-100 hover:text-stone-700">
             {cat}
           </span>
         ))}
@@ -343,15 +343,15 @@ function WidgetLibrary() {
           return (
             <div
               key={widget.id}
-              className="flex flex-col items-center gap-1 p-2 bg-gray-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent cursor-move transition-colors relative"
+              className="flex flex-col items-center gap-1 p-2 bg-warm-50 rounded-lg hover:bg-stone-50 hover:border-stone-200 border border-transparent cursor-move transition-colors relative"
             >
               <div className="p-2 bg-white rounded-lg shadow-sm">
-                <Icon className="h-4 w-4 text-gray-600" />
+                <Icon className="h-4 w-4 text-warm-600" />
               </div>
-              <span className="text-xs text-gray-600 text-center leading-tight">{widget.name}</span>
-              <span className="text-xs text-gray-400">{widget.size}</span>
+              <span className="text-xs text-warm-600 text-center leading-tight">{widget.name}</span>
+              <span className="text-xs text-warm-400">{widget.size}</span>
               {widget.requiredPermission && (
-                <Lock className="h-2.5 w-2.5 text-gray-400 absolute top-1 right-1" />
+                <Lock className="h-2.5 w-2.5 text-warm-400 absolute top-1 right-1" />
               )}
             </div>
           )
@@ -367,40 +367,40 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
       {/* Editor Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h4 className="font-semibold text-gray-900">{dashboard.name}</h4>
+          <h4 className="font-semibold text-warm-900">{dashboard.name}</h4>
           <span className={cn(
             "text-xs px-2 py-0.5 rounded font-medium",
-            dashboard.visibility === 'personal' ? "bg-blue-100 text-blue-700" :
+            dashboard.visibility === 'personal' ? "bg-stone-100 text-stone-700" :
             dashboard.visibility === 'team' ? "bg-green-100 text-green-700" :
             "bg-purple-100 text-purple-700"
           )}>
             {dashboard.visibility}
           </span>
           {dashboard.autoRefresh && (
-            <span className="flex items-center gap-1 text-xs text-gray-400">
+            <span className="flex items-center gap-1 text-xs text-warm-400">
               <RefreshCw className="h-3 w-3" />
               Auto-refresh: {dashboard.autoRefresh / 60}m
             </span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
             <Eye className="h-4 w-4" />
             Preview
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
             <Smartphone className="h-4 w-4" />
             Mobile
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
             <Share2 className="h-4 w-4" />
             Share
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
             <Download className="h-4 w-4" />
             PDF
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
             <Settings className="h-4 w-4" />
             Settings
           </button>
@@ -408,7 +408,7 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
       </div>
 
       {/* Widget Grid Preview */}
-      <div className="bg-gray-100 rounded-lg p-4 min-h-[300px]">
+      <div className="bg-warm-100 rounded-lg p-4 min-h-[300px]">
         <div className="grid grid-cols-4 gap-3">
           {/* KPI Widgets Row */}
           {[
@@ -419,14 +419,14 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
           ].map((kpi, i) => (
             <div key={i} className="bg-white rounded-lg p-3 shadow-sm relative group">
               <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
-                <GripVertical className="h-4 w-4 text-gray-400" />
+                <GripVertical className="h-4 w-4 text-warm-400" />
               </div>
-              <div className="text-xs text-gray-500 mb-1">{kpi.label}</div>
-              <div className="text-xl font-bold text-gray-900">{kpi.value}</div>
+              <div className="text-xs text-warm-500 mb-1">{kpi.label}</div>
+              <div className="text-xl font-bold text-warm-900">{kpi.value}</div>
               <div className={cn(
                 "text-xs font-medium",
                 kpi.color === 'green' ? "text-green-600" :
-                kpi.color === 'blue' ? "text-blue-600" :
+                kpi.color === 'blue' ? "text-stone-600" :
                 kpi.color === 'amber' ? "text-amber-600" :
                 "text-red-600"
               )}>
@@ -443,20 +443,20 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
           {/* Chart Widgets */}
           <div className="col-span-2 bg-white rounded-lg p-3 shadow-sm relative group">
             <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
-              <GripVertical className="h-4 w-4 text-gray-400" />
+              <GripVertical className="h-4 w-4 text-warm-400" />
             </div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-900">Revenue Trend</span>
+              <span className="text-sm font-medium text-warm-900">Revenue Trend</span>
               <div className="flex items-center gap-1">
-                <span className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded">2x1</span>
-                <LineChart className="h-4 w-4 text-gray-400" />
+                <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded">2x1</span>
+                <LineChart className="h-4 w-4 text-warm-400" />
               </div>
             </div>
-            <div className="h-24 bg-gray-50 rounded flex items-end justify-center gap-1 p-2">
+            <div className="h-24 bg-warm-50 rounded flex items-end justify-center gap-1 p-2">
               {[40, 55, 45, 60, 50, 70, 65, 80, 75, 85, 90, 95].map((h, i) => (
                 <div
                   key={i}
-                  className="w-3 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t"
+                  className="w-3 bg-gradient-to-t from-stone-500 to-stone-300 rounded-t"
                   style={{ height: `${h}%` }}
                 />
               ))}
@@ -465,13 +465,13 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
 
           <div className="col-span-2 bg-white rounded-lg p-3 shadow-sm relative group">
             <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
-              <GripVertical className="h-4 w-4 text-gray-400" />
+              <GripVertical className="h-4 w-4 text-warm-400" />
             </div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-900">Job Status</span>
+              <span className="text-sm font-medium text-warm-900">Job Status</span>
               <div className="flex items-center gap-1">
-                <span className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded">2x1</span>
-                <PieChart className="h-4 w-4 text-gray-400" />
+                <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded">2x1</span>
+                <PieChart className="h-4 w-4 text-warm-400" />
               </div>
             </div>
             <div className="h-24 flex items-center justify-center">
@@ -485,16 +485,16 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
               </div>
               <div className="ml-4 space-y-1 text-xs">
                 <div className="flex items-center gap-2"><div className="w-2 h-2 bg-green-500 rounded-full" />Active (5)</div>
-                <div className="flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full" />Pre-Con (3)</div>
+                <div className="flex items-center gap-2"><div className="w-2 h-2 bg-stone-500 rounded-full" />Pre-Con (3)</div>
                 <div className="flex items-center gap-2"><div className="w-2 h-2 bg-amber-500 rounded-full" />Closeout (2)</div>
-                <div className="flex items-center gap-2"><div className="w-2 h-2 bg-gray-400 rounded-full" />Warranty (2)</div>
+                <div className="flex items-center gap-2"><div className="w-2 h-2 bg-warm-400 rounded-full" />Warranty (2)</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Drop Zone Hint */}
-        <div className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-400 text-sm">
+        <div className="mt-4 border-2 border-dashed border-warm-300 rounded-lg p-4 text-center text-warm-400 text-sm">
           Drag widgets here to add to dashboard - widgets occupy 1x1, 2x1, or 2x2 grid cells
         </div>
       </div>
@@ -517,21 +517,21 @@ export function DashboardsPreview() {
   const companyDashboards = mockDashboards.filter(d => d.visibility === 'company')
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900">Custom Dashboards</h3>
-            <p className="text-sm text-gray-500">Create personalized views of your business data - drag-and-drop widgets from any module</p>
+            <h3 className="font-semibold text-warm-900">Custom Dashboards</h3>
+            <p className="text-sm text-warm-500">Create personalized views of your business data - drag-and-drop widgets from any module</p>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setView('list')}
                 className={cn(
                   "px-3 py-1.5 text-sm",
-                  view === 'list' ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-50"
+                  view === 'list' ? "bg-stone-50 text-stone-600 font-medium" : "text-warm-600 hover:bg-warm-50"
                 )}
               >
                 Browse
@@ -540,13 +540,13 @@ export function DashboardsPreview() {
                 onClick={() => setView('edit')}
                 className={cn(
                   "px-3 py-1.5 text-sm",
-                  view === 'edit' ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-50"
+                  view === 'edit' ? "bg-stone-50 text-stone-600 font-medium" : "text-warm-600 hover:bg-warm-50"
                 )}
               >
                 Editor
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               Create Dashboard
             </button>
@@ -555,15 +555,15 @@ export function DashboardsPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-4 text-xs text-gray-500">
+      <div className="bg-white border-b border-warm-200 px-4 py-2 flex items-center gap-4 text-xs text-warm-500">
         <span>{mockDashboards.length} dashboards</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-warm-300">|</span>
         <span>{myDashboards.length} personal</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-warm-300">|</span>
         <span>{companyDashboards.length} shared</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-warm-300">|</span>
         <span>{availableWidgets.length} widgets available</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-warm-300">|</span>
         <span>{dashboardTemplates.length} templates</span>
       </div>
 
@@ -571,7 +571,7 @@ export function DashboardsPreview() {
         <div className="p-4 space-y-6">
           {/* My Dashboards */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-warm-700 mb-3 flex items-center gap-2">
               <Star className="h-4 w-4 text-amber-500" />
               MY DASHBOARDS
             </h4>
@@ -589,7 +589,7 @@ export function DashboardsPreview() {
 
           {/* Company Dashboards */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-warm-700 mb-3 flex items-center gap-2">
               <Building2 className="h-4 w-4 text-purple-500" />
               COMPANY DASHBOARDS
             </h4>
@@ -607,10 +607,10 @@ export function DashboardsPreview() {
 
           {/* Templates */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-              <LayoutDashboard className="h-4 w-4 text-blue-500" />
+            <h4 className="text-sm font-semibold text-warm-700 mb-3 flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4 text-stone-500" />
               ROLE-BASED TEMPLATES
-              <span className="text-xs text-gray-400 font-normal">Defaults provided per role - configurable per builder</span>
+              <span className="text-xs text-warm-400 font-normal">Defaults provided per role - configurable per builder</span>
             </h4>
             <div className="grid grid-cols-3 gap-3">
               {dashboardTemplates.map(template => (
@@ -621,40 +621,40 @@ export function DashboardsPreview() {
 
           {/* Selected Dashboard Actions */}
           {selectedDashboard && (
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium text-gray-900">{selectedDashboard.name}</h4>
-                  <p className="text-sm text-gray-500">{selectedDashboard.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">Created: {selectedDashboard.createdAt} by {selectedDashboard.owner}</p>
+                  <h4 className="font-medium text-warm-900">{selectedDashboard.name}</h4>
+                  <p className="text-sm text-warm-500">{selectedDashboard.description}</p>
+                  <p className="text-xs text-warm-400 mt-1">Created: {selectedDashboard.createdAt} by {selectedDashboard.owner}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <Eye className="h-4 w-4" />
                     Open
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <Edit className="h-4 w-4" />
                     Edit
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <Share2 className="h-4 w-4" />
                     Share
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <Copy className="h-4 w-4" />
                     Duplicate
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <Download className="h-4 w-4" />
                     PDF
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <Mail className="h-4 w-4" />
                     Schedule
                   </button>
                   {!selectedDashboard.isDefault && (
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-600 border border-gray-200 rounded-lg hover:bg-amber-50">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-600 border border-warm-200 rounded-lg hover:bg-amber-50">
                       <Star className="h-4 w-4" />
                       Set as Default
                     </button>

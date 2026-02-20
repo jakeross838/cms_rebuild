@@ -48,22 +48,22 @@ export function getInitials(name: string): string {
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
     // Job statuses
-    pre_construction: 'bg-blue-100 text-blue-800',
-    active: 'bg-green-100 text-green-800',
-    on_hold: 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-gray-100 text-gray-800',
+    pre_construction: 'bg-info-bg text-info-dark',
+    active: 'bg-success-bg text-success-dark',
+    on_hold: 'bg-warning-bg text-warning-dark',
+    completed: 'bg-warm-100 text-warm-700',
     warranty: 'bg-purple-100 text-purple-800',
-    cancelled: 'bg-red-100 text-red-800',
+    cancelled: 'bg-danger-bg text-danger-dark',
     // Invoice statuses
     needs_matching: 'bg-orange-100 text-orange-800',
-    draft: 'bg-gray-100 text-gray-800',
-    pm_pending: 'bg-blue-100 text-blue-800',
+    draft: 'bg-warm-100 text-warm-700',
+    pm_pending: 'bg-info-bg text-info-dark',
     accountant_pending: 'bg-purple-100 text-purple-800',
-    owner_pending: 'bg-red-100 text-red-800',
-    approved: 'bg-green-100 text-green-800',
+    owner_pending: 'bg-danger-bg text-danger-dark',
+    approved: 'bg-success-bg text-success-dark',
     in_draw: 'bg-teal-100 text-teal-800',
-    paid: 'bg-gray-200 text-gray-700',
-    rejected: 'bg-red-100 text-red-800',
+    paid: 'bg-warm-200 text-warm-700',
+    rejected: 'bg-danger-bg text-danger-dark',
   }
-  return colors[status] || 'bg-gray-100 text-gray-800'
+  return colors[status] || 'bg-warm-100 text-warm-700'
 }

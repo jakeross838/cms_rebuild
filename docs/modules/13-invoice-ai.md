@@ -8,7 +8,7 @@
 
 ## Overview
 
-AI-powered invoice processing that automates data extraction from uploaded invoice documents (PDF, email, photo) using OCR and machine learning. The system auto-codes invoices based on vendor history, provides confidence scoring on all extracted fields, and learns from human corrections to improve accuracy over time. This module extends Module 11 (Basic Invoicing) -- it does not replace it. All AI outputs feed into the same approval workflow, cost coding, and payment pipeline. AI capabilities are configurable per builder and gated by subscription tier.
+AI-powered invoice processing that automates data extraction from uploaded invoice documents (PDF, email, photo) using OCR and machine learning. The system auto-codes invoices based on vendor history, provides confidence scoring on all extracted fields, and learns from human corrections to improve accuracy over time. This module extends Module 11 (Native Accounting (GL/AP/AR)) -- it does not replace it. All AI outputs feed into the same approval workflow, cost coding, and payment pipeline. AI capabilities are configurable per builder and gated by subscription tier.
 
 ---
 
@@ -350,7 +350,7 @@ POST   /api/v2/invoices/ai/classify        # Classify a document without full ex
 
 ## Dependencies
 
-- **Module 11:** Basic Invoicing (invoice data model, approval workflows, payment pipeline)
+- **Module 11:** Native Accounting (GL/AP/AR) (invoice data model, approval workflows, payment pipeline)
 - **Module 6:** Document Storage (file upload, storage, retrieval)
 - **Module 10:** Contact/Vendor Management (vendor matching and lookup)
 - **Module 9:** Budget & Cost Tracking (cost code validation)

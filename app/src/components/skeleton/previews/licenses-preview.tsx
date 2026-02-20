@@ -553,7 +553,7 @@ const categoryLabels: Record<License['licenseCategory'], string> = {
 }
 
 const categoryColors: Record<License['licenseCategory'], string> = {
-  contractor: 'bg-blue-100 text-blue-700',
+  contractor: 'bg-stone-100 text-stone-700',
   trade: 'bg-green-100 text-green-700',
   safety: 'bg-red-100 text-red-700',
   professional: 'bg-purple-100 text-purple-700',
@@ -561,21 +561,21 @@ const categoryColors: Record<License['licenseCategory'], string> = {
 }
 
 const renewalLabels: Record<string, { label: string; color: string }> = {
-  not_started: { label: 'Not Started', color: 'bg-gray-100 text-gray-600' },
-  reminder_sent: { label: 'Reminder Sent', color: 'bg-blue-100 text-blue-700' },
+  not_started: { label: 'Not Started', color: 'bg-warm-100 text-warm-600' },
+  reminder_sent: { label: 'Reminder Sent', color: 'bg-stone-100 text-stone-700' },
   renewal_submitted: { label: 'Submitted', color: 'bg-purple-100 text-purple-700' },
   renewed: { label: 'Renewed', color: 'bg-green-100 text-green-700' },
   lapsed: { label: 'Lapsed', color: 'bg-red-100 text-red-700' },
 }
 
 const verificationSourceColors: Record<VerificationSource, string> = {
-  Portal: 'bg-blue-50 text-blue-600',
+  Portal: 'bg-stone-50 text-stone-600',
   API: 'bg-green-50 text-green-600',
-  Manual: 'bg-gray-50 text-gray-600',
+  Manual: 'bg-warm-50 text-warm-600',
 }
 
 const auditActionLabels: Record<AuditEvent['action'], { label: string; color: string }> = {
-  added: { label: 'Added', color: 'bg-blue-100 text-blue-700' },
+  added: { label: 'Added', color: 'bg-stone-100 text-stone-700' },
   verified: { label: 'Verified', color: 'bg-green-100 text-green-700' },
   renewed: { label: 'Renewed', color: 'bg-purple-100 text-purple-700' },
   expired: { label: 'Expired', color: 'bg-red-100 text-red-700' },
@@ -637,18 +637,18 @@ function AuditTrailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-warm-200">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Audit History</h2>
-            <p className="text-sm text-gray-500">{license.licenseType} - {license.entityName}</p>
+            <h2 className="text-lg font-semibold text-warm-900">Audit History</h2>
+            <p className="text-sm text-warm-500">{license.licenseType} - {license.entityName}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
-            <X className="h-4 w-4 text-gray-500" />
+          <button onClick={onClose} className="p-2 hover:bg-warm-100 rounded-lg">
+            <X className="h-4 w-4 text-warm-500" />
           </button>
         </div>
         <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
           {events.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-4">No audit history available</p>
+            <p className="text-sm text-warm-500 text-center py-4">No audit history available</p>
           ) : (
             <div className="space-y-4">
               {events.map((event, index) => (
@@ -659,10 +659,10 @@ function AuditTrailModal({
                       event.action === 'expired' ? 'bg-red-500' :
                       event.action === 'verified' ? 'bg-green-500' :
                       event.action === 'renewed' ? 'bg-purple-500' :
-                      'bg-blue-500'
+                      'bg-stone-500'
                     )} />
                     {index < events.length - 1 && (
-                      <div className="w-0.5 h-full bg-gray-200 mt-1" />
+                      <div className="w-0.5 h-full bg-warm-200 mt-1" />
                     )}
                   </div>
                   <div className="flex-1 pb-4">
@@ -673,11 +673,11 @@ function AuditTrailModal({
                       )}>
                         {auditActionLabels[event.action].label}
                       </span>
-                      <span className="text-xs text-gray-500">{formatDateTime(event.timestamp)}</span>
+                      <span className="text-xs text-warm-500">{formatDateTime(event.timestamp)}</span>
                     </div>
-                    <p className="text-sm text-gray-700">by {event.user}</p>
+                    <p className="text-sm text-warm-700">by {event.user}</p>
                     {event.details && (
-                      <p className="text-xs text-gray-500 mt-1">{event.details}</p>
+                      <p className="text-xs text-warm-500 mt-1">{event.details}</p>
                     )}
                   </div>
                 </div>
@@ -685,10 +685,10 @@ function AuditTrailModal({
             </div>
           )}
         </div>
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div className="px-6 py-4 border-t border-warm-200 bg-warm-50">
           <button
             onClick={onClose}
-            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="w-full px-4 py-2 text-sm font-medium text-warm-700 bg-white border border-warm-300 rounded-lg hover:bg-warm-50"
           >
             Close
           </button>
@@ -746,52 +746,52 @@ function RenewalWorkflowModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-warm-200">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Renewal Workflow</h2>
-            <p className="text-sm text-gray-500">{license.licenseType} - {license.entityName}</p>
+            <h2 className="text-lg font-semibold text-warm-900">Renewal Workflow</h2>
+            <p className="text-sm text-warm-500">{license.licenseType} - {license.entityName}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
-            <X className="h-4 w-4 text-gray-500" />
+          <button onClick={onClose} className="p-2 hover:bg-warm-100 rounded-lg">
+            <X className="h-4 w-4 text-warm-500" />
           </button>
         </div>
 
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-warm-200">
           <ProgressSteps steps={renewalSteps} orientation="horizontal" />
         </div>
 
         <div className="px-6 py-6">
-          <h3 className="font-semibold text-gray-900 mb-2">{stepContent[currentStep].title}</h3>
-          <p className="text-sm text-gray-500 mb-4">{stepContent[currentStep].description}</p>
+          <h3 className="font-semibold text-warm-900 mb-2">{stepContent[currentStep].title}</h3>
+          <p className="text-sm text-warm-500 mb-4">{stepContent[currentStep].description}</p>
           <ul className="space-y-2">
             {stepContent[currentStep].items.map((item, index) => (
-              <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                <CheckCircle2 className="h-4 w-4 text-gray-400" />
+              <li key={index} className="flex items-center gap-2 text-sm text-warm-700">
+                <CheckCircle2 className="h-4 w-4 text-warm-400" />
                 {item}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-warm-200 bg-warm-50">
           <button
             onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
             disabled={currentStep === 0}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-warm-700 bg-white border border-warm-300 rounded-lg hover:bg-warm-50 disabled:opacity-50"
           >
             Previous
           </button>
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+              className="px-4 py-2 text-sm font-medium text-warm-500 hover:text-warm-700"
             >
               Cancel
             </button>
             {currentStep < 3 ? (
               <button
                 onClick={() => setCurrentStep(currentStep + 1)}
-                className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 text-sm font-medium bg-stone-600 text-white rounded-lg hover:bg-stone-700"
               >
                 Next Step
               </button>
@@ -826,7 +826,7 @@ function StateVerificationButton({ license }: { license: License }) {
     return (
       <button
         onClick={handleVerify}
-        className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100"
+        className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-stone-600 bg-stone-50 border border-stone-200 rounded hover:bg-stone-100"
       >
         <Search className="h-3 w-3" />
         Verify with State
@@ -836,7 +836,7 @@ function StateVerificationButton({ license }: { license: License }) {
 
   if (status === 'checking') {
     return (
-      <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded">
+      <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-stone-600 bg-stone-50 border border-stone-200 rounded">
         <Loader2 className="h-3 w-3 animate-spin" />
         Checking...
       </span>
@@ -883,7 +883,7 @@ function LicenseCard({ license }: { license: License }) {
         license.status === 'expired' ? "border-red-300 bg-red-50" :
         license.status === 'expiring' ? "border-amber-300 bg-amber-50" :
         license.status === 'lapsed' ? "border-red-300 bg-red-50" :
-        "border-gray-200"
+        "border-warm-200"
       )}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
@@ -891,38 +891,38 @@ function LicenseCard({ license }: { license: License }) {
               "p-2 rounded-lg",
               license.status === 'expired' || license.status === 'lapsed' ? "bg-red-100" :
               license.status === 'expiring' ? "bg-amber-100" :
-              "bg-blue-100"
+              "bg-stone-100"
             )}>
               {license.entityType === 'company' ? (
                 <Building2 className={cn(
                   "h-5 w-5",
                   license.status === 'expired' || license.status === 'lapsed' ? "text-red-600" :
                   license.status === 'expiring' ? "text-amber-600" :
-                  "text-blue-600"
+                  "text-stone-600"
                 )} />
               ) : license.entityType === 'employee' ? (
                 <User className={cn(
                   "h-5 w-5",
                   license.status === 'expired' || license.status === 'lapsed' ? "text-red-600" :
                   license.status === 'expiring' ? "text-amber-600" :
-                  "text-blue-600"
+                  "text-stone-600"
                 )} />
               ) : (
                 <Users className={cn(
                   "h-5 w-5",
                   license.status === 'expired' || license.status === 'lapsed' ? "text-red-600" :
                   license.status === 'expiring' ? "text-amber-600" :
-                  "text-blue-600"
+                  "text-stone-600"
                 )} />
               )}
             </div>
             <div>
-              <h4 className="font-medium text-gray-900">{license.entityName}</h4>
-              <p className="text-sm text-gray-500">{license.licenseType}</p>
+              <h4 className="font-medium text-warm-900">{license.entityName}</h4>
+              <p className="text-sm text-warm-500">{license.licenseType}</p>
             </div>
           </div>
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
 
@@ -934,8 +934,8 @@ function LicenseCard({ license }: { license: License }) {
           <span className={cn(
             "text-xs px-2 py-0.5 rounded",
             license.entityType === 'company' ? "bg-purple-100 text-purple-700" :
-            license.entityType === 'employee' ? "bg-blue-100 text-blue-700" :
-            "bg-gray-100 text-gray-700"
+            license.entityType === 'employee' ? "bg-stone-100 text-stone-700" :
+            "bg-warm-100 text-warm-700"
           )}>
             {license.entityType}
           </span>
@@ -949,27 +949,27 @@ function LicenseCard({ license }: { license: License }) {
 
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <span className="text-xs text-gray-500">License #</span>
-            <p className="text-sm font-mono text-gray-700">{license.licenseNumber}</p>
+            <span className="text-xs text-warm-500">License #</span>
+            <p className="text-sm font-mono text-warm-700">{license.licenseNumber}</p>
           </div>
           <div>
-            <span className="text-xs text-gray-500">Issuing Authority</span>
-            <p className="text-sm font-medium text-gray-900">{license.issuingAuthority}</p>
+            <span className="text-xs text-warm-500">Issuing Authority</span>
+            <p className="text-sm font-medium text-warm-900">{license.issuingAuthority}</p>
           </div>
           <div>
-            <span className="text-xs text-gray-500">Jurisdiction</span>
-            <p className="text-sm text-gray-700 flex items-center gap-1">
+            <span className="text-xs text-warm-500">Jurisdiction</span>
+            <p className="text-sm text-warm-700 flex items-center gap-1">
               <MapPin className="h-3 w-3" />
               {license.jurisdiction}
             </p>
           </div>
           <div>
-            <span className="text-xs text-gray-500">Expires</span>
+            <span className="text-xs text-warm-500">Expires</span>
             <p className={cn(
               "text-sm font-medium",
               license.status === 'expired' || license.status === 'lapsed' ? "text-red-600" :
               license.status === 'expiring' ? "text-amber-600" :
-              "text-gray-900"
+              "text-warm-900"
             )}>
               {license.expirationDate ? formatDate(license.expirationDate) : 'No Expiry'}
             </p>
@@ -979,7 +979,7 @@ function LicenseCard({ license }: { license: License }) {
         {/* Renewal status */}
         {license.renewalStatus && (
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs text-gray-500">Renewal:</span>
+            <span className="text-xs text-warm-500">Renewal:</span>
             <span className={cn(
               "text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1",
               renewalLabels[license.renewalStatus].color
@@ -993,7 +993,7 @@ function LicenseCard({ license }: { license: License }) {
         {showCEU && (
           <div className="mb-3">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-500 flex items-center gap-1">
+              <span className="text-xs text-warm-500 flex items-center gap-1">
                 <GraduationCap className="h-3 w-3" />
                 CEU Progress
               </span>
@@ -1004,7 +1004,7 @@ function LicenseCard({ license }: { license: License }) {
                 {license.ceuCompleted}/{license.ceuRequired} hours
               </span>
             </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-2 bg-warm-200 rounded-full overflow-hidden">
               <div
                 className={cn(
                   "h-full rounded-full transition-all",
@@ -1020,7 +1020,7 @@ function LicenseCard({ license }: { license: License }) {
                 </p>
                 <button
                   onClick={() => setShowCEUModal(true)}
-                  className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                  className="text-xs text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1"
                 >
                   <Plus className="h-3 w-3" />
                   Log CEU Hours
@@ -1066,13 +1066,13 @@ function LicenseCard({ license }: { license: License }) {
             </span>
           )}
           {license.documentUrl && (
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded flex items-center gap-1">
+            <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded flex items-center gap-1">
               <FileText className="h-3 w-3" />
               Doc on file
             </span>
           )}
           {license.stateVerificationAvailable && (
-            <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded flex items-center gap-1">
+            <span className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded flex items-center gap-1">
               <ExternalLink className="h-3 w-3" />
               Online verify
             </span>
@@ -1109,7 +1109,7 @@ function LicenseCard({ license }: { license: License }) {
                 <RefreshCw className="h-3 w-3" />
                 Start Renewal
               </button>
-              <button className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100">
+              <button className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-stone-600 bg-stone-50 border border-stone-200 rounded hover:bg-stone-100">
                 <Mail className="h-3 w-3" />
                 Send Reminder
               </button>
@@ -1121,18 +1121,18 @@ function LicenseCard({ license }: { license: License }) {
               Schedule Training
             </button>
           )}
-          <button className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded hover:bg-gray-100">
+          <button className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-warm-600 bg-warm-50 border border-warm-200 rounded hover:bg-warm-100">
             <RefreshCw className="h-3 w-3" />
             Re-verify
           </button>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+        <div className="flex items-center justify-between pt-3 border-t border-warm-200">
           <span className={cn(
             "text-xs px-2 py-1 rounded font-medium flex items-center gap-1",
             license.status === 'expired' || license.status === 'lapsed' ? "bg-red-100 text-red-700" :
             license.status === 'expiring' ? "bg-amber-100 text-amber-700" :
-            license.status === 'renewed' ? "bg-blue-100 text-blue-700" :
+            license.status === 'renewed' ? "bg-stone-100 text-stone-700" :
             "bg-green-100 text-green-700"
           )}>
             {(license.status === 'expired' || license.status === 'lapsed') && <XCircle className="h-3 w-3" />}
@@ -1148,20 +1148,20 @@ function LicenseCard({ license }: { license: License }) {
           <div className="flex items-center gap-1">
             <button
               onClick={() => setShowAuditModal(true)}
-              className="p-1.5 text-gray-500 hover:bg-gray-100 rounded"
+              className="p-1.5 text-warm-500 hover:bg-warm-100 rounded"
               title="View History"
             >
               <History className="h-4 w-4" />
             </button>
-            <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="View">
+            <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="View">
               <Eye className="h-4 w-4" />
             </button>
             {license.stateVerificationAvailable && (
-              <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="Verify with Authority">
+              <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Verify with Authority">
                 <ExternalLink className="h-4 w-4" />
               </button>
             )}
-            <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="Download">
+            <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Download">
               <Download className="h-4 w-4" />
             </button>
           </div>
@@ -1191,11 +1191,11 @@ function LicenseCard({ license }: { license: License }) {
 
 function CourseCard({ course }: { course: TrainingCourse }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-blue-300 transition-colors">
+    <div className="bg-white rounded-lg border border-warm-200 p-3 hover:border-stone-300 transition-colors">
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h5 className="font-medium text-gray-900 text-sm">{course.name}</h5>
-          <p className="text-xs text-gray-500">{course.provider}</p>
+          <h5 className="font-medium text-warm-900 text-sm">{course.name}</h5>
+          <p className="text-xs text-warm-500">{course.provider}</p>
         </div>
         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
           {course.ceuHours} CEU
@@ -1203,17 +1203,17 @@ function CourseCard({ course }: { course: TrainingCourse }) {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">{course.duration}</span>
+          <span className="text-xs text-warm-500">{course.duration}</span>
           <span className={cn(
             "text-xs px-1.5 py-0.5 rounded",
-            course.format === 'online' ? "bg-blue-50 text-blue-600" :
+            course.format === 'online' ? "bg-stone-50 text-stone-600" :
             course.format === 'in-person' ? "bg-green-50 text-green-600" :
             "bg-purple-50 text-purple-600"
           )}>
             {course.format}
           </span>
         </div>
-        <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+        <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
           <BookOpen className="h-3 w-3" />
           View Course
         </button>
@@ -1312,16 +1312,16 @@ export function LicensesPreview() {
   const safetyCount = allLicenses.filter(l => l.licenseCategory === 'safety').length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-semibold text-gray-900">Licenses & Certifications</h3>
-            <p className="text-sm text-gray-500">Track contractor licenses, trade certifications, safety credentials, and professional certifications</p>
+            <h3 className="font-semibold text-warm-900">Licenses & Certifications</h3>
+            <p className="text-sm text-warm-500">Track contractor licenses, trade certifications, safety credentials, and professional certifications</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Upload className="h-4 w-4" />
               Upload Cert
             </button>
@@ -1362,33 +1362,33 @@ export function LicensesPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-7 gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
               <Building2 className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{mockCompanyLicenses.length}</div>
-              <div className="text-xs text-gray-500">Company</div>
+              <div className="text-xl font-bold text-warm-900">{mockCompanyLicenses.length}</div>
+              <div className="text-xs text-warm-500">Company</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <User className="h-5 w-5 text-blue-600" />
+            <div className="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center">
+              <User className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{mockEmployeeCertifications.length}</div>
-              <div className="text-xs text-gray-500">Employee</div>
+              <div className="text-xl font-bold text-warm-900">{mockEmployeeCertifications.length}</div>
+              <div className="text-xs text-warm-500">Employee</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
-              <Users className="h-5 w-5 text-gray-600" />
+            <div className="h-10 w-10 rounded-lg bg-warm-100 flex items-center justify-center">
+              <Users className="h-5 w-5 text-warm-600" />
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">{mockVendorLicenses.length}</div>
-              <div className="text-xs text-gray-500">Vendor</div>
+              <div className="text-xl font-bold text-warm-900">{mockVendorLicenses.length}</div>
+              <div className="text-xs text-warm-500">Vendor</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -1397,7 +1397,7 @@ export function LicensesPreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-red-600">{safetyCount}</div>
-              <div className="text-xs text-gray-500">Safety</div>
+              <div className="text-xs text-warm-500">Safety</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -1408,7 +1408,7 @@ export function LicensesPreview() {
               <div className="text-xl font-bold text-green-600">
                 {allLicenses.filter(l => l.verified).length}
               </div>
-              <div className="text-xs text-gray-500">Verified</div>
+              <div className="text-xs text-warm-500">Verified</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -1417,7 +1417,7 @@ export function LicensesPreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-amber-600">{expiringCount}</div>
-              <div className="text-xs text-gray-500">Expiring</div>
+              <div className="text-xs text-warm-500">Expiring</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -1426,23 +1426,23 @@ export function LicensesPreview() {
             </div>
             <div>
               <div className="text-xl font-bold text-red-600">{autoBlockCount}</div>
-              <div className="text-xs text-gray-500">Auto-Block</div>
+              <div className="text-xs text-warm-500">Auto-Block</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Cross-module connections */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-gray-500">Connected to:</span>
+          <span className="text-xs text-warm-500">Connected to:</span>
           {[
             { label: 'HR & Workforce (M34)', color: 'bg-purple-50 text-purple-700 border-purple-200' },
             { label: 'Safety & Compliance (M33)', color: 'bg-red-50 text-red-700 border-red-200' },
             { label: 'Vendor Management (M10)', color: 'bg-orange-50 text-orange-700 border-orange-200' },
             { label: 'Scheduling (M07)', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
             { label: 'Bid Management (M26)', color: 'bg-green-50 text-green-700 border-green-200' },
-            { label: 'Document Storage (M06)', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+            { label: 'Document Storage (M06)', color: 'bg-stone-50 text-stone-700 border-stone-200' },
             { label: 'Notifications (M05)', color: 'bg-pink-50 text-pink-700 border-pink-200' },
           ].map(badge => (
             <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded border flex items-center gap-1", badge.color)}>
@@ -1454,7 +1454,7 @@ export function LicensesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="License Intelligence"
           features={licenseAIFeatures}
@@ -1471,18 +1471,18 @@ export function LicensesPreview() {
         </div>
 
         {filteredLicenses.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No licenses found matching your criteria
           </div>
         )}
 
         {/* Recommended Training (only on action tab) */}
         {activeTab === 'action' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-4 mt-4">
+          <div className="bg-white rounded-lg border border-warm-200 p-4 mt-4">
             <div className="flex items-center gap-2 mb-3">
-              <GraduationCap className="h-5 w-5 text-blue-600" />
-              <h4 className="font-medium text-gray-900">Recommended Training</h4>
-              <span className="text-xs text-gray-500">(AI-matched to expiring certifications)</span>
+              <GraduationCap className="h-5 w-5 text-stone-600" />
+              <h4 className="font-medium text-warm-900">Recommended Training</h4>
+              <span className="text-xs text-warm-500">(AI-matched to expiring certifications)</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {recommendedCourses.map(course => (
@@ -1494,9 +1494,9 @@ export function LicensesPreview() {
 
         {/* Expiration timeline (on all/company/employees/vendors tabs) */}
         {activeTab !== 'action' && activeTab !== 'safety' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-4 mt-4">
-            <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-500" />
+          <div className="bg-white rounded-lg border border-warm-200 p-4 mt-4">
+            <h4 className="font-medium text-warm-900 mb-3 flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-warm-500" />
               Upcoming Expirations (Next 6 Months)
             </h4>
             <div className="space-y-2">
@@ -1504,7 +1504,7 @@ export function LicensesPreview() {
                 .filter(l => l.daysUntilExpiry !== null && l.daysUntilExpiry > 0 && l.daysUntilExpiry <= 180)
                 .sort((a, b) => (a.daysUntilExpiry ?? 999) - (b.daysUntilExpiry ?? 999))
                 .map(l => (
-                  <div key={l.id} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
+                  <div key={l.id} className="flex items-center justify-between py-2 px-3 bg-warm-50 rounded">
                     <div className="flex items-center gap-2">
                       <span className={cn(
                         "w-2 h-2 rounded-full",
@@ -1512,14 +1512,14 @@ export function LicensesPreview() {
                         (l.daysUntilExpiry ?? 999) <= 90 ? "bg-amber-500" :
                         "bg-green-500"
                       )} />
-                      <span className="text-sm font-medium text-gray-900">{l.entityName}</span>
-                      <span className="text-xs text-gray-500">{l.licenseType}</span>
+                      <span className="text-sm font-medium text-warm-900">{l.entityName}</span>
+                      <span className="text-xs text-warm-500">{l.licenseType}</span>
                     </div>
                     <span className={cn(
                       "text-xs font-medium",
                       (l.daysUntilExpiry ?? 999) <= 30 ? "text-red-600" :
                       (l.daysUntilExpiry ?? 999) <= 90 ? "text-amber-600" :
-                      "text-gray-600"
+                      "text-warm-600"
                     )}>
                       {l.daysUntilExpiry} days
                     </span>

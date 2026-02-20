@@ -115,7 +115,7 @@ export function ApprovalModal({
                       'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
                       step.status === 'approved' && 'bg-emerald-100 text-emerald-600',
                       step.status === 'rejected' && 'bg-red-100 text-red-600',
-                      step.status === 'current' && 'bg-blue-100 text-blue-600 ring-2 ring-blue-500',
+                      step.status === 'current' && 'bg-stone-100 text-stone-600 ring-2 ring-stone-500',
                       step.status === 'pending' && 'bg-muted text-muted-foreground'
                     )}
                   >
@@ -313,23 +313,23 @@ export function BulkActionBar({
   return (
     <div
       className={cn(
-        'flex items-center justify-between px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg',
+        'flex items-center justify-between px-4 py-2 bg-stone-50 border border-stone-200 rounded-lg',
         className
       )}
     >
       <div className="flex items-center gap-3">
-        <span className="text-sm font-medium text-blue-700">
+        <span className="text-sm font-medium text-stone-700">
           {selectedCount} of {totalCount} selected
         </span>
         <button
           onClick={onSelectAll}
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-stone-600 hover:underline"
         >
           Select all
         </button>
         <button
           onClick={onClearSelection}
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-stone-600 hover:underline"
         >
           Clear selection
         </button>
@@ -344,7 +344,7 @@ export function BulkActionBar({
               'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
               action.variant === 'danger'
                 ? 'text-red-600 hover:bg-red-100'
-                : 'text-blue-600 hover:bg-blue-100'
+                : 'text-stone-600 hover:bg-stone-100'
             )}
           >
             {action.icon}
@@ -571,7 +571,7 @@ export function ProgressSteps({
               className={cn(
                 'w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium',
                 step.status === 'completed' && 'bg-emerald-500 text-white',
-                step.status === 'current' && 'bg-blue-500 text-white',
+                step.status === 'current' && 'bg-stone-500 text-white',
                 step.status === 'upcoming' && 'bg-muted text-muted-foreground'
               )}
             >

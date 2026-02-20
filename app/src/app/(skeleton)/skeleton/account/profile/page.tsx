@@ -90,7 +90,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="bg-card rounded-lg border border-border p-6">
         <div className="flex items-start gap-6">
-          <div className="h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="h-20 w-20 bg-stone-600 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-2xl font-bold text-white">JR</span>
           </div>
           <div className="flex-1 min-w-0">
@@ -106,7 +106,7 @@ export default function ProfilePage() {
               </span>
             </div>
             <div className="flex items-center gap-3 mt-2">
-              <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-medium">
+              <span className="text-xs px-2 py-0.5 rounded bg-stone-100 text-stone-700 font-medium">
                 Owner
               </span>
               <span className="text-xs text-muted-foreground">Member since January 2024</span>
@@ -177,7 +177,7 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium">Off</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-warm-100 text-warm-700 font-medium">Off</span>
               <button className="text-xs px-3 py-1.5 rounded bg-accent text-accent-foreground hover:bg-accent/80 transition-colors font-medium">
                 Enable
               </button>
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                       <div
                         className={cn(
                           'inline-block h-5 w-9 rounded-full relative transition-colors',
-                          notificationPrefs[category][channel] ? 'bg-blue-600' : 'bg-gray-200'
+                          notificationPrefs[category][channel] ? 'bg-stone-600' : 'bg-warm-200'
                         )}
                       >
                         <div

@@ -136,8 +136,8 @@ const connectedIntegrations: Integration[] = [
     name: 'Google Calendar',
     description: 'Two-way calendar sync for inspections, deliveries, meetings, and milestones',
     icon: Calendar,
-    iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-stone-100',
     status: 'connected',
     category: 'calendar',
     lastSync: '2 minutes ago',
@@ -170,8 +170,8 @@ const connectedIntegrations: Integration[] = [
     name: 'DocuSign',
     description: 'E-signatures for contracts, change orders, and subcontract agreements with multi-party routing',
     icon: FileText,
-    iconColor: 'text-yellow-600',
-    iconBg: 'bg-yellow-100',
+    iconColor: 'text-amber-600',
+    iconBg: 'bg-amber-100',
     status: 'connected',
     category: 'esignature',
     lastSync: '10 minutes ago',
@@ -240,8 +240,8 @@ const availableIntegrations: Integration[] = [
     name: 'Xero',
     description: 'Accounting integration with two-way sync for invoices, bills, and contacts',
     icon: CreditCard,
-    iconColor: 'text-blue-500',
-    iconBg: 'bg-blue-100',
+    iconColor: 'text-stone-500',
+    iconBg: 'bg-stone-100',
     status: 'disconnected',
     category: 'accounting',
     isInstalled: false,
@@ -255,8 +255,8 @@ const availableIntegrations: Integration[] = [
     name: 'Dropbox',
     description: 'Sync project documents, plans, and photos to Dropbox folders',
     icon: Cloud,
-    iconColor: 'text-blue-500',
-    iconBg: 'bg-blue-100',
+    iconColor: 'text-stone-500',
+    iconBg: 'bg-stone-100',
     status: 'disconnected',
     category: 'storage',
     isInstalled: false,
@@ -302,8 +302,8 @@ const availableIntegrations: Integration[] = [
     name: 'Accela (Building Dept)',
     description: 'Auto-submit permit applications and check status with municipal e-permitting systems',
     icon: Building,
-    iconColor: 'text-gray-600',
-    iconBg: 'bg-gray-100',
+    iconColor: 'text-warm-600',
+    iconBg: 'bg-warm-100',
     status: 'disconnected',
     category: 'construction',
     isInstalled: false,
@@ -379,8 +379,8 @@ const availableIntegrations: Integration[] = [
     name: 'FEMA Flood Maps',
     description: 'Auto-determine flood zone from project address. Flag high-risk zones requiring elevated construction.',
     icon: MapPin,
-    iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-stone-100',
     status: 'disconnected',
     category: 'geospatial',
     isInstalled: false,
@@ -425,8 +425,8 @@ const availableIntegrations: Integration[] = [
     name: 'ICC Digital Codes',
     description: 'Jurisdiction-specific building code lookup, amendments, and code change tracking',
     icon: BookOpen,
-    iconColor: 'text-gray-600',
-    iconBg: 'bg-gray-100',
+    iconColor: 'text-warm-600',
+    iconBg: 'bg-warm-100',
     status: 'disconnected',
     category: 'building_codes',
     isInstalled: false,
@@ -611,8 +611,8 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
     <div className={cn(
       "bg-white rounded-lg border p-4 transition-all",
       integration.status === 'error' ? "border-red-200" :
-      integration.isFeatured ? "border-blue-200 ring-1 ring-blue-100" :
-      "border-gray-200 hover:border-gray-300"
+      integration.isFeatured ? "border-stone-200 ring-1 ring-stone-100" :
+      "border-warm-200 hover:border-warm-300"
     )}>
       <div className="flex items-start gap-4">
         <div className={cn("p-3 rounded-lg", integration.iconBg)}>
@@ -620,7 +620,7 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <h4 className="font-medium text-gray-900">{integration.name}</h4>
+            <h4 className="font-medium text-warm-900">{integration.name}</h4>
             {integration.status === 'connected' && (
               <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
                 <CheckCircle2 className="h-3 w-3" />
@@ -640,20 +640,20 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
               </span>
             )}
             {integration.isFeatured && type === 'available' && (
-              <span className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                <Star className="h-3 w-3 fill-blue-400" />
+              <span className="flex items-center gap-1 text-xs text-stone-600 bg-stone-50 px-2 py-0.5 rounded-full">
+                <Star className="h-3 w-3 fill-stone-400" />
                 Featured
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500 mb-3">{integration.description}</p>
+          <p className="text-sm text-warm-500 mb-3">{integration.description}</p>
 
           {type === 'connected' && integration.syncItems && (
             <div className="mb-3">
-              <p className="text-xs text-gray-500 mb-1">Syncing:</p>
+              <p className="text-xs text-warm-500 mb-1">Syncing:</p>
               <div className="flex flex-wrap gap-1">
                 {integration.syncItems.map((item, i) => (
-                  <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                  <span key={i} className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
                     {item}
                   </span>
                 ))}
@@ -662,7 +662,7 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
           )}
 
           {type === 'connected' && (
-            <div className="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
+            <div className="flex items-center gap-4 text-xs text-warm-500 flex-wrap">
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 Last sync: {integration.lastSync}
@@ -687,11 +687,11 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
           )}
 
           {type === 'available' && (
-            <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
+            <div className="flex items-center gap-3 text-xs text-warm-500 flex-wrap">
               {integration.avgRating && (
                 <span className="flex items-center gap-1">
                   <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-                  <span className="font-medium text-gray-700">{integration.avgRating}</span>
+                  <span className="font-medium text-warm-700">{integration.avgRating}</span>
                   <span>({integration.reviewCount})</span>
                 </span>
               )}
@@ -702,11 +702,11 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
                 </span>
               )}
               {integration.pricing && (
-                <span className={cn("font-medium", integration.pricing === 'free' ? "text-green-600" : "text-gray-900")}>
+                <span className={cn("font-medium", integration.pricing === 'free' ? "text-green-600" : "text-warm-900")}>
                   {integration.pricing === 'free' ? 'Free' : integration.priceMonthly ? `$${integration.priceMonthly}/mo` : 'Paid'}
                 </span>
               )}
-              <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+              <span className="text-xs px-1.5 py-0.5 bg-warm-100 text-warm-500 rounded">
                 {categoryConfig[integration.category]?.label}
               </span>
             </div>
@@ -721,33 +721,33 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
         </div>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+      <div className="mt-4 pt-3 border-t border-warm-100 flex items-center justify-end gap-2">
         {type === 'connected' ? (
           <>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Settings className="h-4 w-4" />
               Configure
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <RefreshCw className="h-4 w-4" />
               Sync Now
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Eye className="h-4 w-4" />
               View Log
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 border border-gray-200 rounded-lg hover:bg-red-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 border border-warm-200 rounded-lg hover:bg-red-50">
               <Unplug className="h-4 w-4" />
               Disconnect
             </button>
           </>
         ) : (
           <>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Eye className="h-4 w-4" />
               Details
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Link className="h-4 w-4" />
               {integration.pricing === 'paid' ? `Install ($${integration.priceMonthly}/mo)` : 'Connect'}
             </button>
@@ -773,12 +773,12 @@ function SyncLogItem({ entry }: { entry: SyncLogEntry }) {
       </div>
       <div className="flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-900">{entry.integration}</span>
-          <span className="text-xs text-gray-400">{entry.timestamp}</span>
+          <span className="text-sm font-medium text-warm-900">{entry.integration}</span>
+          <span className="text-xs text-warm-400">{entry.timestamp}</span>
         </div>
-        <p className="text-sm text-gray-600">{entry.action}</p>
+        <p className="text-sm text-warm-600">{entry.action}</p>
         {entry.details && (
-          <p className="text-xs text-gray-400 mt-0.5">{entry.details}</p>
+          <p className="text-xs text-warm-400 mt-0.5">{entry.details}</p>
         )}
       </div>
     </div>
@@ -799,24 +799,24 @@ export function IntegrationsPreview() {
   const allCategories = [...new Set(availableIntegrations.map(i => i.category))]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900">Integrations & API Marketplace</h3>
-            <p className="text-sm text-gray-500">Connect RossOS to your construction business tools</p>
+            <h3 className="font-semibold text-warm-900">Integrations & API Marketplace</h3>
+            <p className="text-sm text-warm-500">Connect RossOS to your construction business tools</p>
           </div>
           <div className="flex items-center gap-4 text-sm">
             <span className="flex items-center gap-2 text-green-600">
               <CheckCircle2 className="h-4 w-4" />
               {connectedIntegrations.length} Connected
             </span>
-            <span className="flex items-center gap-2 text-gray-500">
+            <span className="flex items-center gap-2 text-warm-500">
               <ShoppingBag className="h-4 w-4" />
               {availableIntegrations.length} Available
             </span>
-            <span className="flex items-center gap-2 text-blue-500">
+            <span className="flex items-center gap-2 text-stone-500">
               <Globe className="h-4 w-4" />
               {allCategories.length} Categories
             </span>
@@ -825,7 +825,7 @@ export function IntegrationsPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-5 gap-3">
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-green-600 text-xs">
@@ -834,19 +834,19 @@ export function IntegrationsPreview() {
             </div>
             <div className="text-lg font-bold text-green-700 mt-0.5">99.2%</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-blue-600 text-xs">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <BarChart3 className="h-3.5 w-3.5" />
               API Calls (Month)
             </div>
-            <div className="text-lg font-bold text-blue-700 mt-0.5">16,268</div>
+            <div className="text-lg font-bold text-stone-700 mt-0.5">16,268</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <Server className="h-3.5 w-3.5" />
               Avg Response
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-0.5">142ms</div>
+            <div className="text-lg font-bold text-warm-900 mt-0.5">142ms</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-purple-600 text-xs">
@@ -866,10 +866,10 @@ export function IntegrationsPreview() {
       </div>
 
       {/* Cross-Module Connections */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-gray-500 font-medium">Connections:</span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded">
+          <span className="text-warm-500 font-medium">Connections:</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded">
             <Lock className="h-3 w-3" />
             Auth & OAuth2 (1)
           </span>
@@ -893,7 +893,7 @@ export function IntegrationsPreview() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4">
+      <div className="bg-white border-b border-warm-200 px-4">
         <div className="flex items-center gap-4">
           {[
             { id: 'connected', label: 'Connected', count: connectedIntegrations.length },
@@ -907,14 +907,14 @@ export function IntegrationsPreview() {
               className={cn(
                 "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === tab.id
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-stone-600 text-stone-600"
+                  : "border-transparent text-warm-500 hover:text-warm-700"
               )}
             >
               {tab.label}
               <span className={cn(
                 "px-1.5 py-0.5 rounded text-xs",
-                activeTab === tab.id ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+                activeTab === tab.id ? "bg-stone-100 text-stone-700" : "bg-warm-100 text-warm-600"
               )}>
                 {tab.count}
               </span>
@@ -932,18 +932,18 @@ export function IntegrationsPreview() {
             ))}
 
             {/* Sync Log */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mt-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4 mt-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-blue-600" />
-                  <h4 className="font-medium text-gray-900">Recent Sync Activity</h4>
+                  <Activity className="h-4 w-4 text-stone-600" />
+                  <h4 className="font-medium text-warm-900">Recent Sync Activity</h4>
                 </div>
-                <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                <button className="text-sm text-stone-600 hover:text-stone-700 flex items-center gap-1">
                   View Full Log
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
-              <div className="divide-y divide-gray-100 max-h-[200px] overflow-y-auto">
+              <div className="divide-y divide-warm-100 max-h-[200px] overflow-y-auto">
                 {recentSyncLog.map(entry => (
                   <SyncLogItem key={entry.id} entry={entry} />
                 ))}
@@ -957,19 +957,19 @@ export function IntegrationsPreview() {
             {/* Search and Filter */}
             <div className="mb-4 flex items-center gap-3">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-warm-400" />
                 <input
                   type="text"
                   placeholder="Search integrations..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-3 py-2 border border-warm-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-stone-500"
                 />
               </div>
               <select
                 value={categoryFilter}
                 onChange={e => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border border-warm-200 rounded-lg text-sm text-warm-600 focus:outline-none focus:ring-2 focus:ring-stone-500"
               >
                 <option value="all">All Categories</option>
                 {allCategories.map(cat => (
@@ -981,8 +981,8 @@ export function IntegrationsPreview() {
             {/* Featured */}
             {categoryFilter === 'all' && !search && (
               <div className="mb-4">
-                <h4 className="font-medium text-gray-700 text-sm mb-2 flex items-center gap-1.5">
-                  <Star className="h-4 w-4 text-blue-500" />
+                <h4 className="font-medium text-warm-700 text-sm mb-2 flex items-center gap-1.5">
+                  <Star className="h-4 w-4 text-stone-500" />
                   Featured Integrations
                 </h4>
                 <div className="grid grid-cols-1 gap-3 mb-4">
@@ -990,7 +990,7 @@ export function IntegrationsPreview() {
                     <IntegrationCard key={integration.id} integration={integration} type="available" />
                   ))}
                 </div>
-                <hr className="border-gray-200 my-4" />
+                <hr className="border-warm-200 my-4" />
               </div>
             )}
 
@@ -999,7 +999,7 @@ export function IntegrationsPreview() {
                 <IntegrationCard key={integration.id} integration={integration} type="available" />
               ))}
               {filteredAvailable.length === 0 && (
-                <div className="col-span-2 text-center py-8 text-gray-400 text-sm">
+                <div className="col-span-2 text-center py-8 text-warm-400 text-sm">
                   No integrations match your search
                 </div>
               )}
@@ -1010,54 +1010,54 @@ export function IntegrationsPreview() {
         {activeTab === 'webhooks' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">Configure webhook endpoints to receive real-time events. Payloads signed with HMAC-SHA256.</p>
-              <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <p className="text-sm text-warm-600">Configure webhook endpoints to receive real-time events. Payloads signed with HMAC-SHA256.</p>
+              <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                 <Webhook className="h-4 w-4" />
                 Add Webhook
               </button>
             </div>
 
             {mockWebhooks.map(webhook => (
-              <div key={webhook.id} className="bg-white rounded-lg border border-gray-200 p-4">
+              <div key={webhook.id} className="bg-white rounded-lg border border-warm-200 p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <code className="text-sm font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded">{webhook.url}</code>
+                    <code className="text-sm font-mono text-warm-800 bg-warm-100 px-2 py-1 rounded">{webhook.url}</code>
                     {webhook.isActive ? (
                       <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
                         <Play className="h-3 w-3" /> Active
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                      <span className="flex items-center gap-1 text-xs text-warm-500 bg-warm-100 px-2 py-0.5 rounded-full">
                         <PauseCircle className="h-3 w-3" /> Paused
                       </span>
                     )}
                   </div>
-                  <button className="text-sm text-gray-600 hover:text-gray-800">
+                  <button className="text-sm text-warm-600 hover:text-warm-800">
                     <Settings className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-1 mb-2">
                   {webhook.events.map(event => (
-                    <span key={event} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-mono">{event}</span>
+                    <span key={event} className="text-xs bg-stone-50 text-stone-700 px-2 py-0.5 rounded font-mono">{event}</span>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-4 text-xs text-warm-500">
                   <span>Last delivered: {webhook.lastDelivered}</span>
                   <span>Success rate: {webhook.deliverySuccessRate}%</span>
                   {webhook.failureCount > 0 && (
                     <span className="text-amber-600">Failures: {webhook.failureCount}</span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
                     <Send className="h-3.5 w-3.5" />
                     Send Test
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
                     <Eye className="h-3.5 w-3.5" />
                     Delivery Log
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
                     <RefreshCw className="h-3.5 w-3.5" />
                     Replay Failed
                   </button>
@@ -1065,11 +1065,11 @@ export function IntegrationsPreview() {
               </div>
             ))}
 
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-700 text-sm mb-2">Available Event Categories</h4>
+            <div className="bg-warm-50 rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-700 text-sm mb-2">Available Event Categories</h4>
               <div className="flex flex-wrap gap-1.5">
                 {['projects', 'budgets', 'schedules', 'invoices', 'change_orders', 'vendors', 'documents', 'selections', 'permits', 'rfis', 'punch_items'].map(cat => (
-                  <span key={cat} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">{cat}.*</span>
+                  <span key={cat} className="text-xs bg-warm-100 text-warm-600 px-2 py-1 rounded font-mono">{cat}.*</span>
                 ))}
               </div>
             </div>
@@ -1079,13 +1079,13 @@ export function IntegrationsPreview() {
         {activeTab === 'api' && (
           <div className="space-y-4">
             {/* API Keys */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Key className="h-5 w-5 text-gray-600" />
-                  <h4 className="font-medium text-gray-900">API Keys</h4>
+                  <Key className="h-5 w-5 text-warm-600" />
+                  <h4 className="font-medium text-warm-900">API Keys</h4>
                 </div>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                   <Key className="h-4 w-4" />
                   Generate Key
                 </button>
@@ -1093,27 +1093,27 @@ export function IntegrationsPreview() {
 
               <div className="space-y-3">
                 {mockApiKeys.map(apiKey => (
-                  <div key={apiKey.id} className="p-3 bg-gray-50 rounded-lg">
+                  <div key={apiKey.id} className="p-3 bg-warm-50 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">{apiKey.name}</span>
+                      <span className="text-sm font-medium text-warm-700">{apiKey.name}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">{apiKey.rateLimitTier}</span>
+                        <span className="text-xs text-warm-500">{apiKey.rateLimitTier}</span>
                         <button className="text-xs text-red-600 hover:text-red-700">Revoke</button>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <code className="flex-1 bg-gray-100 px-3 py-2 rounded text-sm font-mono text-gray-800">
+                      <code className="flex-1 bg-warm-100 px-3 py-2 rounded text-sm font-mono text-warm-800">
                         {apiKey.prefix}{'*'.repeat(24)}
                       </code>
-                      <button className="px-3 py-2 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">Copy</button>
+                      <button className="px-3 py-2 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">Copy</button>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-3 text-xs text-warm-500">
                       <span>Last used: {apiKey.lastUsed}</span>
                       <span>{apiKey.callsThisMonth.toLocaleString()} calls this month</span>
                     </div>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {apiKey.scopes.map(scope => (
-                        <span key={scope} className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-mono">{scope}</span>
+                        <span key={scope} className="text-[10px] bg-stone-50 text-stone-700 px-1.5 py-0.5 rounded font-mono">{scope}</span>
                       ))}
                     </div>
                   </div>
@@ -1122,51 +1122,51 @@ export function IntegrationsPreview() {
             </div>
 
             {/* OAuth2 */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Lock className="h-5 w-5 text-gray-600" />
-                <h4 className="font-medium text-gray-900">OAuth2 & Authorized Apps</h4>
+                <Lock className="h-5 w-5 text-warm-600" />
+                <h4 className="font-medium text-warm-900">OAuth2 & Authorized Apps</h4>
               </div>
-              <p className="text-sm text-gray-500 mb-3">Third-party apps authorized to access your RossOS data via OAuth2.</p>
-              <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-600 text-center">
+              <p className="text-sm text-warm-500 mb-3">Third-party apps authorized to access your RossOS data via OAuth2.</p>
+              <div className="p-3 bg-warm-50 rounded-lg text-sm text-warm-600 text-center">
                 No third-party apps authorized yet. Apps will appear here when you grant access via OAuth2.
               </div>
             </div>
 
             {/* API Stats */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center gap-2 mb-3">
-                <BarChart3 className="h-5 w-5 text-gray-600" />
-                <h4 className="font-medium text-gray-900">API Usage</h4>
+                <BarChart3 className="h-5 w-5 text-warm-600" />
+                <h4 className="font-medium text-warm-900">API Usage</h4>
               </div>
               <div className="grid grid-cols-4 gap-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-900">16,268</div>
-                  <div className="text-sm text-gray-500">API Calls (This Month)</div>
+                <div className="p-4 bg-warm-50 rounded-lg">
+                  <div className="text-2xl font-bold text-warm-900">16,268</div>
+                  <div className="text-sm text-warm-500">API Calls (This Month)</div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-900">98.7%</div>
-                  <div className="text-sm text-gray-500">Success Rate</div>
+                <div className="p-4 bg-warm-50 rounded-lg">
+                  <div className="text-2xl font-bold text-warm-900">98.7%</div>
+                  <div className="text-sm text-warm-500">Success Rate</div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-900">142ms</div>
-                  <div className="text-sm text-gray-500">Avg Response Time</div>
+                <div className="p-4 bg-warm-50 rounded-lg">
+                  <div className="text-2xl font-bold text-warm-900">142ms</div>
+                  <div className="text-sm text-warm-500">Avg Response Time</div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-900">v2</div>
-                  <div className="text-sm text-gray-500">API Version</div>
+                <div className="p-4 bg-warm-50 rounded-lg">
+                  <div className="text-2xl font-bold text-warm-900">v2</div>
+                  <div className="text-sm text-warm-500">API Version</div>
                 </div>
               </div>
               <div className="flex items-center gap-4 mt-4">
-                <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                   <FileText className="h-4 w-4" />
                   API Documentation
                 </button>
-                <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                   <Code className="h-4 w-4" />
                   SDKs (JS, Python, C#)
                 </button>
-                <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                   <ExternalLink className="h-4 w-4" />
                   Developer Portal
                 </button>
@@ -1192,7 +1192,7 @@ export function IntegrationsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-warm-200">
         <AIFeaturesPanel
           title="Integration AI Features"
           columns={2}

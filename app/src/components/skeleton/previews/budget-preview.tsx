@@ -292,7 +292,7 @@ function VarianceIndicator({ variance, revised }: { variance: number; revised: n
   }
 
   return (
-    <div className="flex items-center gap-1 text-gray-500">
+    <div className="flex items-center gap-1 text-warm-500">
       <CheckCircle className="h-4 w-4 text-green-500" />
       <span className="font-medium">$0</span>
     </div>
@@ -337,8 +337,8 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
     <>
       <tr
         className={cn(
-          "hover:bg-gray-50 cursor-pointer",
-          expanded && "bg-blue-50",
+          "hover:bg-warm-50 cursor-pointer",
+          expanded && "bg-stone-50",
           line.alertLevel === 'over' && "bg-red-50/50"
         )}
         onClick={onToggle}
@@ -346,12 +346,12 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
         <td className="py-3 px-4">
           <div className="flex items-center gap-2">
             {expanded ? (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-warm-400" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-warm-400" />
             )}
-            <span className="font-mono text-gray-500">{line.code}</span>
-            <span className="font-medium text-gray-900">{line.name}</span>
+            <span className="font-mono text-warm-500">{line.code}</span>
+            <span className="font-medium text-warm-900">{line.name}</span>
             <LineTypeBadge type={line.lineType} />
             <AlertBadge level={line.alertLevel} />
             {line.aiNote && (
@@ -359,45 +359,45 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
             )}
           </div>
         </td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(line.originalBudget)}</td>
-        <td className="py-3 px-3 text-right text-gray-600">
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(line.originalBudget)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">
           {line.approvedChanges !== 0 ? (
             <span className={line.approvedChanges < 0 ? 'text-red-600' : ''}>
               {formatCurrency(line.approvedChanges)}
             </span>
           ) : '-'}
         </td>
-        <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(line.revisedBudget)}</td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(line.committed)}</td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(line.actual)}</td>
-        <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(line.projected)}</td>
+        <td className="py-3 px-3 text-right font-medium text-warm-900">{formatCurrency(line.revisedBudget)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(line.committed)}</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(line.actual)}</td>
+        <td className="py-3 px-3 text-right font-medium text-warm-900">{formatCurrency(line.projected)}</td>
         <td className="py-3 px-3 text-right">
           <VarianceIndicator variance={variance} revised={line.revisedBudget} />
         </td>
         <td className="py-3 px-3">
           <div className="flex items-center gap-2">
-            <div className="w-16 bg-gray-200 rounded-full h-2">
+            <div className="w-16 bg-warm-200 rounded-full h-2">
               <div
                 className={cn(
                   "h-2 rounded-full",
                   line.percentComplete === 100 ? "bg-green-500" :
-                  line.alertLevel === 'over' ? "bg-red-500" : "bg-blue-600"
+                  line.alertLevel === 'over' ? "bg-red-500" : "bg-stone-600"
                 )}
                 style={{ width: `${Math.min(line.percentComplete, 100)}%` }}
               />
             </div>
-            <span className="text-xs text-gray-500 w-8">{line.percentComplete}%</span>
+            <span className="text-xs text-warm-500 w-8">{line.percentComplete}%</span>
           </div>
         </td>
       </tr>
       {expanded && (
-        <tr className={cn(expanded && "bg-blue-50")}>
+        <tr className={cn(expanded && "bg-stone-50")}>
           <td colSpan={9} className="py-2 px-12">
             <div className="space-y-2">
               {/* Cross-module connections */}
               <div className="flex items-center gap-3 text-xs">
                 {line.linkedPOs > 0 && (
-                  <span className="flex items-center gap-1 bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-1 bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                     <ShoppingCart className="h-3 w-3" />
                     {line.linkedPOs} PO{line.linkedPOs > 1 ? 's' : ''}
                   </span>
@@ -415,15 +415,15 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
                   </span>
                 )}
                 {line.vendor && (
-                  <span className="text-gray-500">
-                    Vendor: <span className="font-medium text-gray-700">{line.vendor}</span>
+                  <span className="text-warm-500">
+                    Vendor: <span className="font-medium text-warm-700">{line.vendor}</span>
                   </span>
                 )}
-                <span className="text-gray-500">
-                  Cost to Complete: <span className="font-medium text-gray-700">{formatCurrency(line.costToComplete)}</span>
+                <span className="text-warm-500">
+                  Cost to Complete: <span className="font-medium text-warm-700">{formatCurrency(line.costToComplete)}</span>
                 </span>
                 {line.aiConfidence !== undefined && (
-                  <span className="flex items-center gap-1 text-gray-400">
+                  <span className="flex items-center gap-1 text-warm-400">
                     <Target className="h-3 w-3" />
                     AI conf: {Math.round(line.aiConfidence * 100)}%
                   </span>
@@ -501,36 +501,36 @@ export function BudgetPreview() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Budget - Smith Residence</h3>
+            <h3 className="font-semibold text-warm-900">Budget - Smith Residence</h3>
             <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Active</span>
-            <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">{contractTypeLabels[contractType]}</span>
+            <span className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded">{contractTypeLabels[contractType]}</span>
           </div>
           <div className="flex items-center gap-2">
             {/* Multi-Audience View Toggle */}
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               {(['pm', 'owner', 'bank'] as const).map(view => (
                 <button
                   key={view}
                   onClick={() => setAudienceView(view)}
                   className={cn(
                     "px-2.5 py-1.5 text-xs font-medium",
-                    audienceView === view ? "bg-blue-50 text-blue-700" : "text-gray-500 hover:bg-gray-50"
+                    audienceView === view ? "bg-stone-50 text-stone-700" : "text-warm-500 hover:bg-warm-50"
                   )}
                 >
                   {view === 'pm' ? 'PM Detail' : view === 'owner' ? 'Owner' : 'Lender'}
                 </button>
               ))}
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Lock className="h-4 w-4" />
               Lock Budget
             </button>
@@ -565,22 +565,22 @@ export function BudgetPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <DollarSign className="h-3.5 w-3.5" />
               Contract
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">$2.45M</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">$2.45M</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <BarChart3 className="h-3.5 w-3.5" />
               Projected Cost
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{formatCurrency(totals.projected)}</div>
-            <div className="text-[10px] text-gray-400 mt-0.5">CTC: {formatCurrency(totals.costToComplete)}</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{formatCurrency(totals.projected)}</div>
+            <div className="text-[10px] text-warm-400 mt-0.5">CTC: {formatCurrency(totals.costToComplete)}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -636,8 +636,8 @@ export function BudgetPreview() {
             </div>
           </div>
           {/* Earned Value Indicators */}
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Layers className="h-3.5 w-3.5" />
               Earned Value
             </div>
@@ -653,7 +653,7 @@ export function BudgetPreview() {
                 </div>
               </div>
             </div>
-            <div className="text-[10px] text-gray-400 mt-0.5">
+            <div className="text-[10px] text-warm-400 mt-0.5">
               {cpi >= 1 ? 'Under budget pace' : 'Over budget pace'} / {spi >= 1 ? 'On schedule' : 'Behind schedule'}
             </div>
           </div>
@@ -677,20 +677,20 @@ export function BudgetPreview() {
       {/* Budget Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 border-b border-gray-200">
+          <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Cost Code</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Original</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Changes</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Revised</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Committed</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Actual</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Projected</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Variance</th>
-              <th className="py-3 px-3 font-medium text-gray-600 w-32">Progress</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">Cost Code</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Original</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Changes</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Revised</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Committed</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Actual</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Projected</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Variance</th>
+              <th className="py-3 px-3 font-medium text-warm-600 w-32">Progress</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-white divide-y divide-warm-100">
             {filteredBudgetLines.map(line => (
               <BudgetRow
                 key={line.id}
@@ -700,15 +700,15 @@ export function BudgetPreview() {
               />
             ))}
           </tbody>
-          <tfoot className="bg-gray-50 border-t-2 border-gray-300">
+          <tfoot className="bg-warm-50 border-t-2 border-warm-300">
             <tr className="font-semibold">
-              <td className="py-3 px-4 text-gray-900">TOTALS</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(totals.originalBudget)}</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(totals.approvedChanges)}</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(totals.revisedBudget)}</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(totals.committed)}</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(totals.actual)}</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(totals.projected)}</td>
+              <td className="py-3 px-4 text-warm-900">TOTALS</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(totals.originalBudget)}</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(totals.approvedChanges)}</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(totals.revisedBudget)}</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(totals.committed)}</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(totals.actual)}</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(totals.projected)}</td>
               <td className="py-3 px-3 text-right">
                 <VarianceIndicator variance={totalVariance} revised={totals.revisedBudget} />
               </td>
@@ -719,14 +719,14 @@ export function BudgetPreview() {
       </div>
 
       {/* Change Order Impact Summary */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
-        <div className="flex items-center gap-6 text-xs text-gray-500">
-          <span className="font-medium text-gray-700">Budget Composition:</span>
+      <div className="bg-white border-t border-warm-200 px-4 py-3">
+        <div className="flex items-center gap-6 text-xs text-warm-500">
+          <span className="font-medium text-warm-700">Budget Composition:</span>
           <span>Original Budget: {formatCurrency(totals.originalBudget)}</span>
-          <span className="text-gray-300">+</span>
+          <span className="text-warm-300">+</span>
           <span className="text-orange-600">Approved COs: {formatCurrency(totals.approvedChanges)}</span>
-          <span className="text-gray-300">=</span>
-          <span className="font-medium text-gray-900">Current Budget: {formatCurrency(totals.revisedBudget)}</span>
+          <span className="text-warm-300">=</span>
+          <span className="font-medium text-warm-900">Current Budget: {formatCurrency(totals.revisedBudget)}</span>
           <span className="ml-auto flex items-center gap-1">
             <Eye className="h-3 w-3" />
             Viewing: {audienceView === 'pm' ? 'PM Detail View' : audienceView === 'owner' ? 'Owner Summary' : 'AIA G702/G703'}

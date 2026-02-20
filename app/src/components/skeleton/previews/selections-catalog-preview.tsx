@@ -338,8 +338,8 @@ const mockSelections: SelectionItem[] = [
 const tiers = ['All', 'Builder', 'Standard', 'Premium', 'Luxury']
 
 const tierConfig: Record<string, { color: string }> = {
-  Builder: { color: 'bg-gray-100 text-gray-700' },
-  Standard: { color: 'bg-blue-100 text-blue-700' },
+  Builder: { color: 'bg-warm-100 text-warm-700' },
+  Standard: { color: 'bg-stone-100 text-stone-700' },
   Premium: { color: 'bg-purple-100 text-purple-700' },
   Luxury: { color: 'bg-amber-100 text-amber-700' },
 }
@@ -349,13 +349,13 @@ const availabilityConfig: Record<AvailabilityStatus, { label: string; color: str
   low_stock: { label: 'Low Stock', color: 'text-amber-600' },
   backordered: { label: 'Backordered', color: 'text-red-600' },
   discontinued: { label: 'Discontinued', color: 'text-red-700' },
-  special_order: { label: 'Special Order', color: 'text-blue-600' },
+  special_order: { label: 'Special Order', color: 'text-stone-600' },
 }
 
 const sourceConfig: Record<ItemSource, { label: string; color: string }> = {
-  builder: { label: 'Builder', color: 'bg-gray-100 text-gray-600' },
+  builder: { label: 'Builder', color: 'bg-warm-100 text-warm-600' },
   designer: { label: 'Designer', color: 'bg-pink-100 text-pink-600' },
-  client: { label: 'Client', color: 'bg-blue-100 text-blue-600' },
+  client: { label: 'Client', color: 'bg-stone-100 text-stone-600' },
   catalog: { label: 'Catalog', color: 'bg-indigo-100 text-indigo-600' },
 }
 
@@ -373,12 +373,12 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      !selection.isActive && "opacity-60 border-dashed border-gray-300",
+      !selection.isActive && "opacity-60 border-dashed border-warm-300",
       selection.availabilityStatus === 'discontinued' && "border-red-200",
     )}>
       <div className="flex items-start gap-3 mb-3">
-        <div className="h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Image className="h-8 w-8 text-gray-300" />
+        <div className="h-16 w-16 bg-warm-100 rounded-lg flex items-center justify-center flex-shrink-0">
+          <Image className="h-8 w-8 text-warm-300" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1 flex-wrap">
@@ -414,32 +414,32 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
           </div>
           <h4 className={cn(
             "font-medium truncate",
-            selection.isActive ? "text-gray-900" : "text-gray-500 line-through"
+            selection.isActive ? "text-warm-900" : "text-warm-500 line-through"
           )}>{selection.name}</h4>
-          <p className="text-sm text-gray-500">{selection.manufacturer} | {selection.model}</p>
-          <p className="text-xs text-gray-400 font-mono">{selection.sku}</p>
+          <p className="text-sm text-warm-500">{selection.manufacturer} | {selection.model}</p>
+          <p className="text-xs text-warm-400 font-mono">{selection.sku}</p>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       <div className="grid grid-cols-3 gap-2 mb-3 text-sm">
         <div>
-          <span className="text-gray-500">Material:</span>
-          <span className="ml-1 font-medium text-gray-900">${selection.materialCost.toFixed(2)}/{selection.unit}</span>
+          <span className="text-warm-500">Material:</span>
+          <span className="ml-1 font-medium text-warm-900">${selection.materialCost.toFixed(2)}/{selection.unit}</span>
         </div>
         <div>
-          <span className="text-gray-500">Labor:</span>
-          <span className="ml-1 font-medium text-gray-900">${selection.laborCost.toFixed(2)}/{selection.unit}</span>
+          <span className="text-warm-500">Labor:</span>
+          <span className="ml-1 font-medium text-warm-900">${selection.laborCost.toFixed(2)}/{selection.unit}</span>
         </div>
         <div>
-          <span className="text-gray-500">Total:</span>
-          <span className="ml-1 font-semibold text-gray-900">${totalCost.toFixed(2)}/{selection.unit}</span>
+          <span className="text-warm-500">Total:</span>
+          <span className="ml-1 font-semibold text-warm-900">${totalCost.toFixed(2)}/{selection.unit}</span>
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2">
           <span className={cn("text-xs px-2 py-1 rounded font-medium", tierCfg.color)}>
             {selection.tier}
@@ -448,7 +448,7 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
             {availCfg.label}
           </span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex items-center gap-3 text-xs text-warm-500">
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
             {selection.leadTimeDays}d
@@ -461,7 +461,7 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
       </div>
 
       {/* Usage & specs indicators */}
-      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+      <div className="flex items-center gap-3 mt-2 text-xs text-warm-400">
         <span className="flex items-center gap-1" title="Used in estimates/jobs">
           <BarChart3 className="h-3 w-3" />
           Used {selection.usageCount}x
@@ -522,9 +522,9 @@ function CategorySidebar({
   }
 
   return (
-    <div className="w-48 border-r border-gray-200 bg-white">
-      <div className="p-3 border-b border-gray-200">
-        <h4 className="font-medium text-gray-700 text-sm">Categories</h4>
+    <div className="w-48 border-r border-warm-200 bg-white">
+      <div className="p-3 border-b border-warm-200">
+        <h4 className="font-medium text-warm-700 text-sm">Categories</h4>
       </div>
       <div className="py-2">
         {categories.map(cat => {
@@ -534,19 +534,19 @@ function CategorySidebar({
               <button
                 onClick={() => toggleCategory(cat.name)}
                 className={cn(
-                  "w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-50",
-                  selectedCategory === cat.name && "bg-blue-50 text-blue-700"
+                  "w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-warm-50",
+                  selectedCategory === cat.name && "bg-stone-50 text-stone-700"
                 )}
               >
                 <span className="flex items-center gap-2">
                   {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                    <ChevronDown className="h-4 w-4 text-warm-400" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                    <ChevronRight className="h-4 w-4 text-warm-400" />
                   )}
                   {cat.name}
                 </span>
-                <span className="text-xs text-gray-400">{cat.count}</span>
+                <span className="text-xs text-warm-400">{cat.count}</span>
               </button>
               {isExpanded && (
                 <div className="ml-6 py-1">
@@ -558,8 +558,8 @@ function CategorySidebar({
                         onSelectSubcategory(sub)
                       }}
                       className={cn(
-                        "w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50",
-                        selectedSubcategory === sub && "bg-blue-50 text-blue-700 font-medium"
+                        "w-full text-left px-3 py-1.5 text-sm hover:bg-warm-50",
+                        selectedSubcategory === sub && "bg-stone-50 text-stone-700 font-medium"
                       )}
                     >
                       {sub}
@@ -606,13 +606,13 @@ export function SelectionsCatalogPreview() {
   const defaultItems = activeSelections.filter(s => s.isDefaultForTier).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="mb-3">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Selections Catalog</h3>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+            <h3 className="font-semibold text-warm-900">Selections Catalog</h3>
+            <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
               {totalSelections} active
             </span>
             {discontinuedCount > 0 && (
@@ -622,7 +622,7 @@ export function SelectionsCatalogPreview() {
               </span>
             )}
           </div>
-          <div className="text-sm text-gray-500 mt-0.5">
+          <div className="text-sm text-warm-500 mt-0.5">
             Master library of products, materials, and finishes with pricing tiers and vendor sources
           </div>
         </div>
@@ -661,21 +661,21 @@ export function SelectionsCatalogPreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-8 gap-3">
-          <div className="bg-gray-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <Package className="h-3.5 w-3.5" />
               Active
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-0.5">{totalSelections}</div>
+            <div className="text-lg font-bold text-warm-900 mt-0.5">{totalSelections}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <Tag className="h-3.5 w-3.5" />
               Categories
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-0.5">{totalCategories}</div>
+            <div className="text-lg font-bold text-warm-900 mt-0.5">{totalCategories}</div>
           </div>
           <div className="bg-cyan-50 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-cyan-600 text-xs">
@@ -700,46 +700,46 @@ export function SelectionsCatalogPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-2.5",
-            priceIncreases > 0 ? "bg-red-50" : "bg-gray-50"
+            priceIncreases > 0 ? "bg-red-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              priceIncreases > 0 ? "text-red-600" : "text-gray-500"
+              priceIncreases > 0 ? "text-red-600" : "text-warm-500"
             )}>
               <TrendingUp className="h-3.5 w-3.5" />
               Price Up
             </div>
             <div className={cn(
               "text-lg font-bold mt-0.5",
-              priceIncreases > 0 ? "text-red-700" : "text-gray-900"
+              priceIncreases > 0 ? "text-red-700" : "text-warm-900"
             )}>
               {priceIncreases}
             </div>
           </div>
           <div className={cn(
             "rounded-lg p-2.5",
-            priceDecreases > 0 ? "bg-green-50" : "bg-gray-50"
+            priceDecreases > 0 ? "bg-green-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              priceDecreases > 0 ? "text-green-600" : "text-gray-500"
+              priceDecreases > 0 ? "text-green-600" : "text-warm-500"
             )}>
               <TrendingDown className="h-3.5 w-3.5" />
               Price Down
             </div>
             <div className={cn(
               "text-lg font-bold mt-0.5",
-              priceDecreases > 0 ? "text-green-700" : "text-gray-900"
+              priceDecreases > 0 ? "text-green-700" : "text-warm-900"
             )}>
               {priceDecreases}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <Truck className="h-3.5 w-3.5" />
               Vendors
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-0.5">{uniqueVendors}</div>
+            <div className="text-lg font-bold text-warm-900 mt-0.5">{uniqueVendors}</div>
           </div>
         </div>
       </div>
@@ -756,9 +756,9 @@ export function SelectionsCatalogPreview() {
 
         <div className="flex-1 p-4">
           <div className="mb-3 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-warm-600">
               <span className="font-medium">{selectedSubcategory || selectedCategory}</span>
-              <span className="text-gray-400 ml-2">({filteredSelections.length} selections)</span>
+              <span className="text-warm-400 ml-2">({filteredSelections.length} selections)</span>
             </div>
           </div>
 
@@ -767,7 +767,7 @@ export function SelectionsCatalogPreview() {
               <SelectionCard key={selection.id} selection={selection} />
             ))}
             {filteredSelections.length === 0 && (
-              <div className="col-span-2 text-center py-12 text-gray-500">
+              <div className="col-span-2 text-center py-12 text-warm-500">
                 No selections match the current filters
               </div>
             )}
@@ -776,14 +776,14 @@ export function SelectionsCatalogPreview() {
       </div>
 
       {/* Cross-Module Connection Badges */}
-      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-500 font-medium">Connected:</span>
+          <span className="text-warm-500 font-medium">Connected:</span>
           <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
             <FileText className="h-3 w-3" />
             Estimates
           </span>
-          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Eye className="h-3 w-3" />
             Job Selections
           </span>
@@ -831,7 +831,7 @@ export function SelectionsCatalogPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features"
           columns={2}

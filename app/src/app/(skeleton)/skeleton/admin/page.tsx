@@ -22,7 +22,7 @@ import {
 import { cn } from '@/lib/utils'
 
 const platformMetrics = [
-  { label: 'Total Tenants', value: '2,847', change: '+124', trend: 'up', icon: Building2, color: 'text-blue-600' },
+  { label: 'Total Tenants', value: '2,847', change: '+124', trend: 'up', icon: Building2, color: 'text-stone-600' },
   { label: 'Monthly Active Users', value: '18,432', change: '+8.2%', trend: 'up', icon: Users, color: 'text-green-600' },
   { label: 'MRR', value: '$486,200', change: '+$32,400', trend: 'up', icon: DollarSign, color: 'text-violet-600' },
   { label: 'ARR', value: '$5.83M', change: '+12.4%', trend: 'up', icon: TrendingUp, color: 'text-amber-600' },
@@ -135,7 +135,7 @@ export default function PlatformAdminPage() {
                     <span className="text-muted-foreground">{f.adoption}%</span>
                   </div>
                   <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                    <div className={cn('h-full rounded-full', f.adoption > 70 ? 'bg-green-500' : f.adoption > 50 ? 'bg-blue-500' : 'bg-amber-500')} style={{ width: `${f.adoption}%` }} />
+                    <div className={cn('h-full rounded-full', f.adoption > 70 ? 'bg-green-500' : f.adoption > 50 ? 'bg-stone-500' : 'bg-amber-500')} style={{ width: `${f.adoption}%` }} />
                   </div>
                 </div>
               ))}
@@ -166,7 +166,7 @@ export default function PlatformAdminPage() {
 
           {/* Tenant Distribution */}
           <div className="bg-card border rounded-lg p-4">
-            <h3 className="font-semibold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4 text-blue-600" />Tenant Distribution</h3>
+            <h3 className="font-semibold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4 text-stone-600" />Tenant Distribution</h3>
             <div className="space-y-3">
               {tenantDistribution.map((t, i) => (
                 <div key={i}>
@@ -189,7 +189,7 @@ export default function PlatformAdminPage() {
               {recentActivity.map((a, i) => (
                 <div key={i} className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
                   <div className="mt-0.5">
-                    {a.type === 'signup' ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : a.type === 'upgrade' ? <ArrowUp className="h-3.5 w-3.5 text-blue-500" /> : a.type === 'alert' ? <Zap className="h-3.5 w-3.5 text-amber-500" /> : <ArrowDown className="h-3.5 w-3.5 text-red-500" />}
+                    {a.type === 'signup' ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : a.type === 'upgrade' ? <ArrowUp className="h-3.5 w-3.5 text-stone-500" /> : a.type === 'alert' ? <Zap className="h-3.5 w-3.5 text-amber-500" /> : <ArrowDown className="h-3.5 w-3.5 text-red-500" />}
                   </div>
                   <div>
                     <div className="text-xs">{a.event}</div>

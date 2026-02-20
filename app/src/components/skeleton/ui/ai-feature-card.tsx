@@ -52,11 +52,11 @@ export interface AIFeatureCardProps {
 
 const severityConfig = {
   info: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-700',
-    icon: 'text-blue-500',
-    badge: 'bg-blue-100 text-blue-700',
+    bg: 'bg-stone-50',
+    border: 'border-stone-200',
+    text: 'text-stone-700',
+    icon: 'text-stone-500',
+    badge: 'bg-stone-100 text-stone-700',
   },
   warning: {
     bg: 'bg-amber-50',
@@ -110,7 +110,7 @@ function ConfidenceMeter({ value }: { value: number }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      <div className="w-16 h-1.5 bg-warm-200 rounded-full overflow-hidden">
         <div
           className={cn('h-full rounded-full transition-all', getColor())}
           style={{ width: `${value}%` }}
@@ -275,7 +275,7 @@ export function AIFeaturesPanel({
     <div className={cn('space-y-3', className)}>
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-purple-500" />
+        <Sparkles className="h-4 w-4 text-stone-500" />
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         <span className="text-xs text-muted-foreground">
           ({features.length} insight{features.length !== 1 ? 's' : ''})

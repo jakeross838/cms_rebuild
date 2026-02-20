@@ -467,7 +467,7 @@ Track the financial impact of every punch item.
 - **Module 29: Full Client Portal** — Client punch item submission
 - **Module 27: Warranty & Home Care** — Warranty item creation from unresolved punch
 - **Module 7: Scheduling** — Checklist auto-trigger from schedule task status
-- **Module 11: Basic Invoicing** — Back-charge generation from punch items
+- **Module 11: Native Accounting (GL/AP/AR)** — Back-charge generation from punch items
 
 ---
 

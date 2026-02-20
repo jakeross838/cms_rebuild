@@ -10,13 +10,13 @@ export default function EmailMarketingPage() {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="flex gap-2 border-b border-gray-200">
+      <div className="flex gap-2 border-b border-warm-200">
         <button
           onClick={() => setActiveTab('specs')}
           className={`px-4 py-3 font-medium border-b-2 transition-colors ${
             activeTab === 'specs'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
+              ? 'border-stone-500 text-stone-600'
+              : 'border-transparent text-warm-600 hover:text-warm-900'
           }`}
         >
           Specifications
@@ -25,8 +25,8 @@ export default function EmailMarketingPage() {
           onClick={() => setActiveTab('preview')}
           className={`px-4 py-3 font-medium border-b-2 transition-colors ${
             activeTab === 'preview'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
+              ? 'border-stone-500 text-stone-600'
+              : 'border-transparent text-warm-600 hover:text-warm-900'
           }`}
         >
           Preview

@@ -256,14 +256,14 @@ const laborTrades = ['electrical', 'plumbing', 'framing', 'hvac', 'roofing', 'dr
 
 function getConfidenceLabel(score: number): { label: string; color: string } {
   if (score >= 80) return { label: 'Strong', color: 'text-green-700 bg-green-100' }
-  if (score >= 50) return { label: 'Moderate', color: 'text-blue-700 bg-blue-100' }
+  if (score >= 50) return { label: 'Moderate', color: 'text-stone-700 bg-stone-100' }
   if (score >= 25) return { label: 'Weak', color: 'text-amber-700 bg-amber-100' }
   return { label: 'Very Weak', color: 'text-red-700 bg-red-100' }
 }
 
 function getConfidenceBarColor(score: number): string {
   if (score >= 80) return 'bg-green-500'
-  if (score >= 50) return 'bg-blue-500'
+  if (score >= 50) return 'bg-stone-500'
   if (score >= 25) return 'bg-amber-500'
   return 'bg-red-500'
 }
@@ -281,21 +281,21 @@ function getBestPrice(prices: Record<string, VendorPrice>): { vendorId: string; 
 function TrendIcon({ trend, className }: { trend: Trend; className?: string }) {
   if (trend === 'up') return <ArrowUp className={cn('h-3 w-3 text-red-500', className)} />
   if (trend === 'down') return <ArrowDown className={cn('h-3 w-3 text-green-500', className)} />
-  return <Minus className={cn('h-3 w-3 text-gray-400', className)} />
+  return <Minus className={cn('h-3 w-3 text-warm-400', className)} />
 }
 
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={cn('h-3 w-3', i <= rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300')} />
+        <Star key={i} className={cn('h-3 w-3', i <= rating ? 'fill-amber-400 text-amber-400' : 'text-warm-300')} />
       ))}
     </div>
   )
 }
 
 function ValueScoreBadge({ score }: { score: number }) {
-  const color = score >= 85 ? 'bg-green-100 text-green-800' : score >= 70 ? 'bg-blue-100 text-blue-800' : score >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
+  const color = score >= 85 ? 'bg-green-100 text-green-800' : score >= 70 ? 'bg-stone-100 text-stone-800' : score >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
   return <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold', color)}>{score}</span>
 }
 
@@ -343,7 +343,7 @@ export function PriceIntelligencePreview() {
           <div className="text-xs text-amber-600">3 POs above best price</div>
         </div>
         <div className="bg-card border rounded-lg p-3">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground"><Package className="h-3.5 w-3.5 text-blue-600" />Materials Tracked</div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground"><Package className="h-3.5 w-3.5 text-stone-600" />Materials Tracked</div>
           <div className="text-xl font-bold mt-1">248</div>
           <div className="text-xs text-muted-foreground">Across 12 categories</div>
         </div>
@@ -761,7 +761,7 @@ function LaborTab() {
                 {/* Visual range bar */}
                 <div className="mt-2">
                   <div className="text-xs text-muted-foreground mb-1">Price Range</div>
-                  <div className="relative h-6 bg-gradient-to-r from-green-100 via-blue-100 to-red-100 rounded-full">
+                  <div className="relative h-6 bg-gradient-to-r from-green-100 via-stone-100 to-red-100 rounded-full">
                     {tradeSubs.map(sub => {
                       const pct = tradeStats.high !== tradeStats.low
                         ? ((sub.pricePerSf - tradeStats.low) / (tradeStats.high - tradeStats.low)) * 100
@@ -964,7 +964,7 @@ function AnalyticsTab() {
                     <td className="py-2.5 px-4">
                       <div className="flex items-center gap-2 justify-center">
                         <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full bg-blue-500 rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-stone-500 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-xs text-muted-foreground w-8">{pct.toFixed(0)}%</span>
                       </div>
@@ -998,7 +998,7 @@ function AnalyticsTab() {
                       <span className="font-medium">${(v.totalSpend / 1000).toFixed(0)}K</span>
                     </div>
                     <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500 rounded-full" style={{ width: `${pct}%` }} />
+                      <div className="h-full bg-stone-500 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 )
@@ -1077,9 +1077,9 @@ function AlertsTab() {
           <div className="flex items-center gap-2 text-sm text-amber-700"><AlertTriangle className="h-4 w-4" />Warnings</div>
           <div className="text-2xl font-bold text-amber-800 mt-1">{anomalies.filter(a => a.severity === 'warning').length}</div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <div className="flex items-center gap-2 text-sm text-blue-700"><Info className="h-4 w-4" />Info</div>
-          <div className="text-2xl font-bold text-blue-800 mt-1">{anomalies.filter(a => a.severity === 'info').length}</div>
+        <div className="bg-stone-50 border border-stone-200 rounded-lg p-3">
+          <div className="flex items-center gap-2 text-sm text-stone-700"><Info className="h-4 w-4" />Info</div>
+          <div className="text-2xl font-bold text-stone-800 mt-1">{anomalies.filter(a => a.severity === 'info').length}</div>
         </div>
       </div>
 
@@ -1095,11 +1095,11 @@ function AlertsTab() {
               <div className="flex items-start gap-3">
                 <div className={cn(
                   'mt-0.5 p-1 rounded',
-                  anomaly.severity === 'alert' ? 'bg-red-100' : anomaly.severity === 'warning' ? 'bg-amber-100' : 'bg-blue-100'
+                  anomaly.severity === 'alert' ? 'bg-red-100' : anomaly.severity === 'warning' ? 'bg-amber-100' : 'bg-stone-100'
                 )}>
                   <AlertTriangle className={cn(
                     'h-4 w-4',
-                    anomaly.severity === 'alert' ? 'text-red-600' : anomaly.severity === 'warning' ? 'text-amber-600' : 'text-blue-600'
+                    anomaly.severity === 'alert' ? 'text-red-600' : anomaly.severity === 'warning' ? 'text-amber-600' : 'text-stone-600'
                   )} />
                 </div>
                 <div className="flex-1">
@@ -1107,7 +1107,7 @@ function AlertsTab() {
                     <span className="font-medium text-sm">{anomaly.material}</span>
                     <span className={cn(
                       'text-xs px-1.5 py-0.5 rounded font-medium',
-                      anomaly.severity === 'alert' ? 'bg-red-100 text-red-700' : anomaly.severity === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                      anomaly.severity === 'alert' ? 'bg-red-100 text-red-700' : anomaly.severity === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-stone-100 text-stone-700'
                     )}>
                       {anomaly.severity === 'alert' ? 'ALERT' : anomaly.severity === 'warning' ? 'WARNING' : 'INFO'} &middot; +{anomaly.deviation}%
                     </span>
@@ -1205,7 +1205,7 @@ function QuotesTab() {
                   {quote.status === 'completed' ? (
                     <span className="text-xs text-green-600">{quote.items} items extracted</span>
                   ) : (
-                    <span className="text-xs text-blue-600 flex items-center gap-1"><Clock className="h-3 w-3" />Processing...</span>
+                    <span className="text-xs text-stone-600 flex items-center gap-1"><Clock className="h-3 w-3" />Processing...</span>
                   )}
                   <div className="text-xs text-muted-foreground">{quote.date}</div>
                 </div>
@@ -1259,10 +1259,10 @@ function QuotesTab() {
                 <td className="py-2.5 px-4 text-center">
                   <div className="flex items-center gap-1 justify-center">
                     {item.suggestion && <button className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded hover:bg-green-200">Confirm</button>}
-                    <button className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                    <button className="text-xs px-2 py-0.5 bg-stone-100 text-stone-700 rounded hover:bg-stone-200">
                       {item.suggestion ? 'Edit' : 'Create New'}
                     </button>
-                    <button className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">Skip</button>
+                    <button className="text-xs px-2 py-0.5 bg-warm-100 text-warm-700 rounded hover:bg-warm-200">Skip</button>
                   </div>
                 </td>
               </tr>

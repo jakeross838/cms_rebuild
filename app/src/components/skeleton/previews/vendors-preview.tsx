@@ -319,11 +319,11 @@ function StarRating({ rating }: { rating: number }) {
               ? "fill-amber-400 text-amber-400"
               : i === fullStars && hasHalfStar
               ? "fill-amber-400/50 text-amber-400"
-              : "text-gray-300"
+              : "text-warm-300"
           )}
         />
       ))}
-      <span className="ml-1 text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
+      <span className="ml-1 text-sm font-medium text-warm-700">{rating.toFixed(1)}</span>
     </div>
   )
 }
@@ -331,10 +331,10 @@ function StarRating({ rating }: { rating: number }) {
 function VendorStatusBadge({ status }: { status: Vendor['status'] }) {
   const config = {
     preferred: { label: 'Preferred', color: 'bg-green-100 text-green-700', icon: Award },
-    approved: { label: 'Approved', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
+    approved: { label: 'Approved', color: 'bg-stone-100 text-stone-700', icon: CheckCircle },
     conditional: { label: 'Conditional', color: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
     blacklisted: { label: 'Blacklisted', color: 'bg-red-100 text-red-700', icon: Ban },
-    pending: { label: 'Pending', color: 'bg-gray-100 text-gray-600', icon: Clock },
+    pending: { label: 'Pending', color: 'bg-warm-100 text-warm-600', icon: Clock },
   }
   const { label, color, icon: Icon } = config[status]
   return (
@@ -356,18 +356,18 @@ function InsuranceStatus({ status, expiry }: { status: Vendor['insuranceStatus']
     <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", color)}>
       <Icon className="h-3.5 w-3.5" />
       <span>{label}</span>
-      <span className="text-gray-500">({expiry})</span>
+      <span className="text-warm-500">({expiry})</span>
     </div>
   )
 }
 
 function CompositeScoreBadge({ score }: { score: number }) {
-  if (score === 0) return <span className="text-xs text-gray-400">No data</span>
+  if (score === 0) return <span className="text-xs text-warm-400">No data</span>
   return (
     <div className={cn(
       "flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full",
       score >= 90 ? "bg-green-100 text-green-700" :
-      score >= 80 ? "bg-blue-100 text-blue-700" :
+      score >= 80 ? "bg-stone-100 text-stone-700" :
       score >= 70 ? "bg-amber-100 text-amber-700" :
       "bg-red-100 text-red-700"
     )}>
@@ -389,25 +389,25 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
       vendor.status === 'blacklisted' ? "border-red-200 bg-red-50/30" :
       vendor.insuranceStatus === 'expired' ? "border-red-200" :
-      vendor.insuranceStatus === 'expiring' ? "border-amber-200" : "border-gray-200"
+      vendor.insuranceStatus === 'expiring' ? "border-amber-200" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-gray-900">{vendor.name}</h4>
+            <h4 className="font-medium text-warm-900">{vendor.name}</h4>
             <span className={cn(
               "text-xs px-1.5 py-0.5 rounded font-medium",
-              vendor.type === 'subcontractor' ? "bg-blue-100 text-blue-700" :
+              vendor.type === 'subcontractor' ? "bg-stone-100 text-stone-700" :
               vendor.type === 'supplier' ? "bg-purple-100 text-purple-700" :
               "bg-teal-100 text-teal-700"
             )}>
               {vendor.type === 'subcontractor' ? 'Sub' : vendor.type === 'supplier' ? 'Supplier' : 'Service'}
             </span>
           </div>
-          <p className="text-sm text-gray-500">{vendor.trade}</p>
+          <p className="text-sm text-warm-500">{vendor.trade}</p>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
@@ -415,7 +415,7 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
       <div className="flex items-center gap-2 mb-3">
         <VendorStatusBadge status={vendor.status} />
         <CompositeScoreBadge score={vendor.scores.composite} />
-        <span className="text-xs text-gray-400 ml-auto">{vendor.paymentTerms}</span>
+        <span className="text-xs text-warm-400 ml-auto">{vendor.paymentTerms}</span>
       </div>
 
       {/* Rating + Reliability */}
@@ -424,10 +424,10 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
         <div className={cn(
           "text-xs font-medium px-1.5 py-0.5 rounded",
           vendor.reliability >= 95 ? "bg-green-100 text-green-700" :
-          vendor.reliability >= 90 ? "bg-blue-100 text-blue-700" :
+          vendor.reliability >= 90 ? "bg-stone-100 text-stone-700" :
           vendor.reliability >= 85 ? "bg-amber-100 text-amber-700" :
           vendor.reliability > 0 ? "bg-red-100 text-red-700" :
-          "bg-gray-100 text-gray-500"
+          "bg-warm-100 text-warm-500"
         )}>
           {vendor.reliability > 0 ? `${vendor.reliability}% reliable` : 'New'}
         </div>
@@ -435,11 +435,11 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
 
       {/* Contact Info */}
       <div className="space-y-1 mb-3">
-        <div className="flex items-center gap-2 text-xs text-gray-600">
+        <div className="flex items-center gap-2 text-xs text-warm-600">
           <Phone className="h-3.5 w-3.5" />
           <span>{vendor.phone}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-600">
+        <div className="flex items-center gap-2 text-xs text-warm-600">
           <Mail className="h-3.5 w-3.5" />
           <span>{vendor.email}</span>
         </div>
@@ -447,13 +447,13 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
 
       {/* Cross-module stats */}
       <div className="flex items-center gap-3 mb-3 text-xs">
-        <span className="flex items-center gap-1 text-gray-500" title="Total spend">
+        <span className="flex items-center gap-1 text-warm-500" title="Total spend">
           <DollarSign className="h-3 w-3" />{formatCurrency(vendor.totalSpend)}
         </span>
-        <span className="flex items-center gap-1 text-blue-500" title="Active POs">
+        <span className="flex items-center gap-1 text-stone-500" title="Active POs">
           <ShoppingCart className="h-3 w-3" />{vendor.activePOs} POs
         </span>
-        <span className="flex items-center gap-1 text-gray-500" title="Active jobs">
+        <span className="flex items-center gap-1 text-warm-500" title="Active jobs">
           <Briefcase className="h-3 w-3" />{vendor.activeJobs} jobs
         </span>
         {vendor.openPunchItems > 0 && (
@@ -469,7 +469,7 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
       </div>
 
       {/* Insurance + Compliance */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <InsuranceStatus status={vendor.insuranceStatus} expiry={vendor.insuranceExpiry} />
         <div className="flex items-center gap-2">
           {vendor.w9OnFile ? (
@@ -491,19 +491,19 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
           "mt-3 p-2 rounded-md flex items-start gap-2",
           vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
             ? "bg-amber-50"
-            : "bg-blue-50"
+            : "bg-stone-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
             vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
               ? "text-amber-500"
-              : "text-blue-500"
+              : "text-stone-500"
           )} />
           <span className={cn(
             "text-xs",
             vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
               ? "text-amber-700"
-              : "text-blue-700"
+              : "text-stone-700"
           )}>
             {vendor.aiNote}
           </span>
@@ -542,27 +542,27 @@ export function VendorsPreview() {
   const totalSpend = mockVendors.reduce((sum, v) => sum + v.totalSpend, 0)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900">Vendor Directory</h3>
-            <p className="text-sm text-gray-500">Subcontractors, Suppliers & Service Providers</p>
+            <h3 className="font-semibold text-warm-900">Vendor Directory</h3>
+            <p className="text-sm text-warm-500">Subcontractors, Suppliers & Service Providers</p>
           </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-7 gap-3">
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Users className="h-4 w-4 text-blue-600" />
+            <div className="h-9 w-9 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Users className="h-4 w-4 text-stone-600" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">{totalVendors}</div>
-              <div className="text-[10px] text-gray-500">Total</div>
+              <div className="text-lg font-bold text-warm-900">{totalVendors}</div>
+              <div className="text-[10px] text-warm-500">Total</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -570,8 +570,8 @@ export function VendorsPreview() {
               <Hammer className="h-4 w-4 text-green-600" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">{subcontractors}</div>
-              <div className="text-[10px] text-gray-500">Subs</div>
+              <div className="text-lg font-bold text-warm-900">{subcontractors}</div>
+              <div className="text-[10px] text-warm-500">Subs</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -579,8 +579,8 @@ export function VendorsPreview() {
               <Building2 className="h-4 w-4 text-purple-600" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">{suppliers}</div>
-              <div className="text-[10px] text-gray-500">Suppliers</div>
+              <div className="text-lg font-bold text-warm-900">{suppliers}</div>
+              <div className="text-[10px] text-warm-500">Suppliers</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -588,17 +588,17 @@ export function VendorsPreview() {
               <Award className="h-4 w-4 text-green-600" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">{preferredCount}</div>
-              <div className="text-[10px] text-gray-500">Preferred</div>
+              <div className="text-lg font-bold text-warm-900">{preferredCount}</div>
+              <div className="text-[10px] text-warm-500">Preferred</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Target className="h-4 w-4 text-blue-600" />
+            <div className="h-9 w-9 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Target className="h-4 w-4 text-stone-600" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">{avgCompositeScore}</div>
-              <div className="text-[10px] text-gray-500">Avg Score</div>
+              <div className="text-lg font-bold text-warm-900">{avgCompositeScore}</div>
+              <div className="text-[10px] text-warm-500">Avg Score</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -606,8 +606,8 @@ export function VendorsPreview() {
               <AlertTriangle className={cn("h-4 w-4", insuranceAlerts > 0 ? "text-red-600" : "text-green-600")} />
             </div>
             <div>
-              <div className={cn("text-lg font-bold", insuranceAlerts > 0 ? "text-red-600" : "text-gray-900")}>{insuranceAlerts}</div>
-              <div className="text-[10px] text-gray-500">Ins. Alerts</div>
+              <div className={cn("text-lg font-bold", insuranceAlerts > 0 ? "text-red-600" : "text-warm-900")}>{insuranceAlerts}</div>
+              <div className="text-[10px] text-warm-500">Ins. Alerts</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -615,15 +615,15 @@ export function VendorsPreview() {
               <DollarSign className="h-4 w-4 text-emerald-600" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">{formatCurrency(totalSpend)}</div>
-              <div className="text-[10px] text-gray-500">Total Spend</div>
+              <div className="text-lg font-bold text-warm-900">{formatCurrency(totalSpend)}</div>
+              <div className="text-[10px] text-warm-500">Total Spend</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -655,11 +655,11 @@ export function VendorsPreview() {
           {/* Additional filters */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Status:</span>
+              <span className="text-sm text-warm-500">Status:</span>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-xs border border-warm-200 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-stone-500"
               >
                 <option value="all">All</option>
                 <option value="preferred">Preferred</option>
@@ -669,7 +669,7 @@ export function VendorsPreview() {
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Min Rating:</span>
+              <span className="text-sm text-warm-500">Min Rating:</span>
               <div className="flex items-center gap-1">
                 {[0, 3, 4, 4.5].map(rating => (
                   <button
@@ -679,7 +679,7 @@ export function VendorsPreview() {
                       "px-2 py-1 text-xs rounded",
                       ratingFilter === rating
                         ? "bg-amber-100 text-amber-700 font-medium"
-                        : "text-gray-500 hover:bg-gray-100"
+                        : "text-warm-500 hover:bg-warm-100"
                     )}
                   >
                     {rating === 0 ? 'Any' : `${rating}+`}
@@ -698,7 +698,7 @@ export function VendorsPreview() {
             <VendorCard key={vendor.id} vendor={vendor} />
           ))}
           {filtered.length === 0 && (
-            <div className="col-span-2 text-center py-12 text-gray-500">
+            <div className="col-span-2 text-center py-12 text-warm-500">
               No vendors match your filters
             </div>
           )}

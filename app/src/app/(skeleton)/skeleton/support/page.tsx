@@ -90,7 +90,7 @@ export default function CustomerSupportPage() {
           </div>
         </div>
         <div className="bg-card border rounded-lg p-4 flex items-center gap-3 hover:bg-muted/30 cursor-pointer">
-          <div className="p-2 bg-blue-100 rounded-lg"><Mail className="h-5 w-5 text-blue-600" /></div>
+          <div className="p-2 bg-stone-100 rounded-lg"><Mail className="h-5 w-5 text-stone-600" /></div>
           <div>
             <div className="font-medium text-sm">Email Support</div>
             <div className="text-xs text-muted-foreground">support@rossos.com -- 4hr SLA</div>
@@ -145,12 +145,12 @@ export default function CustomerSupportPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-mono text-muted-foreground">{ticket.id}</span>
-                      <span className={cn('text-xs px-2 py-0.5 rounded', ticket.priority === 'high' ? 'bg-red-100 text-red-700' : ticket.priority === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600')}>{ticket.priority}</span>
+                      <span className={cn('text-xs px-2 py-0.5 rounded', ticket.priority === 'high' ? 'bg-red-100 text-red-700' : ticket.priority === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-warm-100 text-warm-600')}>{ticket.priority}</span>
                     </div>
                     <div className="text-sm font-medium mt-1">{ticket.subject}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">{ticket.created} -- {ticket.assignee}</div>
                   </div>
-                  <span className={cn('text-xs px-2 py-0.5 rounded', ticket.status === 'open' ? 'bg-blue-100 text-blue-700' : ticket.status === 'in_progress' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700')}>
+                  <span className={cn('text-xs px-2 py-0.5 rounded', ticket.status === 'open' ? 'bg-stone-100 text-stone-700' : ticket.status === 'in_progress' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700')}>
                     {ticket.status === 'in_progress' ? 'In Progress' : ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
                   </span>
                 </div>

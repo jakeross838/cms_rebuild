@@ -304,7 +304,7 @@ const mockDeliveries: Delivery[] = [
 ]
 
 const statusConfig = {
-  scheduled: { label: 'Scheduled', color: 'bg-blue-100 text-blue-700', icon: Clock },
+  scheduled: { label: 'Scheduled', color: 'bg-stone-100 text-stone-700', icon: Clock },
   'in-transit': { label: 'In Transit', color: 'bg-purple-100 text-purple-700', icon: Truck },
   delivered: { label: 'Delivered', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   delayed: { label: 'Delayed', color: 'bg-red-100 text-red-700', icon: AlertTriangle },
@@ -312,7 +312,7 @@ const statusConfig = {
 }
 
 const jobColors: Record<string, string> = {
-  'Smith Residence': 'border-l-blue-500',
+  'Smith Residence': 'border-l-stone-500',
   'Johnson Beach House': 'border-l-green-500',
   'Harbor View Custom': 'border-l-purple-500',
   'Miller Addition': 'border-l-amber-500',
@@ -338,7 +338,7 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4",
-      jobColors[delivery.jobName] || 'border-l-gray-300',
+      jobColors[delivery.jobName] || 'border-l-warm-300',
       delivery.status === 'delayed' && "border-red-200",
       delivery.conditionStatus === 'damaged' && "ring-1 ring-red-200",
     )}>
@@ -350,54 +350,54 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
             delivery.status === 'delayed' ? 'bg-red-100' :
             delivery.status === 'in-transit' ? 'bg-purple-100' :
             delivery.status === 'delivered' ? 'bg-green-100' :
-            delivery.status === 'partial' ? 'bg-amber-100' : 'bg-blue-100'
+            delivery.status === 'partial' ? 'bg-amber-100' : 'bg-stone-100'
           )}>
             <Truck className={cn(
               "h-5 w-5",
               delivery.status === 'delayed' ? 'text-red-600' :
               delivery.status === 'in-transit' ? 'text-purple-600' :
               delivery.status === 'delivered' ? 'text-green-600' :
-              delivery.status === 'partial' ? 'text-amber-600' : 'text-blue-600'
+              delivery.status === 'partial' ? 'text-amber-600' : 'text-stone-600'
             )} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900">{delivery.description}</h4>
-            <div className="flex items-center gap-2 mt-0.5 text-sm text-gray-500">
+            <h4 className="font-medium text-warm-900">{delivery.description}</h4>
+            <div className="flex items-center gap-2 mt-0.5 text-sm text-warm-500">
               <span>{delivery.jobName}</span>
-              <span className="text-gray-300">|</span>
-              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+              <span className="text-warm-300">|</span>
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
                 <Link2 className="h-3 w-3" />
                 {delivery.poNumber}
               </span>
             </div>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* Details grid */}
       <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-        <div className="flex items-center gap-2 text-gray-600">
-          <CalendarDays className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-warm-600">
+          <CalendarDays className="h-3.5 w-3.5 text-warm-400" />
           <span className={delivery.status === 'delayed' ? 'text-red-600 font-medium' : ''}>
             {delivery.expectedDate}
           </span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
-          <Clock className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-warm-600">
+          <Clock className="h-3.5 w-3.5 text-warm-400" />
           <span>{delivery.expectedTime}</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
-          <Truck className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-warm-600">
+          <Truck className="h-3.5 w-3.5 text-warm-400" />
           <span>{delivery.vendor}</span>
           {delivery.vendorOnTimeRate !== undefined && delivery.vendorOnTimeRate < 85 && (
             <span className="text-xs text-red-500 font-medium">{delivery.vendorOnTimeRate}% on-time</span>
           )}
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
-          <Package className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-warm-600">
+          <Package className="h-3.5 w-3.5 text-warm-400" />
           <span>{delivery.orderedItems} items</span>
           {delivery.receivedItems > 0 && delivery.receivedItems < delivery.orderedItems && (
             <span className="text-xs text-amber-600">({delivery.receivedItems} received)</span>
@@ -408,11 +408,11 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
       {/* Receiving progress for partial deliveries */}
       {delivery.status === 'partial' && (
         <div className="mb-3">
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+          <div className="flex items-center justify-between text-xs text-warm-500 mb-1">
             <span>Received</span>
             <span>{delivery.receivedItems}/{delivery.orderedItems} items ({delivery.backorderedItems} backordered)</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
+          <div className="w-full bg-warm-200 rounded-full h-1.5">
             <div
               className="bg-amber-500 h-1.5 rounded-full transition-all"
               style={{ width: `${(delivery.receivedItems / delivery.orderedItems) * 100}%` }}
@@ -423,22 +423,22 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
 
       {/* Tracking info */}
       {delivery.trackingNumber && delivery.status !== 'delivered' && (
-        <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 mb-2 text-xs text-warm-500">
           <MapPin className="h-3 w-3" />
           <span>{delivery.carrier}: {delivery.trackingNumber}</span>
-          <button className="text-blue-600 hover:text-blue-700 inline-flex items-center gap-0.5">
+          <button className="text-stone-600 hover:text-stone-700 inline-flex items-center gap-0.5">
             Track <ExternalLink className="h-3 w-3" />
           </button>
         </div>
       )}
 
       {/* Site contact & receiving info */}
-      <div className="flex items-center gap-2 mb-2 text-sm text-gray-600">
-        <User className="h-3.5 w-3.5 text-gray-400" />
+      <div className="flex items-center gap-2 mb-2 text-sm text-warm-600">
+        <User className="h-3.5 w-3.5 text-warm-400" />
         {delivery.receivedBy ? (
           <span>Received by: {delivery.receivedBy}
             {delivery.receivedLocation && (
-              <span className="text-xs text-gray-400 ml-1">({delivery.receivedLocation.replace('_', ' ')})</span>
+              <span className="text-xs text-warm-400 ml-1">({delivery.receivedLocation.replace('_', ' ')})</span>
             )}
           </span>
         ) : (
@@ -477,17 +477,17 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
       )}
 
       {/* Footer - Status & Actions */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2">
           <span className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", config.color)}>
             <StatusIcon className="h-3.5 w-3.5" />
             {config.label}
           </span>
-          <span className="text-xs text-gray-400">{formatCurrency(delivery.poAmount)}</span>
+          <span className="text-xs text-warm-400">{formatCurrency(delivery.poAmount)}</span>
         </div>
         <div className="flex items-center gap-2">
           {delivery.hasPhotos && (
-            <span className="flex items-center gap-1 text-xs text-gray-500">
+            <span className="flex items-center gap-1 text-xs text-warm-500">
               <Image className="h-3.5 w-3.5" />
               {delivery.photoCount}
             </span>
@@ -499,7 +499,7 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
             </button>
           )}
           {delivery.status === 'delivered' && !delivery.hasPhotos && (
-            <button className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+            <button className="flex items-center gap-1 px-2 py-1 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
               <Camera className="h-3.5 w-3.5" />
               Add Photos
             </button>
@@ -515,13 +515,13 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
 
       {/* Cross-module badges */}
       <div className="flex items-center gap-2 flex-wrap mt-2">
-        <span className="text-xs bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">{delivery.costCode}</span>
+        <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{delivery.costCode}</span>
         {delivery.scheduleTaskName && (
           <span className={cn(
             "text-xs px-1.5 py-0.5 rounded inline-flex items-center gap-0.5",
             delivery.scheduleImpactDays && delivery.scheduleImpactDays > 0
               ? "bg-red-50 text-red-600"
-              : "bg-gray-50 text-gray-500"
+              : "bg-warm-50 text-warm-500"
           )}>
             <CalendarDays className="h-3 w-3" />
             {delivery.scheduleTaskName}
@@ -546,9 +546,9 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
 
       {/* AI Note */}
       {delivery.aiNote && (
-        <div className="mt-2 p-2 rounded-md bg-blue-50 flex items-start gap-2 text-xs">
-          <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-blue-500" />
-          <span className="text-blue-700">{delivery.aiNote}</span>
+        <div className="mt-2 p-2 rounded-md bg-stone-50 flex items-start gap-2 text-xs">
+          <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-stone-500" />
+          <span className="text-stone-700">{delivery.aiNote}</span>
         </div>
       )}
     </div>
@@ -598,14 +598,14 @@ export function DeliveriesPreview() {
   const onTimeRate = deliveredCount > 0 ? Math.round((onTimeDelivered / deliveredCount) * 100) : 100
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Deliveries</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              <h3 className="font-semibold text-warm-900">Deliveries</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
                 {totalDeliveries} total
               </span>
               {scheduleAtRisk > 0 && (
@@ -615,7 +615,7 @@ export function DeliveriesPreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               Track incoming material deliveries across all jobs | Total value: {formatCurrency(totalDeliveryValue)}
             </div>
           </div>
@@ -623,14 +623,14 @@ export function DeliveriesPreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <Clock className="h-3.5 w-3.5" />
               Scheduled
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{scheduledCount}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{scheduledCount}</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-purple-600 text-xs">
@@ -641,36 +641,36 @@ export function DeliveriesPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            delayedCount > 0 ? "bg-red-50" : "bg-gray-50"
+            delayedCount > 0 ? "bg-red-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              delayedCount > 0 ? "text-red-600" : "text-gray-500"
+              delayedCount > 0 ? "text-red-600" : "text-warm-500"
             )}>
               <AlertTriangle className="h-3.5 w-3.5" />
               Delayed
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              delayedCount > 0 ? "text-red-700" : "text-gray-900"
+              delayedCount > 0 ? "text-red-700" : "text-warm-900"
             )}>
               {delayedCount}
             </div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            totalBackordered > 0 ? "bg-orange-50" : "bg-gray-50"
+            totalBackordered > 0 ? "bg-orange-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              totalBackordered > 0 ? "text-orange-600" : "text-gray-500"
+              totalBackordered > 0 ? "text-orange-600" : "text-warm-500"
             )}>
               <PackageX className="h-3.5 w-3.5" />
               Backordered
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              totalBackordered > 0 ? "text-orange-700" : "text-gray-900"
+              totalBackordered > 0 ? "text-orange-700" : "text-warm-900"
             )}>
               {totalBackordered} items
             </div>
@@ -685,8 +685,8 @@ export function DeliveriesPreview() {
               <div className="text-xs text-red-500">{damageCount} w/ damage</div>
             )}
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-warm-500 text-xs">
               <BarChart3 className="h-3.5 w-3.5" />
               On-Time Rate
             </div>
@@ -702,7 +702,7 @@ export function DeliveriesPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -792,9 +792,9 @@ export function DeliveriesPreview() {
         {todayDeliveries.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <CalendarDays className="h-4 w-4 text-blue-500" />
-              <h4 className="font-medium text-gray-900">Today - February 12</h4>
-              <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">{todayDeliveries.length}</span>
+              <CalendarDays className="h-4 w-4 text-stone-500" />
+              <h4 className="font-medium text-warm-900">Today - February 12</h4>
+              <span className="text-xs text-stone-600 bg-stone-100 px-2 py-0.5 rounded">{todayDeliveries.length}</span>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {todayDeliveries.map(delivery => (
@@ -808,9 +808,9 @@ export function DeliveriesPreview() {
         {tomorrowDeliveries.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <CalendarDays className="h-4 w-4 text-gray-400" />
-              <h4 className="font-medium text-gray-900">Tomorrow - February 13</h4>
-              <span className="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded">{tomorrowDeliveries.length}</span>
+              <CalendarDays className="h-4 w-4 text-warm-400" />
+              <h4 className="font-medium text-warm-900">Tomorrow - February 13</h4>
+              <span className="text-xs text-warm-600 bg-warm-100 px-2 py-0.5 rounded">{tomorrowDeliveries.length}</span>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {tomorrowDeliveries.map(delivery => (
@@ -824,9 +824,9 @@ export function DeliveriesPreview() {
         {upcomingDeliveries.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <CalendarDays className="h-4 w-4 text-gray-400" />
-              <h4 className="font-medium text-gray-900">Upcoming</h4>
-              <span className="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded">{upcomingDeliveries.length}</span>
+              <CalendarDays className="h-4 w-4 text-warm-400" />
+              <h4 className="font-medium text-warm-900">Upcoming</h4>
+              <span className="text-xs text-warm-600 bg-warm-100 px-2 py-0.5 rounded">{upcomingDeliveries.length}</span>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {upcomingDeliveries.map(delivery => (
@@ -841,7 +841,7 @@ export function DeliveriesPreview() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <h4 className="font-medium text-gray-900">Recently Delivered</h4>
+              <h4 className="font-medium text-warm-900">Recently Delivered</h4>
               <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded">{deliveredRecently.length}</span>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -853,8 +853,8 @@ export function DeliveriesPreview() {
         )}
 
         {filteredDeliveries.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <Truck className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+          <div className="text-center py-12 text-warm-500">
+            <Truck className="h-12 w-12 mx-auto mb-3 text-warm-300" />
             <p>No deliveries found matching your criteria</p>
           </div>
         )}
@@ -886,7 +886,7 @@ export function DeliveriesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Delivery AI Features"
           columns={2}

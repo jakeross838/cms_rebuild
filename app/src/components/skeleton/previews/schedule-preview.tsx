@@ -133,14 +133,14 @@ interface WeatherDay {
 // ============================================================================
 
 const TASK_TYPE_CONFIG: Record<TaskType, { label: string; barColor: string; bgColor: string; badgeColor: string; icon: typeof HardHat }> = {
-  construction: { label: 'Construction', barColor: 'bg-blue-500', bgColor: 'bg-blue-200', badgeColor: 'bg-blue-100 text-blue-700', icon: HardHat },
+  construction: { label: 'Construction', barColor: 'bg-stone-500', bgColor: 'bg-stone-200', badgeColor: 'bg-stone-100 text-stone-700', icon: HardHat },
   inspection:   { label: 'Inspection', barColor: 'bg-purple-500', bgColor: 'bg-purple-200', badgeColor: 'bg-purple-100 text-purple-700', icon: Eye },
   delivery:     { label: 'Delivery', barColor: 'bg-amber-500', bgColor: 'bg-amber-200', badgeColor: 'bg-amber-100 text-amber-700', icon: Truck },
   deadline:     { label: 'Deadline', barColor: 'bg-red-500', bgColor: 'bg-red-200', badgeColor: 'bg-red-100 text-red-700', icon: Flag },
   milestone:    { label: 'Milestone', barColor: 'bg-emerald-500', bgColor: 'bg-emerald-200', badgeColor: 'bg-emerald-100 text-emerald-700', icon: Diamond },
   survey:       { label: 'Survey', barColor: 'bg-cyan-500', bgColor: 'bg-cyan-200', badgeColor: 'bg-cyan-100 text-cyan-700', icon: Ruler },
   meeting:      { label: 'Meeting', barColor: 'bg-teal-500', bgColor: 'bg-teal-200', badgeColor: 'bg-teal-100 text-teal-700', icon: Users },
-  weather_hold: { label: 'Weather Hold', barColor: 'bg-gray-400', bgColor: 'bg-gray-200', badgeColor: 'bg-gray-100 text-gray-600', icon: CloudOff },
+  weather_hold: { label: 'Weather Hold', barColor: 'bg-warm-400', bgColor: 'bg-warm-200', badgeColor: 'bg-warm-100 text-warm-600', icon: CloudOff },
 }
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -151,13 +151,13 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
 }
 
 const SUB_CONFIRMATION_CONFIG: Record<SubConfirmation, { label: string; badgeClass: string }> = {
-  not_sent:   { label: 'Not Sent', badgeClass: 'bg-gray-100 text-gray-500' },
-  pending:    { label: 'Pending', badgeClass: 'bg-yellow-100 text-yellow-700' },
+  not_sent:   { label: 'Not Sent', badgeClass: 'bg-warm-100 text-warm-500' },
+  pending:    { label: 'Pending', badgeClass: 'bg-amber-100 text-amber-700' },
   confirmed:  { label: 'Confirmed', badgeClass: 'bg-green-100 text-green-700' },
 }
 
 const DEPENDENCY_TYPE_CONFIG: Record<DependencyType, { label: string; color: string; arrowColor: string }> = {
-  FS: { label: 'Finish-to-Start', color: 'text-blue-600', arrowColor: '#3b82f6' },
+  FS: { label: 'Finish-to-Start', color: 'text-stone-600', arrowColor: '#3b82f6' },
   SS: { label: 'Start-to-Start', color: 'text-green-600', arrowColor: '#16a34a' },
   FF: { label: 'Finish-to-Finish', color: 'text-orange-600', arrowColor: '#ea580c' },
   SF: { label: 'Start-to-Finish', color: 'text-purple-600', arrowColor: '#9333ea' },
@@ -466,30 +466,30 @@ function computeScheduleStats(phases: SchedulePhase[]) {
 // ============================================================================
 
 function WeatherIcon({ type, className }: { type: 'sun' | 'cloud' | 'rain' | 'storm'; className?: string }) {
-  if (type === 'sun') return <Sun className={cn('text-yellow-500', className)} />
+  if (type === 'sun') return <Sun className={cn('text-amber-500', className)} />
   if (type === 'rain' || type === 'storm') return <CloudRain className={cn('text-amber-500', className)} />
-  return <Cloud className={cn('text-gray-400', className)} />
+  return <Cloud className={cn('text-warm-400', className)} />
 }
 
 function ScheduleStats({ stats }: { stats: ReturnType<typeof computeScheduleStats> }) {
-  const healthColor = stats.health === 'on_track' ? 'bg-green-100 text-green-700' : stats.health === 'at_risk' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+  const healthColor = stats.health === 'on_track' ? 'bg-green-100 text-green-700' : stats.health === 'at_risk' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
   const healthLabel = stats.health === 'on_track' ? 'On Track' : stats.health === 'at_risk' ? 'At Risk' : 'Behind'
   const HealthIcon = stats.health === 'on_track' ? Activity : stats.health === 'at_risk' ? AlertTriangle : TrendingDown
 
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-2.5">
+    <div className="bg-white border-b border-warm-200 px-4 py-2.5">
       <div className="flex items-center gap-6 text-xs flex-wrap">
         <div className={cn('flex items-center gap-1.5 px-2 py-1 rounded-full font-medium', healthColor)}>
           <HealthIcon className="h-3.5 w-3.5" />
           {healthLabel}
         </div>
-        <div className="flex items-center gap-1 text-gray-600">
-          <span className="font-semibold text-gray-900">{stats.overallPercent}%</span>
+        <div className="flex items-center gap-1 text-warm-600">
+          <span className="font-semibold text-warm-900">{stats.overallPercent}%</span>
           <span>complete</span>
-          <span className="text-gray-300 mx-1">|</span>
+          <span className="text-warm-300 mx-1">|</span>
           <span>{stats.completeTasks}/{stats.totalTasks} tasks</span>
         </div>
-        <div className="flex items-center gap-1 text-gray-500">
+        <div className="flex items-center gap-1 text-warm-500">
           <Clock className="h-3 w-3" />
           {stats.daysRemaining}d remaining
         </div>
@@ -506,7 +506,7 @@ function ScheduleStats({ stats }: { stats: ReturnType<typeof computeScheduleStat
           </div>
         )}
         {stats.unconfirmedSubs > 0 && (
-          <div className="flex items-center gap-1 text-yellow-600">
+          <div className="flex items-center gap-1 text-amber-600">
             <CircleDashed className="h-3 w-3" />
             {stats.unconfirmedSubs} unconfirmed subs
           </div>
@@ -517,7 +517,7 @@ function ScheduleStats({ stats }: { stats: ReturnType<typeof computeScheduleStat
             {stats.pendingInspections} pending inspections
           </div>
         )}
-        <div className="flex items-center gap-1 text-gray-500">
+        <div className="flex items-center gap-1 text-warm-500">
           <CheckSquare className="h-3 w-3" />
           {stats.checklistsDone}/{stats.checklistsTotal} checklists
         </div>
@@ -530,13 +530,13 @@ function WeatherStrip({ weather, timelineStart, totalDays, timelineWidth }: {
   weather: WeatherDay[]; timelineStart: string; totalDays: number; timelineWidth: number
 }) {
   return (
-    <div className="relative h-10 border-b border-gray-200 bg-gray-50" style={{ width: timelineWidth }}>
+    <div className="relative h-10 border-b border-warm-200 bg-warm-50" style={{ width: timelineWidth }}>
       {weather.map((w) => {
         const pos = getDatePosition(w.date, timelineStart, totalDays)
         return (
           <div key={w.date} className={cn('absolute top-0 h-full flex flex-col items-center justify-center', (w.icon === 'rain' || w.icon === 'storm') && 'bg-amber-50/60')} style={{ left: `${pos}%`, width: `${100 / totalDays}%` }}>
             <WeatherIcon type={w.icon} className="h-3.5 w-3.5" />
-            <span className="text-[10px] text-gray-500">{w.high}°</span>
+            <span className="text-[10px] text-warm-500">{w.high}°</span>
           </div>
         )
       })}
@@ -549,10 +549,10 @@ function TimelineHeader({ columns, zoom, timelineWidth }: {
 }) {
   const colWidth = columns.length > 0 ? timelineWidth / columns.length : 0
   return (
-    <div className="flex border-b border-gray-200 bg-gray-100" style={{ width: timelineWidth }}>
+    <div className="flex border-b border-warm-200 bg-warm-100" style={{ width: timelineWidth }}>
       {columns.map((col, i) => (
-        <div key={i} className={cn('text-center py-1.5 text-xs text-gray-500 border-l border-gray-200 flex-shrink-0', zoom === 'day' && isWeekend(col.date) && 'bg-gray-200/60')} style={{ width: colWidth }}>
-          {col.subLabel && <div className="text-[10px] text-gray-400">{col.subLabel}</div>}
+        <div key={i} className={cn('text-center py-1.5 text-xs text-warm-500 border-l border-warm-200 flex-shrink-0', zoom === 'day' && isWeekend(col.date) && 'bg-warm-200/60')} style={{ width: colWidth }}>
+          {col.subLabel && <div className="text-[10px] text-warm-400">{col.subLabel}</div>}
           <div>{col.label}</div>
         </div>
       ))}
@@ -577,7 +577,7 @@ function WeekendShading({ timelineStart, totalDays, timelineWidth, zoom, height 
         return (
           <div
             key={i}
-            className="absolute top-0 h-full bg-gray-200/30"
+            className="absolute top-0 h-full bg-warm-200/30"
             style={{ left: `${pos}%`, width: `${width}%` }}
           />
         )
@@ -608,26 +608,26 @@ function AIWhyTooltip({ item }: { item: ScheduleItem }) {
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+        className="ml-1 text-warm-400 hover:text-warm-600 transition-colors"
       >
         <HelpCircle className="h-3 w-3" />
       </button>
       {isOpen && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-3 bg-white rounded-lg shadow-lg border border-gray-200">
-          <div className="text-xs font-medium text-gray-900 mb-2 flex items-center gap-1">
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-3 bg-white rounded-lg shadow-lg border border-warm-200">
+          <div className="text-xs font-medium text-warm-900 mb-2 flex items-center gap-1">
             <Sparkles className="h-3 w-3 text-amber-500" />
             AI Prediction Factors
           </div>
           <ul className="space-y-1">
             {item.aiReasoning.map((reason, i) => (
-              <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
+              <li key={i} className="text-xs text-warm-600 flex items-start gap-1.5">
                 <span className="text-amber-500 mt-0.5">-</span>
                 {reason}
               </li>
             ))}
           </ul>
           <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1">
-            <div className="w-2 h-2 bg-white border-b border-r border-gray-200 transform rotate-45" />
+            <div className="w-2 h-2 bg-white border-b border-r border-warm-200 transform rotate-45" />
           </div>
         </div>
       )}
@@ -710,13 +710,13 @@ function GanttBar({ item, timelineStart, totalDays, showBaseline }: {
       )}
       {item.vendor && item.subConfirmation === 'pending' && (
         <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${left + width}%`, marginLeft: '2px' }}>
-          <CircleDashed className="h-3 w-3 text-yellow-600" />
+          <CircleDashed className="h-3 w-3 text-amber-600" />
         </div>
       )}
       {/* Weather icon */}
       {item.isWeatherSensitive && (
         <div className="absolute -top-1" style={{ left: `${left + width / 2}%`, marginLeft: '-6px' }}>
-          <Cloud className="h-3 w-3 text-gray-400" />
+          <Cloud className="h-3 w-3 text-warm-400" />
         </div>
       )}
     </div>
@@ -730,8 +730,8 @@ function AggregateBar({ range, timelineStart, totalDays, level }: {
   const left = getDatePosition(range.start, timelineStart, totalDays)
   const width = getBarWidth(range.start, range.end, totalDays)
   const barH = level === 'phase' ? 'h-3' : 'h-2'
-  const barColor = level === 'phase' ? 'bg-gray-400' : 'bg-gray-300'
-  const fillColor = level === 'phase' ? 'bg-gray-600' : 'bg-gray-500'
+  const barColor = level === 'phase' ? 'bg-warm-400' : 'bg-warm-300'
+  const fillColor = level === 'phase' ? 'bg-warm-600' : 'bg-warm-500'
   return (
     <div className="relative h-5 flex items-center">
       <div className={cn('absolute rounded', barH, barColor)} style={{ left: `${left}%`, width: `${width}%` }}>
@@ -751,13 +751,13 @@ function PhaseRow({ phase, isExpanded, onToggle, timelineStart, totalDays, timel
   const taskCount = allItems.filter(i => i.kind === 'task').length
   const checkCount = allItems.filter(i => i.kind === 'checklist').length
   return (
-    <div className="flex border-b border-gray-200 bg-gray-100 cursor-pointer hover:bg-gray-150 group" onClick={onToggle}>
-      <div className="w-64 flex-shrink-0 px-3 py-2 flex items-center gap-2 sticky left-0 z-10 bg-gray-100 group-hover:bg-gray-150 border-r border-gray-200">
-        {isExpanded ? <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-gray-500 flex-shrink-0" />}
-        <span className="font-semibold text-gray-900 text-sm truncate">{phase.name}</span>
-        <span className="text-xs text-gray-400 flex-shrink-0">({taskCount}t, {checkCount}c)</span>
+    <div className="flex border-b border-warm-200 bg-warm-100 cursor-pointer hover:bg-warm-200 group" onClick={onToggle}>
+      <div className="w-64 flex-shrink-0 px-3 py-2 flex items-center gap-2 sticky left-0 z-10 bg-warm-100 group-hover:bg-warm-200 border-r border-warm-200">
+        {isExpanded ? <ChevronDown className="h-4 w-4 text-warm-500 flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-warm-500 flex-shrink-0" />}
+        <span className="font-semibold text-warm-900 text-sm truncate">{phase.name}</span>
+        <span className="text-xs text-warm-400 flex-shrink-0">({taskCount}t, {checkCount}c)</span>
         {range && (
-          <span className={cn('text-xs px-1.5 py-0.5 rounded ml-auto flex-shrink-0', range.percent >= 100 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700')}>{range.percent}%</span>
+          <span className={cn('text-xs px-1.5 py-0.5 rounded ml-auto flex-shrink-0', range.percent >= 100 ? 'bg-green-100 text-green-700' : 'bg-stone-100 text-stone-700')}>{range.percent}%</span>
         )}
       </div>
       <div className="relative" style={{ width: timelineWidth }}>
@@ -773,11 +773,11 @@ function GroupRow({ group, isExpanded, onToggle, timelineStart, totalDays, timel
   const range = computeAggregateRange(group.items)
   const itemCount = group.items.filter(i => i.kind === 'task').length
   return (
-    <div className="flex border-b border-gray-100 bg-gray-50 cursor-pointer hover:bg-gray-100 group" onClick={onToggle}>
-      <div className="w-64 flex-shrink-0 px-3 py-1.5 flex items-center gap-2 pl-8 sticky left-0 z-10 bg-gray-50 group-hover:bg-gray-100 border-r border-gray-200">
-        {isExpanded ? <ChevronDown className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />}
-        <span className="font-medium text-gray-700 text-sm truncate">{group.name}</span>
-        <span className="text-xs text-gray-400 flex-shrink-0">({itemCount})</span>
+    <div className="flex border-b border-warm-100 bg-warm-50 cursor-pointer hover:bg-warm-100 group" onClick={onToggle}>
+      <div className="w-64 flex-shrink-0 px-3 py-1.5 flex items-center gap-2 pl-8 sticky left-0 z-10 bg-warm-50 group-hover:bg-warm-100 border-r border-warm-200">
+        {isExpanded ? <ChevronDown className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />}
+        <span className="font-medium text-warm-700 text-sm truncate">{group.name}</span>
+        <span className="text-xs text-warm-400 flex-shrink-0">({itemCount})</span>
       </div>
       <div className="relative" style={{ width: timelineWidth }}>
         <AggregateBar range={range} timelineStart={timelineStart} totalDays={totalDays} level="group" />
@@ -792,8 +792,8 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
   const variance = getVarianceDays(item)
 
   return (
-    <div className="flex border-b border-gray-50 hover:bg-blue-50/50 group">
-      <div className="w-64 flex-shrink-0 px-3 py-1.5 pl-14 sticky left-0 z-10 bg-white group-hover:bg-blue-50/50 border-r border-gray-200">
+    <div className="flex border-b border-warm-50 hover:bg-stone-50/50 group">
+      <div className="w-64 flex-shrink-0 px-3 py-1.5 pl-14 sticky left-0 z-10 bg-white group-hover:bg-stone-50/50 border-r border-warm-200">
         <div className="flex items-center gap-1.5 min-w-0">
           {item.taskType === 'milestone' ? (
             <span className="font-medium text-sm truncate text-emerald-600 flex items-center gap-1">
@@ -806,7 +806,7 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
               {item.name}
             </span>
           ) : (
-            <span className="text-sm text-gray-700 truncate">{item.name}</span>
+            <span className="text-sm text-warm-700 truncate">{item.name}</span>
           )}
           {item.isCriticalPath && item.taskType !== 'milestone' && (
             <span className="text-[10px] bg-red-100 text-red-600 px-1 rounded flex-shrink-0">CP</span>
@@ -825,9 +825,9 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-400 flex-wrap">
+        <div className="flex items-center gap-2 mt-0.5 text-xs text-warm-400 flex-wrap">
           {item.trade && (
-            <span className="text-gray-300">{item.trade}</span>
+            <span className="text-warm-300">{item.trade}</span>
           )}
           {item.vendor && (
             <span className="flex items-center gap-0.5 truncate">
@@ -855,7 +855,7 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
             </span>
           )}
           {item.linkedDailyLog && (
-            <span className="flex items-center gap-0.5 text-blue-500 flex-shrink-0">
+            <span className="flex items-center gap-0.5 text-stone-500 flex-shrink-0">
               <FileText className="h-3 w-3" />{item.linkedDailyLog}
             </span>
           )}
@@ -878,10 +878,10 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
 
 function ChecklistRow({ item }: { item: ScheduleItem; timelineWidth: number }) {
   return (
-    <div className="flex border-b border-gray-50 hover:bg-blue-50/30 group">
-      <div className="w-64 flex-shrink-0 px-3 py-1 pl-14 flex items-center gap-2 sticky left-0 z-10 bg-white group-hover:bg-blue-50/30 border-r border-gray-200">
-        {item.isChecked ? <CheckSquare className="h-4 w-4 text-green-500 flex-shrink-0" /> : <Square className="h-4 w-4 text-gray-300 flex-shrink-0" />}
-        <span className={cn('text-sm truncate', item.isChecked ? 'text-gray-400 line-through' : 'text-gray-600')}>{item.name}</span>
+    <div className="flex border-b border-warm-50 hover:bg-stone-50/30 group">
+      <div className="w-64 flex-shrink-0 px-3 py-1 pl-14 flex items-center gap-2 sticky left-0 z-10 bg-white group-hover:bg-stone-50/30 border-r border-warm-200">
+        {item.isChecked ? <CheckSquare className="h-4 w-4 text-green-500 flex-shrink-0" /> : <Square className="h-4 w-4 text-warm-300 flex-shrink-0" />}
+        <span className={cn('text-sm truncate', item.isChecked ? 'text-warm-400 line-through' : 'text-warm-600')}>{item.name}</span>
       </div>
       <div className="flex-1" />
     </div>
@@ -971,7 +971,7 @@ function DependencyArrows({ dependencies, itemMap, timelineStart, totalDays, row
 
         // Badge colors: use lighter fill behind the type label
         const badgeFillMap: Record<DependencyType, string> = {
-          FS: '#dbeafe', // blue-100
+          FS: '#dbeafe', // stone-100
           SS: '#dcfce7', // green-100
           FF: '#ffedd5', // orange-100
           SF: '#f3e8ff', // purple-100
@@ -1029,32 +1029,32 @@ function ScheduleToolbar({ zoom, onZoomChange, onExpandAll, onCollapseAll, showB
   hideCompleted: boolean; onToggleHideCompleted: () => void
 }) {
   return (
-    <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200">
+    <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-warm-200">
       <div className="flex items-center gap-2">
-        <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+        <div className="flex border border-warm-200 rounded-lg overflow-hidden">
           {(['day', 'week', 'month'] as ZoomLevel[]).map(z => (
-            <button key={z} onClick={() => onZoomChange(z)} className={cn('px-3 py-1.5 text-xs font-medium capitalize transition-colors', zoom === z ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50')}>{z}</button>
+            <button key={z} onClick={() => onZoomChange(z)} className={cn('px-3 py-1.5 text-xs font-medium capitalize transition-colors', zoom === z ? 'bg-stone-50 text-stone-600' : 'text-warm-500 hover:bg-warm-50')}>{z}</button>
           ))}
         </div>
-        <div className="w-px h-6 bg-gray-200" />
-        <button onClick={onExpandAll} className="flex items-center gap-1 px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 rounded transition-colors" title="Expand all">
+        <div className="w-px h-6 bg-warm-200" />
+        <button onClick={onExpandAll} className="flex items-center gap-1 px-2 py-1.5 text-xs text-warm-500 hover:bg-warm-100 rounded transition-colors" title="Expand all">
           <ChevronsUpDown className="h-3.5 w-3.5" /><span className="hidden sm:inline">Expand</span>
         </button>
-        <button onClick={onCollapseAll} className="flex items-center gap-1 px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 rounded transition-colors" title="Collapse all">
+        <button onClick={onCollapseAll} className="flex items-center gap-1 px-2 py-1.5 text-xs text-warm-500 hover:bg-warm-100 rounded transition-colors" title="Collapse all">
           <ChevronsDownUp className="h-3.5 w-3.5" /><span className="hidden sm:inline">Collapse</span>
         </button>
       </div>
       <div className="flex items-center gap-3">
-        <label className="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer">
-          <input type="checkbox" checked={criticalPathOnly} onChange={onToggleCriticalPath} className="rounded border-gray-300 text-red-500 focus:ring-red-500" />
+        <label className="flex items-center gap-1.5 text-xs text-warm-500 cursor-pointer">
+          <input type="checkbox" checked={criticalPathOnly} onChange={onToggleCriticalPath} className="rounded border-warm-300 text-red-500 focus:ring-red-500" />
           Critical Path
         </label>
-        <label className="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer">
-          <input type="checkbox" checked={hideCompleted} onChange={onToggleHideCompleted} className="rounded border-gray-300 text-blue-500 focus:ring-blue-500" />
+        <label className="flex items-center gap-1.5 text-xs text-warm-500 cursor-pointer">
+          <input type="checkbox" checked={hideCompleted} onChange={onToggleHideCompleted} className="rounded border-warm-300 text-stone-500 focus:ring-stone-500" />
           Hide Completed
         </label>
-        <label className="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer">
-          <input type="checkbox" checked={showBaseline} onChange={onToggleBaseline} className="rounded border-gray-300 text-gray-500 focus:ring-gray-500" />
+        <label className="flex items-center gap-1.5 text-xs text-warm-500 cursor-pointer">
+          <input type="checkbox" checked={showBaseline} onChange={onToggleBaseline} className="rounded border-warm-300 text-warm-500 focus:ring-warm-500" />
           Baselines
         </label>
       </div>
@@ -1064,32 +1064,32 @@ function ScheduleToolbar({ zoom, onZoomChange, onExpandAll, onCollapseAll, showB
 
 function ScheduleLegend() {
   return (
-    <div className="bg-white border-t border-gray-200 px-4 py-2.5">
-      <div className="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
+    <div className="bg-white border-t border-warm-200 px-4 py-2.5">
+      <div className="flex items-center gap-4 text-xs text-warm-500 flex-wrap">
         {(Object.entries(TASK_TYPE_CONFIG) as [TaskType, typeof TASK_TYPE_CONFIG[TaskType]][]).map(([key, cfg]) => (
           <div key={key} className="flex items-center gap-1.5">
             {key === 'milestone' ? <div className={cn('w-2.5 h-2.5 rotate-45', cfg.barColor)} /> : <div className={cn('w-4 h-2.5 rounded-sm', cfg.barColor)} />}
             <span>{cfg.label}</span>
           </div>
         ))}
-        <div className="w-px h-4 bg-gray-200" />
+        <div className="w-px h-4 bg-warm-200" />
         <div className="flex items-center gap-1.5"><div className="w-4 h-2.5 rounded-sm bg-red-500" /><span>Critical Path</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-2.5 rounded-sm bg-blue-300 opacity-30" /><span>Baseline</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-2.5 rounded-sm bg-stone-300 opacity-30" /><span>Baseline</span></div>
         <div className="flex items-center gap-1.5"><div className="w-4 h-1.5 rounded-sm bg-emerald-500 opacity-60" /><span>Actual Dates</span></div>
         <div className="flex items-center gap-1.5"><div className="w-0 h-4 border-l-2 border-dashed border-orange-400 opacity-70" /><span>AI Predicted</span></div>
         <div className="flex items-center gap-1.5"><div className="w-0 h-4 border-l-2 border-dashed border-red-400" /><span>Today</span></div>
-        <div className="w-px h-4 bg-gray-200" />
+        <div className="w-px h-4 bg-warm-200" />
         <div className="flex items-center gap-1.5"><Check className="h-3 w-3 text-green-600" /><span>Sub Confirmed</span></div>
-        <div className="flex items-center gap-1.5"><CircleDashed className="h-3 w-3 text-yellow-600" /><span>Awaiting Sub</span></div>
+        <div className="flex items-center gap-1.5"><CircleDashed className="h-3 w-3 text-amber-600" /><span>Awaiting Sub</span></div>
       </div>
       {/* Dependency type legend */}
-      <div className="flex items-center gap-4 text-xs text-gray-500 mt-2 pt-2 border-t border-gray-100">
-        <span className="font-medium text-gray-600">Dependencies:</span>
+      <div className="flex items-center gap-4 text-xs text-warm-500 mt-2 pt-2 border-t border-warm-100">
+        <span className="font-medium text-warm-600">Dependencies:</span>
         {(Object.entries(DEPENDENCY_TYPE_CONFIG) as [DependencyType, typeof DEPENDENCY_TYPE_CONFIG[DependencyType]][]).map(([key, cfg]) => (
           <div key={key} className="flex items-center gap-1.5">
-            <div className={cn('w-3 h-0.5 rounded', key === 'FS' ? 'bg-blue-500' : key === 'SS' ? 'bg-green-500' : key === 'FF' ? 'bg-orange-500' : 'bg-purple-500')} />
+            <div className={cn('w-3 h-0.5 rounded', key === 'FS' ? 'bg-stone-500' : key === 'SS' ? 'bg-green-500' : key === 'FF' ? 'bg-orange-500' : 'bg-purple-500')} />
             <span className={cfg.color}>{key}</span>
-            <span className="text-gray-400">({cfg.label})</span>
+            <span className="text-warm-400">({cfg.label})</span>
           </div>
         ))}
       </div>
@@ -1123,19 +1123,19 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
   })
 
   return (
-    <div className="bg-white border-t border-gray-200">
-      <button onClick={() => setIsOpen(!isOpen)} className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+    <div className="bg-white border-t border-warm-200">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-warm-50 transition-colors">
         <div className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4 text-blue-600" />
-          <span className="font-medium text-sm text-gray-900">Two-Week Look-Ahead</span>
-          <span className="text-xs text-gray-400">Next 14 days</span>
+          <CalendarDays className="h-4 w-4 text-stone-600" />
+          <span className="font-medium text-sm text-warm-900">Two-Week Look-Ahead</span>
+          <span className="text-xs text-warm-400">Next 14 days</span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex items-center gap-3 text-xs text-warm-500">
           <span>{starting.length} starting</span>
           <span>{continuing.length} continuing</span>
           {deliveries.length > 0 && <span className="text-amber-600">{deliveries.length} deliveries</span>}
           {inspections.length > 0 && <span className="text-purple-600">{inspections.length} inspections</span>}
-          {needConfirmation.length > 0 && <span className="text-yellow-600">{needConfirmation.length} need confirmation</span>}
+          {needConfirmation.length > 0 && <span className="text-amber-600">{needConfirmation.length} need confirmation</span>}
           {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </div>
       </button>
@@ -1143,16 +1143,16 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
         <div className="px-4 pb-3 grid grid-cols-2 gap-4 text-sm">
           {/* Starting soon */}
           <div>
-            <h4 className="font-medium text-gray-700 mb-1.5 flex items-center gap-1"><ArrowRight className="h-3.5 w-3.5 text-blue-500" /> Starting Soon</h4>
-            {starting.length === 0 ? <p className="text-xs text-gray-400">None</p> : (
+            <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><ArrowRight className="h-3.5 w-3.5 text-stone-500" /> Starting Soon</h4>
+            {starting.length === 0 ? <p className="text-xs text-warm-400">None</p> : (
               <div className="space-y-1">
                 {starting.slice(0, 5).map(t => (
                   <div key={t.id} className="flex items-center gap-2 text-xs">
-                    <span className="text-gray-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
-                    <span className="text-gray-700 truncate">{t.name}</span>
-                    {t.vendor && <span className="text-gray-400 truncate">— {t.vendor}</span>}
-                    {t.subConfirmation === 'pending' && <CircleDashed className="h-3 w-3 text-yellow-500 flex-shrink-0" />}
-                    {t.subConfirmation === 'not_sent' && <AlertTriangle className="h-3 w-3 text-gray-400 flex-shrink-0" />}
+                    <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
+                    <span className="text-warm-700 truncate">{t.name}</span>
+                    {t.vendor && <span className="text-warm-400 truncate">— {t.vendor}</span>}
+                    {t.subConfirmation === 'pending' && <CircleDashed className="h-3 w-3 text-amber-500 flex-shrink-0" />}
+                    {t.subConfirmation === 'not_sent' && <AlertTriangle className="h-3 w-3 text-warm-400 flex-shrink-0" />}
                   </div>
                 ))}
               </div>
@@ -1160,14 +1160,14 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
           </div>
           {/* Continuing */}
           <div>
-            <h4 className="font-medium text-gray-700 mb-1.5 flex items-center gap-1"><Activity className="h-3.5 w-3.5 text-green-500" /> In Progress</h4>
-            {continuing.length === 0 ? <p className="text-xs text-gray-400">None</p> : (
+            <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><Activity className="h-3.5 w-3.5 text-green-500" /> In Progress</h4>
+            {continuing.length === 0 ? <p className="text-xs text-warm-400">None</p> : (
               <div className="space-y-1">
                 {continuing.map(t => (
                   <div key={t.id} className="flex items-center gap-2 text-xs">
-                    <span className="text-gray-400 w-12">{t.percentComplete}%</span>
-                    <span className="text-gray-700 truncate">{t.name}</span>
-                    {t.vendor && <span className="text-gray-400 truncate">— {t.vendor}</span>}
+                    <span className="text-warm-400 w-12">{t.percentComplete}%</span>
+                    <span className="text-warm-700 truncate">{t.name}</span>
+                    {t.vendor && <span className="text-warm-400 truncate">— {t.vendor}</span>}
                   </div>
                 ))}
               </div>
@@ -1177,13 +1177,13 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
           {(deliveries.length > 0 || inspections.length > 0) && (
             <>
               <div>
-                <h4 className="font-medium text-gray-700 mb-1.5 flex items-center gap-1"><Truck className="h-3.5 w-3.5 text-amber-500" /> Deliveries Expected</h4>
-                {deliveries.length === 0 ? <p className="text-xs text-gray-400">None</p> : (
+                <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><Truck className="h-3.5 w-3.5 text-amber-500" /> Deliveries Expected</h4>
+                {deliveries.length === 0 ? <p className="text-xs text-warm-400">None</p> : (
                   <div className="space-y-1">
                     {deliveries.map(t => (
                       <div key={t.id} className="flex items-center gap-2 text-xs">
-                        <span className="text-gray-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
-                        <span className="text-gray-700 truncate">{t.name}</span>
+                        <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
+                        <span className="text-warm-700 truncate">{t.name}</span>
                         {t.linkedPO && <span className="text-amber-500">{t.linkedPO}</span>}
                       </div>
                     ))}
@@ -1191,13 +1191,13 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
                 )}
               </div>
               <div>
-                <h4 className="font-medium text-gray-700 mb-1.5 flex items-center gap-1"><Eye className="h-3.5 w-3.5 text-purple-500" /> Inspections Scheduled</h4>
-                {inspections.length === 0 ? <p className="text-xs text-gray-400">None</p> : (
+                <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><Eye className="h-3.5 w-3.5 text-purple-500" /> Inspections Scheduled</h4>
+                {inspections.length === 0 ? <p className="text-xs text-warm-400">None</p> : (
                   <div className="space-y-1">
                     {inspections.map(t => (
                       <div key={t.id} className="flex items-center gap-2 text-xs">
-                        <span className="text-gray-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
-                        <span className="text-gray-700 truncate">{t.name}</span>
+                        <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
+                        <span className="text-warm-700 truncate">{t.name}</span>
                         {t.linkedInspection && <span className="text-purple-500">{t.linkedInspection}</span>}
                       </div>
                     ))}
@@ -1209,13 +1209,13 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
           {/* Vendor confirmations needed */}
           {needConfirmation.length > 0 && (
             <div className="col-span-2">
-              <h4 className="font-medium text-yellow-700 mb-1.5 flex items-center gap-1"><CircleDashed className="h-3.5 w-3.5" /> Vendor Confirmations Needed</h4>
+              <h4 className="font-medium text-amber-700 mb-1.5 flex items-center gap-1"><CircleDashed className="h-3.5 w-3.5" /> Vendor Confirmations Needed</h4>
               <div className="flex gap-3 flex-wrap">
                 {needConfirmation.map(t => (
-                  <div key={t.id} className="flex items-center gap-1.5 text-xs bg-yellow-50 px-2 py-1 rounded">
-                    <span className="text-yellow-700 font-medium">{t.vendor}</span>
-                    <span className="text-yellow-600">— {t.name}</span>
-                    <span className="text-yellow-500">({format(parseISO(t.startDate!), 'MMM d')})</span>
+                  <div key={t.id} className="flex items-center gap-1.5 text-xs bg-amber-50 px-2 py-1 rounded">
+                    <span className="text-amber-700 font-medium">{t.vendor}</span>
+                    <span className="text-amber-600">— {t.name}</span>
+                    <span className="text-amber-500">({format(parseISO(t.startDate!), 'MMM d')})</span>
                   </div>
                 ))}
               </div>
@@ -1389,18 +1389,18 @@ export function SchedulePreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Schedule — Smith Residence</h3>
-              <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', stats.health === 'on_track' ? 'bg-green-100 text-green-700' : stats.health === 'at_risk' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700')}>
+              <h3 className="font-semibold text-warm-900">Schedule — Smith Residence</h3>
+              <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium', stats.health === 'on_track' ? 'bg-green-100 text-green-700' : stats.health === 'at_risk' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700')}>
                 {stats.health === 'on_track' ? 'On Track' : stats.health === 'at_risk' ? 'At Risk' : 'Behind Schedule'}
               </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" />Nov 4, 2025 — Mar 20, 2026 ({totalDays} days)</span>
               <span className="flex items-center gap-1">
                 <CalendarClock className="h-4 w-4" />
@@ -1422,8 +1422,8 @@ export function SchedulePreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"><Download className="h-4 w-4" />Export</button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"><Plus className="h-4 w-4" />Add Task</button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50"><Download className="h-4 w-4" />Export</button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700"><Plus className="h-4 w-4" />Add Task</button>
           </div>
         </div>
       </div>
@@ -1432,7 +1432,7 @@ export function SchedulePreview() {
       <ScheduleStats stats={stats} />
 
       {/* FilterBar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <FilterBar
           search={filters.search} onSearchChange={filters.setSearch} searchPlaceholder="Search tasks, vendors, trades..."
           tabs={phaseTabs} activeTab={filters.activeTab} onTabChange={filters.setActiveTab}
@@ -1507,7 +1507,7 @@ export function SchedulePreview() {
       <ScheduleLegend />
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Schedule Intelligence"
           features={aiFeatures}

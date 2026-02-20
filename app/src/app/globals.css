@@ -4,101 +4,104 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Clean Enterprise Look (Sage/Ressio Inspired) */
-  --background: 210 40% 98%; /* soft slate off-white */
-  --foreground: 222 47% 11%;
-  
-  --card: 0 0% 100%; /* pure white */
-  --card-foreground: 222 47% 11%;
+  /* BuildDesk Design System v2.0 — Stone Blue + Warm Sand + Warm Gray */
+
+  /* Semantic tokens (consumed by shadcn/ui components via hsl()) */
+  --background: 40 14% 97%;       /* warm-50 #faf9f7 */
+  --foreground: 36 6% 28%;        /* warm-800 #4a4843 */
+
+  --card: 0 0% 100%;              /* warm-0 #ffffff */
+  --card-foreground: 36 6% 28%;   /* warm-800 #4a4843 */
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 36 6% 28%;
 
-  /* Action/Brand Color: Crisp Blue */
-  --primary: 221 83% 53%; 
-  --primary-foreground: 210 40% 98%;
+  --primary: 198 27% 31%;         /* stone-700 #3b5564 */
+  --primary-foreground: 0 0% 100%;
 
-  /* Muted surfaces (Buttons hover, distinct areas) */
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 40 10% 95%;        /* warm-100 #f3f2ef */
+  --secondary-foreground: 36 6% 28%;
 
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --muted: 40 10% 95%;            /* warm-100 #f3f2ef */
+  --muted-foreground: 36 5% 56%;  /* warm-500 #96918a */
 
-  --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
+  --accent: 40 14% 97%;           /* warm-50 #faf9f7 */
+  --accent-foreground: 36 6% 28%;
 
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 4 55% 50%;       /* danger #c4463a */
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%; /* Ring matches primary for focus */
+  --border: 40 8% 90%;            /* warm-200 #e8e6e1 */
+  --input: 40 8% 90%;
+  --ring: 198 15% 68%;            /* stone-300 #9db5c0 */
 
   --radius: 0.5rem;
 
-  --chart-1: 221 83% 53%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
+  /* Chart colors mapped to BuildDesk palette */
+  --chart-1: 198 27% 31%;         /* stone-700 */
+  --chart-2: 30 30% 55%;          /* sand-600 */
+  --chart-3: 139 39% 39%;         /* success */
+  --chart-4: 198 26% 47%;         /* info */
+  --chart-5: 42 85% 38%;          /* warning */
 
-  --sidebar-background: 0 0% 100%; /* Clean white sidebar */
-  --sidebar-foreground: 222 47% 11%;
-  --sidebar-primary: 221 83% 53%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 210 40% 96%;
-  --sidebar-accent-foreground: 222 47% 11%;
-  --sidebar-border: 214 32% 91%;
-  --sidebar-ring: 221 83% 53%;
+  /* Sidebar tokens */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 36 6% 28%;
+  --sidebar-primary: 198 27% 31%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 40 14% 97%;
+  --sidebar-accent-foreground: 36 6% 28%;
+  --sidebar-border: 40 8% 90%;
+  --sidebar-ring: 198 15% 68%;
 }
 
 .dark {
-  --background: 222 47% 11%;
-  --foreground: 210 40% 98%;
-  
-  --card: 217 33% 17%;
-  --card-foreground: 210 40% 98%;
+  --background: 36 5% 16%;        /* warm-900 #33312e */
+  --foreground: 40 10% 95%;       /* warm-100 #f3f2ef */
 
-  --popover: 217 33% 17%;
-  --popover-foreground: 210 40% 98%;
+  --card: 36 6% 22%;              /* warm-800 #4a4843 */
+  --card-foreground: 40 10% 95%;
 
-  --primary: 221 83% 53%; 
-  --primary-foreground: 210 40% 98%;
+  --popover: 36 6% 22%;
+  --popover-foreground: 40 10% 95%;
 
-  --secondary: 217 33% 20%;
-  --secondary-foreground: 210 40% 98%;
+  --primary: 198 15% 68%;         /* stone-300 #9db5c0 */
+  --primary-foreground: 200 20% 15%;
 
-  --muted: 217 33% 20%;
-  --muted-foreground: 215 20% 65%;
+  --secondary: 36 5% 22%;
+  --secondary-foreground: 40 10% 95%;
 
-  --accent: 217 33% 20%;
-  --accent-foreground: 210 40% 98%;
+  --muted: 36 5% 22%;
+  --muted-foreground: 36 5% 56%;
 
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
+  --accent: 36 5% 22%;
+  --accent-foreground: 40 10% 95%;
 
-  --border: 217 33% 22%;
-  --input: 217 33% 22%;
-  --ring: 221 83% 53%;
+  --destructive: 4 55% 35%;
+  --destructive-foreground: 0 0% 100%;
 
-  --chart-1: 220 70% 50%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 30 80% 55%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 340 75% 55%;
+  --border: 36 5% 26%;
+  --input: 36 5% 26%;
+  --ring: 198 27% 31%;
 
-  --sidebar-background: 217 33% 17%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 221 83% 53%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 217 33% 20%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-border: 217 33% 22%;
-  --sidebar-ring: 221 83% 53%;
+  --chart-1: 198 15% 58%;
+  --chart-2: 30 30% 50%;
+  --chart-3: 139 39% 45%;
+  --chart-4: 198 26% 52%;
+  --chart-5: 42 85% 45%;
+
+  --sidebar-background: 36 6% 22%;
+  --sidebar-foreground: 40 10% 95%;
+  --sidebar-primary: 198 15% 68%;
+  --sidebar-primary-foreground: 200 20% 15%;
+  --sidebar-accent: 36 5% 22%;
+  --sidebar-accent-foreground: 40 10% 95%;
+  --sidebar-border: 36 5% 26%;
+  --sidebar-ring: 198 27% 31%;
 }
 
 @theme inline {
+  /* Semantic color tokens (shadcn/ui) */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -131,12 +134,126 @@
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --radius-sm: calc(var(--radius) - 4px);
+
+  /* BuildDesk — Stone Blue primary scale (overrides Tailwind stone) */
+  --color-stone-50: #f4f7f8;
+  --color-stone-100: #e2eaed;
+  --color-stone-200: #c5d5db;
+  --color-stone-300: #9db5c0;
+  --color-stone-400: #7499a8;
+  --color-stone-500: #537d8d;
+  --color-stone-600: #456878;
+  --color-stone-700: #3b5564;
+  --color-stone-800: #354854;
+  --color-stone-900: #2f3d48;
+  --color-stone-950: #1b272f;
+
+  /* BuildDesk — Warm Sand accent scale */
+  --color-sand-50: #faf8f5;
+  --color-sand-100: #f2ede6;
+  --color-sand-200: #e4d9cb;
+  --color-sand-300: #d3c0aa;
+  --color-sand-400: #c1a488;
+  --color-sand-500: #b5906f;
+  --color-sand-600: #a87d63;
+  --color-sand-700: #8c6553;
+  --color-sand-800: #735447;
+  --color-sand-900: #5e463c;
+
+  /* BuildDesk — Warm Gray neutral scale */
+  --color-warm-0: #ffffff;
+  --color-warm-25: #fdfcfb;
+  --color-warm-50: #faf9f7;
+  --color-warm-100: #f3f2ef;
+  --color-warm-200: #e8e6e1;
+  --color-warm-300: #d4d1cb;
+  --color-warm-400: #b5b1a9;
+  --color-warm-500: #96918a;
+  --color-warm-600: #7a766f;
+  --color-warm-700: #64615b;
+  --color-warm-800: #4a4843;
+  --color-warm-900: #33312e;
+  --color-warm-950: #1e1d1b;
+
+  /* BuildDesk — Semantic status colors */
+  --color-success-bg: #f0f7f1;
+  --color-success: #3d8b4d;
+  --color-success-dark: #2d6b3a;
+  --color-warning-bg: #fdf6ec;
+  --color-warning: #b8860b;
+  --color-warning-dark: #946b09;
+  --color-danger-bg: #fdf1f0;
+  --color-danger: #c4463a;
+  --color-danger-dark: #a03a30;
+  --color-info-bg: #eff5fa;
+  --color-info: #4a7fa5;
+  --color-info-dark: #3b6888;
+
+  /* Fonts */
+  --font-sans: var(--font-ibm-plex), 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: var(--font-source-serif), 'Source Serif 4', Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Radius scale */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
   --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) + 4px);
-  --radius-xl: calc(var(--radius) + 8px);
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+
+  /* BuildDesk shadows */
+  --shadow-xs: 0 1px 2px rgba(30,29,27,.04);
+  --shadow-sm: 0 1px 3px rgba(30,29,27,.05), 0 1px 2px rgba(30,29,27,.03);
+  --shadow-md: 0 4px 6px -1px rgba(30,29,27,.06), 0 2px 4px -2px rgba(30,29,27,.04);
+  --shadow-lg: 0 10px 15px -3px rgba(30,29,27,.07), 0 4px 6px -4px rgba(30,29,27,.03);
+  --shadow-xl: 0 20px 25px -5px rgba(30,29,27,.08), 0 8px 10px -6px rgba(30,29,27,.03);
+}
+
+/* BuildDesk custom shadows (can't go in @theme) */
+:root {
+  --shadow-focus: 0 0 0 2px #ffffff, 0 0 0 4px #9db5c0;
+  --shadow-focus-danger: 0 0 0 2px #ffffff, 0 0 0 4px rgba(196,70,58,.3);
+
+  /* Animation easings and durations */
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+  --dur-fast: 100ms;
+  --dur-norm: 180ms;
+  --dur-slow: 300ms;
+}
+
+/* BuildDesk animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideR {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideD {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+@keyframes progressFill {
+  from { width: 0%; }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.97) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 * {
@@ -147,6 +264,204 @@ body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-sans), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased; /* Better text rendering for enterprise apps */
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   BuildDesk Component Classes — Invoice Page Pattern
+   Restrained color, clean density, proper proportions
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* CSS custom property aliases (used by component classes below) */
+  --bd-stone-50:#f4f7f8;--bd-stone-100:#e2eaed;--bd-stone-200:#c5d5db;--bd-stone-300:#9db5c0;
+  --bd-stone-400:#7499a8;--bd-stone-500:#537d8d;--bd-stone-600:#456878;--bd-stone-700:#3b5564;
+  --bd-stone-800:#354854;--bd-stone-900:#2f3d48;--bd-stone-950:#1b272f;
+
+  --bd-sand-50:#faf8f5;--bd-sand-100:#f2ede6;--bd-sand-200:#e4d9cb;--bd-sand-300:#d3c0aa;
+  --bd-sand-500:#b5906f;--bd-sand-600:#a87d63;--bd-sand-700:#8c6553;
+
+  --bd-warm-0:#ffffff;--bd-warm-25:#fdfcfb;--bd-warm-50:#faf9f7;--bd-warm-100:#f3f2ef;
+  --bd-warm-200:#e8e6e1;--bd-warm-300:#d4d1cb;--bd-warm-400:#b5b1a9;--bd-warm-500:#96918a;
+  --bd-warm-600:#7a766f;--bd-warm-700:#64615b;--bd-warm-800:#4a4843;--bd-warm-900:#33312e;
+
+  --bd-success:#3d8b4d;--bd-warning:#b8860b;--bd-danger:#c4463a;--bd-info:#4a7fa5;
+
+  --bd-font-display:'Source Serif 4',Georgia,serif;
+  --bd-font-body:'IBM Plex Sans',-apple-system,sans-serif;
+  --bd-text-2xs:.6875rem;--bd-text-xs:.75rem;--bd-text-sm:.8125rem;--bd-text-base:.875rem;
+  --bd-text-md:.9375rem;--bd-text-lg:1.0625rem;--bd-text-xl:1.25rem;--bd-text-2xl:1.5rem;
+
+  --bd-radius-xs:4px;--bd-radius-sm:6px;--bd-radius-md:8px;--bd-radius-lg:10px;--bd-radius-xl:14px;
+  --bd-radius-full:9999px;
+  --bd-border:1px solid var(--bd-warm-200);
+  --bd-shadow-sm:0 1px 3px rgba(30,29,27,.05),0 1px 2px rgba(30,29,27,.03);
+  --bd-shadow-md:0 4px 6px -1px rgba(30,29,27,.06),0 2px 4px -2px rgba(30,29,27,.04);
+  --bd-shadow-lg:0 10px 15px -3px rgba(30,29,27,.07),0 4px 6px -4px rgba(30,29,27,.03);
+  --bd-shadow-xl:0 20px 25px -5px rgba(30,29,27,.1),0 8px 10px -6px rgba(30,29,27,.05);
+  --bd-shadow-focus:0 0 0 2px var(--bd-warm-0),0 0 0 4px var(--bd-stone-300);
+  --bd-ease-out:cubic-bezier(.16,1,.3,1);--bd-ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── APP SHELL ── */
+.bd-shell{display:flex;height:100vh;font-family:var(--bd-font-body);font-size:var(--bd-text-base);color:var(--bd-warm-800);background:var(--bd-warm-50);-webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.bd-sb{width:220px;background:var(--bd-warm-0);border-right:var(--bd-border);display:flex;flex-direction:column;flex-shrink:0}
+.bd-sb-head{padding:16px;border-bottom:1px solid var(--bd-warm-100);display:flex;align-items:center;gap:8px}
+.bd-sb-logo{font-family:var(--bd-font-display);font-weight:700;font-size:var(--bd-text-md);color:var(--bd-stone-900)}
+.bd-sb-nav{flex:1;overflow-y:auto;padding:8px}
+.bd-sb-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--bd-warm-400);padding:12px 10px 4px}
+.bd-sb-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:var(--bd-text-sm);color:var(--bd-warm-600);cursor:pointer;transition:all .1s}
+.bd-sb-item:hover{background:var(--bd-warm-50);color:var(--bd-warm-800)}
+.bd-sb-item.on{background:var(--bd-stone-50);color:var(--bd-stone-700);font-weight:500}
+.bd-sb-badge{margin-left:auto;background:var(--bd-warm-100);color:var(--bd-warm-600);font-size:9px;font-weight:600;padding:1px 6px;border-radius:99px}
+.bd-sb-foot{padding:12px 16px;border-top:1px solid var(--bd-warm-100);display:flex;align-items:center;gap:8px}
+.bd-av{display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:600;flex-shrink:0}
+
+/* Status legend in sidebar */
+.bd-sb-legend{padding:12px 10px 8px}
+.bd-sb-legend-row{display:flex;align-items:center;gap:6px;font-size:var(--bd-text-2xs);color:var(--bd-warm-500);margin-bottom:3px}
+.bd-sb-legend-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ── MAIN AREA ── */
+.bd-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.bd-hdr{height:52px;padding:0 24px;display:flex;align-items:center;gap:16px;background:var(--bd-warm-0);border-bottom:var(--bd-border);flex-shrink:0}
+.bd-hdr-crumbs{display:flex;align-items:center;gap:4px;font-size:var(--bd-text-sm)}
+.bd-hdr-crumb{color:var(--bd-warm-400);cursor:pointer}.bd-hdr-crumb:hover{color:var(--bd-stone-600)}
+.bd-hdr-cur{color:var(--bd-warm-700);font-weight:500}
+
+/* ── CONTENT ── */
+.bd-content{flex:1;overflow-y:auto;padding:24px}
+
+/* ── PAGE HEADER ── */
+.bd-pg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.bd-pg-title{font-family:var(--bd-font-display);font-size:var(--bd-text-2xl);font-weight:600;color:var(--bd-stone-900);letter-spacing:-.01em}
+.bd-pg-sub{font-size:var(--bd-text-sm);color:var(--bd-warm-500);margin-top:2px}
+
+/* ── STAT STRIP ──
+   KEY RULE: Only ONE color emphasis per stat.
+   The rest stay neutral. Color = meaning, not decoration. */
+.bd-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.bd-stat-card{background:var(--bd-warm-0);border:var(--bd-border);border-radius:var(--bd-radius-lg);padding:14px 18px}
+.bd-stat-label{font-size:var(--bd-text-2xs);color:var(--bd-warm-500);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.bd-stat-val{font-family:var(--bd-font-display);font-size:var(--bd-text-2xl);font-weight:700;color:var(--bd-stone-900);letter-spacing:-.02em}
+/* Only the "needs attention" stat gets color */
+.bd-stat-val.att{color:var(--bd-danger)}
+
+/* ── FILTER BAR ── */
+.bd-fbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.bd-ftab{padding:5px 12px;font-size:var(--bd-text-xs);font-weight:500;color:var(--bd-warm-500);border-radius:var(--bd-radius-full);cursor:pointer;transition:all .15s;border:1px solid transparent;background:none;font-family:var(--bd-font-body)}
+.bd-ftab:hover{color:var(--bd-warm-700);background:var(--bd-warm-50)}
+.bd-ftab.on{color:var(--bd-stone-700);background:var(--bd-stone-50);border-color:var(--bd-stone-200)}
+.bd-fcount{font-size:9px;color:var(--bd-warm-400);margin-left:2px}
+.bd-finput{padding:6px 10px 6px 30px;font-size:var(--bd-text-xs);border:var(--bd-border);border-radius:var(--bd-radius-md);background:var(--bd-warm-0);color:var(--bd-warm-800);outline:none;width:200px;font-family:var(--bd-font-body)}
+.bd-finput:focus{border-color:var(--bd-stone-400);box-shadow:var(--bd-shadow-focus)}
+.bd-fselect{padding:6px 28px 6px 10px;font-size:var(--bd-text-xs);border:var(--bd-border);border-radius:var(--bd-radius-md);background:var(--bd-warm-0);color:var(--bd-warm-600);cursor:pointer;appearance:none;font-family:var(--bd-font-body);
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2396918a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center}
+
+/* ── BUTTONS ── */
+.bd-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-family:var(--bd-font-body);font-size:var(--bd-text-xs);font-weight:500;border:none;border-radius:var(--bd-radius-md);cursor:pointer;transition:all .15s var(--bd-ease-out);line-height:1}
+.bd-btn:active{transform:scale(.97)}
+.bd-btn-p{background:var(--bd-stone-700);color:#fff}.bd-btn-p:hover{background:var(--bd-stone-600)}
+.bd-btn-s{background:var(--bd-warm-0);color:var(--bd-warm-700);border:var(--bd-border)}.bd-btn-s:hover{background:var(--bd-warm-50)}
+.bd-btn-g{background:transparent;color:var(--bd-warm-600)}.bd-btn-g:hover{background:var(--bd-warm-100)}
+.bd-btn-sm{padding:5px 10px;font-size:var(--bd-text-2xs)}
+
+/* ── LIST ROWS ──
+   KEY RULE: Each row is mostly neutral.
+   Only the STATUS badge and OVERDUE flag get color.
+   Everything else is warm grays. */
+.bd-list{background:var(--bd-warm-0);border:var(--bd-border);border-radius:var(--bd-radius-lg);overflow:hidden}
+.bd-row{display:grid;align-items:center;padding:14px 20px;border-bottom:1px solid var(--bd-warm-100);cursor:pointer;transition:background .1s}
+.bd-row:last-child{border-bottom:none}
+.bd-row:hover{background:var(--bd-warm-25)}
+.bd-row.selected{background:var(--bd-stone-50);box-shadow:inset 3px 0 0 var(--bd-stone-500)}
+
+.bd-row-id{font-weight:600;font-size:var(--bd-text-sm);color:var(--bd-warm-800);margin-bottom:2px}
+.bd-row-sub{font-size:var(--bd-text-xs);color:var(--bd-warm-500)}
+.bd-row-desc{font-size:var(--bd-text-2xs);color:var(--bd-warm-400);margin-top:2px}
+.bd-row-amt{font-weight:600;font-size:var(--bd-text-sm);color:var(--bd-warm-800);text-align:right}
+.bd-row-net{font-size:var(--bd-text-2xs);color:var(--bd-warm-400);text-align:right}
+
+/* Badges — RESTRAINED. Mostly warm gray. Color only for status. */
+.bd-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:var(--bd-text-2xs);font-weight:500;border-radius:99px;line-height:1.5}
+.bd-bdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.bd-b-gray{background:var(--bd-warm-100);color:var(--bd-warm-600)}.bd-b-gray .bd-bdot{background:var(--bd-warm-400)}
+.bd-b-blue{background:var(--bd-stone-50);color:var(--bd-stone-700)}.bd-b-blue .bd-bdot{background:var(--bd-stone-500)}
+.bd-b-green{background:#f0f7f1;color:#2d6b3a}.bd-b-green .bd-bdot{background:var(--bd-success)}
+.bd-b-amber{background:#fdf6ec;color:#946b09}.bd-b-amber .bd-bdot{background:var(--bd-warning)}
+.bd-b-red{background:#fdf1f0;color:#a03a30}.bd-b-red .bd-bdot{background:var(--bd-danger)}
+
+/* Due date — only red if overdue */
+.bd-due{font-size:var(--bd-text-2xs);color:var(--bd-warm-400);text-align:right}
+.bd-due.overdue{color:var(--bd-danger);font-weight:500}
+
+/* Table header */
+.bd-list-head{display:grid;padding:8px 20px;border-bottom:var(--bd-border);background:var(--bd-warm-50)}
+.bd-th{font-size:var(--bd-text-2xs);font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--bd-warm-500)}
+
+/* ── DETAIL MODAL ──
+   Large modal that opens when clicking into a record.
+   Two-column layout: main info left, sidebar meta right. */
+@keyframes bdModalBgIn{from{opacity:0}to{opacity:1}}
+@keyframes bdModalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.bd-modal-bg{position:fixed;inset:0;background:rgba(30,29,27,.35);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:stretch;justify-content:center;padding:16px;overflow:hidden;animation:bdModalBgIn .15s}
+.bd-modal-lg{background:var(--bd-warm-0);border-radius:var(--bd-radius-xl);width:100%;max-width:100%;box-shadow:var(--bd-shadow-xl);animation:bdModalIn .25s var(--bd-ease-out);display:flex;flex-direction:column;overflow:hidden}
+
+.bd-modal-top{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 28px;border-bottom:var(--bd-border);flex-shrink:0}
+.bd-modal-top-title{font-family:var(--bd-font-display);font-size:var(--bd-text-xl);font-weight:600;color:var(--bd-stone-900)}
+.bd-modal-top-sub{font-size:var(--bd-text-sm);color:var(--bd-warm-500);margin-top:2px}
+.bd-modal-top-actions{display:flex;gap:8px;align-items:center}
+
+.bd-modal-body{display:grid;grid-template-columns:1fr 280px;gap:0;flex:1;overflow:hidden}
+.bd-modal-main{padding:24px 32px;overflow-y:auto}
+.bd-modal-sidebar{padding:24px;border-left:var(--bd-border);background:var(--bd-warm-25);overflow-y:auto}
+
+.bd-modal-section{margin-bottom:20px}
+.bd-modal-section:last-child{margin-bottom:0}
+.bd-modal-section-title{font-size:var(--bd-text-2xs);font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--bd-warm-400);margin-bottom:10px}
+
+.bd-detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd-warm-100);font-size:var(--bd-text-sm)}
+.bd-detail-row:last-child{border-bottom:none}
+.bd-detail-k{color:var(--bd-warm-500)}.bd-detail-v{color:var(--bd-warm-800);font-weight:500;text-align:right}
+
+/* Line items table inside modal */
+.bd-li-tbl{width:100%;border-collapse:collapse;font-size:var(--bd-text-sm)}
+.bd-li-tbl th{text-align:left;padding:6px 0;font-size:var(--bd-text-2xs);text-transform:uppercase;letter-spacing:.04em;color:var(--bd-warm-400);font-weight:600;border-bottom:var(--bd-border)}
+.bd-li-tbl td{padding:8px 0;border-bottom:1px solid var(--bd-warm-100);color:var(--bd-warm-700)}
+.bd-li-tbl tr:last-child td{border-bottom:none}
+.bd-li-tbl .r{text-align:right}
+
+/* Timeline inside modal */
+.bd-tl{padding:0;list-style:none}
+.bd-tl-item{display:flex;gap:10px;padding-bottom:12px;position:relative}
+.bd-tl-item:last-child{padding-bottom:0}
+.bd-tl-item:not(:last-child)::before{content:'';position:absolute;left:5px;top:16px;bottom:0;width:1px;background:var(--bd-warm-200)}
+.bd-tl-dot{width:10px;height:10px;border-radius:50%;background:var(--bd-warm-200);margin-top:3px;flex-shrink:0;z-index:1;border:2px solid var(--bd-warm-0);box-shadow:0 0 0 1px var(--bd-warm-200)}
+.bd-tl-dot.active{background:var(--bd-stone-400);box-shadow:0 0 0 1px var(--bd-stone-300)}
+.bd-tl-text{font-size:var(--bd-text-xs);color:var(--bd-warm-600)}.bd-tl-time{font-size:var(--bd-text-2xs);color:var(--bd-warm-400)}
+
+/* ── MODAL TABS ── */
+.bd-modal-tabs{display:flex;gap:0;border-bottom:var(--bd-border);padding:0 32px;flex-shrink:0;background:var(--bd-warm-0)}
+.bd-modal-tab{padding:10px 16px;font-size:var(--bd-text-sm);font-weight:500;color:var(--bd-warm-500);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:var(--bd-font-body)}
+.bd-modal-tab:hover{color:var(--bd-warm-700)}
+.bd-modal-tab.on{color:var(--bd-stone-700);border-bottom-color:var(--bd-stone-600)}
+
+/* ── ALERT BAR ── subtle, not busy */
+.bd-alert-bar{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:var(--bd-warm-0);border:var(--bd-border);border-left:3px solid var(--bd-warning);border-radius:var(--bd-radius-md);margin-bottom:16px;font-size:var(--bd-text-sm);color:var(--bd-warm-600);line-height:1.5}
+.bd-alert-bar svg{flex-shrink:0;margin-top:1px;color:var(--bd-warning)}
+
+/* ── GUIDE BANNER ── */
+.bd-guide-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bd-stone-50);border:1px dashed var(--bd-stone-200);border-radius:var(--bd-radius-md);font-size:var(--bd-text-xs);color:var(--bd-stone-600);line-height:1.5;margin-bottom:20px}
+.bd-guide-banner strong{color:var(--bd-stone-800)}
+.bd-spec-note{font-size:var(--bd-text-2xs);color:var(--bd-warm-400);font-style:italic;padding:8px 12px;background:var(--bd-warm-50);border-radius:var(--bd-radius-sm);border:1px dashed var(--bd-warm-200);margin-top:12px;line-height:1.5}
+
+/* ── SECONDARY NAV TABS ── */
+.bd-nav-tabs{display:flex;gap:0;border-bottom:var(--bd-border);background:var(--bd-warm-0);padding:0 24px}
+.bd-nav-tab{padding:10px 16px;font-size:var(--bd-text-sm);font-weight:400;color:var(--bd-warm-500);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;font-family:var(--bd-font-body);transition:all .15s}
+.bd-nav-tab:hover{color:var(--bd-warm-700)}
+.bd-nav-tab.on{color:var(--bd-stone-700);font-weight:600;border-bottom-color:var(--bd-stone-600)}

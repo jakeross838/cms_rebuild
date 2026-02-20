@@ -238,19 +238,19 @@ const mockBidPackages: BidPackage[] = [
 ]
 
 const statusConfig: Record<BidPackageStatus, { label: string; color: string; icon: typeof FileText }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
-  published: { label: 'Published', color: 'bg-blue-100 text-blue-700', icon: Send },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
+  published: { label: 'Published', color: 'bg-stone-100 text-stone-700', icon: Send },
   closed: { label: 'Closed', color: 'bg-amber-100 text-amber-700', icon: CheckCircle2 },
   awarded: { label: 'Awarded', color: 'bg-green-100 text-green-700', icon: Award },
 }
 
 const invitationStatusConfig: Record<InvitationStatus, { label: string; color: string }> = {
-  sent: { label: 'Sent', color: 'bg-gray-100 text-gray-600' },
-  viewed: { label: 'Viewed', color: 'bg-blue-100 text-blue-700' },
+  sent: { label: 'Sent', color: 'bg-warm-100 text-warm-600' },
+  viewed: { label: 'Viewed', color: 'bg-stone-100 text-stone-700' },
   acknowledged: { label: 'Acknowledged', color: 'bg-indigo-100 text-indigo-700' },
   submitted: { label: 'Bid Submitted', color: 'bg-green-100 text-green-700' },
   declined: { label: 'Declined', color: 'bg-red-100 text-red-700' },
-  no_response: { label: 'No Response', color: 'bg-gray-100 text-gray-500' },
+  no_response: { label: 'No Response', color: 'bg-warm-100 text-warm-500' },
 }
 
 function formatCurrency(value: number): string {
@@ -274,11 +274,11 @@ function InvitationTracker({ invitations }: { invitations: BidInvitation[] }) {
   const pending = invitations.length - submitted - declined
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-100">
+    <div className="mt-3 pt-3 border-t border-warm-100">
       <div className="flex items-center gap-2 mb-2">
-        <Users className="h-3.5 w-3.5 text-gray-500" />
-        <span className="text-xs font-medium text-gray-700">Invitations</span>
-        <span className="text-xs text-gray-500">{submitted}/{invitations.length} submitted</span>
+        <Users className="h-3.5 w-3.5 text-warm-500" />
+        <span className="text-xs font-medium text-warm-700">Invitations</span>
+        <span className="text-xs text-warm-500">{submitted}/{invitations.length} submitted</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
         {invitations.map(inv => {
@@ -331,11 +331,11 @@ function BidComparisonRow({ response, budgetAmount, isRecommended }: { response:
   return (
     <div className={cn(
       'flex items-center gap-3 p-2 rounded-lg text-sm',
-      isRecommended ? 'bg-green-50 border border-green-200' : 'bg-gray-50'
+      isRecommended ? 'bg-green-50 border border-green-200' : 'bg-warm-50'
     )}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-gray-900 truncate">{response.vendorName}</span>
+          <span className="font-medium text-warm-900 truncate">{response.vendorName}</span>
           {isRecommended && (
             <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
               <Award className="h-2.5 w-2.5" /> Recommended
@@ -356,7 +356,7 @@ function BidComparisonRow({ response, budgetAmount, isRecommended }: { response:
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+        <div className="flex items-center gap-3 mt-0.5 text-xs text-warm-500">
           <span>Scope: {response.scopeCoverage}%</span>
           <span>Valid: {response.validityDays}d</span>
           {response.paymentTerms && <span>{response.paymentTerms}</span>}
@@ -366,7 +366,7 @@ function BidComparisonRow({ response, budgetAmount, isRecommended }: { response:
         </div>
       </div>
       <div className="text-right shrink-0">
-        <div className="font-semibold text-gray-900">${response.totalAmount.toLocaleString()}</div>
+        <div className="font-semibold text-warm-900">${response.totalAmount.toLocaleString()}</div>
         <div className={cn(
           'text-xs font-medium',
           vsBudget <= 0 ? 'text-green-600' : 'text-red-600'
@@ -391,26 +391,26 @@ function BidCard({ bid }: { bid: BidPackage }) {
   const savingsPercent = lowestBid ? ((savings / bid.budgetAmount) * 100).toFixed(0) : '0'
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-warm-200 shadow-sm hover:shadow-md transition-shadow">
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-gray-900 truncate">{bid.name}</h4>
+              <h4 className="font-medium text-warm-900 truncate">{bid.name}</h4>
               {bid.templateName && (
                 <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">Template</span>
               )}
             </div>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
+            <div className="flex items-center gap-1.5 text-sm text-warm-500 mt-0.5">
               <Building2 className="h-3.5 w-3.5" />
               <span>{bid.jobName}</span>
-              <span className="text-gray-300">|</span>
+              <span className="text-warm-300">|</span>
               <Hash className="h-3 w-3" />
               <span className="font-mono text-xs">{bid.tradeCategory}</span>
             </div>
           </div>
-          <button className="p-1 hover:bg-gray-100 rounded" onClick={() => setExpanded(!expanded)}>
-            {expanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronRight className="h-4 w-4 text-gray-400" />}
+          <button className="p-1 hover:bg-warm-100 rounded" onClick={() => setExpanded(!expanded)}>
+            {expanded ? <ChevronDown className="h-4 w-4 text-warm-400" /> : <ChevronRight className="h-4 w-4 text-warm-400" />}
           </button>
         </div>
 
@@ -420,13 +420,13 @@ function BidCard({ bid }: { bid: BidPackage }) {
             {status.label}
           </span>
           {bid.status !== 'awarded' && bid.status !== 'draft' && (
-            <span className="text-xs text-gray-500 flex items-center gap-1">
+            <span className="text-xs text-warm-500 flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Due: {formatDate(bid.dueDate)}
             </span>
           )}
           {bid.preBidMeetingDate && (
-            <span className="text-xs text-blue-600 flex items-center gap-1">
+            <span className="text-xs text-stone-600 flex items-center gap-1">
               <Users className="h-3 w-3" />
               Pre-bid: {formatDate(bid.preBidMeetingDate)}
             </span>
@@ -437,7 +437,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
               {bid.clarificationCount} Q&A
             </span>
           )}
-          <span className="text-xs text-gray-500 flex items-center gap-1">
+          <span className="text-xs text-warm-500 flex items-center gap-1">
             <Paperclip className="h-3 w-3" />
             {bid.planVersion}
           </span>
@@ -445,21 +445,21 @@ function BidCard({ bid }: { bid: BidPackage }) {
 
         <div className="space-y-2 mb-3">
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-1.5 text-gray-600">
+            <div className="flex items-center gap-1.5 text-warm-600">
               <DollarSign className="h-3.5 w-3.5" />
               <span>Budget</span>
             </div>
-            <span className="font-medium text-gray-900">{formatCurrency(bid.budgetAmount)}</span>
+            <span className="font-medium text-warm-900">{formatCurrency(bid.budgetAmount)}</span>
           </div>
           {totalInvited > 0 && (
             <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-1.5 text-gray-600">
+              <div className="flex items-center gap-1.5 text-warm-600">
                 <Users className="h-3.5 w-3.5" />
                 <span>Bids Received</span>
               </div>
               <span className={cn(
                 "font-medium",
-                submitted >= totalInvited ? "text-green-600" : "text-gray-900"
+                submitted >= totalInvited ? "text-green-600" : "text-warm-900"
               )}>
                 {submitted} of {totalInvited}
               </span>
@@ -467,7 +467,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
           )}
           {lowestBid && (
             <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-1.5 text-gray-600">
+              <div className="flex items-center gap-1.5 text-warm-600">
                 <TrendingDown className="h-3.5 w-3.5" />
                 <span>Lowest Bid</span>
               </div>
@@ -481,7 +481,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
           )}
           {bid.awardedVendor && (
             <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-1.5 text-gray-600">
+              <div className="flex items-center gap-1.5 text-warm-600">
                 <Award className="h-3.5 w-3.5" />
                 <span>Awarded To</span>
               </div>
@@ -495,11 +495,11 @@ function BidCard({ bid }: { bid: BidPackage }) {
         {/* Scope coverage bar */}
         {bid.responses.length > 0 && (
           <div className="mb-3">
-            <div className="text-xs text-gray-500 mb-1">Scope checklist: {bid.scopeChecklist.length} items</div>
+            <div className="text-xs text-warm-500 mb-1">Scope checklist: {bid.scopeChecklist.length} items</div>
             <div className="flex gap-1">
               {bid.responses.map(r => (
                 <div key={r.vendorId} className="flex-1" title={`${r.vendorName}: ${r.scopeCoverage}% coverage`}>
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-warm-100 rounded-full overflow-hidden">
                     <div
                       className={cn(
                         'h-full rounded-full',
@@ -508,7 +508,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
                       style={{ width: `${r.scopeCoverage}%` }}
                     />
                   </div>
-                  <div className="text-[9px] text-gray-400 mt-0.5 truncate">{r.vendorName.split(' ')[0]}</div>
+                  <div className="text-[9px] text-warm-400 mt-0.5 truncate">{r.vendorName.split(' ')[0]}</div>
                 </div>
               ))}
             </div>
@@ -516,12 +516,12 @@ function BidCard({ bid }: { bid: BidPackage }) {
         )}
 
         {bid.recommendedVendor && bid.status === 'closed' && (
-          <div className="pt-3 border-t border-gray-100">
+          <div className="pt-3 border-t border-warm-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-sm">
                 <Award className="h-4 w-4 text-amber-500" />
-                <span className="text-gray-600">Recommended:</span>
-                <span className="font-medium text-gray-900">{bid.recommendedVendor}</span>
+                <span className="text-warm-600">Recommended:</span>
+                <span className="font-medium text-warm-900">{bid.recommendedVendor}</span>
               </div>
               <button className="text-xs bg-green-600 text-white px-2.5 py-1 rounded hover:bg-green-700">
                 Award Bid
@@ -543,9 +543,9 @@ function BidCard({ bid }: { bid: BidPackage }) {
 
       {/* Expanded: Bid Comparison Matrix */}
       {expanded && bid.responses.length > 0 && (
-        <div className="border-t border-gray-200 p-4 bg-gray-50">
-          <h5 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-blue-600" />
+        <div className="border-t border-warm-200 p-4 bg-warm-50">
+          <h5 className="text-sm font-medium text-warm-900 mb-3 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-stone-600" />
             Bid Comparison Matrix
           </h5>
           <div className="space-y-2">
@@ -563,11 +563,11 @@ function BidCard({ bid }: { bid: BidPackage }) {
 
           {/* Exclusions comparison */}
           {bid.responses.some(r => r.exclusions.length > 0) && (
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <h6 className="text-xs font-medium text-gray-700 mb-2">Exclusions by Vendor</h6>
+            <div className="mt-3 pt-3 border-t border-warm-200">
+              <h6 className="text-xs font-medium text-warm-700 mb-2">Exclusions by Vendor</h6>
               {bid.responses.map(r => (
                 r.exclusions.length > 0 && (
-                  <div key={r.vendorId} className="text-xs text-gray-600 mb-1">
+                  <div key={r.vendorId} className="text-xs text-warm-600 mb-1">
                     <span className="font-medium">{r.vendorName}:</span>{' '}
                     <span className="text-amber-700">{r.exclusions.join(', ')}</span>
                   </div>
@@ -578,11 +578,11 @@ function BidCard({ bid }: { bid: BidPackage }) {
 
           {/* Alternates */}
           {bid.responses.some(r => r.alternates.length > 0) && (
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <h6 className="text-xs font-medium text-gray-700 mb-2">Alternates</h6>
+            <div className="mt-3 pt-3 border-t border-warm-200">
+              <h6 className="text-xs font-medium text-warm-700 mb-2">Alternates</h6>
               {bid.responses.map(r =>
                 r.alternates.map((alt, i) => (
-                  <div key={`${r.vendorId}-${i}`} className="text-xs text-gray-600 mb-1">
+                  <div key={`${r.vendorId}-${i}`} className="text-xs text-warm-600 mb-1">
                     <span className="font-medium">{r.vendorName}:</span>{' '}
                     {alt.description}{' '}
                     <span className={cn(alt.addDeduct === 'add' ? 'text-red-600' : 'text-green-600')}>
@@ -637,12 +637,12 @@ export function BidsPreview() {
     .filter(r => r.anomalyFlag).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Bid Packages</h3>
-          <span className="text-sm text-gray-500">{mockBidPackages.length} packages</span>
+          <h3 className="font-semibold text-warm-900">Bid Packages</h3>
+          <span className="text-sm text-warm-500">{mockBidPackages.length} packages</span>
           {anomalyCount > 0 && (
             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" />
@@ -690,15 +690,15 @@ export function BidsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Send className="h-4 w-4" />
               Active Packages
             </div>
-            <div className="text-2xl font-bold text-blue-700 mt-1">{activeBids}</div>
-            <div className="text-xs text-blue-600 mt-0.5">published or ready to award</div>
+            <div className="text-2xl font-bold text-stone-700 mt-1">{activeBids}</div>
+            <div className="text-xs text-stone-600 mt-0.5">published or ready to award</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-sm">
@@ -738,7 +738,7 @@ export function BidsPreview() {
           ))}
         </div>
         {filteredBids.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No bid packages found matching your criteria
           </div>
         )}

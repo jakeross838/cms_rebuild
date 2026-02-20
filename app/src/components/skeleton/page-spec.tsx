@@ -49,13 +49,13 @@ interface PageSpecProps {
 }
 
 const phaseColors: Record<string, { bg: string; text: string; border: string }> = {
-  'Phase 0 - Foundation': { bg: 'bg-blue-500', text: 'text-blue-700', border: 'border-blue-200' },
+  'Phase 0 - Foundation': { bg: 'bg-stone-500', text: 'text-stone-700', border: 'border-stone-200' },
   'Phase 1 - Communication': { bg: 'bg-green-500', text: 'text-green-700', border: 'border-green-200' },
   'Phase 2 - Vendor Collaboration': { bg: 'bg-purple-500', text: 'text-purple-700', border: 'border-purple-200' },
   'Phase 3 - Advanced PM': { bg: 'bg-orange-500', text: 'text-orange-700', border: 'border-orange-200' },
   'Phase 4 - Time & Payments': { bg: 'bg-pink-500', text: 'text-pink-700', border: 'border-pink-200' },
   'Phase 5 - Enhanced Portals': { bg: 'bg-cyan-500', text: 'text-cyan-700', border: 'border-cyan-200' },
-  'Phase 6 - Advanced Features': { bg: 'bg-yellow-500', text: 'text-yellow-700', border: 'border-yellow-200' },
+  'Phase 6 - Advanced Features': { bg: 'bg-amber-500', text: 'text-amber-700', border: 'border-amber-200' },
 }
 
 function Section({
@@ -129,12 +129,12 @@ export function PageSpec({
               <span className="text-xs font-medium text-muted-foreground">{phase}</span>
               {planFile && (
                 <>
-                  <span className="text-gray-300">|</span>
+                  <span className="text-warm-400">|</span>
                   <span className="text-xs text-muted-foreground">{planFile}</span>
                 </>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+            <h1 className="text-2xl font-bold text-foreground font-display tracking-tight">{title}</h1>
             <p className="mt-1 text-muted-foreground">{description}</p>
           </div>
 
@@ -211,7 +211,7 @@ export function PageSpec({
           <div className="space-y-3">
             {inputConnections.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-medium text-blue-600 mb-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-stone-600 mb-1.5">
                   <ArrowLeft className="h-3 w-3" />
                   Receives from
                 </div>
@@ -219,7 +219,7 @@ export function PageSpec({
                   {inputConnections.map((conn) => (
                     <span
                       key={conn.name}
-                      className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs"
+                      className="px-2 py-1 bg-stone-50 text-stone-700 rounded text-xs"
                       title={conn.description}
                     >
                       {conn.name}
@@ -322,13 +322,13 @@ export function PageSpec({
               <tbody>
                 {dataFields.map((field, index) => (
                   <tr key={index} className="border-b border-border">
-                    <td className="py-1.5 pr-4 font-mono text-blue-600 text-xs">{field.name}</td>
+                    <td className="py-1.5 pr-4 font-mono text-stone-600 text-xs">{field.name}</td>
                     <td className="py-1.5 pr-4 font-mono text-muted-foreground text-xs">{field.type}</td>
                     <td className="py-1.5 pr-4">
                       {field.required ? (
                         <span className="text-red-500 text-xs">Yes</span>
                       ) : (
-                        <span className="text-gray-300 text-xs">-</span>
+                        <span className="text-warm-400 text-xs">-</span>
                       )}
                     </td>
                     <td className="py-1.5 text-muted-foreground text-xs">{field.description}</td>
@@ -342,8 +342,8 @@ export function PageSpec({
 
       {/* ASCII Mockup - Collapsible */}
       {mockupAscii && (
-        <Section title="Layout Mockup" icon={Layers} iconColor="text-gray-600">
-          <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-xs font-mono leading-relaxed">
+        <Section title="Layout Mockup" icon={Layers} iconColor="text-warm-600">
+          <pre className="bg-warm-900 text-green-400 p-4 rounded-lg overflow-x-auto text-xs font-mono leading-relaxed">
             {mockupAscii}
           </pre>
         </Section>

@@ -21,6 +21,9 @@ import {
   LifeBuoy,
   Palette,
   Brain,
+  Clock,
+  Package,
+  Landmark,
 } from 'lucide-react'
 
 export interface NavSubItem {
@@ -70,7 +73,9 @@ export const companyJobNav: NavItem[] = [
     items: [
       { name: 'Calendar', href: '/skeleton/operations/calendar', description: 'Company-wide schedule' },
       { name: 'Crew Schedule', href: '/skeleton/operations/crew-schedule', description: 'Resource allocation' },
+      { name: 'Time Clock', href: '/skeleton/operations/time-clock', description: 'GPS clock in/out & timesheets' },
       { name: 'Equipment', href: '/skeleton/operations/equipment', description: 'Assets & tools' },
+      { name: 'Inventory', href: '/skeleton/operations/inventory', description: 'Materials & stock tracking' },
       { name: 'Deliveries', href: '/skeleton/operations/deliveries', description: 'Incoming materials' },
     ],
   },
@@ -79,8 +84,11 @@ export const companyJobNav: NavItem[] = [
     icon: DollarSign,
     items: [
       { name: 'Dashboard', href: '/skeleton/financial/dashboard', description: 'Financial overview' },
+      { name: 'Chart of Accounts', href: '/skeleton/financial/chart-of-accounts', description: 'GL accounts & structure' },
+      { name: 'Journal Entries', href: '/skeleton/financial/journal-entries', description: 'Manual journal entries' },
       { name: 'Receivables', href: '/skeleton/financial/receivables', description: 'Client balances' },
       { name: 'Payables', href: '/skeleton/financial/payables', description: 'Vendor balances' },
+      { name: 'Bank Reconciliation', href: '/skeleton/financial/bank-reconciliation', description: 'Bank account matching' },
       { name: 'Cash Flow', href: '/skeleton/financial/cash-flow', description: 'Forecasting' },
       { name: 'Profitability', href: '/skeleton/financial/profitability', description: 'Margin analysis' },
       { name: 'Reports', href: '/skeleton/financial/reports', description: 'Financial reports' },
@@ -164,6 +172,7 @@ export const jobPhaseNav: NavItem[] = [
     items: [
       { name: 'Schedule', href: '/schedule', description: 'Gantt chart with weather/tide' },
       { name: 'Daily Logs', href: '/daily-logs', description: 'Voice-to-text field updates' },
+      { name: 'Time Clock', href: '/time-clock', description: 'Clock in/out & timesheets' },
       { name: 'Photos', href: '/photos', description: 'AI-curated photo gallery' },
       { name: 'Permits', href: '/permits', description: 'Permit tracking' },
       { name: 'Inspections', href: '/inspections', description: 'Inspection scheduling' },
@@ -175,6 +184,7 @@ export const jobPhaseNav: NavItem[] = [
     items: [
       { name: 'Budget', href: '/budget', description: 'Real-time budget tracking' },
       { name: 'Purchase Orders', href: '/purchase-orders', description: 'PO management' },
+      { name: 'Inventory', href: '/inventory', description: 'Job site materials & stock' },
       { name: 'Invoices', href: '/invoices', description: 'Invoice processing' },
       { name: 'Draws', href: '/draws', description: 'Draw requests' },
       { name: 'Lien Waivers', href: '/lien-waivers', description: 'Lien waiver tracking' },

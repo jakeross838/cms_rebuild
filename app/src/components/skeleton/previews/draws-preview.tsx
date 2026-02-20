@@ -266,10 +266,10 @@ const mockDraws: Draw[] = [
 ]
 
 const statusConfig: Record<DrawStatus, { label: string; color: string; icon: typeof Calendar }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   internal_review: { label: 'Internal Review', color: 'bg-indigo-100 text-indigo-700', icon: Eye },
-  approved_internal: { label: 'Approved (Internal)', color: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700', icon: Send },
+  approved_internal: { label: 'Approved (Internal)', color: 'bg-stone-100 text-stone-700', icon: CheckCircle2 },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: Send },
   lender_review: { label: 'Lender Review', color: 'bg-amber-100 text-amber-700', icon: Clock },
   revision_requested: { label: 'Revision Requested', color: 'bg-red-100 text-red-700', icon: RotateCcw },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
@@ -305,7 +305,7 @@ function DocsChecklist({ docs }: { docs: DrawSupportingDocs }) {
         <FileCheck className="h-3 w-3" />
         Waivers: {docs.lienWaivers.received}/{docs.lienWaivers.required}
       </span>
-      <span className="flex items-center gap-1 text-gray-500">
+      <span className="flex items-center gap-1 text-warm-500">
         <Camera className="h-3 w-3" />
         {docs.photos} photos
       </span>
@@ -318,7 +318,7 @@ function DocsChecklist({ docs }: { docs: DrawSupportingDocs }) {
           Inspection: {docs.inspections.completed ? 'Passed' : 'Pending'}
         </span>
       )}
-      <span className="flex items-center gap-1 text-gray-500">
+      <span className="flex items-center gap-1 text-warm-500">
         <FileText className="h-3 w-3" />
         {docs.invoiceBackup} invoices
       </span>
@@ -333,20 +333,20 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
     <>
       <tr
         className={cn(
-          "hover:bg-gray-50 cursor-pointer",
-          expanded && "bg-blue-50"
+          "hover:bg-warm-50 cursor-pointer",
+          expanded && "bg-stone-50"
         )}
         onClick={onToggle}
       >
         <td className="py-3 px-4">
           <div className="flex items-center gap-2">
             {expanded ? (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-warm-400" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-warm-400" />
             )}
-            <span className="font-mono text-gray-500">#{draw.drawNumber}{draw.revisionNumber ? ` Rev ${String.fromCharCode(64 + draw.revisionNumber)}` : ''}</span>
-            <span className="font-medium text-gray-900">{draw.milestone}</span>
+            <span className="font-mono text-warm-500">#{draw.drawNumber}{draw.revisionNumber ? ` Rev ${String.fromCharCode(64 + draw.revisionNumber)}` : ''}</span>
+            <span className="font-medium text-warm-900">{draw.milestone}</span>
             {draw.aiNote && (
               <Sparkles className="h-4 w-4 text-amber-500" />
             )}
@@ -355,15 +355,15 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
             )}
           </div>
         </td>
-        <td className="py-3 px-3 text-sm text-gray-600">
+        <td className="py-3 px-3 text-sm text-warm-600">
           <div className="flex items-center gap-1">
-            <Building2 className="h-3.5 w-3.5 text-gray-400" />
+            <Building2 className="h-3.5 w-3.5 text-warm-400" />
             {draw.projectName}
           </div>
         </td>
-        <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(draw.amount)}</td>
-        <td className="py-3 px-3 text-right text-gray-500 text-sm">{formatCurrency(draw.retainageAmount)}</td>
-        <td className="py-3 px-3 text-center text-gray-600">{draw.percentComplete}%</td>
+        <td className="py-3 px-3 text-right font-medium text-warm-900">{formatCurrency(draw.amount)}</td>
+        <td className="py-3 px-3 text-right text-warm-500 text-sm">{formatCurrency(draw.retainageAmount)}</td>
+        <td className="py-3 px-3 text-center text-warm-600">{draw.percentComplete}%</td>
         <td className="py-3 px-3">
           <div className={cn(
             "inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium",
@@ -373,41 +373,41 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
             {statusConfig[draw.status].label}
           </div>
         </td>
-        <td className="py-3 px-3 text-gray-500 text-sm">{formatShortDate(draw.periodTo)}</td>
+        <td className="py-3 px-3 text-warm-500 text-sm">{formatShortDate(draw.periodTo)}</td>
       </tr>
       {expanded && (
-        <tr className="bg-blue-50">
+        <tr className="bg-stone-50">
           <td colSpan={7} className="py-3 px-12">
             <div className="space-y-2">
               {draw.description && (
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium text-gray-700">Description:</span> {draw.description}
+                <div className="text-sm text-warm-600">
+                  <span className="font-medium text-warm-700">Description:</span> {draw.description}
                 </div>
               )}
               <div className="grid grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Period:</span>{' '}
-                  <span className="text-gray-700">{formatDate(draw.periodFrom)} - {formatDate(draw.periodTo)}</span>
+                  <span className="text-warm-500">Period:</span>{' '}
+                  <span className="text-warm-700">{formatDate(draw.periodFrom)} - {formatDate(draw.periodTo)}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Net Amount:</span>{' '}
-                  <span className="text-gray-700">{formatCurrency(draw.netAmount)}</span>
+                  <span className="text-warm-500">Net Amount:</span>{' '}
+                  <span className="text-warm-700">{formatCurrency(draw.netAmount)}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Format:</span>{' '}
-                  <span className="text-gray-700">{draw.formatType === 'aia_g702' ? 'AIA G702/G703' : draw.formatType === 'custom' ? 'Custom' : 'Lender Specific'}</span>
+                  <span className="text-warm-500">Format:</span>{' '}
+                  <span className="text-warm-700">{draw.formatType === 'aia_g702' ? 'AIA G702/G703' : draw.formatType === 'custom' ? 'Custom' : 'Lender Specific'}</span>
                 </div>
                 {draw.lenderName && (
                   <div>
-                    <span className="text-gray-500">Lender:</span>{' '}
-                    <span className="text-gray-700">{draw.lenderName}</span>
+                    <span className="text-warm-500">Lender:</span>{' '}
+                    <span className="text-warm-700">{draw.lenderName}</span>
                   </div>
                 )}
               </div>
               <div className="grid grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">SOV Lines:</span>{' '}
-                  <span className="text-gray-700">{draw.sovLineCount}</span>
+                  <span className="text-warm-500">SOV Lines:</span>{' '}
+                  <span className="text-warm-700">{draw.sovLineCount}</span>
                 </div>
                 {draw.changeOrdersIncluded > 0 && (
                   <div>
@@ -418,13 +418,13 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                 )}
                 {draw.storedMaterials > 0 && (
                   <div>
-                    <span className="text-gray-500">Stored Materials:</span>{' '}
-                    <span className="text-gray-700">{formatCurrency(draw.storedMaterials)}</span>
+                    <span className="text-warm-500">Stored Materials:</span>{' '}
+                    <span className="text-warm-700">{formatCurrency(draw.storedMaterials)}</span>
                   </div>
                 )}
                 {draw.variance !== undefined && draw.variance !== 0 && (
                   <div>
-                    <span className="text-gray-500">Variance:</span>{' '}
+                    <span className="text-warm-500">Variance:</span>{' '}
                     <span className={draw.variance < 0 ? "text-red-600 font-medium" : "text-green-600"}>
                       {formatCurrency(draw.variance)}
                     </span>
@@ -445,14 +445,14 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                       <Eye className="h-4 w-4" />
                       Submit for Review
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                       <FileText className="h-4 w-4" />
                       Preview G702
                     </button>
                   </>
                 )}
                 {(draw.status === 'approved_internal' || draw.status === 'internal_review') && (
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                     <Send className="h-4 w-4" />
                     Submit to Lender
                   </button>
@@ -490,17 +490,17 @@ function ProgressBar({ draws }: { draws: Draw[] }) {
     paid: 'bg-green-500',
     disbursed: 'bg-emerald-500',
     approved: 'bg-amber-500',
-    lender_review: 'bg-yellow-400',
-    submitted: 'bg-blue-500',
-    approved_internal: 'bg-blue-400',
+    lender_review: 'bg-amber-400',
+    submitted: 'bg-stone-500',
+    approved_internal: 'bg-stone-400',
     internal_review: 'bg-indigo-400',
-    draft: 'bg-gray-300',
+    draft: 'bg-warm-300',
     revision_requested: 'bg-red-400',
   }
 
   return (
     <div className="space-y-2">
-      <div className="flex h-4 rounded-full overflow-hidden bg-gray-200">
+      <div className="flex h-4 rounded-full overflow-hidden bg-warm-200">
         {segments.map((segment) => (
           <div
             key={segment.id}
@@ -510,7 +510,7 @@ function ProgressBar({ draws }: { draws: Draw[] }) {
           />
         ))}
       </div>
-      <div className="flex justify-between text-xs text-gray-500">
+      <div className="flex justify-between text-xs text-warm-500">
         <span>Contract Start</span>
         <span>Final Completion</span>
       </div>
@@ -557,14 +557,14 @@ export function DrawsPreview() {
   const waiverIssues = mockDraws.filter(d => d.supportingDocs.lienWaivers.received < d.supportingDocs.lienWaivers.required).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Draw Requests</h3>
-              <span className="text-sm text-gray-500">{mockDraws.length} draws across {projects.length} projects</span>
+              <h3 className="font-semibold text-warm-900">Draw Requests</h3>
+              <span className="text-sm text-warm-500">{mockDraws.length} draws across {projects.length} projects</span>
               {revisionCount > 0 && (
                 <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <RotateCcw className="h-3 w-3" />
@@ -574,11 +574,11 @@ export function DrawsPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               New Draw
             </button>
@@ -587,21 +587,21 @@ export function DrawsPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <TrendingUp className="h-4 w-4" />
               Total Billed
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalBilled)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalBilled)}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <DollarSign className="h-4 w-4" />
               Total Retainage
             </div>
-            <div className="text-xl font-bold text-gray-700 mt-1">{formatCurrency(totalRetainage)}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{formatCurrency(totalRetainage)}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -610,21 +610,21 @@ export function DrawsPreview() {
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(totalDisbursed)}</div>
           </div>
-          <div className={cn("rounded-lg p-3", pendingApproval > 0 ? "bg-amber-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-sm", pendingApproval > 0 ? "text-amber-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", pendingApproval > 0 ? "bg-amber-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-sm", pendingApproval > 0 ? "text-amber-600" : "text-warm-500")}>
               <Clock className="h-4 w-4" />
               Pending Approval
             </div>
-            <div className={cn("text-xl font-bold mt-1", pendingApproval > 0 ? "text-amber-700" : "text-gray-500")}>
+            <div className={cn("text-xl font-bold mt-1", pendingApproval > 0 ? "text-amber-700" : "text-warm-500")}>
               {pendingApproval} draw{pendingApproval !== 1 ? 's' : ''}
             </div>
           </div>
-          <div className={cn("rounded-lg p-3", waiverIssues > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-sm", waiverIssues > 0 ? "text-red-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", waiverIssues > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-sm", waiverIssues > 0 ? "text-red-600" : "text-warm-500")}>
               <FileCheck className="h-4 w-4" />
               Waiver Issues
             </div>
-            <div className={cn("text-xl font-bold mt-1", waiverIssues > 0 ? "text-red-700" : "text-gray-500")}>
+            <div className={cn("text-xl font-bold mt-1", waiverIssues > 0 ? "text-red-700" : "text-warm-500")}>
               {waiverIssues} draw{waiverIssues !== 1 ? 's' : ''}
             </div>
           </div>
@@ -632,7 +632,7 @@ export function DrawsPreview() {
       </div>
 
       {/* FilterBar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -674,14 +674,14 @@ export function DrawsPreview() {
 
       {/* Progress Bar (for single-project view) */}
       {projectFilter !== 'all' && (
-        <div className="bg-white border-b border-gray-200 px-4 py-4">
+        <div className="bg-white border-b border-warm-200 px-4 py-4">
           <div className="flex items-center gap-4 mb-3">
-            <span className="text-sm font-medium text-gray-700">Draw Progress</span>
-            <div className="flex items-center gap-3 text-xs text-gray-500">
+            <span className="text-sm font-medium text-warm-700">Draw Progress</span>
+            <div className="flex items-center gap-3 text-xs text-warm-500">
               <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-500 rounded" /><span>Paid</span></div>
               <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-500 rounded" /><span>Approved</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-500 rounded" /><span>Submitted</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-300 rounded" /><span>Draft</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-stone-500 rounded" /><span>Submitted</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-warm-300 rounded" /><span>Draft</span></div>
               <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-red-400 rounded" /><span>Revision</span></div>
             </div>
           </div>
@@ -692,18 +692,18 @@ export function DrawsPreview() {
       {/* Draw Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 border-b border-gray-200">
+          <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Draw / Milestone</th>
-              <th className="text-left py-3 px-3 font-medium text-gray-600">Project</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Amount</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Retainage</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600">% Complete</th>
-              <th className="text-left py-3 px-3 font-medium text-gray-600">Status</th>
-              <th className="text-left py-3 px-3 font-medium text-gray-600">Period</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">Draw / Milestone</th>
+              <th className="text-left py-3 px-3 font-medium text-warm-600">Project</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Amount</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Retainage</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600">% Complete</th>
+              <th className="text-left py-3 px-3 font-medium text-warm-600">Status</th>
+              <th className="text-left py-3 px-3 font-medium text-warm-600">Period</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-white divide-y divide-warm-100">
             {filteredDraws.map(draw => (
               <DrawRow
                 key={draw.id}
@@ -732,7 +732,7 @@ export function DrawsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI-Powered Draw Management"
           columns={2}

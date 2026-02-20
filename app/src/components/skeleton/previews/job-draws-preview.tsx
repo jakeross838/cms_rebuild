@@ -315,9 +315,9 @@ const mockDraws: Draw[] = [
 ]
 
 const statusConfig: Record<DrawStatus, { label: string; color: string; icon: typeof Calendar }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700', icon: FileText },
+  draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   internal_review: { label: 'Internal Review', color: 'bg-indigo-100 text-indigo-700', icon: Eye },
-  submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-700', icon: Send },
+  submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: Send },
   lender_review: { label: 'Lender Review', color: 'bg-amber-100 text-amber-700', icon: Clock },
   revision_requested: { label: 'Revision Requested', color: 'bg-red-100 text-red-700', icon: RotateCcw },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
@@ -347,13 +347,13 @@ function DocsChecklist({ docs }: { docs: DrawSupportingDocs }) {
     <div className="flex items-center gap-3 text-xs mt-1">
       <span className={cn(
         "flex items-center gap-1",
-        docs.lienWaivers.required === 0 ? "text-gray-400" :
+        docs.lienWaivers.required === 0 ? "text-warm-400" :
         docs.lienWaivers.received >= docs.lienWaivers.required ? "text-green-600" : "text-amber-600"
       )}>
         <FileCheck className="h-3 w-3" />
         Waivers: {docs.lienWaivers.received}/{docs.lienWaivers.required}
       </span>
-      <span className="flex items-center gap-1 text-gray-500">
+      <span className="flex items-center gap-1 text-warm-500">
         <Camera className="h-3 w-3" />
         {docs.photos} photos
       </span>
@@ -366,7 +366,7 @@ function DocsChecklist({ docs }: { docs: DrawSupportingDocs }) {
           Inspection: {docs.inspections.completed ? 'Passed' : 'Pending'}
         </span>
       )}
-      <span className="flex items-center gap-1 text-gray-500">
+      <span className="flex items-center gap-1 text-warm-500">
         <ClipboardList className="h-3 w-3" />
         {docs.invoiceBackup} invoices
       </span>
@@ -377,28 +377,28 @@ function DocsChecklist({ docs }: { docs: DrawSupportingDocs }) {
 function StoredMaterialsBreakdown({ items }: { items: StoredMaterialItem[] }) {
   return (
     <div className="mt-2">
-      <div className="text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
+      <div className="text-xs font-medium text-warm-600 mb-1 flex items-center gap-1">
         <Package className="h-3 w-3" />
         Stored Materials Breakdown:
       </div>
-      <div className="bg-white rounded border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded border border-warm-200 overflow-hidden">
         <table className="w-full text-xs">
-          <thead className="bg-gray-50">
+          <thead className="bg-warm-50">
             <tr>
-              <th className="text-left py-1.5 px-2 text-gray-500">Description</th>
-              <th className="text-right py-1.5 px-2 text-gray-500">Amount</th>
-              <th className="text-left py-1.5 px-2 text-gray-500">Location</th>
-              <th className="text-center py-1.5 px-2 text-gray-500">Verified</th>
+              <th className="text-left py-1.5 px-2 text-warm-500">Description</th>
+              <th className="text-right py-1.5 px-2 text-warm-500">Amount</th>
+              <th className="text-left py-1.5 px-2 text-warm-500">Location</th>
+              <th className="text-center py-1.5 px-2 text-warm-500">Verified</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-warm-100">
             {items.map((item, i) => (
               <tr key={i}>
-                <td className="py-1.5 px-2 text-gray-700">{item.description}</td>
-                <td className="py-1.5 px-2 text-right text-gray-700 font-medium">{formatCurrency(item.amount)}</td>
-                <td className="py-1.5 px-2 text-gray-600">
+                <td className="py-1.5 px-2 text-warm-700">{item.description}</td>
+                <td className="py-1.5 px-2 text-right text-warm-700 font-medium">{formatCurrency(item.amount)}</td>
+                <td className="py-1.5 px-2 text-warm-600">
                   <span className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3 text-gray-400" />
+                    <MapPin className="h-3 w-3 text-warm-400" />
                     {item.location}
                   </span>
                 </td>
@@ -406,7 +406,7 @@ function StoredMaterialsBreakdown({ items }: { items: StoredMaterialItem[] }) {
                   {item.verified ? (
                     <span className="inline-flex items-center gap-1 text-green-600">
                       <Shield className="h-3 w-3" />
-                      {item.verificationDate && <span className="text-gray-400">{item.verificationDate}</span>}
+                      {item.verificationDate && <span className="text-warm-400">{item.verificationDate}</span>}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-amber-600">
@@ -431,20 +431,20 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
     <>
       <tr
         className={cn(
-          "hover:bg-gray-50 cursor-pointer",
-          expanded && "bg-blue-50"
+          "hover:bg-warm-50 cursor-pointer",
+          expanded && "bg-stone-50"
         )}
         onClick={onToggle}
       >
         <td className="py-3 px-4">
           <div className="flex items-center gap-2">
             {expanded ? (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-warm-400" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <ChevronRight className="h-4 w-4 text-warm-400" />
             )}
-            <span className="font-mono text-gray-500">#{draw.drawNumber}{draw.revisionNumber ? ` Rev ${String.fromCharCode(64 + draw.revisionNumber)}` : ''}</span>
-            <span className="font-medium text-gray-900">{draw.milestone}</span>
+            <span className="font-mono text-warm-500">#{draw.drawNumber}{draw.revisionNumber ? ` Rev ${String.fromCharCode(64 + draw.revisionNumber)}` : ''}</span>
+            <span className="font-medium text-warm-900">{draw.milestone}</span>
             {draw.autoGenerated && <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">Auto</span>}
             {draw.changeOrdersIncluded > 0 && (
               <span className="text-xs bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded">
@@ -459,10 +459,10 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
             )}
           </div>
         </td>
-        <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(draw.amount)}</td>
-        <td className="py-3 px-3 text-right text-gray-500 text-sm">{formatCurrency(draw.retainageAmount)} ({draw.retainagePercent}%)</td>
-        <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(draw.netAmount)}</td>
-        <td className="py-3 px-3 text-center text-gray-600">{draw.percentComplete}%</td>
+        <td className="py-3 px-3 text-right font-medium text-warm-900">{formatCurrency(draw.amount)}</td>
+        <td className="py-3 px-3 text-right text-warm-500 text-sm">{formatCurrency(draw.retainageAmount)} ({draw.retainagePercent}%)</td>
+        <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(draw.netAmount)}</td>
+        <td className="py-3 px-3 text-center text-warm-600">{draw.percentComplete}%</td>
         <td className="py-3 px-3">
           <div className={cn(
             "inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium",
@@ -472,28 +472,28 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
             {statusConfig[draw.status].label}
           </div>
         </td>
-        <td className="py-3 px-3 text-gray-500 text-sm">{formatShortDate(draw.periodTo)}</td>
+        <td className="py-3 px-3 text-warm-500 text-sm">{formatShortDate(draw.periodTo)}</td>
       </tr>
       {expanded && (
-        <tr className="bg-blue-50">
+        <tr className="bg-stone-50">
           <td colSpan={7} className="py-3 px-12">
             <div className="space-y-3">
               {draw.description && (
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium text-gray-700">Description:</span> {draw.description}
+                <div className="text-sm text-warm-600">
+                  <span className="font-medium text-warm-700">Description:</span> {draw.description}
                 </div>
               )}
               <div className="grid grid-cols-4 gap-4 text-sm">
-                <div><span className="text-gray-500">Period:</span> <span className="text-gray-700">{formatDate(draw.periodFrom)} - {formatDate(draw.periodTo)}</span></div>
-                <div><span className="text-gray-500">Format:</span> <span className="text-gray-700">{draw.formatType === 'aia_g702' ? 'AIA G702/G703' : 'Custom'}</span></div>
-                <div><span className="text-gray-500">Lender:</span> <span className="text-gray-700">{draw.lenderName}</span></div>
+                <div><span className="text-warm-500">Period:</span> <span className="text-warm-700">{formatDate(draw.periodFrom)} - {formatDate(draw.periodTo)}</span></div>
+                <div><span className="text-warm-500">Format:</span> <span className="text-warm-700">{draw.formatType === 'aia_g702' ? 'AIA G702/G703' : 'Custom'}</span></div>
+                <div><span className="text-warm-500">Lender:</span> <span className="text-warm-700">{draw.lenderName}</span></div>
                 {draw.storedMaterials > 0 && (
-                  <div><span className="text-gray-500">Stored Materials:</span> <span className="text-gray-700">{formatCurrency(draw.storedMaterials)}</span></div>
+                  <div><span className="text-warm-500">Stored Materials:</span> <span className="text-warm-700">{formatCurrency(draw.storedMaterials)}</span></div>
                 )}
               </div>
               <div className="grid grid-cols-4 gap-4 text-sm">
-                <div><span className="text-gray-500">SOV Lines:</span> <span className="text-gray-700">{draw.sovLineCount}</span></div>
-                <div><span className="text-gray-500">Included Invoices:</span> <span className="text-gray-700">{draw.includedInvoices}</span></div>
+                <div><span className="text-warm-500">SOV Lines:</span> <span className="text-warm-700">{draw.sovLineCount}</span></div>
+                <div><span className="text-warm-500">Included Invoices:</span> <span className="text-warm-700">{draw.includedInvoices}</span></div>
                 {draw.dailyLogsCount && draw.dailyLogsCount > 0 && (
                   <div className="flex items-center gap-1">
                     <BookOpen className="h-3.5 w-3.5 text-cyan-600" />
@@ -501,7 +501,7 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                   </div>
                 )}
                 {draw.variance !== undefined && draw.variance !== 0 && (
-                  <div><span className="text-gray-500">Variance:</span> <span className={draw.variance < 0 ? "text-red-600 font-medium" : "text-green-600"}>{formatCurrency(draw.variance)}</span></div>
+                  <div><span className="text-warm-500">Variance:</span> <span className={draw.variance < 0 ? "text-red-600 font-medium" : "text-green-600"}>{formatCurrency(draw.variance)}</span></div>
                 )}
               </div>
               <DocsChecklist docs={draw.supportingDocs} />
@@ -514,26 +514,26 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
               {/* SOV Line Preview for expanded draws */}
               {draw.sovLines && draw.sovLines.length > 0 && (
                 <div className="mt-2">
-                  <div className="text-xs font-medium text-gray-600 mb-1">SOV Summary (Top Lines):</div>
-                  <div className="bg-white rounded border border-gray-200 overflow-hidden">
+                  <div className="text-xs font-medium text-warm-600 mb-1">SOV Summary (Top Lines):</div>
+                  <div className="bg-white rounded border border-warm-200 overflow-hidden">
                     <table className="w-full text-xs">
-                      <thead className="bg-gray-50">
+                      <thead className="bg-warm-50">
                         <tr>
-                          <th className="text-left py-1.5 px-2 text-gray-500">Line</th>
-                          <th className="text-left py-1.5 px-2 text-gray-500">Description</th>
-                          <th className="text-right py-1.5 px-2 text-gray-500">Scheduled</th>
-                          <th className="text-right py-1.5 px-2 text-gray-500">This Period</th>
-                          <th className="text-center py-1.5 px-2 text-gray-500">%</th>
+                          <th className="text-left py-1.5 px-2 text-warm-500">Line</th>
+                          <th className="text-left py-1.5 px-2 text-warm-500">Description</th>
+                          <th className="text-right py-1.5 px-2 text-warm-500">Scheduled</th>
+                          <th className="text-right py-1.5 px-2 text-warm-500">This Period</th>
+                          <th className="text-center py-1.5 px-2 text-warm-500">%</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-warm-100">
                         {draw.sovLines.map((line, i) => (
                           <tr key={i}>
-                            <td className="py-1.5 px-2 font-mono text-gray-600">{line.lineNumber}</td>
-                            <td className="py-1.5 px-2 text-gray-700">{line.description}</td>
-                            <td className="py-1.5 px-2 text-right text-gray-600">{formatCurrency(line.scheduledValue)}</td>
-                            <td className="py-1.5 px-2 text-right text-gray-700 font-medium">{formatCurrency(line.currentCompleted)}</td>
-                            <td className="py-1.5 px-2 text-center text-gray-600">{line.percentComplete}%</td>
+                            <td className="py-1.5 px-2 font-mono text-warm-600">{line.lineNumber}</td>
+                            <td className="py-1.5 px-2 text-warm-700">{line.description}</td>
+                            <td className="py-1.5 px-2 text-right text-warm-600">{formatCurrency(line.scheduledValue)}</td>
+                            <td className="py-1.5 px-2 text-right text-warm-700 font-medium">{formatCurrency(line.currentCompleted)}</td>
+                            <td className="py-1.5 px-2 text-center text-warm-600">{line.percentComplete}%</td>
                           </tr>
                         ))}
                       </tbody>
@@ -555,11 +555,11 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                       <Eye className="h-4 w-4" />
                       Submit for Review
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                       <FileText className="h-4 w-4" />
                       Preview G702
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                       <Layers className="h-4 w-4" />
                       Assemble Docs
                     </button>
@@ -567,11 +567,11 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                 )}
                 {draw.status === 'internal_review' && (
                   <>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                       <Send className="h-4 w-4" />
                       Submit to Lender
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                       <RotateCcw className="h-4 w-4" />
                       Request Revisions
                     </button>
@@ -584,7 +584,7 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                   </button>
                 )}
                 {draw.status === 'lender_review' && (
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                     <ArrowRightLeft className="h-4 w-4" />
                     Record Lender Response
                   </button>
@@ -609,16 +609,16 @@ function ProgressBar({ draws }: { draws: Draw[] }) {
   const statusColors: Record<DrawStatus, string> = {
     disbursed: 'bg-green-500',
     approved: 'bg-amber-500',
-    lender_review: 'bg-yellow-400',
-    submitted: 'bg-blue-500',
+    lender_review: 'bg-amber-400',
+    submitted: 'bg-stone-500',
     internal_review: 'bg-indigo-400',
-    draft: 'bg-gray-300',
+    draft: 'bg-warm-300',
     revision_requested: 'bg-red-400',
   }
 
   return (
     <div className="space-y-2">
-      <div className="flex h-4 rounded-full overflow-hidden bg-gray-200">
+      <div className="flex h-4 rounded-full overflow-hidden bg-warm-200">
         {segments.map((segment) => (
           <div
             key={segment.id}
@@ -628,7 +628,7 @@ function ProgressBar({ draws }: { draws: Draw[] }) {
           />
         ))}
       </div>
-      <div className="flex justify-between text-xs text-gray-500">
+      <div className="flex justify-between text-xs text-warm-500">
         <span>Contract Start</span>
         <span>Final Completion</span>
       </div>
@@ -706,16 +706,16 @@ export function JobDrawsPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Draw Schedule - Smith Residence</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">In Progress</span>
+              <h3 className="font-semibold text-warm-900">Draw Schedule - Smith Residence</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">In Progress</span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <FileText className="h-4 w-4" />
                 Contract: {formatCurrency(contractAmount)}
@@ -729,17 +729,17 @@ export function JobDrawsPreview() {
                 <Clock className="h-4 w-4" />
                 {mockDraws.length} Draws
               </span>
-              <span className="flex items-center gap-1 text-gray-400">
+              <span className="flex items-center gap-1 text-warm-400">
                 Lender: {lenderName}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               Add Draw
             </button>
@@ -748,37 +748,37 @@ export function JobDrawsPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <CheckCircle2 className="h-4 w-4" />
               Draws Completed
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">
+            <div className="text-xl font-bold text-warm-900 mt-1">
               {disbursedDraws.length} of {mockDraws.length}
             </div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <TrendingUp className="h-4 w-4" />
               Amount Billed
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(amountBilled)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(amountBilled)}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <DollarSign className="h-4 w-4" />
               Retainage Held
             </div>
-            <div className="text-xl font-bold text-gray-700 mt-1">{formatCurrency(totalRetainage)}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{formatCurrency(totalRetainage)}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <DollarSign className="h-4 w-4" />
               Remaining
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(amountRemaining)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(amountRemaining)}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -791,20 +791,20 @@ export function JobDrawsPreview() {
       </div>
 
       {/* G702 Summary */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-6 text-sm">
-          <span className="text-gray-500">G702 Summary:</span>
+          <span className="text-warm-500">G702 Summary:</span>
           <div className="flex items-center gap-4">
-            <div><span className="text-gray-500">Original:</span> <span className="font-medium">{formatCurrency(originalContractAmount)}</span></div>
-            <div><span className="text-gray-500">COs:</span> <span className="font-medium text-orange-600">+{formatCurrency(netChangeOrders)}</span></div>
-            <div><span className="text-gray-500">Current:</span> <span className="font-medium">{formatCurrency(contractAmount)}</span></div>
-            <div><span className="text-gray-500">Disbursed:</span> <span className="font-medium text-green-600">{formatCurrency(amountPaid)}</span></div>
+            <div><span className="text-warm-500">Original:</span> <span className="font-medium">{formatCurrency(originalContractAmount)}</span></div>
+            <div><span className="text-warm-500">COs:</span> <span className="font-medium text-orange-600">+{formatCurrency(netChangeOrders)}</span></div>
+            <div><span className="text-warm-500">Current:</span> <span className="font-medium">{formatCurrency(contractAmount)}</span></div>
+            <div><span className="text-warm-500">Disbursed:</span> <span className="font-medium text-green-600">{formatCurrency(amountPaid)}</span></div>
           </div>
         </div>
       </div>
 
       {/* FilterBar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -835,14 +835,14 @@ export function JobDrawsPreview() {
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="flex items-center gap-4 mb-3">
-          <span className="text-sm font-medium text-gray-700">Overall Progress</span>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span className="text-sm font-medium text-warm-700">Overall Progress</span>
+          <div className="flex items-center gap-3 text-xs text-warm-500">
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-500 rounded" /><span>Disbursed</span></div>
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-500 rounded" /><span>Approved</span></div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-400 rounded" /><span>In Review</span></div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-300 rounded" /><span>Draft</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-400 rounded" /><span>In Review</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-warm-300 rounded" /><span>Draft</span></div>
           </div>
         </div>
         <ProgressBar draws={mockDraws} />
@@ -851,18 +851,18 @@ export function JobDrawsPreview() {
       {/* Draw Schedule Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 border-b border-gray-200">
+          <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Draw / Milestone</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Amount</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Retainage</th>
-              <th className="text-right py-3 px-3 font-medium text-gray-600">Net</th>
-              <th className="text-center py-3 px-3 font-medium text-gray-600">% Complete</th>
-              <th className="text-left py-3 px-3 font-medium text-gray-600">Status</th>
-              <th className="text-left py-3 px-3 font-medium text-gray-600">Period</th>
+              <th className="text-left py-3 px-4 font-medium text-warm-600">Draw / Milestone</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Amount</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Retainage</th>
+              <th className="text-right py-3 px-3 font-medium text-warm-600">Net</th>
+              <th className="text-center py-3 px-3 font-medium text-warm-600">% Complete</th>
+              <th className="text-left py-3 px-3 font-medium text-warm-600">Status</th>
+              <th className="text-left py-3 px-3 font-medium text-warm-600">Period</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-white divide-y divide-warm-100">
             {filteredDraws.map(draw => (
               <DrawRow
                 key={draw.id}
@@ -872,13 +872,13 @@ export function JobDrawsPreview() {
               />
             ))}
           </tbody>
-          <tfoot className="bg-gray-50 border-t-2 border-gray-300">
+          <tfoot className="bg-warm-50 border-t-2 border-warm-300">
             <tr className="font-semibold">
-              <td className="py-3 px-4 text-gray-900">TOTAL</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(contractAmount)}</td>
-              <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(totalRetainage)}</td>
-              <td className="py-3 px-3 text-right text-gray-900">{formatCurrency(contractAmount - totalRetainage)}</td>
-              <td className="py-3 px-3 text-center text-gray-900">100%</td>
+              <td className="py-3 px-4 text-warm-900">TOTAL</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(contractAmount)}</td>
+              <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(totalRetainage)}</td>
+              <td className="py-3 px-3 text-right text-warm-900">{formatCurrency(contractAmount - totalRetainage)}</td>
+              <td className="py-3 px-3 text-center text-warm-900">100%</td>
               <td colSpan={2} className="py-3 px-3"></td>
             </tr>
           </tfoot>

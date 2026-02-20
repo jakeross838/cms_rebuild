@@ -408,7 +408,7 @@ const jobProfitability: JobProfitability[] = [
 ]
 
 const pendingApprovals: PendingApproval[] = [
-  { type: 'invoice', count: 3, label: 'Invoices', color: 'bg-blue-100 text-blue-700' },
+  { type: 'invoice', count: 3, label: 'Invoices', color: 'bg-stone-100 text-stone-700' },
   { type: 'change-order', count: 2, label: 'Change Orders', color: 'bg-amber-100 text-amber-700' },
   { type: 'po', count: 5, label: 'POs', color: 'bg-purple-100 text-purple-700' },
   { type: 'draw', count: 1, label: 'Draws', color: 'bg-green-100 text-green-700' },
@@ -519,9 +519,9 @@ function formatCurrency(value: number): string {
 
 const cardColorClasses = {
   blue: {
-    bg: 'bg-blue-50',
-    icon: 'bg-blue-100 text-blue-600',
-    text: 'text-blue-600',
+    bg: 'bg-stone-50',
+    icon: 'bg-stone-100 text-stone-600',
+    text: 'text-stone-600',
   },
   green: {
     bg: 'bg-green-50',
@@ -556,7 +556,7 @@ function Sparkline({ data, color = 'blue', width = 60, height = 20 }: { data: nu
   }).join(' ')
 
   const colorMap: Record<string, string> = {
-    blue: 'stroke-blue-500',
+    blue: 'stroke-stone-500',
     green: 'stroke-green-500',
     amber: 'stroke-amber-500',
     purple: 'stroke-purple-500',
@@ -568,7 +568,7 @@ function Sparkline({ data, color = 'blue', width = 60, height = 20 }: { data: nu
       <polyline
         points={points}
         fill="none"
-        className={cn('stroke-[1.5]', colorMap[color] || 'stroke-blue-500')}
+        className={cn('stroke-[1.5]', colorMap[color] || 'stroke-stone-500')}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -603,10 +603,10 @@ function SummaryCardComponent({ card }: { card: SummaryCard }) {
           {card.change > 0 ? '+' : ''}{card.change}%
         </div>
       </div>
-      <div className="text-2xl font-bold text-gray-900">{formatCurrency(card.value)}</div>
-      <div className="text-sm text-gray-500 mt-1">{card.label}</div>
+      <div className="text-2xl font-bold text-warm-900">{formatCurrency(card.value)}</div>
+      <div className="text-sm text-warm-500 mt-1">{card.label}</div>
       <div className="flex items-center justify-between mt-1">
-        <div className="text-xs text-gray-400">{card.changeLabel}</div>
+        <div className="text-xs text-warm-400">{card.changeLabel}</div>
         {card.sparklineData && (
           <Sparkline data={card.sparklineData} color={card.color} width={50} height={16} />
         )}
@@ -619,23 +619,23 @@ function SummaryCardComponent({ card }: { card: SummaryCard }) {
 
 function ChartPlaceholder({ title, icon: Icon, height = "h-48" }: { title: string; icon: React.ElementType; height?: string }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-medium text-gray-900 text-sm">{title}</h4>
-        <Icon className="h-4 w-4 text-gray-400" />
+        <h4 className="font-medium text-warm-900 text-sm">{title}</h4>
+        <Icon className="h-4 w-4 text-warm-400" />
       </div>
-      <div className={cn("bg-gray-50 rounded-lg flex items-center justify-center", height)}>
+      <div className={cn("bg-warm-50 rounded-lg flex items-center justify-center", height)}>
         <div className="text-center">
           <div className="flex justify-center gap-1 mb-2">
             {[40, 65, 45, 80, 55, 70, 90, 60, 75, 85, 50, 95].map((h, i) => (
               <div
                 key={i}
-                className="w-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t"
+                className="w-4 bg-gradient-to-t from-stone-500 to-stone-300 rounded-t"
                 style={{ height: `${h}%`, maxHeight: '120px' }}
               />
             ))}
           </div>
-          <span className="text-xs text-gray-400">Chart visualization</span>
+          <span className="text-xs text-warm-400">Chart visualization</span>
         </div>
       </div>
     </div>
@@ -646,12 +646,12 @@ function ChartPlaceholder({ title, icon: Icon, height = "h-48" }: { title: strin
 
 function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
   const colorMap: Record<string, string> = {
-    blue: 'text-blue-600',
+    blue: 'text-stone-600',
     green: 'text-green-600',
     amber: 'text-amber-600',
     red: 'text-red-600',
     purple: 'text-purple-600',
-    gray: 'text-gray-600',
+    gray: 'text-warm-600',
   }
 
   return (
@@ -659,19 +659,19 @@ function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
       {widgets.map(w => {
         const Icon = w.icon
         return (
-          <div key={w.id} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-sm cursor-pointer transition-shadow">
+          <div key={w.id} className="bg-white rounded-lg border border-warm-200 p-3 hover:shadow-sm cursor-pointer transition-shadow">
             <div className={cn("flex items-center gap-1.5 text-xs mb-1", colorMap[w.color])}>
               <Icon className="h-3.5 w-3.5" />
               {w.label}
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-lg font-bold text-gray-900">{w.value}</div>
+              <div className="text-lg font-bold text-warm-900">{w.value}</div>
               {w.sparklineData && (
                 <Sparkline data={w.sparklineData} color={w.color} width={40} height={14} />
               )}
             </div>
             <div className="flex items-center justify-between mt-0.5">
-              <div className="text-xs text-gray-500">{w.subLabel}</div>
+              <div className="text-xs text-warm-500">{w.subLabel}</div>
               {w.changePercent !== undefined && (
                 <div className={cn(
                   "flex items-center gap-0.5 text-[10px] font-medium",
@@ -693,41 +693,41 @@ function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
 
 function OutstandingDrawsList({ draws }: { draws: OutstandingDraw[] }) {
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-700',
-    review: 'bg-blue-100 text-blue-700',
+    draft: 'bg-warm-100 text-warm-700',
+    review: 'bg-stone-100 text-stone-700',
     approved: 'bg-green-100 text-green-700',
     submitted: 'bg-purple-100 text-purple-700',
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium text-gray-900 text-sm">Outstanding Draws</h4>
-          <span className="text-xs text-gray-500">{formatCurrency(draws.reduce((s, d) => s + d.amount, 0))} pending</span>
+          <h4 className="font-medium text-warm-900 text-sm">Outstanding Draws</h4>
+          <span className="text-xs text-warm-500">{formatCurrency(draws.reduce((s, d) => s + d.amount, 0))} pending</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {draws.map(draw => (
-          <div key={draw.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+          <div key={draw.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-sm font-medium text-gray-900">{draw.job}</span>
-                <span className="text-xs text-gray-500 ml-2">Draw #{draw.drawNumber}</span>
+                <span className="text-sm font-medium text-warm-900">{draw.job}</span>
+                <span className="text-xs text-warm-500 ml-2">Draw #{draw.drawNumber}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className={cn("text-xs px-2 py-0.5 rounded font-medium", statusColors[draw.status])}>
                   {draw.status.charAt(0).toUpperCase() + draw.status.slice(1)}
                 </span>
-                <span className="text-sm font-semibold text-gray-900">{formatCurrency(draw.amount)}</span>
+                <span className="text-sm font-semibold text-warm-900">{formatCurrency(draw.amount)}</span>
               </div>
             </div>
-            <div className="text-xs text-gray-400 mt-0.5">{draw.daysInStatus} days in status</div>
+            <div className="text-xs text-warm-400 mt-0.5">{draw.daysInStatus} days in status</div>
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all draws
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -748,32 +748,32 @@ function PaymentsList({ payments }: { payments: PaymentDue[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium text-gray-900 text-sm">Upcoming Payments</h4>
-          <span className="text-xs text-gray-500">{payments.length} due soon | {formatCurrency(payments.reduce((s, p) => s + p.amount, 0))}</span>
+          <h4 className="font-medium text-warm-900 text-sm">Upcoming Payments</h4>
+          <span className="text-xs text-warm-500">{payments.length} due soon | {formatCurrency(payments.reduce((s, p) => s + p.amount, 0))}</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {payments.map(payment => {
           const Icon = getTypeIcon(payment.type)
           return (
-            <div key={payment.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <div key={payment.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "p-2 rounded-lg",
-                    payment.daysUntilDue <= 3 ? "bg-red-100" : "bg-gray-100"
+                    payment.daysUntilDue <= 3 ? "bg-red-100" : "bg-warm-100"
                   )}>
                     <Icon className={cn(
                       "h-4 w-4",
-                      payment.daysUntilDue <= 3 ? "text-red-600" : "text-gray-600"
+                      payment.daysUntilDue <= 3 ? "text-red-600" : "text-warm-600"
                     )} />
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900 text-sm">{payment.vendor}</div>
-                    <div className="text-xs text-gray-500">{payment.job}</div>
+                    <div className="font-medium text-warm-900 text-sm">{payment.vendor}</div>
+                    <div className="text-xs text-warm-500">{payment.job}</div>
                     <div className="flex items-center gap-2 mt-0.5">
                       {payment.lienWaiverRequired && (
                         <span className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Lien waiver req</span>
@@ -785,10 +785,10 @@ function PaymentsList({ payments }: { payments: PaymentDue[] }) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-semibold text-gray-900 text-sm">{formatCurrency(payment.amount)}</div>
+                  <div className="font-semibold text-warm-900 text-sm">{formatCurrency(payment.amount)}</div>
                   <div className={cn(
                     "text-xs flex items-center gap-1 justify-end",
-                    payment.daysUntilDue <= 3 ? "text-red-600" : "text-gray-500"
+                    payment.daysUntilDue <= 3 ? "text-red-600" : "text-warm-500"
                   )}>
                     <Clock className="h-3 w-3" />
                     {payment.daysUntilDue === 0 ? 'Due today' :
@@ -801,8 +801,8 @@ function PaymentsList({ payments }: { payments: PaymentDue[] }) {
           )
         })}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all payments
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -815,11 +815,11 @@ function PaymentsList({ payments }: { payments: PaymentDue[] }) {
 
 function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-gray-900 text-sm">Overdue Receivables</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Overdue Receivables</h4>
             <AlertTriangle className="h-4 w-4 text-amber-500" />
           </div>
           <span className="text-xs font-medium text-red-600">
@@ -827,23 +827,23 @@ function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
           </span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {receivables.map(receivable => (
-          <div key={receivable.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          <div key={receivable.id} className="px-4 py-3 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-gray-900 text-sm">{receivable.client}</div>
-                <div className="text-xs text-gray-500">
+                <div className="font-medium text-warm-900 text-sm">{receivable.client}</div>
+                <div className="text-xs text-warm-500">
                   {receivable.job}
                   {receivable.drawNumber && <span> - Draw #{receivable.drawNumber}</span>}
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-semibold text-gray-900 text-sm">{formatCurrency(receivable.amount)}</div>
+                <div className="font-semibold text-warm-900 text-sm">{formatCurrency(receivable.amount)}</div>
                 <div className={cn(
                   "text-xs",
                   receivable.daysOverdue > 21 ? "text-red-600" :
-                  receivable.daysOverdue > 14 ? "text-amber-600" : "text-gray-500"
+                  receivable.daysOverdue > 14 ? "text-amber-600" : "text-warm-500"
                 )}>
                   {receivable.daysOverdue} days overdue
                 </div>
@@ -851,17 +851,17 @@ function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
             </div>
             <div className="mt-1 flex items-center gap-3">
               {receivable.retainageAmount && (
-                <span className="text-xs text-gray-400">Retainage: {formatCurrency(receivable.retainageAmount)}</span>
+                <span className="text-xs text-warm-400">Retainage: {formatCurrency(receivable.retainageAmount)}</span>
               )}
               {receivable.lastContact && (
-                <span className="text-xs text-gray-400">Last contact: {receivable.lastContact}</span>
+                <span className="text-xs text-warm-400">Last contact: {receivable.lastContact}</span>
               )}
             </div>
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all receivables
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -885,13 +885,13 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium text-gray-900 text-sm">Job Profitability Summary</h4>
+          <h4 className="font-medium text-warm-900 text-sm">Job Profitability Summary</h4>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-500">{jobs.length} active jobs</span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-warm-500">{jobs.length} active jobs</span>
+            <span className="text-xs text-warm-500">
               Total: {formatCurrency(jobs.reduce((s, j) => s + j.revisedContract, 0))}
             </span>
           </div>
@@ -899,36 +899,36 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-warm-50 border-b border-warm-200">
             <tr>
-              <th className="text-left py-2 px-4 font-medium text-gray-600">Job</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">PM</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">Contract</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">Cost to Date</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">Committed</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">Projected</th>
-              <th className="text-right py-2 px-3 font-medium text-gray-600">Margin</th>
-              <th className="py-2 px-3 font-medium text-gray-600 w-24">Progress</th>
-              <th className="py-2 px-3 font-medium text-gray-600">Status</th>
+              <th className="text-left py-2 px-4 font-medium text-warm-600">Job</th>
+              <th className="text-left py-2 px-3 font-medium text-warm-600">PM</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">Contract</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">Cost to Date</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">Committed</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">Projected</th>
+              <th className="text-right py-2 px-3 font-medium text-warm-600">Margin</th>
+              <th className="py-2 px-3 font-medium text-warm-600 w-24">Progress</th>
+              <th className="py-2 px-3 font-medium text-warm-600">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-warm-100">
             {jobs.map(job => (
               <tr key={job.id} className={cn(
-                "hover:bg-gray-50 cursor-pointer",
+                "hover:bg-warm-50 cursor-pointer",
                 job.status === 'over-budget' && "bg-red-50/30"
               )}>
                 <td className="py-3 px-4">
-                  <span className="font-medium text-gray-900">{job.name}</span>
+                  <span className="font-medium text-warm-900">{job.name}</span>
                   {job.changeOrders > 0 && (
-                    <div className="text-xs text-gray-400">+{formatCurrency(job.changeOrders)} COs</div>
+                    <div className="text-xs text-warm-400">+{formatCurrency(job.changeOrders)} COs</div>
                   )}
                 </td>
-                <td className="py-3 px-3 text-sm text-gray-600">{job.pm}</td>
-                <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.revisedContract)}</td>
-                <td className="py-3 px-3 text-right text-gray-600">{formatCurrency(job.costToDate)}</td>
-                <td className="py-3 px-3 text-right text-gray-500">{formatCurrency(job.committedCost)}</td>
-                <td className="py-3 px-3 text-right font-medium text-gray-900">{formatCurrency(job.projectedCost)}</td>
+                <td className="py-3 px-3 text-sm text-warm-600">{job.pm}</td>
+                <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(job.revisedContract)}</td>
+                <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(job.costToDate)}</td>
+                <td className="py-3 px-3 text-right text-warm-500">{formatCurrency(job.committedCost)}</td>
+                <td className="py-3 px-3 text-right font-medium text-warm-900">{formatCurrency(job.projectedCost)}</td>
                 <td className={cn(
                   "py-3 px-3 text-right font-semibold",
                   job.projectedMargin >= 15 ? "text-green-600" :
@@ -937,7 +937,7 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
                   {job.projectedMargin.toFixed(1)}%
                 </td>
                 <td className="py-3 px-3">
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-warm-200 rounded-full h-2">
                     <div
                       className={cn(
                         "h-2 rounded-full",
@@ -947,19 +947,19 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
                       style={{ width: `${job.percentComplete}%` }}
                     />
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5 text-center">{job.percentComplete}%</div>
+                  <div className="text-xs text-warm-500 mt-0.5 text-center">{job.percentComplete}%</div>
                 </td>
                 <td className="py-3 px-3">{getStatusBadge(job.status)}</td>
               </tr>
             ))}
           </tbody>
-          <tfoot className="bg-gray-50 border-t border-gray-200">
+          <tfoot className="bg-warm-50 border-t border-warm-200">
             <tr>
-              <td className="py-2 px-4 font-semibold text-gray-700 text-sm" colSpan={2}>Totals</td>
-              <td className="py-2 px-3 text-right font-semibold text-gray-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.revisedContract, 0))}</td>
-              <td className="py-2 px-3 text-right font-semibold text-gray-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.costToDate, 0))}</td>
-              <td className="py-2 px-3 text-right font-semibold text-gray-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.committedCost, 0))}</td>
-              <td className="py-2 px-3 text-right font-semibold text-gray-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.projectedCost, 0))}</td>
+              <td className="py-2 px-4 font-semibold text-warm-700 text-sm" colSpan={2}>Totals</td>
+              <td className="py-2 px-3 text-right font-semibold text-warm-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.revisedContract, 0))}</td>
+              <td className="py-2 px-3 text-right font-semibold text-warm-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.costToDate, 0))}</td>
+              <td className="py-2 px-3 text-right font-semibold text-warm-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.committedCost, 0))}</td>
+              <td className="py-2 px-3 text-right font-semibold text-warm-700 text-sm">{formatCurrency(jobs.reduce((s, j) => s + j.projectedCost, 0))}</td>
               <td className="py-2 px-3 text-right font-bold text-sm text-amber-600">
                 {(jobs.reduce((s, j) => s + j.projectedMargin, 0) / jobs.length).toFixed(1)}%
               </td>
@@ -979,17 +979,17 @@ function PendingApprovalsBar({ approvals }: { approvals: PendingApproval[] }) {
   const total = approvals.reduce((sum, a) => sum + a.count, 0)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3">
+    <div className="bg-white rounded-lg border border-warm-200 p-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-amber-500" />
-          <h4 className="font-medium text-gray-900 text-sm">Pending Approvals</h4>
+          <h4 className="font-medium text-warm-900 text-sm">Pending Approvals</h4>
           <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">{total} total</span>
         </div>
         {activeFilter && (
           <button
             onClick={() => setActiveFilter(null)}
-            className="text-xs text-gray-500 hover:text-gray-700"
+            className="text-xs text-warm-500 hover:text-warm-700"
           >
             Clear filter
           </button>
@@ -1003,7 +1003,7 @@ function PendingApprovalsBar({ approvals }: { approvals: PendingApproval[] }) {
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all",
               approval.color,
-              activeFilter === approval.type && "ring-2 ring-offset-1 ring-blue-500"
+              activeFilter === approval.type && "ring-2 ring-offset-1 ring-stone-500"
             )}
           >
             <span>{approval.label}:</span>
@@ -1022,7 +1022,7 @@ function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
 
   const activityTypeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
     'payment-received': { icon: DollarSign, color: 'text-green-600 bg-green-100', label: 'Payments' },
-    'invoice-sent': { icon: Send, color: 'text-blue-600 bg-blue-100', label: 'Invoices' },
+    'invoice-sent': { icon: Send, color: 'text-stone-600 bg-stone-100', label: 'Invoices' },
     'po-approved': { icon: CheckCircle, color: 'text-purple-600 bg-purple-100', label: 'POs' },
     'draw-submitted': { icon: FileText, color: 'text-amber-600 bg-amber-100', label: 'Draws' },
   }
@@ -1032,17 +1032,17 @@ function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
     : activities.filter(a => a.type === filter).slice(0, 7)
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <RefreshCw className="h-4 w-4 text-blue-500 animate-spin-slow" />
-            <h4 className="font-medium text-gray-900 text-sm">Real-time Activity</h4>
+            <RefreshCw className="h-4 w-4 text-stone-500 animate-spin-slow" />
+            <h4 className="font-medium text-warm-900 text-sm">Real-time Activity</h4>
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-600"
+            className="text-xs border border-warm-200 rounded px-2 py-1 text-warm-600"
           >
             <option value="all">All</option>
             <option value="payment-received">Payments</option>
@@ -1052,21 +1052,21 @@ function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
           </select>
         </div>
       </div>
-      <div className="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+      <div className="divide-y divide-warm-100 max-h-64 overflow-y-auto">
         {filteredActivities.map(activity => {
           const config = activityTypeConfig[activity.type]
           const Icon = config.icon
           return (
-            <div key={activity.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+            <div key={activity.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
               <div className="flex items-start gap-3">
                 <div className={cn("p-1.5 rounded-lg", config.color)}>
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm text-gray-900 truncate">{activity.description}</div>
+                  <div className="text-sm text-warm-900 truncate">{activity.description}</div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-medium text-gray-700">{formatCurrency(activity.amount)}</span>
-                    <span className="text-xs text-gray-400">{activity.timestamp}</span>
+                    <span className="text-xs font-medium text-warm-700">{formatCurrency(activity.amount)}</span>
+                    <span className="text-xs text-warm-400">{activity.timestamp}</span>
                   </div>
                 </div>
               </div>
@@ -1074,8 +1074,8 @@ function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
           )
         })}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all activity
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -1091,41 +1091,41 @@ function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
     if (reason.includes('overdue')) return 'text-red-600 bg-red-50'
     if (reason.includes('confirmation')) return 'text-amber-600 bg-amber-50'
     if (reason.includes('expiring')) return 'text-purple-600 bg-purple-50'
-    return 'text-gray-600 bg-gray-50'
+    return 'text-warm-600 bg-warm-50'
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-purple-500" />
-            <h4 className="font-medium text-gray-900 text-sm">Vendor Follow-up Queue</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Vendor Follow-up Queue</h4>
           </div>
-          <span className="text-xs text-gray-500">{vendors.length} pending</span>
+          <span className="text-xs text-warm-500">{vendors.length} pending</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {vendors.map(vendor => (
-          <div key={vendor.id} className="px-4 py-2.5 hover:bg-gray-50">
+          <div key={vendor.id} className="px-4 py-2.5 hover:bg-warm-50">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-gray-900 text-sm">{vendor.vendor}</div>
+                <div className="font-medium text-warm-900 text-sm">{vendor.vendor}</div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className={cn("text-xs px-1.5 py-0.5 rounded", getReasonColor(vendor.reason))}>
                     {vendor.reason}
                   </span>
-                  {vendor.job && <span className="text-xs text-gray-400">{vendor.job}</span>}
+                  {vendor.job && <span className="text-xs text-warm-400">{vendor.job}</span>}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <span className={cn(
                   "text-xs font-medium",
-                  vendor.daysWaiting > 7 ? "text-red-600" : "text-gray-500"
+                  vendor.daysWaiting > 7 ? "text-red-600" : "text-warm-500"
                 )}>
                   {vendor.daysWaiting} days
                 </span>
-                <button className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 flex items-center gap-1">
+                <button className="text-xs bg-stone-600 text-white px-2 py-1 rounded hover:bg-stone-700 flex items-center gap-1">
                   <Phone className="h-3 w-3" />
                   Follow Up
                 </button>
@@ -1134,8 +1134,8 @@ function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all vendors
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -1148,33 +1148,33 @@ function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
 
 function ClientCommunicationQueue({ messages }: { messages: ClientMessage[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-blue-500" />
-            <h4 className="font-medium text-gray-900 text-sm">Client Messages Awaiting Response</h4>
+            <MessageSquare className="h-4 w-4 text-stone-500" />
+            <h4 className="font-medium text-warm-900 text-sm">Client Messages Awaiting Response</h4>
           </div>
-          <span className="text-xs text-gray-500">{messages.length} pending</span>
+          <span className="text-xs text-warm-500">{messages.length} pending</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {messages.map(message => (
-          <div key={message.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+          <div key={message.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 text-sm">{message.client}</div>
-                <div className="text-xs text-gray-500 truncate mt-0.5">{message.subject}</div>
-                {message.job && <div className="text-xs text-gray-400 mt-0.5">{message.job}</div>}
+                <div className="font-medium text-warm-900 text-sm">{message.client}</div>
+                <div className="text-xs text-warm-500 truncate mt-0.5">{message.subject}</div>
+                {message.job && <div className="text-xs text-warm-400 mt-0.5">{message.job}</div>}
               </div>
               <div className="flex items-center gap-2 ml-3">
                 <span className={cn(
                   "text-xs font-medium px-1.5 py-0.5 rounded",
-                  message.daysAging > 3 ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-600"
+                  message.daysAging > 3 ? "bg-red-100 text-red-700" : "bg-warm-100 text-warm-600"
                 )}>
                   {message.daysAging} days
                 </span>
-                <button className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200 flex items-center gap-1">
+                <button className="text-xs bg-warm-100 text-warm-700 px-2 py-1 rounded hover:bg-warm-200 flex items-center gap-1">
                   <Mail className="h-3 w-3" />
                   Reply
                 </button>
@@ -1183,8 +1183,8 @@ function ClientCommunicationQueue({ messages }: { messages: ClientMessage[] }) {
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all messages
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -1197,31 +1197,31 @@ function ClientCommunicationQueue({ messages }: { messages: ClientMessage[] }) {
 
 function UpcomingInspectionsWidget({ inspections }: { inspections: UpcomingInspection[] }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ClipboardCheck className="h-4 w-4 text-green-500" />
-            <h4 className="font-medium text-gray-900 text-sm">Upcoming Inspections</h4>
+            <h4 className="font-medium text-warm-900 text-sm">Upcoming Inspections</h4>
           </div>
-          <span className="text-xs text-gray-500">{inspections.length} scheduled</span>
+          <span className="text-xs text-warm-500">{inspections.length} scheduled</span>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {inspections.slice(0, 5).map(inspection => (
-          <div key={inspection.id} className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+          <div key={inspection.id} className="px-4 py-2.5 hover:bg-warm-50 cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-gray-900 text-sm">{inspection.job}</div>
+                <div className="font-medium text-warm-900 text-sm">{inspection.job}</div>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-xs text-gray-500">Permit: {inspection.permitRef}</span>
+                  <span className="text-xs text-warm-500">Permit: {inspection.permitRef}</span>
                   {inspection.inspectorName && (
-                    <span className="text-xs text-gray-400">Inspector: {inspection.inspectorName}</span>
+                    <span className="text-xs text-warm-400">Inspector: {inspection.inspectorName}</span>
                   )}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xs font-medium text-gray-700">{inspection.date}</div>
+                <div className="text-xs font-medium text-warm-700">{inspection.date}</div>
                 <span className={cn(
                   "text-xs px-1.5 py-0.5 rounded mt-0.5 inline-block",
                   inspection.status === 'scheduled' ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
@@ -1233,8 +1233,8 @@ function UpcomingInspectionsWidget({ inspections }: { inspections: UpcomingInspe
           </div>
         ))}
       </div>
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-warm-200 bg-warm-50">
+        <button className="text-sm text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
           View all inspections
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -1265,30 +1265,30 @@ function WeatherWidget({ weatherData }: { weatherData: WeatherInfo[] }) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center gap-2">
-          <Cloud className="h-4 w-4 text-blue-500" />
-          <h4 className="font-medium text-gray-900 text-sm">Job Site Weather</h4>
+          <Cloud className="h-4 w-4 text-stone-500" />
+          <h4 className="font-medium text-warm-900 text-sm">Job Site Weather</h4>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {weatherData.map((weather, index) => {
           const WeatherIcon = getWeatherIcon(weather.conditions)
           return (
             <div key={index} className="px-4 py-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-1.5 bg-blue-50 rounded-lg">
-                    <WeatherIcon className="h-4 w-4 text-blue-600" />
+                  <div className="p-1.5 bg-stone-50 rounded-lg">
+                    <WeatherIcon className="h-4 w-4 text-stone-600" />
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900 text-sm">{weather.jobSite}</div>
-                    <div className="text-xs text-gray-500 capitalize">{weather.conditions}</div>
+                    <div className="font-medium text-warm-900 text-sm">{weather.jobSite}</div>
+                    <div className="text-xs text-warm-500 capitalize">{weather.conditions}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold text-gray-900">{weather.temperature}°F</span>
+                  <span className="text-lg font-semibold text-warm-900">{weather.temperature}°F</span>
                   <span className={cn("text-xs px-1.5 py-0.5 rounded", getRiskColor(weather.outdoorRisk))}>
                     {weather.outdoorRisk === 'high' ? 'Outdoor Risk' : weather.outdoorRisk === 'medium' ? 'Caution' : 'Good'}
                   </span>
@@ -1340,17 +1340,17 @@ function DateRangeSelector({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"
+        className="flex items-center gap-2 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50"
       >
         <Calendar className="h-4 w-4" />
         <span className="font-medium">{dateRangePresets.find(p => p.key === selectedRange)?.label}</span>
-        <span className="text-gray-400">|</span>
-        <span className="text-xs text-gray-500">{getDateRangeLabel(selectedRange)}</span>
+        <span className="text-warm-400">|</span>
+        <span className="text-xs text-warm-500">{getDateRangeLabel(selectedRange)}</span>
         <ChevronDown className="h-4 w-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
+        <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg border border-warm-200 shadow-lg z-10">
           <div className="py-1">
             {dateRangePresets.map(preset => (
               <button
@@ -1360,8 +1360,8 @@ function DateRangeSelector({
                   setIsOpen(false)
                 }}
                 className={cn(
-                  "w-full text-left px-3 py-2 text-sm hover:bg-gray-50",
-                  selectedRange === preset.key ? "bg-blue-50 text-blue-700" : "text-gray-700"
+                  "w-full text-left px-3 py-2 text-sm hover:bg-warm-50",
+                  selectedRange === preset.key ? "bg-stone-50 text-stone-700" : "text-warm-700"
                 )}
               >
                 {preset.label}
@@ -1381,20 +1381,20 @@ export function FinancialDashboardPreview() {
   const [dateRange, setDateRange] = useState<DateRangePreset>('mtd')
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Financial Dashboard</h3>
+              <h3 className="font-semibold text-warm-900">Financial Dashboard</h3>
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Healthy</span>
-              <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded flex items-center gap-1">
+              <span className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded flex items-center gap-1">
                 <Lock className="h-3 w-3" />
                 Jan 2026 Locked
               </span>
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 As of February 12, 2026
@@ -1403,19 +1403,19 @@ export function FinancialDashboardPreview() {
                 <TrendingUp className="h-4 w-4" />
                 Cash position improving
               </span>
-              <span className="flex items-center gap-1 text-gray-400">
+              <span className="flex items-center gap-1 text-warm-400">
                 <RefreshCw className="h-3 w-3" />
                 QB synced 5 min ago
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Settings className="h-4 w-4" />
               Configure KPIs
             </button>
             <DateRangeSelector selectedRange={dateRange} onRangeChange={setDateRange} />
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <BarChart3 className="h-4 w-4" />
               Full Report
             </button>
@@ -1424,7 +1424,7 @@ export function FinancialDashboardPreview() {
       </div>
 
       {/* Fiscal Year / Period indicator */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -1441,12 +1441,12 @@ export function FinancialDashboardPreview() {
       </div>
 
       {/* Pending Approvals Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <PendingApprovalsBar approvals={pendingApprovals} />
       </div>
 
       {/* Primary Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-4">
           {summaryCards.map(card => (
             <SummaryCardComponent key={card.id} card={card} />
@@ -1455,7 +1455,7 @@ export function FinancialDashboardPreview() {
       </div>
 
       {/* Secondary KPI Row - Configurable (Gap #438) */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <SecondaryKPIRow widgets={secondaryKPIs} />
       </div>
 
@@ -1506,17 +1506,17 @@ export function FinancialDashboardPreview() {
       </div>
 
       {/* WIP Summary Bar */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
+      <div className="bg-white border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-gray-400" />
-            <span className="font-medium text-gray-700">WIP Summary (Jan 2026):</span>
+            <FileText className="h-4 w-4 text-warm-400" />
+            <span className="font-medium text-warm-700">WIP Summary (Jan 2026):</span>
           </div>
-          <div className="flex items-center gap-6 text-gray-600">
+          <div className="flex items-center gap-6 text-warm-600">
             <span>Over-billed: <span className="font-semibold text-amber-600">$85K</span></span>
-            <span>Under-billed: <span className="font-semibold text-blue-600">$42K</span></span>
+            <span>Under-billed: <span className="font-semibold text-stone-600">$42K</span></span>
             <span>Net: <span className="font-semibold text-amber-600">$43K over-billed</span></span>
-            <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+            <button className="text-stone-600 hover:text-stone-700 font-medium flex items-center gap-1">
               Full WIP Report <ChevronRight className="h-3 w-3" />
             </button>
           </div>

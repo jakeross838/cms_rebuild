@@ -678,7 +678,7 @@ These scenarios cover unusual but real financial situations that construction bu
 - **Module 5: Notification Engine** -- budget alerts, draw request notifications
 - **Module 7: Scheduling** -- earned value requires schedule data; draw auto-generation from progress
 - **Module 10: Vendor Management** -- committed costs from vendor subcontracts
-- **Module 11: Basic Invoicing** -- actual costs from approved invoices
+- **Module 11: Native Accounting (GL/AP/AR)** -- actual costs from approved invoices
 - **Module 17: Change Order Management** -- CO impact on budget lines
 - **Module 20: Purchasing** -- committed costs from approved POs
 - **External: Accounting Systems** -- QuickBooks, Sage, Xero sync (GAP-432)

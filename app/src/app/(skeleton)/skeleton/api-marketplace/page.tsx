@@ -79,7 +79,7 @@ export default function ApiMarketplacePage() {
           <div className="text-xs text-green-600 mt-1">Active integrations</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Puzzle className="h-4 w-4 text-blue-600" />Available</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Puzzle className="h-4 w-4 text-stone-600" />Available</div>
           <div className="text-2xl font-bold mt-1">{available}</div>
           <div className="text-xs text-muted-foreground mt-1">Ready to connect</div>
         </div>

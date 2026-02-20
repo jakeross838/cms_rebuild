@@ -277,15 +277,15 @@ const priorityConfig = {
   critical: { color: 'bg-red-600', label: 'Critical', bgColor: 'bg-red-50', textColor: 'text-red-800', borderColor: 'border-l-red-600' },
   urgent: { color: 'bg-red-500', label: 'Urgent', bgColor: 'bg-red-50', textColor: 'text-red-700', borderColor: 'border-l-red-500' },
   high: { color: 'bg-amber-500', label: 'High', bgColor: 'bg-amber-50', textColor: 'text-amber-700', borderColor: 'border-l-amber-500' },
-  normal: { color: 'bg-blue-500', label: 'Normal', bgColor: 'bg-white', textColor: 'text-blue-700', borderColor: 'border-l-blue-500' },
-  low: { color: 'bg-gray-400', label: 'Low', bgColor: 'bg-white', textColor: 'text-gray-700', borderColor: 'border-l-gray-400' },
+  normal: { color: 'bg-stone-500', label: 'Normal', bgColor: 'bg-white', textColor: 'text-stone-700', borderColor: 'border-l-stone-500' },
+  low: { color: 'bg-warm-400', label: 'Low', bgColor: 'bg-white', textColor: 'text-warm-700', borderColor: 'border-l-warm-400' },
 }
 
 const typeConfig = {
   alert: { icon: AlertTriangle, color: 'text-red-500' },
   reminder: { icon: Clock, color: 'text-amber-500' },
   ai_insight: { icon: Sparkles, color: 'text-purple-500' },
-  update: { icon: Bell, color: 'text-blue-500' },
+  update: { icon: Bell, color: 'text-stone-500' },
   approval: { icon: CheckCircle2, color: 'text-green-500' },
 }
 
@@ -310,7 +310,7 @@ function NotificationCard({ notification }: { notification: Notification }) {
 
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer",
+      "bg-white rounded-lg border border-warm-200 p-4 hover:shadow-md transition-shadow cursor-pointer",
       !notification.isRead && "border-l-4",
       !notification.isRead && priority.borderColor
     )}>
@@ -320,7 +320,7 @@ function NotificationCard({ notification }: { notification: Notification }) {
           <div className="flex items-center gap-2 mb-1">
             <TypeIcon className={cn("h-4 w-4", type.color)} />
             <h4 className={cn(
-              "font-medium text-gray-900",
+              "font-medium text-warm-900",
               !notification.isRead && "font-semibold"
             )}>
               {notification.title}
@@ -332,30 +332,30 @@ function NotificationCard({ notification }: { notification: Notification }) {
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-600 mb-2">{notification.message}</p>
+          <p className="text-sm text-warm-600 mb-2">{notification.message}</p>
 
           {/* Metadata row */}
-          <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
+          <div className="flex items-center gap-3 text-xs text-warm-500 flex-wrap">
             <span className="flex items-center gap-1">
               <CategoryIcon className="h-3 w-3" />
               {notification.source}
             </span>
             {notification.sourceModule && (
-              <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{notification.sourceModule}</span>
+              <span className="bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{notification.sourceModule}</span>
             )}
             {notification.job && (
               <>
-                <span className="text-gray-300">|</span>
-                <span className="bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">{notification.job}</span>
+                <span className="text-warm-300">|</span>
+                <span className="bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{notification.job}</span>
               </>
             )}
             {notification.entityType && notification.entityId && (
               <>
-                <span className="text-gray-300">|</span>
-                <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{notification.entityId}</span>
+                <span className="text-warm-300">|</span>
+                <span className="bg-warm-50 text-warm-500 px-1.5 py-0.5 rounded font-mono">{notification.entityId}</span>
               </>
             )}
-            <span className="text-gray-300">|</span>
+            <span className="text-warm-300">|</span>
             <span>{notification.time}</span>
           </div>
 
@@ -367,9 +367,9 @@ function NotificationCard({ notification }: { notification: Notification }) {
                 <span key={channel} className={cn(
                   "text-xs flex items-center gap-1 px-1.5 py-0.5 rounded",
                   status === 'delivered' ? "bg-green-50 text-green-600" :
-                  status === 'sent' ? "bg-blue-50 text-blue-600" :
+                  status === 'sent' ? "bg-stone-50 text-stone-600" :
                   status === 'failed' ? "bg-red-50 text-red-600" :
-                  "bg-gray-50 text-gray-500"
+                  "bg-warm-50 text-warm-500"
                 )}>
                   {channel === 'in_app' && <Inbox className="h-3 w-3" />}
                   {channel === 'email' && <Mail className="h-3 w-3" />}
@@ -385,25 +385,25 @@ function NotificationCard({ notification }: { notification: Notification }) {
           {(notification.actionLabel || notification.secondaryActionLabel) && (
             <div className="flex gap-2 mt-3">
               {notification.actionLabel && (
-                <button className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+                <button className="px-3 py-1 text-xs bg-stone-600 text-white rounded hover:bg-stone-700">
                   {notification.actionLabel}
                 </button>
               )}
               {notification.secondaryActionLabel && (
-                <button className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                <button className="px-3 py-1 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200">
                   {notification.secondaryActionLabel}
                 </button>
               )}
-              <button className="px-3 py-1 text-xs text-gray-400 hover:text-gray-600">
+              <button className="px-3 py-1 text-xs text-warm-400 hover:text-warm-600">
                 Snooze
               </button>
-              <button className="px-3 py-1 text-xs text-gray-400 hover:text-gray-600">
+              <button className="px-3 py-1 text-xs text-warm-400 hover:text-warm-600">
                 Dismiss
               </button>
             </div>
           )}
         </div>
-        <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+        <ChevronRight className="h-4 w-4 text-warm-400 flex-shrink-0" />
       </div>
     </div>
   )
@@ -439,13 +439,13 @@ export function NotificationsPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Notification Center</h3>
+          <h3 className="font-semibold text-warm-900">Notification Center</h3>
           {unreadCount > 0 && (
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">
+            <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-medium">
               {unreadCount} unread
             </span>
           )}
@@ -460,13 +460,13 @@ export function NotificationsPreview() {
               {urgentCount + highCount} urgent/high
             </span>
           )}
-          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">Module 5</span>
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">Module 5</span>
           <div className="flex-1" />
-          <button className="text-sm text-blue-600 hover:text-blue-700">
+          <button className="text-sm text-stone-600 hover:text-stone-700">
             Mark All Read
           </button>
-          <button className="p-1.5 hover:bg-gray-100 rounded" title="Notification Preferences">
-            <Settings className="h-4 w-4 text-gray-400" />
+          <button className="p-1.5 hover:bg-warm-100 rounded" title="Notification Preferences">
+            <Settings className="h-4 w-4 text-warm-400" />
           </button>
         </div>
         <FilterBar
@@ -528,30 +528,30 @@ export function NotificationsPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-6 text-sm">
-          <span className="text-gray-500">Unread: <span className="font-medium text-gray-900">{unreadCount}</span></span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">Today: <span className="font-medium text-gray-900">{mockNotifications.filter(n => n.time.includes('hrs') || n.time === 'Now').length}</span></span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500">This Week: <span className="font-medium text-gray-900">{mockNotifications.length}</span></span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500 flex items-center gap-1">
+          <span className="text-warm-500">Unread: <span className="font-medium text-warm-900">{unreadCount}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500">Today: <span className="font-medium text-warm-900">{mockNotifications.filter(n => n.time.includes('hrs') || n.time === 'Now').length}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500">This Week: <span className="font-medium text-warm-900">{mockNotifications.length}</span></span>
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500 flex items-center gap-1">
             <Sparkles className="h-3.5 w-3.5 text-purple-500" />
-            AI Insights: <span className="font-medium text-gray-900">{mockNotifications.filter(n => n.type === 'ai_insight').length}</span>
+            AI Insights: <span className="font-medium text-warm-900">{mockNotifications.filter(n => n.type === 'ai_insight').length}</span>
           </span>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500 flex items-center gap-1">
+          <span className="text-warm-300">|</span>
+          <span className="text-warm-500 flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-            Approvals: <span className="font-medium text-gray-900">{mockNotifications.filter(n => n.type === 'approval').length}</span>
+            Approvals: <span className="font-medium text-warm-900">{mockNotifications.filter(n => n.type === 'approval').length}</span>
           </span>
         </div>
       </div>
 
       {/* Channel Preference Summary */}
-      <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-4 text-xs text-gray-500">
-          <span className="font-medium text-gray-600">Delivery channels:</span>
+      <div className="bg-warm-50 border-b border-warm-200 px-4 py-2">
+        <div className="flex items-center gap-4 text-xs text-warm-500">
+          <span className="font-medium text-warm-600">Delivery channels:</span>
           <span className="flex items-center gap-1"><Inbox className="h-3 w-3" /> In-App (all)</span>
           <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> Email (Financial, Approvals, Schedule)</span>
           <span className="flex items-center gap-1"><Smartphone className="h-3 w-3" /> Push (Schedule, Approvals)</span>
@@ -566,16 +566,16 @@ export function NotificationsPreview() {
           <NotificationCard key={notification.id} notification={notification} />
         ))}
         {filteredNotifications.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No notifications found
           </div>
         )}
       </div>
 
       {/* Footer - Digest & Preferences */}
-      <div className="bg-gray-100 border-t border-gray-200 px-4 py-3">
+      <div className="bg-warm-100 border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-4 text-gray-500">
+          <div className="flex items-center gap-4 text-warm-500">
             <span className="flex items-center gap-1">
               <Mail className="h-4 w-4" />
               Email digest: Daily at 7am
@@ -589,7 +589,7 @@ export function NotificationsPreview() {
               Muted projects: 0
             </span>
           </div>
-          <button className="text-blue-600 hover:text-blue-700 flex items-center gap-1">
+          <button className="text-stone-600 hover:text-stone-700 flex items-center gap-1">
             Notification Preferences <ChevronRight className="h-4 w-4" />
           </button>
         </div>

@@ -296,7 +296,7 @@ const mockReceivables: Receivable[] = [
 
 const agingConfig: Record<AgingBucket, { label: string; color: string; bgColor: string }> = {
   'current': { label: 'Current', color: 'text-green-700', bgColor: 'bg-green-100' },
-  '1-30': { label: '1-30 Days', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  '1-30': { label: '1-30 Days', color: 'text-stone-700', bgColor: 'bg-stone-100' },
   '31-60': { label: '31-60 Days', color: 'text-amber-700', bgColor: 'bg-amber-100' },
   '61-90': { label: '61-90 Days', color: 'text-orange-700', bgColor: 'bg-orange-100' },
   '90+': { label: '90+ Days', color: 'text-red-700', bgColor: 'bg-red-100' },
@@ -396,7 +396,7 @@ function PaymentLinkStatus({ tracking }: { tracking?: PaymentLinkTracking }) {
   }
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+    <div className="flex items-center gap-1.5 text-xs text-stone-600 bg-stone-50 px-2 py-1 rounded">
       <Link className="h-3 w-3" />
       {tracking.viewedAt && <Eye className="h-3 w-3" />}
       {tracking.clickedAt && <MousePointer className="h-3 w-3" />}
@@ -415,7 +415,7 @@ function LienDeadlineAlert({ deadline, collectionStatus }: { deadline?: string; 
   return (
     <div className={cn(
       "flex items-center gap-1.5 text-xs px-2 py-1 rounded",
-      isUrgent ? "bg-red-50 text-red-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-gray-50 text-gray-700"
+      isUrgent ? "bg-red-50 text-red-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-warm-50 text-warm-700"
     )}>
       <AlertTriangle className="h-3 w-3" />
       <span>Lien deadline: {formatDate(deadline)} ({daysUntil} days)</span>
@@ -427,13 +427,13 @@ function WriteOffHistory({ history }: { history?: WriteOffRecord[] }) {
   if (!history || history.length === 0) return null
 
   return (
-    <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-      <div className="text-xs font-medium text-gray-700 mb-1">Write-off History</div>
+    <div className="mt-2 p-2 bg-warm-50 rounded border border-warm-200">
+      <div className="text-xs font-medium text-warm-700 mb-1">Write-off History</div>
       {history.map(record => (
-        <div key={record.id} className="text-xs text-gray-600 flex items-center gap-2">
-          <XCircle className="h-3 w-3 text-gray-400" />
+        <div key={record.id} className="text-xs text-warm-600 flex items-center gap-2">
+          <XCircle className="h-3 w-3 text-warm-400" />
           <span>{formatDate(record.date)}: {formatCurrency(record.amount)} - {record.reason}</span>
-          {record.approvedBy && <span className="text-gray-400">| Approved by: {record.approvedBy}</span>}
+          {record.approvedBy && <span className="text-warm-400">| Approved by: {record.approvedBy}</span>}
         </div>
       ))}
     </div>
@@ -444,10 +444,10 @@ function EmailFollowUpHistory({ emails }: { emails?: EmailFollowUp[] }) {
   if (!emails || emails.length === 0) return null
 
   return (
-    <div className="mt-2 p-2 bg-blue-50 rounded border border-blue-100">
-      <div className="text-xs font-medium text-blue-700 mb-1">Email Follow-up History</div>
+    <div className="mt-2 p-2 bg-stone-50 rounded border border-stone-100">
+      <div className="text-xs font-medium text-stone-700 mb-1">Email Follow-up History</div>
       {emails.map(email => (
-        <div key={email.id} className="text-xs text-blue-600 flex items-center gap-2">
+        <div key={email.id} className="text-xs text-stone-600 flex items-center gap-2">
           <Mail className="h-3 w-3" />
           <span>{formatDate(email.date)}: "{email.subject}" to {email.recipient}</span>
         </div>
@@ -474,8 +474,8 @@ function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Write Off Receivable</h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <h3 className="text-lg font-semibold text-warm-900 mb-4">Write Off Receivable</h3>
+        <p className="text-sm text-warm-600 mb-4">
           Invoice: {receivable.invoiceNumber} | Balance: {formatCurrency(balance)}
         </p>
         <SubmissionForm
@@ -509,7 +509,7 @@ function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
           submitLabel="Submit Write-off"
         />
         {receivable.writeOffHistory && receivable.writeOffHistory.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-warm-200">
             <WriteOffHistory history={receivable.writeOffHistory} />
           </div>
         )}
@@ -534,8 +534,8 @@ function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Log Email Follow-up</h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <h3 className="text-lg font-semibold text-warm-900 mb-4">Log Email Follow-up</h3>
+        <p className="text-sm text-warm-600 mb-4">
           Invoice: {receivable.invoiceNumber} | Client: {receivable.clientName}
         </p>
         <SubmissionForm
@@ -568,7 +568,7 @@ function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
           submitLabel="Log Email"
         />
         {receivable.emailFollowUps && receivable.emailFollowUps.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-warm-200">
             <EmailFollowUpHistory emails={receivable.emailFollowUps} />
           </div>
         )}
@@ -593,12 +593,12 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
     <div className={cn(
       "bg-white border rounded-lg p-4 hover:shadow-md transition-shadow",
       receivable.agingBucket === '61-90' || receivable.agingBucket === '90+' ? "border-red-200" :
-      receivable.agingBucket === '31-60' ? "border-amber-200" : "border-gray-200"
+      receivable.agingBucket === '31-60' ? "border-amber-200" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2 flex-wrap">
-            <span className="font-mono text-sm font-medium text-gray-900">{receivable.invoiceNumber}</span>
+            <span className="font-mono text-sm font-medium text-warm-900">{receivable.invoiceNumber}</span>
             <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium", aging.bgColor, aging.color)}>
               {receivable.agingBucket === 'current' ? 'Current' : `${receivable.daysOutstanding} days overdue`}
             </span>
@@ -608,12 +608,12 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <Building2 className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <Building2 className="h-4 w-4 text-warm-400" />
               <span>{receivable.clientName}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Briefcase className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-warm-600">
+              <Briefcase className="h-4 w-4 text-warm-400" />
               <span>{receivable.jobName} - Draw #{receivable.drawNumber}</span>
             </div>
           </div>
@@ -621,14 +621,14 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
           {/* Partial payment progress */}
           {receivable.amountPaid > 0 && (
             <div className="mt-2">
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-warm-500 mb-1">
                 <span className="flex items-center gap-1">
                   <Receipt className="h-3 w-3" />
                   Partial payment: {formatCurrency(receivable.amountPaid)} of {formatCurrency(receivable.amount)}
                 </span>
                 <span>{((receivable.amountPaid / receivable.amount) * 100).toFixed(0)}% paid</span>
               </div>
-              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-warm-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-green-500 rounded-full"
                   style={{ width: `${(receivable.amountPaid / receivable.amount) * 100}%` }}
@@ -638,17 +638,17 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
           )}
 
           <div className="mt-2 flex items-center gap-4 text-sm flex-wrap">
-            <div className="flex items-center gap-1 text-gray-500">
+            <div className="flex items-center gap-1 text-warm-500">
               <StatusIcon className="h-3.5 w-3.5" />
               <span>{collectionStatus.label}</span>
             </div>
             {receivable.lastContact && (
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-warm-400">
                 Last contact: {formatDate(receivable.lastContact)}
               </span>
             )}
             {receivable.paymentMethod && (
-              <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+              <span className="text-xs text-warm-400 bg-warm-100 px-1.5 py-0.5 rounded">
                 Preferred: {receivable.paymentMethod}
               </span>
             )}
@@ -682,13 +682,13 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
           {receivable.aiNote && (
             <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-              isHighRisk ? "bg-red-50" : "bg-blue-50"
+              isHighRisk ? "bg-red-50" : "bg-stone-50"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 mt-0.5 flex-shrink-0",
-                isHighRisk ? "text-red-500" : "text-blue-500"
+                isHighRisk ? "text-red-500" : "text-stone-500"
               )} />
-              <span className={isHighRisk ? "text-red-700" : "text-blue-700"}>
+              <span className={isHighRisk ? "text-red-700" : "text-stone-700"}>
                 {receivable.aiNote}
               </span>
             </div>
@@ -703,24 +703,24 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
 
         <div className="flex items-start gap-4 ml-4">
           <div className="text-right">
-            <div className="text-lg font-semibold text-gray-900">{formatCurrency(balance)}</div>
+            <div className="text-lg font-semibold text-warm-900">{formatCurrency(balance)}</div>
             {receivable.amountPaid > 0 && (
-              <div className="text-xs text-gray-400">of {formatCurrency(receivable.amount)}</div>
+              <div className="text-xs text-warm-400">of {formatCurrency(receivable.amount)}</div>
             )}
             <div className="flex items-center gap-2 text-sm mt-1">
-              <Calendar className="h-3.5 w-3.5 text-gray-400" />
-              <span className="text-gray-500">Due {formatDate(receivable.dueDate)}</span>
+              <Calendar className="h-3.5 w-3.5 text-warm-400" />
+              <span className="text-warm-500">Due {formatDate(receivable.dueDate)}</span>
             </div>
           </div>
-          <button className="p-1.5 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1.5 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
       </div>
 
-      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-end gap-2 flex-wrap">
+      <div className="mt-3 pt-3 border-t border-warm-100 flex items-center justify-end gap-2 flex-wrap">
         {receivable.collectionStatus === 'none' && (
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-700 border border-stone-200 rounded-lg hover:bg-stone-50">
             <Send className="h-3.5 w-3.5" />
             Send Reminder
           </button>
@@ -733,13 +733,13 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
         )}
         {(receivable.collectionStatus === 'called' || receivable.collectionStatus === 'reminder_sent') && (
           <>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Phone className="h-3.5 w-3.5" />
               Log Call
             </button>
             <button
               onClick={() => onLogEmail(receivable)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-50"
             >
               <Mail className="h-3.5 w-3.5" />
               Log Email
@@ -761,13 +761,13 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
         {isSeverelyOverdue && (
           <button
             onClick={() => onWriteOff(receivable)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-50"
           >
             <XCircle className="h-3.5 w-3.5" />
             Write Off
           </button>
         )}
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
           <ExternalLink className="h-3.5 w-3.5" />
           Payment Link
         </button>
@@ -851,9 +851,9 @@ export function ReceivablesPreview() {
       return Object.entries(grouped).map(([clientName, receivables]) => (
         <div key={clientName} className="mb-6">
           <div className="flex items-center gap-2 mb-3 px-2">
-            <Building2 className="h-5 w-5 text-gray-500" />
-            <h4 className="font-semibold text-gray-800">{clientName}</h4>
-            <span className="text-sm text-gray-500">
+            <Building2 className="h-5 w-5 text-warm-500" />
+            <h4 className="font-semibold text-warm-800">{clientName}</h4>
+            <span className="text-sm text-warm-500">
               ({receivables.length} items, {formatCurrency(receivables.reduce((sum, r) => sum + (r.amount - r.amountPaid), 0))})
             </span>
           </div>
@@ -876,9 +876,9 @@ export function ReceivablesPreview() {
       return Object.entries(grouped).map(([jobName, receivables]) => (
         <div key={jobName} className="mb-6">
           <div className="flex items-center gap-2 mb-3 px-2">
-            <Briefcase className="h-5 w-5 text-gray-500" />
-            <h4 className="font-semibold text-gray-800">{jobName}</h4>
-            <span className="text-sm text-gray-500">
+            <Briefcase className="h-5 w-5 text-warm-500" />
+            <h4 className="font-semibold text-warm-800">{jobName}</h4>
+            <span className="text-sm text-warm-500">
               ({receivables.length} items, {formatCurrency(receivables.reduce((sum, r) => sum + (r.amount - r.amountPaid), 0))})
             </span>
           </div>
@@ -928,18 +928,18 @@ export function ReceivablesPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Accounts Receivable</h3>
-              <span className="text-sm text-gray-500">{mockReceivables.length} outstanding | {formatCurrency(totalAR)} total</span>
+              <h3 className="font-semibold text-warm-900">Accounts Receivable</h3>
+              <span className="text-sm text-warm-500">{mockReceivables.length} outstanding | {formatCurrency(totalAR)} total</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
@@ -948,14 +948,14 @@ export function ReceivablesPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-3 gap-4 mb-3">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Total Outstanding
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalAR)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalAR)}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -1012,7 +1012,7 @@ export function ReceivablesPreview() {
             )}>
               {dso} days
             </div>
-            <div className="text-xs text-gray-500 mt-0.5">
+            <div className="text-xs text-warm-500 mt-0.5">
               {dsoTrend === 'down' ? `↓${Math.abs(dsoChange)}` : dsoTrend === 'up' ? `↑${Math.abs(dsoChange)}` : '→'} from last month | Industry avg: 35 days
             </div>
           </div>
@@ -1022,7 +1022,7 @@ export function ReceivablesPreview() {
               Retainage Held
             </div>
             <div className="text-xl font-bold text-purple-700 mt-1">{formatCurrency(totalRetainage)}</div>
-            <div className="text-xs text-gray-500 mt-0.5">Across {mockReceivables.filter(r => r.retainageAmount > 0).length} draws</div>
+            <div className="text-xs text-warm-500 mt-0.5">Across {mockReceivables.filter(r => r.retainageAmount > 0).length} draws</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -1041,15 +1041,15 @@ export function ReceivablesPreview() {
             )}>
               {pendingLienWaivers > 0 ? `${pendingLienWaivers} pending` : 'All received'}
             </div>
-            <div className="text-xs text-gray-500 mt-0.5">Avg collection: {avgCollectionProbability}% probability</div>
+            <div className="text-xs text-warm-500 mt-0.5">Avg collection: {avgCollectionProbability}% probability</div>
           </div>
         </div>
       </div>
 
       {/* Aging Summary Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm text-gray-500">Aging Summary:</span>
+          <span className="text-sm text-warm-500">Aging Summary:</span>
         </div>
         <div className="flex items-center gap-1">
           {Object.entries(agingSummary).map(([bucket, amount]) => {
@@ -1068,7 +1068,7 @@ export function ReceivablesPreview() {
             )
           })}
         </div>
-        <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+        <div className="flex items-center justify-between mt-2 text-xs text-warm-500">
           <span>Current: {formatCurrency(agingSummary.current)} ({((agingSummary.current / totalAR) * 100).toFixed(0)}%)</span>
           <span>1-30: {formatCurrency(agingSummary['1-30'])}</span>
           <span>31-60: {formatCurrency(agingSummary['31-60'])}</span>
@@ -1078,7 +1078,7 @@ export function ReceivablesPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <FilterBar
             search={search}
@@ -1121,7 +1121,7 @@ export function ReceivablesPreview() {
       <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
         {renderReceivables()}
         {filteredReceivables.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No receivables match your filters
           </div>
         )}
@@ -1147,7 +1147,7 @@ export function ReceivablesPreview() {
       <AIFeaturesPanel
         title="AI Collection Insights"
         features={aiFeatures}
-        className="border-t border-gray-200"
+        className="border-t border-warm-200"
       />
 
       {/* AI Insights Bar */}

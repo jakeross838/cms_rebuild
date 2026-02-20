@@ -8,7 +8,18 @@
 
 ## Overview
 
-Bi-directional sync engine connecting the construction management platform to external accounting systems. QuickBooks Online is the primary target with Xero as a supported alternative. The integration eliminates double-entry by synchronizing invoices, payments, journal entries, vendors, and customers between systems. Each builder configures their own account mapping, sync frequency, and conflict resolution rules. The architecture supports future expansion to Sage, QuickBooks Desktop, and Viewpoint.
+**OPTIONAL module** — RossOS includes a full native accounting engine (Module 11: GL/AP/AR). This module provides bi-directional sync for builders who ALSO use an external accounting system alongside RossOS, or who are migrating from an external system and need a transition period.
+
+Bi-directional sync engine connecting the construction management platform to external accounting systems. QuickBooks Online is the primary target with Xero and Sage as supported alternatives. The integration eliminates double-entry by synchronizing invoices, payments, journal entries, vendors, and customers between systems. Each builder configures their own account mapping, sync frequency, and conflict resolution rules. The architecture supports future expansion to QuickBooks Desktop and Viewpoint.
+
+**When to use this module:**
+- Builder has an existing accounting system and wants to keep using it alongside RossOS
+- Builder's CPA/accountant requires a specific accounting system for tax preparation
+- Builder is transitioning from external accounting to RossOS native accounting and needs both running in parallel
+- Builder wants RossOS as the construction management layer with accounting handled externally
+
+**When NOT needed:**
+- Builder uses RossOS native accounting (Module 11) as their sole accounting system
 
 ---
 
@@ -251,7 +262,7 @@ CREATE TABLE v2_sync_records (
 
 - **Module 9:** Budget & Cost Tracking (cost codes for account mapping)
 - **Module 10:** Contact/Vendor Management (vendor and customer data to sync)
-- **Module 11:** Basic Invoicing (invoices and payments to sync)
+- **Module 11:** Native Accounting (GL/AP/AR) (invoices and payments to sync)
 - **Module 18:** Purchase Orders (bills/AP to sync)
 - **External:** QuickBooks Online API, Xero API
 - **Infrastructure:** Encrypted credential storage, background job processor (Bull/BullMQ)

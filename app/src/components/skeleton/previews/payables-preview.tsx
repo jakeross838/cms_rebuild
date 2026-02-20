@@ -281,7 +281,7 @@ const mockPayables: Payable[] = [
 
 const statusConfig: Record<PayableStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
   pending: { label: 'Pending Approval', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: Clock },
-  approved: { label: 'Approved', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: CheckCircle },
+  approved: { label: 'Approved', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: CheckCircle },
   scheduled: { label: 'Scheduled', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: Calendar },
   paid: { label: 'Paid', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   disputed: { label: 'Disputed', color: 'text-red-700', bgColor: 'bg-red-100', icon: Ban },
@@ -327,7 +327,7 @@ function getDaysUntilDue(dueDate: string): { days: number; label: string; isOver
 function ConfidenceBadge({ score }: { score: number }) {
   const pct = Math.round(score * 100)
   const color = score >= 0.95 ? 'text-green-600 bg-green-50' :
-    score >= 0.80 ? 'text-blue-600 bg-blue-50' :
+    score >= 0.80 ? 'text-stone-600 bg-stone-50' :
     score >= 0.70 ? 'text-amber-600 bg-amber-50' :
     'text-red-600 bg-red-50'
   return (
@@ -363,7 +363,7 @@ function LienWaiverBadge({ status }: { status: Payable['lienWaiverStatus'] }) {
       )
     case 'not_required':
       return (
-        <span className="flex items-center gap-1 text-xs text-gray-400">
+        <span className="flex items-center gap-1 text-xs text-warm-400">
           Not required
         </span>
       )
@@ -398,7 +398,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
   return (
     <div className={cn(
       "bg-white border rounded-lg p-4 hover:shadow-md transition-shadow",
-      selected ? "border-blue-500 ring-2 ring-blue-100" : "border-gray-200",
+      selected ? "border-stone-500 ring-2 ring-stone-100" : "border-warm-200",
       payable.anomaly?.severity === 'high' && "border-l-4 border-l-red-500",
       payable.duplicateWarning && "border-l-4 border-l-orange-500"
     )}>
@@ -408,11 +408,11 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
             type="checkbox"
             checked={selected}
             onChange={onSelect}
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="mt-1 h-4 w-4 rounded border-warm-300 text-stone-600 focus:ring-stone-500"
           />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="font-mono text-sm font-medium text-gray-900">{payable.invoiceNumber}</span>
+              <span className="font-mono text-sm font-medium text-warm-900">{payable.invoiceNumber}</span>
               <span className={cn("text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1", status.bgColor, status.color)}>
                 <StatusIcon className="h-3 w-3" />
                 {status.label}
@@ -440,26 +440,26 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
             </div>
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Building2 className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-2 text-warm-600">
+                <Building2 className="h-4 w-4 text-warm-400" />
                 <span>{payable.vendorName}</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600">
-                <Briefcase className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-2 text-warm-600">
+                <Briefcase className="h-4 w-4 text-warm-400" />
                 <span>{payable.jobName}</span>
               </div>
             </div>
 
             <div className="mt-2 flex items-center gap-3 text-sm flex-wrap">
-              <span className="text-gray-500">{payable.paymentTerms}</span>
+              <span className="text-warm-500">{payable.paymentTerms}</span>
               <LienWaiverBadge status={payable.lienWaiverStatus} />
               {payable.retainage && payable.retainage > 0 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-warm-500">
                   Retainage: {formatCurrency(payable.retainage)}
                 </span>
               )}
               {payable.poNumber && (
-                <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   {payable.poNumber}
                 </span>
               )}
@@ -469,12 +469,12 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 </span>
               )}
               {payable.costCodes && payable.costCodes.length > 0 && (
-                <span className="text-xs text-gray-400 flex items-center gap-1">
+                <span className="text-xs text-warm-400 flex items-center gap-1">
                   <FileText className="h-3 w-3" />
                   {payable.costCodes.join(', ')}
                 </span>
               )}
-              <span className="text-xs text-gray-400 flex items-center gap-1" title={`Uploaded via ${payable.uploadSource}`}>
+              <span className="text-xs text-warm-400 flex items-center gap-1" title={`Uploaded via ${payable.uploadSource}`}>
                 <SourceIcon className="h-3 w-3" />
               </span>
               <QboSyncBadge status={payable.qboSyncStatus} />
@@ -485,22 +485,22 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 "mt-2 p-2 rounded-md flex items-start gap-2 text-sm",
                 payable.anomaly.severity === 'high' ? "bg-red-50" :
                 payable.anomaly.severity === 'medium' ? "bg-amber-50" :
-                "bg-yellow-50"
+                "bg-amber-50"
               )}>
                 <ShieldAlert className={cn(
                   "h-4 w-4 mt-0.5 flex-shrink-0",
                   payable.anomaly.severity === 'high' ? "text-red-500" :
                   payable.anomaly.severity === 'medium' ? "text-amber-500" :
-                  "text-yellow-500"
+                  "text-amber-500"
                 )} />
                 <span className={
                   payable.anomaly.severity === 'high' ? "text-red-700" :
                   payable.anomaly.severity === 'medium' ? "text-amber-700" :
-                  "text-yellow-700"
+                  "text-amber-700"
                 }>
                   {payable.anomaly.message}
                 </span>
-                <button className="ml-auto text-xs text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <button className="ml-auto text-xs text-warm-500 hover:text-warm-700 whitespace-nowrap">
                   Dismiss
                 </button>
               </div>
@@ -509,13 +509,13 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
             {payable.aiNote && !payable.anomaly && (
               <div className={cn(
                 "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
-                payable.lienWaiverStatus === 'pending' ? "bg-amber-50" : "bg-blue-50"
+                payable.lienWaiverStatus === 'pending' ? "bg-amber-50" : "bg-stone-50"
               )}>
                 <Sparkles className={cn(
                   "h-4 w-4 mt-0.5 flex-shrink-0",
-                  payable.lienWaiverStatus === 'pending' ? "text-amber-500" : "text-blue-500"
+                  payable.lienWaiverStatus === 'pending' ? "text-amber-500" : "text-stone-500"
                 )} />
-                <span className={payable.lienWaiverStatus === 'pending' ? "text-amber-700" : "text-blue-700"}>
+                <span className={payable.lienWaiverStatus === 'pending' ? "text-amber-700" : "text-stone-700"}>
                   {payable.aiNote}
                 </span>
               </div>
@@ -527,11 +527,11 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
           <div className="text-right">
             <div className={cn(
               "text-lg font-semibold",
-              payable.amount < 0 ? "text-purple-700" : "text-gray-900"
+              payable.amount < 0 ? "text-purple-700" : "text-warm-900"
             )}>
               {payable.amountPaid > 0 ? (
                 <>
-                  <span className="text-gray-400 line-through text-sm mr-2">{formatCurrency(payable.amount)}</span>
+                  <span className="text-warm-400 line-through text-sm mr-2">{formatCurrency(payable.amount)}</span>
                   {formatCurrency(balance)}
                 </>
               ) : (
@@ -539,31 +539,31 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
               )}
             </div>
             <div className="flex items-center gap-2 text-sm mt-1">
-              <Calendar className="h-3.5 w-3.5 text-gray-400" />
-              <span className="text-gray-500">Due {formatDate(payable.dueDate)}</span>
+              <Calendar className="h-3.5 w-3.5 text-warm-400" />
+              <span className="text-warm-500">Due {formatDate(payable.dueDate)}</span>
               {payable.status !== 'paid' && (
                 <span className={cn(
                   "text-xs px-1.5 py-0.5 rounded font-medium",
                   dueInfo.isOverdue ? "bg-red-100 text-red-700" :
                   dueInfo.days <= 7 ? "bg-amber-100 text-amber-700" :
-                  "bg-gray-100 text-gray-600"
+                  "bg-warm-100 text-warm-600"
                 )}>
                   {dueInfo.label}
                 </span>
               )}
             </div>
-            <div className="text-xs text-gray-400 mt-0.5">
+            <div className="text-xs text-warm-400 mt-0.5">
               Inv: {formatDate(payable.invoiceDate)}
             </div>
           </div>
-          <button className="p-1.5 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1.5 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
       </div>
 
       {payable.status !== 'paid' && payable.status !== 'disputed' && (
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+        <div className="mt-3 pt-3 border-t border-warm-100 flex items-center justify-end gap-2">
           {payable.lienWaiverStatus === 'pending' && (
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50">
               <Send className="h-3.5 w-3.5" />
@@ -571,25 +571,25 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
             </button>
           )}
           {payable.status === 'pending' && (
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-700 border border-stone-200 rounded-lg hover:bg-stone-50">
               <CheckCircle className="h-3.5 w-3.5" />
               Approve
             </button>
           )}
           {payable.status === 'approved' && payable.lienWaiverStatus !== 'pending' && (
             <>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
                 <Calendar className="h-3.5 w-3.5" />
                 Schedule
               </button>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                 <CreditCard className="h-3.5 w-3.5" />
                 Pay Now
               </button>
             </>
           )}
           {payable.qboSyncStatus === 'not_synced' && (
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-500 border border-warm-200 rounded-lg hover:bg-warm-50">
               <ArrowRightLeft className="h-3.5 w-3.5" />
               Sync to QBO
             </button>
@@ -673,14 +673,14 @@ export function PayablesPreview() {
   const anomalyCount = mockPayables.filter(p => p.anomaly).length
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Accounts Payable</h3>
-              <span className="text-sm text-gray-500">{mockPayables.length} invoices | {formatCurrency(totalOutstanding)} outstanding</span>
+              <h3 className="font-semibold text-warm-900">Accounts Payable</h3>
+              <span className="text-sm text-warm-500">{mockPayables.length} invoices | {formatCurrency(totalOutstanding)} outstanding</span>
               {anomalyCount > 0 && (
                 <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <ShieldAlert className="h-3 w-3" />
@@ -690,15 +690,15 @@ export function PayablesPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <ArrowRightLeft className="h-4 w-4" />
               Export to QBO
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <CreditCard className="h-4 w-4" />
               Batch Pay
             </button>
@@ -707,14 +707,14 @@ export function PayablesPreview() {
       </div>
 
       {/* Summary Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Total Outstanding
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalOutstanding)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalOutstanding)}</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-600 text-sm">
@@ -725,18 +725,18 @@ export function PayablesPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            overdueCount > 0 ? "bg-red-50" : "bg-gray-50"
+            overdueCount > 0 ? "bg-red-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-sm",
-              overdueCount > 0 ? "text-red-600" : "text-gray-600"
+              overdueCount > 0 ? "text-red-600" : "text-warm-600"
             )}>
               <TrendingDown className="h-4 w-4" />
               Overdue
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              overdueCount > 0 ? "text-red-700" : "text-gray-500"
+              overdueCount > 0 ? "text-red-700" : "text-warm-500"
             )}>
               {overdueCount > 0 ? formatCurrency(overdueAmount) : '$0'}
             </div>
@@ -768,39 +768,39 @@ export function PayablesPreview() {
             <div className="text-xl font-bold text-green-700 mt-1">{formatCurrency(availableDiscounts)}</div>
             <div className="text-xs text-green-600 mt-0.5">If paid early</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Retainage Held
             </div>
-            <div className="text-xl font-bold text-gray-700 mt-1">{formatCurrency(totalRetainage)}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{formatCurrency(totalRetainage)}</div>
           </div>
         </div>
       </div>
 
       {/* Aging Summary */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-6">
-          <span className="text-sm text-gray-500">Aging:</span>
+          <span className="text-sm text-warm-500">Aging:</span>
           <div className="flex items-center gap-4">
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-900">$85,400</div>
-              <div className="text-xs text-gray-500">Current</div>
+              <div className="text-sm font-medium text-warm-900">$85,400</div>
+              <div className="text-xs text-warm-500">Current</div>
             </div>
             <div className="text-center">
               <div className="text-sm font-medium text-amber-600">$52,000</div>
-              <div className="text-xs text-gray-500">1-30 Days</div>
+              <div className="text-xs text-warm-500">1-30 Days</div>
             </div>
             <div className="text-center">
               <div className="text-sm font-medium text-orange-600">$28,400</div>
-              <div className="text-xs text-gray-500">31-60 Days</div>
+              <div className="text-xs text-warm-500">31-60 Days</div>
             </div>
             <div className="text-center">
               <div className="text-sm font-medium text-red-600">$9,800</div>
-              <div className="text-xs text-gray-500">60+ Days</div>
+              <div className="text-xs text-warm-500">60+ Days</div>
             </div>
           </div>
-          <div className="ml-auto text-xs text-gray-400 flex items-center gap-1">
+          <div className="ml-auto text-xs text-warm-400 flex items-center gap-1">
             <Sparkles className="h-3 w-3" />
             DSO: 28 days (industry avg: 34)
           </div>
@@ -808,7 +808,7 @@ export function PayablesPreview() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -851,19 +851,19 @@ export function PayablesPreview() {
 
       {/* Selected Bar */}
       {selectedIds.size > 0 && (
-        <div className="bg-blue-50 border-b border-blue-200 px-4 py-2">
+        <div className="bg-stone-50 border-b border-stone-200 px-4 py-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-blue-700">
+            <span className="text-sm text-stone-700">
               {selectedIds.size} selected | Total: {formatCurrency(selectedAmount)}
             </span>
             <div className="flex items-center gap-2">
-              <button className="px-3 py-1 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-white">
+              <button className="px-3 py-1 text-sm text-warm-600 border border-warm-300 rounded-lg hover:bg-white">
                 Export Selected
               </button>
-              <button className="px-3 py-1 text-sm text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-100">
+              <button className="px-3 py-1 text-sm text-stone-700 border border-stone-300 rounded-lg hover:bg-stone-100">
                 Schedule All
               </button>
-              <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button className="px-3 py-1 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
                 Pay Selected
               </button>
             </div>
@@ -882,7 +882,7 @@ export function PayablesPreview() {
           />
         ))}
         {filteredPayables.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No payables match your filters
           </div>
         )}

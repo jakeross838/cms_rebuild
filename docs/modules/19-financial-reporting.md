@@ -618,7 +618,7 @@ CREATE TABLE v2_financial_settings (
 ## Dependencies
 
 - **Module 9:** Budget & Cost Tracking (budget data, cost actuals, cost codes)
-- **Module 11:** Basic Invoicing (AR data, invoice amounts, payment status)
+- **Module 11:** Native Accounting (GL/AP/AR) (AR data, invoice amounts, payment status)
 - **Module 17:** Change Orders (CO impact on contract value and budget)
 - **Module 18:** Purchase Orders (committed costs, AP data)
 - **Module 7:** Scheduling (schedule progress for WIP and draw calculation)

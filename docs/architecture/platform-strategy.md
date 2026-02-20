@@ -169,7 +169,7 @@ Stay lean. One person with AI tooling can maintain this product for 50+ customer
 **Weeks 1-8 (Current Phase): Core Product Completion**
 - Complete skeleton UI for all 50 modules
 - Implement Phase 1 (Foundation) and Phase 2 (Construction Core) modules with real data
-- Ship Module 11 (Basic Invoicing) and Module 09 (Budget & Cost Tracking) — these are the "killer features"
+- Ship Module 11 (Native Accounting (GL/AP/AR)) and Module 09 (Budget & Cost Tracking) — these are the "killer features"
 - Ross Built uses the system daily as the sole alpha tester
 
 **Weeks 9-16: Financial Modules + Hardening**

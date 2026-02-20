@@ -386,10 +386,10 @@ const rooms = ['All Rooms', 'Kitchen', 'Master Bath', 'Master Bedroom', 'Living 
 const categories = ['All', 'Flooring', 'Fixtures', 'Appliances', 'Countertops', 'Lighting', 'Cabinetry']
 
 const statusConfig: Record<SelectionStatus, { label: string; color: string; icon: typeof Clock }> = {
-  not_started: { label: 'Not Started', color: 'bg-gray-100 text-gray-600', icon: Clock },
+  not_started: { label: 'Not Started', color: 'bg-warm-100 text-warm-600', icon: Clock },
   options_presented: { label: 'Options Presented', color: 'bg-indigo-100 text-indigo-700', icon: Eye },
   client_reviewing: { label: 'Client Reviewing', color: 'bg-cyan-100 text-cyan-700', icon: Eye },
-  selected: { label: 'Selected', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
+  selected: { label: 'Selected', color: 'bg-stone-100 text-stone-700', icon: CheckCircle },
   confirmed: { label: 'Confirmed', color: 'bg-emerald-100 text-emerald-700', icon: FileSignature },
   ordered: { label: 'Ordered', color: 'bg-purple-100 text-purple-700', icon: ShoppingCart },
   received: { label: 'Received', color: 'bg-teal-100 text-teal-700', icon: Truck },
@@ -419,14 +419,14 @@ function SelectionCard({ selection }: { selection: Selection }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      isUrgent ? "border-amber-300" : selection.status === 'change_requested' ? "border-orange-300" : "border-gray-200"
+      isUrgent ? "border-amber-300" : selection.status === 'change_requested' ? "border-orange-300" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-gray-500 uppercase">{selection.category}</span>
-            <span className="text-xs text-gray-400">-</span>
-            <span className="text-xs text-gray-500">{selection.room}</span>
+            <span className="text-xs font-medium text-warm-500 uppercase">{selection.category}</span>
+            <span className="text-xs text-warm-400">-</span>
+            <span className="text-xs text-warm-500">{selection.room}</span>
             {isUrgent && <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
             {selection.designerRecommended && (
               <span className="flex items-center gap-0.5 text-xs text-pink-600" title="Designer recommended">
@@ -434,22 +434,22 @@ function SelectionCard({ selection }: { selection: Selection }) {
               </span>
             )}
           </div>
-          <h4 className="font-medium text-gray-900">{selection.itemName}</h4>
+          <h4 className="font-medium text-warm-900">{selection.itemName}</h4>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       <div className="mb-3">
         {selection.selectedProduct ? (
-          <p className="text-sm text-gray-700">{selection.selectedProduct}</p>
+          <p className="text-sm text-warm-700">{selection.selectedProduct}</p>
         ) : (
-          <p className="text-sm text-gray-400 italic">No selection made</p>
+          <p className="text-sm text-warm-400 italic">No selection made</p>
         )}
         <div className="flex items-center gap-3 mt-1">
           {selection.vendor && (
-            <p className="text-xs text-gray-500">{selection.vendor}</p>
+            <p className="text-xs text-warm-500">{selection.vendor}</p>
           )}
           {selection.poNumber && (
             <span className="text-xs text-purple-600 flex items-center gap-0.5">
@@ -464,16 +464,16 @@ function SelectionCard({ selection }: { selection: Selection }) {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3 text-sm">
           <div className="flex items-center gap-1">
-            <DollarSign className="h-3.5 w-3.5 text-gray-400" />
+            <DollarSign className="h-3.5 w-3.5 text-warm-400" />
             <span className={cn(
               "font-medium",
-              overAllowance ? "text-red-600" : "text-gray-900"
+              overAllowance ? "text-red-600" : "text-warm-900"
             )}>
               {selection.price > 0 ? formatCurrency(selection.price) : '-'}
             </span>
           </div>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-500">{formatCurrency(selection.allowance)} {pricingModelLabels[selection.pricingModel].toLowerCase()}</span>
+          <span className="text-warm-400">/</span>
+          <span className="text-warm-500">{formatCurrency(selection.allowance)} {pricingModelLabels[selection.pricingModel].toLowerCase()}</span>
         </div>
         {selection.price > 0 && (
           <span className={cn(
@@ -486,7 +486,7 @@ function SelectionCard({ selection }: { selection: Selection }) {
       </div>
 
       {/* Meta indicators */}
-      <div className="flex items-center gap-3 mb-3 text-xs text-gray-400">
+      <div className="flex items-center gap-3 mb-3 text-xs text-warm-400">
         {selection.optionsCount > 0 && (
           <span className="flex items-center gap-0.5" title={`${selection.optionsCount} options presented`}>
             <Eye className="h-3 w-3" />
@@ -518,25 +518,25 @@ function SelectionCard({ selection }: { selection: Selection }) {
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-warm-100">
         <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium", config.color)}>
           <StatusIcon className="h-3.5 w-3.5" />
           {config.label}
         </div>
         <div className={cn(
           "flex items-center gap-1 text-xs",
-          isUrgent ? "text-amber-600 font-medium" : "text-gray-500"
+          isUrgent ? "text-amber-600 font-medium" : "text-warm-500"
         )}>
           <Calendar className="h-3.5 w-3.5" />
           <span>{selection.deadline}</span>
           {selection.daysUntilDeadline > 0 && (selection.status === 'not_started' || selection.status === 'options_presented' || selection.status === 'client_reviewing') && (
-            <span className="text-gray-400">({selection.daysUntilDeadline}d)</span>
+            <span className="text-warm-400">({selection.daysUntilDeadline}d)</span>
           )}
         </div>
       </div>
 
       {selection.scheduleDependency && (
-        <div className="mt-2 text-xs text-gray-400 flex items-center gap-1">
+        <div className="mt-2 text-xs text-warm-400 flex items-center gap-1">
           <Clock className="h-3 w-3" />
           {selection.scheduleDependency}
         </div>
@@ -545,13 +545,13 @@ function SelectionCard({ selection }: { selection: Selection }) {
       {selection.aiNote && (
         <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2 text-xs",
-          selection.status === 'change_requested' ? "bg-orange-50" : isUrgent ? "bg-amber-50" : "bg-blue-50"
+          selection.status === 'change_requested' ? "bg-orange-50" : isUrgent ? "bg-amber-50" : "bg-stone-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
-            selection.status === 'change_requested' ? "text-orange-500" : isUrgent ? "text-amber-500" : "text-blue-500"
+            selection.status === 'change_requested' ? "text-orange-500" : isUrgent ? "text-amber-500" : "text-stone-500"
           )} />
-          <span className={selection.status === 'change_requested' ? "text-orange-700" : isUrgent ? "text-amber-700" : "text-blue-700"}>
+          <span className={selection.status === 'change_requested' ? "text-orange-700" : isUrgent ? "text-amber-700" : "text-stone-700"}>
             {selection.aiNote}
           </span>
         </div>
@@ -569,41 +569,41 @@ function SelectionRow({ selection }: { selection: Selection }) {
 
   return (
     <tr className={cn(
-      "hover:bg-gray-50",
+      "hover:bg-warm-50",
       isUrgent && "bg-amber-50/50",
       selection.status === 'change_requested' && "bg-orange-50/30",
     )}>
       <td className="py-3 px-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-gray-500 uppercase bg-gray-100 px-1.5 py-0.5 rounded">
+          <span className="text-xs font-medium text-warm-500 uppercase bg-warm-100 px-1.5 py-0.5 rounded">
             {selection.category}
           </span>
           {isUrgent && <AlertTriangle className="h-4 w-4 text-amber-500" />}
           {selection.designerRecommended && <Palette className="h-3.5 w-3.5 text-pink-500" />}
         </div>
       </td>
-      <td className="py-3 px-4 text-xs text-gray-500">{selection.room}</td>
+      <td className="py-3 px-4 text-xs text-warm-500">{selection.room}</td>
       <td className="py-3 px-4">
-        <div className="font-medium text-gray-900">{selection.itemName}</div>
+        <div className="font-medium text-warm-900">{selection.itemName}</div>
         {selection.vendor && (
-          <div className="text-xs text-gray-500">{selection.vendor}</div>
+          <div className="text-xs text-warm-500">{selection.vendor}</div>
         )}
       </td>
       <td className="py-3 px-4">
         {selection.selectedProduct ? (
-          <span className="text-sm text-gray-700">{selection.selectedProduct}</span>
+          <span className="text-sm text-warm-700">{selection.selectedProduct}</span>
         ) : (
-          <span className="text-sm text-gray-400 italic">Not selected</span>
+          <span className="text-sm text-warm-400 italic">Not selected</span>
         )}
       </td>
       <td className="py-3 px-4 text-right">
         <span className={cn(
           "font-medium",
-          overAllowance ? "text-red-600" : "text-gray-900"
+          overAllowance ? "text-red-600" : "text-warm-900"
         )}>
           {selection.price > 0 ? formatCurrency(selection.price) : '-'}
         </span>
-        <div className="text-xs text-gray-500">{formatCurrency(selection.allowance)} allow.</div>
+        <div className="text-xs text-warm-500">{formatCurrency(selection.allowance)} allow.</div>
       </td>
       <td className="py-3 px-4 text-right">
         {selection.price > 0 && (
@@ -624,7 +624,7 @@ function SelectionRow({ selection }: { selection: Selection }) {
       <td className="py-3 px-4 text-right">
         <div className={cn(
           "text-sm",
-          isUrgent ? "text-amber-600 font-medium" : "text-gray-600"
+          isUrgent ? "text-amber-600 font-medium" : "text-warm-600"
         )}>
           {selection.deadline}
         </div>
@@ -668,13 +668,13 @@ export function SelectionsPreview() {
   const totalComments = mockSelections.reduce((sum, s) => sum + s.commentCount, 0)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="mb-3">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Client Selections</h3>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Smith Residence</span>
+            <h3 className="font-semibold text-warm-900">Client Selections</h3>
+            <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">Smith Residence</span>
             {changeRequests > 0 && (
               <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
                 <ArrowRightLeft className="h-3 w-3" />
@@ -682,7 +682,7 @@ export function SelectionsPreview() {
               </span>
             )}
           </div>
-          <div className="text-sm text-gray-500 mt-0.5">
+          <div className="text-sm text-warm-500 mt-0.5">
             {selectionsMade} of {totalSelections} selections made | {pendingDecisions} pending
             {urgentDecisions > 0 && (
               <span className="text-amber-600 font-medium ml-1">({urgentDecisions} urgent)</span>
@@ -692,13 +692,13 @@ export function SelectionsPreview() {
 
         {/* Progress Bar */}
         <div className="mb-3">
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-2 bg-warm-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all"
+              className="h-full bg-gradient-to-r from-stone-500 to-green-500 rounded-full transition-all"
               style={{ width: `${(selectionsMade / totalSelections) * 100}%` }}
             />
           </div>
-          <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
+          <div className="flex items-center justify-between mt-1 text-xs text-warm-500">
             <span>{Math.round((selectionsMade / totalSelections) * 100)}% complete</span>
             <span>{totalSelections - selectionsMade} remaining</span>
           </div>
@@ -760,31 +760,31 @@ export function SelectionsPreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <CheckCircle className="h-4 w-4" />
               Made
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">
-              {selectionsMade} <span className="text-sm font-normal text-gray-500">/ {totalSelections}</span>
+            <div className="text-xl font-bold text-warm-900 mt-1">
+              {selectionsMade} <span className="text-sm font-normal text-warm-500">/ {totalSelections}</span>
             </div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            urgentDecisions > 0 ? "bg-amber-50" : "bg-gray-50"
+            urgentDecisions > 0 ? "bg-amber-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-sm",
-              urgentDecisions > 0 ? "text-amber-600" : "text-gray-500"
+              urgentDecisions > 0 ? "text-amber-600" : "text-warm-500"
             )}>
               <Clock className="h-4 w-4" />
               Pending
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              urgentDecisions > 0 ? "text-amber-700" : "text-gray-900"
+              urgentDecisions > 0 ? "text-amber-700" : "text-warm-900"
             )}>
               {pendingDecisions}
               {urgentDecisions > 0 && (
@@ -792,12 +792,12 @@ export function SelectionsPreview() {
               )}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-sm">
               <DollarSign className="h-4 w-4" />
               Total Allowance
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(totalAllowance)}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalAllowance)}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -824,12 +824,12 @@ export function SelectionsPreview() {
             </div>
             <div className="text-xl font-bold text-pink-700 mt-1">{designerRecommendedCount}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <MessageSquare className="h-4 w-4" />
               Comments
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{totalComments}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{totalComments}</div>
           </div>
         </div>
       </div>
@@ -841,7 +841,7 @@ export function SelectionsPreview() {
             <SelectionCard key={selection.id} selection={selection} />
           ))}
           {filteredSelections.length === 0 && (
-            <div className="col-span-3 text-center py-12 text-gray-500">
+            <div className="col-span-3 text-center py-12 text-warm-500">
               No selections match the current filters
             </div>
           )}
@@ -849,25 +849,25 @@ export function SelectionsPreview() {
       ) : (
         <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100 border-b border-gray-200 sticky top-0">
+            <thead className="bg-warm-100 border-b border-warm-200 sticky top-0">
               <tr>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Category</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Room</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Item</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Selected Product</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Price</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Variance</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Deadline</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Category</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Room</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Item</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Selected Product</th>
+                <th className="text-right py-3 px-4 font-medium text-warm-600">Price</th>
+                <th className="text-right py-3 px-4 font-medium text-warm-600">Variance</th>
+                <th className="text-left py-3 px-4 font-medium text-warm-600">Status</th>
+                <th className="text-right py-3 px-4 font-medium text-warm-600">Deadline</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
+            <tbody className="bg-white divide-y divide-warm-100">
               {filteredSelections.map(selection => (
                 <SelectionRow key={selection.id} selection={selection} />
               ))}
               {filteredSelections.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-gray-500">
+                  <td colSpan={8} className="text-center py-12 text-warm-500">
                     No selections match the current filters
                   </td>
                 </tr>
@@ -878,10 +878,10 @@ export function SelectionsPreview() {
       )}
 
       {/* Cross-Module Connection Badges */}
-      <div className="bg-gray-50 border-t border-gray-200 px-4 py-2">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-500 font-medium">Connected:</span>
-          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="text-warm-500 font-medium">Connected:</span>
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Package className="h-3 w-3" />
             Selections Catalog
           </span>
@@ -929,7 +929,7 @@ export function SelectionsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Features for Selections"
           columns={2}

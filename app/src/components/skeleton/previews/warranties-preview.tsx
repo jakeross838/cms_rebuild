@@ -450,19 +450,19 @@ const statusConfig = {
 }
 
 const warrantyTypeConfig: Record<WarrantyType, { label: string; color: string }> = {
-  builder: { label: 'Builder', color: 'bg-blue-100 text-blue-700' },
+  builder: { label: 'Builder', color: 'bg-stone-100 text-stone-700' },
   manufacturer: { label: 'Manufacturer', color: 'bg-purple-100 text-purple-700' },
   workmanship: { label: 'Workmanship', color: 'bg-orange-100 text-orange-700' },
   extended: { label: 'Extended', color: 'bg-teal-100 text-teal-700' },
 }
 
 const categoryConfig: Record<CategoryType, { label: string; icon: typeof Wrench; color: string }> = {
-  appliances: { label: 'Appliances', icon: Home, color: 'bg-blue-50 text-blue-700' },
+  appliances: { label: 'Appliances', icon: Home, color: 'bg-stone-50 text-stone-700' },
   roofing: { label: 'Roofing', icon: Building2, color: 'bg-orange-50 text-orange-700' },
   hvac: { label: 'HVAC', icon: Thermometer, color: 'bg-cyan-50 text-cyan-700' },
   plumbing: { label: 'Plumbing', icon: Droplets, color: 'bg-indigo-50 text-indigo-700' },
-  electrical: { label: 'Electrical', icon: Zap, color: 'bg-yellow-50 text-yellow-700' },
-  structural: { label: 'Structural', icon: Building2, color: 'bg-gray-100 text-gray-700' },
+  electrical: { label: 'Electrical', icon: Zap, color: 'bg-amber-50 text-amber-700' },
+  structural: { label: 'Structural', icon: Building2, color: 'bg-warm-100 text-warm-700' },
   windows: { label: 'Windows', icon: Home, color: 'bg-purple-50 text-purple-700' },
   exterior: { label: 'Exterior', icon: Building2, color: 'bg-emerald-50 text-emerald-700' },
   finish: { label: 'Finish', icon: Wrench, color: 'bg-pink-50 text-pink-700' },
@@ -470,9 +470,9 @@ const categoryConfig: Record<CategoryType, { label: string; icon: typeof Wrench;
 
 const coverageConfig: Record<CoverageType, { label: string; color: string }> = {
   full: { label: 'Full Coverage', color: 'bg-green-50 text-green-700' },
-  parts: { label: 'Parts Only', color: 'bg-blue-50 text-blue-700' },
+  parts: { label: 'Parts Only', color: 'bg-stone-50 text-stone-700' },
   labor: { label: 'Labor Only', color: 'bg-purple-50 text-purple-700' },
-  limited: { label: 'Limited', color: 'bg-gray-100 text-gray-600' },
+  limited: { label: 'Limited', color: 'bg-warm-100 text-warm-600' },
 }
 
 const walkthroughTypeConfig: Record<WalkthroughSchedule['type'], string> = {
@@ -498,14 +498,14 @@ function formatCurrency(amount: number): string {
 
 function getFTQColor(score: number): string {
   if (score >= 95) return 'text-green-600'
-  if (score >= 90) return 'text-blue-600'
+  if (score >= 90) return 'text-stone-600'
   if (score >= 85) return 'text-amber-600'
   return 'text-red-600'
 }
 
 function getFTQBgColor(score: number): string {
   if (score >= 95) return 'bg-green-100 text-green-700'
-  if (score >= 90) return 'bg-blue-100 text-blue-700'
+  if (score >= 90) return 'bg-stone-100 text-stone-700'
   if (score >= 85) return 'bg-amber-100 text-amber-700'
   return 'bg-red-100 text-red-700'
 }
@@ -522,30 +522,30 @@ function getRiskColor(level: 'high' | 'medium' | 'low'): string {
 
 function ConstructionFTQPanel({ data }: { data: ConstructionFTQData }) {
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-4">
+    <div className="bg-white border-b border-warm-200 px-4 py-4">
       <div className="flex items-center gap-2 mb-3">
-        <Target className="h-4 w-4 text-blue-600" />
-        <span className="text-sm font-medium text-gray-700">FTQ Impact on Warranty</span>
-        <span className="text-xs text-gray-500 ml-auto">Construction quality correlation</span>
+        <Target className="h-4 w-4 text-stone-600" />
+        <span className="text-sm font-medium text-warm-700">FTQ Impact on Warranty</span>
+        <span className="text-xs text-warm-500 ml-auto">Construction quality correlation</span>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-4">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-100">
-          <div className="text-xs text-blue-600 mb-1">Original Construction FTQ</div>
+        <div className="bg-gradient-to-br from-stone-50 to-indigo-50 rounded-lg p-3 border border-stone-100">
+          <div className="text-xs text-stone-600 mb-1">Original Construction FTQ</div>
           <div className={cn("text-3xl font-bold", getFTQColor(data.overallScore))}>{data.overallScore}%</div>
-          <div className="text-xs text-gray-500 mt-1">First Time Quality Score</div>
+          <div className="text-xs text-warm-500 mt-1">First Time Quality Score</div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-          <div className="text-xs text-gray-600 mb-1">Predicted Claims</div>
-          <div className="text-2xl font-bold text-gray-800">{data.predictedClaimsRange.min}-{data.predictedClaimsRange.max}</div>
-          <div className="text-xs text-gray-500 mt-1">Year 1 estimate</div>
+        <div className="bg-warm-50 rounded-lg p-3 border border-warm-200">
+          <div className="text-xs text-warm-600 mb-1">Predicted Claims</div>
+          <div className="text-2xl font-bold text-warm-800">{data.predictedClaimsRange.min}-{data.predictedClaimsRange.max}</div>
+          <div className="text-xs text-warm-500 mt-1">Year 1 estimate</div>
         </div>
-        <div className="col-span-2 bg-blue-50 rounded-lg p-3 border border-blue-100">
+        <div className="col-span-2 bg-stone-50 rounded-lg p-3 border border-stone-100">
           <div className="flex items-start gap-2">
-            <Brain className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+            <Brain className="h-4 w-4 text-stone-600 mt-0.5 flex-shrink-0" />
             <div>
-              <div className="text-xs font-medium text-blue-700 mb-1">Quality Correlation Insight</div>
-              <div className="text-sm text-blue-800">{data.qualityCorrelation}</div>
+              <div className="text-xs font-medium text-stone-700 mb-1">Quality Correlation Insight</div>
+              <div className="text-sm text-stone-800">{data.qualityCorrelation}</div>
             </div>
           </div>
         </div>
@@ -553,41 +553,41 @@ function ConstructionFTQPanel({ data }: { data: ConstructionFTQData }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <div className="text-xs font-medium text-gray-600 mb-2">FTQ by Construction Phase</div>
+          <div className="text-xs font-medium text-warm-600 mb-2">FTQ by Construction Phase</div>
           <div className="space-y-1.5">
             {data.phaseScores.map((phase, idx) => (
               <div key={idx} className="flex items-center gap-2 text-xs">
-                <span className="w-20 text-gray-600 truncate">{phase.phase}</span>
-                <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                <span className="w-20 text-warm-600 truncate">{phase.phase}</span>
+                <div className="flex-1 bg-warm-100 rounded-full h-2 overflow-hidden">
                   <div
                     className={cn(
                       "h-full rounded-full",
                       phase.score >= 95 ? "bg-green-500" :
-                      phase.score >= 90 ? "bg-blue-500" :
+                      phase.score >= 90 ? "bg-stone-500" :
                       phase.score >= 85 ? "bg-amber-500" : "bg-red-500"
                     )}
                     style={{ width: `${phase.score}%` }}
                   />
                 </div>
                 <span className={cn("w-10 text-right font-medium", getFTQColor(phase.score))}>{phase.score}%</span>
-                <span className="w-24 text-gray-400 truncate">{phase.vendorName}</span>
+                <span className="w-24 text-warm-400 truncate">{phase.vendorName}</span>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <div className="text-xs font-medium text-gray-600 mb-2">Warranty Risk Areas (from FTQ)</div>
+          <div className="text-xs font-medium text-warm-600 mb-2">Warranty Risk Areas (from FTQ)</div>
           <div className="space-y-2">
             {data.riskAreas.map((risk, idx) => (
-              <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-100">
+              <div key={idx} className="flex items-center gap-2 p-2 bg-warm-50 rounded border border-warm-100">
                 <AlertTriangle className={cn(
                   "h-3.5 w-3.5 flex-shrink-0",
                   risk.riskLevel === 'high' ? 'text-red-500' :
                   risk.riskLevel === 'medium' ? 'text-amber-500' : 'text-green-500'
                 )} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-gray-700 truncate">{risk.area}</div>
-                  <div className="text-xs text-gray-500">{risk.vendorName} - FTQ: {risk.originalFTQ}%</div>
+                  <div className="text-xs font-medium text-warm-700 truncate">{risk.area}</div>
+                  <div className="text-xs text-warm-500">{risk.vendorName} - FTQ: {risk.originalFTQ}%</div>
                 </div>
                 <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", getRiskColor(risk.riskLevel))}>
                   {risk.riskLevel}
@@ -603,31 +603,31 @@ function ConstructionFTQPanel({ data }: { data: ConstructionFTQData }) {
 
 function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCallback[] }) {
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-4">
+    <div className="bg-white border-b border-warm-200 px-4 py-4">
       <div className="flex items-center gap-2 mb-3">
         <BarChart3 className="h-4 w-4 text-purple-600" />
-        <span className="text-sm font-medium text-gray-700">Vendor Warranty Performance</span>
-        <span className="text-xs text-gray-500 ml-auto">Callback rates & repair quality</span>
+        <span className="text-sm font-medium text-warm-700">Vendor Warranty Performance</span>
+        <span className="text-xs text-warm-500 ml-auto">Callback rates & repair quality</span>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-2 text-xs font-medium text-gray-500">Vendor</th>
-              <th className="text-center py-2 text-xs font-medium text-gray-500">Claims</th>
-              <th className="text-center py-2 text-xs font-medium text-gray-500">Callback Rate</th>
-              <th className="text-center py-2 text-xs font-medium text-gray-500">Warranty FTQ</th>
-              <th className="text-center py-2 text-xs font-medium text-gray-500">Cost</th>
-              <th className="text-center py-2 text-xs font-medium text-gray-500">Rank</th>
-              <th className="text-center py-2 text-xs font-medium text-gray-500">Trend</th>
+            <tr className="border-b border-warm-200">
+              <th className="text-left py-2 text-xs font-medium text-warm-500">Vendor</th>
+              <th className="text-center py-2 text-xs font-medium text-warm-500">Claims</th>
+              <th className="text-center py-2 text-xs font-medium text-warm-500">Callback Rate</th>
+              <th className="text-center py-2 text-xs font-medium text-warm-500">Warranty FTQ</th>
+              <th className="text-center py-2 text-xs font-medium text-warm-500">Cost</th>
+              <th className="text-center py-2 text-xs font-medium text-warm-500">Rank</th>
+              <th className="text-center py-2 text-xs font-medium text-warm-500">Trend</th>
             </tr>
           </thead>
           <tbody>
             {vendors.map((vendor, idx) => (
-              <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-2 font-medium text-gray-700">{vendor.vendorName}</td>
-                <td className="py-2 text-center text-gray-600">{vendor.totalClaims}</td>
+              <tr key={idx} className="border-b border-warm-100 hover:bg-warm-50">
+                <td className="py-2 font-medium text-warm-700">{vendor.vendorName}</td>
+                <td className="py-2 text-center text-warm-600">{vendor.totalClaims}</td>
                 <td className="py-2 text-center">
                   <span className={cn(
                     "px-1.5 py-0.5 rounded text-xs font-medium",
@@ -643,14 +643,14 @@ function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCa
                     {vendor.warrantyFTQ}%
                   </span>
                 </td>
-                <td className="py-2 text-center text-gray-600">{formatCurrency(vendor.totalCost)}</td>
+                <td className="py-2 text-center text-warm-600">{formatCurrency(vendor.totalCost)}</td>
                 <td className="py-2 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    {vendor.ranking === 1 && <Award className="h-3.5 w-3.5 text-yellow-500" />}
+                    {vendor.ranking === 1 && <Award className="h-3.5 w-3.5 text-amber-500" />}
                     <span className={cn(
                       "text-xs font-medium",
                       vendor.ranking <= 2 ? 'text-green-600' :
-                      vendor.ranking <= 3 ? 'text-blue-600' : 'text-gray-600'
+                      vendor.ranking <= 3 ? 'text-stone-600' : 'text-warm-600'
                     )}>
                       #{vendor.ranking}
                     </span>
@@ -658,7 +658,7 @@ function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCa
                 </td>
                 <td className="py-2 text-center">
                   {vendor.trend === 'improving' && <TrendingUp className="h-4 w-4 text-green-500 mx-auto" />}
-                  {vendor.trend === 'stable' && <Activity className="h-4 w-4 text-blue-500 mx-auto" />}
+                  {vendor.trend === 'stable' && <Activity className="h-4 w-4 text-stone-500 mx-auto" />}
                   {vendor.trend === 'declining' && <TrendingDown className="h-4 w-4 text-red-500 mx-auto" />}
                 </td>
               </tr>
@@ -710,25 +710,25 @@ function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) 
       "flex-1 rounded-lg p-3 border",
       walkthrough.status === 'completed' ? 'bg-green-50 border-green-200' :
       walkthrough.status === 'overdue' ? 'bg-red-50 border-red-200' :
-      'bg-blue-50 border-blue-200'
+      'bg-stone-50 border-stone-200'
     )}>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-medium text-gray-700">{walkthroughTypeConfig[walkthrough.type]}</span>
+        <span className="text-xs font-medium text-warm-700">{walkthroughTypeConfig[walkthrough.type]}</span>
         <span className={cn(
           'text-xs px-1.5 py-0.5 rounded font-medium',
           walkthrough.status === 'completed' ? 'bg-green-100 text-green-700' :
           walkthrough.status === 'overdue' ? 'bg-red-100 text-red-700' :
-          'bg-blue-100 text-blue-700'
+          'bg-stone-100 text-stone-700'
         )}>
           {walkthrough.status === 'completed' ? 'Done' : walkthrough.status === 'overdue' ? 'Overdue' : 'Scheduled'}
         </span>
       </div>
-      <p className="text-sm font-medium text-gray-900">{formatDate(walkthrough.scheduledDate)}</p>
+      <p className="text-sm font-medium text-warm-900">{formatDate(walkthrough.scheduledDate)}</p>
 
       {/* Checklist Info */}
       {walkthrough.checklistId && (
-        <div className="mt-2 pt-2 border-t border-gray-200/50">
-          <button className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 mb-1">
+        <div className="mt-2 pt-2 border-t border-warm-200/50">
+          <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-stone-700 mb-1">
             <ListChecks className="h-3 w-3" />
             <span className="truncate">{walkthrough.checklistName}</span>
             <ExternalLink className="h-2.5 w-2.5" />
@@ -736,7 +736,7 @@ function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) 
 
           {walkthrough.status === 'completed' && walkthrough.checklistCompletion !== undefined ? (
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-gray-500">
+              <span className="text-warm-500">
                 {walkthrough.passedItems}/{walkthrough.totalItems} items
               </span>
               <span className={cn("font-medium", getFTQColor(walkthrough.checklistFTQ || 0))}>
@@ -745,9 +745,9 @@ function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) 
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">{walkthrough.totalItems} checklist items</span>
+              <span className="text-xs text-warm-500">{walkthrough.totalItems} checklist items</span>
               {walkthrough.status === 'scheduled' && (
-                <button className="flex items-center gap-1 text-xs bg-blue-600 text-white px-2 py-0.5 rounded hover:bg-blue-700">
+                <button className="flex items-center gap-1 text-xs bg-stone-600 text-white px-2 py-0.5 rounded hover:bg-stone-700">
                   <Play className="h-3 w-3" />
                   Start
                 </button>
@@ -758,7 +758,7 @@ function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) 
       )}
 
       {walkthrough.findingsCount !== undefined && (
-        <p className="text-xs text-gray-500 mt-1">{walkthrough.findingsCount} findings | {walkthrough.homeownerSigned ? 'Signed' : 'Unsigned'}</p>
+        <p className="text-xs text-warm-500 mt-1">{walkthrough.findingsCount} findings | {walkthrough.homeownerSigned ? 'Signed' : 'Unsigned'}</p>
       )}
     </div>
   )
@@ -776,26 +776,26 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
       warranty.status === 'expired' ? "border-red-200" :
-      warranty.status === 'expiring_soon' ? "border-amber-200" : "border-gray-200"
+      warranty.status === 'expiring_soon' ? "border-amber-200" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-gray-900 truncate">{warranty.itemName}</h4>
+            <h4 className="font-medium text-warm-900 truncate">{warranty.itemName}</h4>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
+          <div className="flex items-center gap-1.5 text-sm text-warm-500 mt-0.5">
             <Wrench className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="truncate">{warranty.vendor}</span>
             {warranty.manufacturer && (
               <>
-                <span className="text-gray-300">|</span>
+                <span className="text-warm-300">|</span>
                 <span className="truncate text-xs">{warranty.manufacturer}</span>
               </>
             )}
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded flex-shrink-0">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded flex-shrink-0">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
@@ -818,50 +818,50 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
 
       <div className="space-y-2 mb-3">
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1.5 text-gray-600">
+          <div className="flex items-center gap-1.5 text-warm-600">
             <Calendar className="h-3.5 w-3.5" />
             <span>Start</span>
           </div>
-          <span className="text-gray-700">{formatDate(warranty.startDate)}</span>
+          <span className="text-warm-700">{formatDate(warranty.startDate)}</span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1.5 text-gray-600">
+          <div className="flex items-center gap-1.5 text-warm-600">
             <Calendar className="h-3.5 w-3.5" />
             <span>End</span>
           </div>
           <span className={cn(
             "font-medium",
             warranty.status === 'expired' ? "text-red-600" :
-            warranty.status === 'expiring_soon' ? "text-amber-600" : "text-gray-700"
+            warranty.status === 'expiring_soon' ? "text-amber-600" : "text-warm-700"
           )}>
             {formatDate(warranty.endDate)}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1.5 text-gray-600">
+          <div className="flex items-center gap-1.5 text-warm-600">
             <Clock className="h-3.5 w-3.5" />
             <span>Duration</span>
           </div>
-          <span className="text-gray-700">{warranty.duration}</span>
+          <span className="text-warm-700">{warranty.duration}</span>
         </div>
       </div>
 
       {/* Quality Tracking Section */}
       {(warranty.originalConstructionFTQ || warranty.repairFTQ) && (
-        <div className="mb-3 pt-2 border-t border-gray-100">
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2">
+        <div className="mb-3 pt-2 border-t border-warm-100">
+          <div className="flex items-center gap-1.5 text-xs text-warm-500 mb-2">
             <Target className="h-3 w-3" />
             <span>Quality Tracking</span>
           </div>
           <div className="flex items-center gap-3">
             {warranty.originalConstructionFTQ && (
               <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-500">Construction FTQ:</span>
+                <span className="text-xs text-warm-500">Construction FTQ:</span>
                 <span className={cn("text-xs font-medium", getFTQColor(warranty.originalConstructionFTQ))}>
                   {warranty.originalConstructionFTQ}%
                 </span>
                 {warranty.inspectionLink && (
-                  <button className="text-blue-600 hover:text-blue-700">
+                  <button className="text-stone-600 hover:text-stone-700">
                     <ExternalLink className="h-3 w-3" />
                   </button>
                 )}
@@ -869,7 +869,7 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
             )}
             {warranty.repairFTQ && (
               <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-500">Repair FTQ:</span>
+                <span className="text-xs text-warm-500">Repair FTQ:</span>
                 <span className={cn("text-xs font-medium", getFTQColor(warranty.repairFTQ))}>
                   {warranty.repairFTQ}%
                 </span>
@@ -877,7 +877,7 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
             )}
             {warranty.vendorCallbackRate && (
               <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-500">Callback:</span>
+                <span className="text-xs text-warm-500">Callback:</span>
                 <span className={cn(
                   "text-xs font-medium",
                   warranty.vendorCallbackRate <= 5 ? 'text-green-600' :
@@ -893,7 +893,7 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
 
       {/* Claim & Cost info */}
       {(warranty.claimCount !== undefined && warranty.claimCount > 0) && (
-        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3 pt-2 border-t border-gray-100">
+        <div className="flex items-center gap-3 text-xs text-warm-500 mb-3 pt-2 border-t border-warm-100">
           <span className="flex items-center gap-1">
             <ClipboardCheck className="h-3 w-3" />
             {warranty.claimCount} claim{warranty.claimCount !== 1 ? 's' : ''}
@@ -908,10 +908,10 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
       )}
 
       {/* Registration & Contact */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className="flex items-center gap-3">
           {warranty.documentUrl && (
-            <button className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700">
+            <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-stone-700">
               <FileText className="h-3.5 w-3.5" />
               <span>Document</span>
             </button>
@@ -923,13 +923,13 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
             </button>
           )}
           {warranty.registrationNumber && (
-            <span className="text-xs text-gray-400 font-mono">{warranty.registrationNumber}</span>
+            <span className="text-xs text-warm-400 font-mono">{warranty.registrationNumber}</span>
           )}
         </div>
         {warranty.daysUntilExpiry !== undefined && warranty.status !== 'expired' && (
           <span className={cn(
             "text-xs font-medium",
-            warranty.daysUntilExpiry <= 30 ? "text-amber-600" : "text-gray-500"
+            warranty.daysUntilExpiry <= 30 ? "text-amber-600" : "text-warm-500"
           )}>
             {warranty.daysUntilExpiry}d remaining
           </span>
@@ -938,7 +938,7 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
 
       {/* Claim contact */}
       {warranty.claimContact && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
+        <div className="mt-2 flex items-center gap-2 text-xs text-warm-400">
           <Phone className="h-3 w-3" />
           <span>{warranty.claimContact}</span>
           {warranty.claimPhone && <span>- {warranty.claimPhone}</span>}
@@ -950,19 +950,19 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
           "mt-3 p-2 rounded-md flex items-start gap-2",
           warranty.status === 'expired' || warranty.status === 'expiring_soon'
             ? "bg-amber-50"
-            : "bg-blue-50"
+            : "bg-stone-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
             warranty.status === 'expired' || warranty.status === 'expiring_soon'
               ? "text-amber-500"
-              : "text-blue-500"
+              : "text-stone-500"
           )} />
           <span className={cn(
             "text-xs",
             warranty.status === 'expired' || warranty.status === 'expiring_soon'
               ? "text-amber-700"
-              : "text-blue-700"
+              : "text-stone-700"
           )}>
             {warranty.aiNote}
           </span>
@@ -1013,12 +1013,12 @@ export function WarrantiesPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Warranty Binder</h3>
-          <span className="text-sm text-gray-500">{totalItems} warranties | {coveragePercentage}% coverage active</span>
+          <h3 className="font-semibold text-warm-900">Warranty Binder</h3>
+          <span className="text-sm text-warm-500">{totalItems} warranties | {coveragePercentage}% coverage active</span>
           <span className={cn("text-sm px-2 py-0.5 rounded font-medium ml-auto", getFTQBgColor(mockConstructionFTQ.overallScore))}>
             <Target className="h-3 w-3 inline mr-1" />
             Construction FTQ: {mockConstructionFTQ.overallScore}%
@@ -1072,7 +1072,7 @@ export function WarrantiesPreview() {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-6 gap-3">
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -1090,13 +1090,13 @@ export function WarrantiesPreview() {
             <div className="text-2xl font-bold text-amber-700 mt-1">{expiringIn30Days}</div>
             <div className="text-xs text-amber-600 mt-0.5">need attention</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <TrendingUp className="h-4 w-4" />
               Coverage
             </div>
-            <div className="text-2xl font-bold text-blue-700 mt-1">{coveragePercentage}%</div>
-            <div className="text-xs text-blue-600 mt-0.5">{totalCoverage} of {totalItems} active</div>
+            <div className="text-2xl font-bold text-stone-700 mt-1">{coveragePercentage}%</div>
+            <div className="text-xs text-stone-600 mt-0.5">{totalCoverage} of {totalItems} active</div>
           </div>
           <div className="bg-red-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -1137,11 +1137,11 @@ export function WarrantiesPreview() {
       <WarrantyPredictionPanel ftqData={mockConstructionFTQ} />
 
       {/* Walkthrough Schedule */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-2 mb-3">
-          <ListChecks className="h-4 w-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Warranty Walkthrough Checklists</span>
-          <span className="text-xs text-gray-500 ml-auto">Linked to quality checklists</span>
+          <ListChecks className="h-4 w-4 text-warm-600" />
+          <span className="text-sm font-medium text-warm-700">Warranty Walkthrough Checklists</span>
+          <span className="text-xs text-warm-500 ml-auto">Linked to quality checklists</span>
         </div>
         <div className="flex items-center gap-3">
           {mockWalkthroughs.map(wt => (
@@ -1156,7 +1156,7 @@ export function WarrantiesPreview() {
           <WarrantyCard key={warranty.id} warranty={warranty} />
         ))}
         {filteredWarranties.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="col-span-2 text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No warranties found
           </div>
         )}
@@ -1179,7 +1179,7 @@ export function WarrantiesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Warranty & FTQ Features"
           columns={2}

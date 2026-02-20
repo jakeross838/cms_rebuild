@@ -834,7 +834,7 @@ Module 7: Scheduling (Gantt, calendar, task management)
 Module 8: Daily Logs (field reporting, photos, weather)
 Module 9: Budget & Cost Tracking (line items, committed costs, actuals)
 Module 10: Contact/Vendor Management (profiles, compliance, communication)
-Module 11: Basic Invoicing (receive, code, approve, track)
+Module 11: Native Accounting (GL/AP/AR) (receive, code, approve, track)
 Module 12: Basic Client Portal (view-only updates, photos, schedule)
 ```
 

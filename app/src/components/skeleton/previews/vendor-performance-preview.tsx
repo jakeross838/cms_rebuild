@@ -186,21 +186,21 @@ const rollingAverages = {
 
 function getFTQColor(score: number): string {
   if (score >= 95) return 'text-green-600'
-  if (score >= 85) return 'text-yellow-600'
+  if (score >= 85) return 'text-amber-600'
   if (score >= 70) return 'text-orange-600'
   return 'text-red-600'
 }
 
 function getFTQBgColor(score: number): string {
   if (score >= 95) return 'bg-green-100'
-  if (score >= 85) return 'bg-yellow-100'
+  if (score >= 85) return 'bg-amber-100'
   if (score >= 70) return 'bg-orange-100'
   return 'bg-red-100'
 }
 
 function getFTQBorderColor(score: number): string {
   if (score >= 95) return 'border-green-300'
-  if (score >= 85) return 'border-yellow-300'
+  if (score >= 85) return 'border-amber-300'
   if (score >= 70) return 'border-orange-300'
   return 'border-red-300'
 }
@@ -223,7 +223,7 @@ function TrendIndicator({ trend, value }: { trend: 'up' | 'down' | 'stable'; val
     )
   }
   return (
-    <span className="flex items-center gap-0.5 text-gray-500 text-sm font-medium">
+    <span className="flex items-center gap-0.5 text-warm-500 text-sm font-medium">
       <Minus className="h-3.5 w-3.5" />
       {value.toFixed(1)}%
     </span>
@@ -268,18 +268,18 @@ function ResultBadge({ result }: { result: 'pass' | 'fail' | 'conditional' }) {
 
 function PercentileBar({ percentile }: { percentile: number }) {
   return (
-    <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+    <div className="relative w-full h-2 bg-warm-200 rounded-full overflow-hidden">
       <div
         className={cn(
           'absolute top-0 left-0 h-full rounded-full transition-all',
           percentile >= 75 ? 'bg-green-500' :
-          percentile >= 50 ? 'bg-blue-500' :
+          percentile >= 50 ? 'bg-stone-500' :
           percentile >= 25 ? 'bg-amber-500' : 'bg-red-500'
         )}
         style={{ width: `${percentile}%` }}
       />
       <div
-        className="absolute top-0 h-full w-0.5 bg-gray-800"
+        className="absolute top-0 h-full w-0.5 bg-warm-800"
         style={{ left: `${percentile}%` }}
       />
     </div>
@@ -295,38 +295,38 @@ export function VendorPerformancePreview() {
   const vendor = mockVendor
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-warm-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Building2 className="h-6 w-6 text-blue-600" />
+            <div className="h-12 w-12 rounded-lg bg-stone-100 flex items-center justify-center">
+              <Building2 className="h-6 w-6 text-stone-600" />
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-bold text-gray-900">{vendor.name}</h2>
+                <h2 className="text-xl font-bold text-warm-900">{vendor.name}</h2>
                 <span className={cn(
                   'text-xs px-2 py-0.5 rounded font-medium',
                   vendor.status === 'preferred' ? 'bg-green-100 text-green-700' :
-                  vendor.status === 'approved' ? 'bg-blue-100 text-blue-700' :
+                  vendor.status === 'approved' ? 'bg-stone-100 text-stone-700' :
                   'bg-amber-100 text-amber-700'
                 )}>
                   {vendor.status.charAt(0).toUpperCase() + vendor.status.slice(1)}
                 </span>
               </div>
-              <p className="text-sm text-gray-500">{vendor.trade} | Subcontractor</p>
+              <p className="text-sm text-warm-500">{vendor.trade} | Subcontractor</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-500 mb-1">Vendor Performance Dashboard</p>
-            <p className="text-xs text-gray-400">Last updated: Feb 13, 2026</p>
+            <p className="text-sm text-warm-500 mb-1">Vendor Performance Dashboard</p>
+            <p className="text-xs text-warm-400">Last updated: Feb 13, 2026</p>
           </div>
         </div>
       </div>
 
       {/* Primary Score Cards - FTQ Prominently Displayed */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-warm-200 px-6 py-4">
         <div className="grid grid-cols-4 gap-4">
           {/* FTQ Score - Primary */}
           <div className={cn(
@@ -337,7 +337,7 @@ export function VendorPerformancePreview() {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Target className={cn('h-5 w-5', getFTQColor(vendor.ftq_score_current))} />
-                <span className="text-sm font-semibold text-gray-700">FTQ Score</span>
+                <span className="text-sm font-semibold text-warm-700">FTQ Score</span>
               </div>
               <TrendIndicator trend={vendor.ftq_trend} value={vendor.ftq_trend_value} />
             </div>
@@ -345,24 +345,24 @@ export function VendorPerformancePreview() {
               <span className={cn('text-4xl font-bold', getFTQColor(vendor.ftq_score_current))}>
                 {vendor.ftq_score_current}%
               </span>
-              <span className="text-sm text-gray-500">FTQ</span>
+              <span className="text-sm text-warm-500">FTQ</span>
             </div>
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-warm-500">
               6mo: {vendor.ftq_score_6mo}% | 12mo: {vendor.ftq_score_12mo}%
             </div>
           </div>
 
           {/* Overall Composite Score */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Award className="h-5 w-5 text-blue-600" />
-              <span className="text-sm font-semibold text-gray-700">Overall Score</span>
+              <Award className="h-5 w-5 text-stone-600" />
+              <span className="text-sm font-semibold text-warm-700">Overall Score</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-blue-600">{vendor.compositeScore}</span>
-              <span className="text-sm text-gray-500">/ 100</span>
+              <span className="text-4xl font-bold text-stone-600">{vendor.compositeScore}</span>
+              <span className="text-sm text-warm-500">/ 100</span>
             </div>
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-warm-500">
               Composite performance rating
             </div>
           </div>
@@ -371,13 +371,13 @@ export function VendorPerformancePreview() {
           <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <Trophy className="h-5 w-5 text-purple-600" />
-              <span className="text-sm font-semibold text-gray-700">FTQ Ranking</span>
+              <span className="text-sm font-semibold text-warm-700">FTQ Ranking</span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold text-purple-600">#{vendor.ftq_rank}</span>
-              <span className="text-sm text-gray-500">of {vendor.ftq_total_vendors}</span>
+              <span className="text-sm text-warm-500">of {vendor.ftq_total_vendors}</span>
             </div>
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-warm-500">
               {vendor.trade} Contractors
             </div>
           </div>
@@ -386,7 +386,7 @@ export function VendorPerformancePreview() {
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <BarChart3 className="h-5 w-5 text-emerald-600" />
-              <span className="text-sm font-semibold text-gray-700">Percentile</span>
+              <span className="text-sm font-semibold text-warm-700">Percentile</span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold text-emerald-600">{vendor.ftq_percentile}th</span>
@@ -401,10 +401,10 @@ export function VendorPerformancePreview() {
       {/* Main Content Grid */}
       <div className="p-6 space-y-6">
         {/* FTQ by Trade/Scope Section */}
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-            <Wrench className="h-4 w-4 text-gray-500" />
-            <h3 className="font-semibold text-gray-900">FTQ by Trade/Scope</h3>
+        <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-warm-100 flex items-center gap-2">
+            <Wrench className="h-4 w-4 text-warm-500" />
+            <h3 className="font-semibold text-warm-900">FTQ by Trade/Scope</h3>
           </div>
           <div className="p-4">
             <div className="grid grid-cols-4 gap-3">
@@ -418,16 +418,16 @@ export function VendorPerformancePreview() {
                   )}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">{item.trade}</span>
+                    <span className="text-sm font-medium text-warm-700">{item.trade}</span>
                     <TrendIndicator trend={item.trend} value={item.trendValue} />
                   </div>
                   <div className="flex items-baseline gap-1">
                     <span className={cn('text-2xl font-bold', getFTQColor(item.ftqScore))}>
                       {item.ftqScore}%
                     </span>
-                    <span className="text-xs text-gray-500">FTQ</span>
+                    <span className="text-xs text-warm-500">FTQ</span>
                   </div>
-                  <div className="mt-1 text-xs text-gray-500">
+                  <div className="mt-1 text-xs text-warm-500">
                     {item.inspections} inspections
                   </div>
                 </div>
@@ -441,18 +441,18 @@ export function VendorPerformancePreview() {
           {/* Left Column */}
           <div className="space-y-6">
             {/* FTQ Trend Chart */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-                <LineChart className="h-4 w-4 text-gray-500" />
-                <h3 className="font-semibold text-gray-900">FTQ Trend</h3>
+            <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-warm-100 flex items-center gap-2">
+                <LineChart className="h-4 w-4 text-warm-500" />
+                <h3 className="font-semibold text-warm-900">FTQ Trend</h3>
               </div>
               <div className="p-4">
                 {/* Mock Chart Visualization */}
-                <div className="h-40 bg-gradient-to-b from-gray-50 to-white rounded-lg border border-gray-100 flex items-end justify-around px-4 pb-4 relative">
+                <div className="h-40 bg-gradient-to-b from-warm-50 to-white rounded-lg border border-warm-100 flex items-end justify-around px-4 pb-4 relative">
                   {/* Y-axis labels */}
-                  <div className="absolute left-2 top-2 text-[10px] text-gray-400">100%</div>
-                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">85%</div>
-                  <div className="absolute left-2 bottom-2 text-[10px] text-gray-400">70%</div>
+                  <div className="absolute left-2 top-2 text-[10px] text-warm-400">100%</div>
+                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-warm-400">85%</div>
+                  <div className="absolute left-2 bottom-2 text-[10px] text-warm-400">70%</div>
 
                   {/* Threshold line */}
                   <div className="absolute left-8 right-4 top-[15%] border-t border-dashed border-green-300" />
@@ -465,12 +465,12 @@ export function VendorPerformancePreview() {
                         className={cn(
                           'w-8 rounded-t transition-all',
                           val >= 95 ? 'bg-green-400' :
-                          val >= 85 ? 'bg-yellow-400' :
+                          val >= 85 ? 'bg-amber-400' :
                           val >= 70 ? 'bg-orange-400' : 'bg-red-400'
                         )}
                         style={{ height: `${(val - 70) * 3}px` }}
                       />
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-[10px] text-warm-400">
                         {['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'][i]}
                       </span>
                     </div>
@@ -479,20 +479,20 @@ export function VendorPerformancePreview() {
 
                 {/* Rolling Averages */}
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <p className="text-xs text-gray-500">30-Day Avg</p>
+                  <div className="text-center p-2 bg-warm-50 rounded">
+                    <p className="text-xs text-warm-500">30-Day Avg</p>
                     <p className={cn('text-lg font-bold', getFTQColor(rollingAverages.thirtyDay))}>
                       {rollingAverages.thirtyDay}%
                     </p>
                   </div>
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <p className="text-xs text-gray-500">60-Day Avg</p>
+                  <div className="text-center p-2 bg-warm-50 rounded">
+                    <p className="text-xs text-warm-500">60-Day Avg</p>
                     <p className={cn('text-lg font-bold', getFTQColor(rollingAverages.sixtyDay))}>
                       {rollingAverages.sixtyDay}%
                     </p>
                   </div>
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <p className="text-xs text-gray-500">90-Day Avg</p>
+                  <div className="text-center p-2 bg-warm-50 rounded">
+                    <p className="text-xs text-warm-500">90-Day Avg</p>
                     <p className={cn('text-lg font-bold', getFTQColor(rollingAverages.ninetyDay))}>
                       {rollingAverages.ninetyDay}%
                     </p>
@@ -500,26 +500,26 @@ export function VendorPerformancePreview() {
                 </div>
 
                 {/* Peer Comparison */}
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="text-sm font-medium text-blue-800 mb-2 flex items-center gap-1">
+                <div className="mt-4 p-3 bg-stone-50 rounded-lg border border-stone-200">
+                  <h4 className="text-sm font-medium text-stone-800 mb-2 flex items-center gap-1">
                     <Users className="h-4 w-4" />
                     Peer Comparison ({vendor.trade})
                   </h4>
-                  <div className="relative h-8 bg-gradient-to-r from-red-100 via-yellow-100 to-green-100 rounded-full">
+                  <div className="relative h-8 bg-gradient-to-r from-red-100 via-amber-100 to-green-100 rounded-full">
                     {/* Range indicator */}
-                    <div className="absolute inset-y-1 left-1 right-1 flex items-center justify-between px-2 text-[10px] text-gray-600">
+                    <div className="absolute inset-y-1 left-1 right-1 flex items-center justify-between px-2 text-[10px] text-warm-600">
                       <span>{peerComparison.bottomPerformerFTQ}%</span>
                       <span>{peerComparison.avgFTQ}% avg</span>
                       <span>{peerComparison.topPerformerFTQ}%</span>
                     </div>
                     {/* Vendor marker */}
                     <div
-                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-md"
+                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-stone-600 rounded-full border-2 border-white shadow-md"
                       style={{ left: `${((vendor.ftq_score_current - 70) / 30) * 100}%` }}
                       title={`${vendor.name}: ${vendor.ftq_score_current}%`}
                     />
                   </div>
-                  <p className="mt-2 text-xs text-blue-700 text-center">
+                  <p className="mt-2 text-xs text-stone-700 text-center">
                     {vendor.ftq_score_current - peerComparison.avgFTQ > 0 ? (
                       <span className="flex items-center justify-center gap-1">
                         <ArrowUpRight className="h-3 w-3" />
@@ -537,21 +537,21 @@ export function VendorPerformancePreview() {
             </div>
 
             {/* FTQ Impact on Overall Score */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-                <Calculator className="h-4 w-4 text-gray-500" />
-                <h3 className="font-semibold text-gray-900">FTQ Impact on Overall Score</h3>
+            <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-warm-100 flex items-center gap-2">
+                <Calculator className="h-4 w-4 text-warm-500" />
+                <h3 className="font-semibold text-warm-900">FTQ Impact on Overall Score</h3>
               </div>
               <div className="p-4 space-y-4">
                 {/* Visual breakdown */}
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <div className="flex items-center justify-between text-sm mb-1">
-                      <span className="text-gray-600">Quality Dimension</span>
+                      <span className="text-warm-600">Quality Dimension</span>
                       <span className="font-medium">{vendor.quality_dimension_weight}% of total</span>
                     </div>
-                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500 rounded-full" style={{ width: `${vendor.quality_dimension_weight}%` }} />
+                    <div className="h-3 bg-warm-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-stone-500 rounded-full" style={{ width: `${vendor.quality_dimension_weight}%` }} />
                     </div>
                   </div>
                 </div>
@@ -559,10 +559,10 @@ export function VendorPerformancePreview() {
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <div className="flex items-center justify-between text-sm mb-1">
-                      <span className="text-gray-600">FTQ Weight in Quality</span>
+                      <span className="text-warm-600">FTQ Weight in Quality</span>
                       <span className="font-medium">{vendor.ftq_weight_in_quality}%</span>
                     </div>
-                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-3 bg-warm-200 rounded-full overflow-hidden">
                       <div className="h-full bg-purple-500 rounded-full" style={{ width: `${vendor.ftq_weight_in_quality}%` }} />
                     </div>
                   </div>
@@ -580,20 +580,20 @@ export function VendorPerformancePreview() {
 
                 {/* Score dimensions breakdown */}
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Score Dimensions</p>
+                  <p className="text-xs font-medium text-warm-500 uppercase tracking-wide">Score Dimensions</p>
                   {[
-                    { label: 'Quality', score: vendor.qualityScore, weight: 35, color: 'bg-blue-500' },
+                    { label: 'Quality', score: vendor.qualityScore, weight: 35, color: 'bg-stone-500' },
                     { label: 'Timeliness', score: vendor.timelinessScore, weight: 25, color: 'bg-green-500' },
                     { label: 'Communication', score: vendor.communicationScore, weight: 15, color: 'bg-purple-500' },
                     { label: 'Safety', score: vendor.safetyScore, weight: 25, color: 'bg-amber-500' },
                   ].map((dim) => (
                     <div key={dim.label} className="flex items-center gap-3">
-                      <div className="w-24 text-sm text-gray-600">{dim.label}</div>
-                      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="w-24 text-sm text-warm-600">{dim.label}</div>
+                      <div className="flex-1 h-2 bg-warm-100 rounded-full overflow-hidden">
                         <div className={cn('h-full rounded-full', dim.color)} style={{ width: `${dim.score}%` }} />
                       </div>
                       <div className="w-12 text-sm font-medium text-right">{dim.score}</div>
-                      <div className="w-12 text-xs text-gray-400 text-right">{dim.weight}%</div>
+                      <div className="w-12 text-xs text-warm-400 text-right">{dim.weight}%</div>
                     </div>
                   ))}
                 </div>
@@ -607,24 +607,24 @@ export function VendorPerformancePreview() {
             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-200 overflow-hidden">
               <div className="px-4 py-3 border-b border-indigo-200 flex items-center gap-2 bg-white/50">
                 <Brain className="h-4 w-4 text-indigo-600" />
-                <h3 className="font-semibold text-gray-900">AI Quality Prediction</h3>
+                <h3 className="font-semibold text-warm-900">AI Quality Prediction</h3>
                 <Sparkles className="h-3 w-3 text-indigo-500 ml-auto" />
               </div>
               <div className="p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Predicted FTQ for Next Project</p>
+                    <p className="text-sm text-warm-600">Predicted FTQ for Next Project</p>
                     <div className="flex items-baseline gap-2 mt-1">
                       <span className={cn('text-3xl font-bold', getFTQColor(vendor.predicted_ftq))}>
                         {vendor.predicted_ftq}%
                       </span>
-                      <span className="text-sm text-gray-500">expected</span>
+                      <span className="text-sm text-warm-500">expected</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-500">Confidence</p>
+                    <p className="text-xs text-warm-500">Confidence</p>
                     <div className="flex items-center gap-1">
-                      <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-16 h-2 bg-warm-200 rounded-full overflow-hidden">
                         <div
                           className={cn(
                             'h-full rounded-full',
@@ -674,20 +674,20 @@ export function VendorPerformancePreview() {
             </div>
 
             {/* FTQ History */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
               <button
                 onClick={() => setFtqHistoryExpanded(!ftqHistoryExpanded)}
-                className="w-full px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full px-4 py-3 border-b border-warm-100 flex items-center justify-between hover:bg-warm-50 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <History className="h-4 w-4 text-gray-500" />
-                  <h3 className="font-semibold text-gray-900">FTQ History</h3>
-                  <span className="text-xs text-gray-500">({vendor.ftq_history.length} recent inspections)</span>
+                  <History className="h-4 w-4 text-warm-500" />
+                  <h3 className="font-semibold text-warm-900">FTQ History</h3>
+                  <span className="text-xs text-warm-500">({vendor.ftq_history.length} recent inspections)</span>
                 </div>
                 {ftqHistoryExpanded ? (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 text-warm-400" />
                 ) : (
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-warm-400" />
                 )}
               </button>
 
@@ -705,41 +705,41 @@ export function VendorPerformancePreview() {
                     >
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-900">{item.projectName}</span>
-                          <span className="text-xs text-gray-500">{item.trade}</span>
+                          <span className="text-sm font-medium text-warm-900">{item.projectName}</span>
+                          <span className="text-xs text-warm-500">{item.trade}</span>
                         </div>
                         <ResultBadge result={item.result} />
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-warm-500">
                         <CalendarDays className="h-3 w-3" />
                         {item.date}
                         {item.defectCategory && (
                           <>
-                            <span className="text-gray-300">|</span>
+                            <span className="text-warm-300">|</span>
                             <span className="text-amber-600">Defect: {item.defectCategory}</span>
                           </>
                         )}
                       </div>
                       {item.notes && (
-                        <p className="mt-1 text-xs text-gray-600 italic">{item.notes}</p>
+                        <p className="mt-1 text-xs text-warm-600 italic">{item.notes}</p>
                       )}
                     </div>
                   ))}
 
                   {/* Defect Pattern Summary */}
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <h4 className="text-xs font-medium text-gray-700 mb-2">Defect Pattern Analysis</h4>
+                  <div className="mt-4 p-3 bg-warm-50 rounded-lg border border-warm-200">
+                    <h4 className="text-xs font-medium text-warm-700 mb-2">Defect Pattern Analysis</h4>
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600">Box Placement Issues</span>
+                        <span className="text-warm-600">Box Placement Issues</span>
                         <span className="text-red-600 font-medium">2 occurrences</span>
                       </div>
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600">Blocking Issues</span>
+                        <span className="text-warm-600">Blocking Issues</span>
                         <span className="text-amber-600 font-medium">1 occurrence</span>
                       </div>
                     </div>
-                    <p className="mt-2 text-[10px] text-gray-500">
+                    <p className="mt-2 text-[10px] text-warm-500">
                       <Sparkles className="h-3 w-3 inline mr-1 text-purple-500" />
                       AI Note: Box placement errors are decreasing. Focus training on electrical scope work.
                     </p>
@@ -749,27 +749,27 @@ export function VendorPerformancePreview() {
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Activity className="h-4 w-4 text-gray-500" />
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h3 className="text-sm font-semibold text-warm-900 mb-3 flex items-center gap-2">
+                <Activity className="h-4 w-4 text-warm-500" />
                 Quick Stats
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-2 bg-gray-50 rounded">
-                  <p className="text-xs text-gray-500">Total Inspections</p>
-                  <p className="text-lg font-bold text-gray-900">{vendor.totalInspections}</p>
+                <div className="p-2 bg-warm-50 rounded">
+                  <p className="text-xs text-warm-500">Total Inspections</p>
+                  <p className="text-lg font-bold text-warm-900">{vendor.totalInspections}</p>
                 </div>
-                <div className="p-2 bg-gray-50 rounded">
-                  <p className="text-xs text-gray-500">Pass Rate</p>
+                <div className="p-2 bg-warm-50 rounded">
+                  <p className="text-xs text-warm-500">Pass Rate</p>
                   <p className="text-lg font-bold text-green-600">{vendor.passRate}%</p>
                 </div>
-                <div className="p-2 bg-gray-50 rounded">
-                  <p className="text-xs text-gray-500">Avg Defects/Job</p>
+                <div className="p-2 bg-warm-50 rounded">
+                  <p className="text-xs text-warm-500">Avg Defects/Job</p>
                   <p className="text-lg font-bold text-amber-600">{vendor.avgDefectsPerJob}</p>
                 </div>
-                <div className="p-2 bg-gray-50 rounded">
-                  <p className="text-xs text-gray-500">Warranty Callbacks</p>
-                  <p className="text-lg font-bold text-blue-600">{vendor.warrantyCallbackRate}%</p>
+                <div className="p-2 bg-warm-50 rounded">
+                  <p className="text-xs text-warm-500">Warranty Callbacks</p>
+                  <p className="text-lg font-bold text-stone-600">{vendor.warrantyCallbackRate}%</p>
                 </div>
               </div>
             </div>

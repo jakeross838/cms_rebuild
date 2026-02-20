@@ -573,7 +573,7 @@ When a builder needs to fire a subcontractor during active work on a project, th
 - **Module 7: Scheduling** -- vendor assignment to schedule tasks, resource calendar
 - **Module 8: Daily Logs** -- vendor check-in/check-out, labor tracking
 - **Module 9: Budget & Cost Tracking** -- rate sheets feed PO pricing, bid awards create commitments
-- **Module 11: Basic Invoicing** -- vendor invoices, payment terms
+- **Module 11: Native Accounting (GL/AP/AR)** -- vendor invoices, payment terms
 - **Module 12: Contracts** -- subcontract generation from templates (GAP-392)
 - **Module 17: Change Orders** -- vendor-related change orders
 - **Module 20: Purchasing** -- PO creation using rate sheet pricing

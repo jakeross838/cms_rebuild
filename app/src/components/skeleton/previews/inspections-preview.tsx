@@ -68,7 +68,7 @@ const vendorFTQData: Record<string, VendorFTQ> = {
 // FTQ threshold configuration
 const ftqThresholdConfig = {
   excellent: { label: 'Excellent', bgColor: 'bg-green-100', textColor: 'text-green-700' },
-  good: { label: 'Good', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
+  good: { label: 'Good', bgColor: 'bg-stone-100', textColor: 'text-stone-700' },
   fair: { label: 'Fair', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
   poor: { label: 'Poor', bgColor: 'bg-red-100', textColor: 'text-red-700' },
 }
@@ -310,15 +310,15 @@ const mockInspections: Inspection[] = [
 const statusConfig = {
   ready_to_schedule: {
     label: 'Ready to Schedule',
-    color: 'bg-gray-100 text-gray-700',
+    color: 'bg-warm-100 text-warm-700',
     icon: ListChecks,
-    iconColor: 'text-gray-500',
+    iconColor: 'text-warm-500',
   },
   scheduled: {
     label: 'Scheduled',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-stone-100 text-stone-700',
     icon: CalendarClock,
-    iconColor: 'text-blue-500',
+    iconColor: 'text-stone-500',
   },
   passed: {
     label: 'Passed',
@@ -340,9 +340,9 @@ const statusConfig = {
   },
   cancelled: {
     label: 'Cancelled',
-    color: 'bg-gray-100 text-gray-500',
+    color: 'bg-warm-100 text-warm-500',
     icon: XCircle,
-    iconColor: 'text-gray-400',
+    iconColor: 'text-warm-400',
   },
   rescheduled: {
     label: 'Rescheduled',
@@ -375,7 +375,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
       inspection.status === 'failed' ? 'border-red-200' :
-      inspection.scheduleImpact ? 'border-l-4 border-l-amber-400' : 'border-gray-200'
+      inspection.scheduleImpact ? 'border-l-4 border-l-amber-400' : 'border-warm-200'
     )}>
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3 flex-1">
@@ -385,8 +385,8 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
             inspection.status === 'passed' ? 'bg-green-50' :
             inspection.status === 'failed' ? 'bg-red-50' :
             inspection.status === 'rescheduled' || inspection.status === 'conditional' ? 'bg-amber-50' :
-            inspection.status === 'ready_to_schedule' ? 'bg-gray-50' :
-            'bg-blue-50'
+            inspection.status === 'ready_to_schedule' ? 'bg-warm-50' :
+            'bg-stone-50'
           )}>
             <StatusIcon className={cn("h-5 w-5", config.iconColor)} />
           </div>
@@ -394,7 +394,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
           {/* Main Content */}
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-medium text-gray-900">{inspection.type}</h4>
+              <h4 className="font-medium text-warm-900">{inspection.type}</h4>
               <span className={cn("text-xs px-2 py-0.5 rounded font-medium", config.color)}>
                 {config.label}
               </span>
@@ -405,14 +405,14 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                 </span>
               )}
               {inspection.photos > 0 && (
-                <span className="text-xs text-gray-400 flex items-center gap-1">
+                <span className="text-xs text-warm-400 flex items-center gap-1">
                   <Camera className="h-3 w-3" />
                   {inspection.photos}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center gap-4 mt-1.5 text-sm text-gray-500 flex-wrap">
+            <div className="flex items-center gap-4 mt-1.5 text-sm text-warm-500 flex-wrap">
               {inspection.date !== '-' && (
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3.5 w-3.5" />
@@ -430,7 +430,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                 {inspection.inspector}
               </span>
               {inspection.inspectorPhone !== '-' && (
-                <span className="flex items-center gap-1 text-xs text-gray-400">
+                <span className="flex items-center gap-1 text-xs text-warm-400">
                   <Phone className="h-3 w-3" />
                   {inspection.inspectorPhone}
                 </span>
@@ -451,7 +451,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                 "text-sm mt-2 p-2 rounded-md",
                 inspection.status === 'failed' ? 'bg-red-50 text-red-700' :
                 inspection.status === 'passed' ? 'bg-green-50 text-green-700' :
-                'bg-gray-50 text-gray-600'
+                'bg-warm-50 text-warm-600'
               )}>
                 <FileText className="h-3.5 w-3.5 inline mr-1.5" />
                 {inspection.notes}
@@ -471,7 +471,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                       <p className={def.resolved ? 'text-green-700' : 'text-red-700'}>{def.description}</p>
                       {def.resolved && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0 ml-2" />}
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-gray-500 flex-wrap">
+                    <div className="flex items-center gap-3 mt-1 text-warm-500 flex-wrap">
                       <span className="flex items-center gap-1"><Wrench className="h-3 w-3" />{def.responsibleVendor}</span>
                       {/* Vendor FTQ Badge */}
                       {def.responsibleVendorId && vendorFTQData[def.responsibleVendorId] && (
@@ -486,7 +486,7 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                           {vendorFTQData[def.responsibleVendorId].ftqTrend === 'down' && <TrendingDown className="h-2.5 w-2.5" />}
                         </span>
                       )}
-                      {def.correctionTaskCreated && <span className="text-blue-600 flex items-center gap-1"><ClipboardCheck className="h-3 w-3" />Task created</span>}
+                      {def.correctionTaskCreated && <span className="text-stone-600 flex items-center gap-1"><ClipboardCheck className="h-3 w-3" />Task created</span>}
                       {def.photos > 0 && <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{def.photos} photos</span>}
                     </div>
                   </div>
@@ -496,8 +496,8 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
 
             {/* Pre-inspection Checklist */}
             {inspection.preInspectionChecklist && inspection.status === 'scheduled' && (
-              <div className="mt-2 p-2 bg-blue-50 rounded">
-                <p className="text-xs font-medium text-blue-700 mb-1 flex items-center gap-1">
+              <div className="mt-2 p-2 bg-stone-50 rounded">
+                <p className="text-xs font-medium text-stone-700 mb-1 flex items-center gap-1">
                   <ListChecks className="h-3 w-3" />
                   Pre-Inspection Checklist ({inspection.preInspectionChecklist.filter(i => i.checked).length}/{inspection.preInspectionChecklist.length})
                 </p>
@@ -507,9 +507,9 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                       {item.checked ? (
                         <CheckCircle2 className="h-3 w-3 text-green-500" />
                       ) : (
-                        <div className="h-3 w-3 rounded-full border border-gray-300" />
+                        <div className="h-3 w-3 rounded-full border border-warm-300" />
                       )}
-                      <span className={item.checked ? 'text-green-700' : 'text-gray-600'}>{item.item}</span>
+                      <span className={item.checked ? 'text-green-700' : 'text-warm-600'}>{item.item}</span>
                     </div>
                   ))}
                 </div>
@@ -526,16 +526,16 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
           </div>
         </div>
 
-        <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 mt-2" />
+        <ChevronRight className="h-5 w-5 text-warm-400 flex-shrink-0 mt-2" />
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1.5 text-sm text-gray-500">
-          <Building2 className="h-4 w-4 text-gray-400" />
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-warm-100">
+        <div className="flex items-center gap-1.5 text-sm text-warm-500">
+          <Building2 className="h-4 w-4 text-warm-400" />
           <span>{inspection.projectName}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-sm text-blue-600">
+        <div className="flex items-center gap-1.5 text-sm text-stone-600">
           <ClipboardCheck className="h-4 w-4" />
           <span>{inspection.linkedPermit}</span>
         </div>
@@ -548,18 +548,18 @@ function CalendarView() {
   const today = 12
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <ChevronLeft className="h-4 w-4 text-gray-600" />
+          <button className="p-1 hover:bg-warm-100 rounded">
+            <ChevronLeft className="h-4 w-4 text-warm-600" />
           </button>
-          <h4 className="font-medium text-gray-900">February 2026</h4>
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <ChevronRight className="h-4 w-4 text-gray-600" />
+          <h4 className="font-medium text-warm-900">February 2026</h4>
+          <button className="p-1 hover:bg-warm-100 rounded">
+            <ChevronRight className="h-4 w-4 text-warm-600" />
           </button>
         </div>
-        <span className="text-sm text-gray-500">Week of Feb 10</span>
+        <span className="text-sm text-warm-500">Week of Feb 10</span>
       </div>
 
       <div className="grid grid-cols-7 gap-2">
@@ -568,13 +568,13 @@ function CalendarView() {
             key={day.day}
             className={cn(
               "flex flex-col items-center p-2 rounded-lg min-h-[100px]",
-              day.date === today ? "bg-blue-50 ring-2 ring-blue-500" : "bg-gray-50"
+              day.date === today ? "bg-stone-50 ring-2 ring-stone-500" : "bg-warm-50"
             )}
           >
-            <span className="text-xs text-gray-500 mb-1">{day.day}</span>
+            <span className="text-xs text-warm-500 mb-1">{day.day}</span>
             <span className={cn(
               "text-lg font-semibold mb-2",
-              day.date === today ? "text-blue-700" : "text-gray-700"
+              day.date === today ? "text-stone-700" : "text-warm-700"
             )}>
               {day.date}
             </span>
@@ -635,14 +635,14 @@ export function InspectionsPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Inspections - Smith Residence</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              <h3 className="font-semibold text-warm-900">Inspections - Smith Residence</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
                 {scheduledCount} upcoming
               </span>
               {failedCount > 0 && (
@@ -652,7 +652,7 @@ export function InspectionsPreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-4">
+            <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <ClipboardCheck className="h-4 w-4" />
                 {totalInspections} total
@@ -670,16 +670,16 @@ export function InspectionsPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('list')}
-                className={cn("p-2", viewMode === 'list' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50")}
+                className={cn("p-2", viewMode === 'list' ? "bg-stone-50 text-stone-600" : "text-warm-400 hover:bg-warm-50")}
               >
                 <ClipboardCheck className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setViewMode('calendar')}
-                className={cn("p-2", viewMode === 'calendar' ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:bg-gray-50")}
+                className={cn("p-2", viewMode === 'calendar' ? "bg-stone-50 text-stone-600" : "text-warm-400 hover:bg-warm-50")}
               >
                 <Calendar className="h-4 w-4" />
               </button>
@@ -689,24 +689,24 @@ export function InspectionsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-center w-10 h-10 bg-gray-200 rounded-lg">
-              <ListChecks className="h-5 w-5 text-gray-600" />
+          <div className="flex items-center gap-3 p-3 bg-warm-50 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-warm-200 rounded-lg">
+              <ListChecks className="h-5 w-5 text-warm-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-700">{readyToSchedule}</div>
-              <div className="text-xs text-gray-500">Ready to Schedule</div>
+              <div className="text-2xl font-bold text-warm-700">{readyToSchedule}</div>
+              <div className="text-xs text-warm-500">Ready to Schedule</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
-              <CalendarClock className="h-5 w-5 text-blue-600" />
+          <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-stone-100 rounded-lg">
+              <CalendarClock className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-blue-700">{scheduledCount}</div>
-              <div className="text-xs text-blue-600">Scheduled</div>
+              <div className="text-2xl font-bold text-stone-700">{scheduledCount}</div>
+              <div className="text-xs text-stone-600">Scheduled</div>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
@@ -749,7 +749,7 @@ export function InspectionsPreview() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -801,8 +801,8 @@ export function InspectionsPreview() {
               <InspectionCard key={inspection.id} inspection={inspection} />
             ))}
             {filteredInspections.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="text-center py-12 text-warm-500">
+                <ClipboardCheck className="h-12 w-12 mx-auto mb-3 text-warm-300" />
                 <p>No inspections found matching your criteria</p>
               </div>
             )}
@@ -829,7 +829,7 @@ export function InspectionsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="border-t border-gray-200 px-4 py-4 bg-white">
+      <div className="border-t border-warm-200 px-4 py-4 bg-white">
         <AIFeaturesPanel
           title="AI Inspection Features"
           columns={2}

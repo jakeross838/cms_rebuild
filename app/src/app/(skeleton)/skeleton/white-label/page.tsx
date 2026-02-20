@@ -181,7 +181,7 @@ export default function WhiteLabelBrandingPage() {
                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3" />SSL Active
                 </span>
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Custom Domain</span>
+                <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">Custom Domain</span>
               </div>
             </div>
             <button className="w-full mt-3 text-sm text-pink-600 hover:text-pink-700 font-medium">Configure Domain</button>
@@ -197,7 +197,7 @@ export default function WhiteLabelBrandingPage() {
                     <div className="text-sm font-medium">{b.area}</div>
                     <div className="text-xs text-muted-foreground">{b.description}</div>
                   </div>
-                  <span className={cn('text-xs px-2 py-0.5 rounded', b.status === 'configured' ? 'bg-green-100 text-green-700' : b.status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600')}>
+                  <span className={cn('text-xs px-2 py-0.5 rounded', b.status === 'configured' ? 'bg-green-100 text-green-700' : b.status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-warm-100 text-warm-600')}>
                     {b.status === 'configured' ? 'Done' : b.status === 'partial' ? 'Partial' : 'Pending'}
                   </span>
                 </div>

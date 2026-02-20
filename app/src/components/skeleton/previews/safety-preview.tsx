@@ -610,7 +610,7 @@ const severityLabels: Record<SafetyObservation['severity'], string> = {
 }
 
 const severityColors: Record<SafetyObservation['severity'], string> = {
-  informational: 'bg-blue-100 text-blue-700',
+  informational: 'bg-stone-100 text-stone-700',
   minor_hazard: 'bg-amber-100 text-amber-700',
   serious_hazard: 'bg-orange-100 text-orange-700',
   imminent_danger: 'bg-red-100 text-red-700',
@@ -628,7 +628,7 @@ const incidentStatusColors: Record<SafetyIncident['status'], string> = {
   reported: 'bg-red-100 text-red-700',
   investigating: 'bg-amber-100 text-amber-700',
   root_cause: 'bg-purple-100 text-purple-700',
-  corrective_action: 'bg-blue-100 text-blue-700',
+  corrective_action: 'bg-stone-100 text-stone-700',
   closed: 'bg-green-100 text-green-700',
 }
 
@@ -637,14 +637,14 @@ const incidentStatusColors: Record<SafetyIncident['status'], string> = {
 
 function getFTQColor(score: number): string {
   if (score >= 95) return 'text-green-700'
-  if (score >= 85) return 'text-blue-700'
+  if (score >= 85) return 'text-stone-700'
   if (score >= 70) return 'text-amber-700'
   return 'text-red-700'
 }
 
 function getFTQBgColor(score: number): string {
   if (score >= 95) return 'bg-green-100'
-  if (score >= 85) return 'bg-blue-100'
+  if (score >= 85) return 'bg-stone-100'
   if (score >= 70) return 'bg-amber-100'
   return 'bg-red-100'
 }
@@ -659,7 +659,7 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
       metric.status === 'success' ? "bg-green-50" :
       metric.status === 'warning' ? "bg-amber-50" :
       metric.status === 'danger' ? "bg-red-50" :
-      "bg-gray-50"
+      "bg-warm-50"
     )}>
       <div className="flex items-center justify-between mb-2">
         <div className={cn(
@@ -667,14 +667,14 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
           metric.status === 'success' ? "bg-green-100" :
           metric.status === 'warning' ? "bg-amber-100" :
           metric.status === 'danger' ? "bg-red-100" :
-          "bg-gray-100"
+          "bg-warm-100"
         )}>
           <Icon className={cn(
             "h-5 w-5",
             metric.status === 'success' ? "text-green-600" :
             metric.status === 'warning' ? "text-amber-600" :
             metric.status === 'danger' ? "text-red-600" :
-            "text-gray-600"
+            "text-warm-600"
           )} />
         </div>
         {metric.change && (
@@ -682,7 +682,7 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
             "flex items-center gap-1 text-xs font-medium",
             metric.trend === 'down' ? "text-green-600" :
             metric.trend === 'up' && metric.status === 'warning' ? "text-amber-600" :
-            "text-gray-600"
+            "text-warm-600"
           )}>
             {metric.trend === 'up' && <TrendingUp className="h-3 w-3" />}
             {metric.trend === 'down' && <TrendingDown className="h-3 w-3" />}
@@ -690,8 +690,8 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
           </div>
         )}
       </div>
-      <div className="text-2xl font-bold text-gray-900">{metric.value}</div>
-      <div className="text-sm text-gray-500">{metric.label}</div>
+      <div className="text-2xl font-bold text-warm-900">{metric.value}</div>
+      <div className="text-sm text-warm-500">{metric.label}</div>
     </div>
   )
 }
@@ -699,34 +699,34 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
 function ToolboxTalkCard({ talk }: { talk: ToolboxTalk }) {
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-300 transition-colors",
-      talk.status === 'completed' && "bg-gray-50"
+      "bg-white rounded-lg border border-warm-200 p-4 hover:border-stone-300 transition-colors",
+      talk.status === 'completed' && "bg-warm-50"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={cn(
             "p-2 rounded-lg",
-            talk.status === 'completed' ? "bg-green-100" : "bg-blue-100"
+            talk.status === 'completed' ? "bg-green-100" : "bg-stone-100"
           )}>
             <MessageSquare className={cn(
               "h-4 w-4",
-              talk.status === 'completed' ? "text-green-600" : "text-blue-600"
+              talk.status === 'completed' ? "text-green-600" : "text-stone-600"
             )} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900">{talk.topic}</h4>
-            <p className="text-xs text-gray-500 flex items-center gap-1">
+            <h4 className="font-medium text-warm-900">{talk.topic}</h4>
+            <p className="text-xs text-warm-500 flex items-center gap-1">
               <Building2 className="h-3 w-3" />
               {talk.job}
             </p>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
       <div className="flex items-center justify-between mt-3">
-        <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex items-center gap-3 text-xs text-warm-500">
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
             {talk.scheduledDate} {talk.scheduledTime}
@@ -751,17 +751,17 @@ function ToolboxTalkCard({ talk }: { talk: ToolboxTalk }) {
             </span>
           ) : (
             <>
-              <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="View Materials">
+              <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="View Materials">
                 <BookOpen className="h-4 w-4" />
               </button>
-              <button className="p-1.5 text-gray-500 hover:bg-gray-100 rounded" title="Print Sign-In">
+              <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Print Sign-In">
                 <Printer className="h-4 w-4" />
               </button>
             </>
           )}
         </div>
       </div>
-      <div className="mt-2 text-xs text-gray-400">
+      <div className="mt-2 text-xs text-warm-400">
         Led by: {talk.conductedBy}
       </div>
     </div>
@@ -775,7 +775,7 @@ function ObservationCard({ observation }: { observation: SafetyObservation }) {
       observation.severity === 'imminent_danger' ? "border-red-300 bg-red-50" :
       observation.severity === 'serious_hazard' ? "border-orange-200" :
       observation.severity === 'minor_hazard' ? "border-amber-200" :
-      "border-gray-200"
+      "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2 flex-wrap">
@@ -788,14 +788,14 @@ function ObservationCard({ observation }: { observation: SafetyObservation }) {
           <span className={cn("text-xs px-2 py-0.5 rounded font-medium", severityColors[observation.severity])}>
             {severityLabels[observation.severity]}
           </span>
-          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+          <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
             {categoryLabels[observation.category]}
           </span>
         </div>
-        <span className="text-xs text-gray-500">{observation.date}</span>
+        <span className="text-xs text-warm-500">{observation.date}</span>
       </div>
-      <p className="text-sm text-gray-900 mb-2">{observation.description}</p>
-      <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+      <p className="text-sm text-warm-900 mb-2">{observation.description}</p>
+      <div className="flex items-center gap-3 text-xs text-warm-500 mb-2">
         <span className="flex items-center gap-1">
           <Building2 className="h-3 w-3" />
           {observation.job}
@@ -814,14 +814,14 @@ function ObservationCard({ observation }: { observation: SafetyObservation }) {
           </span>
         )}
         {observation.hasPhotos && (
-          <span className="flex items-center gap-1 text-blue-600">
+          <span className="flex items-center gap-1 text-stone-600">
             <Camera className="h-3 w-3" />
             {observation.photoCount} photo{observation.photoCount !== 1 ? 's' : ''}
           </span>
         )}
       </div>
       {observation.correctiveAction && (
-        <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700">
+        <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
           <span className="font-medium">Corrective Action:</span> {observation.correctiveAction}
         </div>
       )}
@@ -836,7 +836,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
       incident.severity === 'critical' ? "border-red-300 bg-red-50" :
       incident.severity === 'high' ? "border-red-200" :
       incident.severity === 'medium' ? "border-amber-200" :
-      "border-gray-200"
+      "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2 flex-wrap">
@@ -867,10 +867,10 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
             </span>
           )}
         </div>
-        <span className="text-xs text-gray-500">{incident.date}</span>
+        <span className="text-xs text-warm-500">{incident.date}</span>
       </div>
-      <p className="text-sm text-gray-900 mb-2">{incident.description}</p>
-      <div className="flex items-center gap-3 text-xs text-gray-500 mb-2 flex-wrap">
+      <p className="text-sm text-warm-900 mb-2">{incident.description}</p>
+      <div className="flex items-center gap-3 text-xs text-warm-500 mb-2 flex-wrap">
         <span className="flex items-center gap-1">
           <Building2 className="h-3 w-3" />
           {incident.job}
@@ -879,7 +879,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           <User className="h-3 w-3" />
           {incident.reportedBy}
         </span>
-        <span className="text-gray-400">
+        <span className="text-warm-400">
           {incident.time} at {incident.location}
         </span>
         {incident.vendorName && (
@@ -895,7 +895,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           </span>
         )}
         {incident.hasPhotos && (
-          <span className="flex items-center gap-1 text-blue-600">
+          <span className="flex items-center gap-1 text-stone-600">
             <Camera className="h-3 w-3" />
             Photos
           </span>
@@ -907,7 +907,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
         </div>
       )}
       {incident.correctiveAction && (
-        <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700">
+        <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
           <span className="font-medium">Corrective Action:</span> {incident.correctiveAction}
         </div>
       )}
@@ -924,7 +924,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           )}
         </div>
       )}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2 flex-wrap">
           {incident.oshaReportable && (
             <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">OSHA Reportable</span>
@@ -935,14 +935,14 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           <span className={cn(
             "text-xs px-2 py-0.5 rounded",
             incident.investigationStatus === 'complete' ? "bg-green-100 text-green-700" :
-            incident.investigationStatus === 'in_progress' ? "bg-blue-100 text-blue-700" :
-            "bg-gray-100 text-gray-600"
+            incident.investigationStatus === 'in_progress' ? "bg-stone-100 text-stone-700" :
+            "bg-warm-100 text-warm-600"
           )}>
             Investigation: {incident.investigationStatus === 'complete' ? 'Complete' :
                            incident.investigationStatus === 'in_progress' ? 'In Progress' : 'Pending'}
           </span>
         </div>
-        <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+        <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
           View Details <ChevronRight className="h-3 w-3" />
         </button>
       </div>
@@ -952,7 +952,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
 
 function InspectionItem({ inspection }: { inspection: SafetyInspection }) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between py-3 border-b border-warm-100 last:border-0">
       <div className="flex items-center gap-3">
         <div className={cn(
           "p-2 rounded-lg",
@@ -968,14 +968,14 @@ function InspectionItem({ inspection }: { inspection: SafetyInspection }) {
           )} />
         </div>
         <div>
-          <div className="font-medium text-gray-900 text-sm">{inspection.type}</div>
-          <div className="text-xs text-gray-500 flex items-center gap-2">
+          <div className="font-medium text-warm-900 text-sm">{inspection.type}</div>
+          <div className="text-xs text-warm-500 flex items-center gap-2">
             <span>{inspection.job}</span>
-            <span className="text-gray-300">|</span>
+            <span className="text-warm-300">|</span>
             <span>{inspection.inspector}</span>
             {inspection.checklistItems && (
               <>
-                <span className="text-gray-300">|</span>
+                <span className="text-warm-300">|</span>
                 <span>{inspection.completedItems ?? 0}/{inspection.checklistItems} items</span>
               </>
             )}
@@ -994,8 +994,8 @@ function InspectionItem({ inspection }: { inspection: SafetyInspection }) {
           </span>
         )}
         <div>
-          <div className="text-sm font-medium text-gray-900">{inspection.scheduledDate}</div>
-          <div className="text-xs text-gray-500">{inspection.scheduledTime}</div>
+          <div className="text-sm font-medium text-warm-900">{inspection.scheduledDate}</div>
+          <div className="text-xs text-warm-500">{inspection.scheduledTime}</div>
         </div>
       </div>
     </div>
@@ -1004,8 +1004,8 @@ function InspectionItem({ inspection }: { inspection: SafetyInspection }) {
 
 function SafetyScoreRow({ score }: { score: SafetyScore }) {
   return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50">
-      <td className="px-3 py-2 text-sm font-medium text-gray-900">{score.projectName}</td>
+    <tr className="border-b border-warm-100 hover:bg-warm-50">
+      <td className="px-3 py-2 text-sm font-medium text-warm-900">{score.projectName}</td>
       <td className="px-3 py-2 text-sm text-center">{score.observationScore}</td>
       <td className="px-3 py-2 text-sm text-center">{score.incidentScore}</td>
       <td className="px-3 py-2 text-sm text-center">{score.trainingScore}</td>
@@ -1028,8 +1028,8 @@ function SafetyScoreRow({ score }: { score: SafetyScore }) {
 
 function VendorSafetyRow({ vendor }: { vendor: VendorSafetyStatus }) {
   return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50">
-      <td className="px-3 py-2 text-sm font-medium text-gray-900">{vendor.vendorName}</td>
+    <tr className="border-b border-warm-100 hover:bg-warm-50">
+      <td className="px-3 py-2 text-sm font-medium text-warm-900">{vendor.vendorName}</td>
       <td className="px-3 py-2 text-sm text-center">
         <span className={cn(
           "px-2 py-0.5 rounded text-xs font-medium",
@@ -1052,7 +1052,7 @@ function VendorSafetyRow({ vendor }: { vendor: VendorSafetyStatus }) {
            vendor.certificationStatus === 'expiring' ? 'Expiring' : 'Non-Compliant'}
         </span>
       </td>
-      <td className="px-3 py-2 text-sm text-center text-gray-500">{vendor.lastIncidentDate ?? 'None'}</td>
+      <td className="px-3 py-2 text-sm text-center text-warm-500">{vendor.lastIncidentDate ?? 'None'}</td>
       <td className="px-3 py-2 text-sm text-center">{vendor.activeProjects}</td>
     </tr>
   )
@@ -1066,27 +1066,27 @@ function SafetyChecklistCard({ checklist }: { checklist: SafetyChecklist }) {
     <div className={cn(
       "bg-white rounded-lg border p-4",
       checklist.status === 'completed' ? "border-green-200" :
-      checklist.status === 'in_progress' ? "border-blue-200" :
-      "border-gray-200"
+      checklist.status === 'in_progress' ? "border-stone-200" :
+      "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={cn(
             "p-2 rounded-lg",
             checklist.status === 'completed' ? "bg-green-100" :
-            checklist.status === 'in_progress' ? "bg-blue-100" :
-            "bg-gray-100"
+            checklist.status === 'in_progress' ? "bg-stone-100" :
+            "bg-warm-100"
           )}>
             <ListChecks className={cn(
               "h-4 w-4",
               checklist.status === 'completed' ? "text-green-600" :
-              checklist.status === 'in_progress' ? "text-blue-600" :
-              "text-gray-600"
+              checklist.status === 'in_progress' ? "text-stone-600" :
+              "text-warm-600"
             )} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900 text-sm">{checklist.name}</h4>
-            <p className="text-xs text-gray-500 flex items-center gap-1">
+            <h4 className="font-medium text-warm-900 text-sm">{checklist.name}</h4>
+            <p className="text-xs text-warm-500 flex items-center gap-1">
               <Building2 className="h-3 w-3" />
               {checklist.job}
             </p>
@@ -1104,16 +1104,16 @@ function SafetyChecklistCard({ checklist }: { checklist: SafetyChecklist }) {
       </div>
       <div className="mt-3">
         <div className="flex items-center justify-between text-xs mb-1">
-          <span className="text-gray-500">{checklist.completedItems}/{checklist.totalItems} items</span>
-          <span className="font-medium text-gray-700">{completionPercent}%</span>
+          <span className="text-warm-500">{checklist.completedItems}/{checklist.totalItems} items</span>
+          <span className="font-medium text-warm-700">{completionPercent}%</span>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-warm-200 rounded-full overflow-hidden">
           <div
             className={cn(
               "h-full rounded-full transition-all",
               checklist.status === 'completed' ? "bg-green-500" :
-              checklist.status === 'in_progress' ? "bg-blue-500" :
-              "bg-gray-400"
+              checklist.status === 'in_progress' ? "bg-stone-500" :
+              "bg-warm-400"
             )}
             style={{ width: `${completionPercent}%` }}
           />
@@ -1128,13 +1128,13 @@ function SafetyChecklistCard({ checklist }: { checklist: SafetyChecklist }) {
             </span>
           )}
           {checklist.status === 'completed' && checklist.completedBy && (
-            <span className="text-gray-500">
+            <span className="text-warm-500">
               by {checklist.completedBy}
             </span>
           )}
         </div>
         {checklist.completedDate && (
-          <span className="text-gray-400">{checklist.completedDate}</span>
+          <span className="text-warm-400">{checklist.completedDate}</span>
         )}
       </div>
     </div>
@@ -1143,18 +1143,18 @@ function SafetyChecklistCard({ checklist }: { checklist: SafetyChecklist }) {
 
 function VendorSafetyScoreRow({ vendor }: { vendor: VendorSafetyScore }) {
   return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50">
+    <tr className="border-b border-warm-100 hover:bg-warm-50">
       <td className="px-3 py-2">
         <div className="flex items-center gap-2">
           {vendor.safetyRanking <= 3 && (
             <Trophy className={cn(
               "h-4 w-4",
               vendor.safetyRanking === 1 ? "text-amber-500" :
-              vendor.safetyRanking === 2 ? "text-gray-400" :
+              vendor.safetyRanking === 2 ? "text-warm-400" :
               "text-amber-700"
             )} />
           )}
-          <span className="text-sm font-medium text-gray-900">{vendor.vendorName}</span>
+          <span className="text-sm font-medium text-warm-900">{vendor.vendorName}</span>
         </div>
       </td>
       <td className="px-3 py-2 text-sm text-center">{vendor.safetyObservationCount}</td>
@@ -1167,7 +1167,7 @@ function VendorSafetyScoreRow({ vendor }: { vendor: VendorSafetyScore }) {
           {vendor.safetyFTQScore}%
         </span>
       </td>
-      <td className="px-3 py-2 text-sm text-center font-bold text-gray-900">#{vendor.safetyRanking}</td>
+      <td className="px-3 py-2 text-sm text-center font-bold text-warm-900">#{vendor.safetyRanking}</td>
       <td className="px-3 py-2 text-sm text-center">
         {vendor.safetyIncidents > 0 ? (
           <span className="text-red-600 font-medium">{vendor.safetyIncidents}</span>
@@ -1179,7 +1179,7 @@ function VendorSafetyScoreRow({ vendor }: { vendor: VendorSafetyScore }) {
         <div className="flex items-center justify-center gap-1">
           {vendor.trend === 'up' && <TrendingUp className="h-3 w-3 text-green-600" />}
           {vendor.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-600" />}
-          {vendor.trend === 'stable' && <Minus className="h-3 w-3 text-gray-400" />}
+          {vendor.trend === 'stable' && <Minus className="h-3 w-3 text-warm-400" />}
         </div>
       </td>
     </tr>
@@ -1213,20 +1213,20 @@ export function SafetyPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900">Safety & Compliance</h3>
-            <p className="text-sm text-gray-500">OSHA compliance, incident reporting, observations, training & vendor safety</p>
+            <h3 className="font-semibold text-warm-900">Safety & Compliance</h3>
+            <p className="text-sm text-warm-500">OSHA compliance, incident reporting, observations, training & vendor safety</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Eye className="h-4 w-4" />
               Submit Observation
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <ClipboardCheck className="h-4 w-4" />
               New Inspection
             </button>
@@ -1239,7 +1239,7 @@ export function SafetyPreview() {
       </div>
 
       {/* Filter Bar with Search + Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -1321,9 +1321,9 @@ export function SafetyPreview() {
 
             {/* Cross-module connection badges */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-gray-500">Connected to:</span>
+              <span className="text-xs text-warm-500">Connected to:</span>
               {[
-                { label: 'Daily Logs', color: 'bg-blue-50 text-blue-700' },
+                { label: 'Daily Logs', color: 'bg-stone-50 text-stone-700' },
                 { label: 'Vendor Scorecards', color: 'bg-orange-50 text-orange-700' },
                 { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700' },
                 { label: 'Document Storage', color: 'bg-green-50 text-green-700' },
@@ -1341,11 +1341,11 @@ export function SafetyPreview() {
               {/* Upcoming Toolbox Talks */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-medium text-warm-900 flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-stone-600" />
                     Toolbox Talks
                   </h4>
-                  <button className="text-xs text-blue-600 hover:text-blue-700">Schedule New</button>
+                  <button className="text-xs text-stone-600 hover:text-stone-700">Schedule New</button>
                 </div>
                 <div className="space-y-2">
                   {upcomingToolboxTalks.map(talk => (
@@ -1355,13 +1355,13 @@ export function SafetyPreview() {
               </div>
 
               {/* Upcoming Inspections */}
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="bg-white rounded-lg border border-warm-200 p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                  <h4 className="font-medium text-warm-900 flex items-center gap-2">
                     <ClipboardCheck className="h-4 w-4 text-green-600" />
                     Inspections
                   </h4>
-                  <button className="text-xs text-blue-600 hover:text-blue-700">View All</button>
+                  <button className="text-xs text-stone-600 hover:text-stone-700">View All</button>
                 </div>
                 <div>
                   {safetyInspections.map(inspection => (
@@ -1375,11 +1375,11 @@ export function SafetyPreview() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                    <Eye className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-medium text-warm-900 flex items-center gap-2">
+                    <Eye className="h-4 w-4 text-stone-600" />
                     Recent Observations
                   </h4>
-                  <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                  <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                     View All <ArrowRight className="h-3 w-3" />
                   </button>
                 </div>
@@ -1391,7 +1391,7 @@ export function SafetyPreview() {
               </div>
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                  <h4 className="font-medium text-warm-900 flex items-center gap-2">
                     <AlertCircle className="h-4 w-4 text-amber-600" />
                     Recent Incidents (Review Required)
                   </h4>
@@ -1401,7 +1401,7 @@ export function SafetyPreview() {
                     <IncidentCard key={incident.id} incident={incident} />
                   ))}
                   {recentIncidents.filter(i => i.status !== 'closed').length === 0 && (
-                    <div className="text-center py-8 text-gray-400 text-sm border border-dashed border-gray-200 rounded-lg">
+                    <div className="text-center py-8 text-warm-400 text-sm border border-dashed border-warm-200 rounded-lg">
                       <Shield className="h-8 w-8 mx-auto mb-2 text-green-300" />
                       No open incidents requiring review
                     </div>
@@ -1429,17 +1429,17 @@ export function SafetyPreview() {
                 </div>
                 <div className="text-xs text-red-600">Hazards</div>
               </div>
-              <div className="bg-blue-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-blue-700">
+              <div className="bg-stone-50 rounded-lg p-3 text-center">
+                <div className="text-lg font-bold text-stone-700">
                   {safetyObservations.filter(o => o.hasPhotos).length}
                 </div>
-                <div className="text-xs text-blue-600">With Photos</div>
+                <div className="text-xs text-stone-600">With Photos</div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-gray-700">
+              <div className="bg-warm-50 rounded-lg p-3 text-center">
+                <div className="text-lg font-bold text-warm-700">
                   {safetyObservations.filter(o => o.isAnonymous).length}
                 </div>
-                <div className="text-xs text-gray-600">Anonymous</div>
+                <div className="text-xs text-warm-600">Anonymous</div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -1448,8 +1448,8 @@ export function SafetyPreview() {
               ))}
             </div>
             {filteredObservations.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <Eye className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="text-center py-12 text-warm-500">
+                <Eye className="h-12 w-12 mx-auto mb-3 text-warm-300" />
                 <p>No observations found matching your filters</p>
               </div>
             )}
@@ -1485,11 +1485,11 @@ export function SafetyPreview() {
                 </div>
                 <div className="text-xs text-orange-600">OSHA Reportable</div>
               </div>
-              <div className="bg-blue-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-blue-700">
+              <div className="bg-stone-50 rounded-lg p-3 text-center">
+                <div className="text-lg font-bold text-stone-700">
                   {recentIncidents.filter(i => i.status !== 'closed').length}
                 </div>
-                <div className="text-xs text-blue-600">Open</div>
+                <div className="text-xs text-stone-600">Open</div>
               </div>
             </div>
             <div className="space-y-4">
@@ -1498,8 +1498,8 @@ export function SafetyPreview() {
               ))}
             </div>
             {filteredIncidents.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <Shield className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="text-center py-12 text-warm-500">
+                <Shield className="h-12 w-12 mx-auto mb-3 text-warm-300" />
                 <p>No incidents found matching your search</p>
               </div>
             )}
@@ -1513,28 +1513,28 @@ export function SafetyPreview() {
             <div className="bg-white rounded-lg border border-amber-200 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="h-5 w-5 text-amber-600" />
-                <h4 className="font-medium text-gray-900">Training Gaps</h4>
+                <h4 className="font-medium text-warm-900">Training Gaps</h4>
                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">
                   {trainingGaps.length} employees
                 </span>
               </div>
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Employee</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Required Training</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Job Assignment</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Due</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Status</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Action</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Employee</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Required Training</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Job Assignment</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Due</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Status</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-warm-200">
                   {trainingGaps.map((gap, i) => (
                     <tr key={i}>
-                      <td className="px-3 py-2 text-sm text-gray-900">{gap.employee}</td>
-                      <td className="px-3 py-2 text-sm text-gray-600">{gap.training}</td>
-                      <td className="px-3 py-2 text-sm text-gray-600">{gap.job}</td>
+                      <td className="px-3 py-2 text-sm text-warm-900">{gap.employee}</td>
+                      <td className="px-3 py-2 text-sm text-warm-600">{gap.training}</td>
+                      <td className="px-3 py-2 text-sm text-warm-600">{gap.job}</td>
                       <td className="px-3 py-2 text-sm text-amber-600 font-medium">{gap.dueDate}</td>
                       <td className="px-3 py-2">
                         {gap.isAutoBlocked ? (
@@ -1547,7 +1547,7 @@ export function SafetyPreview() {
                         )}
                       </td>
                       <td className="px-3 py-2">
-                        <button className="text-xs text-blue-600 hover:text-blue-700">Schedule</button>
+                        <button className="text-xs text-stone-600 hover:text-stone-700">Schedule</button>
                       </td>
                     </tr>
                   ))}
@@ -1556,8 +1556,8 @@ export function SafetyPreview() {
             </div>
 
             {/* Training Compliance by Category */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-4">Training Compliance by Category</h4>
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-4">Training Compliance by Category</h4>
               <div className="space-y-3">
                 {[
                   { category: 'OSHA 10-Hour', compliant: 12, total: 15, percentage: 80 },
@@ -1570,12 +1570,12 @@ export function SafetyPreview() {
                 ].map(item => (
                   <div key={item.category}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-gray-700">{item.category}</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm text-warm-700">{item.category}</span>
+                      <span className="text-sm font-medium text-warm-900">
                         {item.compliant}/{item.total} ({item.percentage}%)
                       </span>
                     </div>
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-2 bg-warm-200 rounded-full overflow-hidden">
                       <div
                         className={cn(
                           "h-full rounded-full transition-all",
@@ -1592,37 +1592,37 @@ export function SafetyPreview() {
             </div>
 
             {/* OSHA 300 Log summary */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-gray-500" />
+                <h4 className="font-medium text-warm-900 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-warm-500" />
                   OSHA 300 Log Summary (2026)
                 </h4>
                 <div className="flex items-center gap-2">
-                  <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                  <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                     <Download className="h-3 w-3" /> Export 300A
                   </button>
-                  <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                  <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                     <FileText className="h-3 w-3" /> Full 300 Log
                   </button>
                 </div>
               </div>
               <div className="grid grid-cols-4 gap-3">
-                <div className="bg-gray-50 rounded p-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">1</div>
-                  <div className="text-xs text-gray-500">Recordable Cases</div>
+                <div className="bg-warm-50 rounded p-2 text-center">
+                  <div className="text-sm font-bold text-warm-900">1</div>
+                  <div className="text-xs text-warm-500">Recordable Cases</div>
                 </div>
-                <div className="bg-gray-50 rounded p-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">5</div>
-                  <div className="text-xs text-gray-500">Days Away</div>
+                <div className="bg-warm-50 rounded p-2 text-center">
+                  <div className="text-sm font-bold text-warm-900">5</div>
+                  <div className="text-xs text-warm-500">Days Away</div>
                 </div>
-                <div className="bg-gray-50 rounded p-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">10</div>
-                  <div className="text-xs text-gray-500">Restricted Days</div>
+                <div className="bg-warm-50 rounded p-2 text-center">
+                  <div className="text-sm font-bold text-warm-900">10</div>
+                  <div className="text-xs text-warm-500">Restricted Days</div>
                 </div>
-                <div className="bg-gray-50 rounded p-2 text-center">
-                  <div className="text-sm font-bold text-gray-900">0</div>
-                  <div className="text-xs text-gray-500">Fatalities</div>
+                <div className="bg-warm-50 rounded p-2 text-center">
+                  <div className="text-sm font-bold text-warm-900">0</div>
+                  <div className="text-xs text-warm-500">Fatalities</div>
                 </div>
               </div>
             </div>
@@ -1632,20 +1632,20 @@ export function SafetyPreview() {
         {/* ── Safety Scores Tab ── */}
         {activeTab === 'scores' && (
           <div className="space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-blue-600" />
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-3 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-stone-600" />
                 Project Safety Scores
               </h4>
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Project</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Observations</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Incidents</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Training</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Certifications</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Composite</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Project</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Observations</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Incidents</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Training</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Certifications</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Composite</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1658,32 +1658,32 @@ export function SafetyPreview() {
 
             {/* Rate calculations */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h5 className="text-sm font-medium text-gray-900 mb-2">TRIR Calculation</h5>
-                <div className="text-xs text-gray-500 space-y-1">
+              <div className="bg-white rounded-lg border border-warm-200 p-4">
+                <h5 className="text-sm font-medium text-warm-900 mb-2">TRIR Calculation</h5>
+                <div className="text-xs text-warm-500 space-y-1">
                   <div>Recordable Cases: 1</div>
                   <div>Total Hours Worked: 112,000</div>
-                  <div className="pt-1 border-t border-gray-100 font-medium text-gray-900">
+                  <div className="pt-1 border-t border-warm-100 font-medium text-warm-900">
                     TRIR = (1 x 200,000) / 112,000 = 1.79
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h5 className="text-sm font-medium text-gray-900 mb-2">DART Rate</h5>
-                <div className="text-xs text-gray-500 space-y-1">
+              <div className="bg-white rounded-lg border border-warm-200 p-4">
+                <h5 className="text-sm font-medium text-warm-900 mb-2">DART Rate</h5>
+                <div className="text-xs text-warm-500 space-y-1">
                   <div>DART Cases: 1 (5 days away + 10 restricted)</div>
                   <div>Total Hours Worked: 112,000</div>
-                  <div className="pt-1 border-t border-gray-100 font-medium text-gray-900">
+                  <div className="pt-1 border-t border-warm-100 font-medium text-warm-900">
                     DART = (1 x 200,000) / 112,000 = 0.89
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h5 className="text-sm font-medium text-gray-900 mb-2">EMR Worksheet</h5>
-                <div className="text-xs text-gray-500 space-y-1">
+              <div className="bg-white rounded-lg border border-warm-200 p-4">
+                <h5 className="text-sm font-medium text-warm-900 mb-2">EMR Worksheet</h5>
+                <div className="text-xs text-warm-500 space-y-1">
                   <div>Current EMR: 0.82</div>
                   <div>Industry Average: 1.00</div>
-                  <div className="pt-1 border-t border-gray-100 font-medium text-green-700">
+                  <div className="pt-1 border-t border-warm-100 font-medium text-green-700">
                     Below average - favorable insurance rates
                   </div>
                 </div>
@@ -1695,26 +1695,26 @@ export function SafetyPreview() {
         {/* ── Vendor Safety Tab ── */}
         {activeTab === 'vendors' && (
           <div className="space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                <h4 className="font-medium text-warm-900 flex items-center gap-2">
                   <Users className="h-4 w-4 text-orange-600" />
                   Vendor Safety Compliance
                 </h4>
-                <span className="text-xs text-gray-500 flex items-center gap-1">
+                <span className="text-xs text-warm-500 flex items-center gap-1">
                   <Link2 className="h-3 w-3" />
                   Feeds into Vendor Scorecard (Module 22)
                 </span>
               </div>
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Vendor</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">EMR Rating</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Incidents (12mo)</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Cert Status</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Last Incident</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Active Projects</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Vendor</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">EMR Rating</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Incidents (12mo)</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Cert Status</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Last Incident</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Active Projects</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1762,7 +1762,7 @@ export function SafetyPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="border-t border-gray-200 px-4 py-4 bg-white">
+      <div className="border-t border-warm-200 px-4 py-4 bg-white">
         <AIFeaturesPanel
           title="Safety AI Features"
           columns={2}

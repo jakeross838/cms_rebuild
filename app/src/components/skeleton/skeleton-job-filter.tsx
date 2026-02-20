@@ -119,7 +119,7 @@ const mockJobs: Job[] = [
 
 const statusConfig = {
   active: { label: 'Active', icon: Circle, color: 'text-green-500', bgColor: 'bg-green-50' },
-  completed: { label: 'Completed', icon: CheckCircle2, color: 'text-blue-500', bgColor: 'bg-blue-50' },
+  completed: { label: 'Completed', icon: CheckCircle2, color: 'text-stone-500', bgColor: 'bg-stone-50' },
   'on-hold': { label: 'On Hold', icon: AlertCircle, color: 'text-amber-500', bgColor: 'bg-amber-50' },
   'pre-construction': { label: 'Pre-Con', icon: Clock, color: 'text-purple-500', bgColor: 'bg-purple-50' },
 }
@@ -404,7 +404,7 @@ export function SkeletonJobFilter() {
               : 'text-muted-foreground hover:bg-accent'
           )}
         >
-          <div className="h-6 w-6 rounded bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+          <div className="h-6 w-6 rounded bg-gradient-to-br from-stone-500 to-purple-500 flex items-center justify-center">
             <Building2 className="h-3.5 w-3.5 text-white" />
           </div>
           All Jobs

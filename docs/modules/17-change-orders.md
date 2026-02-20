@@ -375,7 +375,7 @@ CREATE TABLE v2_change_order_settings (
 - **Module 9:** Budget & Cost Tracking (budget line adjustment on approval)
 - **Module 7:** Scheduling (schedule task extension on approval)
 - **Module 3:** Core Data Model (project and contract references)
-- **Module 11:** Basic Invoicing (draw schedule recalculation)
+- **Module 11:** Native Accounting (GL/AP/AR) (draw schedule recalculation)
 - **Module 16:** QuickBooks Integration (sync approved COs to accounting)
 - **Module 18:** Selections & Allowances (auto-CO on overage)
 - **Module 21:** RFI Management (RFI-to-CO workflow linking)

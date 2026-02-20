@@ -264,8 +264,8 @@ const mockClients: Client[] = [
 const statusConfig: Record<ClientStatus, { label: string; color: string; icon: typeof CheckCircle }> = {
   active: { label: 'Active', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
-  completed: { label: 'Completed', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
-  'on-hold': { label: 'On Hold', color: 'bg-gray-100 text-gray-700', icon: AlertCircle },
+  completed: { label: 'Completed', color: 'bg-stone-100 text-stone-700', icon: CheckCircle },
+  'on-hold': { label: 'On Hold', color: 'bg-warm-100 text-warm-700', icon: AlertCircle },
   warranty: { label: 'Warranty', color: 'bg-purple-100 text-purple-700', icon: Shield },
 }
 
@@ -277,8 +277,8 @@ const communicationConfig: Record<CommunicationPref, { label: string; icon: type
 }
 
 const tierConfig: Record<ClientTier, { label: string; color: string }> = {
-  standard: { label: 'Standard', color: 'bg-gray-100 text-gray-600' },
-  premium: { label: 'Premium', color: 'bg-blue-100 text-blue-600' },
+  standard: { label: 'Standard', color: 'bg-warm-100 text-warm-600' },
+  premium: { label: 'Premium', color: 'bg-stone-100 text-stone-600' },
   luxury: { label: 'Luxury', color: 'bg-amber-100 text-amber-700' },
 }
 
@@ -305,57 +305,57 @@ function ClientCard({ client }: { client: Client }) {
   const CommIcon = commPref.icon
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <div className="bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <User className="h-5 w-5 text-blue-600" />
+          <div className="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0">
+            <User className="h-5 w-5 text-stone-600" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-gray-900">{client.name}</h4>
+              <h4 className="font-medium text-warm-900">{client.name}</h4>
               {client.tags.includes('VIP') && (
                 <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
               )}
             </div>
             {client.company && (
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-warm-500">
                 <Building2 className="h-3 w-3" />
                 <span>{client.company}</span>
               </div>
             )}
             {client.currentProjectName && (
-              <div className="text-xs text-gray-400 mt-0.5">Current: {client.currentProjectName}</div>
+              <div className="text-xs text-warm-400 mt-0.5">Current: {client.currentProjectName}</div>
             )}
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       <div className="space-y-1.5 mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Mail className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Mail className="h-3.5 w-3.5 text-warm-400" />
           <span>{client.email}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Phone className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Phone className="h-3.5 w-3.5 text-warm-400" />
           <span>{client.phone}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="flex items-center gap-2 text-xs text-warm-400">
           <Clock className="h-3 w-3" />
           <span>Last contact: {client.lastContact} | Since {client.clientSince}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <div className="bg-gray-50 rounded-lg p-2">
-          <div className="text-xs text-gray-500 flex items-center gap-1">
+        <div className="bg-warm-50 rounded-lg p-2">
+          <div className="text-xs text-warm-500 flex items-center gap-1">
             <FolderOpen className="h-3 w-3" />
             Projects
           </div>
-          <div className="font-semibold text-gray-900">
+          <div className="font-semibold text-warm-900">
             {client.totalProjects}
             {client.activeProjects > 0 && (
               <span className="text-xs font-normal text-green-600 ml-1">
@@ -364,12 +364,12 @@ function ClientCard({ client }: { client: Client }) {
             )}
           </div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2">
-          <div className="text-xs text-gray-500 flex items-center gap-1">
+        <div className="bg-warm-50 rounded-lg p-2">
+          <div className="text-xs text-warm-500 flex items-center gap-1">
             <DollarSign className="h-3 w-3" />
             Lifetime Value
           </div>
-          <div className="font-semibold text-gray-900">{formatCurrency(client.totalContractValue)}</div>
+          <div className="font-semibold text-warm-900">{formatCurrency(client.totalContractValue)}</div>
         </div>
       </div>
 
@@ -388,10 +388,10 @@ function ClientCard({ client }: { client: Client }) {
           </span>
         )}
         {!client.portalEnabled && (
-          <span className="text-xs bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded">No Portal</span>
+          <span className="text-xs bg-warm-50 text-warm-400 px-1.5 py-0.5 rounded">No Portal</span>
         )}
         {client.referralsGiven > 0 && (
-          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
             <ArrowUpRight className="h-3 w-3" />
             {client.referralsGiven} referral{client.referralsGiven > 1 ? 's' : ''}
           </span>
@@ -402,7 +402,7 @@ function ClientCard({ client }: { client: Client }) {
           </span>
         )}
         {client.source !== 'other' && (
-          <span className="text-xs bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded">
+          <span className="text-xs bg-warm-50 text-warm-500 px-1.5 py-0.5 rounded">
             via {sourceLabels[client.source]}
           </span>
         )}
@@ -410,8 +410,8 @@ function ClientCard({ client }: { client: Client }) {
 
       {/* AI Profile row */}
       {(client.aiDecisionSpeed || client.aiBudgetSensitivity || client.aiStylePreferences) && (
-        <div className="flex items-center gap-1.5 flex-wrap mb-3 pt-2 border-t border-gray-100">
-          <Sparkles className="h-3 w-3 text-blue-500" />
+        <div className="flex items-center gap-1.5 flex-wrap mb-3 pt-2 border-t border-warm-100">
+          <Sparkles className="h-3 w-3 text-stone-500" />
           {client.aiDecisionSpeed && (
             <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
               {client.aiDecisionSpeed} decisions
@@ -428,14 +428,14 @@ function ClientCard({ client }: { client: Client }) {
             </span>
           ))}
           {(client.aiStylePreferences?.length ?? 0) > 2 && (
-            <span className="text-xs text-gray-400">+{(client.aiStylePreferences?.length ?? 0) - 2} more</span>
+            <span className="text-xs text-warm-400">+{(client.aiStylePreferences?.length ?? 0) - 2} more</span>
           )}
         </div>
       )}
 
       {/* Footer row */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-        <div className="flex items-center gap-1 text-xs text-gray-500">
+      <div className="flex items-center justify-between pt-2 border-t border-warm-100">
+        <div className="flex items-center gap-1 text-xs text-warm-500">
           <CommIcon className="h-3 w-3" />
           <span>Prefers {commPref.label}</span>
         </div>
@@ -443,7 +443,7 @@ function ClientCard({ client }: { client: Client }) {
           <div className={cn(
             "text-xs px-1.5 py-0.5 rounded font-medium",
             client.satisfactionScore >= 90 ? "bg-green-50 text-green-700" :
-            client.satisfactionScore >= 75 ? "bg-blue-50 text-blue-700" :
+            client.satisfactionScore >= 75 ? "bg-stone-50 text-stone-700" :
             "bg-amber-50 text-amber-700"
           )}>
             Satisfaction: {client.satisfactionScore}%
@@ -452,9 +452,9 @@ function ClientCard({ client }: { client: Client }) {
       </div>
 
       {client.aiInsight && (
-        <div className="mt-3 p-2 bg-blue-50 rounded-md flex items-start gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-          <span className="text-xs text-blue-700">{client.aiInsight}</span>
+        <div className="mt-3 p-2 bg-stone-50 rounded-md flex items-start gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-stone-500 mt-0.5 flex-shrink-0" />
+          <span className="text-xs text-stone-700">{client.aiInsight}</span>
         </div>
       )}
     </div>
@@ -486,12 +486,12 @@ export function ClientsPreview() {
   const pendingActions = mockClients.reduce((sum, c) => sum + c.pendingActions, 0)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Clients</h3>
-          <span className="text-sm text-gray-500">{totalClients} clients | {activeProjects} active projects</span>
+          <h3 className="font-semibold text-warm-900">Clients</h3>
+          <span className="text-sm text-warm-500">{totalClients} clients | {activeProjects} active projects</span>
         </div>
         <FilterBar
           search={search}
@@ -548,49 +548,49 @@ export function ClientsPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-warm-500 text-xs font-medium">
               <Users className="h-3.5 w-3.5" />
               Clients
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{totalClients}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{totalClients}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-warm-500 text-xs font-medium">
               <FolderOpen className="h-3.5 w-3.5" />
               Active Projects
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{activeProjects}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{activeProjects}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-warm-500 text-xs font-medium">
               <TrendingUp className="h-3.5 w-3.5" />
               Lifetime Value
             </div>
-            <div className="text-xl font-bold text-blue-600 mt-1">{formatCurrency(lifetimeValue)}</div>
+            <div className="text-xl font-bold text-stone-600 mt-1">{formatCurrency(lifetimeValue)}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-warm-500 text-xs font-medium">
               <ArrowUpRight className="h-3.5 w-3.5" />
               Referrals Given
             </div>
             <div className="text-xl font-bold text-green-600 mt-1">{totalReferrals}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1 text-warm-500 text-xs font-medium">
               <Globe className="h-3.5 w-3.5" />
               Portal Active
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">{portalActive}</div>
+            <div className="text-xl font-bold text-warm-900 mt-1">{portalActive}</div>
           </div>
-          <div className={cn("rounded-lg p-3", pendingActions > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-1 text-xs font-medium", pendingActions > 0 ? "text-red-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", pendingActions > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-1 text-xs font-medium", pendingActions > 0 ? "text-red-600" : "text-warm-500")}>
               <AlertCircle className="h-3.5 w-3.5" />
               Pending Actions
             </div>
-            <div className={cn("text-xl font-bold mt-1", pendingActions > 0 ? "text-red-700" : "text-gray-900")}>{pendingActions}</div>
+            <div className={cn("text-xl font-bold mt-1", pendingActions > 0 ? "text-red-700" : "text-warm-900")}>{pendingActions}</div>
           </div>
         </div>
       </div>
@@ -611,15 +611,15 @@ export function ClientsPreview() {
           </div>
         )}
         {filteredClients.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <Users className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+          <div className="text-center py-12 text-warm-500">
+            <Users className="h-12 w-12 mx-auto mb-3 text-warm-300" />
             <p>No clients found matching your criteria</p>
           </div>
         )}
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Client Intelligence"
           columns={2}

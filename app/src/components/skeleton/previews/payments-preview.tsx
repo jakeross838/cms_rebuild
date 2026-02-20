@@ -172,7 +172,7 @@ const mockPayments: Payment[] = [
 
 const statusConfig: Record<Payment['status'], { label: string; color: string; icon: typeof Clock }> = {
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
-  processing: { label: 'Processing', color: 'bg-blue-100 text-blue-700', icon: RefreshCw },
+  processing: { label: 'Processing', color: 'bg-stone-100 text-stone-700', icon: RefreshCw },
   completed: { label: 'Paid', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   failed: { label: 'Failed', color: 'bg-red-100 text-red-700', icon: AlertCircle },
   refunded: { label: 'Refunded', color: 'bg-purple-100 text-purple-700', icon: Undo2 },
@@ -200,21 +200,21 @@ function PaymentCard({ payment }: { payment: Payment }) {
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
       payment.status === 'failed' ? "border-red-200" :
-      payment.status === 'refunded' ? "border-purple-200" : "border-gray-200"
+      payment.status === 'refunded' ? "border-purple-200" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-gray-900">{payment.job}</h4>
-            <span className="text-sm text-gray-500">- Draw #{payment.drawNumber}</span>
+            <h4 className="font-medium text-warm-900">{payment.job}</h4>
+            <span className="text-sm text-warm-500">- Draw #{payment.drawNumber}</span>
           </div>
-          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-warm-500">
             <Building2 className="h-3 w-3" />
             <span>{payment.clientName}</span>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
@@ -224,7 +224,7 @@ function PaymentCard({ payment }: { payment: Payment }) {
           {status.label}
         </span>
         {methodInfo && MethodIcon && (
-          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
+          <span className="text-xs text-warm-500 bg-warm-100 px-2 py-1 rounded flex items-center gap-1">
             <MethodIcon className="h-3 w-3" />
             {methodInfo.label}
           </span>
@@ -242,39 +242,39 @@ function PaymentCard({ payment }: { payment: Payment }) {
 
       <div className="space-y-2 mb-3">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Amount</span>
-          <span className="font-semibold text-gray-900">{formatCurrency(payment.amount)}</span>
+          <span className="text-warm-600">Amount</span>
+          <span className="font-semibold text-warm-900">{formatCurrency(payment.amount)}</span>
         </div>
         {payment.status === 'partial' && payment.partialAmount !== undefined && (
           <>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Received</span>
+              <span className="text-warm-600">Received</span>
               <span className="font-medium text-orange-600">{formatCurrency(payment.partialAmount)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Remaining</span>
-              <span className="font-medium text-gray-900">{formatCurrency(payment.amount - payment.partialAmount)}</span>
+              <span className="text-warm-600">Remaining</span>
+              <span className="font-medium text-warm-900">{formatCurrency(payment.amount - payment.partialAmount)}</span>
             </div>
-            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-warm-200 rounded-full overflow-hidden">
               <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(payment.partialAmount / payment.amount) * 100}%` }} />
             </div>
           </>
         )}
         {payment.fee !== undefined && payment.status !== 'partial' && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Processing Fee</span>
-            <span className="text-gray-500">-{formatCurrency(payment.fee)}</span>
+            <span className="text-warm-600">Processing Fee</span>
+            <span className="text-warm-500">-{formatCurrency(payment.fee)}</span>
           </div>
         )}
         {payment.netAmount !== undefined && payment.status !== 'partial' && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Net Amount</span>
+            <span className="text-warm-600">Net Amount</span>
             <span className="font-medium text-green-600">{formatCurrency(payment.netAmount)}</span>
           </div>
         )}
         {payment.status === 'refunded' && payment.refundAmount !== undefined && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Refunded</span>
+            <span className="text-warm-600">Refunded</span>
             <span className="font-medium text-purple-600">-{formatCurrency(payment.refundAmount)}</span>
           </div>
         )}
@@ -287,8 +287,8 @@ function PaymentCard({ payment }: { payment: Payment }) {
       )}
 
       {payment.status === 'pending' && (
-        <div className="pt-3 border-t border-gray-100">
-          <div className="text-xs text-gray-500 mb-2 flex items-center gap-2 flex-wrap">
+        <div className="pt-3 border-t border-warm-100">
+          <div className="text-xs text-warm-500 mb-2 flex items-center gap-2 flex-wrap">
             {payment.linkSent && <span>Link sent: {payment.linkSent}</span>}
             {payment.linkViewed && <span>| Viewed: {payment.linkViewed}</span>}
             {payment.linkExpires && (
@@ -299,11 +299,11 @@ function PaymentCard({ payment }: { payment: Payment }) {
             )}
           </div>
           <div className="flex gap-2">
-            <button className="flex-1 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center gap-1">
+            <button className="flex-1 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700 flex items-center justify-center gap-1">
               <Send className="h-3 w-3" />
               Send Reminder
             </button>
-            <button className="flex-1 py-1.5 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 flex items-center justify-center gap-1">
+            <button className="flex-1 py-1.5 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200 flex items-center justify-center gap-1">
               <Link2 className="h-3 w-3" />
               Copy Link
             </button>
@@ -319,7 +319,7 @@ function PaymentCard({ payment }: { payment: Payment }) {
               <RefreshCw className="h-3 w-3" />
               Retry Payment
             </button>
-            <button className="flex-1 py-1.5 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 flex items-center justify-center gap-1">
+            <button className="flex-1 py-1.5 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200 flex items-center justify-center gap-1">
               <Send className="h-3 w-3" />
               New Link
             </button>
@@ -328,18 +328,18 @@ function PaymentCard({ payment }: { payment: Payment }) {
       )}
 
       {payment.status === 'processing' && (
-        <div className="pt-3 border-t border-blue-100 text-xs text-blue-600 flex items-center gap-1">
+        <div className="pt-3 border-t border-stone-100 text-xs text-stone-600 flex items-center gap-1">
           <RefreshCw className="h-3 w-3 animate-spin" />
           Processing... Expected completion: 1-2 business days
         </div>
       )}
 
       {payment.status === 'completed' && (
-        <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-xs text-gray-500">Paid: {payment.paidAt}</span>
+        <div className="pt-3 border-t border-warm-100 flex items-center justify-between">
+          <span className="text-xs text-warm-500">Paid: {payment.paidAt}</span>
           <div className="flex items-center gap-2">
             {payment.receiptUrl && (
-              <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 <Download className="h-3 w-3" />
                 Receipt
               </button>
@@ -383,13 +383,13 @@ export function PaymentsPreview() {
   )
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-gray-900">Payments</h3>
-            <span className="text-sm text-gray-500">{mockPayments.length} total</span>
+            <h3 className="font-semibold text-warm-900">Payments</h3>
+            <span className="text-sm text-warm-500">{mockPayments.length} total</span>
           </div>
           <div className="flex items-center gap-2">
             {notSyncedCount > 0 && (
@@ -398,7 +398,7 @@ export function PaymentsPreview() {
                 {notSyncedCount} not synced to QB
               </span>
             )}
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
@@ -407,7 +407,7 @@ export function PaymentsPreview() {
       </div>
 
       {/* Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-6 gap-3">
           <div className="bg-green-50 rounded-lg p-2.5">
             <div className="text-xs text-green-600">Collected (Month)</div>
@@ -417,9 +417,9 @@ export function PaymentsPreview() {
             <div className="text-xs text-amber-600">Pending</div>
             <div className="text-lg font-bold text-amber-700">{formatCurrency(pending)}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2.5">
-            <div className="text-xs text-blue-600">Processing</div>
-            <div className="text-lg font-bold text-blue-700">{formatCurrency(processing)}</div>
+          <div className="bg-stone-50 rounded-lg p-2.5">
+            <div className="text-xs text-stone-600">Processing</div>
+            <div className="text-lg font-bold text-stone-700">{formatCurrency(processing)}</div>
           </div>
           <div className="bg-orange-50 rounded-lg p-2.5">
             <div className="text-xs text-orange-600">Partial Due</div>
@@ -429,15 +429,15 @@ export function PaymentsPreview() {
             <div className="text-xs text-purple-600">Refunded</div>
             <div className="text-lg font-bold text-purple-700">{formatCurrency(refunded)}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-2.5">
-            <div className="text-xs text-gray-600">Fees (Month)</div>
-            <div className="text-lg font-bold text-gray-700">{formatCurrency(totalFees)}</div>
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="text-xs text-warm-600">Fees (Month)</div>
+            <div className="text-lg font-bold text-warm-700">{formatCurrency(totalFees)}</div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -476,25 +476,25 @@ export function PaymentsPreview() {
           <PaymentCard key={payment.id} payment={payment} />
         ))}
         {filteredPayments.length === 0 && (
-          <div className="col-span-2 text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+          <div className="col-span-2 text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
             No payments found
           </div>
         )}
       </div>
 
       {/* Fee Comparison Summary */}
-      <div className="bg-blue-50 border-t border-blue-200 px-4 py-3">
+      <div className="bg-stone-50 border-t border-stone-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm">
-            <DollarSign className="h-4 w-4 text-blue-600" />
-            <span className="font-medium text-blue-800">Fee Summary:</span>
-            <span className="text-blue-700">
+            <DollarSign className="h-4 w-4 text-stone-600" />
+            <span className="font-medium text-stone-800">Fee Summary:</span>
+            <span className="text-stone-700">
               ACH: $15 flat ({mockPayments.filter(p => p.method === 'ACH' && p.status === 'completed').length} payments) |
               Card: 2.9%+$0.30 ({mockPayments.filter(p => p.method === 'Credit Card' && p.status === 'completed').length} payments) |
               Wire: $25 flat ({mockPayments.filter(p => p.method === 'Wire').length} payments)
             </span>
           </div>
-          <span className="text-xs text-blue-600">Fees saved by ACH vs card: ~$5,300</span>
+          <span className="text-xs text-stone-600">Fees saved by ACH vs card: ~$5,300</span>
         </div>
       </div>
 
@@ -516,7 +516,7 @@ export function PaymentsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Payment Features"
           columns={2}
@@ -556,9 +556,9 @@ export function PaymentsPreview() {
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-100 border-t border-gray-200 px-4 py-3">
+      <div className="bg-warm-100 border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-warm-500">
             <CreditCard className="h-4 w-4" />
             <span>Stripe Connected | Processing: 2.9% + $0.30 card, $15 flat ACH, $25 wire</span>
           </div>

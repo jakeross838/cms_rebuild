@@ -352,7 +352,7 @@ const mockTasks: Task[] = [
 // ---------------------------------------------------------------------------
 
 const categoryConfig: Record<TaskCategory, { label: string; color: string; icon: typeof CircleDot }> = {
-  'job-related': { label: 'Job Related', color: 'bg-blue-100 text-blue-700', icon: Building2 },
+  'job-related': { label: 'Job Related', color: 'bg-stone-100 text-stone-700', icon: Building2 },
   admin: { label: 'Admin / Financial', color: 'bg-purple-100 text-purple-700', icon: FileText },
   'follow-ups': { label: 'Follow-ups', color: 'bg-orange-100 text-orange-700', icon: Clock },
   inspections: { label: 'Inspections', color: 'bg-teal-100 text-teal-700', icon: ClipboardList },
@@ -360,23 +360,23 @@ const categoryConfig: Record<TaskCategory, { label: string; color: string; icon:
 }
 
 const statusConfig: Record<TaskStatus, { label: string; color: string; bgColor: string; textColor: string; icon: typeof CircleDot }> = {
-  todo: { label: 'Todo', color: 'bg-gray-400', bgColor: 'bg-gray-50', textColor: 'text-gray-700', icon: CircleDot },
+  todo: { label: 'Todo', color: 'bg-warm-400', bgColor: 'bg-warm-50', textColor: 'text-warm-700', icon: CircleDot },
   in_progress: { label: 'In Progress', color: 'bg-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700', icon: Clock },
   blocked: { label: 'Blocked', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700', icon: AlertCircle },
   done: { label: 'Done', color: 'bg-green-500', bgColor: 'bg-green-50', textColor: 'text-green-700', icon: CheckCircle2 },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-300', bgColor: 'bg-gray-50', textColor: 'text-gray-500', icon: CircleDot },
+  cancelled: { label: 'Cancelled', color: 'bg-warm-300', bgColor: 'bg-warm-50', textColor: 'text-warm-500', icon: CircleDot },
 }
 
 const priorityConfig: Record<Priority, { label: string; color: string; bgColor: string; textColor: string; sortOrder: number }> = {
   urgent: { label: 'Urgent', color: 'bg-red-600', bgColor: 'bg-red-100', textColor: 'text-red-800', sortOrder: 0 },
   high: { label: 'High', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700', sortOrder: 1 },
   medium: { label: 'Medium', color: 'bg-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700', sortOrder: 2 },
-  low: { label: 'Low', color: 'bg-gray-400', bgColor: 'bg-gray-100', textColor: 'text-gray-600', sortOrder: 3 },
+  low: { label: 'Low', color: 'bg-warm-400', bgColor: 'bg-warm-100', textColor: 'text-warm-600', sortOrder: 3 },
 }
 
 const sourceModuleConfig: Record<SourceModule, { label: string; color: string }> = {
-  manual: { label: 'Manual', color: 'bg-gray-50 text-gray-500' },
-  schedule: { label: 'Schedule', color: 'bg-blue-50 text-blue-600' },
+  manual: { label: 'Manual', color: 'bg-warm-50 text-warm-500' },
+  schedule: { label: 'Schedule', color: 'bg-stone-50 text-stone-600' },
   'daily-log': { label: 'Daily Log', color: 'bg-green-50 text-green-600' },
   rfi: { label: 'RFI', color: 'bg-purple-50 text-purple-600' },
   inspection: { label: 'Inspection', color: 'bg-teal-50 text-teal-600' },
@@ -405,20 +405,20 @@ function SubtaskList({ subtasks }: { subtasks: Subtask[] }) {
   const done = subtasks.filter(s => s.done).length
   return (
     <div className="mt-2 space-y-1">
-      <div className="flex items-center gap-2 text-xs text-gray-500">
+      <div className="flex items-center gap-2 text-xs text-warm-500">
         <Layers className="h-3 w-3" />
         <span>Subtasks: {done}/{subtasks.length}</span>
-        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-warm-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-500 rounded-full transition-all"
+            className="h-full bg-stone-500 rounded-full transition-all"
             style={{ width: `${(done / subtasks.length) * 100}%` }}
           />
         </div>
       </div>
       {subtasks.map(st => (
         <div key={st.id} className="flex items-center gap-2 pl-5 text-xs">
-          <input type="checkbox" className="rounded border-gray-300 text-blue-600 cursor-pointer h-3 w-3" checked={st.done} readOnly />
-          <span className={cn(st.done ? 'text-gray-400 line-through' : 'text-gray-600')}>{st.title}</span>
+          <input type="checkbox" className="rounded border-warm-300 text-stone-600 cursor-pointer h-3 w-3" checked={st.done} readOnly />
+          <span className={cn(st.done ? 'text-warm-400 line-through' : 'text-warm-600')}>{st.title}</span>
         </div>
       ))}
     </div>
@@ -437,18 +437,18 @@ function TaskCard({ task }: { task: Task }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow",
-      task.status === 'blocked' ? 'border-red-200 bg-red-50/30' : 'border-gray-200'
+      task.status === 'blocked' ? 'border-red-200 bg-red-50/30' : 'border-warm-200'
     )}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-start gap-3 flex-1">
           <div className="mt-0.5">
-            <input type="checkbox" className="rounded border-gray-300 text-blue-600 cursor-pointer" checked={task.status === 'done'} readOnly />
+            <input type="checkbox" className="rounded border-warm-300 text-stone-600 cursor-pointer" checked={task.status === 'done'} readOnly />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-xs text-gray-400 font-mono">{task.id}</span>
+              <span className="text-xs text-warm-400 font-mono">{task.id}</span>
               {task.isRecurring && (
-                <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5" title={task.recurringSchedule}>
+                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5" title={task.recurringSchedule}>
                   <Repeat className="h-3 w-3" />
                   {task.recurringSchedule}
                 </span>
@@ -462,12 +462,12 @@ function TaskCard({ task }: { task: Task }) {
             </div>
             <p className={cn(
               "font-medium text-sm",
-              task.status === 'done' ? 'text-gray-400 line-through' : 'text-gray-900'
+              task.status === 'done' ? 'text-warm-400 line-through' : 'text-warm-900'
             )}>
               {task.title}
             </p>
             {task.description && (
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{task.description}</p>
+              <p className="text-xs text-warm-500 mt-1 line-clamp-2">{task.description}</p>
             )}
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               <span className={cn("text-xs px-2 py-0.5 rounded inline-flex items-center gap-1", category.color)}>
@@ -475,10 +475,10 @@ function TaskCard({ task }: { task: Task }) {
                 {category.label}
               </span>
               {task.linkedJob && (
-                <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-600 inline-flex items-center gap-1 cursor-pointer hover:bg-blue-100">
+                <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1 cursor-pointer hover:bg-stone-100">
                   <Building2 className="h-3 w-3" />
                   {task.linkedJob}
-                  {task.linkedJobId && <span className="text-blue-400 font-mono text-[10px]">{task.linkedJobId}</span>}
+                  {task.linkedJobId && <span className="text-stone-400 font-mono text-[10px]">{task.linkedJobId}</span>}
                 </span>
               )}
               {task.linkedVendor && (
@@ -516,7 +516,7 @@ function TaskCard({ task }: { task: Task }) {
             {task.tags && task.tags.length > 0 && (
               <div className="flex items-center gap-1 mt-2">
                 {task.tags.map(tag => (
-                  <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
+                  <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-warm-100 text-warm-500">
                     #{tag}
                   </span>
                 ))}
@@ -524,21 +524,21 @@ function TaskCard({ task }: { task: Task }) {
             )}
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
-            <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
-              <span className="text-xs font-medium text-blue-700">{task.assignedTo[0]}</span>
+            <div className="h-5 w-5 rounded-full bg-stone-100 flex items-center justify-center">
+              <span className="text-xs font-medium text-stone-700">{task.assignedTo[0]}</span>
             </div>
-            <span className="text-xs text-gray-500">{task.assignedTo}</span>
+            <span className="text-xs text-warm-500">{task.assignedTo}</span>
           </div>
           {task.commentCount && task.commentCount > 0 && (
-            <span className="text-xs text-gray-400 flex items-center gap-1">
+            <span className="text-xs text-warm-400 flex items-center gap-1">
               <MessageSquare className="h-3 w-3" />
               {task.commentCount}
             </span>
@@ -548,7 +548,7 @@ function TaskCard({ task }: { task: Task }) {
           {task.dueDate && (
             <span className={cn(
               "text-xs px-1.5 py-0.5 rounded flex items-center gap-1 font-medium",
-              daysOverdue > 0 ? "bg-red-50 text-red-600" : "bg-gray-100 text-gray-600"
+              daysOverdue > 0 ? "bg-red-50 text-red-600" : "bg-warm-100 text-warm-600"
             )}>
               <Calendar className="h-3 w-3" />
               {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -585,23 +585,23 @@ function KanbanCard({ task }: { task: Task }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-2.5 shadow-sm hover:shadow-md transition-shadow cursor-grab",
-      task.status === 'blocked' ? 'border-red-200' : 'border-gray-200'
+      task.status === 'blocked' ? 'border-red-200' : 'border-warm-200'
     )}>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[10px] text-gray-400 font-mono">{task.id}</span>
+        <span className="text-[10px] text-warm-400 font-mono">{task.id}</span>
         <span className={cn("text-[10px] px-1 py-0.5 rounded font-medium", priority.bgColor, priority.textColor)}>
           {priority.label}
         </span>
       </div>
-      <p className="text-xs font-medium text-gray-900 mb-1.5 line-clamp-2">{task.title}</p>
+      <p className="text-xs font-medium text-warm-900 mb-1.5 line-clamp-2">{task.title}</p>
       <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
         {task.linkedJob && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-50 text-stone-600">
             {task.linkedJob}
           </span>
         )}
         {task.isRecurring && (
-          <Repeat className="h-3 w-3 text-blue-500" />
+          <Repeat className="h-3 w-3 text-stone-500" />
         )}
         {task.sourceModule === 'ai-suggested' && (
           <Sparkles className="h-3 w-3 text-amber-500" />
@@ -609,13 +609,13 @@ function KanbanCard({ task }: { task: Task }) {
       </div>
       {task.subtasks && task.subtasks.length > 0 && (
         <div className="flex items-center gap-1 mb-1.5">
-          <CheckSquare className="h-3 w-3 text-gray-400" />
-          <span className="text-[10px] text-gray-500">
+          <CheckSquare className="h-3 w-3 text-warm-400" />
+          <span className="text-[10px] text-warm-500">
             {task.subtasks.filter(s => s.done).length}/{task.subtasks.length}
           </span>
-          <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div className="flex-1 h-1 bg-warm-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-500 rounded-full"
+              className="h-full bg-stone-500 rounded-full"
               style={{ width: `${(task.subtasks.filter(s => s.done).length / task.subtasks.length) * 100}%` }}
             />
           </div>
@@ -623,11 +623,11 @@ function KanbanCard({ task }: { task: Task }) {
       )}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-[10px] font-medium text-blue-700">{task.assignedTo[0]}</span>
+          <div className="h-4 w-4 rounded-full bg-stone-100 flex items-center justify-center">
+            <span className="text-[10px] font-medium text-stone-700">{task.assignedTo[0]}</span>
           </div>
           {task.commentCount && task.commentCount > 0 && (
-            <span className="text-[10px] text-gray-400 flex items-center gap-0.5">
+            <span className="text-[10px] text-warm-400 flex items-center gap-0.5">
               <MessageSquare className="h-2.5 w-2.5" />
               {task.commentCount}
             </span>
@@ -636,7 +636,7 @@ function KanbanCard({ task }: { task: Task }) {
         {task.dueDate && (
           <span className={cn(
             "text-[10px] px-1 py-0.5 rounded",
-            daysOverdue > 0 ? "bg-red-50 text-red-600 font-semibold" : "text-gray-500"
+            daysOverdue > 0 ? "bg-red-50 text-red-600 font-semibold" : "text-warm-500"
           )}>
             {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             {daysOverdue > 0 && ` (${daysOverdue}d)`}
@@ -653,19 +653,19 @@ function KanbanColumn({ title, status, tasks, color }: { title: string; status: 
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={cn("w-2.5 h-2.5 rounded-full", color)} />
-          <span className="text-xs font-semibold text-gray-700">{title}</span>
-          <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{tasks.length}</span>
+          <span className="text-xs font-semibold text-warm-700">{title}</span>
+          <span className="text-xs text-warm-400 bg-warm-100 px-1.5 py-0.5 rounded">{tasks.length}</span>
         </div>
-        <button className="p-0.5 hover:bg-gray-100 rounded">
-          <Plus className="h-3 w-3 text-gray-400" />
+        <button className="p-0.5 hover:bg-warm-100 rounded">
+          <Plus className="h-3 w-3 text-warm-400" />
         </button>
       </div>
-      <div className="space-y-2 min-h-[100px] bg-gray-50/50 rounded-lg p-2">
+      <div className="space-y-2 min-h-[100px] bg-warm-50/50 rounded-lg p-2">
         {tasks.map(task => (
           <KanbanCard key={task.id} task={task} />
         ))}
         {tasks.length === 0 && (
-          <div className="text-center py-6 text-gray-400">
+          <div className="text-center py-6 text-warm-400">
             <p className="text-xs">No tasks</p>
           </div>
         )}
@@ -692,19 +692,19 @@ function StatCard({
   trend?: 'up' | 'down' | 'flat'
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3">
+    <div className="bg-white rounded-lg border border-warm-200 p-3">
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", iconBg)}>
           <Icon className={cn("h-4 w-4", iconColor)} />
         </div>
         <div>
-          <p className="text-xs text-gray-500">{label}</p>
+          <p className="text-xs text-warm-500">{label}</p>
           <div className="flex items-center gap-1">
-            <p className="text-lg font-semibold text-gray-900">{value}</p>
+            <p className="text-lg font-semibold text-warm-900">{value}</p>
             {trend === 'down' && <span className="text-green-500 text-xs">-2</span>}
             {trend === 'up' && <span className="text-red-500 text-xs">+3</span>}
           </div>
-          {subValue && <p className="text-xs text-gray-400">{subValue}</p>}
+          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
         </div>
       </div>
     </div>
@@ -714,22 +714,22 @@ function StatCard({
 function BulkActionBar({ selectedCount }: { selectedCount: number }) {
   if (selectedCount === 0) return null
   return (
-    <div className="bg-blue-600 text-white px-4 py-2 flex items-center justify-between rounded-lg mx-4 mb-2">
+    <div className="bg-stone-600 text-white px-4 py-2 flex items-center justify-between rounded-lg mx-4 mb-2">
       <span className="text-sm font-medium">{selectedCount} tasks selected</span>
       <div className="flex items-center gap-2">
-        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-500 hover:bg-blue-400 rounded">
+        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-stone-500 hover:bg-stone-400 rounded">
           <UserPlus className="h-3 w-3" />
           Reassign
         </button>
-        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-500 hover:bg-blue-400 rounded">
+        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-stone-500 hover:bg-stone-400 rounded">
           <CalendarDays className="h-3 w-3" />
           Reschedule
         </button>
-        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-500 hover:bg-blue-400 rounded">
+        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-stone-500 hover:bg-stone-400 rounded">
           <ArrowRight className="h-3 w-3" />
           Move Status
         </button>
-        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-500 hover:bg-blue-400 rounded">
+        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-stone-500 hover:bg-stone-400 rounded">
           <Trash2 className="h-3 w-3" />
           Archive
         </button>
@@ -814,13 +814,13 @@ export function TodosPreview() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Tasks & Todos</h3>
+              <h3 className="font-semibold text-warm-900">Tasks & Todos</h3>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded font-medium",
                 completedPercent >= 70 ? "bg-green-100 text-green-700" :
@@ -836,18 +836,18 @@ export function TodosPreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               {totalTasks} total | {todoTasks} to do | {inProgressTasks} in progress | {blockedTasks} blocked | {overdueTasks} overdue
             </div>
           </div>
           <div className="flex items-center gap-2">
             {/* View Mode Toggle */}
-            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex items-center border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('list')}
                 className={cn(
                   "p-1.5 transition-colors",
-                  viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:bg-gray-50'
+                  viewMode === 'list' ? 'bg-stone-50 text-stone-600' : 'text-warm-400 hover:bg-warm-50'
                 )}
                 title="List view"
               >
@@ -857,18 +857,18 @@ export function TodosPreview() {
                 onClick={() => setViewMode('kanban')}
                 className={cn(
                   "p-1.5 transition-colors",
-                  viewMode === 'kanban' ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:bg-gray-50'
+                  viewMode === 'kanban' ? 'bg-stone-50 text-stone-600' : 'text-warm-400 hover:bg-warm-50'
                 )}
                 title="Kanban board"
               >
                 <LayoutGrid className="h-4 w-4" />
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               New Task
             </button>
@@ -877,14 +877,14 @@ export function TodosPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="px-4 py-3 bg-white border-b border-gray-200">
+      <div className="px-4 py-3 bg-white border-b border-warm-200">
         <div className="grid grid-cols-7 gap-3">
           <StatCard
             icon={CircleDot}
             label="Total Tasks"
             value={totalTasks}
-            iconColor="text-blue-600"
-            iconBg="bg-blue-50"
+            iconColor="text-stone-600"
+            iconBg="bg-stone-50"
           />
           <StatCard
             icon={CheckCircle2}
@@ -898,8 +898,8 @@ export function TodosPreview() {
             icon={CircleDot}
             label="To Do"
             value={todoTasks}
-            iconColor="text-gray-600"
-            iconBg="bg-gray-100"
+            iconColor="text-warm-600"
+            iconBg="bg-warm-100"
             trend="up"
           />
           <StatCard
@@ -927,14 +927,14 @@ export function TodosPreview() {
             icon={Repeat}
             label="Recurring"
             value={recurringTasks}
-            iconColor="text-blue-600"
-            iconBg="bg-blue-50"
+            iconColor="text-stone-600"
+            iconBg="bg-stone-50"
           />
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -1014,22 +1014,22 @@ export function TodosPreview() {
             if (categoryTasks.length === 0 && filterCategory !== 'all') return null
 
             return (
-              <div key={category} className="border-b border-gray-100 last:border-b-0">
+              <div key={category} className="border-b border-warm-100 last:border-b-0">
                 {/* Category Header */}
                 <button
                   onClick={() => toggleCategory(category)}
-                  className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100"
+                  className="w-full px-4 py-3 flex items-center justify-between bg-warm-50 hover:bg-warm-100"
                 >
                   <div className="flex items-center gap-2">
                     {isExpanded ? (
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                      <ChevronDown className="h-4 w-4 text-warm-400" />
                     ) : (
-                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                      <ChevronRight className="h-4 w-4 text-warm-400" />
                     )}
                     <span className={cn("text-xs px-2 py-0.5 rounded font-medium", categoryConfig_local.color)}>
                       {categoryConfig_local.label}
                     </span>
-                    <span className="text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">
+                    <span className="text-xs text-warm-400 bg-warm-200 px-1.5 py-0.5 rounded">
                       {categoryTasks.length}
                     </span>
                     {overdueCount > 0 && (
@@ -1039,8 +1039,8 @@ export function TodosPreview() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">{completedCount}/{categoryTasks.length} complete</span>
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <span className="text-xs text-warm-500">{completedCount}/{categoryTasks.length} complete</span>
+                    <div className="w-24 h-2 bg-warm-200 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-green-500 rounded-full"
                         style={{ width: `${categoryTasks.length > 0 ? (completedCount / categoryTasks.length) * 100 : 0}%` }}
@@ -1057,7 +1057,7 @@ export function TodosPreview() {
                         <TaskCard key={task.id} task={task} />
                       ))
                     ) : (
-                      <div className="text-center py-8 text-gray-400">
+                      <div className="text-center py-8 text-warm-400">
                         <CheckCircle2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">No tasks in this category</p>
                       </div>
@@ -1069,7 +1069,7 @@ export function TodosPreview() {
           })}
 
           {filteredTasks.length === 0 && (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-warm-400">
               <CheckCircle2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>No tasks found matching your criteria</p>
               <p className="text-sm mt-1">Try adjusting your filters or search terms</p>
@@ -1086,7 +1086,7 @@ export function TodosPreview() {
               title="Todo"
               status="todo"
               tasks={tasksByStatus['todo'] || []}
-              color="bg-gray-400"
+              color="bg-warm-400"
             />
             <KanbanColumn
               title="In Progress"
@@ -1181,7 +1181,7 @@ export function TodosPreview() {
       />
 
       {/* Footer Stats */}
-      <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center justify-between text-xs text-gray-500">
+      <div className="bg-white border-t border-warm-200 px-4 py-2 flex items-center justify-between text-xs text-warm-500">
         <div className="flex items-center gap-4">
           <span>Showing {filteredTasks.length} of {totalTasks} tasks</span>
           <span>|</span>
@@ -1190,7 +1190,7 @@ export function TodosPreview() {
           <span>{mockTasks.reduce((sum, t) => sum + (t.subtasks?.length || 0), 0)} subtasks across all tasks</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-gray-400">Last synced: just now</span>
+          <span className="text-warm-400">Last synced: just now</span>
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
         </div>
       </div>

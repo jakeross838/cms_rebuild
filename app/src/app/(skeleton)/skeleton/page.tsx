@@ -201,7 +201,7 @@ export default function CompanyDashboard() {
                   <span className="text-sm font-medium text-muted-foreground w-16">{item.time}</span>
                   <div className={cn(
                     'w-2 h-2 rounded-full',
-                    item.type === 'inspection' ? 'bg-blue-500' :
+                    item.type === 'inspection' ? 'bg-stone-500' :
                       item.type === 'meeting' ? 'bg-purple-500' : 'bg-emerald-500'
                   )} />
                   <span className="text-sm font-medium text-foreground flex-1">{item.event}</span>
@@ -215,7 +215,7 @@ export default function CompanyDashboard() {
             <h2 className="text-lg font-medium text-foreground mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-3">
               <Link href="/skeleton/leads" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
-                <Target className="h-4 w-4 text-blue-500" />
+                <Target className="h-4 w-4 text-stone-500" />
                 New Lead
               </Link>
               <Link href="/skeleton/estimates" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
@@ -255,7 +255,7 @@ export default function CompanyDashboard() {
                   <div className={cn(
                     'w-2 h-2 rounded-full mt-1.5 flex-shrink-0',
                     alert.severity === 'high' ? 'bg-destructive' :
-                      alert.severity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+                      alert.severity === 'medium' ? 'bg-amber-500' : 'bg-stone-500'
                   )} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{alert.message}</p>
@@ -268,7 +268,7 @@ export default function CompanyDashboard() {
         </div>
 
         {/* AI Insights */}
-        <div className="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 dark:from-indigo-950/20 dark:to-blue-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/50 overflow-hidden shadow-sm flex flex-col">
+        <div className="bg-gradient-to-br from-indigo-50/50 to-stone-50/50 dark:from-indigo-950/20 dark:to-stone-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/50 overflow-hidden shadow-sm flex flex-col">
           <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900/50 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-lg font-medium text-foreground">AI Insights</h2>

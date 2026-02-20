@@ -113,15 +113,15 @@ export function FilterBar({
               key={tab.key}
               onClick={() => onTabChange?.(tab.key)}
               className={cn(
-                'px-3 py-1.5 text-sm rounded-lg whitespace-nowrap transition-colors',
+                'px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-all border',
                 activeTab === tab.key
-                  ? 'bg-blue-100 text-blue-700 font-medium'
-                  : 'text-gray-600 hover:bg-gray-100',
+                  ? 'bg-stone-50 text-stone-700 border-stone-200'
+                  : 'text-warm-500 hover:text-warm-700 hover:bg-warm-50 border-transparent',
               )}
             >
               {tab.label}
               {tab.count !== undefined && (
-                <span className="ml-1.5 text-xs opacity-70">({tab.count})</span>
+                <span className="ml-1 text-[9px] text-warm-400">{tab.count}</span>
               )}
             </button>
           ))}
@@ -134,13 +134,13 @@ export function FilterBar({
           {/* Search */}
           {onSearchChange && (
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-warm-400" />
               <input
                 type="text"
                 placeholder={searchPlaceholder ?? 'Search...'}
                 value={search ?? ''}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-8 pr-3 py-1.5 text-xs border border-warm-200 rounded-md w-48 bg-white focus:outline-none focus:border-stone-400 focus:shadow-[var(--shadow-focus)]"
               />
             </div>
           )}
@@ -151,7 +151,7 @@ export function FilterBar({
               key={i}
               value={dropdown.value}
               onChange={(e) => dropdown.onChange(e.target.value)}
-              className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              className="appearance-none pl-3 pr-7 py-1.5 text-xs border border-warm-200 rounded-md bg-white text-warm-600 focus:outline-none focus:border-stone-400 cursor-pointer"
             >
               <option value="all">{dropdown.label}</option>
               {dropdown.options.map((opt) => (
@@ -168,7 +168,7 @@ export function FilterBar({
               <select
                 value={activeSort ?? ''}
                 onChange={(e) => onSortChange?.(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="appearance-none pl-3 pr-7 py-1.5 text-xs border border-warm-200 rounded-md bg-white text-warm-600 focus:outline-none focus:border-stone-400 cursor-pointer"
               >
                 <option value="">Sort by…</option>
                 {sortOptions.map((opt) => (
@@ -180,7 +180,7 @@ export function FilterBar({
               {activeSort && onSortDirectionChange && (
                 <button
                   onClick={onSortDirectionChange}
-                  className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1.5 text-warm-500 hover:bg-warm-100 rounded-lg transition-colors"
                   title={sortDirection === 'asc' ? 'Ascending' : 'Descending'}
                 >
                   {sortDirection === 'asc' ? (
@@ -203,21 +203,21 @@ export function FilterBar({
           {resultCount !== undefined &&
             totalCount !== undefined &&
             resultCount !== totalCount && (
-              <span className="text-xs text-gray-500 whitespace-nowrap">
+              <span className="text-xs text-warm-500 whitespace-nowrap">
                 {resultCount} of {totalCount}
               </span>
             )}
 
           {/* View toggle */}
           {onViewModeChange && (
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => onViewModeChange('grid')}
                 className={cn(
                   'p-1.5 transition-colors',
                   viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-400 hover:bg-gray-50',
+                    ? 'bg-stone-50 text-stone-600'
+                    : 'text-warm-400 hover:bg-warm-50',
                 )}
                 title="Grid view"
               >
@@ -228,8 +228,8 @@ export function FilterBar({
                 className={cn(
                   'p-1.5 transition-colors',
                   viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-400 hover:bg-gray-50',
+                    ? 'bg-stone-50 text-stone-600'
+                    : 'text-warm-400 hover:bg-warm-50',
                 )}
                 title="List view"
               >
@@ -244,13 +244,13 @@ export function FilterBar({
               key={i}
               onClick={action.onClick}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors whitespace-nowrap',
+                'inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap active:scale-[.97]',
                 action.variant === 'primary'
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'border border-gray-200 text-gray-700 hover:bg-gray-50',
+                  ? 'bg-stone-700 text-white hover:bg-stone-600'
+                  : 'bg-white border border-warm-200 text-warm-700 hover:bg-warm-50',
               )}
             >
-              {action.icon && <action.icon className="h-4 w-4" />}
+              {action.icon && <action.icon className="h-3.5 w-3.5" />}
               {action.label}
             </button>
           ))}

@@ -270,7 +270,7 @@ function ConnectionStatus() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-gray-900">Connected to QuickBooks Online</h4>
+              <h4 className="font-semibold text-warm-900">Connected to QuickBooks Online</h4>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded-full font-medium",
                 connectionHealth === 'healthy' ? "bg-green-100 text-green-700" :
@@ -280,8 +280,8 @@ function ConnectionStatus() {
                 {connectionHealth === 'healthy' ? 'Healthy' : connectionHealth === 'warning' ? 'Warning' : 'Error'}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Ross Built Construction LLC</p>
-            <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+            <p className="text-sm text-warm-600">Ross Built Construction LLC</p>
+            <div className="flex items-center gap-4 mt-1 text-xs text-warm-500">
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 Last sync: 5 minutes ago
@@ -294,7 +294,7 @@ function ConnectionStatus() {
                 "flex items-center gap-1",
                 tokenExpiresIn <= 7 ? "text-red-600 font-medium" :
                 tokenExpiresIn <= 14 ? "text-amber-600" :
-                "text-gray-500"
+                "text-warm-500"
               )}>
                 <Shield className="h-3 w-3" />
                 Token expires: {tokenExpiresIn} days
@@ -303,15 +303,15 @@ function ConnectionStatus() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-white">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-white">
             <RefreshCw className="h-4 w-4" />
             Sync Now
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-white">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-white">
             <Settings className="h-4 w-4" />
             Configure
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 border border-gray-200 rounded-lg hover:bg-red-50">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 border border-warm-200 rounded-lg hover:bg-red-50">
             <Unplug className="h-4 w-4" />
             Disconnect
           </button>
@@ -332,8 +332,8 @@ function SyncSettings() {
   })
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h4 className="font-medium text-gray-900 mb-4">Sync Settings</h4>
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
+      <h4 className="font-medium text-warm-900 mb-4">Sync Settings</h4>
       <div className="space-y-4">
         {[
           { key: 'autoSyncInvoices', label: 'Auto-sync approved invoices to QBO bills', description: 'Approved invoices automatically create bills in QuickBooks' },
@@ -345,14 +345,14 @@ function SyncSettings() {
         ].map(item => (
           <div key={item.key} className="flex items-start justify-between py-2">
             <div>
-              <div className="text-sm font-medium text-gray-900">{item.label}</div>
-              <div className="text-xs text-gray-500">{item.description}</div>
+              <div className="text-sm font-medium text-warm-900">{item.label}</div>
+              <div className="text-xs text-warm-500">{item.description}</div>
             </div>
             <button
               onClick={() => setSettings(prev => ({ ...prev, [item.key]: !prev[item.key as keyof typeof settings] }))}
               className={cn(
                 "relative w-11 h-6 rounded-full transition-colors",
-                settings[item.key as keyof typeof settings] ? "bg-blue-600" : "bg-gray-200"
+                settings[item.key as keyof typeof settings] ? "bg-stone-600" : "bg-warm-200"
               )}
             >
               <span
@@ -375,14 +375,14 @@ function SyncStatusCard({ sync }: { sync: SyncStatus }) {
       "bg-white rounded-lg border p-3",
       sync.status === 'error' ? "border-red-200" :
       sync.status === 'warning' ? "border-amber-200" :
-      "border-gray-200"
+      "border-warm-200"
     )}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-900 text-sm">{sync.entity}</span>
-          {sync.direction === 'push' && <ArrowRight className="h-3 w-3 text-gray-400" />}
-          {sync.direction === 'pull' && <ArrowRight className="h-3 w-3 text-gray-400 rotate-180" />}
-          {sync.direction === 'bidirectional' && <ArrowLeftRight className="h-3 w-3 text-gray-400" />}
+          <span className="font-medium text-warm-900 text-sm">{sync.entity}</span>
+          {sync.direction === 'push' && <ArrowRight className="h-3 w-3 text-warm-400" />}
+          {sync.direction === 'pull' && <ArrowRight className="h-3 w-3 text-warm-400 rotate-180" />}
+          {sync.direction === 'bidirectional' && <ArrowLeftRight className="h-3 w-3 text-warm-400" />}
         </div>
         <div className="flex items-center gap-1">
           {sync.syncMode === 'real_time' && (
@@ -393,7 +393,7 @@ function SyncStatusCard({ sync }: { sync: SyncStatus }) {
           {sync.status === 'error' && <XCircle className="h-4 w-4 text-red-500" />}
         </div>
       </div>
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs text-warm-500">
         <span>{sync.lastSync}</span>
         <span>{sync.count} records</span>
       </div>
@@ -413,42 +413,42 @@ function SyncStatusCard({ sync }: { sync: SyncStatus }) {
 function AccountMappingTable() {
   const unmappedCount = accountMappings.filter(m => !m.isMapped).length
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-gray-900">Account Mapping</h4>
+            <h4 className="font-medium text-warm-900">Account Mapping</h4>
             {unmappedCount > 0 && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">
                 {unmappedCount} unmapped
               </span>
             )}
           </div>
-          <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+          <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
             <Sparkles className="h-3 w-3" />
             Auto-suggest Mappings
           </button>
         </div>
       </div>
       <table className="w-full">
-        <thead className="bg-gray-50">
+        <thead className="bg-warm-50">
           <tr>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Code</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Name</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Type</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">QuickBooks Account</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500"></th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Code</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Name</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Type</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">QuickBooks Account</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500"></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-warm-200">
           {accountMappings.map((mapping, i) => (
-            <tr key={i} className={cn("hover:bg-gray-50", !mapping.isMapped && "bg-amber-50")}>
-              <td className="px-4 py-2 text-sm font-mono text-gray-700">{mapping.costCode}</td>
-              <td className="px-4 py-2 text-sm text-gray-900">{mapping.costCodeName}</td>
+            <tr key={i} className={cn("hover:bg-warm-50", !mapping.isMapped && "bg-amber-50")}>
+              <td className="px-4 py-2 text-sm font-mono text-warm-700">{mapping.costCode}</td>
+              <td className="px-4 py-2 text-sm text-warm-900">{mapping.costCodeName}</td>
               <td className="px-4 py-2">
                 <span className={cn(
                   "text-xs px-1.5 py-0.5 rounded",
-                  mapping.mappingType === 'expense' ? "bg-blue-50 text-blue-600" :
+                  mapping.mappingType === 'expense' ? "bg-stone-50 text-stone-600" :
                   mapping.mappingType === 'revenue' ? "bg-green-50 text-green-600" :
                   mapping.mappingType === 'asset' ? "bg-purple-50 text-purple-600" :
                   "bg-orange-50 text-orange-600"
@@ -458,7 +458,7 @@ function AccountMappingTable() {
               </td>
               <td className="px-4 py-2">
                 {mapping.isMapped ? (
-                  <select className="text-sm border border-gray-200 rounded px-2 py-1 w-full">
+                  <select className="text-sm border border-warm-200 rounded px-2 py-1 w-full">
                     <option>{mapping.qboAccount}</option>
                   </select>
                 ) : (
@@ -471,7 +471,7 @@ function AccountMappingTable() {
                 )}
               </td>
               <td className="px-4 py-2 text-right">
-                <button className="text-xs text-blue-600 hover:text-blue-700">Edit</button>
+                <button className="text-xs text-stone-600 hover:text-stone-700">Edit</button>
               </td>
             </tr>
           ))}
@@ -484,12 +484,12 @@ function AccountMappingTable() {
 function SyncLogPanel() {
   const errorCount = recentSyncLog.filter(e => e.status === 'error').length
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <div className="bg-white rounded-lg border border-warm-200">
+      <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <History className="h-4 w-4 text-blue-600" />
-            <h4 className="font-medium text-gray-900">Sync History</h4>
+            <History className="h-4 w-4 text-stone-600" />
+            <h4 className="font-medium text-warm-900">Sync History</h4>
             {errorCount > 0 && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
                 {errorCount} error{errorCount !== 1 ? 's' : ''}
@@ -503,17 +503,17 @@ function SyncLogPanel() {
                 Retry All Failed
               </button>
             )}
-            <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+            <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
               View Full Log
               <ChevronRight className="h-3 w-3" />
             </button>
           </div>
         </div>
       </div>
-      <div className="divide-y divide-gray-100 max-h-72 overflow-y-auto">
+      <div className="divide-y divide-warm-100 max-h-72 overflow-y-auto">
         {recentSyncLog.map(entry => (
           <div key={entry.id} className={cn(
-            "px-4 py-3 hover:bg-gray-50",
+            "px-4 py-3 hover:bg-warm-50",
             entry.status === 'error' && "bg-red-50"
           )}>
             <div className="flex items-start gap-3">
@@ -529,22 +529,22 @@ function SyncLogPanel() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-900">{entry.action}</span>
-                  <span className="text-xs text-gray-400">{entry.timestamp}</span>
-                  {entry.direction === 'push' && <ArrowRight className="h-3 w-3 text-gray-300" />}
-                  {entry.direction === 'pull' && <ArrowRight className="h-3 w-3 text-gray-300 rotate-180" />}
+                  <span className="text-sm font-medium text-warm-900">{entry.action}</span>
+                  <span className="text-xs text-warm-400">{entry.timestamp}</span>
+                  {entry.direction === 'push' && <ArrowRight className="h-3 w-3 text-warm-300" />}
+                  {entry.direction === 'pull' && <ArrowRight className="h-3 w-3 text-warm-300 rotate-180" />}
                 </div>
                 {entry.details && (
-                  <p className="text-xs text-gray-500 mt-0.5">{entry.details}</p>
+                  <p className="text-xs text-warm-500 mt-0.5">{entry.details}</p>
                 )}
                 {entry.retryCount && entry.retryCount > 0 && (
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-red-600">{entry.retryCount} retries failed</span>
-                    <button className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                    <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                       <RotateCcw className="h-3 w-3" />
                       Retry
                     </button>
-                    <button className="text-xs text-gray-400 hover:text-gray-600">
+                    <button className="text-xs text-warm-400 hover:text-warm-600">
                       Dismiss
                     </button>
                   </div>
@@ -566,41 +566,41 @@ function ConflictResolutionPanel() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <h4 className="font-medium text-gray-900">Conflicts ({conflicts.length})</h4>
+            <h4 className="font-medium text-warm-900">Conflicts ({conflicts.length})</h4>
           </div>
           <button className="text-xs text-amber-700 hover:text-amber-800 font-medium">
             Resolve All
           </button>
         </div>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-warm-100">
         {conflicts.map(conflict => (
           <div key={conflict.id} className="px-4 py-3">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm font-medium text-gray-900">{conflict.entity}: {conflict.entityId}</span>
-              <span className="text-xs text-gray-400">Field: {conflict.field}</span>
-              <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">
+              <span className="text-sm font-medium text-warm-900">{conflict.entity}: {conflict.entityId}</span>
+              <span className="text-xs text-warm-400">Field: {conflict.field}</span>
+              <span className="text-xs px-1.5 py-0.5 rounded bg-warm-100 text-warm-600">
                 Strategy: {conflict.strategy.replace(/_/g, ' ')}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-blue-50 rounded p-2">
-                <div className="text-xs text-blue-600 font-medium mb-0.5">RossOS Value</div>
-                <div className="text-gray-700">{conflict.platformValue}</div>
+              <div className="bg-stone-50 rounded p-2">
+                <div className="text-xs text-stone-600 font-medium mb-0.5">RossOS Value</div>
+                <div className="text-warm-700">{conflict.platformValue}</div>
               </div>
               <div className="bg-purple-50 rounded p-2">
                 <div className="text-xs text-purple-600 font-medium mb-0.5">QBO Value</div>
-                <div className="text-gray-700">{conflict.qboValue}</div>
+                <div className="text-warm-700">{conflict.qboValue}</div>
               </div>
             </div>
             <div className="flex items-center gap-2 mt-2">
-              <button className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+              <button className="text-xs px-2 py-1 bg-stone-600 text-white rounded hover:bg-stone-700">
                 Keep RossOS
               </button>
               <button className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
                 Keep QBO
               </button>
-              <button className="text-xs px-2 py-1 text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+              <button className="text-xs px-2 py-1 text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
                 Ignore
               </button>
             </div>
@@ -618,14 +618,14 @@ export function QuickbooksPreview() {
   const totalSyncedEntities = syncStatuses.reduce((sum, s) => sum + s.count, 0)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">QuickBooks Integration</h3>
-              <span className="text-sm text-gray-500">Bi-directional sync with QuickBooks Online</span>
+              <h3 className="font-semibold text-warm-900">QuickBooks Integration</h3>
+              <span className="text-sm text-warm-500">Bi-directional sync with QuickBooks Online</span>
               {errorCount > 0 && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium flex items-center gap-1">
                   <XCircle className="h-3 w-3" />
@@ -635,11 +635,11 @@ export function QuickbooksPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <History className="h-4 w-4" />
               History
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <RefreshCw className="h-4 w-4" />
               Sync Now
             </button>
@@ -648,31 +648,31 @@ export function QuickbooksPreview() {
       </div>
 
       {/* Summary Stats */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-4 gap-4">
           <div className="bg-green-50 rounded-lg p-2.5">
             <div className="text-xs text-green-600 flex items-center gap-1"><Activity className="h-3 w-3" />Success Rate</div>
             <div className="text-lg font-bold text-green-700">{syncSuccessRate}%</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-2.5">
-            <div className="text-xs text-blue-600 flex items-center gap-1"><Database className="h-3 w-3" />Total Synced</div>
-            <div className="text-lg font-bold text-blue-700">{totalSyncedEntities.toLocaleString()}</div>
+          <div className="bg-stone-50 rounded-lg p-2.5">
+            <div className="text-xs text-stone-600 flex items-center gap-1"><Database className="h-3 w-3" />Total Synced</div>
+            <div className="text-lg font-bold text-stone-700">{totalSyncedEntities.toLocaleString()}</div>
           </div>
-          <div className={cn("rounded-lg p-2.5", errorCount > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("text-xs flex items-center gap-1", errorCount > 0 ? "text-red-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-2.5", errorCount > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("text-xs flex items-center gap-1", errorCount > 0 ? "text-red-600" : "text-warm-500")}>
               <AlertTriangle className="h-3 w-3" />Errors
             </div>
-            <div className={cn("text-lg font-bold", errorCount > 0 ? "text-red-700" : "text-gray-500")}>{errorCount}</div>
+            <div className={cn("text-lg font-bold", errorCount > 0 ? "text-red-700" : "text-warm-500")}>{errorCount}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-2.5">
-            <div className="text-xs text-gray-500 flex items-center gap-1"><Shield className="h-3 w-3" />Token Expires</div>
-            <div className={cn("text-lg font-bold", tokenExpiresIn <= 7 ? "text-red-700" : "text-gray-700")}>{tokenExpiresIn} days</div>
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="text-xs text-warm-500 flex items-center gap-1"><Shield className="h-3 w-3" />Token Expires</div>
+            <div className={cn("text-lg font-bold", tokenExpiresIn <= 7 ? "text-red-700" : "text-warm-700")}>{tokenExpiresIn} days</div>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-4">
+      <div className="bg-white border-b border-warm-200 px-4">
         <div className="flex items-center gap-4">
           {[
             { id: 'overview', label: 'Overview', icon: Activity },
@@ -687,8 +687,8 @@ export function QuickbooksPreview() {
                 className={cn(
                   "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                   activeTab === tab.id
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
+                    ? "border-stone-600 text-stone-600"
+                    : "border-transparent text-warm-500 hover:text-warm-700"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -712,7 +712,7 @@ export function QuickbooksPreview() {
 
             {/* Sync Status Grid */}
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">SYNC STATUS BY ENTITY</h4>
+              <h4 className="text-sm font-semibold text-warm-700 mb-3">SYNC STATUS BY ENTITY</h4>
               <div className="grid grid-cols-4 gap-3">
                 {syncStatuses.map((sync, i) => (
                   <SyncStatusCard key={i} sync={sync} />
@@ -750,20 +750,20 @@ export function QuickbooksPreview() {
           <div className="space-y-4">
             <AccountMappingTable />
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-4">Class & Location Mapping</h4>
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-4">Class & Location Mapping</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Map Jobs To:</label>
-                  <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                  <label className="block text-sm text-warm-700 mb-1">Map Jobs To:</label>
+                  <select className="w-full border border-warm-200 rounded-lg px-3 py-2 text-sm">
                     <option>QuickBooks Classes</option>
                     <option>QuickBooks Locations</option>
                     <option>QuickBooks Projects</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Default Class/Location:</label>
-                  <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                  <label className="block text-sm text-warm-700 mb-1">Default Class/Location:</label>
+                  <select className="w-full border border-warm-200 rounded-lg px-3 py-2 text-sm">
                     <option>None (Create per Job)</option>
                     <option>Construction</option>
                     <option>Service</option>
@@ -772,8 +772,8 @@ export function QuickbooksPreview() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-4">Conflict Resolution Strategy</h4>
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-4">Conflict Resolution Strategy</h4>
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { entity: 'Invoices/Bills', strategy: 'platform_wins' },
@@ -782,8 +782,8 @@ export function QuickbooksPreview() {
                   { entity: 'Customers', strategy: 'last_write_wins' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">{item.entity}</span>
-                    <select className="text-sm border border-gray-200 rounded px-2 py-1">
+                    <span className="text-sm text-warm-700">{item.entity}</span>
+                    <select className="text-sm border border-warm-200 rounded px-2 py-1">
                       <option value="last_write_wins" selected={item.strategy === 'last_write_wins'}>Last Write Wins</option>
                       <option value="platform_wins" selected={item.strategy === 'platform_wins'}>RossOS Wins</option>
                       <option value="qbo_wins" selected={item.strategy === 'qbo_wins'}>QBO Wins</option>
@@ -800,12 +800,12 @@ export function QuickbooksPreview() {
           <div className="space-y-4">
             <SyncSettings />
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-4">Sync Frequency</h4>
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-4">Sync Frequency</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Auto-sync Interval:</label>
-                  <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                  <label className="block text-sm text-warm-700 mb-1">Auto-sync Interval:</label>
+                  <select className="w-full border border-warm-200 rounded-lg px-3 py-2 text-sm">
                     <option>Every 15 minutes</option>
                     <option selected>Every 30 minutes</option>
                     <option>Every hour</option>
@@ -814,8 +814,8 @@ export function QuickbooksPreview() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Sync Window:</label>
-                  <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                  <label className="block text-sm text-warm-700 mb-1">Sync Window:</label>
+                  <select className="w-full border border-warm-200 rounded-lg px-3 py-2 text-sm">
                     <option selected>24/7</option>
                     <option>Business hours only (8am-6pm)</option>
                     <option>Custom</option>
@@ -824,8 +824,8 @@ export function QuickbooksPreview() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-4">Error Handling & Retry</h4>
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-4">Error Handling & Retry</h4>
               <div className="space-y-3">
                 {[
                   { label: 'Retry failed syncs automatically (max 5 retries, exponential backoff)', checked: true },
@@ -835,11 +835,11 @@ export function QuickbooksPreview() {
                   { label: 'Dead-letter queue for permanently failed items', checked: true },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">{item.label}</span>
+                    <span className="text-sm text-warm-700">{item.label}</span>
                     <button
                       className={cn(
                         "relative w-11 h-6 rounded-full transition-colors",
-                        item.checked ? "bg-blue-600" : "bg-gray-200"
+                        item.checked ? "bg-stone-600" : "bg-warm-200"
                       )}
                     >
                       <span
@@ -854,24 +854,24 @@ export function QuickbooksPreview() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-3">Other Integrations</h4>
+            <div className="bg-white rounded-lg border border-warm-200 p-4">
+              <h4 className="font-medium text-warm-900 mb-3">Other Integrations</h4>
               <div className="flex items-center gap-4">
-                <div className="flex-1 bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+                <div className="flex-1 bg-warm-50 rounded-lg p-3 flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-gray-700">Xero</div>
-                    <div className="text-xs text-gray-400">Alternative accounting system</div>
+                    <div className="text-sm font-medium text-warm-700">Xero</div>
+                    <div className="text-xs text-warm-400">Alternative accounting system</div>
                   </div>
-                  <button className="text-xs px-3 py-1.5 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50">
+                  <button className="text-xs px-3 py-1.5 text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50">
                     Connect
                   </button>
                 </div>
-                <div className="flex-1 bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+                <div className="flex-1 bg-warm-50 rounded-lg p-3 flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-gray-700">Zapier / Make</div>
-                    <div className="text-xs text-gray-400">Webhook-based automation</div>
+                    <div className="text-sm font-medium text-warm-700">Zapier / Make</div>
+                    <div className="text-xs text-warm-400">Webhook-based automation</div>
                   </div>
-                  <button className="text-xs px-3 py-1.5 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50">
+                  <button className="text-xs px-3 py-1.5 text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-50">
                     Configure
                   </button>
                 </div>
@@ -897,7 +897,7 @@ export function QuickbooksPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-warm-200">
         <AIFeaturesPanel
           title="QuickBooks AI Features"
           columns={2}

@@ -272,12 +272,12 @@ const standardReports: Report[] = [
 ]
 
 const reportCategoryConfig: Record<ReportCategory, { label: string; color: string }> = {
-  financial: { label: 'Financial', color: 'bg-blue-100 text-blue-700' },
+  financial: { label: 'Financial', color: 'bg-stone-100 text-stone-700' },
   operations: { label: 'Operations', color: 'bg-green-100 text-green-700' },
   tax: { label: 'Tax & Accounting', color: 'bg-purple-100 text-purple-700' },
   client_facing: { label: 'Client-Facing', color: 'bg-orange-100 text-orange-700' },
   company_wide: { label: 'Company-Wide', color: 'bg-indigo-100 text-indigo-700' },
-  custom: { label: 'Custom', color: 'bg-gray-100 text-gray-700' },
+  custom: { label: 'Custom', color: 'bg-warm-100 text-warm-700' },
 }
 
 const audienceConfig: Record<string, { label: string; icon: typeof Eye }> = {
@@ -426,25 +426,25 @@ function ReportCard({ report }: { report: Report }) {
   const AudIcon = audConfig.icon
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white border border-warm-200 rounded-lg p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-blue-50 rounded-lg">
-            <Icon className="h-5 w-5 text-blue-600" />
+          <div className="p-2 bg-stone-50 rounded-lg">
+            <Icon className="h-5 w-5 text-stone-600" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-medium text-gray-900">{report.name}</h4>
+              <h4 className="font-medium text-warm-900">{report.name}</h4>
               {report.isLocked && (
-                <span title="Period locked"><Lock className="h-3.5 w-3.5 text-gray-400" /></span>
+                <span title="Period locked"><Lock className="h-3.5 w-3.5 text-warm-400" /></span>
               )}
             </div>
-            <p className="text-sm text-gray-500 mt-0.5">{report.description}</p>
+            <p className="text-sm text-warm-500 mt-0.5">{report.description}</p>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", catConfig.color)}>
                 {catConfig.label}
               </span>
-              <span className="text-xs text-gray-400 flex items-center gap-1">
+              <span className="text-xs text-warm-400 flex items-center gap-1">
                 <AudIcon className="h-3 w-3" />
                 {audConfig.label}
               </span>
@@ -455,7 +455,7 @@ function ReportCard({ report }: { report: Report }) {
                 </span>
               )}
               {report.accessRoles && (
-                <span className="text-xs text-gray-400 flex items-center gap-1">
+                <span className="text-xs text-warm-400 flex items-center gap-1">
                   <Shield className="h-3 w-3" />
                   {report.accessRoles.join(', ')}
                 </span>
@@ -463,7 +463,7 @@ function ReportCard({ report }: { report: Report }) {
             </div>
             <div className="flex items-center gap-3 mt-1.5">
               {report.lastRun && (
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-warm-400">
                   Last run: {formatDate(report.lastRun)}
                 </span>
               )}
@@ -476,19 +476,19 @@ function ReportCard({ report }: { report: Report }) {
             </div>
           </div>
         </div>
-        <ChevronRight className="h-5 w-5 text-gray-300 flex-shrink-0" />
+        <ChevronRight className="h-5 w-5 text-warm-300 flex-shrink-0" />
       </div>
 
       <div className="mt-4 flex items-center gap-2">
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
           <Play className="h-3.5 w-3.5" />
           Generate
         </button>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
           <Calendar className="h-3.5 w-3.5" />
           Schedule
         </button>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
           <History className="h-3.5 w-3.5" />
           History
         </button>
@@ -500,22 +500,22 @@ function ReportCard({ report }: { report: Report }) {
 function ScheduledReportRow({ report }: { report: ScheduledReport }) {
   return (
     <div className={cn(
-      "flex items-center justify-between py-2.5 px-3 hover:bg-gray-50 rounded",
+      "flex items-center justify-between py-2.5 px-3 hover:bg-warm-50 rounded",
       !report.isActive && "opacity-50"
     )}>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <Calendar className={cn("h-4 w-4", report.isActive ? "text-blue-500" : "text-gray-300")} />
-          <span className="font-medium text-gray-900 text-sm">{report.reportName}</span>
+          <Calendar className={cn("h-4 w-4", report.isActive ? "text-stone-500" : "text-warm-300")} />
+          <span className="font-medium text-warm-900 text-sm">{report.reportName}</span>
           {!report.isActive && (
-            <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Paused</span>
+            <span className="text-xs text-warm-400 bg-warm-100 px-1.5 py-0.5 rounded">Paused</span>
           )}
         </div>
-        <span className="text-sm text-gray-500">{report.frequency}</span>
+        <span className="text-sm text-warm-500">{report.frequency}</span>
         <span className={cn(
           "text-xs px-1.5 py-0.5 rounded font-medium uppercase",
           report.format === 'pdf' ? "bg-red-100 text-red-600" :
-          report.format === 'excel' ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"
+          report.format === 'excel' ? "bg-green-100 text-green-600" : "bg-stone-100 text-stone-600"
         )}>
           {report.format === 'both' ? 'PDF+XLS' : report.format}
         </span>
@@ -527,21 +527,21 @@ function ScheduledReportRow({ report }: { report: ScheduledReport }) {
             Conditional
           </span>
         )}
-        <div className="flex items-center gap-1 text-sm text-gray-500">
+        <div className="flex items-center gap-1 text-sm text-warm-500">
           <Mail className="h-3.5 w-3.5" />
           <span>{report.recipients.length} recipient{report.recipients.length > 1 ? 's' : ''}</span>
           {report.lastDeliveryOpened !== undefined && (
             <span className={cn(
               "ml-1",
-              report.lastDeliveryOpened ? "text-green-500" : "text-gray-400"
+              report.lastDeliveryOpened ? "text-green-500" : "text-warm-400"
             )}>
               {report.lastDeliveryOpened ? '(opened)' : '(not opened)'}
             </span>
           )}
         </div>
-        <span className="text-xs text-gray-400">Next: {report.nextRun}</span>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <Settings className="h-4 w-4 text-gray-400" />
+        <span className="text-xs text-warm-400">Next: {report.nextRun}</span>
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <Settings className="h-4 w-4 text-warm-400" />
         </button>
       </div>
     </div>
@@ -552,21 +552,21 @@ function RecentReportRow({ report }: { report: RecentReport }) {
   const formatColors: Record<string, string> = {
     pdf: "bg-red-100 text-red-600",
     excel: "bg-green-100 text-green-600",
-    csv: "bg-gray-100 text-gray-600",
-    word: "bg-blue-100 text-blue-600",
+    csv: "bg-warm-100 text-warm-600",
+    word: "bg-stone-100 text-stone-600",
   }
   const audInfo = audienceConfig[report.audience]
   const AudIcon = audInfo.icon
 
   return (
-    <div className="flex items-center justify-between py-3 px-3 hover:bg-gray-50 rounded border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between py-3 px-3 hover:bg-warm-50 rounded border-b border-warm-100 last:border-0">
       <div className="flex-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-gray-900 text-sm">{report.reportName}</span>
-          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium uppercase", formatColors[report.format] ?? "bg-gray-100 text-gray-600")}>
+          <span className="font-medium text-warm-900 text-sm">{report.reportName}</span>
+          <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium uppercase", formatColors[report.format] ?? "bg-warm-100 text-warm-600")}>
             {report.format}
           </span>
-          <span className="text-xs text-gray-400 flex items-center gap-1">
+          <span className="text-xs text-warm-400 flex items-center gap-1">
             <AudIcon className="h-3 w-3" />
             {audInfo.label}
           </span>
@@ -578,13 +578,13 @@ function RecentReportRow({ report }: { report: RecentReport }) {
           )}
         </div>
         <div className="flex items-center gap-4 mt-1">
-          <span className="text-xs text-gray-400">{report.generatedAt}</span>
-          <span className="text-xs text-gray-400">by {report.generatedBy}</span>
+          <span className="text-xs text-warm-400">{report.generatedAt}</span>
+          <span className="text-xs text-warm-400">by {report.generatedBy}</span>
         </div>
         {report.highlights && (
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             {report.highlights.map((highlight, idx) => (
-              <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+              <span key={idx} className="text-xs bg-stone-50 text-stone-700 px-2 py-0.5 rounded">
                 {highlight}
               </span>
             ))}
@@ -592,11 +592,11 @@ function RecentReportRow({ report }: { report: RecentReport }) {
         )}
       </div>
       <div className="flex items-center gap-2 ml-2">
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
           <Download className="h-3.5 w-3.5" />
           Download
         </button>
-        <button className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-50" title="Regenerate">
+        <button className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-warm-400 hover:text-stone-600 rounded-lg hover:bg-warm-50" title="Regenerate">
           <Play className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -635,22 +635,22 @@ export function ReportsPreview() {
   }, {} as Record<ReportCategory, Report[]>)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Reports</h3>
-              <span className="text-sm text-gray-500">{standardReports.length} standard | {scheduledReports.filter(s => s.isActive).length} scheduled</span>
+              <h3 className="font-semibold text-warm-900">Reports</h3>
+              <span className="text-sm text-warm-500">{standardReports.length} standard | {scheduledReports.filter(s => s.isActive).length} scheduled</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Palette className="h-4 w-4" />
               Branding
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Plus className="h-4 w-4" />
               Custom Report
             </button>
@@ -659,21 +659,21 @@ export function ReportsPreview() {
       </div>
 
       {/* AI Alert - Month End */}
-      <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
+      <div className="bg-stone-50 border-b border-stone-200 px-4 py-3">
         <div className="flex items-center gap-3">
-          <Sparkles className="h-4 w-4 text-blue-600" />
-          <span className="text-sm text-blue-700">
+          <Sparkles className="h-4 w-4 text-stone-600" />
+          <span className="text-sm text-stone-700">
             <span className="font-medium">Month-end in 3 days.</span> WIP report due for bank covenant review.
             January period is unlocked - lock before generating final reports.
-            <button className="ml-2 underline text-blue-800 hover:text-blue-900">Generate WIP</button>
-            <button className="ml-2 underline text-blue-800 hover:text-blue-900">Lock Period</button>
+            <button className="ml-2 underline text-stone-800 hover:text-stone-900">Generate WIP</button>
+            <button className="ml-2 underline text-stone-800 hover:text-stone-900">Lock Period</button>
           </span>
         </div>
       </div>
 
       {/* Branding Status Bar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
+        <div className="flex items-center justify-between text-xs text-warm-500">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
               <Palette className="h-3 w-3 text-green-500" />
@@ -684,7 +684,7 @@ export function ReportsPreview() {
               Period Lock: Jan 2026 = Open | Dec 2025 = Locked
             </span>
             <span className="flex items-center gap-1">
-              <Globe className="h-3 w-3 text-blue-500" />
+              <Globe className="h-3 w-3 text-stone-500" />
               Export: PDF, Excel, CSV, Word
             </span>
           </div>
@@ -696,7 +696,7 @@ export function ReportsPreview() {
       </div>
 
       {/* Navigation Tabs + Search */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -735,7 +735,7 @@ export function ReportsPreview() {
                     <span className={cn("text-xs px-2 py-0.5 rounded font-medium", catConfig.color)}>
                       {catConfig.label}
                     </span>
-                    <span className="text-xs text-gray-400">{reports.length} reports</span>
+                    <span className="text-xs text-warm-400">{reports.length} reports</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {reports.map(report => (
@@ -746,7 +746,7 @@ export function ReportsPreview() {
               )
             })}
             {filteredStandardReports.length === 0 && (
-              <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+              <div className="text-center py-8 text-warm-400 text-sm border-2 border-dashed border-warm-200 rounded-lg">
                 No reports match your search
               </div>
             )}
@@ -754,16 +754,16 @@ export function ReportsPreview() {
         )}
 
         {activeTab === 'scheduled' && (
-          <div className="bg-white rounded-lg border border-gray-200">
-            <div className="px-4 py-3 border-b border-gray-200">
+          <div className="bg-white rounded-lg border border-warm-200">
+            <div className="px-4 py-3 border-b border-warm-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h4 className="font-medium text-gray-900 text-sm">Scheduled Reports</h4>
-                  <span className="text-xs text-gray-400">
+                  <h4 className="font-medium text-warm-900 text-sm">Scheduled Reports</h4>
+                  <span className="text-xs text-warm-400">
                     {scheduledReports.filter(s => s.isActive).length} active | {scheduledReports.filter(s => !s.isActive).length} paused
                   </span>
                 </div>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <button className="text-sm text-stone-600 hover:text-stone-700 font-medium">
                   + Add Schedule
                 </button>
               </div>
@@ -773,7 +773,7 @@ export function ReportsPreview() {
                 <ScheduledReportRow key={report.id} report={report} />
               ))}
               {filteredScheduledReports.length === 0 && (
-                <div className="text-center py-8 text-gray-400 text-sm">
+                <div className="text-center py-8 text-warm-400 text-sm">
                   No scheduled reports match your search
                 </div>
               )}
@@ -782,13 +782,13 @@ export function ReportsPreview() {
         )}
 
         {activeTab === 'recent' && (
-          <div className="bg-white rounded-lg border border-gray-200">
-            <div className="px-4 py-3 border-b border-gray-200">
+          <div className="bg-white rounded-lg border border-warm-200">
+            <div className="px-4 py-3 border-b border-warm-200">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium text-gray-900 text-sm">Recently Generated Reports</h4>
+                <h4 className="font-medium text-warm-900 text-sm">Recently Generated Reports</h4>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400">Last 7 days</span>
-                  <span className="text-xs text-gray-400">{recentReports.filter(r => r.aiNarrative).length} with AI narrative</span>
+                  <span className="text-xs text-warm-400">Last 7 days</span>
+                  <span className="text-xs text-warm-400">{recentReports.filter(r => r.aiNarrative).length} with AI narrative</span>
                 </div>
               </div>
             </div>
@@ -797,7 +797,7 @@ export function ReportsPreview() {
                 <RecentReportRow key={report.id} report={report} />
               ))}
               {filteredRecentReports.length === 0 && (
-                <div className="text-center py-8 text-gray-400 text-sm">
+                <div className="text-center py-8 text-warm-400 text-sm">
                   No recent reports match your search
                 </div>
               )}
@@ -807,44 +807,44 @@ export function ReportsPreview() {
       </div>
 
       {/* Quick Report Generator */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
-        <h4 className="font-medium text-gray-900 text-sm mb-3">Quick Generate</h4>
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
+        <h4 className="font-medium text-warm-900 text-sm mb-3">Quick Generate</h4>
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex-1 min-w-[180px]">
-            <select className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select className="w-full px-3 py-2 text-sm border border-warm-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-stone-500">
               <option>Select a report...</option>
               {standardReports.map(report => (
                 <option key={report.id} value={report.id}>{report.name}</option>
               ))}
             </select>
           </div>
-          <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select className="px-3 py-2 text-sm border border-warm-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-stone-500">
             <option>This Month</option>
             <option>Last Month</option>
             <option>This Quarter</option>
             <option>YTD</option>
             <option>Custom Range</option>
           </select>
-          <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select className="px-3 py-2 text-sm border border-warm-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-stone-500">
             <option>All Jobs</option>
             <option>Active Jobs Only</option>
             <option>Select Jobs...</option>
           </select>
-          <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select className="px-3 py-2 text-sm border border-warm-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-stone-500">
             <option>Internal</option>
             <option>Client-Facing</option>
             <option>Bank/Lender</option>
           </select>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-4 py-2 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Download className="h-4 w-4" />
               PDF
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Excel
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               CSV
             </button>

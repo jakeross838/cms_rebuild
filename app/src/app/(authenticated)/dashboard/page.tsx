@@ -41,7 +41,7 @@ export default async function DashboardPage() {
       value: activeJobs || 0,
       icon: Briefcase,
       href: '/jobs?status=active',
-      color: 'text-blue-600 bg-blue-100',
+      color: 'text-stone-600 bg-stone-100',
     },
     {
       name: 'Pending Invoices',

@@ -274,25 +274,25 @@ function SettingsCategoryCard({ category, onClick }: { category: SettingsCategor
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
+      className="bg-white rounded-lg border border-warm-200 p-4 hover:border-stone-300 hover:shadow-sm transition-all cursor-pointer"
     >
       <div className="flex items-start gap-4">
         <div className={cn(
           "p-3 rounded-lg",
-          category.status === 'configured' ? "bg-blue-100" :
+          category.status === 'configured' ? "bg-stone-100" :
           category.status === 'needs-attention' ? "bg-amber-100" :
-          "bg-gray-100"
+          "bg-warm-100"
         )}>
           <Icon className={cn(
             "h-6 w-6",
-            category.status === 'configured' ? "text-blue-600" :
+            category.status === 'configured' ? "text-stone-600" :
             category.status === 'needs-attention' ? "text-amber-600" :
-            "text-gray-500"
+            "text-warm-500"
           )} />
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h4 className="font-medium text-gray-900">{category.label}</h4>
+            <h4 className="font-medium text-warm-900">{category.label}</h4>
             {category.status === 'configured' && (
               <CheckCircle2 className="h-4 w-4 text-green-500" />
             )}
@@ -300,21 +300,21 @@ function SettingsCategoryCard({ category, onClick }: { category: SettingsCategor
               <AlertCircle className="h-4 w-4 text-amber-500" />
             )}
             {category.module && (
-              <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{category.module}</span>
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{category.module}</span>
             )}
           </div>
-          <p className="text-sm text-gray-500 mb-2">{category.description}</p>
+          <p className="text-sm text-warm-500 mb-2">{category.description}</p>
           {category.subItems && (
             <div className="flex flex-wrap gap-1">
               {category.subItems.map((item, i) => (
-                <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                <span key={i} className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
                   {item}
                 </span>
               ))}
             </div>
           )}
         </div>
-        <ChevronRight className="h-5 w-5 text-gray-400" />
+        <ChevronRight className="h-5 w-5 text-warm-400" />
       </div>
     </div>
   )
@@ -322,24 +322,24 @@ function SettingsCategoryCard({ category, onClick }: { category: SettingsCategor
 
 function QuickSettingsCard({ title, settings, icon: Icon }: { title: string; settings: QuickSetting[]; icon: React.ElementType }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center gap-2 mb-4">
-        <Icon className="h-5 w-5 text-blue-600" />
-        <h4 className="font-medium text-gray-900">{title}</h4>
+        <Icon className="h-5 w-5 text-stone-600" />
+        <h4 className="font-medium text-warm-900">{title}</h4>
       </div>
       <div className="space-y-3">
         {settings.map((setting, i) => (
-          <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+          <div key={i} className="flex items-center justify-between py-2 border-b border-warm-100 last:border-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">{setting.label}</span>
+              <span className="text-sm text-warm-600">{setting.label}</span>
               {setting.moduleRef && (
-                <span className="text-xs bg-gray-50 text-gray-400 px-1 py-0.5 rounded">{setting.moduleRef}</span>
+                <span className="text-xs bg-warm-50 text-warm-400 px-1 py-0.5 rounded">{setting.moduleRef}</span>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900">{setting.value}</span>
+              <span className="text-sm font-medium text-warm-900">{setting.value}</span>
               {setting.editable && (
-                <button className="text-xs text-blue-600 hover:text-blue-700">Edit</button>
+                <button className="text-xs text-stone-600 hover:text-stone-700">Edit</button>
               )}
             </div>
           </div>
@@ -359,30 +359,30 @@ function IntegrationStatus() {
   ]
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Link className="h-5 w-5 text-blue-600" />
-          <h4 className="font-medium text-gray-900">Integrations</h4>
+          <Link className="h-5 w-5 text-stone-600" />
+          <h4 className="font-medium text-warm-900">Integrations</h4>
         </div>
-        <button className="text-xs text-blue-600 hover:text-blue-700">Manage All</button>
+        <button className="text-xs text-stone-600 hover:text-stone-700">Manage All</button>
       </div>
       <div className="space-y-3">
         {integrations.map((integration, i) => (
-          <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+          <div key={i} className="flex items-center justify-between py-2 border-b border-warm-100 last:border-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">{integration.name}</span>
-              <span className="text-xs bg-gray-50 text-gray-400 px-1 py-0.5 rounded">{integration.module}</span>
+              <span className="text-sm text-warm-700">{integration.name}</span>
+              <span className="text-xs bg-warm-50 text-warm-400 px-1 py-0.5 rounded">{integration.module}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded-full font-medium",
-                integration.status === 'connected' ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                integration.status === 'connected' ? "bg-green-100 text-green-700" : "bg-warm-100 text-warm-600"
               )}>
                 {integration.status === 'connected' ? 'Connected' : 'Not Connected'}
               </span>
               {integration.lastSync && (
-                <span className="text-xs text-gray-500">{integration.lastSync}</span>
+                <span className="text-xs text-warm-500">{integration.lastSync}</span>
               )}
             </div>
           </div>
@@ -394,33 +394,33 @@ function IntegrationStatus() {
 
 function UsageStats() {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center gap-2 mb-4">
-        <FileText className="h-5 w-5 text-blue-600" />
-        <h4 className="font-medium text-gray-900">Usage This Month</h4>
+        <FileText className="h-5 w-5 text-stone-600" />
+        <h4 className="font-medium text-warm-900">Usage This Month</h4>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <div className="text-center p-3 bg-blue-50 rounded-lg">
-          <div className="text-2xl font-bold text-blue-600">847</div>
-          <div className="text-xs text-gray-600">AI Analyses</div>
+        <div className="text-center p-3 bg-stone-50 rounded-lg">
+          <div className="text-2xl font-bold text-stone-600">847</div>
+          <div className="text-xs text-warm-600">AI Analyses</div>
         </div>
         <div className="text-center p-3 bg-green-50 rounded-lg">
           <div className="text-2xl font-bold text-green-600">156</div>
-          <div className="text-xs text-gray-600">Docs Processed</div>
+          <div className="text-xs text-warm-600">Docs Processed</div>
         </div>
         <div className="text-center p-3 bg-purple-50 rounded-lg">
           <div className="text-2xl font-bold text-purple-600">7</div>
-          <div className="text-xs text-gray-600">Active Users</div>
+          <div className="text-xs text-warm-600">Active Users</div>
         </div>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div className="text-center p-2 bg-amber-50 rounded-lg">
           <div className="text-lg font-bold text-amber-600">5</div>
-          <div className="text-xs text-gray-600">Active Projects</div>
+          <div className="text-xs text-warm-600">Active Projects</div>
         </div>
         <div className="text-center p-2 bg-teal-50 rounded-lg">
           <div className="text-lg font-bold text-teal-600">23</div>
-          <div className="text-xs text-gray-600">Custom Fields</div>
+          <div className="text-xs text-warm-600">Custom Fields</div>
         </div>
       </div>
     </div>
@@ -429,16 +429,16 @@ function UsageStats() {
 
 function ConfigHierarchyBar() {
   return (
-    <div className="bg-gray-100 border-b border-gray-200 px-4 py-2">
-      <div className="flex items-center gap-2 text-xs text-gray-500">
+    <div className="bg-warm-100 border-b border-warm-200 px-4 py-2">
+      <div className="flex items-center gap-2 text-xs text-warm-500">
         <span className="font-medium">Config Hierarchy:</span>
-        <span className="bg-white px-1.5 py-0.5 rounded border border-gray-200">Platform Defaults</span>
+        <span className="bg-white px-1.5 py-0.5 rounded border border-warm-200">Platform Defaults</span>
         <ChevronRight className="h-3 w-3" />
-        <span className="bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 text-blue-700 font-medium">Company (viewing)</span>
+        <span className="bg-stone-50 px-1.5 py-0.5 rounded border border-stone-200 text-stone-700 font-medium">Company (viewing)</span>
         <ChevronRight className="h-3 w-3" />
-        <span className="bg-white px-1.5 py-0.5 rounded border border-gray-200">Project Override</span>
+        <span className="bg-white px-1.5 py-0.5 rounded border border-warm-200">Project Override</span>
         <ChevronRight className="h-3 w-3" />
-        <span className="bg-white px-1.5 py-0.5 rounded border border-gray-200">User Preferences</span>
+        <span className="bg-white px-1.5 py-0.5 rounded border border-warm-200">User Preferences</span>
       </div>
     </div>
   )
@@ -456,29 +456,29 @@ export function SettingsPreview() {
   const completionPercent = Math.round((configuredCount / totalCategories) * 100)
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900">Global Settings</h3>
-            <p className="text-sm text-gray-500">Company-wide settings and system configuration</p>
+            <h3 className="font-semibold text-warm-900">Global Settings</h3>
+            <p className="text-sm text-warm-500">Company-wide settings and system configuration</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-xs text-gray-500">Setup Completeness</p>
+              <p className="text-xs text-warm-500">Setup Completeness</p>
               <div className="flex items-center gap-2">
-                <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-600 rounded-full" style={{ width: `${completionPercent}%` }} />
+                <div className="w-24 h-2 bg-warm-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-stone-600 rounded-full" style={{ width: `${completionPercent}%` }} />
                 </div>
-                <span className="text-xs font-medium text-gray-700">{completionPercent}%</span>
+                <span className="text-xs font-medium text-warm-700">{completionPercent}%</span>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
               <Download className="h-4 w-4" />
               Export Config
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Save className="h-4 w-4" />
               Save All Changes
             </button>
@@ -506,7 +506,7 @@ export function SettingsPreview() {
         <div className="grid grid-cols-3 gap-4">
           {/* Main Settings Categories */}
           <div className="col-span-2 space-y-3">
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">SETTINGS CATEGORIES ({totalCategories})</h4>
+            <h4 className="text-sm font-semibold text-warm-700 mb-2">SETTINGS CATEGORIES ({totalCategories})</h4>
             {settingsCategories.map(category => (
               <SettingsCategoryCard
                 key={category.id}
@@ -540,7 +540,7 @@ export function SettingsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-warm-200">
         <AIFeaturesPanel
           features={[
             {

@@ -69,7 +69,7 @@ export default function MarketingPortfolioPage() {
           <div className="text-xs text-green-600 mt-1">192 total reviews</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Camera className="h-4 w-4 text-blue-600" />Portfolio Projects</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Camera className="h-4 w-4 text-stone-600" />Portfolio Projects</div>
           <div className="text-2xl font-bold mt-1">23</div>
           <div className="text-xs text-muted-foreground mt-1">4 published this quarter</div>
         </div>
@@ -112,7 +112,7 @@ export default function MarketingPortfolioPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-xs text-muted-foreground">{p.photos} photos</span>
-                  <span className={cn('text-xs px-2 py-0.5 rounded', p.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600')}>{p.status}</span>
+                  <span className={cn('text-xs px-2 py-0.5 rounded', p.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-warm-100 text-warm-600')}>{p.status}</span>
                   <button className="p-1 hover:bg-muted rounded"><ExternalLink className="h-4 w-4 text-muted-foreground" /></button>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function MarketingPortfolioPage() {
 
           {/* Social Stats */}
           <div className="bg-card border rounded-lg p-4">
-            <h3 className="font-semibold mb-3 flex items-center gap-2"><Share2 className="h-4 w-4 text-blue-600" />Social Media</h3>
+            <h3 className="font-semibold mb-3 flex items-center gap-2"><Share2 className="h-4 w-4 text-stone-600" />Social Media</h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-muted/50 rounded-lg p-2.5 text-center">
                 <div className="text-lg font-bold">2.4K</div>
@@ -210,7 +210,7 @@ export default function MarketingPortfolioPage() {
               <div>
                 <div className="text-sm font-medium">{c.title}</div>
                 <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                  <span className={cn('px-1.5 py-0.5 rounded', c.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600')}>{c.status}</span>
+                  <span className={cn('px-1.5 py-0.5 rounded', c.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-warm-100 text-warm-600')}>{c.status}</span>
                   {c.views > 0 && <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{c.views.toLocaleString()} views</span>}
                 </div>
               </div>

@@ -290,19 +290,19 @@ const monthWeeks = [
 ]
 
 const jobColors: Record<string, string> = {
-  blue: 'bg-blue-100 text-blue-700 border-blue-200',
+  blue: 'bg-stone-100 text-stone-700 border-stone-200',
   green: 'bg-green-100 text-green-700 border-green-200',
   purple: 'bg-purple-100 text-purple-700 border-purple-200',
   amber: 'bg-amber-100 text-amber-700 border-amber-200',
-  gray: 'bg-gray-100 text-gray-600 border-gray-200',
+  gray: 'bg-warm-100 text-warm-600 border-warm-200',
   red: 'bg-red-100 text-red-700 border-red-200',
 }
 
 function WeatherIcon({ condition }: { condition: string }) {
   switch (condition) {
     case 'sunny': return <Sun className="h-3 w-3 text-amber-500" />
-    case 'cloudy': return <Cloud className="h-3 w-3 text-gray-400" />
-    case 'rain': return <CloudRain className="h-3 w-3 text-blue-500" />
+    case 'cloudy': return <Cloud className="h-3 w-3 text-warm-400" />
+    case 'rain': return <CloudRain className="h-3 w-3 text-stone-500" />
     default: return <Sun className="h-3 w-3 text-amber-500" />
   }
 }
@@ -325,22 +325,22 @@ function AssignmentCell({
   if (!assignment) {
     return (
       <div className={cn(
-        "h-full min-h-[60px] flex items-center justify-center text-gray-400 text-xs border-r border-gray-100 transition-colors",
-        isToday && "bg-blue-50/50",
+        "h-full min-h-[60px] flex items-center justify-center text-warm-400 text-xs border-r border-warm-100 transition-colors",
+        isToday && "bg-stone-50/50",
         weather?.impactsOutdoor && "bg-red-50/30",
-        isDragOver && "bg-blue-100 border-2 border-dashed border-blue-400"
+        isDragOver && "bg-stone-100 border-2 border-dashed border-stone-400"
       )}>
-        <span className="text-gray-300">---</span>
+        <span className="text-warm-300">---</span>
       </div>
     )
   }
 
   return (
     <div className={cn(
-      "h-full min-h-[60px] p-1 border-r border-gray-100 transition-colors",
-      isToday && "bg-blue-50/50",
+      "h-full min-h-[60px] p-1 border-r border-warm-100 transition-colors",
+      isToday && "bg-stone-50/50",
       weather?.impactsOutdoor && "bg-red-50/30",
-      isDragOver && "bg-blue-100 border-2 border-dashed border-blue-400"
+      isDragOver && "bg-stone-100 border-2 border-dashed border-stone-400"
     )}>
       <div
         className={cn(
@@ -352,7 +352,7 @@ function AssignmentCell({
       >
         {/* Drag handle */}
         <div className="absolute left-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <GripVertical className="h-3 w-3 text-gray-400" />
+          <GripVertical className="h-3 w-3 text-warm-400" />
         </div>
         <div className="flex items-center gap-1 pl-2">
           <span className="font-medium truncate">{assignment.jobName}</span>
@@ -390,7 +390,7 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
 
   // Overtime color coding
   const getOvertimeColor = (ot: number) => {
-    if (ot === 0) return 'text-gray-400'
+    if (ot === 0) return 'text-warm-400'
     if (ot <= 4) return 'text-amber-600'
     return 'text-red-600'
   }
@@ -414,24 +414,24 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
         </tr>
       )}
       <tr className={cn(
-        "border-b border-gray-100 hover:bg-gray-50/50",
+        "border-b border-warm-100 hover:bg-warm-50/50",
         hasExpiredCert && "bg-red-50/30"
       )}>
-        <td className="py-2 px-3 sticky left-0 bg-white border-r border-gray-200 z-10">
+        <td className="py-2 px-3 sticky left-0 bg-white border-r border-warm-200 z-10">
           <div className="flex items-center gap-2">
             <div className={cn(
               "h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-medium",
-              member.status === 'pto' ? 'bg-gray-300' :
+              member.status === 'pto' ? 'bg-warm-300' :
               member.status === 'conflict' ? 'bg-red-400' :
-              member.status === 'light-duty' ? 'bg-amber-400' : 'bg-blue-500'
+              member.status === 'light-duty' ? 'bg-amber-400' : 'bg-stone-500'
             )}>
               {getInitials(member.name)}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-medium text-sm text-gray-900 truncate">{member.name}</span>
+                <span className="font-medium text-sm text-warm-900 truncate">{member.name}</span>
                 {member.status === 'pto' && (
-                  <Plane className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                  <Plane className="h-3 w-3 text-warm-400 flex-shrink-0" />
                 )}
                 {member.status === 'conflict' && (
                   <AlertTriangle className="h-3 w-3 text-red-500 flex-shrink-0" />
@@ -440,9 +440,9 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
                   <Shield className="h-3 w-3 text-amber-500 flex-shrink-0" />
                 )}
               </div>
-              <div className="flex items-center gap-1 text-xs text-gray-500">
+              <div className="flex items-center gap-1 text-xs text-warm-500">
                 <span>{member.role}</span>
-                {member.trade && <span className="text-gray-300">|</span>}
+                {member.trade && <span className="text-warm-300">|</span>}
                 {member.trade && <span>{member.trade}</span>}
               </div>
               {/* Certifications */}
@@ -475,12 +475,12 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
           </td>
         ))}
         <td className="py-2 px-2 text-center">
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-warm-500">
             {scheduledHours}/{member.weeklyHours || 40}
           </div>
           <div className={cn(
             "text-[10px]",
-            hoursVariance > 0 ? "text-red-500" : hoursVariance < 0 ? "text-green-500" : "text-gray-400"
+            hoursVariance > 0 ? "text-red-500" : hoursVariance < 0 ? "text-green-500" : "text-warm-400"
           )}>
             Actual: {actualHours}h
           </div>
@@ -499,17 +499,17 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
             "text-sm font-medium",
             member.utilization > 100 ? "text-red-600" :
             member.utilization >= 80 ? "text-green-600" :
-            member.utilization >= 50 ? "text-amber-600" : "text-gray-400"
+            member.utilization >= 50 ? "text-amber-600" : "text-warm-400"
           )}>
             {member.utilization}%
           </div>
         </td>
-        <td className="py-2 px-2 text-center text-xs text-gray-500">
+        <td className="py-2 px-2 text-center text-xs text-warm-500">
           ${((member.costRate || 0) * (member.scheduledHours || 0)).toLocaleString()}
         </td>
         <td className="py-2 px-3">
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </td>
       </tr>
@@ -532,31 +532,31 @@ function MonthlyCalendarView({ members }: { members: TeamMember[] }) {
   const getWeekUtilColor = (util: number) => {
     if (util >= 90) return 'bg-green-100 text-green-700'
     if (util >= 70) return 'bg-amber-100 text-amber-700'
-    if (util >= 50) return 'bg-yellow-100 text-yellow-700'
-    return 'bg-gray-100 text-gray-500'
+    if (util >= 50) return 'bg-amber-100 text-amber-700'
+    return 'bg-warm-100 text-warm-500'
   }
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
-        <thead className="bg-gray-100 border-b border-gray-200">
+        <thead className="bg-warm-100 border-b border-warm-200">
           <tr>
-            <th className="text-left py-2 px-3 font-medium text-gray-600 text-sm sticky left-0 bg-gray-100 z-10 w-48">
+            <th className="text-left py-2 px-3 font-medium text-warm-600 text-sm sticky left-0 bg-warm-100 z-10 w-48">
               Team Member
             </th>
             {monthWeeks.map(week => (
-              <th key={week.weekNum} colSpan={5} className="text-center py-2 px-1 font-medium text-gray-600 text-xs border-l border-gray-200">
+              <th key={week.weekNum} colSpan={5} className="text-center py-2 px-1 font-medium text-warm-600 text-xs border-l border-warm-200">
                 <div>Week {week.weekNum}</div>
-                <div className="text-[10px] text-gray-400 font-normal">{week.dates[0]} - {week.dates[4]}</div>
+                <div className="text-[10px] text-warm-400 font-normal">{week.dates[0]} - {week.dates[4]}</div>
               </th>
             ))}
-            <th className="text-center py-2 px-2 font-medium text-gray-600 text-xs w-16">Total</th>
+            <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Total</th>
           </tr>
-          <tr className="bg-gray-50">
-            <th className="sticky left-0 bg-gray-50 z-10"></th>
+          <tr className="bg-warm-50">
+            <th className="sticky left-0 bg-warm-50 z-10"></th>
             {monthWeeks.map(week => (
               weekDays.map((day, idx) => (
-                <th key={`${week.weekNum}-${day}`} className="text-center py-1 px-1 text-[10px] text-gray-400 font-normal">
+                <th key={`${week.weekNum}-${day}`} className="text-center py-1 px-1 text-[10px] text-warm-400 font-normal">
                   {day}
                 </th>
               ))
@@ -578,12 +578,12 @@ function MonthlyCalendarView({ members }: { members: TeamMember[] }) {
             const monthTotal = weeklyTotals.reduce((sum, w) => sum + w, 0)
 
             return (
-              <tr key={member.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                <td className="py-2 px-3 sticky left-0 bg-white border-r border-gray-200 z-10">
+              <tr key={member.id} className="border-b border-warm-100 hover:bg-warm-50/50">
+                <td className="py-2 px-3 sticky left-0 bg-white border-r border-warm-200 z-10">
                   <div className="flex items-center gap-2">
                     <div className={cn(
                       "h-6 w-6 rounded-full flex items-center justify-center text-white text-[10px] font-medium",
-                      member.status === 'pto' ? 'bg-gray-300' : 'bg-blue-500'
+                      member.status === 'pto' ? 'bg-warm-300' : 'bg-stone-500'
                     )}>
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
@@ -594,10 +594,10 @@ function MonthlyCalendarView({ members }: { members: TeamMember[] }) {
                   weekDays.map((_, dayIdx) => {
                     const count = getDailyCount(member.id, week.weekNum, dayIdx)
                     return (
-                      <td key={`${week.weekNum}-${dayIdx}`} className="p-0.5 text-center border-l border-gray-50">
+                      <td key={`${week.weekNum}-${dayIdx}`} className="p-0.5 text-center border-l border-warm-50">
                         <div className={cn(
                           "w-6 h-6 mx-auto rounded text-[10px] flex items-center justify-center",
-                          count > 0 ? 'bg-blue-100 text-blue-700' : 'text-gray-300'
+                          count > 0 ? 'bg-stone-100 text-stone-700' : 'text-warm-300'
                         )}>
                           {count > 0 ? count : '-'}
                         </div>
@@ -629,7 +629,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
 
   const getTypeIcon = (type: TwoWeekItem['type']) => {
     switch (type) {
-      case 'task': return <Calendar className="h-3.5 w-3.5 text-blue-500" />
+      case 'task': return <Calendar className="h-3.5 w-3.5 text-stone-500" />
       case 'delivery': return <Truck className="h-3.5 w-3.5 text-purple-500" />
       case 'inspection': return <ClipboardCheck className="h-3.5 w-3.5 text-amber-500" />
       case 'confirmation': return <CheckSquare className="h-3.5 w-3.5 text-green-500" />
@@ -638,7 +638,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
 
   const getTypeBg = (type: TwoWeekItem['type']) => {
     switch (type) {
-      case 'task': return 'bg-blue-50 border-blue-200'
+      case 'task': return 'bg-stone-50 border-stone-200'
       case 'delivery': return 'bg-purple-50 border-purple-200'
       case 'inspection': return 'bg-amber-50 border-amber-200'
       case 'confirmation': return 'bg-green-50 border-green-200'
@@ -659,45 +659,45 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
     <div className="p-4 space-y-4">
       {/* Summary counts */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-gray-50 rounded-lg p-3">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">This Week (Feb 10-14)</h4>
+        <div className="bg-warm-50 rounded-lg p-3">
+          <h4 className="text-sm font-semibold text-warm-700 mb-2">This Week (Feb 10-14)</h4>
           <div className="grid grid-cols-4 gap-2 text-xs">
             <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{thisWeekCounts.tasks}</div>
-              <div className="text-gray-500">Tasks</div>
+              <div className="text-lg font-bold text-stone-600">{thisWeekCounts.tasks}</div>
+              <div className="text-warm-500">Tasks</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-purple-600">{thisWeekCounts.deliveries}</div>
-              <div className="text-gray-500">Deliveries</div>
+              <div className="text-warm-500">Deliveries</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-amber-600">{thisWeekCounts.inspections}</div>
-              <div className="text-gray-500">Inspections</div>
+              <div className="text-warm-500">Inspections</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-green-600">{thisWeekCounts.confirmations}</div>
-              <div className="text-gray-500">Confirm</div>
+              <div className="text-warm-500">Confirm</div>
             </div>
           </div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Next Week (Feb 17-21)</h4>
+        <div className="bg-warm-50 rounded-lg p-3">
+          <h4 className="text-sm font-semibold text-warm-700 mb-2">Next Week (Feb 17-21)</h4>
           <div className="grid grid-cols-4 gap-2 text-xs">
             <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{nextWeekCounts.tasks}</div>
-              <div className="text-gray-500">Tasks</div>
+              <div className="text-lg font-bold text-stone-600">{nextWeekCounts.tasks}</div>
+              <div className="text-warm-500">Tasks</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-purple-600">{nextWeekCounts.deliveries}</div>
-              <div className="text-gray-500">Deliveries</div>
+              <div className="text-warm-500">Deliveries</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-amber-600">{nextWeekCounts.inspections}</div>
-              <div className="text-gray-500">Inspections</div>
+              <div className="text-warm-500">Inspections</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-green-600">{nextWeekCounts.confirmations}</div>
-              <div className="text-gray-500">Confirm</div>
+              <div className="text-warm-500">Confirm</div>
             </div>
           </div>
         </div>
@@ -705,7 +705,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
 
       {/* This Week details */}
       <div>
-        <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+        <h4 className="text-sm font-semibold text-warm-700 mb-2 flex items-center gap-2">
           <CalendarDays className="h-4 w-4" />
           This Week
         </h4>
@@ -713,9 +713,9 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
           {thisWeekItems.map((item, idx) => (
             <div key={idx} className={cn("p-2 rounded border text-sm flex items-center gap-3", getTypeBg(item.type))}>
               {getTypeIcon(item.type)}
-              <span className="font-medium text-gray-700 w-16">{item.date}</span>
+              <span className="font-medium text-warm-700 w-16">{item.date}</span>
               <span className="flex-1">{item.title}</span>
-              {item.job && <span className="text-xs text-gray-500">{item.job}</span>}
+              {item.job && <span className="text-xs text-warm-500">{item.job}</span>}
               {item.assignee && <span className="text-xs bg-white px-2 py-0.5 rounded">{item.assignee}</span>}
             </div>
           ))}
@@ -724,7 +724,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
 
       {/* Next Week details */}
       <div>
-        <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+        <h4 className="text-sm font-semibold text-warm-700 mb-2 flex items-center gap-2">
           <CalendarDays className="h-4 w-4" />
           Next Week
         </h4>
@@ -732,9 +732,9 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
           {nextWeekItems.map((item, idx) => (
             <div key={idx} className={cn("p-2 rounded border text-sm flex items-center gap-3", getTypeBg(item.type))}>
               {getTypeIcon(item.type)}
-              <span className="font-medium text-gray-700 w-16">{item.date}</span>
+              <span className="font-medium text-warm-700 w-16">{item.date}</span>
               <span className="flex-1">{item.title}</span>
-              {item.job && <span className="text-xs text-gray-500">{item.job}</span>}
+              {item.job && <span className="text-xs text-warm-500">{item.job}</span>}
               {item.assignee && <span className="text-xs bg-white px-2 py-0.5 rounded">{item.assignee}</span>}
             </div>
           ))}
@@ -872,14 +872,14 @@ export function CrewSchedulePreview() {
   const aiFeatures = generateAIFeatures()
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Crew Schedule</h3>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+              <h3 className="font-semibold text-warm-900">Crew Schedule</h3>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
                 Week of February 10, 2026
               </span>
               {conflicts > 0 && (
@@ -893,17 +893,17 @@ export function CrewSchedulePreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               Resource allocation across all active projects
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('week')}
                 className={cn(
                   "px-3 py-1.5 text-sm",
-                  viewMode === 'week' ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-500 hover:bg-gray-50"
+                  viewMode === 'week' ? "bg-stone-50 text-stone-600 font-medium" : "text-warm-500 hover:bg-warm-50"
                 )}
               >
                 Week
@@ -912,7 +912,7 @@ export function CrewSchedulePreview() {
                 onClick={() => setViewMode('month')}
                 className={cn(
                   "px-3 py-1.5 text-sm",
-                  viewMode === 'month' ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-500 hover:bg-gray-50"
+                  viewMode === 'month' ? "bg-stone-50 text-stone-600 font-medium" : "text-warm-500 hover:bg-warm-50"
                 )}
               >
                 Month
@@ -921,13 +921,13 @@ export function CrewSchedulePreview() {
                 onClick={() => setViewMode('two-week')}
                 className={cn(
                   "px-3 py-1.5 text-sm",
-                  viewMode === 'two-week' ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-500 hover:bg-gray-50"
+                  viewMode === 'two-week' ? "bg-stone-50 text-stone-600 font-medium" : "text-warm-500 hover:bg-warm-50"
                 )}
               >
                 2-Week
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-stone-600 text-white rounded-lg hover:bg-stone-700">
               <Plus className="h-4 w-4" />
               Add Assignment
             </button>
@@ -952,112 +952,112 @@ export function CrewSchedulePreview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-9 gap-3">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Users className="h-3.5 w-3.5" />
               Crew
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{totalCrew}</div>
-            <div className="text-[10px] text-gray-400">{activeCrew} active</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{totalCrew}</div>
+            <div className="text-[10px] text-warm-400">{activeCrew} active</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <TrendingUp className="h-3.5 w-3.5" />
               Avg Util
             </div>
             <div className={cn("text-lg font-bold mt-1", avgUtilization >= 80 ? "text-green-600" : "text-amber-600")}>{avgUtilization}%</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Clock className="h-3.5 w-3.5" />
               Scheduled
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{totalScheduledHours}h</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{totalScheduledHours}h</div>
             <div className={cn(
               "text-[10px]",
-              totalActualHours > totalScheduledHours ? "text-red-500" : totalActualHours < totalScheduledHours ? "text-green-500" : "text-gray-400"
+              totalActualHours > totalScheduledHours ? "text-red-500" : totalActualHours < totalScheduledHours ? "text-green-500" : "text-warm-400"
             )}>
               Actual: {totalActualHours}h
             </div>
           </div>
-          <div className={cn("rounded-lg p-3", totalOvertimeHours > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-xs", totalOvertimeHours > 0 ? "text-red-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", totalOvertimeHours > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-xs", totalOvertimeHours > 0 ? "text-red-600" : "text-warm-500")}>
               <Zap className="h-3.5 w-3.5" />
               Overtime
             </div>
-            <div className={cn("text-lg font-bold mt-1", totalOvertimeHours > 0 ? "text-red-600" : "text-gray-900")}>{totalOvertimeHours}h</div>
+            <div className={cn("text-lg font-bold mt-1", totalOvertimeHours > 0 ? "text-red-600" : "text-warm-900")}>{totalOvertimeHours}h</div>
           </div>
-          <div className={cn("rounded-lg p-3", conflicts > 0 ? "bg-red-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-xs", conflicts > 0 ? "text-red-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", conflicts > 0 ? "bg-red-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-xs", conflicts > 0 ? "text-red-600" : "text-warm-500")}>
               <AlertTriangle className="h-3.5 w-3.5" />
               Conflicts
             </div>
-            <div className={cn("text-lg font-bold mt-1", conflicts > 0 ? "text-red-700" : "text-gray-900")}>{conflicts}</div>
+            <div className={cn("text-lg font-bold mt-1", conflicts > 0 ? "text-red-700" : "text-warm-900")}>{conflicts}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Plane className="h-3.5 w-3.5" />
               PTO
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">{onPto}</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">{onPto}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Briefcase className="h-3.5 w-3.5" />
               Available
             </div>
             <div className="text-lg font-bold text-green-600 mt-1">{availableCapacity}</div>
-            <div className="text-[10px] text-gray-400">below 80%</div>
+            <div className="text-[10px] text-warm-400">below 80%</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-warm-500 text-xs">
               <Building2 className="h-3.5 w-3.5" />
               Labor Cost
             </div>
-            <div className="text-lg font-bold text-gray-900 mt-1">${(totalLaborCost / 1000).toFixed(1)}K</div>
+            <div className="text-lg font-bold text-warm-900 mt-1">${(totalLaborCost / 1000).toFixed(1)}K</div>
           </div>
-          <div className={cn("rounded-lg p-3", expiredCertCount > 0 ? "bg-amber-50" : "bg-gray-50")}>
-            <div className={cn("flex items-center gap-2 text-xs", expiredCertCount > 0 ? "text-amber-600" : "text-gray-500")}>
+          <div className={cn("rounded-lg p-3", expiredCertCount > 0 ? "bg-amber-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-xs", expiredCertCount > 0 ? "text-amber-600" : "text-warm-500")}>
               <AlertCircle className="h-3.5 w-3.5" />
               Cert Issues
             </div>
-            <div className={cn("text-lg font-bold mt-1", expiredCertCount > 0 ? "text-amber-700" : "text-gray-900")}>{expiredCertCount}</div>
+            <div className={cn("text-lg font-bold mt-1", expiredCertCount > 0 ? "text-amber-700" : "text-warm-900")}>{expiredCertCount}</div>
           </div>
         </div>
       </div>
 
       {/* Cross-module badges */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <div className="flex items-center gap-4 text-xs">
-          <span className="text-gray-500 font-medium">Active Projects:</span>
-          <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Smith Residence - Rough-In</span>
+          <span className="text-warm-500 font-medium">Active Projects:</span>
+          <span className="bg-stone-50 text-stone-600 px-2 py-0.5 rounded">Smith Residence - Rough-In</span>
           <span className="bg-green-50 text-green-600 px-2 py-0.5 rounded">Johnson Beach - Framing</span>
           <span className="bg-purple-50 text-purple-600 px-2 py-0.5 rounded">Davis Addition - Pre-Con</span>
           <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded">Harbor View - Foundation</span>
-          <span className="ml-auto text-gray-400">Critical path tasks: {criticalPathAssignments}</span>
+          <span className="ml-auto text-warm-400">Critical path tasks: {criticalPathAssignments}</span>
         </div>
       </div>
 
       {/* Calendar Navigation */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+      <div className="bg-white border-b border-warm-200 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-            <ChevronLeft className="h-5 w-5 text-gray-600" />
+          <button className="p-1.5 hover:bg-warm-100 rounded-lg transition-colors">
+            <ChevronLeft className="h-5 w-5 text-warm-600" />
           </button>
-          <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-            <ChevronRight className="h-5 w-5 text-gray-600" />
+          <button className="p-1.5 hover:bg-warm-100 rounded-lg transition-colors">
+            <ChevronRight className="h-5 w-5 text-warm-600" />
           </button>
-          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg font-medium">
+          <button className="px-3 py-1 text-sm text-stone-600 hover:bg-stone-50 rounded-lg font-medium">
             Today
           </button>
-          <span className="text-gray-300 ml-2">|</span>
+          <span className="text-warm-300 ml-2">|</span>
           <button
             onClick={() => setViewMode('two-week')}
             className={cn(
               "px-3 py-1 text-sm rounded-lg flex items-center gap-1",
-              viewMode === 'two-week' ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-50"
+              viewMode === 'two-week' ? "bg-stone-50 text-stone-600 font-medium" : "text-warm-600 hover:bg-warm-50"
             )}
           >
             <CalendarDays className="h-3.5 w-3.5" />
@@ -1066,24 +1066,24 @@ export function CrewSchedulePreview() {
         </div>
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5">
-            <Move className="h-3.5 w-3.5 text-gray-400" />
-            <span className="text-gray-500">Drag to reassign</span>
+            <Move className="h-3.5 w-3.5 text-warm-400" />
+            <span className="text-warm-500">Drag to reassign</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-blue-100 border border-blue-200" />
-            <span className="text-gray-600">Smith</span>
+            <div className="w-3 h-3 rounded bg-stone-100 border border-stone-200" />
+            <span className="text-warm-600">Smith</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded bg-green-100 border border-green-200" />
-            <span className="text-gray-600">Johnson</span>
+            <span className="text-warm-600">Johnson</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded bg-purple-100 border border-purple-200" />
-            <span className="text-gray-600">Davis</span>
+            <span className="text-warm-600">Davis</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded bg-amber-100 border border-amber-200" />
-            <span className="text-gray-600">Harbor View</span>
+            <span className="text-warm-600">Harbor View</span>
           </div>
         </div>
       </div>
@@ -1092,9 +1092,9 @@ export function CrewSchedulePreview() {
       {viewMode === 'week' && (
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
+            <thead className="bg-warm-100 border-b border-warm-200">
               <tr>
-                <th className="text-left py-2 px-3 font-medium text-gray-600 text-sm sticky left-0 bg-gray-100 z-10 w-56 border-r border-gray-200">
+                <th className="text-left py-2 px-3 font-medium text-warm-600 text-sm sticky left-0 bg-warm-100 z-10 w-56 border-r border-warm-200">
                   Team Member
                 </th>
                 {weekDays.map((day, idx) => {
@@ -1104,7 +1104,7 @@ export function CrewSchedulePreview() {
                       key={day}
                       className={cn(
                         "text-center py-2 px-3 font-medium text-sm min-w-[120px]",
-                        idx === 2 ? "bg-blue-100 text-blue-700" : "text-gray-600",
+                        idx === 2 ? "bg-stone-100 text-stone-700" : "text-warm-600",
                         weather?.impactsOutdoor && "bg-red-50"
                       )}
                     >
@@ -1116,10 +1116,10 @@ export function CrewSchedulePreview() {
                     </th>
                   )
                 })}
-                <th className="text-center py-2 px-2 font-medium text-gray-600 text-xs w-16">Hours</th>
-                <th className="text-center py-2 px-2 font-medium text-gray-600 text-xs w-12">OT</th>
-                <th className="text-center py-2 px-2 font-medium text-gray-600 text-xs w-14">Util</th>
-                <th className="text-center py-2 px-2 font-medium text-gray-600 text-xs w-16">Cost</th>
+                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Hours</th>
+                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-12">OT</th>
+                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-14">Util</th>
+                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Cost</th>
                 <th className="w-10"></th>
               </tr>
             </thead>
@@ -1141,8 +1141,8 @@ export function CrewSchedulePreview() {
       )}
 
       {/* Legend */}
-      <div className="bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex items-center gap-6 text-xs text-gray-500">
+      <div className="bg-white border-t border-warm-200 px-4 py-2">
+        <div className="flex items-center gap-6 text-xs text-warm-500">
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full bg-green-500" />
             <span>80-100%</span>
@@ -1152,7 +1152,7 @@ export function CrewSchedulePreview() {
             <span>50-79%</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-gray-300" />
+            <div className="w-3 h-3 rounded-full bg-warm-300" />
             <span>&lt;50%</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -1160,7 +1160,7 @@ export function CrewSchedulePreview() {
             <span>&gt;100% Conflict</span>
           </div>
           <div className="flex items-center gap-1.5 ml-2">
-            <Plane className="h-3.5 w-3.5 text-gray-400" />
+            <Plane className="h-3.5 w-3.5 text-warm-400" />
             <span>PTO</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -1176,14 +1176,14 @@ export function CrewSchedulePreview() {
             <span>Cert Issue</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <GripVertical className="h-3.5 w-3.5 text-gray-300" />
+            <GripVertical className="h-3.5 w-3.5 text-warm-300" />
             <span>Drag to reassign</span>
           </div>
         </div>
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Resource Intelligence"
           features={aiFeatures}

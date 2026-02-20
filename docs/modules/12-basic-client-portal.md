@@ -344,7 +344,7 @@ PUT    /api/v2/portal/notifications/preferences     # Client updates preferences
 - **Module 3:** Core Data Model (project data, milestones, phases)
 - **Module 6:** Document Storage (shared documents, photo storage)
 - **Module 9:** Budget & Cost Tracking (budget data for client budget view)
-- **Module 11:** Basic Invoicing (payment/draw visibility)
+- **Module 11:** Native Accounting (GL/AP/AR) (payment/draw visibility)
 - **Module 17:** Change Orders (change order review/approval in portal)
 - **Module 18:** Selections & Allowances (selection approval workflow)
 

@@ -114,7 +114,7 @@ const vendorFTQData: Record<string, VendorFTQ> = {
 // FTQ threshold badge colors
 const ftqThresholdConfig = {
   excellent: { label: 'Excellent', bgColor: 'bg-green-100', textColor: 'text-green-700', borderColor: 'border-green-300' },
-  good: { label: 'Good', bgColor: 'bg-blue-100', textColor: 'text-blue-700', borderColor: 'border-blue-300' },
+  good: { label: 'Good', bgColor: 'bg-stone-100', textColor: 'text-stone-700', borderColor: 'border-stone-300' },
   fair: { label: 'Fair', bgColor: 'bg-amber-100', textColor: 'text-amber-700', borderColor: 'border-amber-300' },
   poor: { label: 'Poor', bgColor: 'bg-red-100', textColor: 'text-red-700', borderColor: 'border-red-300' },
 }
@@ -390,25 +390,25 @@ const statusConfig: Record<PunchItemStatus, { label: string; color: string; bgCo
   open: { label: 'Open', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700', icon: CircleDot },
   assigned: { label: 'Assigned', color: 'bg-orange-500', bgColor: 'bg-orange-50', textColor: 'text-orange-700', icon: User },
   in_progress: { label: 'In Progress', color: 'bg-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700', icon: Clock },
-  completed: { label: 'Complete', color: 'bg-blue-500', bgColor: 'bg-blue-50', textColor: 'text-blue-700', icon: CheckCircle2 },
+  completed: { label: 'Complete', color: 'bg-stone-500', bgColor: 'bg-stone-50', textColor: 'text-stone-700', icon: CheckCircle2 },
   rejected: { label: 'Rejected', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700', icon: RotateCcw },
   verified: { label: 'Verified', color: 'bg-green-500', bgColor: 'bg-green-50', textColor: 'text-green-700', icon: CheckCircle2 },
-  closed: { label: 'Closed', color: 'bg-gray-400', bgColor: 'bg-gray-50', textColor: 'text-gray-600', icon: CheckCircle2 },
+  closed: { label: 'Closed', color: 'bg-warm-400', bgColor: 'bg-warm-50', textColor: 'text-warm-600', icon: CheckCircle2 },
 }
 
 const priorityConfig: Record<Priority, { label: string; color: string; bgColor: string; textColor: string }> = {
   critical: { label: 'Critical', color: 'bg-red-600', bgColor: 'bg-red-50', textColor: 'text-red-700' },
   high: { label: 'High', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700' },
   medium: { label: 'Medium', color: 'bg-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700' },
-  low: { label: 'Low', color: 'bg-gray-400', bgColor: 'bg-gray-100', textColor: 'text-gray-600' },
-  cosmetic: { label: 'Cosmetic', color: 'bg-blue-300', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
+  low: { label: 'Low', color: 'bg-warm-400', bgColor: 'bg-warm-100', textColor: 'text-warm-600' },
+  cosmetic: { label: 'Cosmetic', color: 'bg-stone-300', bgColor: 'bg-stone-50', textColor: 'text-stone-600' },
 }
 
 const costConfig: Record<CostResponsibility, { label: string; color: string }> = {
   vendor_backcharge: { label: 'Vendor Back-charge', color: 'text-red-600' },
   builder_warranty: { label: 'Builder Warranty', color: 'text-amber-600' },
   shared: { label: 'Shared', color: 'text-purple-600' },
-  none: { label: 'No Cost', color: 'text-gray-500' },
+  none: { label: 'No Cost', color: 'text-warm-500' },
 }
 
 const sourceConfig: Record<ItemSource, { label: string; icon: typeof FileText }> = {
@@ -446,14 +446,14 @@ function PhotoStages({ photos }: { photos: PunchItemPhoto[] }) {
   }
   const stageColors: Record<PhotoStage, string> = {
     issue: 'bg-red-400',
-    repair: 'bg-blue-400',
+    repair: 'bg-stone-400',
     verification: 'bg-green-400',
     rejection: 'bg-amber-400',
   }
 
   return (
     <div className="flex items-center gap-1">
-      <Camera className="h-3 w-3 text-blue-500" />
+      <Camera className="h-3 w-3 text-stone-500" />
       {stageOrder.map(stage => {
         const photo = photos.find(p => p.stage === stage)
         if (!photo) return null
@@ -465,7 +465,7 @@ function PhotoStages({ photos }: { photos: PunchItemPhoto[] }) {
           />
         )
       })}
-      <span className="text-[10px] text-gray-400 ml-0.5">{photos.length}</span>
+      <span className="text-[10px] text-warm-400 ml-0.5">{photos.length}</span>
     </div>
   )
 }
@@ -485,12 +485,12 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
     return (
       <div className={cn(
         "bg-white rounded-lg border p-4 shadow-sm",
-        isOverdue ? "border-red-200" : "border-gray-200"
+        isOverdue ? "border-red-200" : "border-warm-200"
       )}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-mono text-sm font-medium text-gray-700">{item.itemNumber}</span>
+              <span className="font-mono text-sm font-medium text-warm-700">{item.itemNumber}</span>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded font-medium",
                 priority.bgColor,
@@ -504,15 +504,15 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
                 </span>
               )}
             </div>
-            <p className="font-medium text-gray-900 text-base">{item.description}</p>
+            <p className="font-medium text-warm-900 text-base">{item.description}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-sm text-gray-600">
+        <div className="flex items-center gap-3 text-sm text-warm-600">
           <div className="flex items-center gap-1">
             <MapPin className="h-4 w-4" />
             <span>{item.room}</span>
           </div>
-          <span className="text-gray-300">|</span>
+          <span className="text-warm-300">|</span>
           <span>{item.trade}</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
@@ -533,15 +533,15 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
   return (
     <div className={cn(
       "bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      isOverdue ? "border-red-200" : "border-gray-200",
+      isOverdue ? "border-red-200" : "border-warm-200",
       item.status === 'rejected' ? "border-l-4 border-l-red-500" : ""
     )}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-xs text-gray-500">{item.itemNumber}</span>
+            <span className="font-mono text-xs text-warm-500">{item.itemNumber}</span>
             {item.hasPlanPin && (
-              <span title="Pinned to floor plan"><MapPin className="h-3 w-3 text-blue-500" /></span>
+              <span title="Pinned to floor plan"><MapPin className="h-3 w-3 text-stone-500" /></span>
             )}
             <PhotoStages photos={item.photos} />
             {item.warrantyConversion && (
@@ -550,32 +550,32 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
               </span>
             )}
           </div>
-          <p className="font-medium text-gray-900 text-sm line-clamp-2">{item.description}</p>
+          <p className="font-medium text-warm-900 text-sm line-clamp-2">{item.description}</p>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <div className="flex items-center gap-1 text-xs text-gray-500">
+            <div className="flex items-center gap-1 text-xs text-warm-500">
               <MapPin className="h-3 w-3" />
               <span>{item.room}</span>
-              <span className="text-gray-300">|</span>
+              <span className="text-warm-300">|</span>
               <span>{item.floorLevel}</span>
             </div>
-            <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">{item.trade}</span>
-            <span className="text-[10px] text-gray-400 flex items-center gap-0.5">
+            <span className="text-xs px-1.5 py-0.5 bg-warm-100 text-warm-600 rounded">{item.trade}</span>
+            <span className="text-[10px] text-warm-400 flex items-center gap-0.5">
               <SourceIcon className="h-2.5 w-2.5" />
               {source.label}
             </span>
           </div>
         </div>
-        <button className="p-1 hover:bg-gray-100 rounded">
-          <MoreHorizontal className="h-4 w-4 text-gray-400" />
+        <button className="p-1 hover:bg-warm-100 rounded">
+          <MoreHorizontal className="h-4 w-4 text-warm-400" />
         </button>
       </div>
 
       {/* Vendor assignment with FTQ */}
       <div className="flex items-center gap-2 mb-2">
-        <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
-          <span className="text-xs font-medium text-blue-700">{item.assignedVendor[0]}</span>
+        <div className="h-5 w-5 rounded-full bg-stone-100 flex items-center justify-center">
+          <span className="text-xs font-medium text-stone-700">{item.assignedVendor[0]}</span>
         </div>
-        <span className="text-xs text-gray-600">{item.assignedVendor}</span>
+        <span className="text-xs text-warm-600">{item.assignedVendor}</span>
         {/* FTQ Score Badge */}
         {vendorFTQData[item.assignedVendorId] && (
           <span 
@@ -596,7 +596,7 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
         {item.dueDate && (
           <span className={cn(
             "text-xs ml-auto flex items-center gap-0.5",
-            isOverdue ? "text-red-600 font-medium" : "text-gray-400"
+            isOverdue ? "text-red-600 font-medium" : "text-warm-400"
           )}>
             <Calendar className="h-3 w-3" />
             Due: {item.dueDate}
@@ -611,8 +611,8 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
           <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
             <span className="text-xs font-medium text-green-700">{item.assignedTo.name[0]}</span>
           </div>
-          <span className="text-xs text-gray-500">Assigned to:</span>
-          <span className="text-xs text-gray-700 font-medium">{item.assignedTo.name}</span>
+          <span className="text-xs text-warm-500">Assigned to:</span>
+          <span className="text-xs text-warm-700 font-medium">{item.assignedTo.name}</span>
         </div>
       )}
 
@@ -640,13 +640,13 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
         <div className="mb-2">
           <button
             onClick={() => setNotesExpanded(!notesExpanded)}
-            className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"
+            className="flex items-center gap-1 text-xs text-warm-500 hover:text-warm-700"
           >
             {notesExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             <span>Notes</span>
           </button>
           {notesExpanded && (
-            <div className="mt-1 p-2 bg-gray-50 rounded text-xs text-gray-600">
+            <div className="mt-1 p-2 bg-warm-50 rounded text-xs text-warm-600">
               {item.notes}
             </div>
           )}
@@ -654,7 +654,7 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className="flex items-center gap-2">
           <span className={cn(
             "text-xs px-1.5 py-0.5 rounded font-medium",
@@ -702,15 +702,15 @@ function StatCard({
   icon: typeof CircleDot
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3">
+    <div className="bg-white rounded-lg border border-warm-200 p-3">
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", iconBg)}>
           <Icon className={cn("h-4 w-4", iconColor)} />
         </div>
         <div>
-          <p className="text-xs text-gray-500">{label}</p>
-          <p className="text-lg font-semibold text-gray-900">{value}</p>
-          {subValue && <p className="text-xs text-gray-400">{subValue}</p>}
+          <p className="text-xs text-warm-500">{label}</p>
+          <p className="text-lg font-semibold text-warm-900">{value}</p>
+          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
         </div>
       </div>
     </div>
@@ -859,13 +859,13 @@ export function PunchListPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Punch List - Smith Residence</h3>
+              <h3 className="font-semibold text-warm-900">Punch List - Smith Residence</h3>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded font-medium",
                 completePercent >= 90 ? "bg-green-100 text-green-700" :
@@ -881,7 +881,7 @@ export function PunchListPreview() {
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">
+            <div className="text-sm text-warm-500 mt-0.5">
               {totalItems} total | {openItems} open | {inProgressItems} in progress | {verifiedOrClosed} verified/closed
             </div>
           </div>
@@ -891,8 +891,8 @@ export function PunchListPreview() {
               className={cn(
                 "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border transition-colors",
                 isWalkthroughMode
-                  ? "bg-blue-50 border-blue-200 text-blue-700"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  ? "bg-stone-50 border-stone-200 text-stone-700"
+                  : "border-warm-200 text-warm-600 hover:bg-warm-50"
               )}
             >
               <Footprints className="h-4 w-4" />
@@ -904,9 +904,9 @@ export function PunchListPreview() {
 
       {/* Quick Stats */}
       {!isWalkthroughMode && (
-        <div className="px-4 py-3 bg-white border-b border-gray-200">
+        <div className="px-4 py-3 bg-white border-b border-warm-200">
           <div className="grid grid-cols-7 gap-2">
-            <StatCard icon={CircleDot} label="Total Items" value={totalItems} iconColor="text-blue-600" iconBg="bg-blue-50" />
+            <StatCard icon={CircleDot} label="Total Items" value={totalItems} iconColor="text-stone-600" iconBg="bg-stone-50" />
             <StatCard icon={CheckCircle2} label="Complete" value={`${completePercent}%`} subValue={`${verifiedOrClosed} of ${totalItems}`} iconColor="text-green-600" iconBg="bg-green-50" />
             <StatCard icon={CircleDot} label="Open" value={openItems} iconColor="text-red-600" iconBg="bg-red-50" />
             <StatCard icon={AlertCircle} label="Critical" value={criticalItems} iconColor="text-red-600" iconBg="bg-red-50" />
@@ -918,7 +918,7 @@ export function PunchListPreview() {
       )}
 
       {/* Filters */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-warm-200 px-4 py-2">
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -983,7 +983,7 @@ export function PunchListPreview() {
         />
 
         {/* Additional filters row */}
-        <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100">
+        <div className="flex items-center gap-3 mt-2 pt-2 border-t border-warm-100">
           <PriorityFilter
             value={filterPriority}
             onChange={setFilterPriority}
@@ -1015,23 +1015,23 @@ export function PunchListPreview() {
             const groupCritical = items.filter(i => i.priority === 'critical' && !['verified', 'closed'].includes(i.status)).length
 
             return (
-              <div key={group} className="border-b border-gray-100 last:border-b-0">
+              <div key={group} className="border-b border-warm-100 last:border-b-0">
                 {/* Group Header */}
                 <button
                   onClick={() => toggleGroup(group)}
-                  className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100"
+                  className="w-full px-4 py-3 flex items-center justify-between bg-warm-50 hover:bg-warm-100"
                 >
                   <div className="flex items-center gap-2">
                     {isExpanded ? (
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                      <ChevronDown className="h-4 w-4 text-warm-400" />
                     ) : (
-                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                      <ChevronRight className="h-4 w-4 text-warm-400" />
                     )}
-                    {groupBy === 'room' && <MapPin className="h-4 w-4 text-gray-500" />}
-                    {groupBy === 'floor' && <Layers className="h-4 w-4 text-gray-500" />}
-                    {groupBy === 'trade' && <ClipboardCheck className="h-4 w-4 text-gray-500" />}
-                    <span className="font-medium text-gray-900">{group}</span>
-                    <span className="text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">
+                    {groupBy === 'room' && <MapPin className="h-4 w-4 text-warm-500" />}
+                    {groupBy === 'floor' && <Layers className="h-4 w-4 text-warm-500" />}
+                    {groupBy === 'trade' && <ClipboardCheck className="h-4 w-4 text-warm-500" />}
+                    <span className="font-medium text-warm-900">{group}</span>
+                    <span className="text-xs text-warm-400 bg-warm-200 px-1.5 py-0.5 rounded">
                       {groupTotal}
                     </span>
                     {groupCritical > 0 && (
@@ -1042,12 +1042,12 @@ export function PunchListPreview() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">{groupComplete}/{groupTotal} complete</span>
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <span className="text-xs text-warm-500">{groupComplete}/{groupTotal} complete</span>
+                    <div className="w-24 h-2 bg-warm-200 rounded-full overflow-hidden">
                       <div
                         className={cn(
                           "h-full rounded-full",
-                          groupComplete === groupTotal ? "bg-green-500" : "bg-blue-500"
+                          groupComplete === groupTotal ? "bg-green-500" : "bg-stone-500"
                         )}
                         style={{ width: `${(groupComplete / groupTotal) * 100}%` }}
                       />
@@ -1069,7 +1069,7 @@ export function PunchListPreview() {
         )}
 
         {Object.keys(itemsByGroup).length === 0 && (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-warm-400">
             <CheckCircle2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p>No punch items found matching your criteria</p>
           </div>
@@ -1078,8 +1078,8 @@ export function PunchListPreview() {
 
       {/* Walkthrough Mode Add Item Button */}
       {isWalkthroughMode && (
-        <div className="bg-white border-t border-gray-200 px-4 py-3">
-          <button className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        <div className="bg-white border-t border-warm-200 px-4 py-3">
+          <button className="w-full flex items-center justify-center gap-2 py-3 bg-stone-600 text-white rounded-lg hover:bg-stone-700 transition-colors">
             <Plus className="h-5 w-5" />
             <span className="font-medium">Add New Item</span>
           </button>
@@ -1087,7 +1087,7 @@ export function PunchListPreview() {
       )}
 
       {/* AI Features Panel */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-t border-purple-200 px-4 py-4">
+      <div className="bg-gradient-to-r from-purple-50 to-stone-50 border-t border-purple-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Insights"
           features={aiFeatures}

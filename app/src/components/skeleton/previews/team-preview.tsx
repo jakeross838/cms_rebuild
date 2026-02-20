@@ -234,13 +234,13 @@ const roles = [
   { id: 'pm', label: 'Project Manager', icon: ClipboardList, color: 'bg-green-500', bgLight: 'bg-green-50', textColor: 'text-green-700' },
   { id: 'superintendent', label: 'Superintendent', icon: HardHat, color: 'bg-amber-500', bgLight: 'bg-amber-50', textColor: 'text-amber-700' },
   { id: 'foreman', label: 'Foreman', icon: Users, color: 'bg-orange-500', bgLight: 'bg-orange-50', textColor: 'text-orange-700' },
-  { id: 'field', label: 'Field Technician', icon: Wrench, color: 'bg-blue-500', bgLight: 'bg-blue-50', textColor: 'text-blue-700' },
+  { id: 'field', label: 'Field Technician', icon: Wrench, color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
   { id: 'estimator', label: 'Estimator', icon: Briefcase, color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
   { id: 'coordinator', label: 'Coordinator', icon: Calendar, color: 'bg-teal-500', bgLight: 'bg-teal-50', textColor: 'text-teal-700' },
 ]
 
 const memberTypes = [
-  { id: 'employee', label: 'Employee', color: 'bg-blue-500', bgLight: 'bg-blue-50', textColor: 'text-blue-700' },
+  { id: 'employee', label: 'Employee', color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
   { id: 'subcontractor', label: 'Subcontractor', color: 'bg-orange-500', bgLight: 'bg-orange-50', textColor: 'text-orange-700' },
   { id: 'consultant', label: 'Consultant', color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
 ]
@@ -248,7 +248,7 @@ const memberTypes = [
 const accessLevels = [
   { id: 'full', label: 'Full Access', icon: Key, color: 'text-green-600' },
   { id: 'limited', label: 'Limited', icon: Shield, color: 'text-amber-600' },
-  { id: 'view_only', label: 'View Only', icon: Shield, color: 'text-gray-500' },
+  { id: 'view_only', label: 'View Only', icon: Shield, color: 'text-warm-500' },
 ]
 
 function getRoleConfig(role: JobTeamMember['role']) {
@@ -287,7 +287,7 @@ function QuickActions({ phone, email }: { phone: string; email: string }) {
         <PhoneCall className="h-3.5 w-3.5" />
       </button>
       <button
-        className="p-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
+        className="p-1.5 rounded-full bg-stone-50 hover:bg-stone-100 text-stone-600 transition-colors"
         title="Text"
         onClick={(e) => { e.stopPropagation(); window.location.href = `sms:${phone}` }}
       >
@@ -317,13 +317,13 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
 
   const statusStyles = {
     active: 'bg-green-50 text-green-700',
-    upcoming: 'bg-blue-50 text-blue-700',
-    completed: 'bg-gray-100 text-gray-500',
+    upcoming: 'bg-stone-50 text-stone-700',
+    completed: 'bg-warm-100 text-warm-500',
   }
 
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      "bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       member.status === 'completed' && "opacity-60"
     )}>
       <div className="flex items-start justify-between mb-3">
@@ -331,21 +331,21 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
           <div className="relative">
             <div className={cn(
               "h-12 w-12 rounded-full flex items-center justify-center text-white font-semibold text-lg",
-              member.status === 'completed' ? 'bg-gray-400' : roleConfig.color
+              member.status === 'completed' ? 'bg-warm-400' : roleConfig.color
             )}>
               {getInitials(member.name)}
             </div>
             {member.is_primary && (
-              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-yellow-400 flex items-center justify-center border-2 border-white">
-                <Star className="h-3 w-3 text-yellow-800" />
+              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber-400 flex items-center justify-center border-2 border-white">
+                <Star className="h-3 w-3 text-amber-800" />
               </div>
             )}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-gray-900">{member.name}</h4>
+              <h4 className="font-medium text-warm-900">{member.name}</h4>
               {member.is_primary && (
-                <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-medium">
+                <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
                   PRIMARY
                 </span>
               )}
@@ -358,8 +358,8 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
         </div>
         <div className="flex items-center gap-2">
           <QuickActions phone={member.phone} email={member.email} />
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <MoreHorizontal className="h-4 w-4 text-gray-400" />
+          <button className="p-1 hover:bg-warm-100 rounded">
+            <MoreHorizontal className="h-4 w-4 text-warm-400" />
           </button>
         </div>
       </div>
@@ -380,18 +380,18 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
 
       {/* Contact Info */}
       <div className="space-y-1.5 mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Mail className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Mail className="h-3.5 w-3.5 text-warm-400" />
           <span className="truncate text-xs">{member.email}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Phone className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Phone className="h-3.5 w-3.5 text-warm-400" />
           <span className="text-xs">{member.phone}</span>
         </div>
       </div>
 
       {/* Assignment Dates */}
-      <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+      <div className="flex items-center gap-3 text-xs text-warm-500 mb-3">
         <div className="flex items-center gap-1">
           <Calendar className="h-3 w-3" />
           <span>Start: {formatDate(member.start_date)}</span>
@@ -405,16 +405,16 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
       </div>
 
       {/* Responsibilities */}
-      <div className="pt-3 border-t border-gray-100">
-        <p className="text-xs font-medium text-gray-700 mb-1">Responsibilities:</p>
+      <div className="pt-3 border-t border-warm-100">
+        <p className="text-xs font-medium text-warm-700 mb-1">Responsibilities:</p>
         <div className="flex flex-wrap gap-1">
           {member.responsibilities.slice(0, 3).map((resp, i) => (
-            <span key={i} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+            <span key={i} className="text-[10px] bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">
               {resp}
             </span>
           ))}
           {member.responsibilities.length > 3 && (
-            <span className="text-[10px] text-gray-400">+{member.responsibilities.length - 3} more</span>
+            <span className="text-[10px] text-warm-400">+{member.responsibilities.length - 3} more</span>
           )}
         </div>
       </div>
@@ -429,14 +429,14 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
 function SubcontractorCard({ sub }: { sub: Subcontractor }) {
   const statusStyles = {
     active: { bg: 'bg-green-50', text: 'text-green-700', label: 'On Site' },
-    scheduled: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Scheduled' },
-    completed: { bg: 'bg-gray-100', text: 'text-gray-500', label: 'Completed' },
+    scheduled: { bg: 'bg-stone-50', text: 'text-stone-700', label: 'Scheduled' },
+    completed: { bg: 'bg-warm-100', text: 'text-warm-500', label: 'Completed' },
   }
   const status = statusStyles[sub.status]
 
   return (
     <div className={cn(
-      "bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+      "bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       sub.status === 'completed' && "opacity-60"
     )}>
       <div className="flex items-start justify-between mb-3">
@@ -445,8 +445,8 @@ function SubcontractorCard({ sub }: { sub: Subcontractor }) {
             <Building2 className="h-5 w-5 text-orange-600" />
           </div>
           <div>
-            <h4 className="font-medium text-gray-900">{sub.company_name}</h4>
-            <p className="text-sm text-gray-600">{sub.contact_person}</p>
+            <h4 className="font-medium text-warm-900">{sub.company_name}</h4>
+            <p className="text-sm text-warm-600">{sub.contact_person}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -458,26 +458,26 @@ function SubcontractorCard({ sub }: { sub: Subcontractor }) {
       </div>
 
       <div className="space-y-2 mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Phone className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Phone className="h-3.5 w-3.5 text-warm-400" />
           <span className="text-xs">{sub.contact_phone}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Clock className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-warm-600">
+          <Clock className="h-3.5 w-3.5 text-warm-400" />
           <span className="text-xs">{sub.on_site_schedule}</span>
         </div>
       </div>
 
-      <div className="pt-3 border-t border-gray-100">
-        <p className="text-xs font-medium text-gray-700 mb-1">Package Scope:</p>
-        <p className="text-xs text-gray-600">{sub.package_scope}</p>
+      <div className="pt-3 border-t border-warm-100">
+        <p className="text-xs font-medium text-warm-700 mb-1">Package Scope:</p>
+        <p className="text-xs text-warm-600">{sub.package_scope}</p>
       </div>
 
-      <div className="mt-3 pt-3 border-t border-gray-100">
+      <div className="mt-3 pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
-          <span className="text-xs text-gray-700 font-medium">Emergency:</span>
-          <span className="text-xs text-gray-600">{sub.emergency_contact} - {sub.emergency_phone}</span>
+          <span className="text-xs text-warm-700 font-medium">Emergency:</span>
+          <span className="text-xs text-warm-600">{sub.emergency_contact} - {sub.emergency_phone}</span>
         </div>
       </div>
     </div>
@@ -536,15 +536,15 @@ function StatCard({
   iconBg: string
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded-lg border border-warm-200 p-4">
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", iconBg)}>
           <Icon className={cn("h-5 w-5", iconColor)} />
         </div>
         <div>
-          <p className="text-sm text-gray-500">{label}</p>
-          <p className="text-xl font-semibold text-gray-900">{value}</p>
-          {subValue && <p className="text-xs text-gray-400">{subValue}</p>}
+          <p className="text-sm text-warm-500">{label}</p>
+          <p className="text-xl font-semibold text-warm-900">{value}</p>
+          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
         </div>
       </div>
     </div>
@@ -613,12 +613,12 @@ export function TeamPreview() {
   ]
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-warm-50 rounded-lg border border-warm-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-semibold text-gray-900">Job Team Roster</h3>
-          <span className="text-sm text-gray-500">{totalTeam} team members, {mockSubcontractors.length} subcontractors</span>
+          <h3 className="font-semibold text-warm-900">Job Team Roster</h3>
+          <span className="text-sm text-warm-500">{totalTeam} team members, {mockSubcontractors.length} subcontractors</span>
           <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded">Johnson Residence - Active</span>
         </div>
         <FilterBar
@@ -662,18 +662,18 @@ export function TeamPreview() {
       </div>
 
       {/* Quick Stats */}
-      <div className="px-4 py-4 bg-white border-b border-gray-200">
+      <div className="px-4 py-4 bg-white border-b border-warm-200">
         <div className="grid grid-cols-5 gap-3">
-          <StatCard icon={Users} label="Team Members" value={totalTeam.toString()} iconColor="text-blue-600" iconBg="bg-blue-50" />
+          <StatCard icon={Users} label="Team Members" value={totalTeam.toString()} iconColor="text-stone-600" iconBg="bg-stone-50" />
           <StatCard icon={UserCheck} label="Active Now" value={activeMembers.toString()} iconColor="text-green-600" iconBg="bg-green-50" />
-          <StatCard icon={Star} label="Primary Contacts" value={primaryContacts.toString()} iconColor="text-yellow-600" iconBg="bg-yellow-50" />
+          <StatCard icon={Star} label="Primary Contacts" value={primaryContacts.toString()} iconColor="text-amber-600" iconBg="bg-amber-50" />
           <StatCard icon={Truck} label="Subcontractors" value={mockSubcontractors.length.toString()} subValue={`${activeSubcontractors} on site`} iconColor="text-orange-600" iconBg="bg-orange-50" />
-          <StatCard icon={Clock} label="Upcoming" value={upcomingMembers.toString()} iconColor="text-blue-600" iconBg="bg-blue-50" />
+          <StatCard icon={Clock} label="Upcoming" value={upcomingMembers.toString()} iconColor="text-stone-600" iconBg="bg-stone-50" />
         </div>
       </div>
 
       {/* AI Insights Panel */}
-      <div className="px-4 py-4 bg-white border-b border-gray-200">
+      <div className="px-4 py-4 bg-white border-b border-warm-200">
         <AIFeaturesPanel
           title="AI Team Insights"
           features={aiFeatures}
@@ -684,9 +684,9 @@ export function TeamPreview() {
       {/* Team Members Section */}
       <div className="p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Users className="h-4 w-4 text-gray-600" />
-          <h4 className="font-medium text-gray-900">Team Members</h4>
-          <span className="text-xs text-gray-500">({filteredMembers.length})</span>
+          <Users className="h-4 w-4 text-warm-600" />
+          <h4 className="font-medium text-warm-900">Team Members</h4>
+          <span className="text-xs text-warm-500">({filteredMembers.length})</span>
         </div>
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -702,7 +702,7 @@ export function TeamPreview() {
           </div>
         )}
         {filteredMembers.length === 0 && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-warm-400">
             <Users className="h-10 w-10 mx-auto mb-2 opacity-50" />
             <p>No team members found matching your criteria</p>
           </div>
@@ -710,11 +710,11 @@ export function TeamPreview() {
       </div>
 
       {/* Subcontractors Section */}
-      <div className="p-4 border-t border-gray-200 bg-orange-50/30">
+      <div className="p-4 border-t border-warm-200 bg-orange-50/30">
         <div className="flex items-center gap-2 mb-3">
           <Building2 className="h-4 w-4 text-orange-600" />
-          <h4 className="font-medium text-gray-900">Subcontractors</h4>
-          <span className="text-xs text-gray-500">({filteredSubcontractors.length})</span>
+          <h4 className="font-medium text-warm-900">Subcontractors</h4>
+          <span className="text-xs text-warm-500">({filteredSubcontractors.length})</span>
         </div>
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -730,7 +730,7 @@ export function TeamPreview() {
           </div>
         )}
         {filteredSubcontractors.length === 0 && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-warm-400">
             <Building2 className="h-10 w-10 mx-auto mb-2 opacity-50" />
             <p>No subcontractors found matching your criteria</p>
           </div>

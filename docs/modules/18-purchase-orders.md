@@ -431,7 +431,7 @@ CREATE TABLE v2_po_settings (
 - **Module 9:** Budget & Cost Tracking (committed costs, cost code association)
 - **Module 10:** Contact/Vendor Management (vendor selection, vendor portal)
 - **Module 7:** Scheduling (lead time alerts, delivery impact on schedule)
-- **Module 11:** Basic Invoicing (invoice matching)
+- **Module 11:** Native Accounting (GL/AP/AR) (invoice matching)
 - **Module 17:** Change Orders (CO-generated POs)
 - **Module 16:** QuickBooks Integration (sync POs as Bills to accounting)
 - **Module 5:** Notification Engine (approval alerts, delivery reminders)

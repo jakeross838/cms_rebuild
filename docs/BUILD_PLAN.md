@@ -577,7 +577,7 @@ export async function getUserProfile(supabase: SupabaseClient<Database>, userId:
 
 ---
 
-### Module 11 — Basic Invoicing
+### Module 11 — Native Accounting (GL/AP/AR)
 **Purpose:** Invoice intake, approval workflow, payment tracking
 **Depends on:** Module 03 (jobs, vendors), Module 05 (notifications), Module 09 (budgets)
 

@@ -254,13 +254,13 @@ export function SkeletonSidebar() {
 
   const getPhaseColor = (phase?: string) => {
     if (!phase) return 'bg-muted text-muted-foreground'
-    if (phase === 'Phase 0') return 'bg-blue-100 text-blue-700'
+    if (phase === 'Phase 0') return 'bg-stone-100 text-stone-700'
     if (phase === 'Phase 1') return 'bg-green-100 text-green-700'
     if (phase === 'Phase 2') return 'bg-purple-100 text-purple-700'
     if (phase === 'Phase 3') return 'bg-orange-100 text-orange-700'
     if (phase === 'Phase 4') return 'bg-pink-100 text-pink-700'
     if (phase === 'Phase 5') return 'bg-cyan-100 text-cyan-700'
-    if (phase === 'Phase 6') return 'bg-yellow-100 text-yellow-700'
+    if (phase === 'Phase 6') return 'bg-amber-100 text-amber-700'
     return 'bg-muted text-muted-foreground'
   }
 
@@ -344,7 +344,7 @@ export function SkeletonSidebar() {
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-sidebar-border flex-shrink-0">
         <Link href="/skeleton" className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-stone-600 to-stone-800 flex items-center justify-center">
             <Building2 className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -389,7 +389,7 @@ export function SkeletonSidebar() {
       <div className="p-4 border-t border-sidebar-border bg-muted flex-shrink-0">
         <div className="text-xs text-muted-foreground mb-2">Total Views: 112</div>
         <div className="grid grid-cols-4 gap-1 text-center text-[10px]">
-          <div className="bg-blue-100 text-blue-700 rounded px-1 py-0.5">P0: 68</div>
+          <div className="bg-stone-100 text-stone-700 rounded px-1 py-0.5">P0: 68</div>
           <div className="bg-green-100 text-green-700 rounded px-1 py-0.5">P1: 8</div>
           <div className="bg-purple-100 text-purple-700 rounded px-1 py-0.5">P2: 10</div>
           <div className="bg-orange-100 text-orange-700 rounded px-1 py-0.5">P3: 8</div>
@@ -397,7 +397,7 @@ export function SkeletonSidebar() {
         <div className="grid grid-cols-3 gap-1 text-center text-[10px] mt-1">
           <div className="bg-pink-100 text-pink-700 rounded px-1 py-0.5">P4: 6</div>
           <div className="bg-cyan-100 text-cyan-700 rounded px-1 py-0.5">P5: 6</div>
-          <div className="bg-yellow-100 text-yellow-700 rounded px-1 py-0.5">P6: 6</div>
+          <div className="bg-amber-100 text-amber-700 rounded px-1 py-0.5">P6: 6</div>
         </div>
       </div>
     </aside>
