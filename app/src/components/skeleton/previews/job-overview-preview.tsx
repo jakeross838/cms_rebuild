@@ -43,6 +43,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AIFeaturesPanel, type AIFeatureCardProps } from '@/components/skeleton/ui'
+import { AIAssistantPanel } from './ai-assistant-panel'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1140,6 +1141,7 @@ export function JobOverviewPreview() {
 
         {/* Right sidebar - Takes 1 column */}
         <div className="col-span-1 space-y-4">
+          <AIAssistantPanel projectName="Smith Residence" defaultExpanded={true} />
           <WeatherWidget weather={mockWeather} />
           <MilestoneTracker milestones={mockMilestones} />
         </div>
