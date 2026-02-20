@@ -210,6 +210,58 @@ A full-featured estimating and budgeting system that supports the wide variety o
 - VE log with running total of savings achieved.
 - Client approval status per VE item.
 
+### 14. Eco-Friendly Estimating & Carbon Intelligence
+
+For builders and clients interested in sustainable construction, the estimating engine integrates with the Sustainability/ESG module to provide environmental impact visibility from the earliest design phase:
+
+#### 14a. Carbon Footprint Per Line Item
+- Each estimate line item can display estimated carbon footprint (kg CO2e) based on material quantity and carbon intensity from `material_carbon_data`.
+- Carbon data auto-populated when cost code or material is linked to carbon database.
+- Missing carbon data flagged for manual entry or AI lookup.
+
+#### 14b. Project Carbon Summary
+- Running total carbon footprint for entire estimate displayed in dashboard header.
+- Carbon intensity metric: kg CO2e per square foot, compared to:
+  - Builder's historical average for this project type
+  - Industry benchmark for region and tier
+- Carbon target setting: Builder can set a target (e.g., "20% below typical") and track estimate against it.
+
+#### 14c. Green Alternative Suggestions
+- AI suggests lower-carbon alternatives when higher-impact materials are specified:
+  - "Steel framing → consider wood framing: 45% lower carbon, $2,300 cost increase"
+  - "Standard concrete → low-carbon mix available: 30% lower carbon, 8% cost premium"
+- Suggestions drawn from `carbon_alternatives` table and AI analysis.
+- One-click swap to alternative with automatic price/carbon recalculation.
+
+#### 14d. Eco-Conscious Estimate Mode
+- Optional "Green Build" mode that:
+  - Prioritizes low-carbon materials in AI suggestions
+  - Shows carbon impact alongside cost in all views
+  - Auto-applies green material substitutions where cost-neutral
+  - Generates carbon comparison report vs. standard build
+
+#### 14e. Sustainability in Estimate Presentation
+- Client-facing estimate presentations can include optional sustainability section:
+  - Estimated total carbon footprint
+  - Comparison to typical home of this size
+  - Green certifications this build could qualify for
+  - Key eco-friendly materials included
+- Branded "Green Build Estimate" cover page option for eco-focused clients.
+
+#### 14f. ESG Compliance for Commercial/Multifamily
+- For builders with ESG reporting requirements:
+  - Estimate-level carbon projections feed into ESG reports
+  - Material certifications tracked per line item
+  - Recycled content percentage calculated
+  - Local sourcing percentage calculated
+
+#### 14g. Carbon-Cost Tradeoff Analysis
+- Interactive tool showing cost vs. carbon impact:
+  - X-axis: Additional cost over baseline
+  - Y-axis: Carbon reduction percentage
+  - Plot each potential substitution to help client choose optimal tradeoffs
+- Export as client decision matrix.
+
 ---
 
 ## Database Tables
@@ -235,7 +287,10 @@ v2_estimate_sections
 
 v2_estimate_line_items
   id, estimate_id, section_id, cost_code_id, assembly_id, description, item_type (line|allowance|exclusion|alternate),
-  quantity, unit, unit_cost, markup_pct, total, alt_group, notes, sort_order, ai_suggested, ai_confidence
+  quantity, unit, unit_cost, markup_pct, total, alt_group, notes, sort_order, ai_suggested, ai_confidence,
+  -- Sustainability fields
+  material_carbon_data_id, carbon_per_unit, total_carbon_kg, has_green_alternative,
+  recycled_content_pct, is_locally_sourced, eco_certifications
 
 v2_assemblies
   id, builder_id, name, description, category, parameter_unit, is_active, created_at
@@ -285,6 +340,12 @@ v2_escalation_indices
 v2_escalation_scenarios
   id, estimate_id, projected_start_date, total_escalation_amount,
   per_category_escalation, created_at
+
+v2_estimate_carbon_tracking
+  id, estimate_id, is_green_build_mode, carbon_target_kg,
+  carbon_target_per_sqft, total_carbon_kg, carbon_per_sqft,
+  vs_baseline_pct, vs_industry_benchmark_pct, recycled_content_pct,
+  local_materials_pct, certification_targets, last_calculated, created_at
 ```
 
 ---
@@ -367,6 +428,14 @@ POST   /api/v2/precon-budgets/:id/roll-to-construction  # Roll pre-con costs int
 POST   /api/v2/estimates/:id/escalation/calculate    # Calculate escalation for projected start date
 GET    /api/v2/escalation-indices                     # List available escalation indices
 PUT    /api/v2/escalation-indices/:id                 # Update custom escalation rate
+
+# Sustainability / Carbon Intelligence
+GET    /api/v2/estimates/:id/carbon-summary           # Get carbon footprint summary for estimate
+POST   /api/v2/estimates/:id/carbon/recalculate       # Recalculate carbon for all line items
+GET    /api/v2/estimates/:id/green-alternatives       # Get green alternative suggestions for all line items
+POST   /api/v2/estimates/:id/line-items/:lid/swap-green  # Swap line item with green alternative
+PUT    /api/v2/estimates/:id/carbon-settings          # Set carbon targets and green build mode
+GET    /api/v2/estimates/:id/carbon-tradeoffs         # Get cost vs. carbon tradeoff analysis
 ```
 
 ---
@@ -390,6 +459,11 @@ PUT    /api/v2/escalation-indices/:id                 # Update custom escalation
 | `ContingencyTracker` | Visual remaining contingency with draw history |
 | `ValueEngineeringLog` | Table of VE items with status and running savings total |
 | `AIConfidenceBadge` | Shows data-point count and confidence level on AI suggestions |
+| `CarbonSummaryBadge` | Shows total carbon footprint and vs. target/benchmark |
+| `GreenAlternativeSuggestion` | Inline suggestion to swap for lower-carbon material |
+| `CarbonTradeoffChart` | Interactive cost vs. carbon reduction scatterplot |
+| `EcoLineItemBadge` | Shows eco certifications and carbon data per line item |
+| `GreenBuildToggle` | Toggle for eco-conscious estimate mode |
 
 ---
 

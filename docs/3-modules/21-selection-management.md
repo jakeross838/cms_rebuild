@@ -138,6 +138,40 @@ Manages the entire client selection lifecycle for finishes, fixtures, appliances
 - Outstanding selections report: all items still pending, sorted by deadline urgency.
 - Export to PDF for client binder; export to Excel for internal tracking.
 
+### 11. Eco-Friendly & Sustainability Integration
+
+For clients interested in green building, selections integrate with the Sustainability/ESG module to surface environmental impact:
+
+- **Eco Badges**: Each selection option can display sustainability badges:
+  - 🌿 **Low Carbon** — Below average carbon footprint for this category
+  - ♻️ **Recycled Content** — Contains recycled materials (% displayed)
+  - 🏠 **Locally Sourced** — Manufactured within configurable radius (default 500 mi)
+  - 📜 **EPD Available** — Environmental Product Declaration on file
+  - 🏆 **Certified** — FSC, GREENGUARD, Cradle to Cradle, etc.
+
+- **Carbon Footprint Display**: Optional carbon footprint (kg CO2e) shown per option, sourced from `material_carbon_data` table.
+
+- **Green Comparison Mode**: Filter or sort options by eco-rating within a category. Side-by-side comparison includes carbon impact delta.
+
+- **Green Alternative Suggestions**: When a client selects a standard option, AI can suggest lower-carbon alternatives with the same functionality:
+  - "Consider FSC-certified oak flooring — 23% lower carbon footprint, similar price."
+  - Suggestions pulled from `carbon_alternatives` table.
+
+- **Cumulative Carbon Impact**: Dashboard widget showing total carbon footprint of all confirmed selections vs. baseline for project tier.
+
+- **ESG Selection Summary**: Export includes an optional sustainability section showing:
+  - Total carbon footprint of selections
+  - % recycled content across selections
+  - % locally sourced materials
+  - Certifications earned (if pursuing LEED, etc.)
+
+- **Client Eco Preferences**: Clients can set a "sustainability preference" level:
+  - **Standard** — No filtering, eco info shown but not prioritized
+  - **Eco-Conscious** — Eco badges highlighted, green alternatives suggested
+  - **Green Priority** — Eco options sorted first, carbon impact always visible
+
+- **Builder Configuration**: Builders control whether eco features are enabled per project, and can mark projects as "Green Build" to enable full sustainability tracking.
+
 ---
 
 ## Database Tables
@@ -151,7 +185,10 @@ v2_selection_categories
 v2_selection_options
   id, category_id, name, description, vendor_id, sku, model_number,
   unit_price, quantity, total_price, lead_time_days, availability_status,
-  source (builder|designer|client|catalog), is_recommended, sort_order, created_by, created_at
+  source (builder|designer|client|catalog), is_recommended, sort_order, created_by, created_at,
+  -- Sustainability fields
+  material_carbon_data_id, carbon_per_unit, recycled_content_pct, is_locally_sourced,
+  local_source_distance_miles, eco_certifications, eco_score
 
 v2_selection_option_media
   id, option_id, file_url, file_type (image|pdf|link), caption, sort_order, created_at

@@ -37,6 +37,15 @@ import {
   Send,
   Bell,
   Sparkles,
+  Activity,
+  Undo2,
+  Mic,
+  CalendarClock,
+  HeadphonesIcon,
+  Newspaper,
+  Globe,
+  TrendingUp,
+  Wallet,
 } from 'lucide-react'
 
 interface NavItem {
@@ -228,6 +237,83 @@ const navigation: NavItem[] = [
       { name: 'Dashboard Builder', href: '/skeleton/dashboards/builder', phase: 'Phase 6' },
     ],
   },
+
+  // NEW: Employee & Revenue (Planned Feature)
+  {
+    name: '13. Revenue & Bonuses',
+    icon: TrendingUp,
+    phase: 'Planned',
+    children: [
+      { name: 'Employee Dashboard', href: '/skeleton/revenue/employee', phase: 'Planned' },
+      { name: 'Revenue Attribution', href: '/skeleton/revenue/attribution', phase: 'Planned' },
+      { name: 'Bonus Calculator', href: '/skeleton/revenue/bonuses', phase: 'Planned' },
+      { name: 'Bonus Formulas', href: '/skeleton/revenue/formulas', phase: 'Planned' },
+    ],
+  },
+
+  // NEW: Expense Tracking (Planned Feature)
+  {
+    name: '14. Expenses',
+    icon: Wallet,
+    phase: 'Planned',
+    children: [
+      { name: 'Expense List', href: '/skeleton/expenses', phase: 'Planned' },
+      { name: 'Receipt Upload', href: '/skeleton/expenses/upload', phase: 'Planned' },
+      { name: 'Mileage Log', href: '/skeleton/expenses/mileage', phase: 'Planned' },
+      { name: 'Expense Approval', href: '/skeleton/expenses/approval', phase: 'Planned' },
+    ],
+  },
+
+  // NEW: Communications Hub (Planned Feature)
+  {
+    name: '15. Communications',
+    icon: MessageSquare,
+    phase: 'Planned',
+    children: [
+      { name: 'Inbox', href: '/skeleton/communications', phase: 'Planned' },
+      { name: 'Channels', href: '/skeleton/communications/channels', phase: 'Planned' },
+      { name: 'Direct Messages', href: '/skeleton/communications/dm', phase: 'Planned' },
+      { name: 'Email Capture', href: '/skeleton/communications/email', phase: 'Planned' },
+    ],
+  },
+
+  // NEW: Activity & History (Planned Feature)
+  {
+    name: '16. Activity & History',
+    icon: Activity,
+    phase: 'Planned',
+    children: [
+      { name: 'Activity Feed', href: '/skeleton/activity', phase: 'Planned' },
+      { name: 'History Log', href: '/skeleton/activity/history', phase: 'Planned' },
+      { name: 'Undo Actions', href: '/skeleton/activity/undo', phase: 'Planned' },
+    ],
+  },
+
+  // NEW: Meetings & Discussions (Planned Feature)
+  {
+    name: '17. Meetings',
+    icon: CalendarClock,
+    phase: 'Planned',
+    children: [
+      { name: 'Meeting List', href: '/skeleton/meetings', phase: 'Planned' },
+      { name: 'Meeting Templates', href: '/skeleton/meetings/templates', phase: 'Planned' },
+      { name: 'Voice Notes', href: '/skeleton/meetings/voice', phase: 'Planned' },
+      { name: 'Discussion Capture', href: '/skeleton/meetings/capture', phase: 'Planned' },
+    ],
+  },
+
+  // NEW: Community & Content (Planned Feature)
+  {
+    name: '18. Community',
+    icon: Globe,
+    phase: 'Future',
+    children: [
+      { name: 'Community Feed', href: '/skeleton/community', phase: 'Future' },
+      { name: 'Ask a Question', href: '/skeleton/community/ask', phase: 'Future' },
+      { name: 'Articles', href: '/skeleton/content', phase: 'Future' },
+      { name: 'Daily Tips', href: '/skeleton/content/tips', phase: 'Future' },
+    ],
+  },
 ]
 
 const settingsNav: NavItem[] = [
@@ -270,6 +356,8 @@ export function SkeletonSidebar() {
     if (phase === 'Phase 6') return 'bg-amber-100 text-amber-700'
     if (phase === 'Premium') return 'bg-gradient-to-r from-stone-600 to-stone-700 text-white'
     if (phase === 'All Phases') return 'bg-stone-200 text-stone-700'
+    if (phase === 'Planned') return 'bg-blue-100 text-blue-700'
+    if (phase === 'Future') return 'bg-purple-100 text-purple-700'
     return 'bg-muted text-muted-foreground'
   }
 
@@ -367,7 +455,7 @@ export function SkeletonSidebar() {
       <div className="px-4 py-3 border-b border-border flex-shrink-0">
         <div className="text-xs font-medium text-muted-foreground mb-2">IMPLEMENTATION PHASES</div>
         <div className="flex flex-wrap gap-1">
-          {['Phase 0', 'Phase 1', 'Phase 2', 'Phase 3', 'Phase 4', 'Phase 5', 'Phase 6'].map((phase) => (
+          {['Phase 0', 'Phase 1', 'Phase 2', 'Phase 3', 'Phase 4', 'Phase 5', 'Phase 6', 'Planned', 'Future'].map((phase) => (
             <span key={phase} className={cn('text-[10px] px-1.5 py-0.5 rounded', getPhaseColor(phase))}>
               {phase}
             </span>

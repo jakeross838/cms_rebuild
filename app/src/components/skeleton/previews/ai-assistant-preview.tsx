@@ -405,8 +405,18 @@ Would you like me to elaborate on any specific aspect?`,
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-stone-900 font-display">AI Project Assistant</h1>
-          <p className="text-warm-600 mt-1">Ask anything about your project • Powered by NotebookLM</p>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-stone-600 to-stone-800 rounded-xl">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold text-stone-900 font-display flex items-center gap-2">
+                Plaude
+                <span className="text-xs bg-stone-700 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">AI</span>
+              </h1>
+              <p className="text-warm-600">Ask anything about your project • Powered by Claude + Gemini</p>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -414,25 +424,28 @@ Would you like me to elaborate on any specific aspect?`,
           <div className="lg:col-span-2">
             <div className={`bg-warm-0 rounded-xl border border-warm-200 shadow-sm overflow-hidden flex flex-col ${isExpanded ? 'fixed inset-4 z-50' : 'h-[600px]'}`}>
               {/* Panel Header */}
-              <div className="px-4 py-3 border-b border-warm-200 bg-warm-50 flex items-center justify-between">
+              <div className="px-4 py-3 border-b border-warm-200 bg-stone-700 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-stone-100 rounded-lg">
-                    <Sparkles className="h-5 w-5 text-stone-600" />
+                  <div className="p-2 bg-white/10 rounded-lg">
+                    <Sparkles className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="font-medium text-warm-800">Project Intelligence</h2>
-                    <p className="text-xs text-warm-500">Johnson Kitchen Remodel</p>
+                    <h2 className="font-medium text-white flex items-center gap-2">
+                      Plaude
+                      <span className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded uppercase tracking-wide">AI</span>
+                    </h2>
+                    <p className="text-xs text-white/60">Johnson Kitchen Remodel</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="p-2 hover:bg-warm-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                   >
                     {isExpanded ? (
-                      <Minimize2 className="h-4 w-4 text-warm-500" />
+                      <Minimize2 className="h-4 w-4 text-white/60" />
                     ) : (
-                      <Maximize2 className="h-4 w-4 text-warm-500" />
+                      <Maximize2 className="h-4 w-4 text-white/60" />
                     )}
                   </button>
                 </div>

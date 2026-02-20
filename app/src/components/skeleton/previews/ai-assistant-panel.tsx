@@ -20,6 +20,9 @@ import {
   ExternalLink,
   Mic,
   Volume2,
+  Maximize2,
+  Minimize2,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -30,6 +33,7 @@ interface Message {
   content: string
   timestamp: Date
   sources?: Source[]
+  actions?: PlaudeAction[]
 }
 
 interface Source {
@@ -37,6 +41,7 @@ interface Source {
   type: 'daily_log' | 'invoice' | 'change_order' | 'contract' | 'email' | 'photo'
   excerpt: string
   date: string
+  url?: string
 }
 
 interface Insight {
@@ -46,11 +51,91 @@ interface Insight {
   severity?: 'low' | 'medium' | 'high'
 }
 
-interface AIAssistantPanelProps {
+interface PlaudeCapability {
+  name: string
+  description: string
+  action?: () => void
+}
+
+interface PlaudeAction {
+  label: string
+  type: 'navigate' | 'create' | 'update' | 'generate'
+  execute: () => void
+}
+
+interface PlaudePanelProps {
   projectName?: string
   defaultExpanded?: boolean
   className?: string
+  context?: PlaudeContext
 }
+
+interface PlaudeContext {
+  page: 'job-overview' | 'budget' | 'schedule' | 'change-order' | 'rfi' | 'daily-log' |
+        'estimate' | 'selections' | 'communications' | 'client-portal' | 'dashboard'
+  jobId?: string
+  recordType?: string
+  recordId?: string
+}
+
+// Page-specific capabilities
+const pageCapabilities: Record<string, PlaudeCapability[]> = {
+  'job-overview': [
+    { name: 'summarize', description: 'Summarize project status' },
+    { name: 'identify-risks', description: 'Identify risks' },
+    { name: 'generate-update', description: 'Draft client update' },
+    { name: 'suggest-actions', description: 'Suggest next actions' },
+  ],
+  'budget': [
+    { name: 'analyze-variance', description: 'Analyze variances' },
+    { name: 'forecast', description: 'Forecast final cost' },
+    { name: 'identify-overruns', description: 'Flag overruns' },
+    { name: 'compare-jobs', description: 'Compare to similar jobs' },
+  ],
+  'schedule': [
+    { name: 'analyze-delays', description: 'Analyze delays' },
+    { name: 'suggest-recovery', description: 'Suggest recovery plan' },
+    { name: 'predict-completion', description: 'Predict completion' },
+    { name: 'optimize', description: 'Optimize sequence' },
+  ],
+  'change-order': [
+    { name: 'draft-description', description: 'Draft CO description' },
+    { name: 'calculate-impact', description: 'Calculate impact' },
+    { name: 'find-precedents', description: 'Find similar COs' },
+    { name: 'justify-cost', description: 'Justify pricing' },
+  ],
+  'rfi': [
+    { name: 'search-specs', description: 'Search specs' },
+    { name: 'draft-response', description: 'Draft response' },
+    { name: 'find-precedents', description: 'Find similar RFIs' },
+  ],
+  'daily-log': [
+    { name: 'extract-issues', description: 'Extract issues' },
+    { name: 'summarize-week', description: 'Summarize week' },
+    { name: 'identify-patterns', description: 'Identify patterns' },
+  ],
+  'estimate': [
+    { name: 'validate-pricing', description: 'Validate pricing' },
+    { name: 'suggest-adjustments', description: 'Suggest adjustments' },
+    { name: 'compare-jobs', description: 'Compare to history' },
+    { name: 'identify-missing', description: 'Find missing items' },
+  ],
+  'client-portal': [
+    { name: 'answer-question', description: 'Answer questions' },
+    { name: 'explain-budget', description: 'Explain budget' },
+    { name: 'timeline-status', description: 'Timeline status' },
+    { name: 'next-steps', description: 'What\'s next?' },
+  ],
+  'dashboard': [
+    { name: 'portfolio-summary', description: 'Portfolio summary' },
+    { name: 'at-risk-projects', description: 'At-risk projects' },
+    { name: 'team-workload', description: 'Team workload' },
+    { name: 'cash-flow', description: 'Cash flow forecast' },
+  ],
+}
+
+// Legacy prop support
+interface AIAssistantPanelProps extends PlaudePanelProps {}
 
 // Mock data for the panel
 const mockMessages: Message[] = [
@@ -187,18 +272,23 @@ function AudioBriefingMini() {
   )
 }
 
-// Main Component
+// Main Component - Plaude AI Assistant
 export function AIAssistantPanel({
   projectName = 'This Project',
   defaultExpanded = true,
   className,
+  context = { page: 'job-overview' },
 }: AIAssistantPanelProps) {
   const [messages, setMessages] = useState<Message[]>(mockMessages)
   const [input, setInput] = useState('')
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
   const [activeTab, setActiveTab] = useState<'chat' | 'insights' | 'audio'>('chat')
   const [showSources, setShowSources] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Get capabilities for current page
+  const capabilities = pageCapabilities[context.page] || pageCapabilities['job-overview']
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -220,29 +310,56 @@ export function AIAssistantPanel({
 
     setMessages((prev) => [...prev, userMessage])
     setInput('')
+    setIsLoading(true)
 
-    // Simulate AI response
+    // Simulate Plaude AI response (routes to Claude or Gemini based on complexity)
     setTimeout(() => {
+      const inputLower = input.toLowerCase()
+
+      // Context-aware responses based on input
+      let response = ''
+      let sources: Source[] = []
+      let actions: PlaudeAction[] = []
+
+      if (inputLower.includes('risk') || inputLower.includes('concern')) {
+        response = `I've analyzed ${projectName} for risks:\n\n**Critical:**\n- Weather forecast shows rain Thu-Fri, may delay roofing by 2-3 days\n\n**Moderate:**\n- Plumbing rough-in inspection not yet scheduled\n- Cabinet lead time is 6 weeks, order deadline approaching\n\n**Low:**\n- Minor budget variance in framing (+$847)\n\nWould you like me to draft a mitigation plan?`
+        sources = [
+          { title: 'Weather API', type: 'daily_log', excerpt: '70% rain probability', date: 'Today' },
+          { title: 'Inspection Log', type: 'daily_log', excerpt: 'Pending inspections', date: 'Yesterday' },
+        ]
+        actions = [
+          { label: 'Create mitigation tasks', type: 'create', execute: () => console.log('Creating tasks') },
+          { label: 'Notify team', type: 'create', execute: () => console.log('Notifying') },
+        ]
+      } else if (inputLower.includes('budget') || inputLower.includes('cost')) {
+        response = `**Budget Status for ${projectName}:**\n\nContract: $485,000\nSpent to Date: $312,400 (64.4%)\nRemaining: $172,600\n\n**Variances:**\n- Framing: +$847 (weather delays)\n- Electrical: -$1,200 (favorable)\n- Plumbing: On track\n\nProjected Final: $482,153 (**$2,847 under budget**)`
+        sources = [
+          { title: 'Budget Report', type: 'invoice', excerpt: 'Current financials', date: 'Today' },
+        ]
+      } else if (inputLower.includes('schedule') || inputLower.includes('timeline')) {
+        response = `**Schedule Status:**\n\nBaseline Completion: March 15\nCurrent Projection: March 20 (+5 days)\n\n**Critical Path:**\n1. Roofing (weather dependent)\n2. HVAC rough-in\n3. Drywall\n\n**This Week:**\n- Mon-Wed: Complete framing punch list\n- Thu-Fri: Weather contingency\n- Sat: Roofing start (if weather permits)`
+        actions = [
+          { label: 'View Gantt chart', type: 'navigate', execute: () => console.log('Navigate to schedule') },
+        ]
+      } else {
+        response = `Based on the project data for ${projectName}:\n\n**Summary:** Project is 64% complete, currently 5 days behind baseline due to weather delays. Budget is tracking well at $2,847 under projection.\n\n**Key Items:**\n- Framing 100% complete, inspection passed\n- Roofing scheduled pending weather\n- Draw #4 awaiting client approval\n\nWhat specific aspect would you like me to dive into?`
+        sources = [
+          { title: 'Daily Log #47', type: 'daily_log', excerpt: 'Framing crew completed 2nd floor', date: 'Today' },
+          { title: 'Draw Request #4', type: 'invoice', excerpt: '$48,500 pending', date: 'Feb 15' },
+        ]
+      }
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Based on the project data for ${projectName}:
-
-**Answer:** This is a simulated response. In production, this would query NotebookLM with full project context including daily logs, invoices, and all documentation.
-
-Would you like more details?`,
+        content: response,
         timestamp: new Date(),
-        sources: [
-          {
-            title: 'Project Documents',
-            type: 'daily_log',
-            excerpt: 'Relevant data...',
-            date: 'Today',
-          },
-        ],
+        sources,
+        actions,
       }
       setMessages((prev) => [...prev, aiMessage])
-    }, 1000)
+      setIsLoading(false)
+    }, 1200)
   }
 
   const handleSuggestedQuestion = (question: string) => {
@@ -259,7 +376,7 @@ Would you like more details?`,
         )}
       >
         <Sparkles className="h-5 w-5" />
-        <span className="font-medium">AI Assistant</span>
+        <span className="font-medium">Plaude</span>
         <span className="text-xs bg-white/20 px-2 py-0.5 rounded">3 insights</span>
       </button>
     )
@@ -268,29 +385,32 @@ Would you like more details?`,
   return (
     <div className={cn('bg-warm-0 rounded-xl border border-warm-200 shadow-sm overflow-hidden', className)}>
       {/* Header */}
-      <div className="px-4 py-3 border-b border-warm-200 bg-warm-50 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-warm-200 bg-stone-700 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-stone-100 rounded-lg">
-            <Sparkles className="h-4 w-4 text-stone-600" />
+          <div className="p-1.5 bg-white/10 rounded-lg">
+            <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div>
-            <h3 className="font-medium text-warm-800 text-sm">AI Assistant</h3>
-            <p className="text-[10px] text-warm-500">Powered by NotebookLM</p>
+            <h3 className="font-medium text-white text-sm flex items-center gap-1.5">
+              Plaude
+              <span className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded uppercase tracking-wide">AI</span>
+            </h3>
+            <p className="text-[10px] text-white/60">Claude + Gemini powered</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <a
             href="/skeleton/ai-assistant"
-            className="p-1.5 hover:bg-warm-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
             title="Open full view"
           >
-            <ExternalLink className="h-4 w-4 text-warm-400" />
+            <ExternalLink className="h-4 w-4 text-white/60" />
           </a>
           <button
             onClick={() => setIsExpanded(false)}
-            className="p-1.5 hover:bg-warm-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
           >
-            <X className="h-4 w-4 text-warm-400" />
+            <X className="h-4 w-4 text-white/60" />
           </button>
         </div>
       </div>
@@ -326,6 +446,25 @@ Would you like more details?`,
       {/* Chat Tab */}
       {activeTab === 'chat' && (
         <div className="flex flex-col h-80">
+          {/* Capabilities - shown when no messages */}
+          {messages.length <= 1 && (
+            <div className="px-3 py-2 border-b border-warm-100 bg-warm-50">
+              <p className="text-[10px] text-warm-500 mb-1.5">On this page, I can:</p>
+              <div className="flex flex-wrap gap-1">
+                {capabilities.map((cap) => (
+                  <button
+                    key={cap.name}
+                    onClick={() => setInput(cap.description)}
+                    className="px-2 py-1 bg-warm-0 border border-warm-200 rounded-full text-[10px] text-warm-600 hover:border-stone-300 hover:bg-stone-50 transition-colors flex items-center gap-1"
+                  >
+                    <Zap className="h-2.5 w-2.5" />
+                    {cap.description}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
             {messages.map((message) => (
@@ -387,10 +526,39 @@ Would you like more details?`,
                         )}
                       </div>
                     )}
+
+                    {/* Action buttons from AI response */}
+                    {message.actions && message.actions.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-warm-200 space-y-1">
+                        {message.actions.map((action, i) => (
+                          <button
+                            key={i}
+                            onClick={action.execute}
+                            className="flex items-center gap-1.5 w-full text-left px-2 py-1.5 bg-stone-100 text-stone-700 rounded text-[10px] hover:bg-stone-200 transition-colors"
+                          >
+                            <Zap className="h-3 w-3" />
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             ))}
+
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="flex items-center gap-2 text-warm-500">
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+                <span className="text-xs text-warm-500">Plaude is thinking...</span>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
@@ -528,4 +696,6 @@ Would you like more details?`,
   )
 }
 
+// Export with both names for compatibility
+export const PlaudePanel = AIAssistantPanel
 export default AIAssistantPanel
