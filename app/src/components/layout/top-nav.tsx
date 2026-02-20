@@ -34,15 +34,15 @@ export function TopNav({ user }: TopNavProps) {
   }
 
   return (
-    <header className="h-16 bg-background border-b border-border flex items-center justify-between px-6">
+    <header className="h-16 bg-card/95 backdrop-blur supports-backdrop-blur:bg-card/60 border-b border-border/40 flex items-center justify-between px-6 z-10 shadow-sm">
       {/* Search */}
       <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="relative group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
           <Input
             type="search"
             placeholder="Search jobs, invoices, vendors..."
-            className="pl-10 bg-muted border-border"
+            className="pl-10 h-10 w-full rounded-full bg-muted/60 border-transparent hover:bg-muted focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all text-sm"
           />
         </div>
       </div>

@@ -70,8 +70,8 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here&apos;s what&apos;s happening.</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Welcome back. Here&apos;s an overview of your projects.</p>
       </div>
 
       {/* Stats grid */}
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">{stat.name}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
                     <p className="text-2xl font-bold text-foreground mt-1">
                       {stat.value}
                     </p>
@@ -103,8 +103,8 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Recent Jobs</CardTitle>
-              <CardDescription>Your most recently updated projects</CardDescription>
+              <CardTitle className="text-lg font-medium">Recent Jobs</CardTitle>
+              <CardDescription className="mt-1">Your most recently updated projects</CardDescription>
             </div>
             <Link
               href="/jobs"
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors border border-transparent hover:border-border/50"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -161,15 +161,15 @@ export default async function DashboardPage() {
         {/* Action Items */}
         <Card>
           <CardHeader>
-            <CardTitle>Action Items</CardTitle>
-            <CardDescription>Things that need your attention</CardDescription>
+            <CardTitle className="text-lg font-medium">Action Items</CardTitle>
+            <CardDescription className="mt-1">Things that need your attention</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {(pendingInvoices || 0) > 0 && (
                 <Link
                   href="/invoices?status=pending"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-orange-50/50 hover:bg-orange-50 transition-colors border border-orange-100"
                 >
                   <div className="p-2 rounded-lg bg-orange-100">
                     <AlertCircle className="h-5 w-5 text-orange-600" />
@@ -187,7 +187,7 @@ export default async function DashboardPage() {
               {(pendingDraws || 0) > 0 && (
                 <Link
                   href="/draws?status=pending"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-purple-50/50 hover:bg-purple-50 transition-colors border border-purple-100"
                 >
                   <div className="p-2 rounded-lg bg-purple-100">
                     <Clock className="h-5 w-5 text-purple-600" />

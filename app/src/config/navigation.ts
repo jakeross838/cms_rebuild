@@ -60,16 +60,6 @@ export const companyNav: NavItem[] = [
     icon: Briefcase,
     href: '/skeleton/jobs',
   },
-  {
-    label: 'Reports',
-    icon: BarChart3,
-    href: '/skeleton/reports',
-  },
-  {
-    label: 'Docs',
-    icon: BookOpen,
-    href: '/skeleton/docs',
-  },
 ]
 
 // Job-aggregate views: across all jobs
@@ -128,28 +118,6 @@ export const companyRightNav: NavItem[] = [
     ],
   },
   {
-    label: 'Intelligence',
-    icon: Brain,
-    items: [
-      { name: 'Price Intelligence', href: '/skeleton/price-intelligence', description: 'Material & labor pricing' },
-      { name: 'Marketing', href: '/skeleton/marketing', description: 'Portfolio & reviews' },
-    ],
-  },
-  {
-    label: 'Platform',
-    icon: Puzzle,
-    items: [
-      { name: 'Integrations', href: '/skeleton/api-marketplace', description: 'API & marketplace' },
-      { name: 'Onboarding', href: '/skeleton/onboarding', description: 'Setup wizard' },
-      { name: 'Data Migration', href: '/skeleton/data-migration', description: 'Import from other tools' },
-      { name: 'Subscription', href: '/skeleton/subscription', description: 'Plan & billing' },
-      { name: 'White Label', href: '/skeleton/white-label', description: 'Branding & customization' },
-      { name: 'Training', href: '/skeleton/training', description: 'Courses & certification' },
-      { name: 'Support', href: '/skeleton/support', description: 'Help center & tickets' },
-      { name: 'Admin', href: '/skeleton/admin', description: 'Platform analytics' },
-    ],
-  },
-  {
     label: 'Settings',
     icon: Settings,
     items: [
@@ -177,11 +145,6 @@ export const jobNav: NavItem[] = [
     label: 'Overview',
     icon: LayoutDashboard,
     href: '', // resolved to /skeleton/jobs/[id]
-  },
-  {
-    label: 'Property',
-    icon: Home,
-    href: '/property', // resolved to /skeleton/jobs/[id]/property
   },
 ]
 
@@ -235,10 +198,5 @@ export const jobPhaseNav: NavItem[] = [
       { name: 'Punch List', href: '/punch-list', description: 'Final punch tracking' },
       { name: 'Warranties', href: '/warranties', description: 'Warranty tracking' },
     ],
-  },
-  {
-    label: 'Reports',
-    icon: BarChart3,
-    href: '/reports',
   },
 ]

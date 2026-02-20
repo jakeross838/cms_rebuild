@@ -286,6 +286,17 @@ npm run validate            # Full validation (types + all vitest + e2e)
 
 ---
 
+## AI Collaboration Protocol (Gemini Planner & Claude Executor)
+
+When operating as the "Executor" AI (Claude Code) following a plan created by the "Planner" AI (Gemini):
+1. **Read the Plan**: Always start by reading `docs/current_plan.md` to understand the exact step-by-step tasks.
+2. **Execute Strictly**: Follow the architectural decisions, file structures, and code chunks specified in the plan. Do not deviate from the core design unless you hit a blocker.
+3. **Track Progress**: As you complete tasks, update `docs/current_plan.md` to mark them as `[x]` so the Planner AI (Gemini) knows what is done if a handoff occurs.
+4. **Validation**: Run the necessary linters and tests specified in the plan before marking a task complete.
+5. **Blockers & Handoff**: If you face a roadblock, stop execution and prompt the user to ask the Planner AI for a revised plan.
+
+---
+
 ## Do NOT
 
 - Skip the validation step — ever

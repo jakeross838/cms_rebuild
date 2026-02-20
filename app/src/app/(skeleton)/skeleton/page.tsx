@@ -65,14 +65,14 @@ function formatCurrency(value: number): string {
 
 export default function CompanyDashboard() {
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-6 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Good morning, Jake</h1>
-          <p className="text-gray-500">Here&apos;s what&apos;s happening at Ross Built today</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Good morning, Jake</h1>
+          <p className="text-muted-foreground mt-1">Here&apos;s what&apos;s happening at Ross Built today</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock className="h-4 w-4" />
           <span>Last updated: 5 min ago</span>
         </div>
@@ -80,47 +80,47 @@ export default function CompanyDashboard() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Link href="/skeleton/financial/dashboard" className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all group">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">Cash Position</span>
-            <DollarSign className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+        <Link href="/skeleton/financial/dashboard" className="bg-card rounded-xl border border-border/60 p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-muted-foreground">Cash Position</span>
+            <DollarSign className="h-4 w-4 text-muted-foreground/70 group-hover:text-primary transition-colors" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.cashPosition.value)}</div>
-          <div className="flex items-center gap-1 mt-1 text-sm text-green-600">
-            <TrendingUp className="h-3 w-3" />
+          <div className="text-3xl font-bold text-foreground">{formatCurrency(metrics.cashPosition.value)}</div>
+          <div className="flex items-center gap-1 mt-2 text-sm font-medium text-emerald-600">
+            <TrendingUp className="h-4 w-4" />
             <span>+{formatCurrency(metrics.cashPosition.change)}</span>
           </div>
         </Link>
 
-        <Link href="/skeleton/financial/receivables" className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all group">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">Accounts Receivable</span>
-            <FileText className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+        <Link href="/skeleton/financial/receivables" className="bg-card rounded-xl border border-border/60 p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-muted-foreground">Accounts Receivable</span>
+            <FileText className="h-4 w-4 text-muted-foreground/70 group-hover:text-primary transition-colors" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.accountsReceivable.value)}</div>
-          <div className="flex items-center gap-1 mt-1 text-sm text-amber-600">
-            <AlertTriangle className="h-3 w-3" />
+          <div className="text-3xl font-bold text-foreground">{formatCurrency(metrics.accountsReceivable.value)}</div>
+          <div className="flex items-center gap-1 mt-2 text-sm font-medium text-amber-600">
+            <AlertTriangle className="h-4 w-4" />
             <span>{metrics.accountsReceivable.overdue} overdue</span>
           </div>
         </Link>
 
-        <Link href="/skeleton/financial/payables" className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all group">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">Accounts Payable</span>
-            <FileText className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+        <Link href="/skeleton/financial/payables" className="bg-card rounded-xl border border-border/60 p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-muted-foreground">Accounts Payable</span>
+            <FileText className="h-4 w-4 text-muted-foreground/70 group-hover:text-primary transition-colors" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.accountsPayable.value)}</div>
-          <div className="text-sm text-gray-500 mt-1">{metrics.accountsPayable.dueSoon} due this week</div>
+          <div className="text-3xl font-bold text-foreground">{formatCurrency(metrics.accountsPayable.value)}</div>
+          <div className="text-sm font-medium text-muted-foreground mt-2">{metrics.accountsPayable.dueSoon} due this week</div>
         </Link>
 
-        <Link href="/skeleton/financial/profitability" className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all group">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">Gross Margin</span>
-            <TrendingUp className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+        <Link href="/skeleton/financial/profitability" className="bg-card rounded-xl border border-border/60 p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-muted-foreground">Gross Margin</span>
+            <TrendingUp className="h-4 w-4 text-muted-foreground/70 group-hover:text-primary transition-colors" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{metrics.grossMargin.value}%</div>
-          <div className="flex items-center gap-1 mt-1 text-sm text-red-600">
-            <TrendingDown className="h-3 w-3" />
+          <div className="text-3xl font-bold text-foreground">{metrics.grossMargin.value}%</div>
+          <div className="flex items-center gap-1 mt-2 text-sm font-medium text-destructive">
+            <TrendingDown className="h-4 w-4" />
             <span>{metrics.grossMargin.change}% this month</span>
           </div>
         </Link>
@@ -128,53 +128,53 @@ export default function CompanyDashboard() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Active Jobs */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div className="lg:col-span-2 bg-card rounded-xl border border-border/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 py-4 border-b border-border/40 flex items-center justify-between bg-card">
             <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-gray-600" />
-              <h2 className="font-semibold text-gray-900">Active Jobs</h2>
-              <span className="text-sm text-gray-500">({activeJobs.length})</span>
+              <Briefcase className="h-5 w-5 text-muted-foreground" />
+              <h2 className="text-lg font-medium text-foreground">Active Jobs</h2>
+              <span className="text-sm font-medium text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">{activeJobs.length}</span>
             </div>
-            <Link href="/skeleton/jobs" className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
-              View all <ArrowRight className="h-3 w-3" />
+            <Link href="/skeleton/jobs" className="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1">
+              View all <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-border/40 flex-1">
             {activeJobs.map((job) => (
-              <Link key={job.id} href={`/skeleton/jobs/${job.id}`} className="block px-4 py-3 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <span className="font-medium text-gray-900">{job.name}</span>
-                    <span className="text-gray-400 mx-2">•</span>
-                    <span className="text-sm text-gray-500">{job.client}</span>
+              <Link key={job.id} href={`/skeleton/jobs/${job.id}`} className="block px-5 py-4 hover:bg-secondary/40 transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium text-foreground">{job.name}</span>
+                    <span className="text-muted-foreground/30">•</span>
+                    <span className="text-sm text-muted-foreground">{job.client}</span>
                   </div>
                   <div className={cn(
-                    'flex items-center gap-1 text-xs px-2 py-1 rounded-full',
-                    job.status === 'on-track' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                    'flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border',
+                    job.status === 'on-track' ? 'bg-emerald-50 text-emerald-700 border-emerald-200/50' : 'bg-amber-50 text-amber-700 border-amber-200/50'
                   )}>
-                    {job.status === 'on-track' ? <CheckCircle2 className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+                    {job.status === 'on-track' ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
                     {job.status === 'on-track' ? 'On Track' : 'Attention'}
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
                   <div className="flex-1">
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                    <div className="flex items-center justify-between text-xs font-medium text-muted-foreground mb-1.5">
                       <span>Progress</span>
                       <span>{job.progress}%</span>
                     </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
                       <div
                         className={cn(
-                          'h-full rounded-full',
-                          job.status === 'on-track' ? 'bg-green-500' : 'bg-amber-500'
+                          'h-full rounded-full transition-all duration-500',
+                          job.status === 'on-track' ? 'bg-primary' : 'bg-amber-500'
                         )}
                         style={{ width: `${job.progress}%` }}
                       />
                     </div>
                   </div>
                   <div className="text-right text-sm">
-                    <div className="text-gray-500">Next: {job.nextMilestone}</div>
-                    <div className="text-gray-400 text-xs">{job.nextDate}</div>
+                    <div className="font-medium text-foreground">{job.nextMilestone}</div>
+                    <div className="text-muted-foreground text-xs mt-0.5">{job.nextDate}</div>
                   </div>
                 </div>
               </Link>
@@ -185,48 +185,48 @@ export default function CompanyDashboard() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Today's Schedule */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+          <div className="bg-card rounded-xl border border-border/60 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-border/40 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-gray-600" />
-                <h2 className="font-semibold text-gray-900">Today</h2>
+                <Calendar className="h-5 w-5 text-muted-foreground" />
+                <h2 className="text-lg font-medium text-foreground">Today</h2>
               </div>
-              <Link href="/skeleton/operations/calendar" className="text-sm text-blue-600 hover:text-blue-700">
+              <Link href="/skeleton/operations/calendar" className="text-sm font-medium text-primary hover:text-primary/80">
                 Calendar
               </Link>
             </div>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border/40 p-2">
               {upcomingToday.map((item, idx) => (
-                <div key={idx} className="px-4 py-2 flex items-center gap-3">
-                  <span className="text-sm font-medium text-gray-500 w-16">{item.time}</span>
+                <div key={idx} className="px-3 py-2.5 flex items-center gap-3 hover:bg-secondary/40 rounded-lg transition-colors cursor-pointer">
+                  <span className="text-sm font-medium text-muted-foreground w-16">{item.time}</span>
                   <div className={cn(
                     'w-2 h-2 rounded-full',
                     item.type === 'inspection' ? 'bg-blue-500' :
-                    item.type === 'meeting' ? 'bg-purple-500' : 'bg-green-500'
+                      item.type === 'meeting' ? 'bg-purple-500' : 'bg-emerald-500'
                   )} />
-                  <span className="text-sm text-gray-700 flex-1">{item.event}</span>
+                  <span className="text-sm font-medium text-foreground flex-1">{item.event}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h2 className="font-semibold text-gray-900 mb-3">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-2">
-              <Link href="/skeleton/leads" className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 transition-colors">
+          <div className="bg-card rounded-xl border border-border/60 shadow-sm p-5">
+            <h2 className="text-lg font-medium text-foreground mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <Link href="/skeleton/leads" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
                 <Target className="h-4 w-4 text-blue-500" />
                 New Lead
               </Link>
-              <Link href="/skeleton/estimates" className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 transition-colors">
-                <FileText className="h-4 w-4 text-green-500" />
+              <Link href="/skeleton/estimates" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
+                <FileText className="h-4 w-4 text-emerald-500" />
                 New Estimate
               </Link>
-              <Link href="/skeleton/invoices" className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 transition-colors">
+              <Link href="/skeleton/invoices" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
                 <DollarSign className="h-4 w-4 text-amber-500" />
                 Enter Invoice
               </Link>
-              <Link href="/skeleton/directory/vendors" className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 transition-colors">
+              <Link href="/skeleton/directory/vendors" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
                 <Users className="h-4 w-4 text-purple-500" />
                 Add Vendor
               </Link>
@@ -238,29 +238,29 @@ export default function CompanyDashboard() {
       {/* Alerts & AI Insights */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Alerts */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div className="bg-card rounded-xl border border-border/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 py-4 border-b border-border/40 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
-              <h2 className="font-semibold text-gray-900">Alerts</h2>
-              <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">
+              <h2 className="text-lg font-medium text-foreground">Alerts</h2>
+              <span className="bg-destructive/10 text-destructive text-xs font-semibold px-2 py-0.5 rounded-full ml-2">
                 {alerts.filter(a => a.severity === 'high').length} urgent
               </span>
             </div>
           </div>
-          <div className="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+          <div className="divide-y divide-border/40 max-h-72 overflow-y-auto flex-1">
             {alerts.map((alert, idx) => (
-              <Link key={idx} href={alert.action} className="block px-4 py-3 hover:bg-gray-50 transition-colors">
-                <div className="flex items-start gap-3">
+              <Link key={idx} href={alert.action} className="block px-5 py-4 hover:bg-secondary/40 transition-colors group">
+                <div className="flex items-start gap-4">
                   <div className={cn(
-                    'w-2 h-2 rounded-full mt-2 flex-shrink-0',
-                    alert.severity === 'high' ? 'bg-red-500' :
-                    alert.severity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+                    'w-2 h-2 rounded-full mt-1.5 flex-shrink-0',
+                    alert.severity === 'high' ? 'bg-destructive' :
+                      alert.severity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
                   )} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-700">{alert.message}</p>
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{alert.message}</p>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors flex-shrink-0" />
                 </div>
               </Link>
             ))}
@@ -268,19 +268,19 @@ export default function CompanyDashboard() {
         </div>
 
         {/* AI Insights */}
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-amber-200/50 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-amber-600" />
-            <h2 className="font-semibold text-gray-900">AI Insights</h2>
+        <div className="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 dark:from-indigo-950/20 dark:to-blue-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/50 overflow-hidden shadow-sm flex flex-col">
+          <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900/50 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-medium text-foreground">AI Insights</h2>
           </div>
-          <div className="divide-y divide-amber-200/50">
+          <div className="divide-y divide-indigo-100/50 dark:divide-indigo-900/30 flex-1 p-2">
             {aiInsights.map((insight, idx) => (
-              <div key={idx} className="px-4 py-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <insight.icon className="h-4 w-4 text-amber-600" />
-                  <span className="font-medium text-sm text-gray-900">{insight.title}</span>
+              <div key={idx} className="px-3 py-3 rounded-lg hover:bg-white/50 dark:hover:bg-slate-900/50 transition-colors m-1">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <insight.icon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  <span className="font-semibold text-sm text-indigo-950 dark:text-indigo-300">{insight.title}</span>
                 </div>
-                <p className="text-sm text-gray-600">{insight.message}</p>
+                <p className="text-sm text-indigo-900/80 dark:text-indigo-200/70 leading-relaxed">{insight.message}</p>
               </div>
             ))}
           </div>
@@ -288,20 +288,20 @@ export default function CompanyDashboard() {
       </div>
 
       {/* Footer Stats */}
-      <div className="bg-gray-50 rounded-xl border border-gray-200 p-4">
+      <div className="bg-card rounded-xl border border-border/60 p-5 shadow-sm">
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-600">{metrics.activeJobs} Active Jobs</span>
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2.5">
+              <Briefcase className="h-5 w-5 text-muted-foreground" />
+              <span className="font-medium text-foreground">{metrics.activeJobs} <span className="text-muted-foreground font-normal">Active Jobs</span></span>
             </div>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-600">{formatCurrency(metrics.activeBudget)} Under Contract</span>
+            <div className="flex items-center gap-2.5">
+              <DollarSign className="h-5 w-5 text-muted-foreground" />
+              <span className="font-medium text-foreground">{formatCurrency(metrics.activeBudget)} <span className="text-muted-foreground font-normal">Under Contract</span></span>
             </div>
           </div>
-          <Link href="/skeleton/overview" className="text-blue-600 hover:text-blue-700 flex items-center gap-1">
-            System Overview <ArrowRight className="h-3 w-3" />
+          <Link href="/skeleton/overview" className="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-primary/10 transition-colors">
+            System Overview <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>

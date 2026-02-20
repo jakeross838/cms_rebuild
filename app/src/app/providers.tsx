@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider, isServer } from '@tanstack/react-quer
 
 
 import { AuthProvider } from '@/lib/auth/auth-context'
+import { SideDrawerProvider } from '@/contexts/side-drawer-context'
 import type { PermissionsMode, UserProfile } from '@/types/auth'
 
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -53,8 +54,12 @@ export default function Providers({
         initialProfile={initialProfile}
         permissionsMode={permissionsMode}
       >
-        {children}
+        <SideDrawerProvider>
+          {children}
+        </SideDrawerProvider>
       </AuthProvider>
     </QueryClientProvider>
   )
 }
+
+

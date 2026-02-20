@@ -52,6 +52,7 @@ This document defines the complete system architecture for the RossOS Constructi
 | **PO Line Item** | Individual PO item | Purchase Order | → Cost Code |
 | **Invoice** | Vendor bill | Job | → Vendor, → PO (optional) |
 | **Invoice Allocation** | Cost code breakdown | Invoice | → Cost Code, → Budget Line |
+| **RFI** | Request for Information | Job | → Change Order |
 | **Draw** | Client billing (AIA format) | Job | → Invoices |
 | **Draw Line** | Individual draw item | Draw | → Budget Line |
 
@@ -290,7 +291,10 @@ LEAD ──► JOB ──► ESTIMATE ──► PROPOSAL ──► CONTRACT
     ┌─────────┼─────────┐
     │         │         │
     ▼         ▼         ▼
-   PO     INVOICE   CHANGE ORDER
+   PO     INVOICE      RFI
+    │         │         │
+    │    ┌────┘         ▼
+    │    │         CHANGE ORDER
     │         │         │
     │    ┌────┘         │
     │    │              │

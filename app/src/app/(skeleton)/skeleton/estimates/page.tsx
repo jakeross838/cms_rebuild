@@ -75,7 +75,7 @@ export default function EstimatesListSkeleton() {
             'Multi-view presentation: Client summary, builder detail, bank/AIA format',
             'Pre-construction cost tracking: Soft costs separate from construction budget',
             'Cost escalation calculator: Project material/labor increases for delayed starts',
-            'One-click convert to budget or proposal',
+            'One-click convert to Budget: Automatically maps Estimate Lines to Locked Budget Lines',
           ]}
           connections={[
             { name: 'Selections Catalog', type: 'input', description: 'All product/material choices and pricing' },
