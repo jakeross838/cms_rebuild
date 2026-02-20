@@ -202,7 +202,7 @@ export default function CompanyDashboard() {
                   <div className={cn(
                     'w-2 h-2 rounded-full',
                     item.type === 'inspection' ? 'bg-stone-500' :
-                      item.type === 'meeting' ? 'bg-purple-500' : 'bg-emerald-500'
+                      item.type === 'meeting' ? 'bg-warm-500' : 'bg-emerald-500'
                   )} />
                   <span className="text-sm font-medium text-foreground flex-1">{item.event}</span>
                 </div>
@@ -227,7 +227,7 @@ export default function CompanyDashboard() {
                 Enter Invoice
               </Link>
               <Link href="/skeleton/directory/vendors" className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary hover:bg-secondary/80 text-sm font-medium text-foreground transition-colors border border-border/50">
-                <Users className="h-4 w-4 text-purple-500" />
+                <Users className="h-4 w-4 text-stone-600" />
                 Add Vendor
               </Link>
             </div>
@@ -268,19 +268,19 @@ export default function CompanyDashboard() {
         </div>
 
         {/* AI Insights */}
-        <div className="bg-gradient-to-br from-indigo-50/50 to-stone-50/50 dark:from-indigo-950/20 dark:to-stone-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/50 overflow-hidden shadow-sm flex flex-col">
-          <div className="px-5 py-4 border-b border-indigo-100 dark:border-indigo-900/50 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+        <div className="bg-gradient-to-br from-indigo-50/50 to-stone-50/50 dark:from-indigo-950/20 dark:to-stone-950/20 rounded-xl border border-stone-100 dark:border-indigo-900/50 overflow-hidden shadow-sm flex flex-col">
+          <div className="px-5 py-4 border-b border-stone-100 dark:border-indigo-900/50 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-stone-600 dark:text-indigo-400" />
             <h2 className="text-lg font-medium text-foreground">AI Insights</h2>
           </div>
           <div className="divide-y divide-indigo-100/50 dark:divide-indigo-900/30 flex-1 p-2">
             {aiInsights.map((insight, idx) => (
-              <div key={idx} className="px-3 py-3 rounded-lg hover:bg-white/50 dark:hover:bg-slate-900/50 transition-colors m-1">
+              <div key={idx} className="px-3 py-3 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-900/50 transition-colors m-1">
                 <div className="flex items-center gap-2.5 mb-2">
-                  <insight.icon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  <insight.icon className="h-4 w-4 text-stone-600 dark:text-indigo-400" />
                   <span className="font-semibold text-sm text-indigo-950 dark:text-indigo-300">{insight.title}</span>
                 </div>
-                <p className="text-sm text-indigo-900/80 dark:text-indigo-200/70 leading-relaxed">{insight.message}</p>
+                <p className="text-sm text-stone-900/80 dark:text-indigo-200/70 leading-relaxed">{insight.message}</p>
               </div>
             ))}
           </div>

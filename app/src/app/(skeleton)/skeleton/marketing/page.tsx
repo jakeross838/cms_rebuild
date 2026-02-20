@@ -50,15 +50,15 @@ export default function MarketingPortfolioPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-purple-100 rounded-lg">
-            <Megaphone className="h-6 w-6 text-purple-700" />
+          <div className="p-2 bg-warm-100 rounded-lg">
+            <Megaphone className="h-6 w-6 text-warm-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Marketing & Portfolio</h1>
             <p className="text-sm text-muted-foreground">Module 37 -- Showcase projects, manage reviews, track marketing ROI</p>
           </div>
         </div>
-        <button className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">+ New Case Study</button>
+        <button className="px-4 py-2 text-sm bg-stone-700 text-white rounded-lg hover:bg-stone-800">+ New Case Study</button>
       </div>
 
       {/* Metric Cards */}
@@ -79,7 +79,7 @@ export default function MarketingPortfolioPage() {
           <div className="text-xs text-green-600 mt-1">+12% vs last month</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Globe className="h-4 w-4 text-indigo-600" />Website Visitors</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Globe className="h-4 w-4 text-stone-600" />Website Visitors</div>
           <div className="text-2xl font-bold mt-1">3,842</div>
           <div className="text-xs text-green-600 mt-1">+18% vs last month</div>
         </div>
@@ -93,7 +93,7 @@ export default function MarketingPortfolioPage() {
               <h3 className="font-semibold">Portfolio Projects</h3>
               <p className="text-xs text-muted-foreground mt-0.5">Showcase your best work</p>
             </div>
-            <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">View All</button>
+            <button className="text-sm text-stone-600 hover:text-warm-700 font-medium">View All</button>
           </div>
           <div className="divide-y">
             {portfolioProjects.map((p, i) => (
@@ -203,7 +203,7 @@ export default function MarketingPortfolioPage() {
 
       {/* Case Studies */}
       <div className="bg-card border rounded-lg p-4">
-        <h3 className="font-semibold mb-3 flex items-center gap-2"><FileText className="h-4 w-4 text-purple-600" />Case Studies</h3>
+        <h3 className="font-semibold mb-3 flex items-center gap-2"><FileText className="h-4 w-4 text-stone-600" />Case Studies</h3>
         <div className="space-y-2">
           {caseStudies.map((c, i) => (
             <div key={i} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
@@ -214,7 +214,7 @@ export default function MarketingPortfolioPage() {
                   {c.views > 0 && <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{c.views.toLocaleString()} views</span>}
                 </div>
               </div>
-              <button className="text-sm text-purple-600 hover:text-purple-700">Edit</button>
+              <button className="text-sm text-stone-600 hover:text-warm-700">Edit</button>
             </div>
           ))}
         </div>

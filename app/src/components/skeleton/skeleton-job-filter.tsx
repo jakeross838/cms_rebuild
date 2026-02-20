@@ -121,7 +121,7 @@ const statusConfig = {
   active: { label: 'Active', icon: Circle, color: 'text-green-500', bgColor: 'bg-green-50' },
   completed: { label: 'Completed', icon: CheckCircle2, color: 'text-stone-500', bgColor: 'bg-stone-50' },
   'on-hold': { label: 'On Hold', icon: AlertCircle, color: 'text-amber-500', bgColor: 'bg-amber-50' },
-  'pre-construction': { label: 'Pre-Con', icon: Clock, color: 'text-purple-500', bgColor: 'bg-purple-50' },
+  'pre-construction': { label: 'Pre-Con', icon: Clock, color: 'text-stone-600', bgColor: 'bg-warm-50' },
 }
 
 // Job-specific sidebar navigation

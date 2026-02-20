@@ -122,7 +122,7 @@ function ProgressBar({ currentStep, totalSteps }: { currentStep: number; totalSt
           key={i}
           className={cn(
             'h-1.5 flex-1 rounded-full transition-all duration-300',
-            i < currentStep ? 'bg-stone-700' : i === currentStep ? 'bg-blue-400' : 'bg-warm-200'
+            i < currentStep ? 'bg-stone-700' : i === currentStep ? 'bg-stone-400' : 'bg-warm-200'
           )}
         />
       ))}

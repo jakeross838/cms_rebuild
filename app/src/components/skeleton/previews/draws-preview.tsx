@@ -493,7 +493,7 @@ function ProgressBar({ draws }: { draws: Draw[] }) {
     lender_review: 'bg-amber-400',
     submitted: 'bg-stone-500',
     approved_internal: 'bg-stone-400',
-    internal_review: 'bg-indigo-400',
+    internal_review: 'bg-stone-400',
     draft: 'bg-warm-300',
     revision_requested: 'bg-red-400',
   }

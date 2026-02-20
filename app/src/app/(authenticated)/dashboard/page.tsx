@@ -48,14 +48,14 @@ export default async function DashboardPage() {
       value: pendingInvoices || 0,
       icon: Receipt,
       href: '/invoices?status=pending',
-      color: 'text-orange-600 bg-orange-100',
+      color: 'text-sand-600 bg-sand-100',
     },
     {
       name: 'Pending Draws',
       value: pendingDraws || 0,
       icon: FileText,
       href: '/draws?status=pending',
-      color: 'text-purple-600 bg-purple-100',
+      color: 'text-stone-600 bg-warm-100',
     },
     {
       name: 'This Month Revenue',
@@ -169,36 +169,36 @@ export default async function DashboardPage() {
               {(pendingInvoices || 0) > 0 && (
                 <Link
                   href="/invoices?status=pending"
-                  className="flex items-center gap-4 p-4 rounded-xl bg-orange-50/50 hover:bg-orange-50 transition-colors border border-orange-100"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-sand-50/50 hover:bg-sand-50 transition-colors border border-orange-100"
                 >
-                  <div className="p-2 rounded-lg bg-orange-100">
-                    <AlertCircle className="h-5 w-5 text-orange-600" />
+                  <div className="p-2 rounded-lg bg-sand-100">
+                    <AlertCircle className="h-5 w-5 text-sand-600" />
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-orange-900">
                       {pendingInvoices} invoice{pendingInvoices !== 1 ? 's' : ''} pending approval
                     </div>
-                    <div className="text-sm text-orange-700">Review and approve</div>
+                    <div className="text-sm text-sand-700">Review and approve</div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-orange-600" />
+                  <ArrowRight className="h-5 w-5 text-sand-600" />
                 </Link>
               )}
 
               {(pendingDraws || 0) > 0 && (
                 <Link
                   href="/draws?status=pending"
-                  className="flex items-center gap-4 p-4 rounded-xl bg-purple-50/50 hover:bg-purple-50 transition-colors border border-purple-100"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-warm-50/50 hover:bg-warm-50 transition-colors border border-warm-100"
                 >
-                  <div className="p-2 rounded-lg bg-purple-100">
-                    <Clock className="h-5 w-5 text-purple-600" />
+                  <div className="p-2 rounded-lg bg-warm-100">
+                    <Clock className="h-5 w-5 text-stone-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium text-purple-900">
+                    <div className="font-medium text-stone-800">
                       {pendingDraws} draw{pendingDraws !== 1 ? 's' : ''} awaiting client approval
                     </div>
-                    <div className="text-sm text-purple-700">Follow up with clients</div>
+                    <div className="text-sm text-warm-700">Follow up with clients</div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-purple-600" />
+                  <ArrowRight className="h-5 w-5 text-stone-600" />
                 </Link>
               )}
 

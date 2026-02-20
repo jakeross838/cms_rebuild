@@ -51,10 +51,10 @@ interface PageSpecProps {
 const phaseColors: Record<string, { bg: string; text: string; border: string }> = {
   'Phase 0 - Foundation': { bg: 'bg-stone-500', text: 'text-stone-700', border: 'border-stone-200' },
   'Phase 1 - Communication': { bg: 'bg-green-500', text: 'text-green-700', border: 'border-green-200' },
-  'Phase 2 - Vendor Collaboration': { bg: 'bg-purple-500', text: 'text-purple-700', border: 'border-purple-200' },
-  'Phase 3 - Advanced PM': { bg: 'bg-orange-500', text: 'text-orange-700', border: 'border-orange-200' },
-  'Phase 4 - Time & Payments': { bg: 'bg-pink-500', text: 'text-pink-700', border: 'border-pink-200' },
-  'Phase 5 - Enhanced Portals': { bg: 'bg-cyan-500', text: 'text-cyan-700', border: 'border-cyan-200' },
+  'Phase 2 - Vendor Collaboration': { bg: 'bg-warm-500', text: 'text-warm-700', border: 'border-warm-200' },
+  'Phase 3 - Advanced PM': { bg: 'bg-sand-500', text: 'text-sand-700', border: 'border-sand-200' },
+  'Phase 4 - Time & Payments': { bg: 'bg-warm-500', text: 'text-sand-700', border: 'border-warm-200' },
+  'Phase 5 - Enhanced Portals': { bg: 'bg-stone-500', text: 'text-stone-700', border: 'border-stone-200' },
   'Phase 6 - Advanced Features': { bg: 'bg-amber-500', text: 'text-amber-700', border: 'border-amber-200' },
 }
 
@@ -204,7 +204,7 @@ export function PageSpec({
         <Section
           title="System Connections"
           icon={Link2}
-          iconColor="text-purple-600"
+          iconColor="text-stone-600"
           count={connections.length}
           defaultOpen={true}
         >
@@ -249,7 +249,7 @@ export function PageSpec({
             )}
             {bidirectionalConnections.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-medium text-purple-600 mb-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-stone-600 mb-1.5">
                   <ArrowLeftRight className="h-3 w-3" />
                   Two-way sync
                 </div>
@@ -257,7 +257,7 @@ export function PageSpec({
                   {bidirectionalConnections.map((conn) => (
                     <span
                       key={conn.name}
-                      className="px-2 py-1 bg-purple-50 text-purple-700 rounded text-xs"
+                      className="px-2 py-1 bg-warm-50 text-warm-700 rounded text-xs"
                       title={conn.description}
                     >
                       {conn.name}
@@ -283,7 +283,7 @@ export function PageSpec({
             {aiFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-100"
+                className="p-3 bg-warm-50 rounded-lg border border-amber-100"
               >
                 <div className="flex items-center gap-1.5 mb-1">
                   <Sparkles className="h-3.5 w-3.5 text-amber-600" />
@@ -306,7 +306,7 @@ export function PageSpec({
         <Section
           title="Data Model"
           icon={Database}
-          iconColor="text-orange-600"
+          iconColor="text-sand-600"
           count={dataFields.length}
         >
           <div className="overflow-x-auto">

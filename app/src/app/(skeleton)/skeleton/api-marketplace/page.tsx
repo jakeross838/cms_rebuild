@@ -52,8 +52,8 @@ export default function ApiMarketplacePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-orange-100 rounded-lg">
-            <Puzzle className="h-6 w-6 text-orange-700" />
+          <div className="p-2 bg-sand-100 rounded-lg">
+            <Puzzle className="h-6 w-6 text-sand-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">API & Integration Marketplace</h1>
@@ -89,7 +89,7 @@ export default function ApiMarketplacePage() {
           <div className="text-xs text-muted-foreground mt-1">Across all integrations</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Webhook className="h-4 w-4 text-purple-600" />Active Webhooks</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Webhook className="h-4 w-4 text-stone-600" />Active Webhooks</div>
           <div className="text-2xl font-bold mt-1">{webhooks.length}</div>
           <div className="text-xs text-muted-foreground mt-1">{webhooks.reduce((s, w) => s + w.fires, 0)} events fired</div>
         </div>
@@ -127,7 +127,7 @@ export default function ApiMarketplacePage() {
                   <button className="p-1.5 hover:bg-muted rounded"><Settings className="h-4 w-4 text-muted-foreground" /></button>
                 </div>
               ) : (
-                <button className="px-3 py-1.5 text-sm border rounded-lg text-orange-600 border-orange-200 hover:bg-orange-50">Connect</button>
+                <button className="px-3 py-1.5 text-sm border rounded-lg text-sand-600 border-sand-200 hover:bg-sand-50">Connect</button>
               )}
             </div>
           ))}
@@ -138,8 +138,8 @@ export default function ApiMarketplacePage() {
         {/* API Keys */}
         <div className="bg-card border rounded-lg">
           <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold flex items-center gap-2"><Key className="h-4 w-4 text-orange-600" />API Keys</h3>
-            <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">+ Generate Key</button>
+            <h3 className="font-semibold flex items-center gap-2"><Key className="h-4 w-4 text-sand-600" />API Keys</h3>
+            <button className="text-sm text-sand-600 hover:text-sand-700 font-medium">+ Generate Key</button>
           </div>
           <div className="divide-y">
             {apiKeys.map((key, i) => (
@@ -160,8 +160,8 @@ export default function ApiMarketplacePage() {
         {/* Webhooks */}
         <div className="bg-card border rounded-lg">
           <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold flex items-center gap-2"><Webhook className="h-4 w-4 text-purple-600" />Webhooks</h3>
-            <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">+ Add Webhook</button>
+            <h3 className="font-semibold flex items-center gap-2"><Webhook className="h-4 w-4 text-stone-600" />Webhooks</h3>
+            <button className="text-sm text-sand-600 hover:text-sand-700 font-medium">+ Add Webhook</button>
           </div>
           <div className="divide-y">
             {webhooks.map((wh, i) => (
@@ -179,12 +179,12 @@ export default function ApiMarketplacePage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-sand-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-5 w-5 text-orange-600 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-sand-600 mt-0.5" />
           <div>
             <div className="font-medium text-orange-800">Integration Insight</div>
-            <p className="text-sm text-orange-700 mt-1">Your QuickBooks sync is running smoothly with 99.8% success rate. Consider connecting DocuSign to eliminate paper signatures -- builders who use e-signatures close contracts 4 days faster on average. Your Zapier webhook has fired 142 times this month with zero failures.</p>
+            <p className="text-sm text-sand-700 mt-1">Your QuickBooks sync is running smoothly with 99.8% success rate. Consider connecting DocuSign to eliminate paper signatures -- builders who use e-signatures close contracts 4 days faster on average. Your Zapier webhook has fired 142 times this month with zero failures.</p>
           </div>
         </div>
       </div>

@@ -81,7 +81,7 @@ export default function TrainingCertificationPage() {
           <div className="text-xs text-amber-600 mt-1">Badges earned</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Video className="h-4 w-4 text-purple-600" />Upcoming Webinars</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground"><Video className="h-4 w-4 text-stone-600" />Upcoming Webinars</div>
           <div className="text-2xl font-bold mt-1">{upcomingWebinars.length}</div>
           <div className="text-xs text-muted-foreground mt-1">Available to register</div>
         </div>
@@ -114,7 +114,7 @@ export default function TrainingCertificationPage() {
                 <div className="flex-1">
                   <div className="font-medium flex items-center gap-2">
                     {course.title}
-                    <span className={cn('text-xs px-1.5 py-0.5 rounded', course.level === 'Beginner' ? 'bg-green-100 text-green-700' : course.level === 'Intermediate' ? 'bg-stone-100 text-stone-700' : 'bg-purple-100 text-purple-700')}>{course.level}</span>
+                    <span className={cn('text-xs px-1.5 py-0.5 rounded', course.level === 'Beginner' ? 'bg-green-100 text-green-700' : course.level === 'Intermediate' ? 'bg-stone-100 text-stone-700' : 'bg-warm-100 text-warm-700')}>{course.level}</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">{course.modules} modules -- {course.duration}</div>
                   {course.progress > 0 && course.progress < 100 && (
@@ -164,7 +164,7 @@ export default function TrainingCertificationPage() {
 
           {/* Upcoming Webinars */}
           <div className="bg-card border rounded-lg p-4">
-            <h3 className="font-semibold mb-3 flex items-center gap-2"><Calendar className="h-4 w-4 text-purple-600" />Upcoming Webinars</h3>
+            <h3 className="font-semibold mb-3 flex items-center gap-2"><Calendar className="h-4 w-4 text-stone-600" />Upcoming Webinars</h3>
             <div className="space-y-2">
               {upcomingWebinars.map((webinar, i) => (
                 <div key={i} className="p-2.5 bg-muted/30 rounded-lg">

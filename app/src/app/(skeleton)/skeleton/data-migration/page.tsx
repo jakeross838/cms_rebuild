@@ -63,8 +63,8 @@ export default function DataMigrationPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-cyan-100 rounded-lg">
-            <DatabaseZap className="h-6 w-6 text-cyan-700" />
+          <div className="p-2 bg-stone-100 rounded-lg">
+            <DatabaseZap className="h-6 w-6 text-stone-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Data Migration</h1>
@@ -75,7 +75,7 @@ export default function DataMigrationPage() {
           <button className="px-3 py-1.5 text-sm border rounded-lg text-muted-foreground hover:bg-accent flex items-center gap-1.5">
             <RefreshCw className="h-4 w-4" /> Retry Failed
           </button>
-          <button className="px-4 py-2 text-sm bg-cyan-600 text-white rounded-lg hover:bg-cyan-700">Resume Migration</button>
+          <button className="px-4 py-2 text-sm bg-stone-700 text-white rounded-lg hover:bg-stone-600">Resume Migration</button>
         </div>
       </div>
 
@@ -88,11 +88,11 @@ export default function DataMigrationPage() {
           </div>
           <div className="flex items-center gap-4">
             {totalErrors > 0 && <span className="text-sm text-amber-600 flex items-center gap-1"><AlertTriangle className="h-4 w-4" />{totalErrors} errors</span>}
-            <div className="text-3xl font-bold text-cyan-600">{overallPercent}%</div>
+            <div className="text-3xl font-bold text-stone-600">{overallPercent}%</div>
           </div>
         </div>
         <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-          <div className="h-full bg-cyan-500 rounded-full transition-all" style={{ width: `${overallPercent}%` }} />
+          <div className="h-full bg-stone-500 rounded-full transition-all" style={{ width: `${overallPercent}%` }} />
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export default function DataMigrationPage() {
                 return (
                   <div key={i} className="p-4 flex items-center gap-4">
                     <div className="flex-shrink-0">
-                      {item.status === 'complete' ? <CheckCircle2 className="h-5 w-5 text-green-500" /> : item.status === 'in_progress' ? <RefreshCw className="h-5 w-5 text-cyan-500 animate-spin" /> : <Clock className="h-5 w-5 text-muted-foreground/40" />}
+                      {item.status === 'complete' ? <CheckCircle2 className="h-5 w-5 text-green-500" /> : item.status === 'in_progress' ? <RefreshCw className="h-5 w-5 text-stone-600 animate-spin" /> : <Clock className="h-5 w-5 text-muted-foreground/40" />}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
@@ -117,7 +117,7 @@ export default function DataMigrationPage() {
                         <span className="text-xs text-muted-foreground">{item.migrated.toLocaleString()} / {item.total.toLocaleString()}</span>
                       </div>
                       <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className={cn('h-full rounded-full', item.status === 'complete' ? 'bg-green-500' : item.status === 'in_progress' ? 'bg-cyan-500' : 'bg-muted-foreground/20')} style={{ width: `${pct}%` }} />
+                        <div className={cn('h-full rounded-full', item.status === 'complete' ? 'bg-green-500' : item.status === 'in_progress' ? 'bg-stone-500' : 'bg-muted-foreground/20')} style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                     {item.errors > 0 && <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{item.errors} errors</span>}
@@ -177,12 +177,12 @@ export default function DataMigrationPage() {
             <h3 className="font-semibold mb-3">Migration Sources</h3>
             <div className="space-y-2">
               {migrationSources.map((s, i) => (
-                <div key={i} className={cn('flex items-center gap-3 p-2.5 rounded-lg border', s.status === 'active' ? 'border-cyan-300 bg-cyan-50' : s.supported ? 'border-transparent bg-muted/30 hover:bg-muted/50 cursor-pointer' : 'border-transparent bg-muted/20 opacity-60')}>
+                <div key={i} className={cn('flex items-center gap-3 p-2.5 rounded-lg border', s.status === 'active' ? 'border-cyan-300 bg-stone-50' : s.supported ? 'border-transparent bg-muted/30 hover:bg-muted/50 cursor-pointer' : 'border-transparent bg-muted/20 opacity-60')}>
                   <span className="text-lg">{s.icon}</span>
                   <div className="flex-1">
                     <div className="text-sm font-medium flex items-center gap-2">
                       {s.name}
-                      {s.status === 'active' && <CircleDot className="h-3.5 w-3.5 text-cyan-600" />}
+                      {s.status === 'active' && <CircleDot className="h-3.5 w-3.5 text-stone-600" />}
                       {s.status === 'coming' && <span className="text-xs text-muted-foreground">Coming Soon</span>}
                     </div>
                     <div className="text-xs text-muted-foreground">{s.description}</div>
@@ -211,12 +211,12 @@ export default function DataMigrationPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-cyan-50 to-stone-50 border border-cyan-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-cyan-50 to-stone-50 border border-stone-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-5 w-5 text-cyan-600 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-stone-600 mt-0.5" />
           <div>
             <div className="font-medium text-cyan-800">AI Migration Assistant</div>
-            <p className="text-sm text-cyan-700 mt-1">6 vendor records had name variations (e.g., "ABC Electric LLC" vs "ABC Electrical") -- auto-merged into single records. 2 cost code mappings need your review: Buildertrend uses combined "Site Work" while RossOS splits into "Grading" and "Utilities". Budget migration is 76% complete and on track to finish in ~15 minutes.</p>
+            <p className="text-sm text-stone-700 mt-1">6 vendor records had name variations (e.g., "ABC Electric LLC" vs "ABC Electrical") -- auto-merged into single records. 2 cost code mappings need your review: Buildertrend uses combined "Site Work" while RossOS splits into "Grading" and "Utilities". Budget migration is 76% complete and on track to finish in ~15 minutes.</p>
           </div>
         </div>
       </div>

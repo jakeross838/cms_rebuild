@@ -81,7 +81,7 @@ export function ApprovalModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-warm-1000"
         onClick={onClose}
       />
 
@@ -416,7 +416,7 @@ export function SubmissionForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-warm-1000" onClick={onClose} />
 
       <div className="relative bg-background rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
         {/* Header */}

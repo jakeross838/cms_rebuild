@@ -256,10 +256,10 @@ export function SkeletonSidebar() {
     if (!phase) return 'bg-muted text-muted-foreground'
     if (phase === 'Phase 0') return 'bg-stone-100 text-stone-700'
     if (phase === 'Phase 1') return 'bg-green-100 text-green-700'
-    if (phase === 'Phase 2') return 'bg-purple-100 text-purple-700'
-    if (phase === 'Phase 3') return 'bg-orange-100 text-orange-700'
-    if (phase === 'Phase 4') return 'bg-pink-100 text-pink-700'
-    if (phase === 'Phase 5') return 'bg-cyan-100 text-cyan-700'
+    if (phase === 'Phase 2') return 'bg-warm-100 text-warm-700'
+    if (phase === 'Phase 3') return 'bg-sand-100 text-sand-700'
+    if (phase === 'Phase 4') return 'bg-warm-100 text-sand-700'
+    if (phase === 'Phase 5') return 'bg-stone-100 text-stone-700'
     if (phase === 'Phase 6') return 'bg-amber-100 text-amber-700'
     return 'bg-muted text-muted-foreground'
   }
@@ -391,12 +391,12 @@ export function SkeletonSidebar() {
         <div className="grid grid-cols-4 gap-1 text-center text-[10px]">
           <div className="bg-stone-100 text-stone-700 rounded px-1 py-0.5">P0: 68</div>
           <div className="bg-green-100 text-green-700 rounded px-1 py-0.5">P1: 8</div>
-          <div className="bg-purple-100 text-purple-700 rounded px-1 py-0.5">P2: 10</div>
-          <div className="bg-orange-100 text-orange-700 rounded px-1 py-0.5">P3: 8</div>
+          <div className="bg-warm-100 text-warm-700 rounded px-1 py-0.5">P2: 10</div>
+          <div className="bg-sand-100 text-sand-700 rounded px-1 py-0.5">P3: 8</div>
         </div>
         <div className="grid grid-cols-3 gap-1 text-center text-[10px] mt-1">
-          <div className="bg-pink-100 text-pink-700 rounded px-1 py-0.5">P4: 6</div>
-          <div className="bg-cyan-100 text-cyan-700 rounded px-1 py-0.5">P5: 6</div>
+          <div className="bg-warm-100 text-sand-700 rounded px-1 py-0.5">P4: 6</div>
+          <div className="bg-stone-100 text-stone-700 rounded px-1 py-0.5">P5: 6</div>
           <div className="bg-amber-100 text-amber-700 rounded px-1 py-0.5">P6: 6</div>
         </div>
       </div>

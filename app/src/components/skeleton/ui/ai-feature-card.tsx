@@ -222,7 +222,7 @@ export function AIFeatureCard({
                   }}
                   className={cn(
                     'px-2 py-1 text-xs font-medium rounded transition-colors',
-                    'bg-white/50 hover:bg-white',
+                    'bg-warm-50 hover:bg-white',
                     config.text
                   )}
                 >

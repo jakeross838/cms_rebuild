@@ -186,10 +186,10 @@ const categories: Category[] = [
 const colorClasses: Record<string, { bg: string; text: string; badge: string; border: string }> = {
   blue: { bg: 'bg-stone-50', text: 'text-stone-700', badge: 'bg-stone-100', border: 'border-stone-200' },
   green: { bg: 'bg-green-50', text: 'text-green-700', badge: 'bg-green-100', border: 'border-green-200' },
-  purple: { bg: 'bg-purple-50', text: 'text-purple-700', badge: 'bg-purple-100', border: 'border-purple-200' },
-  orange: { bg: 'bg-orange-50', text: 'text-orange-700', badge: 'bg-orange-100', border: 'border-orange-200' },
-  pink: { bg: 'bg-pink-50', text: 'text-pink-700', badge: 'bg-pink-100', border: 'border-pink-200' },
-  cyan: { bg: 'bg-cyan-50', text: 'text-cyan-700', badge: 'bg-cyan-100', border: 'border-cyan-200' },
+  purple: { bg: 'bg-warm-50', text: 'text-warm-700', badge: 'bg-warm-100', border: 'border-warm-200' },
+  orange: { bg: 'bg-sand-50', text: 'text-sand-700', badge: 'bg-sand-100', border: 'border-sand-200' },
+  pink: { bg: 'bg-warm-50', text: 'text-sand-700', badge: 'bg-warm-100', border: 'border-warm-200' },
+  cyan: { bg: 'bg-stone-50', text: 'text-stone-700', badge: 'bg-stone-100', border: 'border-stone-200' },
   yellow: { bg: 'bg-amber-50', text: 'text-amber-700', badge: 'bg-amber-100', border: 'border-amber-200' },
   gray: { bg: 'bg-warm-50', text: 'text-warm-700', badge: 'bg-warm-100', border: 'border-warm-200' },
 }

@@ -51,15 +51,15 @@ export default function CustomerSupportPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-teal-100 rounded-lg">
-            <LifeBuoy className="h-6 w-6 text-teal-700" />
+          <div className="p-2 bg-stone-100 rounded-lg">
+            <LifeBuoy className="h-6 w-6 text-stone-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Customer Support</h1>
             <p className="text-sm text-muted-foreground">Module 46 -- Get help, browse articles, manage support tickets</p>
           </div>
         </div>
-        <button className="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-1.5">
+        <button className="px-4 py-2 text-sm bg-stone-700 text-white rounded-lg hover:bg-stone-600 flex items-center gap-1.5">
           <MessageCircle className="h-4 w-4" /> Live Chat
         </button>
       </div>
@@ -83,7 +83,7 @@ export default function CustomerSupportPage() {
       {/* Contact Options */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-card border rounded-lg p-4 flex items-center gap-3 hover:bg-muted/30 cursor-pointer">
-          <div className="p-2 bg-teal-100 rounded-lg"><MessageCircle className="h-5 w-5 text-teal-600" /></div>
+          <div className="p-2 bg-stone-100 rounded-lg"><MessageCircle className="h-5 w-5 text-stone-600" /></div>
           <div>
             <div className="font-medium text-sm">Live Chat</div>
             <div className="text-xs text-green-600">Online -- Avg response: 2 min</div>
@@ -97,7 +97,7 @@ export default function CustomerSupportPage() {
           </div>
         </div>
         <div className="bg-card border rounded-lg p-4 flex items-center gap-3 hover:bg-muted/30 cursor-pointer">
-          <div className="p-2 bg-purple-100 rounded-lg"><Video className="h-5 w-5 text-purple-600" /></div>
+          <div className="p-2 bg-warm-100 rounded-lg"><Video className="h-5 w-5 text-stone-600" /></div>
           <div>
             <div className="font-medium text-sm">Schedule a Call</div>
             <div className="text-xs text-muted-foreground">1-on-1 video support session</div>
@@ -111,7 +111,7 @@ export default function CustomerSupportPage() {
           <div className="bg-card border rounded-lg">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="font-semibold flex items-center gap-2"><Star className="h-4 w-4 text-amber-500" />Popular Articles</h3>
-              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium">View All</button>
+              <button className="text-sm text-stone-600 hover:text-stone-700 font-medium">View All</button>
             </div>
             <div className="divide-y">
               {popularArticles.map((article, i) => (
@@ -137,7 +137,7 @@ export default function CustomerSupportPage() {
           <div className="bg-card border rounded-lg">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="font-semibold">Your Tickets</h3>
-              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium">+ New Ticket</button>
+              <button className="text-sm text-stone-600 hover:text-stone-700 font-medium">+ New Ticket</button>
             </div>
             <div className="divide-y">
               {tickets.map((ticket, i) => (
@@ -161,7 +161,7 @@ export default function CustomerSupportPage() {
 
         {/* Knowledge Base Categories */}
         <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3 flex items-center gap-2"><BookOpen className="h-4 w-4 text-teal-600" />Knowledge Base</h3>
+          <h3 className="font-semibold mb-3 flex items-center gap-2"><BookOpen className="h-4 w-4 text-stone-600" />Knowledge Base</h3>
           <div className="space-y-2">
             {kbCategories.map((cat, i) => (
               <button key={i} className="w-full flex items-center justify-between p-2.5 bg-muted/30 rounded-lg hover:bg-muted/50 text-left">
@@ -177,12 +177,12 @@ export default function CustomerSupportPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-stone-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-5 w-5 text-teal-600 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-stone-600 mt-0.5" />
           <div>
             <div className="font-medium text-teal-800">AI Support Assistant</div>
-            <p className="text-sm text-teal-700 mt-1">Based on your recent activity, you might find these helpful: "How to handle vendor name variations in invoice processing" and "Setting up approval thresholds for POs over $10K". Your open ticket about QuickBooks duplicates is being investigated -- typical resolution time is 4 hours.</p>
+            <p className="text-sm text-stone-700 mt-1">Based on your recent activity, you might find these helpful: "How to handle vendor name variations in invoice processing" and "Setting up approval thresholds for POs over $10K". Your open ticket about QuickBooks duplicates is being investigated -- typical resolution time is 4 hours.</p>
           </div>
         </div>
       </div>

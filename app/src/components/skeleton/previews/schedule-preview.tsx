@@ -138,8 +138,8 @@ const TASK_TYPE_CONFIG: Record<TaskType, { label: string; barColor: string; bgCo
   delivery:     { label: 'Delivery', barColor: 'bg-amber-500', bgColor: 'bg-amber-200', badgeColor: 'bg-amber-100 text-amber-700', icon: Truck },
   deadline:     { label: 'Deadline', barColor: 'bg-red-500', bgColor: 'bg-red-200', badgeColor: 'bg-red-100 text-red-700', icon: Flag },
   milestone:    { label: 'Milestone', barColor: 'bg-emerald-500', bgColor: 'bg-emerald-200', badgeColor: 'bg-emerald-100 text-emerald-700', icon: Diamond },
-  survey:       { label: 'Survey', barColor: 'bg-stone-500', bgColor: 'bg-cyan-200', badgeColor: 'bg-stone-100 text-stone-700', icon: Ruler },
-  meeting:      { label: 'Meeting', barColor: 'bg-stone-500', bgColor: 'bg-teal-200', badgeColor: 'bg-stone-100 text-stone-700', icon: Users },
+  survey:       { label: 'Survey', barColor: 'bg-stone-500', bgColor: 'bg-warm-200', badgeColor: 'bg-stone-100 text-stone-700', icon: Ruler },
+  meeting:      { label: 'Meeting', barColor: 'bg-stone-500', bgColor: 'bg-warm-200', badgeColor: 'bg-stone-100 text-stone-700', icon: Users },
   weather_hold: { label: 'Weather Hold', barColor: 'bg-warm-400', bgColor: 'bg-warm-200', badgeColor: 'bg-warm-100 text-warm-600', icon: CloudOff },
 }
 

@@ -56,8 +56,8 @@ export default function OnboardingWizardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-indigo-100 rounded-lg">
-            <Rocket className="h-6 w-6 text-indigo-700" />
+          <div className="p-2 bg-stone-100 rounded-lg">
+            <Rocket className="h-6 w-6 text-stone-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Onboarding Wizard</h1>
@@ -74,10 +74,10 @@ export default function OnboardingWizardPage() {
             <h2 className="text-lg font-semibold">Setup Progress</h2>
             <p className="text-sm text-muted-foreground">{completedSteps} of {totalSteps} steps complete -- estimated {15} minutes remaining</p>
           </div>
-          <div className="text-3xl font-bold text-indigo-600">{progressPercent}%</div>
+          <div className="text-3xl font-bold text-stone-600">{progressPercent}%</div>
         </div>
         <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-          <div className="h-full bg-indigo-500 rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
+          <div className="h-full bg-stone-500 rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
         </div>
       </div>
 
@@ -92,13 +92,13 @@ export default function OnboardingWizardPage() {
             {setupSteps.map((step) => {
               const Icon = step.icon
               return (
-                <div key={step.id} className={cn('p-4 flex items-center gap-4 transition-colors', step.status === 'current' ? 'bg-indigo-50/50' : 'hover:bg-muted/30')}>
+                <div key={step.id} className={cn('p-4 flex items-center gap-4 transition-colors', step.status === 'current' ? 'bg-stone-50/50' : 'hover:bg-muted/30')}>
                   <div className="flex-shrink-0">
                     {step.status === 'complete' ? (
                       <CheckCircle2 className="h-6 w-6 text-green-500" />
                     ) : step.status === 'current' ? (
-                      <div className="h-6 w-6 rounded-full border-2 border-indigo-500 flex items-center justify-center">
-                        <div className="h-2.5 w-2.5 rounded-full bg-indigo-500" />
+                      <div className="h-6 w-6 rounded-full border-2 border-stone-500 flex items-center justify-center">
+                        <div className="h-2.5 w-2.5 rounded-full bg-stone-500" />
                       </div>
                     ) : (
                       <Circle className="h-6 w-6 text-muted-foreground/40" />
@@ -110,13 +110,13 @@ export default function OnboardingWizardPage() {
                   <div className="flex-1">
                     <div className="font-medium flex items-center gap-2">
                       {step.title}
-                      {step.status === 'current' && <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Current</span>}
+                      {step.status === 'current' && <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full">Current</span>}
                     </div>
                     <div className="text-xs text-muted-foreground">{step.description}</div>
                   </div>
                   <div className="text-xs text-muted-foreground">{step.time}</div>
                   {step.status === 'current' ? (
-                    <button className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-1">
+                    <button className="px-3 py-1.5 text-sm bg-stone-700 text-white rounded-lg hover:bg-stone-800 flex items-center gap-1">
                       Continue <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   ) : step.status === 'pending' ? (
@@ -134,7 +134,7 @@ export default function OnboardingWizardPage() {
         <div className="space-y-6">
           {/* Quick Start Guides */}
           <div className="bg-card border rounded-lg p-4">
-            <h3 className="font-semibold mb-3 flex items-center gap-2"><Play className="h-4 w-4 text-indigo-600" />Quick Start Guides</h3>
+            <h3 className="font-semibold mb-3 flex items-center gap-2"><Play className="h-4 w-4 text-stone-600" />Quick Start Guides</h3>
             <div className="space-y-2">
               {quickStartGuides.map((guide, i) => (
                 <button key={i} className="w-full flex items-center justify-between p-2.5 bg-muted/30 rounded-lg hover:bg-muted/50 text-left">
@@ -159,11 +159,11 @@ export default function OnboardingWizardPage() {
                     <div className="text-sm font-medium">{s.type}</div>
                     <div className="text-xs text-muted-foreground">{s.description}</div>
                   </div>
-                  <span className="text-sm font-bold text-indigo-600">{s.count}</span>
+                  <span className="text-sm font-bold text-stone-600">{s.count}</span>
                 </div>
               ))}
             </div>
-            <button className="w-full mt-3 px-3 py-2 text-sm border border-indigo-200 text-indigo-600 rounded-lg hover:bg-indigo-50">
+            <button className="w-full mt-3 px-3 py-2 text-sm border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-50">
               Load Sample Data
             </button>
           </div>
@@ -171,12 +171,12 @@ export default function OnboardingWizardPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
+      <div className="bg-warm-50 border border-stone-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-5 w-5 text-indigo-600 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-stone-600 mt-0.5" />
           <div>
-            <div className="font-medium text-indigo-800">AI Setup Assistant</div>
-            <p className="text-sm text-indigo-700 mt-1">Based on your company profile (custom residential builder, 8 employees), I recommend connecting QuickBooks next for seamless financial tracking. Most builders your size complete setup in 25 minutes and see ROI within the first week.</p>
+            <div className="font-medium text-stone-800">AI Setup Assistant</div>
+            <p className="text-sm text-stone-700 mt-1">Based on your company profile (custom residential builder, 8 employees), I recommend connecting QuickBooks next for seamless financial tracking. Most builders your size complete setup in 25 minutes and see ROI within the first week.</p>
           </div>
         </div>
       </div>

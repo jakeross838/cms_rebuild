@@ -49,8 +49,8 @@ export default function SubscriptionBillingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-violet-100 rounded-lg">
-            <CreditCard className="h-6 w-6 text-violet-700" />
+          <div className="p-2 bg-warm-100 rounded-lg">
+            <CreditCard className="h-6 w-6 text-warm-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Subscription & Billing</h1>
@@ -63,8 +63,8 @@ export default function SubscriptionBillingPage() {
       <div className="bg-card border rounded-lg p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-violet-100 rounded-xl">
-              <Star className="h-8 w-8 text-violet-600" />
+            <div className="p-3 bg-warm-100 rounded-xl">
+              <Star className="h-8 w-8 text-stone-600" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export default function SubscriptionBillingPage() {
           </div>
           <div className="flex items-center gap-2">
             <button className="px-4 py-2 text-sm border rounded-lg text-muted-foreground hover:bg-accent">Change Plan</button>
-            <button className="px-4 py-2 text-sm bg-violet-600 text-white rounded-lg hover:bg-violet-700">Upgrade to Enterprise</button>
+            <button className="px-4 py-2 text-sm bg-stone-700 text-white rounded-lg hover:bg-stone-600">Upgrade to Enterprise</button>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function SubscriptionBillingPage() {
               </div>
               <div className="text-2xl font-bold">{m.current}<span className="text-sm font-normal text-muted-foreground"> / {m.limit} {m.unit}</span></div>
               <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mt-2">
-                <div className={cn('h-full rounded-full', pct > 80 ? 'bg-amber-500' : 'bg-violet-500')} style={{ width: `${pct}%` }} />
+                <div className={cn('h-full rounded-full', pct > 80 ? 'bg-amber-500' : 'bg-warm-500')} style={{ width: `${pct}%` }} />
               </div>
               <div className="text-xs text-muted-foreground mt-1">{pct}% used</div>
             </div>
@@ -112,10 +112,10 @@ export default function SubscriptionBillingPage() {
           </div>
           <div className="grid grid-cols-3 divide-x">
             {plans.map((plan, i) => (
-              <div key={i} className={cn('p-4', plan.current && 'bg-violet-50/50')}>
+              <div key={i} className={cn('p-4', plan.current && 'bg-warm-50/50')}>
                 <div className="flex items-center gap-2 mb-2">
                   <h4 className="font-semibold text-lg">{plan.name}</h4>
-                  {plan.current && <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">Current</span>}
+                  {plan.current && <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded-full">Current</span>}
                 </div>
                 <div className="mb-4">
                   <span className="text-2xl font-bold">${plan.price}</span>
@@ -152,7 +152,7 @@ export default function SubscriptionBillingPage() {
                 <div className="text-xs text-muted-foreground">Expires 08/2028</div>
               </div>
             </div>
-            <button className="w-full mt-3 text-sm text-violet-600 hover:text-violet-700 font-medium">Update Payment Method</button>
+            <button className="w-full mt-3 text-sm text-stone-600 hover:text-warm-700 font-medium">Update Payment Method</button>
           </div>
 
           {/* Billing History */}
@@ -167,7 +167,7 @@ export default function SubscriptionBillingPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Paid</span>
-                    <button className="text-xs text-violet-600 hover:text-violet-700">PDF</button>
+                    <button className="text-xs text-stone-600 hover:text-warm-700">PDF</button>
                   </div>
                 </div>
               ))}
@@ -178,12 +178,12 @@ export default function SubscriptionBillingPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-violet-50 to-purple-50 border border-warm-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-5 w-5 text-violet-600 mt-0.5" />
+          <Sparkles className="h-5 w-5 text-stone-600 mt-0.5" />
           <div>
             <div className="font-medium text-violet-800">Usage Insight</div>
-            <p className="text-sm text-violet-700 mt-1">You are using 53% of your user seats and 48% of active jobs. At your current growth rate, you will hit the Pro plan job limit in approximately 4 months. Consider annual billing to save 20% ($838/year).</p>
+            <p className="text-sm text-warm-700 mt-1">You are using 53% of your user seats and 48% of active jobs. At your current growth rate, you will hit the Pro plan job limit in approximately 4 months. Consider annual billing to save 20% ($838/year).</p>
           </div>
         </div>
       </div>

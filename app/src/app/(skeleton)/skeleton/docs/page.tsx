@@ -36,8 +36,8 @@ const phaseColors: Record<string, string> = {
   '1': 'bg-stone-100 text-stone-800',
   '2': 'bg-green-100 text-green-800',
   '3': 'bg-amber-100 text-amber-800',
-  '4': 'bg-purple-100 text-purple-800',
-  '5': 'bg-orange-100 text-orange-800',
+  '4': 'bg-warm-100 text-warm-800',
+  '5': 'bg-sand-100 text-orange-800',
   '6': 'bg-red-100 text-red-800',
 }
 
@@ -49,7 +49,7 @@ const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string; b
 
 const priorityColors: Record<string, string> = {
   P0: 'text-red-700 bg-red-100',
-  P1: 'text-orange-700 bg-orange-100',
+  P1: 'text-sand-700 bg-sand-100',
   P2: 'text-amber-700 bg-amber-100',
   P3: 'text-warm-600 bg-warm-100',
 }

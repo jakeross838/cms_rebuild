@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils'
 const platformMetrics = [
   { label: 'Total Tenants', value: '2,847', change: '+124', trend: 'up', icon: Building2, color: 'text-stone-600' },
   { label: 'Monthly Active Users', value: '18,432', change: '+8.2%', trend: 'up', icon: Users, color: 'text-green-600' },
-  { label: 'MRR', value: '$486,200', change: '+$32,400', trend: 'up', icon: DollarSign, color: 'text-violet-600' },
+  { label: 'MRR', value: '$486,200', change: '+$32,400', trend: 'up', icon: DollarSign, color: 'text-stone-600' },
   { label: 'ARR', value: '$5.83M', change: '+12.4%', trend: 'up', icon: TrendingUp, color: 'text-amber-600' },
 ]
 
@@ -175,7 +175,7 @@ export default function PlatformAdminPage() {
                     <span>{t.count} ({t.revenue}/mo)</span>
                   </div>
                   <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-violet-500 rounded-full" style={{ width: `${t.percentage}%` }} />
+                    <div className="h-full bg-warm-500 rounded-full" style={{ width: `${t.percentage}%` }} />
                   </div>
                 </div>
               ))}
