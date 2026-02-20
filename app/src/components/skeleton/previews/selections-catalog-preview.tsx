@@ -340,7 +340,7 @@ const tiers = ['All', 'Builder', 'Standard', 'Premium', 'Luxury']
 const tierConfig: Record<string, { color: string }> = {
   Builder: { color: 'bg-warm-100 text-warm-700' },
   Standard: { color: 'bg-stone-100 text-stone-700' },
-  Premium: { color: 'bg-purple-100 text-purple-700' },
+  Premium: { color: 'bg-warm-100 text-warm-700' },
   Luxury: { color: 'bg-amber-100 text-amber-700' },
 }
 
@@ -354,9 +354,9 @@ const availabilityConfig: Record<AvailabilityStatus, { label: string; color: str
 
 const sourceConfig: Record<ItemSource, { label: string; color: string }> = {
   builder: { label: 'Builder', color: 'bg-warm-100 text-warm-600' },
-  designer: { label: 'Designer', color: 'bg-pink-100 text-pink-600' },
+  designer: { label: 'Designer', color: 'bg-warm-100 text-sand-600' },
   client: { label: 'Client', color: 'bg-stone-100 text-stone-600' },
-  catalog: { label: 'Catalog', color: 'bg-indigo-100 text-indigo-600' },
+  catalog: { label: 'Catalog', color: 'bg-stone-100 text-stone-600' },
 }
 
 function formatCurrency(value: number): string {
@@ -383,7 +383,7 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1 flex-wrap">
             {selection.isCoastalRated && (
-              <span className="text-xs bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">Coastal</span>
+              <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded">Coastal</span>
             )}
             {selection.isDefaultForTier && (
               <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
@@ -677,12 +677,12 @@ export function SelectionsCatalogPreview() {
             </div>
             <div className="text-lg font-bold text-warm-900 mt-0.5">{totalCategories}</div>
           </div>
-          <div className="bg-cyan-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-cyan-600 text-xs">
+          <div className="bg-stone-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <Building2 className="h-3.5 w-3.5" />
               Coastal
             </div>
-            <div className="text-lg font-bold text-cyan-700 mt-0.5">{coastalRated}</div>
+            <div className="text-lg font-bold text-stone-700 mt-0.5">{coastalRated}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-green-600 text-xs">
@@ -787,23 +787,23 @@ export function SelectionsCatalogPreview() {
             <Eye className="h-3 w-3" />
             Job Selections
           </span>
-          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
             <FileText className="h-3 w-3" />
             Proposals
           </span>
-          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-sand-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <ShoppingCart className="h-3 w-3" />
             Purchase Orders
           </span>
-          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Truck className="h-3 w-3" />
             Vendors
           </span>
-          <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <TrendingUp className="h-3 w-3" />
             Price Intelligence
           </span>
-          <span className="bg-pink-50 text-pink-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Package className="h-3 w-3" />
             Assemblies
           </span>
@@ -811,7 +811,7 @@ export function SelectionsCatalogPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

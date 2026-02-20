@@ -450,9 +450,9 @@ const cardColorClasses = {
     text: 'text-amber-600',
   },
   purple: {
-    bg: 'bg-purple-50',
-    icon: 'bg-purple-100 text-purple-600',
-    text: 'text-purple-600',
+    bg: 'bg-warm-50',
+    icon: 'bg-warm-100 text-stone-600',
+    text: 'text-stone-600',
   },
 }
 
@@ -623,10 +623,10 @@ function OvernightAlertWidget({ alerts }: { alerts: OvernightAlert[] }) {
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Moon className="h-4 w-4 text-indigo-600" />
+            <Moon className="h-4 w-4 text-stone-600" />
             <h4 className="font-medium text-warm-900 text-sm">Overnight Summary</h4>
           </div>
-          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-medium">
+          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-medium">
             {alerts.filter(a => a.category === 'action_required').length} need action
           </span>
         </div>
@@ -727,8 +727,8 @@ function VendorFollowUpWidget({ items }: { items: VendorFollowUp[] }) {
     switch (cat) {
       case 'expired_insurance': return { label: 'Insurance', bg: 'bg-red-100 text-red-700', icon: ShieldAlert }
       case 'overdue_invoice': return { label: 'Invoice', bg: 'bg-amber-100 text-amber-700', icon: FileWarning }
-      case 'overdue_bid': return { label: 'Bid', bg: 'bg-orange-100 text-orange-700', icon: Clock }
-      case 'unanswered_rfi': return { label: 'RFI', bg: 'bg-purple-100 text-purple-700', icon: MessageSquare }
+      case 'overdue_bid': return { label: 'Bid', bg: 'bg-sand-100 text-sand-700', icon: Clock }
+      case 'unanswered_rfi': return { label: 'RFI', bg: 'bg-warm-100 text-warm-700', icon: MessageSquare }
       case 'unacknowledged_bid': return { label: 'Bid Inv.', bg: 'bg-stone-100 text-stone-700', icon: Mail }
     }
   }
@@ -738,10 +738,10 @@ function VendorFollowUpWidget({ items }: { items: VendorFollowUp[] }) {
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Truck className="h-4 w-4 text-orange-600" />
+            <Truck className="h-4 w-4 text-sand-600" />
             <h4 className="font-medium text-warm-900 text-sm">Vendor Follow-Up</h4>
           </div>
-          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-medium">
+          <span className="text-xs bg-sand-100 text-sand-700 px-2 py-0.5 rounded font-medium">
             {items.length} items
           </span>
         </div>
@@ -782,10 +782,10 @@ function ClientQueueWidget({ messages }: { messages: ClientMessage[] }) {
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-cyan-600" />
+            <MessageSquare className="h-4 w-4 text-stone-600" />
             <h4 className="font-medium text-warm-900 text-sm">Client Messages</h4>
           </div>
-          <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded font-medium">
+          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-medium">
             {messages.filter(m => m.type === 'portal_message').length} awaiting
           </span>
         </div>
@@ -838,9 +838,9 @@ function TasksList({ tasks }: { tasks: TaskDue[] }) {
     switch (type) {
       case 'approval': return 'bg-green-50 text-green-600'
       case 'task': return 'bg-stone-50 text-stone-600'
-      case 'rfi': return 'bg-purple-50 text-purple-600'
+      case 'rfi': return 'bg-warm-50 text-stone-600'
       case 'inspection': return 'bg-amber-50 text-amber-600'
-      case 'selection': return 'bg-pink-50 text-pink-600'
+      case 'selection': return 'bg-warm-50 text-sand-600'
       case 'invoice': return 'bg-emerald-50 text-emerald-600'
     }
   }
@@ -933,7 +933,7 @@ function InspectionsList({ inspections }: { inspections: UpcomingInspection[] })
                   <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{inspection.jobId}</span>
                 </div>
                 {inspection.permitRef && (
-                  <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mt-1 inline-block">
+                  <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded mt-1 inline-block">
                     {inspection.permitRef}
                   </span>
                 )}
@@ -986,10 +986,10 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
       case 'job': return 'bg-stone-100 text-stone-600'
       case 'invoice': return 'bg-green-100 text-green-600'
       case 'change-order': return 'bg-amber-100 text-amber-600'
-      case 'document': return 'bg-purple-100 text-purple-600'
-      case 'daily-log': return 'bg-cyan-100 text-cyan-600'
+      case 'document': return 'bg-warm-100 text-stone-600'
+      case 'daily-log': return 'bg-stone-100 text-stone-600'
       case 'approval': return 'bg-emerald-100 text-emerald-600'
-      case 'selection': return 'bg-pink-100 text-pink-600'
+      case 'selection': return 'bg-warm-100 text-sand-600'
     }
   }
 
@@ -998,7 +998,7 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-purple-600" />
+            <Activity className="h-4 w-4 text-stone-600" />
             <h4 className="font-medium text-warm-900 text-sm">Recent Activity</h4>
           </div>
         </div>
@@ -1169,7 +1169,7 @@ export function DashboardPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

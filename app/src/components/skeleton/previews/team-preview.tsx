@@ -233,16 +233,16 @@ const mockEmergencyContacts: EmergencyContact[] = [
 const roles = [
   { id: 'pm', label: 'Project Manager', icon: ClipboardList, color: 'bg-green-500', bgLight: 'bg-green-50', textColor: 'text-green-700' },
   { id: 'superintendent', label: 'Superintendent', icon: HardHat, color: 'bg-amber-500', bgLight: 'bg-amber-50', textColor: 'text-amber-700' },
-  { id: 'foreman', label: 'Foreman', icon: Users, color: 'bg-orange-500', bgLight: 'bg-orange-50', textColor: 'text-orange-700' },
+  { id: 'foreman', label: 'Foreman', icon: Users, color: 'bg-sand-500', bgLight: 'bg-sand-50', textColor: 'text-sand-700' },
   { id: 'field', label: 'Field Technician', icon: Wrench, color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
-  { id: 'estimator', label: 'Estimator', icon: Briefcase, color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
-  { id: 'coordinator', label: 'Coordinator', icon: Calendar, color: 'bg-teal-500', bgLight: 'bg-teal-50', textColor: 'text-teal-700' },
+  { id: 'estimator', label: 'Estimator', icon: Briefcase, color: 'bg-warm-500', bgLight: 'bg-warm-50', textColor: 'text-warm-700' },
+  { id: 'coordinator', label: 'Coordinator', icon: Calendar, color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
 ]
 
 const memberTypes = [
   { id: 'employee', label: 'Employee', color: 'bg-stone-500', bgLight: 'bg-stone-50', textColor: 'text-stone-700' },
-  { id: 'subcontractor', label: 'Subcontractor', color: 'bg-orange-500', bgLight: 'bg-orange-50', textColor: 'text-orange-700' },
-  { id: 'consultant', label: 'Consultant', color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
+  { id: 'subcontractor', label: 'Subcontractor', color: 'bg-sand-500', bgLight: 'bg-sand-50', textColor: 'text-sand-700' },
+  { id: 'consultant', label: 'Consultant', color: 'bg-warm-500', bgLight: 'bg-warm-50', textColor: 'text-warm-700' },
 ]
 
 const accessLevels = [
@@ -294,7 +294,7 @@ function QuickActions({ phone, email }: { phone: string; email: string }) {
         <MessageSquare className="h-3.5 w-3.5" />
       </button>
       <button
-        className="p-1.5 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-600 transition-colors"
+        className="p-1.5 rounded-full bg-warm-50 hover:bg-warm-100 text-stone-600 transition-colors"
         title="Email"
         onClick={(e) => { e.stopPropagation(); window.location.href = `mailto:${email}` }}
       >
@@ -441,8 +441,8 @@ function SubcontractorCard({ sub }: { sub: Subcontractor }) {
     )}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center">
-            <Building2 className="h-5 w-5 text-orange-600" />
+          <div className="h-10 w-10 rounded-lg bg-sand-100 flex items-center justify-center">
+            <Building2 className="h-5 w-5 text-sand-600" />
           </div>
           <div>
             <h4 className="font-medium text-warm-900">{sub.company_name}</h4>
@@ -667,7 +667,7 @@ export function TeamPreview() {
           <StatCard icon={Users} label="Team Members" value={totalTeam.toString()} iconColor="text-stone-600" iconBg="bg-stone-50" />
           <StatCard icon={UserCheck} label="Active Now" value={activeMembers.toString()} iconColor="text-green-600" iconBg="bg-green-50" />
           <StatCard icon={Star} label="Primary Contacts" value={primaryContacts.toString()} iconColor="text-amber-600" iconBg="bg-amber-50" />
-          <StatCard icon={Truck} label="Subcontractors" value={mockSubcontractors.length.toString()} subValue={`${activeSubcontractors} on site`} iconColor="text-orange-600" iconBg="bg-orange-50" />
+          <StatCard icon={Truck} label="Subcontractors" value={mockSubcontractors.length.toString()} subValue={`${activeSubcontractors} on site`} iconColor="text-sand-600" iconBg="bg-sand-50" />
           <StatCard icon={Clock} label="Upcoming" value={upcomingMembers.toString()} iconColor="text-stone-600" iconBg="bg-stone-50" />
         </div>
       </div>
@@ -710,9 +710,9 @@ export function TeamPreview() {
       </div>
 
       {/* Subcontractors Section */}
-      <div className="p-4 border-t border-warm-200 bg-orange-50/30">
+      <div className="p-4 border-t border-warm-200 bg-sand-50/30">
         <div className="flex items-center gap-2 mb-3">
-          <Building2 className="h-4 w-4 text-orange-600" />
+          <Building2 className="h-4 w-4 text-sand-600" />
           <h4 className="font-medium text-warm-900">Subcontractors</h4>
           <span className="text-xs text-warm-500">({filteredSubcontractors.length})</span>
         </div>

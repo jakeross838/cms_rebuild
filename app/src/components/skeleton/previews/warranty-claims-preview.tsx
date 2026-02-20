@@ -273,15 +273,15 @@ const mockClaims: WarrantyClaim[] = [
 const statusConfig: Record<ClaimStatus, { label: string; color: string; bgColor: string; textColor: string; icon: typeof AlertCircle }> = {
   submitted: { label: 'Submitted', color: 'bg-stone-500', bgColor: 'bg-stone-50', textColor: 'text-stone-700', icon: Clock },
   evaluating: { label: 'Evaluating', color: 'bg-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700', icon: AlertCircle },
-  dispatched: { label: 'Dispatched', color: 'bg-purple-500', bgColor: 'bg-purple-50', textColor: 'text-purple-700', icon: User },
-  in_progress: { label: 'In Progress', color: 'bg-orange-500', bgColor: 'bg-orange-50', textColor: 'text-orange-700', icon: Wrench },
+  dispatched: { label: 'Dispatched', color: 'bg-warm-500', bgColor: 'bg-warm-50', textColor: 'text-warm-700', icon: User },
+  in_progress: { label: 'In Progress', color: 'bg-sand-500', bgColor: 'bg-sand-50', textColor: 'text-sand-700', icon: Wrench },
   resolved: { label: 'Resolved', color: 'bg-green-500', bgColor: 'bg-green-50', textColor: 'text-green-700', icon: CheckCircle2 },
   closed: { label: 'Closed', color: 'bg-warm-500', bgColor: 'bg-warm-50', textColor: 'text-warm-700', icon: XCircle },
 }
 
 const priorityConfig: Record<Priority, { label: string; color: string; bgColor: string; textColor: string; slaLabel: string }> = {
   emergency: { label: 'Emergency', color: 'bg-red-600', bgColor: 'bg-red-50', textColor: 'text-red-700', slaLabel: '24hr response' },
-  urgent: { label: 'Urgent', color: 'bg-orange-600', bgColor: 'bg-orange-50', textColor: 'text-orange-700', slaLabel: '48hr response' },
+  urgent: { label: 'Urgent', color: 'bg-sand-700', bgColor: 'bg-sand-50', textColor: 'text-sand-700', slaLabel: '48hr response' },
   standard: { label: 'Standard', color: 'bg-stone-600', bgColor: 'bg-stone-50', textColor: 'text-stone-700', slaLabel: '5 business days' },
   cosmetic: { label: 'Cosmetic', color: 'bg-warm-400', bgColor: 'bg-warm-50', textColor: 'text-warm-600', slaLabel: '10 business days' },
 }
@@ -290,15 +290,15 @@ const categoryConfig: Record<IssueCategory, { label: string; icon: typeof Wrench
   structural: { label: 'Structural', icon: Building2, color: 'text-red-600' },
   mechanical: { label: 'Mechanical', icon: Wrench, color: 'text-stone-600' },
   electrical: { label: 'Electrical', icon: AlertTriangle, color: 'text-amber-600' },
-  plumbing: { label: 'Plumbing', icon: AlertCircle, color: 'text-cyan-600' },
-  finish: { label: 'Finish', icon: Wrench, color: 'text-purple-600' },
-  appliance: { label: 'Appliance', icon: Wrench, color: 'text-orange-600' },
+  plumbing: { label: 'Plumbing', icon: AlertCircle, color: 'text-stone-600' },
+  finish: { label: 'Finish', icon: Wrench, color: 'text-stone-600' },
+  appliance: { label: 'Appliance', icon: Wrench, color: 'text-sand-600' },
   exterior: { label: 'Exterior', icon: Building2, color: 'text-green-600' },
 }
 
 const determinationConfig: Record<Determination, { label: string; color: string }> = {
   covered: { label: 'Covered', color: 'bg-green-100 text-green-700' },
-  manufacturer_issue: { label: 'Manufacturer', color: 'bg-purple-100 text-purple-700' },
+  manufacturer_issue: { label: 'Manufacturer', color: 'bg-warm-100 text-warm-700' },
   homeowner_responsibility: { label: 'Homeowner', color: 'bg-warm-100 text-warm-700' },
   goodwill: { label: 'Goodwill Repair', color: 'bg-stone-100 text-stone-700' },
   pending: { label: 'Pending Review', color: 'bg-amber-100 text-amber-700' },
@@ -328,7 +328,7 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
     <div className={cn(
       'bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer',
       claim.priority === 'emergency' ? 'border-red-300 bg-red-50/30' :
-      claim.priority === 'urgent' ? 'border-orange-200' :
+      claim.priority === 'urgent' ? 'border-sand-200' :
       'border-warm-200'
     )}>
       <div className="flex items-start justify-between mb-3">
@@ -377,7 +377,7 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
           </span>
         )}
         {claim.fromWalkthrough && (
-          <span className="text-xs px-2 py-1 rounded font-medium bg-teal-50 text-teal-700 flex items-center gap-1">
+          <span className="text-xs px-2 py-1 rounded font-medium bg-stone-50 text-stone-700 flex items-center gap-1">
             <Link2 className="h-3 w-3" />
             {claim.fromWalkthrough}
           </span>
@@ -411,7 +411,7 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
             'px-2 py-0.5 rounded font-medium',
             claim.vendorDispatchStatus === 'completed' ? 'bg-green-100 text-green-700' :
             claim.vendorDispatchStatus === 'scheduled' ? 'bg-stone-100 text-stone-700' :
-            claim.vendorDispatchStatus === 'accepted' ? 'bg-purple-100 text-purple-700' :
+            claim.vendorDispatchStatus === 'accepted' ? 'bg-warm-100 text-warm-700' :
             claim.vendorDispatchStatus === 'declined' ? 'bg-red-100 text-red-700' :
             'bg-amber-100 text-amber-700'
           )}>
@@ -465,9 +465,9 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
 
       {/* AI Note */}
       {claim.aiNote && (
-        <div className="mt-2 p-2 bg-indigo-50 rounded-md flex items-start gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-indigo-500 mt-0.5 flex-shrink-0" />
-          <span className="text-xs text-indigo-700">{claim.aiNote}</span>
+        <div className="mt-2 p-2 bg-stone-50 rounded-md flex items-start gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-stone-600 mt-0.5 flex-shrink-0" />
+          <span className="text-xs text-stone-700">{claim.aiNote}</span>
         </div>
       )}
     </div>
@@ -609,12 +609,12 @@ export function WarrantyClaimsPreview() {
       <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-7 gap-3">
           <StatCard icon={AlertCircle} label="Open" value={openClaims} iconColor="text-stone-600" iconBg="bg-stone-50" />
-          <StatCard icon={User} label="Dispatched" value={dispatchedClaims} iconColor="text-purple-600" iconBg="bg-purple-50" />
+          <StatCard icon={User} label="Dispatched" value={dispatchedClaims} iconColor="text-stone-600" iconBg="bg-warm-50" />
           <StatCard icon={CheckCircle2} label="Resolved" value={resolvedClaims} iconColor="text-green-600" iconBg="bg-green-50" />
-          <StatCard icon={TrendingUp} label="Avg Resolution" value={`${avgResolutionDays}d`} iconColor="text-indigo-600" iconBg="bg-indigo-50" />
+          <StatCard icon={TrendingUp} label="Avg Resolution" value={`${avgResolutionDays}d`} iconColor="text-stone-600" iconBg="bg-stone-50" />
           <StatCard icon={AlertTriangle} label="Emergency" value={emergencyClaims} subValue={slaBreaching > 0 ? `${slaBreaching} SLA risk` : undefined} iconColor="text-red-600" iconBg="bg-red-50" />
           <StatCard icon={DollarSign} label="Total Cost" value={formatCurrency(totalCost)} iconColor="text-amber-600" iconBg="bg-amber-50" />
-          <StatCard icon={ShieldCheck} label="Satisfaction" value={`${Math.round(avgSatisfaction)}%`} iconColor="text-teal-600" iconBg="bg-teal-50" />
+          <StatCard icon={ShieldCheck} label="Satisfaction" value={`${Math.round(avgSatisfaction)}%`} iconColor="text-stone-600" iconBg="bg-stone-50" />
         </div>
       </div>
 
@@ -642,9 +642,9 @@ export function WarrantyClaimsPreview() {
           {[
             { phase: 'Reported', date: 'Feb 6', color: 'bg-stone-500' },
             { phase: 'Evaluated', date: 'Feb 6', color: 'bg-amber-500' },
-            { phase: 'Dispatched', date: 'Feb 7', color: 'bg-purple-500' },
-            { phase: 'Vendor Accepted', date: 'Feb 7', color: 'bg-indigo-500' },
-            { phase: 'Scheduled', date: 'Feb 10', color: 'bg-orange-500' },
+            { phase: 'Dispatched', date: 'Feb 7', color: 'bg-warm-500' },
+            { phase: 'Vendor Accepted', date: 'Feb 7', color: 'bg-stone-500' },
+            { phase: 'Scheduled', date: 'Feb 10', color: 'bg-sand-500' },
             { phase: 'Resolved', date: 'Feb 10', color: 'bg-green-500' },
           ].map((item, idx) => (
             <div key={idx} className="flex items-center gap-2">
@@ -660,7 +660,7 @@ export function WarrantyClaimsPreview() {
       </div>
 
       {/* AI Pattern Detection */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -74,13 +74,13 @@ interface FolderItem {
 const mockFolders: FolderItem[] = [
   { id: '1', name: 'Plans & Specifications', filesCount: 24, color: 'bg-stone-100 text-stone-600', subfolders: ['Architectural', 'Structural', 'MEP', 'Civil'] },
   { id: '2', name: 'Permits & Inspections', filesCount: 12, color: 'bg-green-100 text-green-600' },
-  { id: '3', name: 'Contracts', filesCount: 8, color: 'bg-purple-100 text-purple-600' },
-  { id: '4', name: 'Insurance & Compliance', filesCount: 9, color: 'bg-orange-100 text-orange-600' },
-  { id: '5', name: 'Invoices', filesCount: 32, color: 'bg-teal-100 text-teal-600' },
-  { id: '6', name: 'Change Orders', filesCount: 6, color: 'bg-rose-100 text-rose-600' },
-  { id: '7', name: 'Submittals', filesCount: 14, color: 'bg-indigo-100 text-indigo-600' },
+  { id: '3', name: 'Contracts', filesCount: 8, color: 'bg-warm-100 text-stone-600' },
+  { id: '4', name: 'Insurance & Compliance', filesCount: 9, color: 'bg-sand-100 text-sand-600' },
+  { id: '5', name: 'Invoices', filesCount: 32, color: 'bg-stone-100 text-stone-600' },
+  { id: '6', name: 'Change Orders', filesCount: 6, color: 'bg-warm-100 text-sand-600' },
+  { id: '7', name: 'Submittals', filesCount: 14, color: 'bg-stone-100 text-stone-600' },
   { id: '8', name: 'Photos', filesCount: 156, color: 'bg-amber-100 text-amber-600' },
-  { id: '9', name: 'Correspondence', filesCount: 11, color: 'bg-cyan-100 text-cyan-600' },
+  { id: '9', name: 'Correspondence', filesCount: 11, color: 'bg-stone-100 text-stone-600' },
   { id: '10', name: 'Closeout', filesCount: 3, color: 'bg-warm-100 text-warm-600' },
 ]
 
@@ -380,10 +380,10 @@ const fileTypeColors: Record<string, string> = {
   pdf: 'text-red-500',
   doc: 'text-stone-500',
   xls: 'text-green-500',
-  jpg: 'text-purple-500',
-  png: 'text-purple-500',
+  jpg: 'text-stone-600',
+  png: 'text-stone-600',
   zip: 'text-amber-500',
-  dwg: 'text-orange-500',
+  dwg: 'text-sand-600',
   other: 'text-warm-500',
 }
 
@@ -391,7 +391,7 @@ const approvalStatusConfig: Record<string, { label: string; color: string }> = {
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600' },
   submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700' },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700' },
-  revisions_requested: { label: 'Revisions Requested', color: 'bg-orange-100 text-orange-700' },
+  revisions_requested: { label: 'Revisions Requested', color: 'bg-sand-100 text-sand-700' },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700' },
 }
@@ -488,7 +488,7 @@ function FileRow({ file }: { file: DocumentFile }) {
           <span className="uppercase font-medium">{file.type}</span>
           <span>{file.size}</span>
           {file.aiClassification && (
-            <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
               {file.aiClassification.replace(/_/g, ' ')}
             </span>
           )}
@@ -783,20 +783,20 @@ export function DocumentsPreview() {
             <div className={cn("text-xl font-bold mt-1", expiringCount > 0 ? "text-amber-700" : "text-green-700")}>{expiringCount}</div>
             <div className="text-xs text-warm-400 mt-0.5">within 90 days</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <CheckCircle2 className="h-4 w-4" />
               Submittals
             </div>
-            <div className="text-xl font-bold text-purple-700 mt-1">{pendingApprovalCount}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{pendingApprovalCount}</div>
             <div className="text-xs text-warm-400 mt-0.5">pending review</div>
           </div>
-          <div className="bg-indigo-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-indigo-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Brain className="h-4 w-4" />
               AI Processed
             </div>
-            <div className="text-xl font-bold text-indigo-700 mt-1">{aiProcessedCount}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{aiProcessedCount}</div>
             <div className="text-xs text-warm-400 mt-0.5">of {mockFiles.length} total</div>
           </div>
         </div>
@@ -835,7 +835,7 @@ export function DocumentsPreview() {
           {/* Email Inbox Section */}
           <div className="pt-2 border-t border-warm-200">
             <button className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-warm-300 text-left w-full hover:bg-warm-50">
-              <div className="p-2 rounded-lg bg-cyan-100 text-cyan-600">
+              <div className="p-2 rounded-lg bg-stone-100 text-stone-600">
                 <Mail className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -864,7 +864,7 @@ export function DocumentsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
@@ -892,7 +892,7 @@ export function DocumentsPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-t border-purple-200 px-4 py-4">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Document AI Features"
           features={aiFeatures}

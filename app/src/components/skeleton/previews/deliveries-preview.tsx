@@ -305,7 +305,7 @@ const mockDeliveries: Delivery[] = [
 
 const statusConfig = {
   scheduled: { label: 'Scheduled', color: 'bg-stone-100 text-stone-700', icon: Clock },
-  'in-transit': { label: 'In Transit', color: 'bg-purple-100 text-purple-700', icon: Truck },
+  'in-transit': { label: 'In Transit', color: 'bg-warm-100 text-warm-700', icon: Truck },
   delivered: { label: 'Delivered', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   delayed: { label: 'Delayed', color: 'bg-red-100 text-red-700', icon: AlertTriangle },
   partial: { label: 'Partial', color: 'bg-amber-100 text-amber-700', icon: Package },
@@ -348,14 +348,14 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
           <div className={cn(
             "h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0",
             delivery.status === 'delayed' ? 'bg-red-100' :
-            delivery.status === 'in-transit' ? 'bg-purple-100' :
+            delivery.status === 'in-transit' ? 'bg-warm-100' :
             delivery.status === 'delivered' ? 'bg-green-100' :
             delivery.status === 'partial' ? 'bg-amber-100' : 'bg-stone-100'
           )}>
             <Truck className={cn(
               "h-5 w-5",
               delivery.status === 'delayed' ? 'text-red-600' :
-              delivery.status === 'in-transit' ? 'text-purple-600' :
+              delivery.status === 'in-transit' ? 'text-stone-600' :
               delivery.status === 'delivered' ? 'text-green-600' :
               delivery.status === 'partial' ? 'text-amber-600' : 'text-stone-600'
             )} />
@@ -537,7 +537,7 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
           </span>
         )}
         {delivery.backorderedItems > 0 && (
-          <span className="text-xs bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-sand-50 text-sand-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <PackageX className="h-3 w-3" />
             {delivery.backorderedItems} backordered
           </span>
@@ -632,12 +632,12 @@ export function DeliveriesPreview() {
             </div>
             <div className="text-xl font-bold text-warm-900 mt-1">{scheduledCount}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-purple-600 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <Truck className="h-3.5 w-3.5" />
               In Transit
             </div>
-            <div className="text-xl font-bold text-purple-700 mt-1">{inTransitCount}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{inTransitCount}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -659,18 +659,18 @@ export function DeliveriesPreview() {
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            totalBackordered > 0 ? "bg-orange-50" : "bg-warm-50"
+            totalBackordered > 0 ? "bg-sand-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              totalBackordered > 0 ? "text-orange-600" : "text-warm-500"
+              totalBackordered > 0 ? "text-sand-600" : "text-warm-500"
             )}>
               <PackageX className="h-3.5 w-3.5" />
               Backordered
             </div>
             <div className={cn(
               "text-xl font-bold mt-1",
-              totalBackordered > 0 ? "text-orange-700" : "text-warm-900"
+              totalBackordered > 0 ? "text-sand-700" : "text-warm-900"
             )}>
               {totalBackordered} items
             </div>
@@ -861,7 +861,7 @@ export function DeliveriesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

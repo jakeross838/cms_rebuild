@@ -207,10 +207,10 @@ const statusConfig: Record<ContractStatus, { label: string; color: string; icon:
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   internal_review: { label: 'Internal Review', color: 'bg-amber-100 text-amber-700', icon: BookOpen },
   sent: { label: 'Sent', color: 'bg-stone-100 text-stone-700', icon: Send },
-  signed: { label: 'Signed', color: 'bg-purple-100 text-purple-700', icon: PenTool },
+  signed: { label: 'Signed', color: 'bg-warm-100 text-warm-700', icon: PenTool },
   active: { label: 'Active', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   complete: { label: 'Closeout', color: 'bg-warm-100 text-warm-600', icon: CheckCircle },
-  amended: { label: 'Amended', color: 'bg-orange-100 text-orange-700', icon: FileText },
+  amended: { label: 'Amended', color: 'bg-sand-100 text-sand-700', icon: FileText },
 }
 
 const signatureConfig = {
@@ -221,18 +221,18 @@ const signatureConfig = {
 }
 
 const typeConfig: Record<ContractType, { label: string; color: string }> = {
-  fixed_price: { label: 'Fixed Price', color: 'bg-indigo-50 text-indigo-700' },
-  cost_plus: { label: 'Cost Plus', color: 'bg-teal-50 text-teal-700' },
+  fixed_price: { label: 'Fixed Price', color: 'bg-stone-50 text-stone-700' },
+  cost_plus: { label: 'Cost Plus', color: 'bg-stone-50 text-stone-700' },
   gmp: { label: 'GMP', color: 'bg-amber-50 text-amber-700' },
-  t_and_m: { label: 'T&M', color: 'bg-cyan-50 text-cyan-700' },
-  hybrid: { label: 'Hybrid', color: 'bg-purple-50 text-purple-700' },
+  t_and_m: { label: 'T&M', color: 'bg-stone-50 text-stone-700' },
+  hybrid: { label: 'Hybrid', color: 'bg-warm-50 text-warm-700' },
 }
 
 const partyLabels: Record<PartyType, { label: string; color: string }> = {
   owner: { label: 'Owner', color: 'bg-stone-50 text-stone-700' },
   subcontractor: { label: 'Subcontract', color: 'bg-green-50 text-green-700' },
-  vendor: { label: 'Vendor', color: 'bg-orange-50 text-orange-700' },
-  precon: { label: 'Pre-Con', color: 'bg-purple-50 text-purple-700' },
+  vendor: { label: 'Vendor', color: 'bg-sand-50 text-sand-700' },
+  precon: { label: 'Pre-Con', color: 'bg-warm-50 text-warm-700' },
 }
 
 function formatCurrency(value: number): string {
@@ -342,7 +342,7 @@ function ContractCard({ contract }: { contract: Contract }) {
       {(contract.amendments !== undefined && contract.amendments > 0) || (contract.changeDirectives !== undefined && contract.changeDirectives > 0) ? (
         <div className="flex items-center gap-3 mb-2 text-xs">
           {contract.amendments !== undefined && contract.amendments > 0 && (
-            <span className="text-orange-600">{contract.amendments} amendment{contract.amendments > 1 ? 's' : ''}</span>
+            <span className="text-sand-600">{contract.amendments} amendment{contract.amendments > 1 ? 's' : ''}</span>
           )}
           {contract.changeDirectives !== undefined && contract.changeDirectives > 0 && (
             <span className="text-amber-600">{contract.changeDirectives} verbal directive{contract.changeDirectives > 1 ? 's' : ''} pending</span>
@@ -450,19 +450,19 @@ export function ContractsPreview() {
             </div>
             <div className="text-xl font-bold text-stone-700">{formatCurrency(totalContractValue)}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-purple-600 text-xs mb-1">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs mb-1">
               <Building2 className="h-3.5 w-3.5" />
               Sub Value
             </div>
-            <div className="text-xl font-bold text-purple-700">{formatCurrency(totalSubValue)}</div>
+            <div className="text-xl font-bold text-warm-700">{formatCurrency(totalSubValue)}</div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-orange-600 text-xs mb-1">
+          <div className="bg-sand-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-sand-600 text-xs mb-1">
               <AlertCircle className="h-3.5 w-3.5" />
               Verbal Directives
             </div>
-            <div className="text-xl font-bold text-orange-700">{verbalDirectives}</div>
+            <div className="text-xl font-bold text-sand-700">{verbalDirectives}</div>
           </div>
         </div>
       </div>
@@ -477,9 +477,9 @@ export function ContractsPreview() {
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">DocuSign Connected</span>
             </div>
             <div className="flex items-center gap-2">
-              <Scale className="h-4 w-4 text-indigo-600" />
+              <Scale className="h-4 w-4 text-stone-600" />
               <span className="text-sm text-warm-700">State Compliance</span>
-              <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">SC Clauses Active</span>
+              <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">SC Clauses Active</span>
             </div>
           </div>
           <div className="flex items-center gap-4 text-xs text-warm-500">
@@ -507,7 +507,7 @@ export function ContractsPreview() {
             <DollarSign className="h-3 w-3" />
             Budget (Module 9)
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-orange-50 text-orange-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-sand-50 text-sand-700 rounded">
             <FileText className="h-3 w-3" />
             Change Orders (Module 17)
           </span>
@@ -515,7 +515,7 @@ export function ContractsPreview() {
             <Shield className="h-3 w-3" />
             Warranty (Module 31)
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded">
             <Landmark className="h-3 w-3" />
             Draws (Module 15)
           </span>
@@ -570,7 +570,7 @@ export function ContractsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

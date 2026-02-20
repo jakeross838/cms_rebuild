@@ -175,8 +175,8 @@ const statusConfig: Record<Payment['status'], { label: string; color: string; ic
   processing: { label: 'Processing', color: 'bg-stone-100 text-stone-700', icon: RefreshCw },
   completed: { label: 'Paid', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   failed: { label: 'Failed', color: 'bg-red-100 text-red-700', icon: AlertCircle },
-  refunded: { label: 'Refunded', color: 'bg-purple-100 text-purple-700', icon: Undo2 },
-  partial: { label: 'Partial', color: 'bg-orange-100 text-orange-700', icon: Timer },
+  refunded: { label: 'Refunded', color: 'bg-warm-100 text-warm-700', icon: Undo2 },
+  partial: { label: 'Partial', color: 'bg-sand-100 text-sand-700', icon: Timer },
 }
 
 const methodConfig: Record<string, { icon: typeof CreditCard; label: string }> = {
@@ -200,7 +200,7 @@ function PaymentCard({ payment }: { payment: Payment }) {
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
       payment.status === 'failed' ? "border-red-200" :
-      payment.status === 'refunded' ? "border-purple-200" : "border-warm-200"
+      payment.status === 'refunded' ? "border-warm-200" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div>
@@ -249,14 +249,14 @@ function PaymentCard({ payment }: { payment: Payment }) {
           <>
             <div className="flex items-center justify-between text-sm">
               <span className="text-warm-600">Received</span>
-              <span className="font-medium text-orange-600">{formatCurrency(payment.partialAmount)}</span>
+              <span className="font-medium text-sand-600">{formatCurrency(payment.partialAmount)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-warm-600">Remaining</span>
               <span className="font-medium text-warm-900">{formatCurrency(payment.amount - payment.partialAmount)}</span>
             </div>
             <div className="h-1.5 bg-warm-200 rounded-full overflow-hidden">
-              <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(payment.partialAmount / payment.amount) * 100}%` }} />
+              <div className="h-full bg-sand-500 rounded-full" style={{ width: `${(payment.partialAmount / payment.amount) * 100}%` }} />
             </div>
           </>
         )}
@@ -275,13 +275,13 @@ function PaymentCard({ payment }: { payment: Payment }) {
         {payment.status === 'refunded' && payment.refundAmount !== undefined && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-warm-600">Refunded</span>
-            <span className="font-medium text-purple-600">-{formatCurrency(payment.refundAmount)}</span>
+            <span className="font-medium text-stone-600">-{formatCurrency(payment.refundAmount)}</span>
           </div>
         )}
       </div>
 
       {payment.status === 'refunded' && payment.refundReason && (
-        <div className="mb-3 text-xs text-purple-600 bg-purple-50 px-2 py-1.5 rounded">
+        <div className="mb-3 text-xs text-stone-600 bg-warm-50 px-2 py-1.5 rounded">
           Reason: {payment.refundReason}
         </div>
       )}
@@ -350,8 +350,8 @@ function PaymentCard({ payment }: { payment: Payment }) {
 
       {payment.status === 'partial' && (
         <div className="pt-3 border-t border-orange-100">
-          <div className="text-xs text-orange-600 mb-2">Partial payment received {payment.paidAt}</div>
-          <button className="w-full py-1.5 text-xs bg-orange-600 text-white rounded hover:bg-orange-700 flex items-center justify-center gap-1">
+          <div className="text-xs text-sand-600 mb-2">Partial payment received {payment.paidAt}</div>
+          <button className="w-full py-1.5 text-xs bg-sand-700 text-white rounded hover:bg-orange-700 flex items-center justify-center gap-1">
             <Send className="h-3 w-3" />
             Send Remaining Balance Link
           </button>
@@ -421,13 +421,13 @@ export function PaymentsPreview() {
             <div className="text-xs text-stone-600">Processing</div>
             <div className="text-lg font-bold text-stone-700">{formatCurrency(processing)}</div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-2.5">
-            <div className="text-xs text-orange-600">Partial Due</div>
-            <div className="text-lg font-bold text-orange-700">{formatCurrency(partialRemaining)}</div>
+          <div className="bg-sand-50 rounded-lg p-2.5">
+            <div className="text-xs text-sand-600">Partial Due</div>
+            <div className="text-lg font-bold text-sand-700">{formatCurrency(partialRemaining)}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2.5">
-            <div className="text-xs text-purple-600">Refunded</div>
-            <div className="text-lg font-bold text-purple-700">{formatCurrency(refunded)}</div>
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="text-xs text-stone-600">Refunded</div>
+            <div className="text-lg font-bold text-warm-700">{formatCurrency(refunded)}</div>
           </div>
           <div className="bg-warm-50 rounded-lg p-2.5">
             <div className="text-xs text-warm-600">Fees (Month)</div>
@@ -499,7 +499,7 @@ export function PaymentsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

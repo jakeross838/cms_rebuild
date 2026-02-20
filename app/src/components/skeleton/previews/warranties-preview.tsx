@@ -451,27 +451,27 @@ const statusConfig = {
 
 const warrantyTypeConfig: Record<WarrantyType, { label: string; color: string }> = {
   builder: { label: 'Builder', color: 'bg-stone-100 text-stone-700' },
-  manufacturer: { label: 'Manufacturer', color: 'bg-purple-100 text-purple-700' },
-  workmanship: { label: 'Workmanship', color: 'bg-orange-100 text-orange-700' },
-  extended: { label: 'Extended', color: 'bg-teal-100 text-teal-700' },
+  manufacturer: { label: 'Manufacturer', color: 'bg-warm-100 text-warm-700' },
+  workmanship: { label: 'Workmanship', color: 'bg-sand-100 text-sand-700' },
+  extended: { label: 'Extended', color: 'bg-stone-100 text-stone-700' },
 }
 
 const categoryConfig: Record<CategoryType, { label: string; icon: typeof Wrench; color: string }> = {
   appliances: { label: 'Appliances', icon: Home, color: 'bg-stone-50 text-stone-700' },
-  roofing: { label: 'Roofing', icon: Building2, color: 'bg-orange-50 text-orange-700' },
-  hvac: { label: 'HVAC', icon: Thermometer, color: 'bg-cyan-50 text-cyan-700' },
-  plumbing: { label: 'Plumbing', icon: Droplets, color: 'bg-indigo-50 text-indigo-700' },
+  roofing: { label: 'Roofing', icon: Building2, color: 'bg-sand-50 text-sand-700' },
+  hvac: { label: 'HVAC', icon: Thermometer, color: 'bg-stone-50 text-stone-700' },
+  plumbing: { label: 'Plumbing', icon: Droplets, color: 'bg-stone-50 text-stone-700' },
   electrical: { label: 'Electrical', icon: Zap, color: 'bg-amber-50 text-amber-700' },
   structural: { label: 'Structural', icon: Building2, color: 'bg-warm-100 text-warm-700' },
-  windows: { label: 'Windows', icon: Home, color: 'bg-purple-50 text-purple-700' },
+  windows: { label: 'Windows', icon: Home, color: 'bg-warm-50 text-warm-700' },
   exterior: { label: 'Exterior', icon: Building2, color: 'bg-emerald-50 text-emerald-700' },
-  finish: { label: 'Finish', icon: Wrench, color: 'bg-pink-50 text-pink-700' },
+  finish: { label: 'Finish', icon: Wrench, color: 'bg-warm-50 text-sand-700' },
 }
 
 const coverageConfig: Record<CoverageType, { label: string; color: string }> = {
   full: { label: 'Full Coverage', color: 'bg-green-50 text-green-700' },
   parts: { label: 'Parts Only', color: 'bg-stone-50 text-stone-700' },
-  labor: { label: 'Labor Only', color: 'bg-purple-50 text-purple-700' },
+  labor: { label: 'Labor Only', color: 'bg-warm-50 text-warm-700' },
   limited: { label: 'Limited', color: 'bg-warm-100 text-warm-600' },
 }
 
@@ -605,7 +605,7 @@ function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCa
   return (
     <div className="bg-white border-b border-warm-200 px-4 py-4">
       <div className="flex items-center gap-2 mb-3">
-        <BarChart3 className="h-4 w-4 text-purple-600" />
+        <BarChart3 className="h-4 w-4 text-stone-600" />
         <span className="text-sm font-medium text-warm-700">Vendor Warranty Performance</span>
         <span className="text-xs text-warm-500 ml-auto">Callback rates & repair quality</span>
       </div>
@@ -672,27 +672,27 @@ function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCa
 
 function WarrantyPredictionPanel({ ftqData }: { ftqData: ConstructionFTQData }) {
   return (
-    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-200 px-4 py-3">
+    <div className="bg-warm-50 border-b border-stone-200 px-4 py-3">
       <div className="flex items-start gap-3">
         <div className="flex items-center gap-2 flex-shrink-0">
-          <Brain className="h-4 w-4 text-indigo-600" />
-          <span className="font-medium text-sm text-indigo-800">AI Warranty Predictions (from FTQ Data):</span>
+          <Brain className="h-4 w-4 text-stone-600" />
+          <span className="font-medium text-sm text-stone-800">AI Warranty Predictions (from FTQ Data):</span>
         </div>
         <div className="grid grid-cols-3 gap-4 flex-1">
-          <div className="bg-white/60 rounded-lg p-2 border border-indigo-100">
-            <div className="text-xs text-indigo-600 mb-1">Expected Year 1 Claims</div>
-            <div className="text-lg font-bold text-indigo-800">{ftqData.predictedClaimsRange.min}-{ftqData.predictedClaimsRange.max}</div>
-            <div className="text-xs text-indigo-500">Based on {ftqData.overallScore}% FTQ</div>
+          <div className="bg-warm-50 rounded-lg p-2 border border-stone-100">
+            <div className="text-xs text-stone-600 mb-1">Expected Year 1 Claims</div>
+            <div className="text-lg font-bold text-stone-800">{ftqData.predictedClaimsRange.min}-{ftqData.predictedClaimsRange.max}</div>
+            <div className="text-xs text-stone-600">Based on {ftqData.overallScore}% FTQ</div>
           </div>
-          <div className="bg-white/60 rounded-lg p-2 border border-indigo-100">
-            <div className="text-xs text-indigo-600 mb-1">Highest Risk Vendor</div>
+          <div className="bg-warm-50 rounded-lg p-2 border border-stone-100">
+            <div className="text-xs text-stone-600 mb-1">Highest Risk Vendor</div>
             <div className="text-lg font-bold text-red-600">Smith Electric</div>
-            <div className="text-xs text-indigo-500">88% FTQ, 12.5% callback</div>
+            <div className="text-xs text-stone-600">88% FTQ, 12.5% callback</div>
           </div>
-          <div className="bg-white/60 rounded-lg p-2 border border-indigo-100">
-            <div className="text-xs text-indigo-600 mb-1">Predicted Warranty Cost</div>
-            <div className="text-lg font-bold text-indigo-800">$4,200-$6,800</div>
-            <div className="text-xs text-indigo-500">Year 1 estimate</div>
+          <div className="bg-warm-50 rounded-lg p-2 border border-stone-100">
+            <div className="text-xs text-stone-600 mb-1">Predicted Warranty Cost</div>
+            <div className="text-lg font-bold text-stone-800">$4,200-$6,800</div>
+            <div className="text-xs text-stone-600">Year 1 estimate</div>
           </div>
         </div>
       </div>
@@ -917,7 +917,7 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
             </button>
           )}
           {warranty.selectionLink && (
-            <button className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-700">
+            <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-warm-700">
               <Link2 className="h-3.5 w-3.5" />
               <span>Selection</span>
             </button>
@@ -1106,23 +1106,23 @@ export function WarrantiesPreview() {
             <div className="text-2xl font-bold text-red-700 mt-1">{totalClaimCount}</div>
             <div className="text-xs text-red-600 mt-0.5">{formatCurrency(totalClaimCost)} cost to date</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Reserve
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-1">{formatCurrency(mockReserve.remainingAmount)}</div>
-            <div className="text-xs text-purple-600 mt-0.5">{mockReserve.utilizationPercentage}% used</div>
+            <div className="text-2xl font-bold text-warm-700 mt-1">{formatCurrency(mockReserve.remainingAmount)}</div>
+            <div className="text-xs text-stone-600 mt-0.5">{mockReserve.utilizationPercentage}% used</div>
           </div>
-          <div className="bg-indigo-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-indigo-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Target className="h-4 w-4" />
               FTQ Score
             </div>
             <div className={cn("text-2xl font-bold mt-1", getFTQColor(mockConstructionFTQ.overallScore))}>
               {mockConstructionFTQ.overallScore}%
             </div>
-            <div className="text-xs text-indigo-600 mt-0.5">construction quality</div>
+            <div className="text-xs text-stone-600 mt-0.5">construction quality</div>
           </div>
         </div>
       </div>
@@ -1163,7 +1163,7 @@ export function WarrantiesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

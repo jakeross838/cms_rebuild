@@ -131,7 +131,7 @@ export function PortalPreview() {
             </button>
             <div className="text-right">
               <p className="text-sm text-white font-medium">John & Sarah Smith</p>
-              <p className="text-xs text-slate-400">Last login: 2 hours ago</p>
+              <p className="text-xs text-warm-400">Last login: 2 hours ago</p>
             </div>
           </div>
         </div>
@@ -260,7 +260,7 @@ export function PortalPreview() {
             <p className="text-xs text-green-600 mt-1">On track -- 63% invested</p>
           </button>
           <button className="bg-white rounded-xl p-4 border border-stone-200 hover:border-stone-300 hover:shadow-sm transition-all text-left">
-            <MessageSquare className="h-6 w-6 text-purple-600 mb-2" />
+            <MessageSquare className="h-6 w-6 text-stone-600 mb-2" />
             <h3 className="font-medium text-warm-900">Messages</h3>
             <p className="text-sm text-stone-600">1 new from Jake</p>
             <p className="text-xs text-warm-400 mt-1">Read receipt: enabled</p>
@@ -412,10 +412,10 @@ export function PortalPreview() {
       </div>
 
       {/* AI Chat Bot Preview */}
-      <div className="mx-6 mb-6 p-4 bg-gradient-to-r from-purple-50 to-stone-50 border border-purple-200 rounded-lg">
+      <div className="mx-6 mb-6 p-4 bg-gradient-to-r from-purple-50 to-stone-50 border border-warm-200 rounded-lg">
         <div className="flex items-start gap-3">
-          <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-purple-600" />
+          <div className="h-8 w-8 rounded-full bg-warm-100 flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-stone-600" />
           </div>
           <div className="flex-1">
             <h4 className="font-medium text-warm-900 mb-1">Have Questions About Your Project?</h4>
@@ -426,10 +426,10 @@ export function PortalPreview() {
               <input
                 type="text"
                 placeholder="Ask a question about your home..."
-                className="flex-1 px-3 py-2 text-sm border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 px-3 py-2 text-sm border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                 readOnly
               />
-              <button className="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
+              <button className="px-4 py-2 bg-stone-700 text-white text-sm rounded-lg hover:bg-stone-800">
                 Ask
               </button>
             </div>

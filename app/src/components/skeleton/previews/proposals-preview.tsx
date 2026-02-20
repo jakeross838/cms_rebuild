@@ -239,10 +239,10 @@ const mockProposals: Proposal[] = [
 const statusConfig: Record<ProposalStatus, { label: string; color: string; dotColor: string }> = {
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', dotColor: 'bg-warm-400' },
   sent: { label: 'Sent', color: 'bg-stone-100 text-stone-700', dotColor: 'bg-stone-500' },
-  viewed: { label: 'Viewed', color: 'bg-purple-100 text-purple-700', dotColor: 'bg-purple-500' },
+  viewed: { label: 'Viewed', color: 'bg-warm-100 text-warm-700', dotColor: 'bg-warm-500' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700', dotColor: 'bg-green-500' },
   declined: { label: 'Declined', color: 'bg-red-100 text-red-700', dotColor: 'bg-red-500' },
-  expired: { label: 'Expired', color: 'bg-orange-100 text-orange-700', dotColor: 'bg-orange-500' },
+  expired: { label: 'Expired', color: 'bg-sand-100 text-sand-700', dotColor: 'bg-sand-500' },
 }
 
 const contractTypeLabels: Record<ContractType, string> = {
@@ -255,7 +255,7 @@ const contractTypeLabels: Record<ContractType, string> = {
 const esignIcons: Record<EsignStatus, { label: string; color: string }> = {
   not_sent: { label: 'Not Sent', color: 'text-warm-400' },
   sent: { label: 'Awaiting Signature', color: 'text-stone-500' },
-  viewed: { label: 'Viewed', color: 'text-purple-500' },
+  viewed: { label: 'Viewed', color: 'text-stone-600' },
   signed: { label: 'Signed', color: 'text-green-500' },
   declined: { label: 'Declined', color: 'text-red-500' },
 }
@@ -263,10 +263,10 @@ const esignIcons: Record<EsignStatus, { label: string; color: string }> = {
 const stages = [
   { id: 'draft', label: 'Draft', color: 'bg-warm-500' },
   { id: 'sent', label: 'Sent', color: 'bg-stone-500' },
-  { id: 'viewed', label: 'Viewed', color: 'bg-purple-500' },
+  { id: 'viewed', label: 'Viewed', color: 'bg-warm-500' },
   { id: 'accepted', label: 'Accepted', color: 'bg-green-500' },
   { id: 'declined', label: 'Declined', color: 'bg-red-500' },
-  { id: 'expired', label: 'Expired', color: 'bg-orange-500' },
+  { id: 'expired', label: 'Expired', color: 'bg-sand-500' },
 ]
 
 function formatCurrency(value: number): string {
@@ -282,7 +282,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      proposal.status === 'expired' && "border-orange-200",
+      proposal.status === 'expired' && "border-sand-200",
       proposal.status === 'accepted' && "border-green-200",
     )}>
       <div className="flex items-start justify-between mb-2">
@@ -306,7 +306,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
             <span className="font-semibold text-warm-900">{formatCurrency(proposal.amount)}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
               {contractTypeLabels[proposal.contractType]}
             </span>
             <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">
@@ -357,7 +357,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
         {proposal.expiresAt && (
           <div className={cn(
             "flex items-center gap-1.5 text-xs",
-            proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 0 ? "text-orange-600 font-medium" :
+            proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 0 ? "text-sand-600 font-medium" :
             proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 7 ? "text-amber-600" : "text-warm-500"
           )}>
             <Clock className="h-3 w-3" />
@@ -391,7 +391,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
             </button>
           )}
           {proposal.status === 'expired' && (
-            <button className="p-1.5 text-orange-600 hover:bg-orange-50 rounded" title="Resend">
+            <button className="p-1.5 text-sand-600 hover:bg-sand-50 rounded" title="Resend">
               <Copy className="h-3.5 w-3.5" />
             </button>
           )}
@@ -407,15 +407,15 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
       {proposal.aiNote && (
         <div className={cn(
           "mt-2 p-2 rounded-md flex items-start gap-2",
-          proposal.status === 'expired' ? "bg-orange-50" : "bg-stone-50"
+          proposal.status === 'expired' ? "bg-sand-50" : "bg-stone-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
-            proposal.status === 'expired' ? "text-orange-500" : "text-stone-500"
+            proposal.status === 'expired' ? "text-sand-600" : "text-stone-500"
           )} />
           <span className={cn(
             "text-xs",
-            proposal.status === 'expired' ? "text-orange-700" : "text-stone-700"
+            proposal.status === 'expired' ? "text-sand-700" : "text-stone-700"
           )}>{proposal.aiNote}</span>
         </div>
       )}
@@ -468,7 +468,7 @@ export function ProposalsPreview() {
             {mockProposals.length} proposals | {formatCurrency(totalPipeline)} pipeline
           </span>
           {expiredCount > 0 && (
-            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+            <span className="text-xs bg-sand-100 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" />
               {expiredCount} expired
             </span>
@@ -549,15 +549,15 @@ export function ProposalsPreview() {
             </div>
             <div className="text-lg font-bold text-green-700 mt-0.5">{formatCurrency(totalAcceptedValue)}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-purple-600 text-xs">
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <Eye className="h-3.5 w-3.5" />
               Engagement
             </div>
-            <div className="text-lg font-bold text-purple-700 mt-0.5">
+            <div className="text-lg font-bold text-warm-700 mt-0.5">
               {totalViews} <span className="text-xs font-normal">views</span>
             </div>
-            <div className="text-xs text-purple-500">{totalTimeSpent} min total</div>
+            <div className="text-xs text-stone-600">{totalTimeSpent} min total</div>
           </div>
         </div>
       </div>
@@ -609,19 +609,19 @@ export function ProposalsPreview() {
             <Package className="h-3 w-3" />
             Selections Catalog
           </span>
-          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Shield className="h-3 w-3" />
             Contracts
           </span>
-          <span className="bg-pink-50 text-pink-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Eye className="h-3 w-3" />
             Client Portal
           </span>
-          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-sand-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <User className="h-3 w-3" />
             Leads / CRM
           </span>
-          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <FileSignature className="h-3 w-3" />
             E-Signature
           </span>
@@ -655,7 +655,7 @@ export function ProposalsPreview() {
               <XCircle className="h-4 w-4" />
               <span>{declinedCount} declined</span>
             </div>
-            <div className="flex items-center gap-1.5 text-orange-600">
+            <div className="flex items-center gap-1.5 text-sand-600">
               <AlertTriangle className="h-4 w-4" />
               <span>{expiredCount} expired</span>
             </div>
@@ -664,7 +664,7 @@ export function ProposalsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-amber-600" />

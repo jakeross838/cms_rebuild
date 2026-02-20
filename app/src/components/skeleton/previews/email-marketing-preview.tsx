@@ -170,14 +170,14 @@ const mockCampaigns: Campaign[] = [
 
 const templates = [
   { name: 'Newsletter', icon: Mail, color: 'bg-stone-50 text-stone-600' },
-  { name: 'Project Update', icon: Zap, color: 'bg-orange-50 text-orange-600' },
+  { name: 'Project Update', icon: Zap, color: 'bg-sand-50 text-sand-600' },
   { name: 'Review Request', icon: Star, color: 'bg-amber-50 text-amber-600' },
-  { name: 'Referral Request', icon: Users, color: 'bg-purple-50 text-purple-600' },
+  { name: 'Referral Request', icon: Users, color: 'bg-warm-50 text-stone-600' },
   { name: 'Milestone Alert', icon: CheckCircle, color: 'bg-green-50 text-green-600' },
-  { name: 'Maintenance Reminder', icon: Clock, color: 'bg-cyan-50 text-cyan-600' },
-  { name: 'Case Study', icon: FileText, color: 'bg-indigo-50 text-indigo-600' },
-  { name: 'Social Post', icon: Share2, color: 'bg-pink-50 text-pink-600' },
-  { name: 'Photo Gallery', icon: Image, color: 'bg-teal-50 text-teal-600' },
+  { name: 'Maintenance Reminder', icon: Clock, color: 'bg-stone-50 text-stone-600' },
+  { name: 'Case Study', icon: FileText, color: 'bg-stone-50 text-stone-600' },
+  { name: 'Social Post', icon: Share2, color: 'bg-warm-50 text-sand-600' },
+  { name: 'Photo Gallery', icon: Image, color: 'bg-stone-50 text-stone-600' },
 ]
 
 const segmentations = [
@@ -200,7 +200,7 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
   const statusConfig = {
     scheduled: { bg: 'bg-stone-50', text: 'text-stone-700', icon: Clock },
     sent: { bg: 'bg-green-50', text: 'text-green-700', icon: CheckCircle },
-    automated: { bg: 'bg-purple-50', text: 'text-purple-700', icon: Zap },
+    automated: { bg: 'bg-warm-50', text: 'text-warm-700', icon: Zap },
     draft: { bg: 'bg-warm-50', text: 'text-warm-700', icon: Edit },
   }
 
@@ -230,7 +230,7 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
               {channelInfo.label}
             </span>
             {campaign.type === 'drip' && (
-              <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700">Drip</span>
+              <span className="text-xs px-1.5 py-0.5 rounded bg-stone-50 text-stone-700">Drip</span>
             )}
           </div>
 
@@ -419,18 +419,18 @@ export function EmailMarketingPreview() {
               <div className="text-[10px] text-green-600">Automated</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
-            <TrendingUp className="h-4 w-4 text-purple-500" />
+          <div className="flex items-center gap-2 p-2 bg-warm-50 rounded-lg">
+            <TrendingUp className="h-4 w-4 text-stone-600" />
             <div>
-              <div className="text-sm font-semibold text-purple-700">{avgOpenRate}%</div>
-              <div className="text-[10px] text-purple-600">Avg Open Rate</div>
+              <div className="text-sm font-semibold text-warm-700">{avgOpenRate}%</div>
+              <div className="text-[10px] text-stone-600">Avg Open Rate</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-indigo-50 rounded-lg">
-            <Target className="h-4 w-4 text-indigo-500" />
+          <div className="flex items-center gap-2 p-2 bg-stone-50 rounded-lg">
+            <Target className="h-4 w-4 text-stone-600" />
             <div>
-              <div className="text-sm font-semibold text-indigo-700">{totalLeads}</div>
-              <div className="text-[10px] text-indigo-600">Leads Generated</div>
+              <div className="text-sm font-semibold text-stone-700">{totalLeads}</div>
+              <div className="text-[10px] text-stone-600">Leads Generated</div>
             </div>
           </div>
           <div className="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg">
@@ -455,7 +455,7 @@ export function EmailMarketingPreview() {
             <Camera className="h-3 w-3" />
             Project Photos
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded">
             <Award className="h-3 w-3" />
             Portfolio
           </span>
@@ -463,7 +463,7 @@ export function EmailMarketingPreview() {
             <Star className="h-3 w-3" />
             Reviews
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-cyan-50 text-cyan-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded">
             <Globe className="h-3 w-3" />
             Client Portal
           </span>
@@ -582,9 +582,9 @@ export function EmailMarketingPreview() {
           {[
             { channel: 'Referral Program', leads: 8, roi: '420%', color: 'bg-green-100 text-green-700' },
             { channel: 'Website/SEO', leads: 5, roi: '180%', color: 'bg-stone-100 text-stone-700' },
-            { channel: 'Houzz Profile', leads: 3, roi: '150%', color: 'bg-orange-100 text-orange-700' },
-            { channel: 'Email Campaigns', leads: 3, roi: '310%', color: 'bg-purple-100 text-purple-700' },
-            { channel: 'Social Media', leads: 2, roi: '90%', color: 'bg-pink-100 text-pink-700' },
+            { channel: 'Houzz Profile', leads: 3, roi: '150%', color: 'bg-sand-100 text-sand-700' },
+            { channel: 'Email Campaigns', leads: 3, roi: '310%', color: 'bg-warm-100 text-warm-700' },
+            { channel: 'Social Media', leads: 2, roi: '90%', color: 'bg-warm-100 text-sand-700' },
             { channel: 'Parade of Homes', leads: 1, roi: '75%', color: 'bg-amber-100 text-amber-700' },
           ].map((ch) => (
             <div key={ch.channel} className={cn("flex items-center gap-2 px-2 py-1.5 rounded text-xs", ch.color)}>
@@ -597,7 +597,7 @@ export function EmailMarketingPreview() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

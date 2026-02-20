@@ -294,14 +294,14 @@ const mockInvoices: Invoice[] = [
 ]
 
 const statusConfig: Record<InvoiceStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  needs_review: { label: 'Needs Review', color: 'text-orange-700', bgColor: 'bg-orange-100', icon: Eye },
+  needs_review: { label: 'Needs Review', color: 'text-sand-700', bgColor: 'bg-sand-100', icon: Eye },
   ready_for_approval: { label: 'Ready for Approval', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Clock },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
-  in_draw: { label: 'In Draw', color: 'text-indigo-700', bgColor: 'bg-indigo-100', icon: Receipt },
+  in_draw: { label: 'In Draw', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Receipt },
   paid: { label: 'Paid', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: CheckCircle },
   disputed: { label: 'Disputed', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
   denied: { label: 'Denied', color: 'text-red-700', bgColor: 'bg-red-100', icon: Ban },
-  split: { label: 'Split', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: GitBranch },
+  split: { label: 'Split', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: GitBranch },
   voided: { label: 'Voided', color: 'text-warm-500', bgColor: 'bg-warm-50', icon: XCircle },
 }
 
@@ -310,7 +310,7 @@ const invoiceTypeLabels: Record<InvoiceType, { label: string; color: string }> =
   progress: { label: 'Progress', color: 'bg-stone-50 text-stone-600' },
   final: { label: 'Final', color: 'bg-green-50 text-green-600' },
   credit_memo: { label: 'Credit Memo', color: 'bg-amber-50 text-amber-600' },
-  retainage_release: { label: 'Retainage Release', color: 'bg-purple-50 text-purple-600' },
+  retainage_release: { label: 'Retainage Release', color: 'bg-warm-50 text-stone-600' },
 }
 
 function formatCurrency(value: number): string {
@@ -365,13 +365,13 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               </span>
             )}
             {invoice.contractType === 'time_materials' && (
-              <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">T&M</span>
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">T&M</span>
             )}
             {invoice.contractType === 'unit_price' && (
-              <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">Unit Price</span>
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Unit Price</span>
             )}
             {invoice.contractType === 'cost_plus' && (
-              <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">Cost Plus</span>
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Cost Plus</span>
             )}
             {invoice.isAutoCoded && (
               <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
@@ -424,7 +424,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               </span>
             )}
             {invoice.drawNumber && (
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 Draw #{invoice.drawNumber}
               </span>
             )}
@@ -441,7 +441,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
                    invoice.lienWaiverStatus === 'required' ? 'Required' : 'N/A'}
             </span>
             {invoice.retainageAmount > 0 && (
-              <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
                 Ret: {formatCurrency(invoice.retainageAmount)}
               </span>
             )}
@@ -635,12 +635,12 @@ export function InvoicesPreview() {
       {/* Quick Stats */}
       <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-orange-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-orange-600 text-xs font-medium">
+          <div className="bg-sand-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-sand-600 text-xs font-medium">
               <Eye className="h-3.5 w-3.5" />
               Pending Review ({pendingCount})
             </div>
-            <div className="text-lg font-bold text-orange-700 mt-1">{formatCurrency(pendingApproval)}</div>
+            <div className="text-lg font-bold text-sand-700 mt-1">{formatCurrency(pendingApproval)}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-xs font-medium">
@@ -674,12 +674,12 @@ export function InvoicesPreview() {
               {overdueAmount > 0 ? formatCurrency(overdueAmount) : '$0'}
             </div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-xs font-medium">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-xs font-medium">
               <Scale className="h-3.5 w-3.5" />
               Retainage Held
             </div>
-            <div className="text-lg font-bold text-purple-700 mt-1">{formatCurrency(totalRetainage)}</div>
+            <div className="text-lg font-bold text-warm-700 mt-1">{formatCurrency(totalRetainage)}</div>
           </div>
         </div>
       </div>
@@ -757,7 +757,7 @@ export function InvoicesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
@@ -778,7 +778,7 @@ export function InvoicesPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-t border-purple-200 px-4 py-4">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Invoice AI Features"
           features={aiFeatures}

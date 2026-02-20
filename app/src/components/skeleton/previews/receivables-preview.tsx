@@ -298,7 +298,7 @@ const agingConfig: Record<AgingBucket, { label: string; color: string; bgColor: 
   'current': { label: 'Current', color: 'text-green-700', bgColor: 'bg-green-100' },
   '1-30': { label: '1-30 Days', color: 'text-stone-700', bgColor: 'bg-stone-100' },
   '31-60': { label: '31-60 Days', color: 'text-amber-700', bgColor: 'bg-amber-100' },
-  '61-90': { label: '61-90 Days', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  '61-90': { label: '61-90 Days', color: 'text-sand-700', bgColor: 'bg-sand-100' },
   '90+': { label: '90+ Days', color: 'text-red-700', bgColor: 'bg-red-100' },
 }
 
@@ -472,7 +472,7 @@ function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
   const balance = receivable.amount - receivable.amountPaid
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-warm-1000 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
         <h3 className="text-lg font-semibold text-warm-900 mb-4">Write Off Receivable</h3>
         <p className="text-sm text-warm-600 mb-4">
@@ -532,7 +532,7 @@ function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-warm-1000 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
         <h3 className="text-lg font-semibold text-warm-900 mb-4">Log Email Follow-up</h3>
         <p className="text-sm text-warm-600 mb-4">
@@ -670,7 +670,7 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
 
           {/* Retainage info */}
           {receivable.retainageAmount > 0 && (
-            <div className="mt-2 flex items-center gap-2 text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
+            <div className="mt-2 flex items-center gap-2 text-xs text-stone-600 bg-warm-50 px-2 py-1 rounded">
               <DollarSign className="h-3 w-3" />
               <span>Retainage held: {formatCurrency(receivable.retainageAmount)}</span>
               {receivable.retainageReleaseDate && (
@@ -1016,12 +1016,12 @@ export function ReceivablesPreview() {
               {dsoTrend === 'down' ? `↓${Math.abs(dsoChange)}` : dsoTrend === 'up' ? `↑${Math.abs(dsoChange)}` : '→'} from last month | Industry avg: 35 days
             </div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Retainage Held
             </div>
-            <div className="text-xl font-bold text-purple-700 mt-1">{formatCurrency(totalRetainage)}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{formatCurrency(totalRetainage)}</div>
             <div className="text-xs text-warm-500 mt-0.5">Across {mockReceivables.filter(r => r.retainageAmount > 0).length} draws</div>
           </div>
           <div className={cn(
@@ -1128,14 +1128,14 @@ export function ReceivablesPreview() {
       </div>
 
       {/* Retainage Summary */}
-      <div className="bg-purple-50 border-t border-purple-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2 text-sm">
-            <DollarSign className="h-4 w-4 text-purple-600" />
-            <span className="font-medium text-purple-800">Retainage Summary:</span>
-            <span className="text-purple-700">{formatCurrency(totalRetainage)} held across all active draws</span>
+            <DollarSign className="h-4 w-4 text-stone-600" />
+            <span className="font-medium text-warm-800">Retainage Summary:</span>
+            <span className="text-warm-700">{formatCurrency(totalRetainage)} held across all active draws</span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-purple-600">
+          <div className="flex items-center gap-4 text-xs text-stone-600">
             {mockReceivables.filter(r => r.retainageReleaseDate).map(r => (
               <span key={r.id}>{r.jobName}: {formatCurrency(r.retainageAmount)} release {formatDate(r.retainageReleaseDate!)}</span>
             ))}
@@ -1151,7 +1151,7 @@ export function ReceivablesPreview() {
       />
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

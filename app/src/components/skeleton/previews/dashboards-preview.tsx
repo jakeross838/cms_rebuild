@@ -250,7 +250,7 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
           )}
           {dashboard.embedInPortal && (
-            <span className="text-xs bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded font-medium">Portal</span>
+            <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">Portal</span>
           )}
         </div>
         <button className="p-1 hover:bg-warm-100 rounded">
@@ -264,7 +264,7 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
             "px-2 py-0.5 rounded font-medium",
             dashboard.visibility === 'personal' ? "bg-stone-100 text-stone-700" :
             dashboard.visibility === 'team' ? "bg-green-100 text-green-700" :
-            "bg-purple-100 text-purple-700"
+            "bg-warm-100 text-warm-700"
           )}>
             {dashboard.visibility}
           </span>
@@ -372,7 +372,7 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
             "text-xs px-2 py-0.5 rounded font-medium",
             dashboard.visibility === 'personal' ? "bg-stone-100 text-stone-700" :
             dashboard.visibility === 'team' ? "bg-green-100 text-green-700" :
-            "bg-purple-100 text-purple-700"
+            "bg-warm-100 text-warm-700"
           )}>
             {dashboard.visibility}
           </span>
@@ -590,7 +590,7 @@ export function DashboardsPreview() {
           {/* Company Dashboards */}
           <div>
             <h4 className="text-sm font-semibold text-warm-700 mb-3 flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-purple-500" />
+              <Building2 className="h-4 w-4 text-stone-600" />
               COMPANY DASHBOARDS
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -716,7 +716,7 @@ export function DashboardsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

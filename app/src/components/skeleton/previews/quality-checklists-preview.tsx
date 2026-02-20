@@ -671,7 +671,7 @@ function InspectionCard({ inspection }: { inspection: ActiveInspection }) {
       </div>
 
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
-        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+        <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
           <Tag className="h-3 w-3" />
           {inspection.trade}
         </span>
@@ -698,7 +698,7 @@ function TemplateCard({ template, onClone }: { template: ChecklistTemplate; onCl
             <span
               className={cn(
                 'text-xs px-2 py-0.5 rounded font-medium',
-                template.isSystem ? 'bg-stone-100 text-stone-700' : 'bg-purple-100 text-purple-700'
+                template.isSystem ? 'bg-stone-100 text-stone-700' : 'bg-warm-100 text-warm-700'
               )}
             >
               {template.isSystem ? 'System' : 'Custom'}
@@ -819,7 +819,7 @@ function FTQDashboardContent() {
         {/* FTQ by Project */}
         <div className="bg-white rounded-lg border border-warm-200 p-4">
           <h4 className="font-medium text-warm-900 mb-4 flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-purple-600" />
+            <Building2 className="h-4 w-4 text-stone-600" />
             FTQ by Project
           </h4>
           <table className="w-full">
@@ -957,7 +957,7 @@ function ChecklistDetailSection() {
                 </span>
               </div>
               {section.items.some((i) => i.isApprovalGate) && (
-                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+                <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
                   <Lock className="h-3 w-3" />
                   Approval Gate
                 </span>
@@ -972,7 +972,7 @@ function ChecklistDetailSection() {
                     key={item.id}
                     className={cn(
                       'flex items-center gap-4 px-4 py-3 border-b border-warm-50 last:border-0',
-                      item.isApprovalGate && 'bg-purple-50',
+                      item.isApprovalGate && 'bg-warm-50',
                       item.result === 'fail' && 'bg-red-50'
                     )}
                   >
@@ -985,7 +985,7 @@ function ChecklistDetailSection() {
                         'p-1.5 rounded',
                         item.valueType === 'pass_fail' && 'bg-green-100 text-green-600',
                         item.valueType === 'measurement' && 'bg-stone-100 text-stone-600',
-                        item.valueType === 'photo' && 'bg-purple-100 text-purple-600',
+                        item.valueType === 'photo' && 'bg-warm-100 text-stone-600',
                         item.valueType === 'signature' && 'bg-amber-100 text-amber-600',
                         item.valueType === 'text' && 'bg-warm-100 text-warm-600'
                       )}
@@ -1012,7 +1012,7 @@ function ChecklistDetailSection() {
                           </span>
                         )}
                         {item.isApprovalGate && (
-                          <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5">
+                          <span className="text-[10px] bg-warm-100 text-warm-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5">
                             <Lock className="h-2.5 w-2.5" />
                             Gate
                           </span>
@@ -1239,10 +1239,10 @@ export function QualityChecklistsPreview() {
               </div>
               <div className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Target className="h-4 w-4 text-purple-500" />
+                  <Target className="h-4 w-4 text-stone-600" />
                   <span className="text-sm text-warm-500">Avg FTQ</span>
                 </div>
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-stone-600">
                   {Math.round(
                     mockActiveInspections
                       .filter((i) => i.ftqScore > 0)

@@ -134,12 +134,12 @@ interface WeatherDay {
 
 const TASK_TYPE_CONFIG: Record<TaskType, { label: string; barColor: string; bgColor: string; badgeColor: string; icon: typeof HardHat }> = {
   construction: { label: 'Construction', barColor: 'bg-stone-500', bgColor: 'bg-stone-200', badgeColor: 'bg-stone-100 text-stone-700', icon: HardHat },
-  inspection:   { label: 'Inspection', barColor: 'bg-purple-500', bgColor: 'bg-purple-200', badgeColor: 'bg-purple-100 text-purple-700', icon: Eye },
+  inspection:   { label: 'Inspection', barColor: 'bg-warm-500', bgColor: 'bg-warm-200', badgeColor: 'bg-warm-100 text-warm-700', icon: Eye },
   delivery:     { label: 'Delivery', barColor: 'bg-amber-500', bgColor: 'bg-amber-200', badgeColor: 'bg-amber-100 text-amber-700', icon: Truck },
   deadline:     { label: 'Deadline', barColor: 'bg-red-500', bgColor: 'bg-red-200', badgeColor: 'bg-red-100 text-red-700', icon: Flag },
   milestone:    { label: 'Milestone', barColor: 'bg-emerald-500', bgColor: 'bg-emerald-200', badgeColor: 'bg-emerald-100 text-emerald-700', icon: Diamond },
-  survey:       { label: 'Survey', barColor: 'bg-cyan-500', bgColor: 'bg-cyan-200', badgeColor: 'bg-cyan-100 text-cyan-700', icon: Ruler },
-  meeting:      { label: 'Meeting', barColor: 'bg-teal-500', bgColor: 'bg-teal-200', badgeColor: 'bg-teal-100 text-teal-700', icon: Users },
+  survey:       { label: 'Survey', barColor: 'bg-stone-500', bgColor: 'bg-cyan-200', badgeColor: 'bg-stone-100 text-stone-700', icon: Ruler },
+  meeting:      { label: 'Meeting', barColor: 'bg-stone-500', bgColor: 'bg-teal-200', badgeColor: 'bg-stone-100 text-stone-700', icon: Users },
   weather_hold: { label: 'Weather Hold', barColor: 'bg-warm-400', bgColor: 'bg-warm-200', badgeColor: 'bg-warm-100 text-warm-600', icon: CloudOff },
 }
 
@@ -159,8 +159,8 @@ const SUB_CONFIRMATION_CONFIG: Record<SubConfirmation, { label: string; badgeCla
 const DEPENDENCY_TYPE_CONFIG: Record<DependencyType, { label: string; color: string; arrowColor: string }> = {
   FS: { label: 'Finish-to-Start', color: 'text-stone-600', arrowColor: '#3b82f6' },
   SS: { label: 'Start-to-Start', color: 'text-green-600', arrowColor: '#16a34a' },
-  FF: { label: 'Finish-to-Finish', color: 'text-orange-600', arrowColor: '#ea580c' },
-  SF: { label: 'Start-to-Finish', color: 'text-purple-600', arrowColor: '#9333ea' },
+  FF: { label: 'Finish-to-Finish', color: 'text-sand-600', arrowColor: '#ea580c' },
+  SF: { label: 'Start-to-Finish', color: 'text-stone-600', arrowColor: '#9333ea' },
 }
 
 // ============================================================================
@@ -500,7 +500,7 @@ function ScheduleStats({ stats }: { stats: ReturnType<typeof computeScheduleStat
           </div>
         )}
         {stats.zeroFloatNotComplete > 0 && (
-          <div className="flex items-center gap-1 text-orange-600">
+          <div className="flex items-center gap-1 text-sand-600">
             <AlertTriangle className="h-3 w-3" />
             {stats.zeroFloatNotComplete} zero-float
           </div>
@@ -512,7 +512,7 @@ function ScheduleStats({ stats }: { stats: ReturnType<typeof computeScheduleStat
           </div>
         )}
         {stats.pendingInspections > 0 && (
-          <div className="flex items-center gap-1 text-purple-600">
+          <div className="flex items-center gap-1 text-stone-600">
             <Eye className="h-3 w-3" />
             {stats.pendingInspections} pending inspections
           </div>
@@ -812,7 +812,7 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
             <span className="text-[10px] bg-red-100 text-red-600 px-1 rounded flex-shrink-0">CP</span>
           )}
           {item.totalFloat === 0 && item.status !== 'complete' && !item.isCriticalPath && (
-            <span className="text-[10px] bg-orange-100 text-orange-600 px-1 rounded flex-shrink-0">0F</span>
+            <span className="text-[10px] bg-sand-100 text-sand-600 px-1 rounded flex-shrink-0">0F</span>
           )}
           {variance !== null && variance > 0 && (
             <span className="text-[10px] text-red-500 flex items-center gap-0.5 flex-shrink-0">
@@ -845,7 +845,7 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
             )
           })()}
           {item.linkedInspection && (
-            <span className="flex items-center gap-0.5 text-purple-500 flex-shrink-0">
+            <span className="flex items-center gap-0.5 text-stone-600 flex-shrink-0">
               <ExternalLink className="h-3 w-3" />{item.linkedInspection}
             </span>
           )}
@@ -1087,7 +1087,7 @@ function ScheduleLegend() {
         <span className="font-medium text-warm-600">Dependencies:</span>
         {(Object.entries(DEPENDENCY_TYPE_CONFIG) as [DependencyType, typeof DEPENDENCY_TYPE_CONFIG[DependencyType]][]).map(([key, cfg]) => (
           <div key={key} className="flex items-center gap-1.5">
-            <div className={cn('w-3 h-0.5 rounded', key === 'FS' ? 'bg-stone-500' : key === 'SS' ? 'bg-green-500' : key === 'FF' ? 'bg-orange-500' : 'bg-purple-500')} />
+            <div className={cn('w-3 h-0.5 rounded', key === 'FS' ? 'bg-stone-500' : key === 'SS' ? 'bg-green-500' : key === 'FF' ? 'bg-sand-500' : 'bg-warm-500')} />
             <span className={cfg.color}>{key}</span>
             <span className="text-warm-400">({cfg.label})</span>
           </div>
@@ -1134,7 +1134,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
           <span>{starting.length} starting</span>
           <span>{continuing.length} continuing</span>
           {deliveries.length > 0 && <span className="text-amber-600">{deliveries.length} deliveries</span>}
-          {inspections.length > 0 && <span className="text-purple-600">{inspections.length} inspections</span>}
+          {inspections.length > 0 && <span className="text-stone-600">{inspections.length} inspections</span>}
           {needConfirmation.length > 0 && <span className="text-amber-600">{needConfirmation.length} need confirmation</span>}
           {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </div>
@@ -1191,14 +1191,14 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
                 )}
               </div>
               <div>
-                <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><Eye className="h-3.5 w-3.5 text-purple-500" /> Inspections Scheduled</h4>
+                <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><Eye className="h-3.5 w-3.5 text-stone-600" /> Inspections Scheduled</h4>
                 {inspections.length === 0 ? <p className="text-xs text-warm-400">None</p> : (
                   <div className="space-y-1">
                     {inspections.map(t => (
                       <div key={t.id} className="flex items-center gap-2 text-xs">
                         <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
                         <span className="text-warm-700 truncate">{t.name}</span>
-                        {t.linkedInspection && <span className="text-purple-500">{t.linkedInspection}</span>}
+                        {t.linkedInspection && <span className="text-stone-600">{t.linkedInspection}</span>}
                       </div>
                     ))}
                   </div>

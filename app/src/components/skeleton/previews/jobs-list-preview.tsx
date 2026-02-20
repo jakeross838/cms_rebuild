@@ -347,7 +347,7 @@ export function JobsListPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-amber-600" />

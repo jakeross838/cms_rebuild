@@ -314,11 +314,11 @@ const mockCommunications: Communication[] = [
 const typeConfig: Record<CommunicationType, { icon: typeof Mail; label: string; color: string; bgColor: string }> = {
   email: { icon: Mail, label: 'Email', color: 'text-stone-600', bgColor: 'bg-stone-100' },
   call: { icon: Phone, label: 'Call', color: 'text-green-600', bgColor: 'bg-green-100' },
-  meeting: { icon: Calendar, label: 'Meeting', color: 'text-purple-600', bgColor: 'bg-purple-100' },
+  meeting: { icon: Calendar, label: 'Meeting', color: 'text-stone-600', bgColor: 'bg-warm-100' },
   note: { icon: FileText, label: 'Note', color: 'text-warm-600', bgColor: 'bg-warm-100' },
-  sms: { icon: MessageSquare, label: 'SMS', color: 'text-cyan-600', bgColor: 'bg-cyan-100' },
+  sms: { icon: MessageSquare, label: 'SMS', color: 'text-stone-600', bgColor: 'bg-stone-100' },
   push: { icon: Bell, label: 'Push', color: 'text-red-600', bgColor: 'bg-red-100' },
-  in_app: { icon: Inbox, label: 'In-App', color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
+  in_app: { icon: Inbox, label: 'In-App', color: 'text-stone-600', bgColor: 'bg-stone-100' },
 }
 
 const urgencyConfig: Record<UrgencyLevel, { label: string; color: string; bgColor: string }> = {
@@ -379,7 +379,7 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                   </span>
                 )}
                 {communication.digestBatched && (
-                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 flex items-center gap-0.5">
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-stone-50 text-stone-600 flex items-center gap-0.5">
                     <Timer className="h-2.5 w-2.5" />
                     Digest ({communication.batchCount})
                   </span>
@@ -620,11 +620,11 @@ export function CommunicationsPreview() {
               <div className="text-xs text-green-600">Decisions</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-2 bg-orange-50 rounded-lg">
-            <Zap className="h-5 w-5 text-orange-500" />
+          <div className="flex items-center gap-3 p-2 bg-sand-50 rounded-lg">
+            <Zap className="h-5 w-5 text-sand-600" />
             <div>
-              <div className="text-lg font-semibold text-orange-700">{actionItems}</div>
-              <div className="text-xs text-orange-600">Action Items</div>
+              <div className="text-lg font-semibold text-sand-700">{actionItems}</div>
+              <div className="text-xs text-sand-600">Action Items</div>
             </div>
           </div>
           <div className="flex items-center gap-3 p-2 bg-warm-50 rounded-lg">
@@ -649,11 +649,11 @@ export function CommunicationsPreview() {
             <Mail className="h-3 w-3" />
             Email: On
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-cyan-50 text-cyan-700 rounded" title="SMS delivery active">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded" title="SMS delivery active">
             <MessageSquare className="h-3 w-3" />
             SMS: On
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded" title="Push notifications active">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded" title="Push notifications active">
             <Bell className="h-3 w-3" />
             Push: On
           </span>
@@ -681,7 +681,7 @@ export function CommunicationsPreview() {
             <Globe className="h-3 w-3" />
             All Modules (event emitters)
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded">
             <ArrowRightLeft className="h-3 w-3" />
             Auth & Roles (1)
           </span>
@@ -713,7 +713,7 @@ export function CommunicationsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -224,8 +224,8 @@ const availableIntegrations: Integration[] = [
     name: 'Stripe',
     description: 'Accept online client payments via credit card, ACH, and wire transfer',
     icon: CreditCard,
-    iconColor: 'text-purple-600',
-    iconBg: 'bg-purple-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-warm-100',
     status: 'disconnected',
     category: 'payment',
     isInstalled: false,
@@ -270,8 +270,8 @@ const availableIntegrations: Integration[] = [
     name: 'Zapier',
     description: 'Connect to 5,000+ apps via triggers and actions. No-code automation.',
     icon: Zap,
-    iconColor: 'text-orange-500',
-    iconBg: 'bg-orange-100',
+    iconColor: 'text-sand-600',
+    iconBg: 'bg-sand-100',
     status: 'disconnected',
     category: 'automation',
     isInstalled: false,
@@ -286,8 +286,8 @@ const availableIntegrations: Integration[] = [
     name: 'Chief Architect',
     description: 'Import architectural plans, room specs, and quantities from design files',
     icon: FileText,
-    iconColor: 'text-indigo-600',
-    iconBg: 'bg-indigo-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-stone-100',
     status: 'disconnected',
     category: 'design',
     isInstalled: false,
@@ -317,8 +317,8 @@ const availableIntegrations: Integration[] = [
     name: 'Sensera (Job Cameras)',
     description: 'Auto-import time-lapse photos and live camera feeds to project dashboard',
     icon: Camera,
-    iconColor: 'text-teal-600',
-    iconBg: 'bg-teal-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-stone-100',
     status: 'disconnected',
     category: 'construction',
     isInstalled: false,
@@ -410,8 +410,8 @@ const availableIntegrations: Integration[] = [
     name: 'Control4 (Smart Home)',
     description: 'Smart home specs, pre-wire docs, equipment lists, and installation scheduling',
     icon: Wifi,
-    iconColor: 'text-violet-600',
-    iconBg: 'bg-violet-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-warm-100',
     status: 'disconnected',
     category: 'smart_home',
     isInstalled: false,
@@ -456,8 +456,8 @@ const availableIntegrations: Integration[] = [
     name: 'RSMeans Cost Data',
     description: 'Pull regional cost data into estimating module for material and labor pricing',
     icon: BarChart3,
-    iconColor: 'text-indigo-600',
-    iconBg: 'bg-indigo-100',
+    iconColor: 'text-stone-600',
+    iconBg: 'bg-stone-100',
     status: 'disconnected',
     category: 'suppliers',
     isInstalled: false,
@@ -472,8 +472,8 @@ const availableIntegrations: Integration[] = [
     name: 'HubSpot CRM',
     description: 'Lead and contact sync between RossOS pipeline and HubSpot marketing automation',
     icon: Users,
-    iconColor: 'text-orange-500',
-    iconBg: 'bg-orange-100',
+    iconColor: 'text-sand-600',
+    iconBg: 'bg-sand-100',
     status: 'disconnected',
     category: 'crm',
     isInstalled: false,
@@ -848,12 +848,12 @@ export function IntegrationsPreview() {
             </div>
             <div className="text-lg font-bold text-warm-900 mt-0.5">142ms</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-purple-600 text-xs">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <Webhook className="h-3.5 w-3.5" />
               Webhooks Active
             </div>
-            <div className="text-lg font-bold text-purple-700 mt-0.5">{mockWebhooks.length}</div>
+            <div className="text-lg font-bold text-warm-700 mt-0.5">{mockWebhooks.length}</div>
           </div>
           <div className="bg-amber-50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-amber-600 text-xs">
@@ -877,7 +877,7 @@ export function IntegrationsPreview() {
             <ArrowRightLeft className="h-3 w-3" />
             Core Data Model (3)
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded">
             <CreditCard className="h-3 w-3" />
             Subscription Billing (43)
           </span>
@@ -1177,7 +1177,7 @@ export function IntegrationsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

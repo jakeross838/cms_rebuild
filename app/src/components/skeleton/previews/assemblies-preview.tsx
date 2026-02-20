@@ -361,7 +361,7 @@ const categories = ['All', 'Kitchen', 'Bathroom', 'Exterior', 'MEP', 'Interior',
 const tierConfig = {
   Builder: { color: 'bg-warm-100 text-warm-700', label: 'Builder' },
   Standard: { color: 'bg-stone-100 text-stone-700', label: 'Standard' },
-  Premium: { color: 'bg-purple-100 text-purple-700', label: 'Premium' },
+  Premium: { color: 'bg-warm-100 text-warm-700', label: 'Premium' },
   Luxury: { color: 'bg-amber-100 text-amber-700', label: 'Luxury' },
 }
 
@@ -383,7 +383,7 @@ function Modal({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-warm-1000" onClick={onClose} />
       <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[80vh] overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h3 className="font-semibold text-warm-900">{title}</h3>
@@ -575,7 +575,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                 <span className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded">Inactive</span>
               )}
               {assembly.hasNestedAssemblies && (
-                <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   <Layers className="h-3 w-3" />
                   Nested
                 </span>
@@ -849,7 +849,7 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
                 <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded">Inactive</span>
               )}
               {assembly.hasNestedAssemblies && (
-                <span title="Contains nested assemblies"><Layers className="h-3.5 w-3.5 text-indigo-500" /></span>
+                <span title="Contains nested assemblies"><Layers className="h-3.5 w-3.5 text-stone-600" /></span>
               )}
             </div>
             <div className="text-xs text-warm-500">{assembly.description}</div>
@@ -1068,12 +1068,12 @@ export function AssembliesPreview() {
             </div>
             <div className="text-xl font-bold text-warm-900 mt-1">{favorites}</div>
           </div>
-          <div className="bg-indigo-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-indigo-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Layers className="h-4 w-4" />
               Nested
             </div>
-            <div className="text-xl font-bold text-indigo-700 mt-1">{nestedCount}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{nestedCount}</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
@@ -1171,11 +1171,11 @@ export function AssembliesPreview() {
             <FileText className="h-3 w-3" />
             Estimates
           </span>
-          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Layers className="h-3 w-3" />
             Cost Codes
           </span>
-          <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <TrendingUp className="h-3 w-3" />
             Price Intelligence
           </span>

@@ -348,7 +348,7 @@ export function PriceIntelligencePreview() {
           <div className="text-xs text-muted-foreground">Across 12 categories</div>
         </div>
         <div className="bg-card border rounded-lg p-3">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground"><Users className="h-3.5 w-3.5 text-purple-600" />Active Vendors</div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground"><Users className="h-3.5 w-3.5 text-stone-600" />Active Vendors</div>
           <div className="text-xl font-bold mt-1">14</div>
           <div className="text-xs text-muted-foreground">8 with rate sheets</div>
         </div>
@@ -398,10 +398,10 @@ export function PriceIntelligencePreview() {
           <span className="text-warm-500">Real-time price data flows to all connected modules</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+          <span className="bg-stone-50 text-stone-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
             <DollarSign className="h-3.5 w-3.5" />
             Public Estimator
-            <span className="bg-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Live Sync</span>
+            <span className="bg-stone-200 text-stone-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Live Sync</span>
           </span>
           <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
             <Users className="h-3.5 w-3.5" />
@@ -411,11 +411,11 @@ export function PriceIntelligencePreview() {
             <FileText className="h-3.5 w-3.5" />
             Estimates
           </span>
-          <span className="bg-purple-50 text-purple-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+          <span className="bg-warm-50 text-warm-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
             <FileText className="h-3.5 w-3.5" />
             Change Orders
           </span>
-          <span className="bg-orange-50 text-orange-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+          <span className="bg-sand-50 text-sand-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
             <Package className="h-3.5 w-3.5" />
             Purchase Orders
             <span className="bg-orange-200 text-orange-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Price Source</span>
@@ -425,11 +425,11 @@ export function PriceIntelligencePreview() {
             Invoices
             <span className="bg-stone-200 text-stone-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Price Source</span>
           </span>
-          <span className="bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+          <span className="bg-stone-50 text-stone-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
             <Clock className="h-3.5 w-3.5" />
             Timeline Intelligence
           </span>
-          <span className="bg-pink-50 text-pink-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+          <span className="bg-warm-50 text-sand-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
             <Eye className="h-3.5 w-3.5" />
             Selections Catalog
           </span>
@@ -437,14 +437,14 @@ export function PriceIntelligencePreview() {
       </div>
 
       {/* Data Flow Summary */}
-      <div className="bg-gradient-to-r from-stone-50 to-warm-50 border border-stone-200 rounded-lg px-4 py-3">
+      <div className="bg-warm-50 border border-stone-200 rounded-lg px-4 py-3">
         <div className="grid grid-cols-4 gap-4 text-xs">
           <div className="text-center">
             <div className="text-lg font-bold text-stone-800">1,247</div>
             <div className="text-stone-500">Price Data Points</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-indigo-600">$182K</div>
+            <div className="text-lg font-bold text-stone-600">$182K</div>
             <div className="text-stone-500">Estimator Revenue</div>
           </div>
           <div className="text-center">
@@ -459,7 +459,7 @@ export function PriceIntelligencePreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg px-4 py-4">
+      <div className="bg-warm-50 border border-warm-200 rounded-lg px-4 py-4">
         <AIFeaturesPanel
           title="Price Intelligence AI Features"
           features={[
@@ -1006,7 +1006,7 @@ function SavingsTab() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+      <div className="bg-warm-50 border border-green-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
           <div>
@@ -1103,20 +1103,20 @@ function AnalyticsTab() {
           {/* Negotiation Insights */}
           <div className="bg-card border rounded-lg p-4">
             <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-purple-600" /> Negotiation Insights
+              <Sparkles className="h-4 w-4 text-stone-600" /> Negotiation Insights
             </h3>
             <div className="space-y-2 text-xs">
-              <div className="p-2 bg-purple-50 border border-purple-200 rounded-lg">
-                <div className="font-medium text-purple-800">Gulf Lumber</div>
-                <div className="text-purple-700 mt-0.5">$284K annual spend. Request: 3-5% volume discount, Net 45 terms, free delivery on orders &gt;$2K.</div>
+              <div className="p-2 bg-warm-50 border border-warm-200 rounded-lg">
+                <div className="font-medium text-warm-800">Gulf Lumber</div>
+                <div className="text-warm-700 mt-0.5">$284K annual spend. Request: 3-5% volume discount, Net 45 terms, free delivery on orders &gt;$2K.</div>
               </div>
-              <div className="p-2 bg-purple-50 border border-purple-200 rounded-lg">
-                <div className="font-medium text-purple-800">84 Lumber</div>
-                <div className="text-purple-700 mt-0.5">Pricing 8% above Gulf on framing. Use Gulf quotes as leverage for price matching.</div>
+              <div className="p-2 bg-warm-50 border border-warm-200 rounded-lg">
+                <div className="font-medium text-warm-800">84 Lumber</div>
+                <div className="text-warm-700 mt-0.5">Pricing 8% above Gulf on framing. Use Gulf quotes as leverage for price matching.</div>
               </div>
-              <div className="p-2 bg-purple-50 border border-purple-200 rounded-lg">
-                <div className="font-medium text-purple-800">Advantage Lumber</div>
-                <div className="text-purple-700 mt-0.5">Best exotic decking prices. Consider exclusive decking vendor agreement for 5-8% additional discount.</div>
+              <div className="p-2 bg-warm-50 border border-warm-200 rounded-lg">
+                <div className="font-medium text-warm-800">Advantage Lumber</div>
+                <div className="text-warm-700 mt-0.5">Best exotic decking prices. Consider exclusive decking vendor agreement for 5-8% additional discount.</div>
               </div>
             </div>
           </div>

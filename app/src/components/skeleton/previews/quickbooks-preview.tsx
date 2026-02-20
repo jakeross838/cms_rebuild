@@ -386,7 +386,7 @@ function SyncStatusCard({ sync }: { sync: SyncStatus }) {
         </div>
         <div className="flex items-center gap-1">
           {sync.syncMode === 'real_time' && (
-            <span title="Real-time sync"><Zap className="h-3 w-3 text-purple-500" /></span>
+            <span title="Real-time sync"><Zap className="h-3 w-3 text-stone-600" /></span>
           )}
           {sync.status === 'success' && <CheckCircle2 className="h-4 w-4 text-green-500" />}
           {sync.status === 'warning' && <AlertCircle className="h-4 w-4 text-amber-500" />}
@@ -450,8 +450,8 @@ function AccountMappingTable() {
                   "text-xs px-1.5 py-0.5 rounded",
                   mapping.mappingType === 'expense' ? "bg-stone-50 text-stone-600" :
                   mapping.mappingType === 'revenue' ? "bg-green-50 text-green-600" :
-                  mapping.mappingType === 'asset' ? "bg-purple-50 text-purple-600" :
-                  "bg-orange-50 text-orange-600"
+                  mapping.mappingType === 'asset' ? "bg-warm-50 text-stone-600" :
+                  "bg-sand-50 text-sand-600"
                 )}>
                   {mapping.mappingType}
                 </span>
@@ -588,8 +588,8 @@ function ConflictResolutionPanel() {
                 <div className="text-xs text-stone-600 font-medium mb-0.5">RossOS Value</div>
                 <div className="text-warm-700">{conflict.platformValue}</div>
               </div>
-              <div className="bg-purple-50 rounded p-2">
-                <div className="text-xs text-purple-600 font-medium mb-0.5">QBO Value</div>
+              <div className="bg-warm-50 rounded p-2">
+                <div className="text-xs text-stone-600 font-medium mb-0.5">QBO Value</div>
                 <div className="text-warm-700">{conflict.qboValue}</div>
               </div>
             </div>
@@ -597,7 +597,7 @@ function ConflictResolutionPanel() {
               <button className="text-xs px-2 py-1 bg-stone-600 text-white rounded hover:bg-stone-700">
                 Keep RossOS
               </button>
-              <button className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
+              <button className="text-xs px-2 py-1 bg-stone-700 text-white rounded hover:bg-stone-800">
                 Keep QBO
               </button>
               <button className="text-xs px-2 py-1 text-warm-600 border border-warm-200 rounded hover:bg-warm-50">
@@ -882,7 +882,7 @@ export function QuickbooksPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

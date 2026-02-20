@@ -410,7 +410,7 @@ const jobProfitability: JobProfitability[] = [
 const pendingApprovals: PendingApproval[] = [
   { type: 'invoice', count: 3, label: 'Invoices', color: 'bg-stone-100 text-stone-700' },
   { type: 'change-order', count: 2, label: 'Change Orders', color: 'bg-amber-100 text-amber-700' },
-  { type: 'po', count: 5, label: 'POs', color: 'bg-purple-100 text-purple-700' },
+  { type: 'po', count: 5, label: 'POs', color: 'bg-warm-100 text-warm-700' },
   { type: 'draw', count: 1, label: 'Draws', color: 'bg-green-100 text-green-700' },
 ]
 
@@ -534,9 +534,9 @@ const cardColorClasses = {
     text: 'text-amber-600',
   },
   purple: {
-    bg: 'bg-purple-50',
-    icon: 'bg-purple-100 text-purple-600',
-    text: 'text-purple-600',
+    bg: 'bg-warm-50',
+    icon: 'bg-warm-100 text-stone-600',
+    text: 'text-stone-600',
   },
 }
 
@@ -650,7 +650,7 @@ function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
     green: 'text-green-600',
     amber: 'text-amber-600',
     red: 'text-red-600',
-    purple: 'text-purple-600',
+    purple: 'text-stone-600',
     gray: 'text-warm-600',
   }
 
@@ -696,7 +696,7 @@ function OutstandingDrawsList({ draws }: { draws: OutstandingDraw[] }) {
     draft: 'bg-warm-100 text-warm-700',
     review: 'bg-stone-100 text-stone-700',
     approved: 'bg-green-100 text-green-700',
-    submitted: 'bg-purple-100 text-purple-700',
+    submitted: 'bg-warm-100 text-warm-700',
   }
 
   return (
@@ -1023,7 +1023,7 @@ function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
   const activityTypeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
     'payment-received': { icon: DollarSign, color: 'text-green-600 bg-green-100', label: 'Payments' },
     'invoice-sent': { icon: Send, color: 'text-stone-600 bg-stone-100', label: 'Invoices' },
-    'po-approved': { icon: CheckCircle, color: 'text-purple-600 bg-purple-100', label: 'POs' },
+    'po-approved': { icon: CheckCircle, color: 'text-stone-600 bg-warm-100', label: 'POs' },
     'draw-submitted': { icon: FileText, color: 'text-amber-600 bg-amber-100', label: 'Draws' },
   }
 
@@ -1090,7 +1090,7 @@ function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
   const getReasonColor = (reason: string) => {
     if (reason.includes('overdue')) return 'text-red-600 bg-red-50'
     if (reason.includes('confirmation')) return 'text-amber-600 bg-amber-50'
-    if (reason.includes('expiring')) return 'text-purple-600 bg-purple-50'
+    if (reason.includes('expiring')) return 'text-stone-600 bg-warm-50'
     return 'text-warm-600 bg-warm-50'
   }
 
@@ -1099,7 +1099,7 @@ function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-purple-500" />
+            <Users className="h-4 w-4 text-stone-600" />
             <h4 className="font-medium text-warm-900 text-sm">Vendor Follow-up Queue</h4>
           </div>
           <span className="text-xs text-warm-500">{vendors.length} pending</span>
@@ -1524,7 +1524,7 @@ export function FinancialDashboardPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

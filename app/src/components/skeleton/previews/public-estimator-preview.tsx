@@ -85,9 +85,9 @@ const estimatorSteps: EstimatorStep[] = [
 ]
 
 const finishLevels: FinishLevel[] = [
-  { id: 'builder', name: 'Builder Grade', description: 'Quality materials, value-focused', priceMultiplier: 1.0, color: 'bg-slate-500' },
-  { id: 'standard', name: 'Standard', description: 'Upgraded finishes, popular choices', priceMultiplier: 1.15, color: 'bg-blue-500' },
-  { id: 'premium', name: 'Premium', description: 'High-end materials, custom details', priceMultiplier: 1.35, color: 'bg-purple-500' },
+  { id: 'builder', name: 'Builder Grade', description: 'Quality materials, value-focused', priceMultiplier: 1.0, color: 'bg-warm-500' },
+  { id: 'standard', name: 'Standard', description: 'Upgraded finishes, popular choices', priceMultiplier: 1.15, color: 'bg-stone-500' },
+  { id: 'premium', name: 'Premium', description: 'High-end materials, custom details', priceMultiplier: 1.35, color: 'bg-warm-500' },
   { id: 'luxury', name: 'Luxury', description: 'Top-tier everything, no compromises', priceMultiplier: 1.6, color: 'bg-amber-500' },
 ]
 
@@ -122,7 +122,7 @@ function ProgressBar({ currentStep, totalSteps }: { currentStep: number; totalSt
           key={i}
           className={cn(
             'h-1.5 flex-1 rounded-full transition-all duration-300',
-            i < currentStep ? 'bg-blue-600' : i === currentStep ? 'bg-blue-400' : 'bg-gray-200'
+            i < currentStep ? 'bg-stone-700' : i === currentStep ? 'bg-blue-400' : 'bg-warm-200'
           )}
         />
       ))}
@@ -141,13 +141,13 @@ function StepIndicator({ steps, currentStep }: { steps: EstimatorStep[]; current
               i < currentStep
                 ? 'bg-green-500 text-white'
                 : i === currentStep
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-400'
+                ? 'bg-stone-700 text-white'
+                : 'bg-warm-100 text-warm-400'
             )}
           >
             {i < currentStep ? <Check className="h-4 w-4" /> : step.icon}
           </div>
-          <span className={cn('text-[10px]', i === currentStep ? 'text-blue-600 font-medium' : 'text-gray-400')}>
+          <span className={cn('text-[10px]', i === currentStep ? 'text-stone-600 font-medium' : 'text-warm-400')}>
             {step.name}
           </span>
         </div>
@@ -166,15 +166,15 @@ function FinishLevelSelector({ selected, onSelect }: { selected: string; onSelec
           className={cn(
             'p-3 rounded-lg border-2 text-left transition-all',
             selected === level.id
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-200 hover:border-gray-300'
+              ? 'border-stone-500 bg-stone-50'
+              : 'border-warm-200 hover:border-warm-300'
           )}
         >
           <div className="flex items-center gap-2 mb-1">
             <div className={cn('w-3 h-3 rounded-full', level.color)} />
             <span className="font-medium text-sm">{level.name}</span>
           </div>
-          <p className="text-xs text-gray-500">{level.description}</p>
+          <p className="text-xs text-warm-500">{level.description}</p>
         </button>
       ))}
     </div>
@@ -200,11 +200,11 @@ function RunningTotal({ low, high }: { low: number; high: number }) {
 function CostBreakdownBar({ breakdown }: { breakdown: CategoryBreakdown[] }) {
   const total = breakdown.reduce((sum, cat) => sum + cat.costHigh, 0)
   const colors = [
-    'bg-blue-500', 'bg-green-500', 'bg-amber-500', 'bg-purple-500',
-    'bg-pink-500', 'bg-cyan-500', 'bg-orange-500', 'bg-indigo-500',
-    'bg-red-500', 'bg-teal-500', 'bg-lime-500', 'bg-emerald-500',
-    'bg-violet-500', 'bg-fuchsia-500', 'bg-rose-500', 'bg-sky-500',
-    'bg-yellow-500', 'bg-slate-500'
+    'bg-stone-500', 'bg-green-500', 'bg-amber-500', 'bg-warm-500',
+    'bg-warm-500', 'bg-stone-500', 'bg-sand-500', 'bg-stone-500',
+    'bg-red-500', 'bg-stone-500', 'bg-lime-500', 'bg-emerald-500',
+    'bg-warm-500', 'bg-fuchsia-500', 'bg-warm-500', 'bg-sky-500',
+    'bg-yellow-500', 'bg-warm-500'
   ]
 
   return (
@@ -225,7 +225,7 @@ function CostBreakdownBar({ breakdown }: { breakdown: CategoryBreakdown[] }) {
         {breakdown.slice(0, 9).map((cat, i) => (
           <div key={cat.category} className="flex items-center gap-1">
             <div className={cn('w-2 h-2 rounded-sm', colors[i % colors.length])} />
-            <span className="text-[10px] text-gray-600 truncate">{cat.displayName}</span>
+            <span className="text-[10px] text-warm-600 truncate">{cat.displayName}</span>
           </div>
         ))}
       </div>
@@ -238,33 +238,33 @@ function LeadCaptureGate({ onSubmit }: { onSubmit: () => void }) {
     <div className="absolute inset-0 bg-gradient-to-t from-white via-white to-transparent flex flex-col items-center justify-end pb-8">
       <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4 border">
         <div className="text-center mb-4">
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Lock className="h-6 w-6 text-blue-600" />
+          <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Lock className="h-6 w-6 text-stone-600" />
           </div>
           <h3 className="font-semibold text-lg">Unlock Your Full Estimate</h3>
-          <p className="text-sm text-gray-500 mt-1">Get your detailed cost breakdown and connect with our team</p>
+          <p className="text-sm text-warm-500 mt-1">Get your detailed cost breakdown and connect with our team</p>
         </div>
         <div className="space-y-3">
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-warm-400" />
             <input type="text" placeholder="Your Name" className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm" />
           </div>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-warm-400" />
             <input type="email" placeholder="Email Address" className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm" />
           </div>
           <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-warm-400" />
             <input type="tel" placeholder="Phone (optional)" className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm" />
           </div>
           <button
             onClick={onSubmit}
-            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-stone-700 text-white py-2.5 rounded-lg font-medium hover:bg-stone-800 transition-colors flex items-center justify-center gap-2"
           >
             See My Estimate <ArrowRight className="h-4 w-4" />
           </button>
         </div>
-        <p className="text-[10px] text-gray-400 text-center mt-3">
+        <p className="text-[10px] text-warm-400 text-center mt-3">
           By submitting, you agree to be contacted about your project. No spam, ever.
         </p>
       </div>
@@ -331,7 +331,7 @@ export function PublicEstimatorPreview() {
                         className={cn(
                           'p-3 rounded-lg border text-left transition-all',
                           finishLevel === level.id
-                            ? 'border-blue-400 bg-blue-500/20'
+                            ? 'border-blue-400 bg-stone-500/20'
                             : 'border-white/10 hover:border-white/20'
                         )}
                       >
@@ -391,7 +391,7 @@ export function PublicEstimatorPreview() {
                           className={cn(
                             'flex-1 py-2 rounded-lg text-sm font-medium transition-all',
                             bedrooms === num
-                              ? 'bg-blue-500 text-white'
+                              ? 'bg-stone-500 text-white'
                               : 'bg-white/10 text-white/60 hover:bg-white/20'
                           )}
                         >
@@ -412,7 +412,7 @@ export function PublicEstimatorPreview() {
                           className={cn(
                             'flex-1 py-2 rounded-lg text-sm font-medium transition-all',
                             bathrooms === num
-                              ? 'bg-blue-500 text-white'
+                              ? 'bg-stone-500 text-white'
                               : 'bg-white/10 text-white/60 hover:bg-white/20'
                           )}
                         >
@@ -462,7 +462,7 @@ export function PublicEstimatorPreview() {
                     className={cn(
                       'p-4 rounded-xl border text-center transition-all',
                       style.selected
-                        ? 'border-blue-400 bg-blue-500/20'
+                        ? 'border-blue-400 bg-stone-500/20'
                         : 'border-white/10 hover:border-white/20'
                     )}
                   >
@@ -498,7 +498,7 @@ export function PublicEstimatorPreview() {
                           className={cn(
                             'flex-1 py-2 rounded-lg text-xs font-medium transition-all',
                             item.selected === opt
-                              ? 'bg-blue-500 text-white'
+                              ? 'bg-stone-500 text-white'
                               : 'bg-white/10 text-white/60 hover:bg-white/20'
                           )}
                         >
@@ -596,7 +596,7 @@ export function PublicEstimatorPreview() {
           <button
             onClick={() => setCurrentStep(Math.min(estimatorSteps.length - 1, currentStep + 1))}
             disabled={currentStep === estimatorSteps.length - 1}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-30 flex items-center gap-1 text-sm"
+            className="px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800 disabled:opacity-30 flex items-center gap-1 text-sm"
           >
             {currentStep === estimatorSteps.length - 2 ? 'See Results' : 'Continue'} <ChevronRight className="h-4 w-4" />
           </button>
@@ -607,29 +607,29 @@ export function PublicEstimatorPreview() {
       <div className="bg-white rounded-lg border shadow-sm">
         <div className="p-4 border-b">
           <h3 className="font-semibold flex items-center gap-2">
-            <Target className="h-5 w-5 text-blue-600" />
+            <Target className="h-5 w-5 text-stone-600" />
             Estimator Leads Dashboard
           </h3>
-          <p className="text-sm text-gray-500 mt-1">Leads captured from the public estimator</p>
+          <p className="text-sm text-warm-500 mt-1">Leads captured from the public estimator</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 p-4 border-b bg-gray-50">
+        <div className="grid grid-cols-4 gap-4 p-4 border-b bg-warm-50">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">47</div>
-            <div className="text-xs text-gray-500">Total Leads</div>
+            <div className="text-2xl font-bold text-warm-900">47</div>
+            <div className="text-xs text-warm-500">Total Leads</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">12</div>
-            <div className="text-xs text-gray-500">New This Week</div>
+            <div className="text-2xl font-bold text-stone-600">12</div>
+            <div className="text-xs text-warm-500">New This Week</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">23%</div>
-            <div className="text-xs text-gray-500">Conversion Rate</div>
+            <div className="text-xs text-warm-500">Conversion Rate</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">$14.2M</div>
-            <div className="text-xs text-gray-500">Pipeline Value</div>
+            <div className="text-2xl font-bold text-stone-600">$14.2M</div>
+            <div className="text-xs text-warm-500">Pipeline Value</div>
           </div>
         </div>
 
@@ -640,30 +640,30 @@ export function PublicEstimatorPreview() {
             { name: 'Sarah Williams', email: 'sarah.w@email.com', sqft: 3500, estimate: '$640K-$780K', status: 'contacted', level: 'standard', date: '1 day ago' },
             { name: 'David & Lisa Park', email: 'd.park@email.com', sqft: 5800, estimate: '$1.4M-$1.7M', status: 'qualified', level: 'luxury', date: '3 days ago' },
           ].map((lead, i) => (
-            <div key={i} className="p-4 hover:bg-gray-50 flex items-center justify-between">
+            <div key={i} className="p-4 hover:bg-warm-50 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-medium">{lead.name.split(' ').map(n => n[0]).join('')}</span>
+                <div className="w-10 h-10 bg-stone-100 rounded-full flex items-center justify-center">
+                  <span className="text-stone-600 font-medium">{lead.name.split(' ').map(n => n[0]).join('')}</span>
                 </div>
                 <div>
                   <div className="font-medium text-sm">{lead.name}</div>
-                  <div className="text-xs text-gray-500">{lead.email}</div>
+                  <div className="text-xs text-warm-500">{lead.email}</div>
                 </div>
               </div>
               <div className="text-right">
                 <div className="font-medium text-sm">{lead.estimate}</div>
-                <div className="text-xs text-gray-500">{lead.sqft.toLocaleString()} sqft • {lead.level}</div>
+                <div className="text-xs text-warm-500">{lead.sqft.toLocaleString()} sqft • {lead.level}</div>
               </div>
               <div className="flex items-center gap-2">
                 <span className={cn(
                   'px-2 py-1 rounded-full text-xs font-medium',
-                  lead.status === 'new' ? 'bg-blue-100 text-blue-700' :
+                  lead.status === 'new' ? 'bg-stone-100 text-stone-700' :
                   lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-700' :
                   'bg-green-100 text-green-700'
                 )}>
                   {lead.status}
                 </span>
-                <span className="text-xs text-gray-400">{lead.date}</span>
+                <span className="text-xs text-warm-400">{lead.date}</span>
               </div>
             </div>
           ))}

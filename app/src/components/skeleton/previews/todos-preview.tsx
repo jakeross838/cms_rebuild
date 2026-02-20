@@ -353,10 +353,10 @@ const mockTasks: Task[] = [
 
 const categoryConfig: Record<TaskCategory, { label: string; color: string; icon: typeof CircleDot }> = {
   'job-related': { label: 'Job Related', color: 'bg-stone-100 text-stone-700', icon: Building2 },
-  admin: { label: 'Admin / Financial', color: 'bg-purple-100 text-purple-700', icon: FileText },
-  'follow-ups': { label: 'Follow-ups', color: 'bg-orange-100 text-orange-700', icon: Clock },
-  inspections: { label: 'Inspections', color: 'bg-teal-100 text-teal-700', icon: ClipboardList },
-  procurement: { label: 'Procurement', color: 'bg-indigo-100 text-indigo-700', icon: Hash },
+  admin: { label: 'Admin / Financial', color: 'bg-warm-100 text-warm-700', icon: FileText },
+  'follow-ups': { label: 'Follow-ups', color: 'bg-sand-100 text-sand-700', icon: Clock },
+  inspections: { label: 'Inspections', color: 'bg-stone-100 text-stone-700', icon: ClipboardList },
+  procurement: { label: 'Procurement', color: 'bg-stone-100 text-stone-700', icon: Hash },
 }
 
 const statusConfig: Record<TaskStatus, { label: string; color: string; bgColor: string; textColor: string; icon: typeof CircleDot }> = {
@@ -378,11 +378,11 @@ const sourceModuleConfig: Record<SourceModule, { label: string; color: string }>
   manual: { label: 'Manual', color: 'bg-warm-50 text-warm-500' },
   schedule: { label: 'Schedule', color: 'bg-stone-50 text-stone-600' },
   'daily-log': { label: 'Daily Log', color: 'bg-green-50 text-green-600' },
-  rfi: { label: 'RFI', color: 'bg-purple-50 text-purple-600' },
-  inspection: { label: 'Inspection', color: 'bg-teal-50 text-teal-600' },
+  rfi: { label: 'RFI', color: 'bg-warm-50 text-stone-600' },
+  inspection: { label: 'Inspection', color: 'bg-stone-50 text-stone-600' },
   'ai-suggested': { label: 'AI Suggested', color: 'bg-amber-50 text-amber-600' },
-  'punch-list': { label: 'Punch List', color: 'bg-pink-50 text-pink-600' },
-  'change-order': { label: 'Change Order', color: 'bg-orange-50 text-orange-600' },
+  'punch-list': { label: 'Punch List', color: 'bg-warm-50 text-sand-600' },
+  'change-order': { label: 'Change Order', color: 'bg-sand-50 text-sand-600' },
 }
 
 // ---------------------------------------------------------------------------
@@ -482,7 +482,7 @@ function TaskCard({ task }: { task: Task }) {
                 </span>
               )}
               {task.linkedVendor && (
-                <span className="text-xs px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 inline-flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1">
                   <Hash className="h-3 w-3" />
                   {task.linkedVendor}
                 </span>
@@ -494,7 +494,7 @@ function TaskCard({ task }: { task: Task }) {
                 </span>
               )}
               {task.linkedScheduleTask && (
-                <span className="text-xs px-2 py-0.5 rounded bg-cyan-50 text-cyan-600 inline-flex items-center gap-1 cursor-pointer hover:bg-cyan-100">
+                <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1 cursor-pointer hover:bg-stone-100">
                   <Link2 className="h-3 w-3" />
                   {task.linkedScheduleTask}
                 </span>
@@ -825,7 +825,7 @@ export function TodosPreview() {
                 "text-xs px-2 py-0.5 rounded font-medium",
                 completedPercent >= 70 ? "bg-green-100 text-green-700" :
                 completedPercent >= 40 ? "bg-amber-100 text-amber-700" :
-                "bg-orange-100 text-orange-700"
+                "bg-sand-100 text-sand-700"
               )}>
                 {completedPercent}% Complete
               </span>
@@ -920,8 +920,8 @@ export function TodosPreview() {
             icon={Zap}
             label="Overdue"
             value={overdueTasks}
-            iconColor="text-orange-600"
-            iconBg="bg-orange-50"
+            iconColor="text-sand-600"
+            iconBg="bg-sand-50"
           />
           <StatCard
             icon={Repeat}
@@ -1111,7 +1111,7 @@ export function TodosPreview() {
       )}
 
       {/* AI Suggestions Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

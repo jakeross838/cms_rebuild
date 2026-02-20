@@ -419,11 +419,11 @@ const statusConfig: Record<PurchaseOrder['status'], { label: string; color: stri
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   pending_approval: { label: 'Pending Approval', color: 'bg-amber-100 text-amber-700', icon: Clock },
   approved: { label: 'Approved', color: 'bg-stone-100 text-stone-700', icon: CheckCircle2 },
-  sent: { label: 'Sent', color: 'bg-indigo-100 text-indigo-700', icon: Send },
-  acknowledged: { label: 'Acknowledged', color: 'bg-purple-100 text-purple-700', icon: Inbox },
-  partial_delivery: { label: 'Partial Delivery', color: 'bg-orange-100 text-orange-700', icon: Package },
+  sent: { label: 'Sent', color: 'bg-stone-100 text-stone-700', icon: Send },
+  acknowledged: { label: 'Acknowledged', color: 'bg-warm-100 text-warm-700', icon: Inbox },
+  partial_delivery: { label: 'Partial Delivery', color: 'bg-sand-100 text-sand-700', icon: Package },
   fully_received: { label: 'Fully Received', color: 'bg-emerald-100 text-emerald-700', icon: Truck },
-  invoiced: { label: 'Invoiced', color: 'bg-teal-100 text-teal-700', icon: Receipt },
+  invoiced: { label: 'Invoiced', color: 'bg-stone-100 text-stone-700', icon: Receipt },
   closed: { label: 'Closed', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-700', icon: XCircle },
 }
@@ -669,7 +669,7 @@ function POCard({ po }: { po: PurchaseOrder }) {
             </button>
           )}
           {po.status === 'approved' && !po.isEmergency && (
-            <button className="text-xs text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+            <button className="text-xs text-stone-600 font-medium hover:text-stone-700 flex items-center gap-1">
               <Send className="h-3 w-3" />
               Send to Vendor
             </button>
@@ -681,19 +681,19 @@ function POCard({ po }: { po: PurchaseOrder }) {
       <div className="flex items-center gap-2 flex-wrap mt-2">
         <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{po.costCode}</span>
         {po.changeOrderNumber && (
-          <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Link2 className="h-3 w-3" />
             {po.changeOrderNumber}
           </span>
         )}
         {po.bidReference && (
-          <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <FileText className="h-3 w-3" />
             {po.bidReference}
           </span>
         )}
         {po.selectionName && (
-          <span className="text-xs bg-teal-50 text-teal-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Layers className="h-3 w-3" />
             {po.selectionName}
           </span>
@@ -841,28 +841,28 @@ export function PurchaseOrdersPreview() {
             <div className="text-lg font-bold text-amber-700 mt-1">{formatCurrency(pendingDeliveryAmount)}</div>
             <div className="text-xs text-amber-500">{pendingDelivery.length} awaiting</div>
           </div>
-          <div className="bg-teal-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-teal-600 text-xs">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-xs">
               <Receipt className="h-3.5 w-3.5" />
               Total Invoiced
             </div>
-            <div className="text-lg font-bold text-teal-700 mt-1">{formatCurrency(totalInvoiced)}</div>
-            <div className="text-xs text-teal-500">{matchedCount} matched, {varianceCount} variance</div>
+            <div className="text-lg font-bold text-stone-700 mt-1">{formatCurrency(totalInvoiced)}</div>
+            <div className="text-xs text-stone-600">{matchedCount} matched, {varianceCount} variance</div>
           </div>
           <div className={cn(
             "rounded-lg p-3",
-            backorderedTotal > 0 ? "bg-orange-50" : "bg-warm-50"
+            backorderedTotal > 0 ? "bg-sand-50" : "bg-warm-50"
           )}>
             <div className={cn(
               "flex items-center gap-2 text-xs",
-              backorderedTotal > 0 ? "text-orange-600" : "text-warm-500"
+              backorderedTotal > 0 ? "text-sand-600" : "text-warm-500"
             )}>
               <AlertCircle className="h-3.5 w-3.5" />
               Backordered
             </div>
             <div className={cn(
               "text-lg font-bold mt-1",
-              backorderedTotal > 0 ? "text-orange-700" : "text-warm-900"
+              backorderedTotal > 0 ? "text-sand-700" : "text-warm-900"
             )}>
               {backorderedTotal} items
             </div>
@@ -954,7 +954,7 @@ export function PurchaseOrdersPreview() {
       </div>
 
       {/* AI Features Panel */}
-      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-t border-purple-200 px-4 py-4">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="Procurement AI Insights"
           features={aiFeatures}

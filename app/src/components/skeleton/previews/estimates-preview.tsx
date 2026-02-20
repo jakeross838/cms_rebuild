@@ -278,7 +278,7 @@ const statusConfig: Record<EstimateStatus, { label: string; color: string }> = {
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
   sent: { label: 'Sent to Client', color: 'bg-stone-100 text-stone-700' },
   expired: { label: 'Expired', color: 'bg-red-100 text-red-700' },
-  converted: { label: 'Converted', color: 'bg-purple-100 text-purple-700' },
+  converted: { label: 'Converted', color: 'bg-warm-100 text-warm-700' },
 }
 
 const contractTypeLabels: Record<ContractType, string> = {
@@ -292,13 +292,13 @@ const itemTypeConfig: Record<ItemType, { label: string; color: string }> = {
   line: { label: 'LINE', color: 'bg-stone-50 text-stone-700' },
   allowance: { label: 'ALLOWANCE', color: 'bg-amber-100 text-amber-700' },
   exclusion: { label: 'EXCLUDED', color: 'bg-red-100 text-red-700' },
-  alternate: { label: 'ALTERNATE', color: 'bg-purple-100 text-purple-700' },
+  alternate: { label: 'ALTERNATE', color: 'bg-warm-100 text-warm-700' },
 }
 
 const tierColors = {
   builder: 'bg-warm-100 text-warm-700',
   standard: 'bg-stone-100 text-stone-700',
-  premium: 'bg-purple-100 text-purple-700',
+  premium: 'bg-warm-100 text-warm-700',
   luxury: 'bg-amber-100 text-amber-700',
 }
 
@@ -336,7 +336,7 @@ function LineItemCard({ item }: { item: LineItem }) {
       "border rounded-lg bg-white overflow-hidden",
       item.itemType === 'allowance' && "border-amber-200",
       item.itemType === 'exclusion' && "border-red-200 bg-red-50/30",
-      item.itemType === 'alternate' && "border-purple-200",
+      item.itemType === 'alternate' && "border-warm-200",
       item.itemType === 'line' && "border-warm-200",
     )}>
       <button
@@ -359,7 +359,7 @@ function LineItemCard({ item }: { item: LineItem }) {
                 <span title="AI-suggested pricing"><Sparkles className="h-3.5 w-3.5 text-stone-500" /></span>
               )}
               {item.altGroup && (
-                <span className="text-xs text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">
+                <span className="text-xs text-stone-600 bg-warm-50 px-1.5 py-0.5 rounded">
                   {item.altGroup}
                 </span>
               )}
@@ -515,7 +515,7 @@ export function EstimatesPreview() {
                 <GitBranch className="h-3 w-3" />
                 v{mockHeader.version}
               </span>
-              <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
+              <span className="text-xs bg-stone-50 text-stone-700 px-2 py-0.5 rounded">
                 {contractTypeLabels[mockHeader.contractType]}
               </span>
             </div>
@@ -573,12 +573,12 @@ export function EstimatesPreview() {
             </div>
             <div className="text-lg font-bold text-red-700 mt-0.5">{exclusionItems}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2.5">
-            <div className="flex items-center gap-1.5 text-purple-600 text-xs">
+          <div className="bg-warm-50 rounded-lg p-2.5">
+            <div className="flex items-center gap-1.5 text-stone-600 text-xs">
               <GitBranch className="h-3.5 w-3.5" />
               Alternates
             </div>
-            <div className="text-lg font-bold text-purple-700 mt-0.5">{alternateItems / 2}</div>
+            <div className="text-lg font-bold text-warm-700 mt-0.5">{alternateItems / 2}</div>
           </div>
           <div className="bg-stone-50 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-stone-600 text-xs">
@@ -704,10 +704,10 @@ export function EstimatesPreview() {
       <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 text-xs">
           <span className="text-warm-500 font-medium">Connected:</span>
-          <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1 font-medium">
+          <span className="bg-stone-100 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1 font-medium">
             <DollarSign className="h-3 w-3" />
             Public Estimator
-            <span className="bg-indigo-200 text-indigo-800 px-1 py-0 rounded text-[9px] ml-0.5">Feed</span>
+            <span className="bg-stone-200 text-stone-800 px-1 py-0 rounded text-[9px] ml-0.5">Feed</span>
           </span>
           <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Package className="h-3 w-3" />
@@ -717,19 +717,19 @@ export function EstimatesPreview() {
             <BarChart3 className="h-3 w-3" />
             Budget Tracking
           </span>
-          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
             <FileText className="h-3 w-3" />
             Proposals
           </span>
-          <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <TrendingUp className="h-3 w-3" />
             Price Intelligence
           </span>
-          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-sand-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Shield className="h-3 w-3" />
             Bid Management
           </span>
-          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Calendar className="h-3 w-3" />
             Schedule
           </span>
@@ -737,7 +737,7 @@ export function EstimatesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -402,7 +402,7 @@ const statusConfig: Record<SubmittalStatus, { label: string; color: string; bgCo
   under_review: { label: 'Under Review', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: Eye },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   approved_as_noted: { label: 'Approved as Noted', color: 'text-emerald-700', bgColor: 'bg-emerald-100', icon: CheckCircle },
-  revise_resubmit: { label: 'Revise & Resubmit', color: 'text-orange-700', bgColor: 'bg-orange-100', icon: RotateCcw },
+  revise_resubmit: { label: 'Revise & Resubmit', color: 'text-sand-700', bgColor: 'bg-sand-100', icon: RotateCcw },
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
 }
 
@@ -410,7 +410,7 @@ const actionConfig: Record<ResponseAction, { label: string; color: string; bgCol
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100' },
   approved_as_noted: { label: 'Approved as Noted', color: 'text-emerald-700', bgColor: 'bg-emerald-100' },
   no_exceptions: { label: 'No Exceptions Taken', color: 'text-green-700', bgColor: 'bg-green-50' },
-  revise_and_resubmit: { label: 'Revise & Resubmit', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  revise_and_resubmit: { label: 'Revise & Resubmit', color: 'text-sand-700', bgColor: 'bg-sand-100' },
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100' },
 }
 
@@ -554,7 +554,7 @@ function ConnectionBadges({ submittal }: { submittal: Submittal }) {
   return (
     <div className="flex flex-wrap gap-1.5">
       {submittal.selectionLink && (
-        <span className="text-[10px] bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+        <span className="text-[10px] bg-warm-50 text-warm-700 px-1.5 py-0.5 rounded flex items-center gap-1">
           <Link2 className="h-2.5 w-2.5" />
           {submittal.selectionLink.selectionName} ({submittal.selectionLink.room})
         </span>
@@ -586,7 +586,7 @@ function ConnectionBadges({ submittal }: { submittal: Submittal }) {
         </span>
       )}
       {submittal.permitRequired && (
-        <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+        <span className="text-[10px] bg-stone-50 text-stone-700 px-1.5 py-0.5 rounded flex items-center gap-1">
           <FileText className="h-2.5 w-2.5" />
           Permit Req
         </span>
@@ -763,19 +763,19 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
         <div className={cn(
           'mt-2 p-2 rounded-md flex items-start gap-2',
           submittal.status === 'rejected' ? 'bg-red-50' :
-          submittal.status === 'revise_resubmit' ? 'bg-orange-50' :
+          submittal.status === 'revise_resubmit' ? 'bg-sand-50' :
           'bg-amber-50'
         )}>
           <Sparkles className={cn(
             'h-3.5 w-3.5 mt-0.5 flex-shrink-0',
             submittal.status === 'rejected' ? 'text-red-500' :
-            submittal.status === 'revise_resubmit' ? 'text-orange-500' :
+            submittal.status === 'revise_resubmit' ? 'text-sand-600' :
             'text-amber-500'
           )} />
           <span className={cn(
             'text-xs',
             submittal.status === 'rejected' ? 'text-red-700' :
-            submittal.status === 'revise_resubmit' ? 'text-orange-700' :
+            submittal.status === 'revise_resubmit' ? 'text-sand-700' :
             'text-amber-700'
           )}>{submittal.aiNote}</span>
         </div>
@@ -844,12 +844,12 @@ function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
           ) : (
             <ChevronRight className="h-4 w-4 text-warm-500" />
           )}
-          <Package className="h-4 w-4 text-purple-500" />
+          <Package className="h-4 w-4 text-stone-600" />
           <span className="font-medium text-warm-900">{pkg.name}</span>
           <span className="text-xs text-warm-500">({pkg.submittals.length} items)</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Package</span>
+          <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded">Package</span>
         </div>
       </div>
 
@@ -1129,7 +1129,7 @@ export function SubmittalsPreview() {
             className={cn(
               'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors',
               viewMode === 'grouped'
-                ? 'bg-purple-50 border-purple-200 text-purple-700'
+                ? 'bg-warm-50 border-warm-200 text-warm-700'
                 : 'bg-white border-warm-200 text-warm-600 hover:bg-warm-50'
             )}
           >
@@ -1156,7 +1156,7 @@ export function SubmittalsPreview() {
           </button>
           <button
             onClick={handleRequestRevision}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-sand-600 hover:bg-sand-100 rounded-lg transition-colors"
           >
             <PenLine className="h-4 w-4" />
             Request Revision
@@ -1312,7 +1312,7 @@ export function SubmittalsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

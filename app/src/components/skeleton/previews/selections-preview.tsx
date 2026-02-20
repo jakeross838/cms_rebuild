@@ -387,14 +387,14 @@ const categories = ['All', 'Flooring', 'Fixtures', 'Appliances', 'Countertops', 
 
 const statusConfig: Record<SelectionStatus, { label: string; color: string; icon: typeof Clock }> = {
   not_started: { label: 'Not Started', color: 'bg-warm-100 text-warm-600', icon: Clock },
-  options_presented: { label: 'Options Presented', color: 'bg-indigo-100 text-indigo-700', icon: Eye },
-  client_reviewing: { label: 'Client Reviewing', color: 'bg-cyan-100 text-cyan-700', icon: Eye },
+  options_presented: { label: 'Options Presented', color: 'bg-stone-100 text-stone-700', icon: Eye },
+  client_reviewing: { label: 'Client Reviewing', color: 'bg-stone-100 text-stone-700', icon: Eye },
   selected: { label: 'Selected', color: 'bg-stone-100 text-stone-700', icon: CheckCircle },
   confirmed: { label: 'Confirmed', color: 'bg-emerald-100 text-emerald-700', icon: FileSignature },
-  ordered: { label: 'Ordered', color: 'bg-purple-100 text-purple-700', icon: ShoppingCart },
-  received: { label: 'Received', color: 'bg-teal-100 text-teal-700', icon: Truck },
+  ordered: { label: 'Ordered', color: 'bg-warm-100 text-warm-700', icon: ShoppingCart },
+  received: { label: 'Received', color: 'bg-stone-100 text-stone-700', icon: Truck },
   installed: { label: 'Installed', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-  change_requested: { label: 'Change Requested', color: 'bg-orange-100 text-orange-700', icon: ArrowRightLeft },
+  change_requested: { label: 'Change Requested', color: 'bg-sand-100 text-sand-700', icon: ArrowRightLeft },
 }
 
 const pricingModelLabels: Record<PricingModel, string> = {
@@ -419,7 +419,7 @@ function SelectionCard({ selection }: { selection: Selection }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
-      isUrgent ? "border-amber-300" : selection.status === 'change_requested' ? "border-orange-300" : "border-warm-200"
+      isUrgent ? "border-amber-300" : selection.status === 'change_requested' ? "border-sand-300" : "border-warm-200"
     )}>
       <div className="flex items-start justify-between mb-2">
         <div>
@@ -429,7 +429,7 @@ function SelectionCard({ selection }: { selection: Selection }) {
             <span className="text-xs text-warm-500">{selection.room}</span>
             {isUrgent && <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
             {selection.designerRecommended && (
-              <span className="flex items-center gap-0.5 text-xs text-pink-600" title="Designer recommended">
+              <span className="flex items-center gap-0.5 text-xs text-sand-600" title="Designer recommended">
                 <Palette className="h-3 w-3" />
               </span>
             )}
@@ -452,7 +452,7 @@ function SelectionCard({ selection }: { selection: Selection }) {
             <p className="text-xs text-warm-500">{selection.vendor}</p>
           )}
           {selection.poNumber && (
-            <span className="text-xs text-purple-600 flex items-center gap-0.5">
+            <span className="text-xs text-stone-600 flex items-center gap-0.5">
               <LinkIcon className="h-3 w-3" />
               {selection.poNumber}
             </span>
@@ -545,13 +545,13 @@ function SelectionCard({ selection }: { selection: Selection }) {
       {selection.aiNote && (
         <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2 text-xs",
-          selection.status === 'change_requested' ? "bg-orange-50" : isUrgent ? "bg-amber-50" : "bg-stone-50"
+          selection.status === 'change_requested' ? "bg-sand-50" : isUrgent ? "bg-amber-50" : "bg-stone-50"
         )}>
           <Sparkles className={cn(
             "h-3.5 w-3.5 mt-0.5 flex-shrink-0",
-            selection.status === 'change_requested' ? "text-orange-500" : isUrgent ? "text-amber-500" : "text-stone-500"
+            selection.status === 'change_requested' ? "text-sand-600" : isUrgent ? "text-amber-500" : "text-stone-500"
           )} />
-          <span className={selection.status === 'change_requested' ? "text-orange-700" : isUrgent ? "text-amber-700" : "text-stone-700"}>
+          <span className={selection.status === 'change_requested' ? "text-sand-700" : isUrgent ? "text-amber-700" : "text-stone-700"}>
             {selection.aiNote}
           </span>
         </div>
@@ -571,7 +571,7 @@ function SelectionRow({ selection }: { selection: Selection }) {
     <tr className={cn(
       "hover:bg-warm-50",
       isUrgent && "bg-amber-50/50",
-      selection.status === 'change_requested' && "bg-orange-50/30",
+      selection.status === 'change_requested' && "bg-sand-50/30",
     )}>
       <td className="py-3 px-4">
         <div className="flex items-center gap-2">
@@ -579,7 +579,7 @@ function SelectionRow({ selection }: { selection: Selection }) {
             {selection.category}
           </span>
           {isUrgent && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-          {selection.designerRecommended && <Palette className="h-3.5 w-3.5 text-pink-500" />}
+          {selection.designerRecommended && <Palette className="h-3.5 w-3.5 text-sand-600" />}
         </div>
       </td>
       <td className="py-3 px-4 text-xs text-warm-500">{selection.room}</td>
@@ -676,7 +676,7 @@ export function SelectionsPreview() {
             <h3 className="font-semibold text-warm-900">Client Selections</h3>
             <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">Smith Residence</span>
             {changeRequests > 0 && (
-              <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+              <span className="text-xs bg-sand-100 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
                 <ArrowRightLeft className="h-3 w-3" />
                 {changeRequests} change request{changeRequests !== 1 ? 's' : ''}
               </span>
@@ -817,12 +817,12 @@ export function SelectionsPreview() {
               {varianceFromSelected > 0 ? '+' : ''}{formatCurrency(varianceFromSelected)}
             </div>
           </div>
-          <div className="bg-pink-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-pink-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-sand-600 text-sm">
               <Star className="h-4 w-4" />
               Designer Picks
             </div>
-            <div className="text-xl font-bold text-pink-700 mt-1">{designerRecommendedCount}</div>
+            <div className="text-xl font-bold text-sand-700 mt-1">{designerRecommendedCount}</div>
           </div>
           <div className="bg-stone-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-stone-600 text-sm">
@@ -889,19 +889,19 @@ export function SelectionsPreview() {
             <BarChart3 className="h-3 w-3" />
             Budget
           </span>
-          <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-warm-700 px-2 py-0.5 rounded flex items-center gap-1">
             <ShoppingCart className="h-3 w-3" />
             Purchase Orders
           </span>
-          <span className="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Clock className="h-3 w-3" />
             Schedule
           </span>
-          <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-sand-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <ArrowRightLeft className="h-3 w-3" />
             Change Orders
           </span>
-          <span className="bg-pink-50 text-pink-700 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="bg-warm-50 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Eye className="h-3 w-3" />
             Client Portal
           </span>
@@ -909,7 +909,7 @@ export function SelectionsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

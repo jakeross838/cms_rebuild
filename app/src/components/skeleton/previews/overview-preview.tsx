@@ -243,7 +243,7 @@ const quickActions: QuickAction[] = [
     title: 'View Reports',
     description: 'Financial and operational reports',
     icon: TrendingUp,
-    color: 'bg-purple-100 text-purple-600',
+    color: 'bg-warm-100 text-stone-600',
   },
   {
     id: '5',
@@ -257,7 +257,7 @@ const quickActions: QuickAction[] = [
     title: 'Approve Invoices',
     description: '3 invoices pending your approval',
     icon: CheckCircle2,
-    color: 'bg-cyan-100 text-cyan-600',
+    color: 'bg-stone-100 text-stone-600',
   },
 ]
 
@@ -402,7 +402,7 @@ const cardColorClasses = {
   blue: { bg: 'bg-stone-50', icon: 'bg-stone-100 text-stone-600', text: 'text-stone-600' },
   green: { bg: 'bg-green-50', icon: 'bg-green-100 text-green-600', text: 'text-green-600' },
   amber: { bg: 'bg-amber-50', icon: 'bg-amber-100 text-amber-600', text: 'text-amber-600' },
-  purple: { bg: 'bg-purple-50', icon: 'bg-purple-100 text-purple-600', text: 'text-purple-600' },
+  purple: { bg: 'bg-warm-50', icon: 'bg-warm-100 text-stone-600', text: 'text-stone-600' },
   red: { bg: 'bg-red-50', icon: 'bg-red-100 text-red-600', text: 'text-red-600' },
 }
 
@@ -637,7 +637,7 @@ function TeamActivityPanel() {
     <div className="bg-white rounded-lg border border-warm-200">
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-purple-600" />
+          <Users className="h-4 w-4 text-stone-600" />
           <h4 className="font-medium text-warm-900 text-sm">Team Activity</h4>
         </div>
       </div>
@@ -751,10 +751,10 @@ function MeetingPrep() {
       <div className="px-4 py-3 border-b border-warm-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-indigo-600" />
+            <Calendar className="h-4 w-4 text-stone-600" />
             <h4 className="font-medium text-warm-900 text-sm">Weekly Meeting Prep</h4>
           </div>
-          <button className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-medium hover:bg-indigo-200">
+          <button className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-medium hover:bg-stone-200">
             Generate Agenda
           </button>
         </div>
@@ -867,7 +867,7 @@ export function OverviewPreview() {
       </div>
 
       {/* Company Health Summary */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

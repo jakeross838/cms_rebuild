@@ -286,8 +286,8 @@ const phaseColors: Record<string, string> = {
   'Rough-In': 'bg-amber-100 text-amber-700',
   'Electrical': 'bg-amber-100 text-amber-700',
   'Plumbing': 'bg-stone-100 text-stone-700',
-  'Insulation': 'bg-pink-100 text-pink-700',
-  'Drywall': 'bg-purple-100 text-purple-700',
+  'Insulation': 'bg-warm-100 text-sand-700',
+  'Drywall': 'bg-warm-100 text-warm-700',
   'Finish': 'bg-green-100 text-green-700',
 }
 
@@ -295,9 +295,9 @@ const tradeColors: Record<string, string> = {
   'Framing': 'bg-amber-50 text-amber-600',
   'Electrical': 'bg-amber-50 text-amber-600',
   'Plumbing': 'bg-stone-50 text-stone-600',
-  'Waterproofing': 'bg-cyan-50 text-cyan-600',
+  'Waterproofing': 'bg-stone-50 text-stone-600',
   'Concrete': 'bg-warm-50 text-warm-600',
-  'HVAC': 'bg-teal-50 text-teal-600',
+  'HVAC': 'bg-stone-50 text-stone-600',
 }
 
 function PhotoCard({
@@ -335,7 +335,7 @@ function PhotoCard({
               <button className="px-3 py-1.5 bg-white text-warm-900 text-sm rounded-lg font-medium hover:bg-warm-100">
                 View
               </button>
-              <button className="p-1.5 bg-white/80 text-warm-700 rounded-lg hover:bg-white">
+              <button className="p-1.5 bg-warm-50 text-warm-700 rounded-lg hover:bg-white">
                 <Pencil className="h-4 w-4" />
               </button>
             </div>
@@ -349,7 +349,7 @@ function PhotoCard({
           {isSelected ? (
             <CheckSquare className="h-5 w-5 text-stone-500 bg-white rounded" />
           ) : (
-            <Square className="h-5 w-5 text-warm-400 bg-white/80 rounded" />
+            <Square className="h-5 w-5 text-warm-400 bg-warm-50 rounded" />
           )}
         </div>
       )}
@@ -405,7 +405,7 @@ function PhotoCard({
               </span>
             )}
             {photo.punchItemId && (
-              <span className="text-[10px] bg-orange-500/80 text-white px-1 py-0.5 rounded">
+              <span className="text-[10px] bg-sand-500/80 text-white px-1 py-0.5 rounded">
                 {photo.punchItemId}
               </span>
             )}
@@ -565,9 +565,9 @@ export function PhotosPreview() {
             <div className="text-lg font-bold text-stone-700">{avgQuality}%</div>
             <div className="text-xs text-stone-600">Avg Quality</div>
           </div>
-          <div className="bg-indigo-50 rounded-lg p-2 text-center">
-            <div className="text-lg font-bold text-indigo-700">{fromDailyLogs}</div>
-            <div className="text-xs text-indigo-600">From Logs</div>
+          <div className="bg-stone-50 rounded-lg p-2 text-center">
+            <div className="text-lg font-bold text-stone-700">{fromDailyLogs}</div>
+            <div className="text-xs text-stone-600">From Logs</div>
           </div>
           <div className={cn("rounded-lg p-2 text-center", lowQualityCount > 0 ? "bg-red-50" : "bg-warm-50")}>
             <div className={cn("text-lg font-bold", lowQualityCount > 0 ? "text-red-700" : "text-warm-700")}>{lowQualityCount}</div>
@@ -706,7 +706,7 @@ export function PhotosPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-amber-600" />

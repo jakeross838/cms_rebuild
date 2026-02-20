@@ -208,9 +208,9 @@ const mockEntries: JournalEntry[] = [
 ]
 
 const typeConfig: Record<JEType, { label: string; color: string; bgColor: string; icon: typeof Zap }> = {
-  auto: { label: 'Auto', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: Zap },
+  auto: { label: 'Auto', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Zap },
   manual: { label: 'Manual', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Edit3 },
-  recurring: { label: 'Recurring', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: RefreshCw },
+  recurring: { label: 'Recurring', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: RefreshCw },
   adjusting: { label: 'Adjusting', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: SlidersHorizontal },
 }
 
@@ -443,12 +443,12 @@ export function JournalEntriesPreview() {
             </div>
             <div className="text-xl font-bold text-warm-900 mt-1">{totalEntries}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Zap className="h-4 w-4" />
               Auto-Posted
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{autoPosted}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{autoPosted}</div>
           </div>
           <div className="bg-warm-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-warm-600 text-sm">
@@ -575,7 +575,7 @@ export function JournalEntriesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

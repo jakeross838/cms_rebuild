@@ -260,7 +260,7 @@ const statusConfig: Record<RFIStatus, { label: string; color: string; dotColor: 
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600', dotColor: 'bg-warm-400' },
   submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', dotColor: 'bg-stone-500' },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700', dotColor: 'bg-amber-500' },
-  response_received: { label: 'Response Received', color: 'bg-indigo-100 text-indigo-700', dotColor: 'bg-indigo-500' },
+  response_received: { label: 'Response Received', color: 'bg-stone-100 text-stone-700', dotColor: 'bg-stone-500' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700', dotColor: 'bg-green-500' },
   closed: { label: 'Closed', color: 'bg-warm-100 text-warm-600', dotColor: 'bg-warm-400' },
 }
@@ -278,7 +278,7 @@ const responseTypeConfig: Record<ResponseType, { label: string; color: string; b
   answer: { label: 'Answer', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   clarification_request: { label: 'Clarification', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: HelpCircle },
   partial: { label: 'Partial', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: RotateCcw },
-  forward: { label: 'Forwarded', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: ArrowRight },
+  forward: { label: 'Forwarded', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: ArrowRight },
 }
 
 // ── Sub-Components ──────────────────────────────────────────
@@ -380,9 +380,9 @@ function BallInCourtBadge({ routing }: { routing: RFIRouting[] }) {
 
   return (
     <div className="flex items-center gap-1.5 text-xs">
-      <Eye className="h-3 w-3 text-purple-500" />
-      <span className="text-purple-700 font-medium">Ball: {current.recipientName}</span>
-      <span className="text-purple-500">({current.recipientRole})</span>
+      <Eye className="h-3 w-3 text-stone-600" />
+      <span className="text-warm-700 font-medium">Ball: {current.recipientName}</span>
+      <span className="text-stone-600">({current.recipientRole})</span>
     </div>
   )
 }
@@ -411,7 +411,7 @@ function ImpactBadges({ rfi }: { rfi: RFI }) {
         </span>
       )}
       {rfi.changeOrderNumber && (
-        <span className="text-xs px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded flex items-center gap-0.5">
+        <span className="text-xs px-1.5 py-0.5 bg-warm-50 text-warm-700 rounded flex items-center gap-0.5">
           <Link2 className="h-3 w-3" />
           {rfi.changeOrderNumber}
         </span>
@@ -437,9 +437,9 @@ function SlowResponderAnalytics() {
   const projectAverage = 5.2
 
   return (
-    <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+    <div className="bg-sand-50 rounded-lg p-3 border border-sand-200">
       <div className="flex items-center gap-2 mb-2">
-        <TrendingUp className="h-4 w-4 text-orange-600" />
+        <TrendingUp className="h-4 w-4 text-sand-600" />
         <span className="text-sm font-medium text-orange-800">Slowest Responders</span>
       </div>
       <div className="flex flex-wrap gap-3 text-xs">
@@ -448,7 +448,7 @@ function SlowResponderAnalytics() {
             key={stat.role}
             className={cn(
               "flex items-center gap-1",
-              stat.isAboveAverage ? "text-orange-700 font-medium" : "text-orange-600"
+              stat.isAboveAverage ? "text-sand-700 font-medium" : "text-sand-600"
             )}
           >
             <Users className="h-3 w-3" />
@@ -465,7 +465,7 @@ function SlowResponderAnalytics() {
           </div>
         ))}
       </div>
-      <div className="mt-2 text-[10px] text-orange-600">
+      <div className="mt-2 text-[10px] text-sand-600">
         Project average: {projectAverage} days
       </div>
     </div>
@@ -548,13 +548,13 @@ function RFICard({ rfi }: { rfi: RFI }) {
           </span>
         )}
         {rfi.specReference && (
-          <span className="text-xs text-indigo-600 flex items-center gap-1">
+          <span className="text-xs text-stone-600 flex items-center gap-1">
             <Hash className="h-3 w-3" />
             {rfi.specReference}
           </span>
         )}
         {rfi.planMarkup && (
-          <span className="text-xs text-purple-600 flex items-center gap-1">
+          <span className="text-xs text-stone-600 flex items-center gap-1">
             <FileText className="h-3 w-3" />
             Plan markup
           </span>
@@ -639,11 +639,11 @@ function RFICard({ rfi }: { rfi: RFI }) {
       )}
 
       {rfi.aiSuggestedResponse && isOpen && (
-        <div className="mt-2 p-2 bg-purple-50 rounded-md flex items-start gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-purple-500 mt-0.5 flex-shrink-0" />
+        <div className="mt-2 p-2 bg-warm-50 rounded-md flex items-start gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-stone-600 mt-0.5 flex-shrink-0" />
           <div>
-            <span className="text-xs font-medium text-purple-700">AI-Suggested Response: </span>
-            <span className="text-xs text-purple-600">{rfi.aiSuggestedResponse}</span>
+            <span className="text-xs font-medium text-warm-700">AI-Suggested Response: </span>
+            <span className="text-xs text-stone-600">{rfi.aiSuggestedResponse}</span>
           </div>
         </div>
       )}
@@ -882,7 +882,7 @@ export function RFIsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

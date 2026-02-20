@@ -89,12 +89,12 @@ const mockTemplates: Template[] = [
 const categories: TemplateCategory[] = ['Contracts', 'Proposals', 'Purchase Orders', 'Change Orders', 'Subcontracts', 'Pre-Con Agreements', 'Letters']
 
 const categoryColors: Record<string, string> = {
-  Contracts: 'bg-purple-100 text-purple-700',
+  Contracts: 'bg-warm-100 text-warm-700',
   Proposals: 'bg-stone-100 text-stone-700',
   'Purchase Orders': 'bg-green-100 text-green-700',
-  'Change Orders': 'bg-orange-100 text-orange-700',
-  Subcontracts: 'bg-teal-100 text-teal-700',
-  'Pre-Con Agreements': 'bg-indigo-100 text-indigo-700',
+  'Change Orders': 'bg-sand-100 text-sand-700',
+  Subcontracts: 'bg-stone-100 text-stone-700',
+  'Pre-Con Agreements': 'bg-stone-100 text-stone-700',
   Letters: 'bg-warm-100 text-warm-700',
 }
 
@@ -148,8 +148,8 @@ const mockQualityTemplates: QualityTemplate[] = [
   { id: 'q12', name: 'Custom Luxury Finishes Checklist', trade: 'General', phase: 'Final', itemCount: 95, sectionCount: 12, isSystem: false, rating: 4.9, cloneCount: 47, ftqRatedItems: 78, ftqTotalItems: 95, conditionalRules: 8, measurementCheckpoints: 6, supervisorApprovals: 2, source: 'marketplace', description: 'Premium finish inspection for luxury custom homes with high-end materials', sections: ['Stone & Tile', 'Custom Millwork', 'Hardware', 'Lighting', 'Appliances', 'Smart Home', 'Audio/Visual', 'Pool/Spa', 'Landscaping', 'Final Details', 'Client Presentation', 'Documentation'], sampleItems: ['Stone seams aligned and minimal', 'Custom millwork finish flawless', 'High-end hardware properly adjusted', 'Lighting scenes programmed', 'Smart home integration tested'], lastUpdated: 'Feb 1, 2026', version: '1.5', marketplaceRating: 4.9, marketplaceInstalls: 47, publisherName: 'Luxury Builder Network', price: 79 },
 ]
 
-const qualityTradeColors: Record<QualityTrade, string> = { Foundation: 'bg-stone-100 text-stone-700', Framing: 'bg-amber-100 text-amber-700', Electrical: 'bg-amber-100 text-amber-700', Plumbing: 'bg-stone-100 text-stone-700', HVAC: 'bg-cyan-100 text-cyan-700', Insulation: 'bg-pink-100 text-pink-700', Drywall: 'bg-slate-100 text-slate-700', General: 'bg-warm-100 text-warm-700', Safety: 'bg-red-100 text-red-700' }
-const qualityPhaseColors: Record<QualityPhase, string> = { Rough: 'bg-orange-100 text-orange-700', 'Pre-Drywall': 'bg-purple-100 text-purple-700', Final: 'bg-green-100 text-green-700', Walkthrough: 'bg-indigo-100 text-indigo-700', Startup: 'bg-teal-100 text-teal-700' }
+const qualityTradeColors: Record<QualityTrade, string> = { Foundation: 'bg-stone-100 text-stone-700', Framing: 'bg-amber-100 text-amber-700', Electrical: 'bg-amber-100 text-amber-700', Plumbing: 'bg-stone-100 text-stone-700', HVAC: 'bg-stone-100 text-stone-700', Insulation: 'bg-warm-100 text-sand-700', Drywall: 'bg-warm-100 text-warm-700', General: 'bg-warm-100 text-warm-700', Safety: 'bg-red-100 text-red-700' }
+const qualityPhaseColors: Record<QualityPhase, string> = { Rough: 'bg-sand-100 text-sand-700', 'Pre-Drywall': 'bg-warm-100 text-warm-700', Final: 'bg-green-100 text-green-700', Walkthrough: 'bg-stone-100 text-stone-700', Startup: 'bg-stone-100 text-stone-700' }
 const qualityTrades: QualityTrade[] = ['Foundation', 'Framing', 'Electrical', 'Plumbing', 'HVAC', 'Insulation', 'Drywall', 'General', 'Safety']
 const qualityPhases: QualityPhase[] = ['Rough', 'Pre-Drywall', 'Final', 'Walkthrough', 'Startup']
 
@@ -168,7 +168,7 @@ function TemplateCard({ template }: { template: Template }) {
             {template.isFavorite && <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />}
             {template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}
             {template.source === 'platform' && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />Official</span>}
-            {isMarketplace && <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
+            {isMarketplace && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
             {template.isLegallyReviewed && <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded flex items-center gap-0.5" title={`Reviewed ${template.reviewedDate}`}><Shield className="h-3 w-3" />Reviewed</span>}
           </div>
           <h4 className="font-medium text-warm-900">{template.name}</h4>
@@ -197,7 +197,7 @@ function TemplateCard({ template }: { template: Template }) {
 function TemplateRow({ template }: { template: Template }) {
   return (
     <tr className="hover:bg-warm-50">
-      <td className="py-3 px-4"><div className="flex items-center gap-2">{template.isFavorite && <Star className="h-4 w-4 text-amber-400 fill-amber-400" />}<div><div className="font-medium text-warm-900 flex items-center gap-2">{template.name}{template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}{template.source === 'marketplace' && <ShoppingBag className="h-3.5 w-3.5 text-indigo-500" />}{template.isLegallyReviewed && <Shield className="h-3.5 w-3.5 text-green-500" />}</div><div className="text-xs text-warm-500">{template.description}</div></div></div></td>
+      <td className="py-3 px-4"><div className="flex items-center gap-2">{template.isFavorite && <Star className="h-4 w-4 text-amber-400 fill-amber-400" />}<div><div className="font-medium text-warm-900 flex items-center gap-2">{template.name}{template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}{template.source === 'marketplace' && <ShoppingBag className="h-3.5 w-3.5 text-stone-600" />}{template.isLegallyReviewed && <Shield className="h-3.5 w-3.5 text-green-500" />}</div><div className="text-xs text-warm-500">{template.description}</div></div></div></td>
       <td className="py-3 px-4"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', categoryColors[template.category])}>{template.category}</span></td>
       <td className="py-3 px-4 text-center text-xs text-warm-600">{template.pages}p</td>
       <td className="py-3 px-4 text-center text-xs text-warm-600">{template.variables}</td>
@@ -217,14 +217,14 @@ function TemplateRow({ template }: { template: Template }) {
 function QualityTemplateCard({ template, onPreview }: { template: QualityTemplate; onPreview: (template: QualityTemplate) => void }) {
   const isMarketplace = template.source === 'marketplace'
   return (
-    <div className={cn("bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer", isMarketplace ? "border-indigo-200" : "border-warm-200")}>
+    <div className={cn("bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer", isMarketplace ? "border-stone-200" : "border-warm-200")}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span>
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>
             {template.isSystem && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}
-            {isMarketplace && <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
+            {isMarketplace && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
           </div>
           <h4 className="font-medium text-warm-900">{template.name}</h4>
           <span className="text-[10px] text-warm-400">v{template.version}</span>
@@ -244,7 +244,7 @@ function QualityTemplateCard({ template, onPreview }: { template: QualityTemplat
 
 function QualityTemplatePreviewModal({ template, onClose }: { template: QualityTemplate; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-warm-1000 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
         <div className="flex items-start justify-between p-4 border-b border-warm-200">
           <div>
@@ -262,7 +262,7 @@ function QualityTemplatePreviewModal({ template, onClose }: { template: QualityT
             <div className="bg-warm-50 rounded-lg p-2.5 text-center"><div className="text-lg font-bold text-warm-900">{template.cloneCount}</div><div className="text-xs text-warm-500">Builders</div></div>
           </div>
           <div className="grid grid-cols-3 gap-3 mb-4">
-            {template.conditionalRules > 0 && <div className="flex items-center gap-2 p-2.5 bg-purple-50 rounded-lg"><GitBranch className="h-4 w-4 text-purple-600" /><div><div className="text-sm font-medium text-purple-700">Conditional Rules</div><div className="text-xs text-purple-600">Contains {template.conditionalRules} branching rules</div></div></div>}
+            {template.conditionalRules > 0 && <div className="flex items-center gap-2 p-2.5 bg-warm-50 rounded-lg"><GitBranch className="h-4 w-4 text-stone-600" /><div><div className="text-sm font-medium text-warm-700">Conditional Rules</div><div className="text-xs text-stone-600">Contains {template.conditionalRules} branching rules</div></div></div>}
             {template.measurementCheckpoints > 0 && <div className="flex items-center gap-2 p-2.5 bg-stone-50 rounded-lg"><Ruler className="h-4 w-4 text-stone-600" /><div><div className="text-sm font-medium text-stone-700">Measurements</div><div className="text-xs text-stone-600">Contains {template.measurementCheckpoints} checkpoints</div></div></div>}
             {template.supervisorApprovals > 0 && <div className="flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg"><UserCheck className="h-4 w-4 text-amber-600" /><div><div className="text-sm font-medium text-amber-700">Approvals</div><div className="text-xs text-amber-600">Requires {template.supervisorApprovals} supervisor sign-offs</div></div></div>}
           </div>
@@ -296,7 +296,7 @@ function CreateNewTemplateSection() {
         <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-stone-300 hover:shadow-sm transition-all"><FileText className="h-5 w-5 text-warm-500" /><span className="text-xs font-medium text-warm-700">Create from Scratch</span></button>
         <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-stone-300 hover:shadow-sm transition-all"><Copy className="h-5 w-5 text-stone-500" /><span className="text-xs font-medium text-warm-700">Clone System Template</span></button>
         <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-stone-300 hover:shadow-sm transition-all"><Upload className="h-5 w-5 text-green-500" /><span className="text-xs font-medium text-warm-700">Import from File</span></button>
-        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-purple-300 hover:shadow-sm transition-all"><Wand2 className="h-5 w-5 text-purple-500" /><span className="text-xs font-medium text-warm-700">AI-Generate Template</span></button>
+        <button className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-warm-200 hover:border-warm-300 hover:shadow-sm transition-all"><Wand2 className="h-5 w-5 text-stone-600" /><span className="text-xs font-medium text-warm-700">AI-Generate Template</span></button>
       </div>
     </div>
   )
@@ -336,7 +336,7 @@ function QualityChecklistsSection() {
         <div className="grid grid-cols-5 gap-3">
           <div className="bg-stone-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-stone-600 text-xs"><Award className="h-3.5 w-3.5" />System Templates</div><div className="text-lg font-bold text-stone-700 mt-0.5">{systemTemplates}</div></div>
           <div className="bg-warm-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-warm-500 text-xs"><FileText className="h-3.5 w-3.5" />Custom Templates</div><div className="text-lg font-bold text-warm-900 mt-0.5">{customTemplates}</div></div>
-          <div className="bg-indigo-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-indigo-600 text-xs"><ShoppingBag className="h-3.5 w-3.5" />Marketplace</div><div className="text-lg font-bold text-indigo-700 mt-0.5">{marketplaceTemplates}</div></div>
+          <div className="bg-stone-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-stone-600 text-xs"><ShoppingBag className="h-3.5 w-3.5" />Marketplace</div><div className="text-lg font-bold text-stone-700 mt-0.5">{marketplaceTemplates}</div></div>
           <div className="bg-green-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-green-600 text-xs"><CheckSquare className="h-3.5 w-3.5" />Total Items</div><div className="text-lg font-bold text-green-700 mt-0.5">{totalItems}</div></div>
           <div className="bg-amber-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-amber-600 text-xs"><Target className="h-3.5 w-3.5" />FTQ Coverage</div><div className="text-lg font-bold text-amber-700 mt-0.5">87%</div></div>
         </div>
@@ -394,15 +394,15 @@ export function TemplatesPreview() {
               <div className="bg-warm-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-warm-500 text-xs"><FileText className="h-3.5 w-3.5" />Builder Templates</div><div className="text-lg font-bold text-warm-900 mt-0.5">{builderTemplates}</div></div>
               <div className="bg-warm-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-warm-500 text-xs"><TrendingUp className="h-3.5 w-3.5" />Total Usage</div><div className="text-lg font-bold text-warm-900 mt-0.5">{totalUsage}x</div></div>
               <div className="bg-green-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-green-600 text-xs"><Shield className="h-3.5 w-3.5" />Legally Reviewed</div><div className="text-lg font-bold text-green-700 mt-0.5">{legallyReviewed}</div></div>
-              <div className="bg-indigo-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-indigo-600 text-xs"><ShoppingBag className="h-3.5 w-3.5" />Marketplace</div><div className="text-lg font-bold text-indigo-700 mt-0.5">{marketplaceTemplates}</div></div>
+              <div className="bg-stone-50 rounded-lg p-2.5"><div className="flex items-center gap-1.5 text-stone-600 text-xs"><ShoppingBag className="h-3.5 w-3.5" />Marketplace</div><div className="text-lg font-bold text-stone-700 mt-0.5">{marketplaceTemplates}</div></div>
               <div className={cn('rounded-lg p-2.5', withAISuggestions > 0 ? 'bg-amber-50' : 'bg-warm-50')}><div className={cn('flex items-center gap-1.5 text-xs', withAISuggestions > 0 ? 'text-amber-600' : 'text-warm-500')}><Sparkles className="h-3.5 w-3.5" />AI Suggestions</div><div className={cn('text-lg font-bold mt-0.5', withAISuggestions > 0 ? 'text-amber-700' : 'text-warm-900')}>{withAISuggestions}</div></div>
             </div>
           </div>
           <div className="bg-white border-b border-warm-200 px-4 py-2">
-            <div className="flex items-center gap-3 text-xs"><span className="text-warm-500 font-medium">Connections:</span><span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded"><FileText className="h-3 w-3" />Contracts (Module 38)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded"><BookOpen className="h-3 w-3" />Estimating (Module 20)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded"><Globe className="h-3 w-3" />Marketplace (Module 48)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded"><Tag className="h-3 w-3" />State Compliance</span></div>
+            <div className="flex items-center gap-3 text-xs"><span className="text-warm-500 font-medium">Connections:</span><span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded"><FileText className="h-3 w-3" />Contracts (Module 38)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded"><BookOpen className="h-3 w-3" />Estimating (Module 20)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded"><Globe className="h-3 w-3" />Marketplace (Module 48)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded"><Tag className="h-3 w-3" />State Compliance</span></div>
           </div>
           {viewMode === 'grid' ? <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto">{filteredTemplates.map(t => <TemplateCard key={t.id} template={t} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-warm-500">No templates match your search</div>}</div> : <div className="overflow-x-auto max-h-[500px] overflow-y-auto"><table className="w-full text-sm"><thead className="bg-warm-100 border-b border-warm-200 sticky top-0"><tr><th className="text-left py-3 px-4 font-medium text-warm-600">Template</th><th className="text-left py-3 px-4 font-medium text-warm-600">Category</th><th className="text-center py-3 px-4 font-medium text-warm-600">Pages</th><th className="text-center py-3 px-4 font-medium text-warm-600">Variables</th><th className="text-center py-3 px-4 font-medium text-warm-600">Clauses</th><th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th><th className="text-center py-3 px-4 font-medium text-warm-600">Version</th><th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th><th className="w-10"></th></tr></thead><tbody className="bg-white divide-y divide-warm-100">{filteredTemplates.map(t => <TemplateRow key={t.id} template={t} />)}</tbody></table></div>}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3"><div className="flex items-start gap-3"><div className="flex items-center gap-2 flex-shrink-0"><Sparkles className="h-4 w-4 text-amber-600" /><span className="font-medium text-sm text-amber-800">AI Insights:</span></div><div className="flex-1 text-sm text-amber-700 space-y-1"><p>SC mechanic lien statute updated Jan 2026 - 2 templates need clause updates for compliance. Review recommended.</p><p>Standard Cost-Plus with GMP is your most-used contract. Consider publishing to the marketplace to help other SC builders.</p><p>"Florida Builder Starter Pack" is trending in the marketplace (234 installs). Regional packs for your state are available.</p></div></div></div>
+          <div className="bg-warm-50 border-t border-amber-200 px-4 py-3"><div className="flex items-start gap-3"><div className="flex items-center gap-2 flex-shrink-0"><Sparkles className="h-4 w-4 text-amber-600" /><span className="font-medium text-sm text-amber-800">AI Insights:</span></div><div className="flex-1 text-sm text-amber-700 space-y-1"><p>SC mechanic lien statute updated Jan 2026 - 2 templates need clause updates for compliance. Review recommended.</p><p>Standard Cost-Plus with GMP is your most-used contract. Consider publishing to the marketplace to help other SC builders.</p><p>"Florida Builder Starter Pack" is trending in the marketplace (234 installs). Regional packs for your state are available.</p></div></div></div>
           <div className="bg-white border-t border-warm-200 px-4 py-4">
             <AIFeaturesPanel title="AI Features for Templates" columns={2} features={[
               { feature: 'Usage Analytics', trigger: 'Daily', insight: 'Shows most/least used templates to identify which templates drive value and which may need retirement or updates.', severity: 'info', action: { label: 'View Report', onClick: () => {} } },

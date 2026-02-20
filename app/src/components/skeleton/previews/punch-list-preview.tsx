@@ -388,7 +388,7 @@ const mockPunchItems: PunchItem[] = [
 
 const statusConfig: Record<PunchItemStatus, { label: string; color: string; bgColor: string; textColor: string; icon: typeof CircleDot }> = {
   open: { label: 'Open', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700', icon: CircleDot },
-  assigned: { label: 'Assigned', color: 'bg-orange-500', bgColor: 'bg-orange-50', textColor: 'text-orange-700', icon: User },
+  assigned: { label: 'Assigned', color: 'bg-sand-500', bgColor: 'bg-sand-50', textColor: 'text-sand-700', icon: User },
   in_progress: { label: 'In Progress', color: 'bg-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700', icon: Clock },
   completed: { label: 'Complete', color: 'bg-stone-500', bgColor: 'bg-stone-50', textColor: 'text-stone-700', icon: CheckCircle2 },
   rejected: { label: 'Rejected', color: 'bg-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700', icon: RotateCcw },
@@ -407,7 +407,7 @@ const priorityConfig: Record<Priority, { label: string; color: string; bgColor: 
 const costConfig: Record<CostResponsibility, { label: string; color: string }> = {
   vendor_backcharge: { label: 'Vendor Back-charge', color: 'text-red-600' },
   builder_warranty: { label: 'Builder Warranty', color: 'text-amber-600' },
-  shared: { label: 'Shared', color: 'text-purple-600' },
+  shared: { label: 'Shared', color: 'text-stone-600' },
   none: { label: 'No Cost', color: 'text-warm-500' },
 }
 
@@ -499,7 +499,7 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
                 {priority.label}
               </span>
               {item.warrantyConversion && (
-                <span className="text-xs px-2 py-0.5 rounded font-medium bg-purple-100 text-purple-700">
+                <span className="text-xs px-2 py-0.5 rounded font-medium bg-warm-100 text-warm-700">
                   Warranty
                 </span>
               )}
@@ -545,7 +545,7 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
             )}
             <PhotoStages photos={item.photos} />
             {item.warrantyConversion && (
-              <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-purple-100 text-purple-700">
+              <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-warm-100 text-warm-700">
                 Warranty
               </span>
             )}
@@ -629,7 +629,7 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
 
       {/* Checklist reference */}
       {item.checklistRef && (
-        <div className="mb-2 text-xs text-purple-600 flex items-center gap-1">
+        <div className="mb-2 text-xs text-stone-600 flex items-center gap-1">
           <ClipboardCheck className="h-3 w-3" />
           From: {item.checklistRef}
         </div>
@@ -912,7 +912,7 @@ export function PunchListPreview() {
             <StatCard icon={AlertCircle} label="Critical" value={criticalItems} iconColor="text-red-600" iconBg="bg-red-50" />
             <StatCard icon={RotateCcw} label="Rejected" value={rejectedItems} iconColor="text-red-600" iconBg="bg-red-50" />
             <StatCard icon={DollarSign} label="Est. Cost" value={`$${totalEstCost.toLocaleString()}`} subValue={`${backchargeCount} back-charges`} iconColor="text-amber-600" iconBg="bg-amber-50" />
-            <StatCard icon={Layers} label="Rooms" value={rooms.length} subValue={`${trades.length} trades`} iconColor="text-purple-600" iconBg="bg-purple-50" />
+            <StatCard icon={Layers} label="Rooms" value={rooms.length} subValue={`${trades.length} trades`} iconColor="text-stone-600" iconBg="bg-warm-50" />
           </div>
         </div>
       )}
@@ -1087,7 +1087,7 @@ export function PunchListPreview() {
       )}
 
       {/* AI Features Panel */}
-      <div className="bg-gradient-to-r from-purple-50 to-stone-50 border-t border-purple-200 px-4 py-4">
+      <div className="bg-gradient-to-r from-purple-50 to-stone-50 border-t border-warm-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Insights"
           features={aiFeatures}

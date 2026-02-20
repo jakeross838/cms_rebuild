@@ -406,13 +406,13 @@ const mockContacts: Contact[] = [
 
 const contactTypeConfig: Record<ContactType, { label: string; bgColor: string; textColor: string }> = {
   client: { label: 'Client', bgColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  vendor: { label: 'Vendor', bgColor: 'bg-orange-100', textColor: 'text-orange-700' },
+  vendor: { label: 'Vendor', bgColor: 'bg-sand-100', textColor: 'text-sand-700' },
   architect: { label: 'Architect', bgColor: 'bg-stone-100', textColor: 'text-stone-700' },
   engineer: { label: 'Engineer', bgColor: 'bg-green-100', textColor: 'text-green-700' },
-  designer: { label: 'Designer', bgColor: 'bg-pink-100', textColor: 'text-pink-700' },
-  lender: { label: 'Lender', bgColor: 'bg-violet-100', textColor: 'text-violet-700' },
-  realtor: { label: 'Realtor', bgColor: 'bg-rose-100', textColor: 'text-rose-700' },
-  inspector: { label: 'Inspector', bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
+  designer: { label: 'Designer', bgColor: 'bg-warm-100', textColor: 'text-sand-700' },
+  lender: { label: 'Lender', bgColor: 'bg-warm-100', textColor: 'text-warm-700' },
+  realtor: { label: 'Realtor', bgColor: 'bg-warm-100', textColor: 'text-rose-700' },
+  inspector: { label: 'Inspector', bgColor: 'bg-warm-100', textColor: 'text-warm-700' },
   other: { label: 'Other', bgColor: 'bg-warm-100', textColor: 'text-warm-700' },
 }
 
@@ -510,7 +510,7 @@ function ContactCard({ contact }: { contact: Contact }) {
 
       {/* Vendor-specific fields */}
       {contact.contactType === 'vendor' && (
-        <div className="bg-orange-50 rounded p-2 mb-3 space-y-1">
+        <div className="bg-sand-50 rounded p-2 mb-3 space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="text-warm-500 flex items-center gap-1">
               <Shield className="h-3 w-3" /> Insurance:
@@ -782,7 +782,7 @@ export function ContactsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

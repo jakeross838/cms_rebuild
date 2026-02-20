@@ -314,8 +314,8 @@ const weatherColors = {
   sunny: 'text-amber-500 bg-amber-50',
   cloudy: 'text-warm-500 bg-warm-100',
   rainy: 'text-stone-500 bg-stone-50',
-  snowy: 'text-cyan-500 bg-cyan-50',
-  windy: 'text-teal-500 bg-teal-50',
+  snowy: 'text-stone-600 bg-stone-50',
+  windy: 'text-stone-600 bg-stone-50',
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
@@ -323,13 +323,13 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
   submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: FileText },
   in_review: { label: 'In Review', color: 'bg-amber-100 text-amber-700', icon: Eye },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  returned: { label: 'Returned', color: 'bg-orange-100 text-orange-700', icon: RotateCcw },
+  returned: { label: 'Returned', color: 'bg-sand-100 text-sand-700', icon: RotateCcw },
 }
 
 const severityConfig: Record<string, { color: string }> = {
   low: { color: 'bg-warm-100 text-warm-600' },
   medium: { color: 'bg-amber-100 text-amber-700' },
-  high: { color: 'bg-orange-100 text-orange-700' },
+  high: { color: 'bg-sand-100 text-sand-700' },
   critical: { color: 'bg-red-100 text-red-700' },
 }
 
@@ -354,7 +354,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
   return (
     <div className={cn(
       "bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer",
-      log.status === 'returned' ? "border-orange-300" : "border-warm-200",
+      log.status === 'returned' ? "border-sand-300" : "border-warm-200",
     )}>
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
@@ -405,7 +405,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                 </span>
               )}
               {log.hasVoiceTranscript && (
-                <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   <Mic className="h-3 w-3" />
                   Voice
                 </span>
@@ -423,7 +423,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                 <div key={idx} className="flex items-center gap-2 text-sm text-warm-700">
                   <span className="truncate">{work.description}</span>
                   {work.percentComplete !== undefined && (
-                    <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded flex-shrink-0">
+                    <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex-shrink-0">
                       {work.percentComplete}%
                     </span>
                   )}
@@ -495,7 +495,7 @@ function DailyLogCard({ log }: { log: DailyLog }) {
 
             {/* Review note */}
             {log.reviewNote && (
-              <div className="flex items-start gap-1 mt-1.5 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+              <div className="flex items-start gap-1 mt-1.5 text-xs text-sand-600 bg-sand-50 p-2 rounded">
                 <MessageSquare className="h-3 w-3 mt-0.5 flex-shrink-0" />
                 <span>{log.reviewNote}</span>
               </div>
@@ -605,7 +605,7 @@ export function DailyLogsPreview() {
                 <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">{draftCount} draft</span>
               )}
               {returnedCount > 0 && (
-                <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">{returnedCount} returned</span>
+                <span className="text-xs bg-sand-100 text-sand-600 px-2 py-0.5 rounded">{returnedCount} returned</span>
               )}
             </div>
             <div className="text-sm text-warm-500 mt-0.5 flex items-center gap-4">
@@ -784,17 +784,17 @@ export function DailyLogsPreview() {
             <div className="text-lg font-bold text-green-700">{approvedCount}</div>
             <div className="text-xs text-green-600">Approved</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-purple-700">{avgCrew}</div>
-            <div className="text-xs text-purple-600">Avg Crew</div>
+          <div className="bg-warm-50 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-warm-700">{avgCrew}</div>
+            <div className="text-xs text-stone-600">Avg Crew</div>
           </div>
           <div className={cn("rounded-lg p-3 text-center", totalIssues > 0 ? "bg-amber-50" : "bg-warm-50")}>
             <div className={cn("text-lg font-bold", totalIssues > 0 ? "text-amber-700" : "text-warm-700")}>{totalIssues}</div>
             <div className={cn("text-xs", totalIssues > 0 ? "text-amber-600" : "text-warm-500")}>Issues</div>
           </div>
-          <div className="bg-indigo-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-indigo-700">{totalPhotos}</div>
-            <div className="text-xs text-indigo-600">Photos</div>
+          <div className="bg-stone-50 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-stone-700">{totalPhotos}</div>
+            <div className="text-xs text-stone-600">Photos</div>
           </div>
         </div>
       </div>
@@ -813,7 +813,7 @@ export function DailyLogsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

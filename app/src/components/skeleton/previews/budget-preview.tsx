@@ -302,9 +302,9 @@ function VarianceIndicator({ variance, revised }: { variance: number; revised: n
 function LineTypeBadge({ type }: { type: BudgetLine['lineType'] }) {
   const config = {
     standard: null,
-    allowance: { label: 'Allowance', color: 'bg-purple-50 text-purple-700' },
-    contingency: { label: 'Contingency', color: 'bg-orange-50 text-orange-700' },
-    alternate: { label: 'Alternate', color: 'bg-cyan-50 text-cyan-700' },
+    allowance: { label: 'Allowance', color: 'bg-warm-50 text-warm-700' },
+    contingency: { label: 'Contingency', color: 'bg-sand-50 text-sand-700' },
+    alternate: { label: 'Alternate', color: 'bg-stone-50 text-stone-700' },
   }
   const badge = config[type]
   if (!badge) return null
@@ -409,7 +409,7 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
                   </span>
                 )}
                 {line.linkedCOs > 0 && (
-                  <span className="flex items-center gap-1 bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-1 bg-sand-50 text-sand-600 px-1.5 py-0.5 rounded">
                     <ClipboardList className="h-3 w-3" />
                     {line.linkedCOs} CO{line.linkedCOs > 1 ? 's' : ''}
                   </span>
@@ -619,19 +619,19 @@ export function BudgetPreview() {
             </div>
           </div>
           {/* Contingency Tracker */}
-          <div className="bg-orange-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-orange-600 text-xs">
+          <div className="bg-sand-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-sand-600 text-xs">
               <Shield className="h-3.5 w-3.5" />
               Contingency
             </div>
-            <div className="text-lg font-bold text-orange-700 mt-1">{formatCurrency(contingencyRemaining)}</div>
+            <div className="text-lg font-bold text-sand-700 mt-1">{formatCurrency(contingencyRemaining)}</div>
             <div className="w-full bg-orange-200 rounded-full h-1.5 mt-1">
               <div
-                className="bg-orange-500 h-1.5 rounded-full"
+                className="bg-sand-500 h-1.5 rounded-full"
                 style={{ width: `${contingencyLine ? (contingencyLine.actual / contingencyLine.originalBudget) * 100 : 0}%` }}
               />
             </div>
-            <div className="text-[10px] text-orange-500 mt-0.5">
+            <div className="text-[10px] text-sand-600 mt-0.5">
               {contingencyLine ? Math.round((contingencyLine.actual / contingencyLine.originalBudget) * 100) : 0}% used of {formatCurrency(contingencyLine?.originalBudget ?? 0)}
             </div>
           </div>
@@ -724,7 +724,7 @@ export function BudgetPreview() {
           <span className="font-medium text-warm-700">Budget Composition:</span>
           <span>Original Budget: {formatCurrency(totals.originalBudget)}</span>
           <span className="text-warm-300">+</span>
-          <span className="text-orange-600">Approved COs: {formatCurrency(totals.approvedChanges)}</span>
+          <span className="text-sand-600">Approved COs: {formatCurrency(totals.approvedChanges)}</span>
           <span className="text-warm-300">=</span>
           <span className="font-medium text-warm-900">Current Budget: {formatCurrency(totals.revisedBudget)}</span>
           <span className="ml-auto flex items-center gap-1">
@@ -735,7 +735,7 @@ export function BudgetPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

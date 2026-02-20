@@ -210,13 +210,13 @@ export function BankReconciliationPreview() {
       {/* Summary Cards */}
       <div className="bg-white border-b border-warm-200 px-4 py-4">
         <div className="grid grid-cols-4 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Landmark className="h-4 w-4" />
               Bank Balance
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{formatCurrency(statementEndingBalance)}</div>
-            <div className="text-xs text-blue-500 mt-0.5">Per bank statement</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{formatCurrency(statementEndingBalance)}</div>
+            <div className="text-xs text-stone-600 mt-0.5">Per bank statement</div>
           </div>
           <div className="bg-stone-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-stone-600 text-sm">
@@ -276,12 +276,12 @@ export function BankReconciliationPreview() {
       <div className="grid grid-cols-2 divide-x divide-warm-200">
         {/* Left: Bank Transactions */}
         <div>
-          <div className="bg-blue-50 border-b border-warm-200 px-4 py-2.5">
+          <div className="bg-stone-50 border-b border-warm-200 px-4 py-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Landmark className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-semibold text-blue-800">Bank Transactions</span>
-                <span className="text-xs text-blue-600">({mockBankTransactions.length})</span>
+                <Landmark className="h-4 w-4 text-stone-600" />
+                <span className="text-sm font-semibold text-stone-800">Bank Transactions</span>
+                <span className="text-xs text-stone-600">({mockBankTransactions.length})</span>
               </div>
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-warm-400" />
@@ -563,7 +563,7 @@ export function BankReconciliationPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

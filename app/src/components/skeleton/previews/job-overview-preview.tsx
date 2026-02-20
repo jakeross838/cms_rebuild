@@ -438,12 +438,12 @@ const statuses = [
   { id: 'active', label: 'Active', color: 'bg-green-500', bgLight: 'bg-green-50', textColor: 'text-green-700' },
   { id: 'closeout', label: 'Closeout', color: 'bg-amber-500', bgLight: 'bg-amber-50', textColor: 'text-amber-700' },
   { id: 'complete', label: 'Complete', color: 'bg-warm-500', bgLight: 'bg-warm-100', textColor: 'text-warm-700' },
-  { id: 'warranty', label: 'Warranty', color: 'bg-purple-500', bgLight: 'bg-purple-50', textColor: 'text-purple-700' },
+  { id: 'warranty', label: 'Warranty', color: 'bg-warm-500', bgLight: 'bg-warm-50', textColor: 'text-warm-700' },
 ]
 
 const warrantyStatuses = {
   'in-construction': { label: 'In Construction', color: 'bg-stone-100 text-stone-700' },
-  'warranty-period': { label: 'Warranty Period', color: 'bg-purple-100 text-purple-700' },
+  'warranty-period': { label: 'Warranty Period', color: 'bg-warm-100 text-warm-700' },
   'warranty-expired': { label: 'Warranty Expired', color: 'bg-warm-100 text-warm-600' },
 }
 
@@ -479,14 +479,14 @@ function getActivityIcon(type: ActivityItem['type']) {
 function getActivityColor(type: ActivityItem['type']) {
   switch (type) {
     case 'daily-log': return 'bg-stone-100 text-stone-600'
-    case 'photo': return 'bg-purple-100 text-purple-600'
+    case 'photo': return 'bg-warm-100 text-stone-600'
     case 'change-order': return 'bg-amber-100 text-amber-600'
     case 'invoice': return 'bg-green-100 text-green-600'
-    case 'rfi': return 'bg-cyan-100 text-cyan-600'
-    case 'selection': return 'bg-pink-100 text-pink-600'
+    case 'rfi': return 'bg-stone-100 text-stone-600'
+    case 'selection': return 'bg-warm-100 text-sand-600'
     case 'comment': return 'bg-warm-100 text-warm-600'
     case 'inspection': return 'bg-emerald-100 text-emerald-600'
-    case 'punch-list': return 'bg-orange-100 text-orange-600'
+    case 'punch-list': return 'bg-sand-100 text-sand-600'
     default: return 'bg-warm-100 text-warm-600'
   }
 }
@@ -721,7 +721,7 @@ function NextStepsCard({ steps }: { steps: NextStepItem[] }) {
           {steps.map((step, idx) => {
             const priorityConfig = getPriorityConfig(step.priority)
             return (
-              <div key={step.id} className="flex items-start gap-3 p-2 bg-white/60 rounded-lg">
+              <div key={step.id} className="flex items-start gap-3 p-2 bg-warm-50 rounded-lg">
                 <span className="flex-shrink-0 w-5 h-5 rounded-full bg-stone-100 text-stone-700 text-xs font-medium flex items-center justify-center">
                   {idx + 1}
                 </span>
@@ -961,7 +961,7 @@ function RiskRegister({ risks }: { risks: RiskItem[] }) {
                     I: {risk.impact}
                   </span>
                   {risk.source === 'ai' && (
-                    <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">AI-detected</span>
+                    <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">AI-detected</span>
                   )}
                 </div>
               </div>
@@ -1019,7 +1019,7 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
                           "text-xs font-medium px-2 py-1 rounded",
                           activity.type === 'change-order' ? "bg-amber-100 text-amber-700" :
                           activity.type === 'invoice' ? "bg-green-100 text-green-700" :
-                          activity.type === 'selection' ? "bg-pink-100 text-pink-700" :
+                          activity.type === 'selection' ? "bg-warm-100 text-sand-700" :
                           "bg-warm-100 text-warm-600"
                         )}>
                           {activity.metadata}

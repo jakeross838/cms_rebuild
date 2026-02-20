@@ -88,15 +88,15 @@ interface UploadingFile {
 const mockFolders: FolderItem[] = [
   { id: '1', name: 'Plans & Specifications', filesCount: 18, color: 'bg-stone-100 text-stone-600' },
   { id: '2', name: 'Permits & Inspections', filesCount: 8, color: 'bg-green-100 text-green-600' },
-  { id: '3', name: 'Contracts', filesCount: 5, color: 'bg-purple-100 text-purple-600' },
-  { id: '4', name: 'Insurance & Compliance', filesCount: 7, color: 'bg-orange-100 text-orange-600' },
-  { id: '5', name: 'Submittals', filesCount: 11, color: 'bg-indigo-100 text-indigo-600' },
-  { id: '6', name: 'Change Orders', filesCount: 4, color: 'bg-rose-100 text-rose-600' },
-  { id: '7', name: 'Warranties', filesCount: 6, color: 'bg-cyan-100 text-cyan-600' },
+  { id: '3', name: 'Contracts', filesCount: 5, color: 'bg-warm-100 text-stone-600' },
+  { id: '4', name: 'Insurance & Compliance', filesCount: 7, color: 'bg-sand-100 text-sand-600' },
+  { id: '5', name: 'Submittals', filesCount: 11, color: 'bg-stone-100 text-stone-600' },
+  { id: '6', name: 'Change Orders', filesCount: 4, color: 'bg-warm-100 text-sand-600' },
+  { id: '7', name: 'Warranties', filesCount: 6, color: 'bg-stone-100 text-stone-600' },
   { id: '8', name: 'Specs', filesCount: 12, color: 'bg-red-100 text-red-600' },
   { id: '9', name: 'Photos', filesCount: 156, color: 'bg-amber-100 text-amber-600' },
-  { id: '10', name: 'Correspondence', filesCount: 9, color: 'bg-teal-100 text-teal-600' },
-  { id: '11', name: 'Closeout', filesCount: 3, color: 'bg-slate-100 text-slate-600' },
+  { id: '10', name: 'Correspondence', filesCount: 9, color: 'bg-stone-100 text-stone-600' },
+  { id: '11', name: 'Closeout', filesCount: 3, color: 'bg-warm-100 text-warm-600' },
 ]
 
 const mockFiles: DocumentFile[] = [
@@ -408,25 +408,25 @@ const fileTypeColors: Record<string, string> = {
   pdf: 'text-red-500',
   doc: 'text-stone-500',
   xls: 'text-green-500',
-  jpg: 'text-purple-500',
-  png: 'text-purple-500',
+  jpg: 'text-stone-600',
+  png: 'text-stone-600',
   zip: 'text-amber-500',
-  dwg: 'text-orange-500',
+  dwg: 'text-sand-600',
   other: 'text-warm-500',
 }
 
 const thumbnailColors: Record<string, string> = {
   plan: 'bg-stone-100',
   permit: 'bg-green-100',
-  cad: 'bg-orange-100',
-  photo: 'bg-purple-100',
+  cad: 'bg-sand-100',
+  photo: 'bg-warm-100',
 }
 
 const approvalStatusConfig: Record<string, { label: string; color: string }> = {
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-600' },
   submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700' },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700' },
-  revisions_requested: { label: 'Revisions Req.', color: 'bg-orange-100 text-orange-700' },
+  revisions_requested: { label: 'Revisions Req.', color: 'bg-sand-100 text-sand-700' },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700' },
 }
@@ -546,7 +546,7 @@ function FileRow({
               </span>
             )}
             {file.sharedWithVendors.length > 0 && (
-              <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Share2 className="h-3 w-3" />
                 {file.sharedWithVendors.length} vendor{file.sharedWithVendors.length > 1 ? 's' : ''}
               </span>
@@ -559,7 +559,7 @@ function FileRow({
             <span className="uppercase font-medium">{file.type}</span>
             <span>{file.size}</span>
             {file.aiClassification && (
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 {file.aiClassification.replace(/_/g, ' ')}
               </span>
             )}
@@ -671,7 +671,7 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
         <div className="flex items-center gap-2 mt-1">
           <span className="text-xs text-warm-500 uppercase">{file.type} File</span>
           {file.aiClassification && (
-            <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
               {file.aiClassification.replace(/_/g, ' ')}
             </span>
           )}
@@ -780,7 +780,7 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
           </div>
           {file.sharedWithVendors.length > 0 && (
             <div className="flex items-center gap-1.5">
-              <Share2 className="h-3.5 w-3.5 text-purple-500" />
+              <Share2 className="h-3.5 w-3.5 text-stone-600" />
               <span>Shared with: {file.sharedWithVendors.join(', ')}</span>
             </div>
           )}
@@ -892,7 +892,7 @@ function DocumentPreviewModal({ file, onClose }: { file: DocumentFile; onClose: 
   const iconColor = fileTypeColors[file.type] || 'text-warm-500'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-warm-1000">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-warm-200">
@@ -1023,7 +1023,7 @@ function AIFeaturesSection() {
       name: 'Auto-Classification',
       description: 'AI identifies document type and routes to correct folder',
       status: 'Active',
-      color: 'text-purple-600 bg-purple-100',
+      color: 'text-stone-600 bg-warm-100',
     },
     {
       icon: FileSearch,
@@ -1051,15 +1051,15 @@ function AIFeaturesSection() {
       name: 'Submittal Workflow',
       description: 'Vendor submits, PM reviews, architect approves -- tracked and audited',
       status: 'Active',
-      color: 'text-indigo-600 bg-indigo-100',
+      color: 'text-stone-600 bg-stone-100',
     },
   ]
 
   return (
-    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
+    <div className="bg-warm-50 border border-stone-200 rounded-lg p-4">
       <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="h-5 w-5 text-indigo-600" />
-        <h4 className="font-semibold text-indigo-900">Document Intelligence</h4>
+        <Sparkles className="h-5 w-5 text-stone-600" />
+        <h4 className="font-semibold text-stone-900">Document Intelligence</h4>
       </div>
       <div className="grid grid-cols-3 gap-2">
         {aiFeatures.map(feature => (
@@ -1360,12 +1360,12 @@ export function JobFilesPreview() {
             </div>
             <div className={cn("text-xl font-bold mt-1", expiringCount > 0 ? "text-amber-700" : "text-green-700")}>{expiringCount}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <CheckCircle2 className="h-4 w-4" />
               Pending Review
             </div>
-            <div className="text-xl font-bold text-purple-700 mt-1">{pendingApprovalCount}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{pendingApprovalCount}</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -1455,7 +1455,7 @@ export function JobFilesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

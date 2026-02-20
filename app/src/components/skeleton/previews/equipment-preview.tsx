@@ -538,7 +538,7 @@ const statusConfig: Record<Equipment['status'], { label: string; color: string; 
   available: { label: 'Available', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   deployed: { label: 'Deployed', color: 'bg-stone-100 text-stone-700', icon: MapPin },
   maintenance: { label: 'Maintenance', color: 'bg-amber-100 text-amber-700', icon: Wrench },
-  repair: { label: 'Repair', color: 'bg-orange-100 text-orange-700', icon: Settings },
+  repair: { label: 'Repair', color: 'bg-sand-100 text-sand-700', icon: Settings },
   retired: { label: 'Retired', color: 'bg-warm-100 text-warm-500', icon: Settings },
   lost_stolen: { label: 'Lost/Stolen', color: 'bg-red-100 text-red-700', icon: ShieldAlert },
 }
@@ -546,7 +546,7 @@ const statusConfig: Record<Equipment['status'], { label: string; color: string; 
 const categoryConfig: Record<Equipment['category'], { icon: React.ElementType; color: string; bg: string }> = {
   Vehicle: { icon: Truck, color: 'text-stone-600', bg: 'bg-stone-100' },
   'Heavy Equipment': { icon: Settings, color: 'text-amber-600', bg: 'bg-amber-100' },
-  'Power Tool': { icon: PenTool, color: 'text-purple-600', bg: 'bg-purple-100' },
+  'Power Tool': { icon: PenTool, color: 'text-stone-600', bg: 'bg-warm-100' },
   'Hand Tool': { icon: Wrench, color: 'text-warm-600', bg: 'bg-warm-100' },
   Safety: { icon: Shield, color: 'text-red-600', bg: 'bg-red-100' },
 }
@@ -663,7 +663,7 @@ function QRCodeModal({
   })
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-warm-1000 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-warm-900">Equipment QR Code</h3>
@@ -743,13 +743,13 @@ function PhotoGalleryModal({
               <>
                 <button
                   onClick={goPrev}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-warm-1000 rounded-full text-white hover:bg-black/70"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
                 <button
                   onClick={goNext}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-warm-1000 rounded-full text-white hover:bg-black/70"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </button>
@@ -796,7 +796,7 @@ function ChecklistModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-warm-1000 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -920,7 +920,7 @@ function BreakdownModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-warm-1000 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -1043,7 +1043,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
       <div className={cn(
         "bg-white rounded-lg border border-warm-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
         equipment.status === 'maintenance' && "border-amber-200",
-        equipment.status === 'repair' && "border-orange-200",
+        equipment.status === 'repair' && "border-sand-200",
         equipment.status === 'lost_stolen' && "border-red-300 bg-red-50",
         equipment.geofenceStatus === 'outside' && "border-red-300"
       )}>
@@ -1084,7 +1084,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               <h4 className="font-medium text-warm-900">
                 {equipment.name}
                 {equipment.isRental && (
-                  <span className="ml-1.5 text-xs bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">Rental</span>
+                  <span className="ml-1.5 text-xs bg-sand-100 text-sand-700 px-1.5 py-0.5 rounded">Rental</span>
                 )}
               </h4>
               <div className="flex items-center gap-2 mt-0.5 text-sm text-warm-500">
@@ -1182,7 +1182,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
 
         {/* Rental info with return reminders */}
         {equipment.isRental && (
-          <div className="mb-3 p-2 rounded bg-orange-50 text-xs text-orange-700 space-y-1">
+          <div className="mb-3 p-2 rounded bg-sand-50 text-xs text-sand-700 space-y-1">
             <div className="font-medium">Rental from {equipment.rentalVendor}</div>
             <div>Rate: {equipment.rentalRate}</div>
             {equipment.rentalExpectedReturn && (
@@ -1201,7 +1201,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               </div>
             )}
             {rentalCostAccumulated > 0 && (
-              <div className="flex items-center gap-1 mt-1 pt-1 border-t border-orange-200">
+              <div className="flex items-center gap-1 mt-1 pt-1 border-t border-sand-200">
                 <DollarSign className="h-3 w-3" />
                 <span>Cost accumulated: ${rentalCostAccumulated.toLocaleString()}</span>
               </div>
@@ -1373,7 +1373,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
           {hasChecklist && !equipment.checklistCompleted && (
             <button
               onClick={() => setChecklistModalOpen(true)}
-              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-purple-600 border border-purple-200 rounded hover:bg-purple-50"
+              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-stone-600 border border-warm-200 rounded hover:bg-warm-50"
             >
               <FileText className="h-3.5 w-3.5" />
               Checklist
@@ -1549,13 +1549,13 @@ export function EquipmentPreview() {
               {maintenanceCount}
             </div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-orange-600 text-xs">
+          <div className="bg-sand-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-sand-600 text-xs">
               <CircleDollarSign className="h-3.5 w-3.5" />
               Active Rentals
             </div>
-            <div className="text-xl font-bold text-orange-700 mt-1">{mockRentals.filter(r => r.status === 'active').length}</div>
-            <div className="text-xs text-orange-500">{formatCurrency(activeRentalCost)} spent</div>
+            <div className="text-xl font-bold text-sand-700 mt-1">{mockRentals.filter(r => r.status === 'active').length}</div>
+            <div className="text-xs text-sand-600">{formatCurrency(activeRentalCost)} spent</div>
           </div>
           <div className="bg-emerald-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-emerald-600 text-xs">
@@ -1573,11 +1573,11 @@ export function EquipmentPreview() {
           <span className="text-xs text-warm-500">Connected to:</span>
           {[
             { label: 'Jobs (Cost Allocation)', color: 'bg-stone-50 text-stone-700' },
-            { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700' },
+            { label: 'HR & Workforce', color: 'bg-warm-50 text-warm-700' },
             { label: 'Financial Reporting', color: 'bg-green-50 text-green-700' },
-            { label: 'Vendor Management', color: 'bg-orange-50 text-orange-700' },
-            { label: 'Purchase Orders', color: 'bg-indigo-50 text-indigo-700' },
-            { label: 'Notifications', color: 'bg-pink-50 text-pink-700' },
+            { label: 'Vendor Management', color: 'bg-sand-50 text-sand-700' },
+            { label: 'Purchase Orders', color: 'bg-stone-50 text-stone-700' },
+            { label: 'Notifications', color: 'bg-warm-50 text-sand-700' },
           ].map(badge => (
             <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded flex items-center gap-1", badge.color)}>
               <Link2 className="h-3 w-3" />
@@ -1817,7 +1817,7 @@ export function EquipmentPreview() {
                           log.maintenanceType === 'preventive' ? "bg-green-100 text-green-700" :
                           log.maintenanceType === 'corrective' ? "bg-red-100 text-red-700" :
                           log.maintenanceType === 'inspection' ? "bg-stone-100 text-stone-700" :
-                          "bg-purple-100 text-purple-700"
+                          "bg-warm-100 text-warm-700"
                         )}>
                           {log.maintenanceType}
                         </span>
@@ -1849,7 +1849,7 @@ export function EquipmentPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -362,7 +362,7 @@ const statusConfig: Record<PermitStatus, { label: string; color: string; icon: t
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   issued: { label: 'Issued', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
   expired: { label: 'Expired', color: 'bg-red-100 text-red-700', icon: XCircle },
-  on_hold: { label: 'On Hold', color: 'bg-orange-100 text-orange-700', icon: AlertTriangle },
+  on_hold: { label: 'On Hold', color: 'bg-sand-100 text-sand-700', icon: AlertTriangle },
 }
 
 const utilityIcons: Record<UtilityConnection['utilityType'], typeof Zap> = {
@@ -436,7 +436,7 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
     <div className={cn(
       "bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer",
       permit.status === 'expired' ? 'border-red-200' :
-      permit.status === 'on_hold' ? 'border-orange-300 border-2' :
+      permit.status === 'on_hold' ? 'border-sand-300 border-2' :
       permit.scheduleDependencies?.length ? 'border-l-4 border-l-amber-400' : 'border-warm-200'
     )}>
       <div className="flex items-start justify-between mb-3">
@@ -454,16 +454,16 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
 
       {/* Hold Status UI */}
       {permit.status === 'on_hold' && permit.hold && (
-        <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+        <div className="mb-3 p-3 bg-sand-50 border border-sand-200 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <PauseCircle className="h-4 w-4 text-orange-600" />
+            <PauseCircle className="h-4 w-4 text-sand-600" />
             <span className="font-semibold text-orange-800">{permit.hold.reason}</span>
           </div>
-          <p className="text-xs text-orange-700 mb-2">Hold placed: {formatDate(permit.hold.holdDate)}</p>
+          <p className="text-xs text-sand-700 mb-2">Hold placed: {formatDate(permit.hold.holdDate)}</p>
 
           <div className="mb-2">
             <p className="text-xs font-medium text-orange-800 mb-1">Hold Conditions:</p>
-            <ul className="text-xs text-orange-700 space-y-0.5">
+            <ul className="text-xs text-sand-700 space-y-0.5">
               {permit.hold.conditions.map((condition, idx) => (
                 <li key={idx} className="flex items-start gap-1">
                   <span className="text-orange-400">&#x2022;</span>
@@ -475,7 +475,7 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
 
           <div className="mb-3">
             <p className="text-xs font-medium text-orange-800 mb-1">Resolution Steps:</p>
-            <ol className="text-xs text-orange-700 space-y-0.5 list-decimal list-inside">
+            <ol className="text-xs text-sand-700 space-y-0.5 list-decimal list-inside">
               {permit.hold.resolutionSteps.map((step, idx) => (
                 <li key={idx}>{step}</li>
               ))}
@@ -484,7 +484,7 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
 
           <button
             onClick={() => onResolveHold?.(permit.id)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white text-xs font-medium rounded hover:bg-orange-700 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-sand-700 text-white text-xs font-medium rounded hover:bg-orange-700 transition-colors"
           >
             <PlayCircle className="h-3.5 w-3.5" />
             Resolve Hold
@@ -603,9 +603,9 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
 
       {/* AI Note */}
       {permit.aiNote && (
-        <div className="mt-2 p-2 bg-indigo-50 rounded-md flex items-start gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-indigo-500 mt-0.5 flex-shrink-0" />
-          <span className="text-xs text-indigo-700">{permit.aiNote}</span>
+        <div className="mt-2 p-2 bg-stone-50 rounded-md flex items-start gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-stone-600 mt-0.5 flex-shrink-0" />
+          <span className="text-xs text-stone-700">{permit.aiNote}</span>
         </div>
       )}
 
@@ -785,7 +785,7 @@ function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTr
   return (
     <div className={cn(
       'rounded-lg p-2 border text-center',
-      utility.status === 'transferred' ? 'bg-purple-50 border-purple-200' :
+      utility.status === 'transferred' ? 'bg-warm-50 border-warm-200' :
       utility.status === 'completed' ? 'bg-green-50 border-green-200' :
       utility.status === 'scheduled' ? 'bg-stone-50 border-stone-200' :
       utility.status === 'applied' ? 'bg-amber-50 border-amber-200' :
@@ -793,7 +793,7 @@ function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTr
     )}>
       <UtilIcon className={cn(
         'h-4 w-4 mx-auto mb-1',
-        utility.status === 'transferred' ? 'text-purple-600' :
+        utility.status === 'transferred' ? 'text-stone-600' :
         utility.status === 'completed' ? 'text-green-600' :
         utility.status === 'scheduled' ? 'text-stone-600' :
         utility.status === 'applied' ? 'text-amber-600' : 'text-warm-400'
@@ -802,7 +802,7 @@ function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTr
       <p className="text-[10px] text-warm-500">{utility.provider}</p>
       <p className={cn(
         'text-[10px] font-medium mt-0.5',
-        utility.status === 'transferred' ? 'text-purple-600' :
+        utility.status === 'transferred' ? 'text-stone-600' :
         utility.status === 'completed' ? 'text-green-600' :
         utility.status === 'scheduled' ? 'text-stone-600' :
         utility.status === 'applied' ? 'text-amber-600' : 'text-warm-400'
@@ -812,7 +812,7 @@ function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTr
 
       {/* Transfer confirmation */}
       {utility.transferConfirmed && utility.transferDate && (
-        <div className="mt-1 text-[10px] text-purple-600">
+        <div className="mt-1 text-[10px] text-stone-600">
           Transferred {formatDate(utility.transferDate)}
         </div>
       )}
@@ -900,7 +900,7 @@ export function PermitsPreview() {
                 </span>
               )}
               {onHoldCount > 0 && (
-                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded flex items-center gap-1">
+                <span className="text-xs bg-sand-100 text-sand-700 px-2 py-0.5 rounded flex items-center gap-1">
                   <PauseCircle className="h-3 w-3" />
                   {onHoldCount} on hold
                 </span>
@@ -940,12 +940,12 @@ export function PermitsPreview() {
             </div>
             <div className="text-xl font-bold text-green-700 mt-1">{issuedCount}</div>
           </div>
-          <div className={cn("rounded-lg p-3", onHoldCount > 0 ? "bg-orange-50" : "bg-warm-50")}>
-            <div className={cn("flex items-center gap-2 text-sm", onHoldCount > 0 ? "text-orange-600" : "text-warm-500")}>
+          <div className={cn("rounded-lg p-3", onHoldCount > 0 ? "bg-sand-50" : "bg-warm-50")}>
+            <div className={cn("flex items-center gap-2 text-sm", onHoldCount > 0 ? "text-sand-600" : "text-warm-500")}>
               <PauseCircle className="h-4 w-4" />
               On Hold
             </div>
-            <div className={cn("text-xl font-bold mt-1", onHoldCount > 0 ? "text-orange-700" : "text-warm-900")}>{onHoldCount}</div>
+            <div className={cn("text-xl font-bold mt-1", onHoldCount > 0 ? "text-sand-700" : "text-warm-900")}>{onHoldCount}</div>
           </div>
           <div className={cn("rounded-lg p-3", expiredCount > 0 ? "bg-red-50" : "bg-warm-50")}>
             <div className={cn("flex items-center gap-2 text-sm", expiredCount > 0 ? "text-red-600" : "text-warm-500")}>
@@ -1022,7 +1022,7 @@ export function PermitsPreview() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-warm-500">{utilitiesComplete}/{utilities.length} complete</span>
-            <span className="text-xs text-purple-600">{utilities.filter(u => u.transferConfirmed).length} transferred</span>
+            <span className="text-xs text-stone-600">{utilities.filter(u => u.transferConfirmed).length} transferred</span>
           </div>
         </div>
         <div className="grid grid-cols-6 gap-2">
@@ -1146,7 +1146,7 @@ export function PermitsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

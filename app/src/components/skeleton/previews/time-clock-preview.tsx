@@ -414,9 +414,9 @@ function StatusBadge({ status }: { status: TimeEntry['status'] }) {
       label: 'Rejected',
     },
     disputed: {
-      bg: 'bg-purple-100',
-      text: 'text-purple-700',
-      border: 'border-purple-200',
+      bg: 'bg-warm-100',
+      text: 'text-warm-700',
+      border: 'border-warm-200',
       icon: AlertCircle,
       label: 'Disputed',
     },
@@ -438,7 +438,7 @@ function TimesheetStatusBadge({ status }: { status: TimesheetSummary['status'] }
     submitted: { bg: 'bg-stone-100', text: 'text-stone-700', label: 'Submitted' },
     approved: { bg: 'bg-green-100', text: 'text-green-700', label: 'Approved' },
     rejected: { bg: 'bg-red-100', text: 'text-red-700', label: 'Rejected' },
-    amended: { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Amended' },
+    amended: { bg: 'bg-warm-100', text: 'text-warm-700', label: 'Amended' },
   }
   const { bg, text, label } = config[status]
   return (
@@ -482,7 +482,7 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
           <div className="text-xs text-warm-500">This Week</div>
         </div>
         <div>
-          <div className={cn("text-lg font-bold", employee.overtimeHours > 0 ? "text-orange-600" : "text-warm-400")}>
+          <div className={cn("text-lg font-bold", employee.overtimeHours > 0 ? "text-sand-600" : "text-warm-400")}>
             {employee.overtimeHours}h
           </div>
           <div className="text-xs text-warm-500">Overtime</div>
@@ -603,11 +603,11 @@ export function TimeClockPreview() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-orange-600" />
+            <div className="h-10 w-10 rounded-lg bg-sand-100 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-sand-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-orange-600">{overtimeHours}h</div>
+              <div className="text-2xl font-bold text-sand-600">{overtimeHours}h</div>
               <div className="text-xs text-warm-500">OT This Week</div>
             </div>
           </div>
@@ -648,9 +648,9 @@ export function TimeClockPreview() {
           {[
             { label: 'Budget & Cost Tracking', color: 'bg-green-50 text-green-700 border-green-200' },
             { label: 'Daily Logs', color: 'bg-stone-50 text-stone-700 border-stone-200' },
-            { label: 'Financial Reporting', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-            { label: 'Scheduling', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-            { label: 'Payroll Export', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+            { label: 'Financial Reporting', color: 'bg-warm-50 text-warm-700 border-warm-200' },
+            { label: 'Scheduling', color: 'bg-stone-50 text-stone-700 border-stone-200' },
+            { label: 'Payroll Export', color: 'bg-sand-50 text-sand-700 border-sand-200' },
           ].map(badge => (
             <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded border flex items-center gap-1", badge.color)}>
               <Link2 className="h-3 w-3" />
@@ -776,7 +776,7 @@ export function TimeClockPreview() {
                       <td className="py-3 px-4 font-medium text-warm-900">{entry.hoursWorked}h</td>
                       <td className="py-3 px-4">
                         {entry.overtimeHours > 0 ? (
-                          <span className="text-orange-600 font-medium">{entry.overtimeHours}h</span>
+                          <span className="text-sand-600 font-medium">{entry.overtimeHours}h</span>
                         ) : (
                           <span className="text-warm-300">-</span>
                         )}
@@ -854,7 +854,7 @@ export function TimeClockPreview() {
                   </div>
                   <div className="bg-white rounded p-2 border border-warm-100">
                     <div className="text-xs text-warm-500">Overtime</div>
-                    <div className={cn("font-bold", ts.totalOvertimeHours > 0 ? "text-orange-600" : "text-warm-400")}>
+                    <div className={cn("font-bold", ts.totalOvertimeHours > 0 ? "text-sand-600" : "text-warm-400")}>
                       {ts.totalOvertimeHours}h
                     </div>
                   </div>
@@ -1138,7 +1138,7 @@ export function TimeClockPreview() {
       </div>
 
       {/* AI Insights Footer Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <Sparkles className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-amber-700">

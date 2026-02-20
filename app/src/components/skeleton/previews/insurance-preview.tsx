@@ -539,7 +539,7 @@ function PolicyCard({ policy }: { policy: InsurancePolicy }) {
           <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded">AI Endorsed</span>
         )}
         {policy.waiverSubrogation && (
-          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">WOS</span>
+          <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded">WOS</span>
         )}
         {policy.verified && (
           <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
@@ -724,8 +724,8 @@ export function InsurancePreview() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-purple-600" />
+            <div className="h-10 w-10 rounded-lg bg-warm-100 flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-stone-600" />
             </div>
             <div>
               <div className="text-xl font-bold text-warm-900">{projectPoliciesActive}</div>
@@ -840,7 +840,7 @@ export function InsurancePreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -292,7 +292,7 @@ const monthWeeks = [
 const jobColors: Record<string, string> = {
   blue: 'bg-stone-100 text-stone-700 border-stone-200',
   green: 'bg-green-100 text-green-700 border-green-200',
-  purple: 'bg-purple-100 text-purple-700 border-purple-200',
+  purple: 'bg-warm-100 text-warm-700 border-warm-200',
   amber: 'bg-amber-100 text-amber-700 border-amber-200',
   gray: 'bg-warm-100 text-warm-600 border-warm-200',
   red: 'bg-red-100 text-red-700 border-red-200',
@@ -630,7 +630,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
   const getTypeIcon = (type: TwoWeekItem['type']) => {
     switch (type) {
       case 'task': return <Calendar className="h-3.5 w-3.5 text-stone-500" />
-      case 'delivery': return <Truck className="h-3.5 w-3.5 text-purple-500" />
+      case 'delivery': return <Truck className="h-3.5 w-3.5 text-stone-600" />
       case 'inspection': return <ClipboardCheck className="h-3.5 w-3.5 text-amber-500" />
       case 'confirmation': return <CheckSquare className="h-3.5 w-3.5 text-green-500" />
     }
@@ -639,7 +639,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
   const getTypeBg = (type: TwoWeekItem['type']) => {
     switch (type) {
       case 'task': return 'bg-stone-50 border-stone-200'
-      case 'delivery': return 'bg-purple-50 border-purple-200'
+      case 'delivery': return 'bg-warm-50 border-warm-200'
       case 'inspection': return 'bg-amber-50 border-amber-200'
       case 'confirmation': return 'bg-green-50 border-green-200'
     }
@@ -667,7 +667,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
               <div className="text-warm-500">Tasks</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-purple-600">{thisWeekCounts.deliveries}</div>
+              <div className="text-lg font-bold text-stone-600">{thisWeekCounts.deliveries}</div>
               <div className="text-warm-500">Deliveries</div>
             </div>
             <div className="text-center">
@@ -688,7 +688,7 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
               <div className="text-warm-500">Tasks</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-purple-600">{nextWeekCounts.deliveries}</div>
+              <div className="text-lg font-bold text-stone-600">{nextWeekCounts.deliveries}</div>
               <div className="text-warm-500">Deliveries</div>
             </div>
             <div className="text-center">
@@ -1034,7 +1034,7 @@ export function CrewSchedulePreview() {
           <span className="text-warm-500 font-medium">Active Projects:</span>
           <span className="bg-stone-50 text-stone-600 px-2 py-0.5 rounded">Smith Residence - Rough-In</span>
           <span className="bg-green-50 text-green-600 px-2 py-0.5 rounded">Johnson Beach - Framing</span>
-          <span className="bg-purple-50 text-purple-600 px-2 py-0.5 rounded">Davis Addition - Pre-Con</span>
+          <span className="bg-warm-50 text-stone-600 px-2 py-0.5 rounded">Davis Addition - Pre-Con</span>
           <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded">Harbor View - Foundation</span>
           <span className="ml-auto text-warm-400">Critical path tasks: {criticalPathAssignments}</span>
         </div>
@@ -1078,7 +1078,7 @@ export function CrewSchedulePreview() {
             <span className="text-warm-600">Johnson</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-purple-100 border border-purple-200" />
+            <div className="w-3 h-3 rounded bg-warm-100 border border-warm-200" />
             <span className="text-warm-600">Davis</span>
           </div>
           <div className="flex items-center gap-1.5">

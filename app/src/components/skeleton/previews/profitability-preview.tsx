@@ -473,8 +473,8 @@ export function ProfitabilityPreview() {
             <div className="text-xl font-bold text-warm-900 mt-1">{formatCurrency(totalRevenue)}</div>
             <div className="text-xs text-warm-500 mt-0.5">Active jobs</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <BarChart3 className="h-4 w-4" />
               Projected Cost
             </div>
@@ -667,7 +667,7 @@ export function ProfitabilityPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

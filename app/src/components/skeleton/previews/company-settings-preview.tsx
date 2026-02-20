@@ -530,7 +530,7 @@ function NumberingSection() {
               <h5 className="font-medium text-sm text-warm-900">{np.label}</h5>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded font-medium",
-                np.scope === 'global' ? 'bg-stone-100 text-stone-700' : 'bg-purple-100 text-purple-700'
+                np.scope === 'global' ? 'bg-stone-100 text-stone-700' : 'bg-warm-100 text-warm-700'
               )}>
                 {np.scope === 'global' ? 'Global Sequence' : 'Per-Project Sequence'}
               </span>
@@ -609,12 +609,12 @@ function UsersForm() {
                 <td className="px-4 py-3">
                   <span className={cn(
                     "text-xs px-2 py-1 rounded font-medium",
-                    member.role === 'owner' ? 'bg-purple-100 text-purple-700' :
+                    member.role === 'owner' ? 'bg-warm-100 text-warm-700' :
                     member.role === 'admin' ? 'bg-stone-100 text-stone-700' :
                     member.role === 'pm' ? 'bg-green-100 text-green-700' :
                     member.role === 'superintendent' ? 'bg-amber-100 text-amber-700' :
-                    member.role === 'office' ? 'bg-teal-100 text-teal-700' :
-                    member.role === 'field' ? 'bg-orange-100 text-orange-700' :
+                    member.role === 'office' ? 'bg-stone-100 text-stone-700' :
+                    member.role === 'field' ? 'bg-sand-100 text-sand-700' :
                     'bg-warm-100 text-warm-600'
                   )}>
                     {member.roleLabel}
@@ -655,12 +655,12 @@ function UsersForm() {
         <p className="text-xs text-warm-500 mb-3">Hierarchy: Owner &gt; Admin &gt; PM &gt; Superintendent &gt; Office &gt; Field &gt; Read-Only. Custom roles inherit from these.</p>
         <div className="grid grid-cols-4 gap-3">
           {[
-            { role: 'Owner', desc: 'Full access + billing', color: 'border-purple-300 bg-purple-50' },
+            { role: 'Owner', desc: 'Full access + billing', color: 'border-warm-300 bg-warm-50' },
             { role: 'Admin', desc: 'Full access (no billing)', color: 'border-stone-300 bg-stone-50' },
             { role: 'Project Manager', desc: 'Manage projects, budgets', color: 'border-green-300 bg-green-50' },
             { role: 'Superintendent', desc: 'Field leadership', color: 'border-amber-300 bg-amber-50' },
-            { role: 'Office', desc: 'Accounting, scheduling', color: 'border-teal-300 bg-teal-50' },
-            { role: 'Field', desc: 'Daily logs, photos, tasks', color: 'border-orange-300 bg-orange-50' },
+            { role: 'Office', desc: 'Accounting, scheduling', color: 'border-teal-300 bg-stone-50' },
+            { role: 'Field', desc: 'Daily logs, photos, tasks', color: 'border-sand-300 bg-sand-50' },
             { role: 'Read-Only', desc: 'View only', color: 'border-warm-300 bg-warm-50' },
             { role: '+ Custom Role', desc: 'Create new role', color: 'border-dashed border-warm-300 bg-white' },
           ].map(r => (
@@ -876,7 +876,7 @@ export function CompanySettingsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

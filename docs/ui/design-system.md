@@ -2,6 +2,85 @@
 
 RossOS Construction Management Platform -- UI component library and design conventions.
 
+## BuildDesk Design Philosophy
+
+**RESTRAINED COLOR** is the core principle. Only status badges and attention-required items get color. Everything else uses warm gray neutrals for a sophisticated, professional appearance.
+
+### Key Principles
+
+1. **Restrained Color Usage** - Color is reserved for status indicators and important actions only
+2. **Warm Gray Neutrals** - Use \ scale instead of \ for softer, warmer appearance
+3. **Stone Blue Primary** - \ (#3b5564) is the primary CTA color
+4. **Sand Accent** - \ (#a87d63) for secondary accents
+5. **Typography** - Source Serif 4 for headings, IBM Plex Sans for body text
+
+### Color When to Use
+
+| Color | Use For | Never Use For |
+|-------|---------|---------------|
+| Green (success) | Approved, completed, positive status | Backgrounds, decorative |
+| Amber/Yellow (warning) | Pending, needs attention | Backgrounds, decorative |
+| Red (danger) | Overdue, rejected, errors | Backgrounds, decorative |
+| Stone (primary) | Primary CTAs, links, active states | Status indicators |
+| Warm (neutral) | Backgrounds, borders, text | Status indicators |
+
+### What NOT to Do
+
+- Gradient backgrounds (\)
+- Colorful panel backgrounds (\, \)
+- Rainbow of icon colors
+- Multiple competing accent colors
+
+### Do This Instead
+
+- Warm neutral backgrounds (\, \)
+- Stone for primary actions and active states
+- Status colors ONLY on badges and alerts
+
+### BuildDesk Color Palette (CSS Custom Properties)
+
+#### Stone Blue (Primary)
+| Token | Hex | Usage |
+|-------|-----|-------|
+| --stone-50 | #f4f7f8 | Hover backgrounds |
+| --stone-100 | #e2eaed | Light accents |
+| --stone-200 | #c5d5db | Borders |
+| --stone-600 | #456878 | Secondary actions |
+| --stone-700 | #3b5564 | **Primary CTAs** |
+| --stone-800 | #354854 | Hover on primary |
+| --stone-900 | #2f3d48 | Headings |
+
+#### Sand (Accent)
+| Token | Hex | Usage |
+|-------|-----|-------|
+| --sand-50 | #faf8f5 | Accent backgrounds |
+| --sand-100 | #f2ede6 | Light accent |
+| --sand-600 | #a87d63 | **Secondary accent** |
+| --sand-700 | #8c6553 | Hover on accent |
+
+#### Warm Gray (Neutrals)
+| Token | Hex | Usage |
+|-------|-----|-------|
+| --warm-0 | #ffffff | Cards, inputs |
+| --warm-50 | #faf9f7 | Page backgrounds |
+| --warm-100 | #f3f2ef | Hover states |
+| --warm-200 | #e8e6e1 | Borders |
+| --warm-400 | #b5b1a9 | Muted text |
+| --warm-500 | #96918a | Secondary text |
+| --warm-600 | #7a766f | Body text |
+| --warm-700 | #64615b | Emphasis text |
+| --warm-800 | #4a4843 | Strong text |
+
+#### Status Colors (Use Sparingly)
+| Status | Background | Text | Dot |
+|--------|------------|------|-----|
+| Success | --success-bg (#f0f7f1) | --success (#3d8b4d) | --success |
+| Warning | --warning-bg (#fdf6ec) | --warning (#b8860b) | --warning |
+| Danger | --danger-bg (#fdf1f0) | --danger (#c4463a) | --danger |
+| Info | --info-bg (#eff5fa) | --info (#4a7fa5) | --info |
+
+---
+
 ## Technology Stack
 
 | Tool | Purpose |

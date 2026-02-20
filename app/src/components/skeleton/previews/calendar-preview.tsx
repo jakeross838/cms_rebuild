@@ -115,7 +115,7 @@ const taskTypeConfig: Record<string, { icon: typeof Wrench; label: string; color
   inspection: {
     icon: ClipboardCheck,
     label: 'Inspection',
-    color: 'bg-purple-100 text-purple-700 border-purple-200',
+    color: 'bg-warm-100 text-warm-700 border-warm-200',
   },
   delivery: {
     icon: Truck,
@@ -135,7 +135,7 @@ const taskTypeConfig: Record<string, { icon: typeof Wrench; label: string; color
   milestone: {
     icon: Flag,
     label: 'Milestone',
-    color: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+    color: 'bg-stone-100 text-stone-700 border-stone-200',
   },
   deadline: {
     icon: Target,
@@ -396,8 +396,8 @@ export function CalendarPreview() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-              <ClipboardCheck className="h-5 w-5 text-purple-600" />
+            <div className="h-10 w-10 rounded-lg bg-warm-100 flex items-center justify-center">
+              <ClipboardCheck className="h-5 w-5 text-stone-600" />
             </div>
             <div>
               <div className="text-xl font-bold text-warm-900">{inspectionsScheduled}</div>
@@ -541,7 +541,7 @@ export function CalendarPreview() {
             <span>Work</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <ClipboardCheck className="h-3.5 w-3.5 text-purple-600" />
+            <ClipboardCheck className="h-3.5 w-3.5 text-stone-600" />
             <span>Inspection</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -553,7 +553,7 @@ export function CalendarPreview() {
             <span>Meeting</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Flag className="h-3.5 w-3.5 text-indigo-600" />
+            <Flag className="h-3.5 w-3.5 text-stone-600" />
             <span>Milestone</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -572,7 +572,7 @@ export function CalendarPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -282,7 +282,7 @@ const mockPayables: Payable[] = [
 const statusConfig: Record<PayableStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
   pending: { label: 'Pending Approval', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: Clock },
   approved: { label: 'Approved', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: CheckCircle },
-  scheduled: { label: 'Scheduled', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: Calendar },
+  scheduled: { label: 'Scheduled', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: Calendar },
   paid: { label: 'Paid', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   disputed: { label: 'Disputed', color: 'text-red-700', bgColor: 'bg-red-100', icon: Ban },
 }
@@ -418,7 +418,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 {status.label}
               </span>
               {payable.invoiceType === 'credit_memo' && (
-                <span className="text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-700 font-medium">
+                <span className="text-xs px-2 py-0.5 rounded bg-warm-100 text-warm-700 font-medium">
                   Credit Memo
                 </span>
               )}
@@ -432,7 +432,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 <ConfidenceBadge score={payable.aiConfidence} />
               )}
               {payable.duplicateWarning && (
-                <span className="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-700 font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded bg-sand-100 text-sand-700 font-medium flex items-center gap-1">
                   <Copy className="h-3 w-3" />
                   Possible Duplicate
                 </span>
@@ -464,7 +464,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 </span>
               )}
               {payable.drawNumber && (
-                <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">
+                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   Draw #{payable.drawNumber}
                 </span>
               )}
@@ -527,7 +527,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
           <div className="text-right">
             <div className={cn(
               "text-lg font-semibold",
-              payable.amount < 0 ? "text-purple-700" : "text-warm-900"
+              payable.amount < 0 ? "text-warm-700" : "text-warm-900"
             )}>
               {payable.amountPaid > 0 ? (
                 <>
@@ -792,7 +792,7 @@ export function PayablesPreview() {
               <div className="text-xs text-warm-500">1-30 Days</div>
             </div>
             <div className="text-center">
-              <div className="text-sm font-medium text-orange-600">$28,400</div>
+              <div className="text-sm font-medium text-sand-600">$28,400</div>
               <div className="text-xs text-warm-500">31-60 Days</div>
             </div>
             <div className="text-center">
@@ -889,7 +889,7 @@ export function PayablesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

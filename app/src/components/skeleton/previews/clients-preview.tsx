@@ -266,7 +266,7 @@ const statusConfig: Record<ClientStatus, { label: string; color: string; icon: t
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
   completed: { label: 'Completed', color: 'bg-stone-100 text-stone-700', icon: CheckCircle },
   'on-hold': { label: 'On Hold', color: 'bg-warm-100 text-warm-700', icon: AlertCircle },
-  warranty: { label: 'Warranty', color: 'bg-purple-100 text-purple-700', icon: Shield },
+  warranty: { label: 'Warranty', color: 'bg-warm-100 text-warm-700', icon: Shield },
 }
 
 const communicationConfig: Record<CommunicationPref, { label: string; icon: typeof Mail }> = {
@@ -413,17 +413,17 @@ function ClientCard({ client }: { client: Client }) {
         <div className="flex items-center gap-1.5 flex-wrap mb-3 pt-2 border-t border-warm-100">
           <Sparkles className="h-3 w-3 text-stone-500" />
           {client.aiDecisionSpeed && (
-            <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
               {client.aiDecisionSpeed} decisions
             </span>
           )}
           {client.aiBudgetSensitivity && (
-            <span className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
               {client.aiBudgetSensitivity} budget sensitivity
             </span>
           )}
           {client.aiStylePreferences?.slice(0, 2).map(pref => (
-            <span key={pref} className="text-xs bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded">
+            <span key={pref} className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
               {pref}
             </span>
           ))}
@@ -664,7 +664,7 @@ export function ClientsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

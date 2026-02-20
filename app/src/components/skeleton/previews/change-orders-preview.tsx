@@ -399,20 +399,20 @@ const mockChangeOrders: ChangeOrder[] = [
 const statusConfigMap = {
   draft: { label: 'Draft', color: 'bg-warm-100 text-warm-700', icon: FileText },
   internal_review: { label: 'Internal Review', color: 'bg-stone-100 text-stone-700', icon: Eye },
-  client_presented: { label: 'Client Presented', color: 'bg-indigo-100 text-indigo-700', icon: PenLine },
-  negotiation: { label: 'Negotiation', color: 'bg-purple-100 text-purple-700', icon: MessageSquare },
+  client_presented: { label: 'Client Presented', color: 'bg-stone-100 text-stone-700', icon: PenLine },
+  negotiation: { label: 'Negotiation', color: 'bg-warm-100 text-warm-700', icon: MessageSquare },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700', icon: XCircle },
-  withdrawn: { label: 'Withdrawn', color: 'bg-orange-100 text-orange-700', icon: Ban },
+  withdrawn: { label: 'Withdrawn', color: 'bg-sand-100 text-sand-700', icon: Ban },
   voided: { label: 'Voided', color: 'bg-red-100 text-red-600', icon: XCircle },
 }
 
 const sourceTypeConfig: Record<ChangeOrder['sourceType'], { label: string; color: string }> = {
   client_request: { label: 'Client Request', color: 'bg-stone-50 text-stone-700' },
-  field: { label: 'Field Condition', color: 'bg-orange-50 text-orange-700' },
-  design_change: { label: 'Design Change', color: 'bg-purple-50 text-purple-700' },
+  field: { label: 'Field Condition', color: 'bg-sand-50 text-sand-700' },
+  design_change: { label: 'Design Change', color: 'bg-warm-50 text-warm-700' },
   code_change: { label: 'Code Change', color: 'bg-red-50 text-red-700' },
-  allowance_overage: { label: 'Allowance Overage', color: 'bg-teal-50 text-teal-700' },
+  allowance_overage: { label: 'Allowance Overage', color: 'bg-stone-50 text-stone-700' },
   builder_initiated: { label: 'Builder Initiated', color: 'bg-emerald-50 text-emerald-700' },
 }
 
@@ -640,9 +640,9 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
 
       {/* Negotiation status */}
       {co.status === 'negotiation' && co.negotiationStatus && (
-        <div className="mb-3 p-2 bg-purple-50 rounded flex items-center gap-2 text-xs">
-          <MessageSquare className="h-3.5 w-3.5 text-purple-600" />
-          <span className="text-purple-700 font-medium">
+        <div className="mb-3 p-2 bg-warm-50 rounded flex items-center gap-2 text-xs">
+          <MessageSquare className="h-3.5 w-3.5 text-stone-600" />
+          <span className="text-warm-700 font-medium">
             Negotiation: {negotiationLabels[co.negotiationStatus]}
           </span>
         </div>
@@ -672,13 +672,13 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
           </span>
         )}
         {co.selectionName && (
-          <span className="text-xs bg-teal-50 text-teal-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Layers className="h-3 w-3" />
             {co.selectionName}
           </span>
         )}
         {co.linkedPoIds && co.linkedPoIds.length > 0 && (
-          <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <FileText className="h-3 w-3" />
             {co.linkedPoIds[0]}
           </span>
@@ -993,7 +993,7 @@ export function ChangeOrdersPreview() {
       </div>
 
       {/* AI Insights Bar - Using AIFeaturesPanel */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-4">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-4">
         <AIFeaturesPanel
           title="AI Insights"
           features={aiInsights}

@@ -612,7 +612,7 @@ const severityLabels: Record<SafetyObservation['severity'], string> = {
 const severityColors: Record<SafetyObservation['severity'], string> = {
   informational: 'bg-stone-100 text-stone-700',
   minor_hazard: 'bg-amber-100 text-amber-700',
-  serious_hazard: 'bg-orange-100 text-orange-700',
+  serious_hazard: 'bg-sand-100 text-sand-700',
   imminent_danger: 'bg-red-100 text-red-700',
 }
 
@@ -627,7 +627,7 @@ const incidentStatusLabels: Record<SafetyIncident['status'], string> = {
 const incidentStatusColors: Record<SafetyIncident['status'], string> = {
   reported: 'bg-red-100 text-red-700',
   investigating: 'bg-amber-100 text-amber-700',
-  root_cause: 'bg-purple-100 text-purple-700',
+  root_cause: 'bg-warm-100 text-warm-700',
   corrective_action: 'bg-stone-100 text-stone-700',
   closed: 'bg-green-100 text-green-700',
 }
@@ -773,7 +773,7 @@ function ObservationCard({ observation }: { observation: SafetyObservation }) {
     <div className={cn(
       "bg-white rounded-lg border p-4",
       observation.severity === 'imminent_danger' ? "border-red-300 bg-red-50" :
-      observation.severity === 'serious_hazard' ? "border-orange-200" :
+      observation.severity === 'serious_hazard' ? "border-sand-200" :
       observation.severity === 'minor_hazard' ? "border-amber-200" :
       "border-warm-200"
     )}>
@@ -808,7 +808,7 @@ function ObservationCard({ observation }: { observation: SafetyObservation }) {
           )}
         </span>
         {observation.vendorName && (
-          <span className="flex items-center gap-1 text-orange-600">
+          <span className="flex items-center gap-1 text-sand-600">
             <Link2 className="h-3 w-3" />
             {observation.vendorName}
           </span>
@@ -844,7 +844,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
             "text-xs px-2 py-0.5 rounded font-medium",
             incident.type === 'injury' ? "bg-red-100 text-red-700" :
             incident.type === 'near_miss' ? "bg-amber-100 text-amber-700" :
-            "bg-purple-100 text-purple-700"
+            "bg-warm-100 text-warm-700"
           )}>
             {incident.type === 'injury' ? 'Injury' :
              incident.type === 'near_miss' ? 'Near Miss' :
@@ -857,7 +857,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
             <span className={cn(
               "text-xs px-2 py-0.5 rounded font-medium",
               incident.oshaClassification === 'first_aid' ? "bg-green-100 text-green-700" :
-              incident.oshaClassification === 'recordable' ? "bg-orange-100 text-orange-700" :
+              incident.oshaClassification === 'recordable' ? "bg-sand-100 text-sand-700" :
               incident.oshaClassification === 'lost_time' ? "bg-red-100 text-red-700" :
               "bg-red-200 text-red-800"
             )}>
@@ -883,7 +883,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           {incident.time} at {incident.location}
         </span>
         {incident.vendorName && (
-          <span className="flex items-center gap-1 text-orange-600">
+          <span className="flex items-center gap-1 text-sand-600">
             <Link2 className="h-3 w-3" />
             {incident.vendorName}
           </span>
@@ -902,7 +902,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
         )}
       </div>
       {incident.rootCause && (
-        <div className="mt-2 p-2 bg-purple-50 rounded text-xs text-purple-700">
+        <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
           <span className="font-medium">Root Cause:</span> {incident.rootCause}
         </div>
       )}
@@ -930,7 +930,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
             <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">OSHA Reportable</span>
           )}
           {incident.drugTestRequired && (
-            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Drug Test Required</span>
+            <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded">Drug Test Required</span>
           )}
           <span className={cn(
             "text-xs px-2 py-0.5 rounded",
@@ -1324,11 +1324,11 @@ export function SafetyPreview() {
               <span className="text-xs text-warm-500">Connected to:</span>
               {[
                 { label: 'Daily Logs', color: 'bg-stone-50 text-stone-700' },
-                { label: 'Vendor Scorecards', color: 'bg-orange-50 text-orange-700' },
-                { label: 'HR & Workforce', color: 'bg-purple-50 text-purple-700' },
+                { label: 'Vendor Scorecards', color: 'bg-sand-50 text-sand-700' },
+                { label: 'HR & Workforce', color: 'bg-warm-50 text-warm-700' },
                 { label: 'Document Storage', color: 'bg-green-50 text-green-700' },
-                { label: 'Scheduling', color: 'bg-indigo-50 text-indigo-700' },
-                { label: 'Notifications', color: 'bg-pink-50 text-pink-700' },
+                { label: 'Scheduling', color: 'bg-stone-50 text-stone-700' },
+                { label: 'Notifications', color: 'bg-warm-50 text-sand-700' },
               ].map(badge => (
                 <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded flex items-center gap-1", badge.color)}>
                   <Link2 className="h-3 w-3" />
@@ -1473,17 +1473,17 @@ export function SafetyPreview() {
                 </div>
                 <div className="text-xs text-amber-600">Near Misses</div>
               </div>
-              <div className="bg-purple-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-purple-700">
+              <div className="bg-warm-50 rounded-lg p-3 text-center">
+                <div className="text-lg font-bold text-warm-700">
                   {recentIncidents.filter(i => i.type === 'property_damage').length}
                 </div>
-                <div className="text-xs text-purple-600">Property Damage</div>
+                <div className="text-xs text-stone-600">Property Damage</div>
               </div>
-              <div className="bg-orange-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-orange-700">
+              <div className="bg-sand-50 rounded-lg p-3 text-center">
+                <div className="text-lg font-bold text-sand-700">
                   {recentIncidents.filter(i => i.oshaReportable).length}
                 </div>
-                <div className="text-xs text-orange-600">OSHA Reportable</div>
+                <div className="text-xs text-sand-600">OSHA Reportable</div>
               </div>
               <div className="bg-stone-50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-stone-700">
@@ -1698,7 +1698,7 @@ export function SafetyPreview() {
             <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-medium text-warm-900 flex items-center gap-2">
-                  <Users className="h-4 w-4 text-orange-600" />
+                  <Users className="h-4 w-4 text-sand-600" />
                   Vendor Safety Compliance
                 </h4>
                 <span className="text-xs text-warm-500 flex items-center gap-1">
@@ -1742,7 +1742,7 @@ export function SafetyPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -187,21 +187,21 @@ const rollingAverages = {
 function getFTQColor(score: number): string {
   if (score >= 95) return 'text-green-600'
   if (score >= 85) return 'text-amber-600'
-  if (score >= 70) return 'text-orange-600'
+  if (score >= 70) return 'text-sand-600'
   return 'text-red-600'
 }
 
 function getFTQBgColor(score: number): string {
   if (score >= 95) return 'bg-green-100'
   if (score >= 85) return 'bg-amber-100'
-  if (score >= 70) return 'bg-orange-100'
+  if (score >= 70) return 'bg-sand-100'
   return 'bg-red-100'
 }
 
 function getFTQBorderColor(score: number): string {
   if (score >= 95) return 'border-green-300'
   if (score >= 85) return 'border-amber-300'
-  if (score >= 70) return 'border-orange-300'
+  if (score >= 70) return 'border-sand-300'
   return 'border-red-300'
 }
 
@@ -368,13 +368,13 @@ export function VendorPerformancePreview() {
           </div>
 
           {/* FTQ Rank */}
-          <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+          <div className="bg-warm-50 border border-warm-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Trophy className="h-5 w-5 text-purple-600" />
+              <Trophy className="h-5 w-5 text-stone-600" />
               <span className="text-sm font-semibold text-warm-700">FTQ Ranking</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-purple-600">#{vendor.ftq_rank}</span>
+              <span className="text-4xl font-bold text-stone-600">#{vendor.ftq_rank}</span>
               <span className="text-sm text-warm-500">of {vendor.ftq_total_vendors}</span>
             </div>
             <div className="mt-2 text-xs text-warm-500">
@@ -563,7 +563,7 @@ export function VendorPerformancePreview() {
                       <span className="font-medium">{vendor.ftq_weight_in_quality}%</span>
                     </div>
                     <div className="h-3 bg-warm-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-purple-500 rounded-full" style={{ width: `${vendor.ftq_weight_in_quality}%` }} />
+                      <div className="h-full bg-warm-500 rounded-full" style={{ width: `${vendor.ftq_weight_in_quality}%` }} />
                     </div>
                   </div>
                 </div>
@@ -584,7 +584,7 @@ export function VendorPerformancePreview() {
                   {[
                     { label: 'Quality', score: vendor.qualityScore, weight: 35, color: 'bg-stone-500' },
                     { label: 'Timeliness', score: vendor.timelinessScore, weight: 25, color: 'bg-green-500' },
-                    { label: 'Communication', score: vendor.communicationScore, weight: 15, color: 'bg-purple-500' },
+                    { label: 'Communication', score: vendor.communicationScore, weight: 15, color: 'bg-warm-500' },
                     { label: 'Safety', score: vendor.safetyScore, weight: 25, color: 'bg-amber-500' },
                   ].map((dim) => (
                     <div key={dim.label} className="flex items-center gap-3">
@@ -604,11 +604,11 @@ export function VendorPerformancePreview() {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Quality Prediction Card */}
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-200 overflow-hidden">
-              <div className="px-4 py-3 border-b border-indigo-200 flex items-center gap-2 bg-white/50">
-                <Brain className="h-4 w-4 text-indigo-600" />
+            <div className="bg-warm-50 rounded-lg border border-stone-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-stone-200 flex items-center gap-2 bg-warm-50">
+                <Brain className="h-4 w-4 text-stone-600" />
                 <h3 className="font-semibold text-warm-900">AI Quality Prediction</h3>
-                <Sparkles className="h-3 w-3 text-indigo-500 ml-auto" />
+                <Sparkles className="h-3 w-3 text-stone-600 ml-auto" />
               </div>
               <div className="p-4 space-y-4">
                 <div className="flex items-center justify-between">
@@ -740,7 +740,7 @@ export function VendorPerformancePreview() {
                       </div>
                     </div>
                     <p className="mt-2 text-[10px] text-warm-500">
-                      <Sparkles className="h-3 w-3 inline mr-1 text-purple-500" />
+                      <Sparkles className="h-3 w-3 inline mr-1 text-stone-600" />
                       AI Note: Box placement errors are decreasing. Focus training on electrical scope work.
                     </p>
                   </div>
@@ -777,13 +777,13 @@ export function VendorPerformancePreview() {
         </div>
 
         {/* AI Insights Bar */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg px-4 py-3">
+        <div className="bg-warm-50 border border-stone-200 rounded-lg px-4 py-3">
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Sparkles className="h-4 w-4 text-indigo-600" />
-              <span className="font-medium text-sm text-indigo-800">AI Quality Intelligence:</span>
+              <Sparkles className="h-4 w-4 text-stone-600" />
+              <span className="font-medium text-sm text-stone-800">AI Quality Intelligence:</span>
             </div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-indigo-700">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-stone-700">
               <span className="flex items-center gap-1">
                 <TrendingUp className="h-3.5 w-3.5" />
                 FTQ improved 6.2% over last 6 months

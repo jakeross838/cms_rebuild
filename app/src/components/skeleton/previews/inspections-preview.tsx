@@ -736,13 +736,13 @@ export function InspectionsPreview() {
               <div className="text-xs text-amber-600">Deficiencies ({unresolvedDeficiencies} open)</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-            <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
-              <TrendingUp className="h-5 w-5 text-purple-600" />
+          <div className="flex items-center gap-3 p-3 bg-warm-50 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-warm-100 rounded-lg">
+              <TrendingUp className="h-5 w-5 text-stone-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-700">{passedCount}</div>
-              <div className="text-xs text-purple-600">Passed Total</div>
+              <div className="text-2xl font-bold text-warm-700">{passedCount}</div>
+              <div className="text-xs text-stone-600">Passed Total</div>
             </div>
           </div>
         </div>
@@ -811,7 +811,7 @@ export function InspectionsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

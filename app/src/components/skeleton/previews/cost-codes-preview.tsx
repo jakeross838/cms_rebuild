@@ -264,7 +264,7 @@ function CostCodeRow({
             )}
             <span className="font-mono text-sm font-medium text-warm-700">{code.code}</span>
             {code.system === 'custom' && (
-              <span className="text-[10px] bg-cyan-50 text-cyan-600 px-1 py-0.5 rounded">Custom</span>
+              <span className="text-[10px] bg-stone-50 text-stone-600 px-1 py-0.5 rounded">Custom</span>
             )}
             {!code.isActive && (
               <span className="text-[10px] bg-warm-100 text-warm-500 px-1 py-0.5 rounded flex items-center gap-0.5">
@@ -404,7 +404,7 @@ export function CostCodesPreview() {
               CSI MasterFormat
             </span>
             {customCount > 0 && (
-              <span className="text-xs bg-cyan-50 text-cyan-600 px-2 py-0.5 rounded">
+              <span className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded">
                 +{customCount} Custom
               </span>
             )}
@@ -579,7 +579,7 @@ export function CostCodesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

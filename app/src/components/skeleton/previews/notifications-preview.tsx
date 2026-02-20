@@ -284,7 +284,7 @@ const priorityConfig = {
 const typeConfig = {
   alert: { icon: AlertTriangle, color: 'text-red-500' },
   reminder: { icon: Clock, color: 'text-amber-500' },
-  ai_insight: { icon: Sparkles, color: 'text-purple-500' },
+  ai_insight: { icon: Sparkles, color: 'text-stone-600' },
   update: { icon: Bell, color: 'text-stone-500' },
   approval: { icon: CheckCircle2, color: 'text-green-500' },
 }
@@ -326,7 +326,7 @@ function NotificationCard({ notification }: { notification: Notification }) {
               {notification.title}
             </h4>
             {notification.type === 'ai_insight' && (
-              <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded flex items-center gap-1">
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 AI
               </span>
@@ -537,7 +537,7 @@ export function NotificationsPreview() {
           <span className="text-warm-500">This Week: <span className="font-medium text-warm-900">{mockNotifications.length}</span></span>
           <span className="text-warm-300">|</span>
           <span className="text-warm-500 flex items-center gap-1">
-            <Sparkles className="h-3.5 w-3.5 text-purple-500" />
+            <Sparkles className="h-3.5 w-3.5 text-stone-600" />
             AI Insights: <span className="font-medium text-warm-900">{mockNotifications.filter(n => n.type === 'ai_insight').length}</span>
           </span>
           <span className="text-warm-300">|</span>

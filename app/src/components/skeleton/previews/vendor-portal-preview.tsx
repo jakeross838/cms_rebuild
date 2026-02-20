@@ -454,7 +454,7 @@ const invoiceStatusConfig: Record<InvoiceStatus, { label: string; color: string;
   submitted: { label: 'Submitted', color: 'bg-stone-100 text-stone-700', icon: Clock },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-700', icon: Clock },
   approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  scheduled: { label: 'Scheduled', color: 'bg-purple-100 text-purple-700', icon: CalendarClock },
+  scheduled: { label: 'Scheduled', color: 'bg-warm-100 text-warm-700', icon: CalendarClock },
   paid: { label: 'Paid', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700', icon: XCircle },
 }
@@ -637,13 +637,13 @@ export function VendorPortalPreview() {
             <p className="text-xs text-stone-700 mt-1">Value: {formatCurrency(totalPOValue)}</p>
           </div>
 
-          <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+          <div className="bg-sand-50 rounded-lg p-3 border border-sand-200">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-medium text-orange-600 uppercase">Pending Invoices</p>
-              <Receipt className="h-4 w-4 text-orange-600" />
+              <p className="text-xs font-medium text-sand-600 uppercase">Pending Invoices</p>
+              <Receipt className="h-4 w-4 text-sand-600" />
             </div>
             <p className="text-2xl font-bold text-orange-900">{mockInvoices.filter(i => ['submitted', 'under_review'].includes(i.status)).length}</p>
-            <p className="text-xs text-orange-700 mt-1">{formatCurrency(pendingInvoiceAmount)}</p>
+            <p className="text-xs text-sand-700 mt-1">{formatCurrency(pendingInvoiceAmount)}</p>
           </div>
 
           <div className="bg-green-50 rounded-lg p-3 border border-green-200">
@@ -655,28 +655,28 @@ export function VendorPortalPreview() {
             <p className="text-xs text-green-700 mt-1">Paid YTD: {formatCurrency(totalPaidYTD)}</p>
           </div>
 
-          <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+          <div className="bg-warm-50 rounded-lg p-3 border border-warm-200">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-medium text-purple-600 uppercase">Compliance</p>
-              <Shield className="h-4 w-4 text-purple-600" />
+              <p className="text-xs font-medium text-stone-600 uppercase">Compliance</p>
+              <Shield className="h-4 w-4 text-stone-600" />
             </div>
-            <p className="text-2xl font-bold text-purple-900">{complianceOk}/{complianceTotal}</p>
-            <p className="text-xs text-purple-700 mt-1">documents current</p>
+            <p className="text-2xl font-bold text-stone-800">{complianceOk}/{complianceTotal}</p>
+            <p className="text-xs text-warm-700 mt-1">documents current</p>
           </div>
 
-          <div className="bg-cyan-50 rounded-lg p-3 border border-cyan-200">
+          <div className="bg-stone-50 rounded-lg p-3 border border-stone-200">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-medium text-cyan-600 uppercase">Schedule</p>
-              <Calendar className="h-4 w-4 text-cyan-600" />
+              <p className="text-xs font-medium text-stone-600 uppercase">Schedule</p>
+              <Calendar className="h-4 w-4 text-stone-600" />
             </div>
             <p className="text-2xl font-bold text-cyan-900">{upcomingTasks}</p>
-            <p className="text-xs text-cyan-700 mt-1">upcoming tasks</p>
+            <p className="text-xs text-stone-700 mt-1">upcoming tasks</p>
           </div>
 
-          <div className="bg-rose-50 rounded-lg p-3 border border-rose-200">
+          <div className="bg-warm-50 rounded-lg p-3 border border-warm-200">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-medium text-rose-600 uppercase">Bid Requests</p>
-              <Package className="h-4 w-4 text-rose-600" />
+              <p className="text-xs font-medium text-sand-600 uppercase">Bid Requests</p>
+              <Package className="h-4 w-4 text-sand-600" />
             </div>
             <p className="text-2xl font-bold text-rose-900">{mockBids.filter(b => b.status === 'open').length}</p>
             <p className="text-xs text-rose-700 mt-1">open invitations</p>
@@ -804,7 +804,7 @@ export function VendorPortalPreview() {
                       <div className="flex items-center gap-2">
                         <h4 className="font-medium text-warm-900">{po.poNumber}</h4>
                         {po.changeOrders > 0 && (
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">{po.changeOrders} CO</span>
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-warm-100 text-warm-700">{po.changeOrders} CO</span>
                         )}
                       </div>
                       <p className="text-sm text-warm-500">{po.projectName} - {po.description}</p>
@@ -1100,10 +1100,10 @@ export function VendorPortalPreview() {
           </div>
 
           {/* AI Assistant */}
-          <div className="p-4 bg-gradient-to-r from-indigo-50 to-stone-50 border border-indigo-200 rounded-lg">
+          <div className="p-4 bg-gradient-to-r from-indigo-50 to-stone-50 border border-stone-200 rounded-lg">
             <div className="flex items-start gap-3">
-              <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                <Sparkles className="h-4 w-4 text-indigo-600" />
+              <div className="h-8 w-8 rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="h-4 w-4 text-stone-600" />
               </div>
               <div className="flex-1">
                 <h4 className="font-medium text-warm-900 mb-1">AI Portal Assistant</h4>
@@ -1174,7 +1174,7 @@ export function VendorPortalPreview() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-medium text-warm-900">{po.poNumber}</span>
-                    {po.changeOrders > 0 && <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">{po.changeOrders} CO</span>}
+                    {po.changeOrders > 0 && <span className="text-xs bg-warm-100 text-warm-700 px-1.5 py-0.5 rounded">{po.changeOrders} CO</span>}
                   </div>
                   <p className="text-sm text-warm-600">{po.description}</p>
                   <p className="text-xs text-warm-400">{po.projectName} - {po.builderName}</p>

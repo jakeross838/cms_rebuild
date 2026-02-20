@@ -556,14 +556,14 @@ const categoryColors: Record<License['licenseCategory'], string> = {
   contractor: 'bg-stone-100 text-stone-700',
   trade: 'bg-green-100 text-green-700',
   safety: 'bg-red-100 text-red-700',
-  professional: 'bg-purple-100 text-purple-700',
+  professional: 'bg-warm-100 text-warm-700',
   equipment_operator: 'bg-amber-100 text-amber-700',
 }
 
 const renewalLabels: Record<string, { label: string; color: string }> = {
   not_started: { label: 'Not Started', color: 'bg-warm-100 text-warm-600' },
   reminder_sent: { label: 'Reminder Sent', color: 'bg-stone-100 text-stone-700' },
-  renewal_submitted: { label: 'Submitted', color: 'bg-purple-100 text-purple-700' },
+  renewal_submitted: { label: 'Submitted', color: 'bg-warm-100 text-warm-700' },
   renewed: { label: 'Renewed', color: 'bg-green-100 text-green-700' },
   lapsed: { label: 'Lapsed', color: 'bg-red-100 text-red-700' },
 }
@@ -577,11 +577,11 @@ const verificationSourceColors: Record<VerificationSource, string> = {
 const auditActionLabels: Record<AuditEvent['action'], { label: string; color: string }> = {
   added: { label: 'Added', color: 'bg-stone-100 text-stone-700' },
   verified: { label: 'Verified', color: 'bg-green-100 text-green-700' },
-  renewed: { label: 'Renewed', color: 'bg-purple-100 text-purple-700' },
+  renewed: { label: 'Renewed', color: 'bg-warm-100 text-warm-700' },
   expired: { label: 'Expired', color: 'bg-red-100 text-red-700' },
   updated: { label: 'Updated', color: 'bg-amber-100 text-amber-700' },
-  reminder_sent: { label: 'Reminder Sent', color: 'bg-indigo-100 text-indigo-700' },
-  ceu_logged: { label: 'CEU Logged', color: 'bg-teal-100 text-teal-700' },
+  reminder_sent: { label: 'Reminder Sent', color: 'bg-stone-100 text-stone-700' },
+  ceu_logged: { label: 'CEU Logged', color: 'bg-stone-100 text-stone-700' },
 }
 
 // ── Sub-components ──────────────────────────────────────────────────────
@@ -635,7 +635,7 @@ function AuditTrailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-warm-1000" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-warm-200">
           <div>
@@ -658,7 +658,7 @@ function AuditTrailModal({
                       "w-3 h-3 rounded-full",
                       event.action === 'expired' ? 'bg-red-500' :
                       event.action === 'verified' ? 'bg-green-500' :
-                      event.action === 'renewed' ? 'bg-purple-500' :
+                      event.action === 'renewed' ? 'bg-warm-500' :
                       'bg-stone-500'
                     )} />
                     {index < events.length - 1 && (
@@ -744,7 +744,7 @@ function RenewalWorkflowModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-warm-1000" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-warm-200">
           <div>
@@ -933,7 +933,7 @@ function LicenseCard({ license }: { license: License }) {
           </span>
           <span className={cn(
             "text-xs px-2 py-0.5 rounded",
-            license.entityType === 'company' ? "bg-purple-100 text-purple-700" :
+            license.entityType === 'company' ? "bg-warm-100 text-warm-700" :
             license.entityType === 'employee' ? "bg-stone-100 text-stone-700" :
             "bg-warm-100 text-warm-700"
           )}>
@@ -1090,7 +1090,7 @@ function LicenseCard({ license }: { license: License }) {
         {license.linkedModules.length > 0 && (
           <div className="flex items-center gap-1 mb-3 flex-wrap">
             {license.linkedModules.map(mod => (
-              <span key={mod} className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100 flex items-center gap-0.5">
+              <span key={mod} className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded border border-stone-100 flex items-center gap-0.5">
                 <Link2 className="h-2.5 w-2.5" />
                 {mod}
               </span>
@@ -1104,7 +1104,7 @@ function LicenseCard({ license }: { license: License }) {
             <>
               <button
                 onClick={() => setShowRenewalModal(true)}
-                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-purple-600 bg-purple-50 border border-purple-200 rounded hover:bg-purple-100"
+                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-stone-600 bg-warm-50 border border-warm-200 rounded hover:bg-warm-100"
               >
                 <RefreshCw className="h-3 w-3" />
                 Start Renewal
@@ -1208,7 +1208,7 @@ function CourseCard({ course }: { course: TrainingCourse }) {
             "text-xs px-1.5 py-0.5 rounded",
             course.format === 'online' ? "bg-stone-50 text-stone-600" :
             course.format === 'in-person' ? "bg-green-50 text-green-600" :
-            "bg-purple-50 text-purple-600"
+            "bg-warm-50 text-stone-600"
           )}>
             {course.format}
           </span>
@@ -1365,8 +1365,8 @@ export function LicensesPreview() {
       <div className="bg-white border-b border-warm-200 px-4 py-3">
         <div className="grid grid-cols-7 gap-3">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-purple-600" />
+            <div className="h-10 w-10 rounded-lg bg-warm-100 flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-stone-600" />
             </div>
             <div>
               <div className="text-xl font-bold text-warm-900">{mockCompanyLicenses.length}</div>
@@ -1437,13 +1437,13 @@ export function LicensesPreview() {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-warm-500">Connected to:</span>
           {[
-            { label: 'HR & Workforce (M34)', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+            { label: 'HR & Workforce (M34)', color: 'bg-warm-50 text-warm-700 border-warm-200' },
             { label: 'Safety & Compliance (M33)', color: 'bg-red-50 text-red-700 border-red-200' },
-            { label: 'Vendor Management (M10)', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-            { label: 'Scheduling (M07)', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+            { label: 'Vendor Management (M10)', color: 'bg-sand-50 text-sand-700 border-sand-200' },
+            { label: 'Scheduling (M07)', color: 'bg-stone-50 text-stone-700 border-stone-200' },
             { label: 'Bid Management (M26)', color: 'bg-green-50 text-green-700 border-green-200' },
             { label: 'Document Storage (M06)', color: 'bg-stone-50 text-stone-700 border-stone-200' },
-            { label: 'Notifications (M05)', color: 'bg-pink-50 text-pink-700 border-pink-200' },
+            { label: 'Notifications (M05)', color: 'bg-warm-50 text-sand-700 border-warm-200' },
           ].map(badge => (
             <span key={badge.label} className={cn("text-xs px-2 py-0.5 rounded border flex items-center gap-1", badge.color)}>
               <Link2 className="h-3 w-3" />
@@ -1531,7 +1531,7 @@ export function LicensesPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

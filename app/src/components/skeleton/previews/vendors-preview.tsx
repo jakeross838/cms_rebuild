@@ -398,8 +398,8 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
             <span className={cn(
               "text-xs px-1.5 py-0.5 rounded font-medium",
               vendor.type === 'subcontractor' ? "bg-stone-100 text-stone-700" :
-              vendor.type === 'supplier' ? "bg-purple-100 text-purple-700" :
-              "bg-teal-100 text-teal-700"
+              vendor.type === 'supplier' ? "bg-warm-100 text-warm-700" :
+              "bg-stone-100 text-stone-700"
             )}>
               {vendor.type === 'subcontractor' ? 'Sub' : vendor.type === 'supplier' ? 'Supplier' : 'Service'}
             </span>
@@ -575,8 +575,8 @@ export function VendorsPreview() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-lg bg-purple-100 flex items-center justify-center">
-              <Building2 className="h-4 w-4 text-purple-600" />
+            <div className="h-9 w-9 rounded-lg bg-warm-100 flex items-center justify-center">
+              <Building2 className="h-4 w-4 text-stone-600" />
             </div>
             <div>
               <div className="text-lg font-bold text-warm-900">{suppliers}</div>
@@ -706,7 +706,7 @@ export function VendorsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

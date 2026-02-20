@@ -292,7 +292,7 @@ const mockLienWaivers: LienWaiver[] = [
 const statusConfig: Record<WaiverStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
   draft: { label: 'Draft', color: 'text-warm-700', bgColor: 'bg-warm-100', icon: FileText },
   requested: { label: 'Requested', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: Send },
-  submitted: { label: 'Submitted', color: 'text-indigo-700', bgColor: 'bg-indigo-100', icon: FileCheck },
+  submitted: { label: 'Submitted', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: FileCheck },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100', icon: CheckCircle },
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100', icon: XCircle },
   void: { label: 'Void', color: 'text-warm-500', bgColor: 'bg-warm-100', icon: Ban },
@@ -300,9 +300,9 @@ const statusConfig: Record<WaiverStatus, { label: string; color: string; bgColor
 }
 
 const waiverTypeConfig: Record<WaiverType, { label: string; shortLabel: string; color: string }> = {
-  conditional_progress: { label: 'Conditional Progress', shortLabel: 'Cond. Progress', color: 'bg-purple-50 text-purple-700' },
-  unconditional_progress: { label: 'Unconditional Progress', shortLabel: 'Uncond. Progress', color: 'bg-teal-50 text-teal-700' },
-  conditional_final: { label: 'Conditional Final', shortLabel: 'Cond. Final', color: 'bg-orange-50 text-orange-700' },
+  conditional_progress: { label: 'Conditional Progress', shortLabel: 'Cond. Progress', color: 'bg-warm-50 text-warm-700' },
+  unconditional_progress: { label: 'Unconditional Progress', shortLabel: 'Uncond. Progress', color: 'bg-stone-50 text-stone-700' },
+  conditional_final: { label: 'Conditional Final', shortLabel: 'Cond. Final', color: 'bg-sand-50 text-sand-700' },
   unconditional_final: { label: 'Unconditional Final', shortLabel: 'Uncond. Final', color: 'bg-emerald-50 text-emerald-700' },
 }
 
@@ -346,7 +346,7 @@ function SignatureBadge({ type }: { type: SignatureType }) {
   const config = {
     electronic: { label: 'E-Signed', color: 'text-stone-600 bg-stone-50' },
     wet: { label: 'Wet Signature', color: 'text-warm-600 bg-warm-100' },
-    notarized: { label: 'Notarized', color: 'text-purple-600 bg-purple-50' },
+    notarized: { label: 'Notarized', color: 'text-stone-600 bg-warm-50' },
     pending: { label: '', color: '' },
   }
   const cfg = config[type]
@@ -760,7 +760,7 @@ export function LienWaiversPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

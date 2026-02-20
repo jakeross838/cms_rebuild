@@ -247,7 +247,7 @@ const statusConfig: Record<BidPackageStatus, { label: string; color: string; ico
 const invitationStatusConfig: Record<InvitationStatus, { label: string; color: string }> = {
   sent: { label: 'Sent', color: 'bg-warm-100 text-warm-600' },
   viewed: { label: 'Viewed', color: 'bg-stone-100 text-stone-700' },
-  acknowledged: { label: 'Acknowledged', color: 'bg-indigo-100 text-indigo-700' },
+  acknowledged: { label: 'Acknowledged', color: 'bg-stone-100 text-stone-700' },
   submitted: { label: 'Bid Submitted', color: 'bg-green-100 text-green-700' },
   declined: { label: 'Declined', color: 'bg-red-100 text-red-700' },
   no_response: { label: 'No Response', color: 'bg-warm-100 text-warm-500' },
@@ -342,7 +342,7 @@ function BidComparisonRow({ response, budgetAmount, isRecommended }: { response:
             </span>
           )}
           {response.aiExtracted && (
-            <span className="text-[10px] bg-purple-100 text-purple-700 px-1 py-0.5 rounded flex items-center gap-0.5">
+            <span className="text-[10px] bg-warm-100 text-warm-700 px-1 py-0.5 rounded flex items-center gap-0.5">
               <Sparkles className="h-2.5 w-2.5" /> AI Parsed
             </span>
           )}
@@ -398,7 +398,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
             <div className="flex items-center gap-2">
               <h4 className="font-medium text-warm-900 truncate">{bid.name}</h4>
               {bid.templateName && (
-                <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">Template</span>
+                <span className="text-[10px] bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Template</span>
               )}
             </div>
             <div className="flex items-center gap-1.5 text-sm text-warm-500 mt-0.5">
@@ -432,7 +432,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
             </span>
           )}
           {bid.clarificationCount > 0 && (
-            <span className="text-xs text-indigo-600 flex items-center gap-1">
+            <span className="text-xs text-stone-600 flex items-center gap-1">
               <MessageSquare className="h-3 w-3" />
               {bid.clarificationCount} Q&A
             </span>
@@ -716,13 +716,13 @@ export function BidsPreview() {
             <div className="text-2xl font-bold text-green-700 mt-1">{formatCurrency(totalSavings)}</div>
             <div className="text-xs text-green-600 mt-0.5">vs. budget from bids received</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <Clock className="h-4 w-4" />
               Pending Responses
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-1">{pendingInvitations}</div>
-            <div className="text-xs text-purple-600 mt-0.5">vendors have not responded</div>
+            <div className="text-2xl font-bold text-warm-700 mt-1">{pendingInvitations}</div>
+            <div className="text-xs text-stone-600 mt-0.5">vendors have not responded</div>
           </div>
         </div>
       </div>
@@ -745,7 +745,7 @@ export function BidsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

@@ -274,9 +274,9 @@ const standardReports: Report[] = [
 const reportCategoryConfig: Record<ReportCategory, { label: string; color: string }> = {
   financial: { label: 'Financial', color: 'bg-stone-100 text-stone-700' },
   operations: { label: 'Operations', color: 'bg-green-100 text-green-700' },
-  tax: { label: 'Tax & Accounting', color: 'bg-purple-100 text-purple-700' },
-  client_facing: { label: 'Client-Facing', color: 'bg-orange-100 text-orange-700' },
-  company_wide: { label: 'Company-Wide', color: 'bg-indigo-100 text-indigo-700' },
+  tax: { label: 'Tax & Accounting', color: 'bg-warm-100 text-warm-700' },
+  client_facing: { label: 'Client-Facing', color: 'bg-sand-100 text-sand-700' },
+  company_wide: { label: 'Company-Wide', color: 'bg-stone-100 text-stone-700' },
   custom: { label: 'Custom', color: 'bg-warm-100 text-warm-700' },
 }
 
@@ -449,7 +449,7 @@ function ReportCard({ report }: { report: Report }) {
                 {audConfig.label}
               </span>
               {report.aiNarrativeAvailable && (
-                <span className="text-xs text-purple-500 flex items-center gap-1">
+                <span className="text-xs text-stone-600 flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
                   AI narrative
                 </span>
@@ -522,7 +522,7 @@ function ScheduledReportRow({ report }: { report: ScheduledReport }) {
       </div>
       <div className="flex items-center gap-4">
         {report.conditionalRule && (
-          <span className="text-xs text-purple-500 flex items-center gap-1" title={report.conditionalRule}>
+          <span className="text-xs text-stone-600 flex items-center gap-1" title={report.conditionalRule}>
             <AlertTriangle className="h-3 w-3" />
             Conditional
           </span>
@@ -571,7 +571,7 @@ function RecentReportRow({ report }: { report: RecentReport }) {
             {audInfo.label}
           </span>
           {report.aiNarrative && (
-            <span className="text-xs text-purple-500 flex items-center gap-1">
+            <span className="text-xs text-stone-600 flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
               AI narrative
             </span>
@@ -689,7 +689,7 @@ export function ReportsPreview() {
             </span>
           </div>
           <span className="flex items-center gap-1">
-            <Sparkles className="h-3 w-3 text-purple-500" />
+            <Sparkles className="h-3 w-3 text-stone-600" />
             AI Narratives: {standardReports.filter(r => r.aiNarrativeAvailable).length} reports supported
           </span>
         </div>
@@ -853,7 +853,7 @@ export function ReportsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

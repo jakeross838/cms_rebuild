@@ -418,9 +418,9 @@ const mockLeads: Lead[] = [
 
 const stages = [
   { id: 'new', label: 'New', color: 'bg-stone-500' },
-  { id: 'qualified', label: 'Qualified', color: 'bg-cyan-500' },
-  { id: 'consultation', label: 'Consultation', color: 'bg-indigo-500' },
-  { id: 'proposal', label: 'Proposal', color: 'bg-purple-500' },
+  { id: 'qualified', label: 'Qualified', color: 'bg-stone-500' },
+  { id: 'consultation', label: 'Consultation', color: 'bg-stone-500' },
+  { id: 'proposal', label: 'Proposal', color: 'bg-warm-500' },
   { id: 'negotiation', label: 'Negotiation', color: 'bg-amber-500' },
   { id: 'won', label: 'Won', color: 'bg-green-500' },
   { id: 'lost', label: 'Lost', color: 'bg-red-500' },
@@ -465,14 +465,14 @@ const stageGateRequirements: Record<string, { field: keyof Lead; label: string }
 const lotStatusLabels: Record<string, { label: string; color: string }> = {
   owned: { label: 'Lot Owned', color: 'text-green-600' },
   under_contract: { label: 'Under Contract', color: 'text-stone-600' },
-  looking: { label: 'Lot Shopping', color: 'text-amber-600' },
+  looking: { label: 'Lot Shopping', color: 'text-warning' },
   unknown: { label: 'Unknown', color: 'text-warm-400' },
 }
 
 const financingStatusLabels: Record<string, { label: string; color: string }> = {
   pre_approved: { label: 'Pre-Approved', color: 'text-green-600' },
   cash: { label: 'Cash Buyer', color: 'text-emerald-600' },
-  needs_approval: { label: 'Needs Approval', color: 'text-amber-600' },
+  needs_approval: { label: 'Needs Approval', color: 'text-warning' },
   unknown: { label: 'Unknown', color: 'text-warm-400' },
 }
 
@@ -509,7 +509,7 @@ function StageGateValidation({ lead, targetStage }: { lead: Lead; targetStage: s
         <span
           className={cn(
             'text-xs px-2 py-0.5 rounded',
-            allPassed ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+            allPassed ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-warning'
           )}
         >
           {passedCount}/{requirements.length} Complete
@@ -562,7 +562,7 @@ function ConvertToJobButton({ lead }: { lead: Lead }) {
         <ArrowRight className="h-4 w-4" />
       </button>
       {showDetails && (
-        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mt-2 p-3 bg-green-50 border border-warm-200 rounded-lg">
           <h5 className="text-sm font-medium text-green-800 mb-2">What will be created:</h5>
           <ul className="space-y-1.5 text-xs text-green-700">
             <li className="flex items-center gap-2">
@@ -612,16 +612,16 @@ function DuplicateWarning({ lead }: { lead: Lead }) {
   if (!lead.potentialDuplicate) return null
 
   return (
-    <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+    <div className="mt-2 p-2 bg-sand-50 border border-sand-200 rounded-lg">
       <div className="flex items-start gap-2">
-        <Copy className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+        <Copy className="h-4 w-4 text-sand-600 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
-          <div className="text-xs font-medium text-orange-700">Possible duplicate detected</div>
-          <div className="text-xs text-orange-600 mt-0.5">
+          <div className="text-xs font-medium text-sand-700">Possible duplicate detected</div>
+          <div className="text-xs text-sand-600 mt-0.5">
             {lead.potentialDuplicate.name} ({lead.potentialDuplicate.phone})
           </div>
           <div className="flex gap-2 mt-2">
-            <button className="text-xs px-2 py-1 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded font-medium">
+            <button className="text-xs px-2 py-1 bg-sand-100 hover:bg-orange-200 text-sand-700 rounded font-medium">
               Merge
             </button>
             <button className="text-xs px-2 py-1 bg-white hover:bg-warm-50 text-warm-600 rounded border border-warm-200">
@@ -637,9 +637,9 @@ function DuplicateWarning({ lead }: { lead: Lead }) {
 // Finish Level Colors
 const finishLevelConfig: Record<string, { label: string; color: string; bgColor: string }> = {
   builder: { label: 'Builder Grade', color: 'text-stone-700', bgColor: 'bg-stone-100' },
-  standard: { label: 'Standard', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  premium: { label: 'Premium', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  luxury: { label: 'Luxury', color: 'text-amber-700', bgColor: 'bg-amber-100' },
+  standard: { label: 'Standard', color: 'text-stone-700', bgColor: 'bg-stone-100' },
+  premium: { label: 'Premium', color: 'text-warm-700', bgColor: 'bg-warm-100' },
+  luxury: { label: 'Luxury', color: 'text-warning', bgColor: 'bg-amber-100' },
 }
 
 // Estimator Data Display Component
@@ -652,11 +652,11 @@ function EstimatorDataDisplay({ lead }: { lead: Lead }) {
   const finishConfig = finishLevelConfig[estimatorData.finishLevel]
 
   return (
-    <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg">
+    <div className="mt-2 p-3 bg-warm-50 border border-warm-200 rounded-lg">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Calculator className="h-4 w-4 text-indigo-600" />
-          <span className="text-xs font-semibold text-indigo-700">Website Estimate</span>
+          <Calculator className="h-4 w-4 text-warm-600" />
+          <span className="text-xs font-semibold text-warm-700">Website Estimate</span>
         </div>
         <span className={cn('text-[10px] px-2 py-0.5 rounded font-medium', finishConfig.bgColor, finishConfig.color)}>
           {finishConfig.label}
@@ -665,35 +665,35 @@ function EstimatorDataDisplay({ lead }: { lead: Lead }) {
 
       {/* Estimate Range */}
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-bold text-indigo-900">
+        <span className="text-sm font-bold text-stone-800">
           {formatCurrency(estimatorData.estimateLow)} - {formatCurrency(estimatorData.estimateHigh)}
         </span>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-4 gap-2 text-[10px] mb-2">
-        <div className="text-center p-1.5 bg-white/60 rounded">
-          <div className="font-bold text-indigo-800">{estimatorData.sqft.toLocaleString()}</div>
-          <div className="text-indigo-600">Sq Ft</div>
+        <div className="text-center p-1.5 bg-warm-50 rounded">
+          <div className="font-bold text-warm-800">{estimatorData.sqft.toLocaleString()}</div>
+          <div className="text-warm-600">Sq Ft</div>
         </div>
-        <div className="text-center p-1.5 bg-white/60 rounded">
-          <div className="font-bold text-indigo-800">{estimatorData.bedrooms}</div>
-          <div className="text-indigo-600">Beds</div>
+        <div className="text-center p-1.5 bg-warm-50 rounded">
+          <div className="font-bold text-warm-800">{estimatorData.bedrooms}</div>
+          <div className="text-warm-600">Beds</div>
         </div>
-        <div className="text-center p-1.5 bg-white/60 rounded">
-          <div className="font-bold text-indigo-800">{estimatorData.bathrooms}</div>
-          <div className="text-indigo-600">Baths</div>
+        <div className="text-center p-1.5 bg-warm-50 rounded">
+          <div className="font-bold text-warm-800">{estimatorData.bathrooms}</div>
+          <div className="text-warm-600">Baths</div>
         </div>
-        <div className="text-center p-1.5 bg-white/60 rounded">
-          <div className="font-bold text-indigo-800">{estimatorData.style}</div>
-          <div className="text-indigo-600">Style</div>
+        <div className="text-center p-1.5 bg-warm-50 rounded">
+          <div className="font-bold text-warm-800">{estimatorData.style}</div>
+          <div className="text-warm-600">Style</div>
         </div>
       </div>
 
       {/* Breakdown Toggle */}
       <button
         onClick={() => setShowBreakdown(!showBreakdown)}
-        className="w-full flex items-center justify-center gap-1 text-[10px] font-medium text-indigo-600 hover:text-indigo-700 py-1 rounded hover:bg-white/50 transition-colors"
+        className="w-full flex items-center justify-center gap-1 text-[10px] font-medium text-warm-600 hover:text-warm-700 py-1 rounded hover:bg-warm-100 transition-colors"
       >
         {showBreakdown ? 'Hide' : 'View'} Cost Breakdown
         <ChevronRight className={cn('h-3 w-3 transition-transform', showBreakdown && 'rotate-90')} />
@@ -701,11 +701,11 @@ function EstimatorDataDisplay({ lead }: { lead: Lead }) {
 
       {/* Cost Breakdown */}
       {showBreakdown && (
-        <div className="mt-2 pt-2 border-t border-indigo-200 space-y-1.5">
+        <div className="mt-2 pt-2 border-t border-warm-200 space-y-1.5">
           {estimatorData.breakdown.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[10px]">
-              <span className="text-indigo-700">{item.category}</span>
-              <span className="font-medium text-indigo-800">
+              <span className="text-warm-700">{item.category}</span>
+              <span className="font-medium text-warm-800">
                 {formatCurrency(item.costLow)} - {formatCurrency(item.costHigh)}
               </span>
             </div>
@@ -714,12 +714,12 @@ function EstimatorDataDisplay({ lead }: { lead: Lead }) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 mt-2 pt-2 border-t border-indigo-200">
-        <button className="flex-1 flex items-center justify-center gap-1 text-[10px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 py-1.5 px-2 rounded transition-colors">
+      <div className="flex gap-2 mt-2 pt-2 border-t border-warm-200">
+        <button className="flex-1 flex items-center justify-center gap-1 text-[10px] font-medium text-white bg-stone-700 hover:bg-stone-800 py-1.5 px-2 rounded transition-colors">
           <FileText className="h-3 w-3" />
           View Full Estimate
         </button>
-        <button className="flex items-center justify-center gap-1 text-[10px] font-medium text-indigo-600 bg-white hover:bg-indigo-50 py-1.5 px-2 rounded border border-indigo-200 transition-colors">
+        <button className="flex items-center justify-center gap-1 text-[10px] font-medium text-warm-600 bg-white hover:bg-stone-50 py-1.5 px-2 rounded border border-warm-200 transition-colors">
           <ArrowRight className="h-3 w-3" />
           Start Proposal
         </button>
@@ -788,15 +788,15 @@ function QuickFeasibilityCalculator({ lead }: { lead: Lead }) {
     <div className="mt-3">
       <button
         onClick={() => setShowCalculator(!showCalculator)}
-        className="w-full flex items-center justify-center gap-2 text-xs font-medium text-indigo-600 hover:text-indigo-700 py-1.5 px-3 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+        className="w-full flex items-center justify-center gap-2 text-xs font-medium text-warm-600 hover:text-warm-700 py-1.5 px-3 bg-stone-50 hover:bg-stone-100 rounded-lg transition-colors"
       >
         <Calculator className="h-3.5 w-3.5" />
         Quick Feasibility
         <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', showCalculator && 'rotate-90')} />
       </button>
       {showCalculator && (
-        <div className="mt-2 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-          <div className="text-xs text-indigo-700 space-y-2">
+        <div className="mt-2 p-3 bg-stone-50 border border-warm-200 rounded-lg">
+          <div className="text-xs text-warm-700 space-y-2">
             <div className="flex justify-between">
               <span>Budget:</span>
               <span className="font-medium">{formatCurrency(lead.estimatedValue)}</span>
@@ -805,7 +805,7 @@ function QuickFeasibilityCalculator({ lead }: { lead: Lead }) {
               <span>Square Footage:</span>
               <span className="font-medium">{lead.estimatedSf.toLocaleString()} SF</span>
             </div>
-            <div className="flex justify-between border-t border-indigo-200 pt-2">
+            <div className="flex justify-between border-t border-warm-200 pt-2">
               <span>Cost per SF:</span>
               <span className="font-bold">${Math.round(costPerSqFt)}/SF</span>
             </div>
@@ -819,7 +819,7 @@ function QuickFeasibilityCalculator({ lead }: { lead: Lead }) {
               className={cn(
                 'mt-2 p-2 rounded text-xs font-medium',
                 isFeasible && 'bg-green-100 text-green-700',
-                isLow && 'bg-amber-100 text-amber-700',
+                isLow && 'bg-amber-100 text-warning',
                 isHigh && 'bg-red-100 text-red-700'
               )}
             >
@@ -952,7 +952,7 @@ function LeadCard({ lead }: { lead: Lead }) {
           {lead.preconType === 'design_build' && (
             <>
               <span className="text-warm-400">|</span>
-              <span className="text-indigo-600">Design-Build</span>
+              <span className="text-warm-600">Design-Build</span>
             </>
           )}
         </div>
@@ -982,7 +982,7 @@ function LeadCard({ lead }: { lead: Lead }) {
                   lead.competitivePosition === 'strong'
                     ? 'bg-green-50 text-green-700'
                     : lead.competitivePosition === 'neutral'
-                      ? 'bg-amber-50 text-amber-700'
+                      ? 'bg-amber-50 text-warning'
                       : 'bg-red-50 text-red-700'
                 )}
               >
@@ -1007,12 +1007,12 @@ function LeadCard({ lead }: { lead: Lead }) {
       {(lead.designMilestone || lead.scopeIteration) && (
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           {lead.designMilestone && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-indigo-50 text-indigo-700 rounded font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 bg-stone-50 text-warm-700 rounded font-medium">
               {lead.designMilestone}
             </span>
           )}
           {lead.scopeIteration && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 bg-warm-50 text-warm-700 rounded font-medium">
               {lead.scopeIteration}
             </span>
           )}
@@ -1032,7 +1032,7 @@ function LeadCard({ lead }: { lead: Lead }) {
             title="AI Lead Score"
           >
             <Sparkles className="h-3 w-3 text-amber-500" />
-            <span className="font-medium text-amber-700">{lead.aiScore}</span>
+            <span className="font-medium text-warning">{lead.aiScore}</span>
           </div>
           <div
             className={cn(
@@ -1040,7 +1040,7 @@ function LeadCard({ lead }: { lead: Lead }) {
               lead.budgetRealismScore >= 75
                 ? 'bg-green-50 text-green-700'
                 : lead.budgetRealismScore >= 50
-                  ? 'bg-amber-50 text-amber-700'
+                  ? 'bg-amber-50 text-warning'
                   : 'bg-red-50 text-red-700'
             )}
             title="Budget Realism Score"
@@ -1053,7 +1053,7 @@ function LeadCard({ lead }: { lead: Lead }) {
               lead.winProbability >= 70
                 ? 'bg-green-50 text-green-700'
                 : lead.winProbability >= 40
-                  ? 'bg-amber-50 text-amber-700'
+                  ? 'bg-amber-50 text-warning'
                   : 'bg-red-50 text-red-700'
             )}
           >
@@ -1073,7 +1073,7 @@ function LeadCard({ lead }: { lead: Lead }) {
       {lead.alert && lead.status !== 'lost' && (
         <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
-          <span className="text-xs text-amber-700">{lead.alert}</span>
+          <span className="text-xs text-warning">{lead.alert}</span>
         </div>
       )}
 
@@ -1087,7 +1087,7 @@ function LeadCard({ lead }: { lead: Lead }) {
       {lead.status === 'active' && (
         <button
           onClick={() => setShowAIInsights(!showAIInsights)}
-          className="mt-2 w-full flex items-center justify-center gap-2 text-xs font-medium text-amber-600 hover:text-amber-700 py-1.5 px-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
+          className="mt-2 w-full flex items-center justify-center gap-2 text-xs font-medium text-warning hover:text-warning py-1.5 px-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
         >
           <Sparkles className="h-3.5 w-3.5" />
           AI Insights
@@ -1339,8 +1339,8 @@ export function LeadsPipelinePreview() {
           <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg">
             <Sparkles className="h-4 w-4 text-amber-500" />
             <div>
-              <div className="text-sm font-semibold text-amber-700">{hotLeads}</div>
-              <div className="text-[10px] text-amber-600">Hot Leads (85+)</div>
+              <div className="text-sm font-semibold text-warning">{hotLeads}</div>
+              <div className="text-[10px] text-warning">Hot Leads (85+)</div>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg">
@@ -1350,11 +1350,11 @@ export function LeadsPipelinePreview() {
               <div className="text-[10px] text-red-600">Stale (7+ days)</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg">
-            <Target className="h-4 w-4 text-purple-500" />
+          <div className="flex items-center gap-2 p-3 bg-warm-50 rounded-lg">
+            <Target className="h-4 w-4 text-stone-600" />
             <div>
-              <div className="text-sm font-semibold text-purple-700">{winRate}%</div>
-              <div className="text-[10px] text-purple-600">Win Rate</div>
+              <div className="text-sm font-semibold text-warm-700">{winRate}%</div>
+              <div className="text-[10px] text-warm-600">Win Rate</div>
             </div>
           </div>
         </div>
@@ -1368,7 +1368,7 @@ export function LeadsPipelinePreview() {
             <FileText className="h-3 w-3" />
             Estimating
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded">
             <Briefcase className="h-3 w-3" />
             Contracts
           </span>
@@ -1376,11 +1376,11 @@ export function LeadsPipelinePreview() {
             <Building2 className="h-3 w-3" />
             Jobs
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-warning rounded">
             <Mail className="h-3 w-3" />
             Nurturing
           </span>
-          <span className="flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded">
+          <span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-warm-700 rounded">
             <Calendar className="h-3 w-3" />
             Scheduling
           </span>
@@ -1435,8 +1435,8 @@ export function LeadsPipelinePreview() {
           {[
             { source: 'Referral', leads: 3, won: 1, value: '$2.8M', color: 'bg-green-100 text-green-700' },
             { source: 'Website', leads: 1, won: 0, value: '$250K', color: 'bg-stone-100 text-stone-700' },
-            { source: 'Houzz', leads: 1, won: 0, value: '$320K', color: 'bg-orange-100 text-orange-700' },
-            { source: 'Parade', leads: 1, won: 0, value: '$1.2M', color: 'bg-purple-100 text-purple-700' },
+            { source: 'Houzz', leads: 1, won: 0, value: '$320K', color: 'bg-sand-100 text-sand-700' },
+            { source: 'Parade', leads: 1, won: 0, value: '$1.2M', color: 'bg-warm-100 text-warm-700' },
             { source: 'Angi', leads: 1, won: 0, value: '$95K', color: 'bg-red-100 text-red-700' },
           ].map((s) => (
             <div key={s.source} className={cn('flex items-center gap-2 px-2 py-1.5 rounded text-xs', s.color)}>
@@ -1451,13 +1451,13 @@ export function LeadsPipelinePreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-warm-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-            <span className="font-medium text-sm text-amber-800">AI Insights:</span>
+            <Sparkles className="h-4 w-4 text-warning" />
+            <span className="font-medium text-sm text-warm-800">AI Insights:</span>
           </div>
-          <div className="flex-1 text-sm text-amber-700 space-y-1">
+          <div className="flex-1 text-sm text-warning space-y-1">
             <p>
               Miller Addition has been in Proposal stage for 8 days. Similar leads that convert respond within 5 days.
               Follow up today.

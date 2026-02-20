@@ -372,7 +372,7 @@ function KPICard({
     blue: { bg: 'bg-stone-50', icon: 'bg-stone-100 text-stone-600' },
     green: { bg: 'bg-green-50', icon: 'bg-green-100 text-green-600' },
     amber: { bg: 'bg-amber-50', icon: 'bg-amber-100 text-amber-600' },
-    purple: { bg: 'bg-purple-50', icon: 'bg-purple-100 text-purple-600' },
+    purple: { bg: 'bg-warm-50', icon: 'bg-warm-100 text-stone-600' },
   }
 
   return (
@@ -955,7 +955,7 @@ export function FTQDashboardPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

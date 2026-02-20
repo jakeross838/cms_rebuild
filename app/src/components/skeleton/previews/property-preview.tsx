@@ -297,13 +297,13 @@ export function PropertyPreview() {
                 {constructionTypeLabels[p.constructionType]}
               </span>
               {p.isCoastal && (
-                <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-medium">Coastal</span>
+                <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full font-medium">Coastal</span>
               )}
               {p.foundationType === 'Pilings' && (
                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Elevated</span>
               )}
               {p.isHistoric && (
-                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">Historic District</span>
+                <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded-full font-medium">Historic District</span>
               )}
             </div>
             <div className="flex items-center gap-4 text-sm text-warm-500 mt-1">
@@ -325,7 +325,7 @@ export function PropertyPreview() {
                 Super: {p.superintendent}
               </span>
               {p.projectTags.map(tag => (
-                <span key={tag} className="text-xs bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded capitalize">
+                <span key={tag} className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded capitalize">
                   {tag.replace('_', ' ')}
                 </span>
               ))}
@@ -447,7 +447,7 @@ export function PropertyPreview() {
             </div>
           </div>
           <div className="bg-white rounded-lg border border-warm-200 p-3 flex items-center gap-3">
-            <Flame className="h-5 w-5 text-orange-500" />
+            <Flame className="h-5 w-5 text-sand-600" />
             <div>
               <div className="text-xs text-warm-500">Gas</div>
               <div className="text-sm font-medium text-warm-900">{p.gasType}</div>
@@ -499,15 +499,15 @@ export function PropertyPreview() {
               <span className="text-xs text-warm-400">Zoning, setbacks</span>
             </div>
             <div className="flex items-center gap-2 text-warm-600">
-              <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">Insurance</span>
+              <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Insurance</span>
               <span className="text-xs text-warm-400">Coverage reqs</span>
             </div>
             <div className="flex items-center gap-2 text-warm-600">
-              <span className="text-xs bg-cyan-50 text-cyan-600 px-1.5 py-0.5 rounded">Selections</span>
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">Selections</span>
               <span className="text-xs text-warm-400">Room quantities</span>
             </div>
             <div className="flex items-center gap-2 text-warm-600">
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">Client Portal</span>
+              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">Client Portal</span>
               <span className="text-xs text-warm-400">Property summary</span>
             </div>
             <div className="flex items-center gap-2 text-warm-600">
@@ -546,7 +546,7 @@ export function PropertyPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />

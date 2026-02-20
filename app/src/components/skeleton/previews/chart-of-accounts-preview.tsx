@@ -68,9 +68,9 @@ const mockAccounts: GLAccount[] = [
 ]
 
 const typeConfig: Record<AccountType, { color: string; bgColor: string }> = {
-  Asset: { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  Asset: { color: 'text-stone-700', bgColor: 'bg-stone-100' },
   Liability: { color: 'text-red-700', bgColor: 'bg-red-100' },
-  Equity: { color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  Equity: { color: 'text-warm-700', bgColor: 'bg-warm-100' },
   Revenue: { color: 'text-green-700', bgColor: 'bg-green-100' },
   Expense: { color: 'text-amber-700', bgColor: 'bg-amber-100' },
 }
@@ -178,12 +178,12 @@ export function ChartOfAccountsPreview() {
             <div className="text-xl font-bold text-warm-900 mt-1">{totalAccounts}</div>
             <div className="text-xs text-warm-500 mt-0.5">5 categories</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <div className="bg-stone-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <TrendingUp className="h-4 w-4" />
               Total Assets
             </div>
-            <div className="text-xl font-bold text-blue-700 mt-1">{formatCurrency(totalAssets)}</div>
+            <div className="text-xl font-bold text-stone-700 mt-1">{formatCurrency(totalAssets)}</div>
           </div>
           <div className="bg-red-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -192,12 +192,12 @@ export function ChartOfAccountsPreview() {
             </div>
             <div className="text-xl font-bold text-red-700 mt-1">{formatCurrency(totalLiabilities)}</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
+          <div className="bg-warm-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-stone-600 text-sm">
               <DollarSign className="h-4 w-4" />
               Net Equity
             </div>
-            <div className="text-xl font-bold text-purple-700 mt-1">{formatCurrency(totalEquity)}</div>
+            <div className="text-xl font-bold text-warm-700 mt-1">{formatCurrency(totalEquity)}</div>
           </div>
         </div>
       </div>
@@ -354,11 +354,11 @@ export function ChartOfAccountsPreview() {
           <div className="flex items-center gap-6 text-sm">
             <span className="text-warm-500">Balance Verification:</span>
             <div className="flex items-center gap-4">
-              <span className="text-blue-700 font-medium">Assets: {formatCurrency(totalAssets)}</span>
+              <span className="text-stone-700 font-medium">Assets: {formatCurrency(totalAssets)}</span>
               <span className="text-warm-400">=</span>
               <span className="text-red-700 font-medium">Liabilities: {formatCurrency(totalLiabilities)}</span>
               <span className="text-warm-400">+</span>
-              <span className="text-purple-700 font-medium">Equity: {formatCurrency(totalEquity)}</span>
+              <span className="text-warm-700 font-medium">Equity: {formatCurrency(totalEquity)}</span>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -369,7 +369,7 @@ export function ChartOfAccountsPreview() {
       </div>
 
       {/* AI Insights Bar */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-t border-amber-200 px-4 py-3">
+      <div className="bg-warm-50 border-t border-amber-200 px-4 py-3">
         <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 flex-shrink-0">
             <Sparkles className="h-4 w-4 text-amber-600" />
