@@ -87,6 +87,18 @@ interface Lead {
     phone: string
     id: string
   }
+  // Estimator lead data
+  fromEstimator?: boolean
+  estimatorData?: {
+    sqft: number
+    finishLevel: 'builder' | 'standard' | 'premium' | 'luxury'
+    estimateLow: number
+    estimateHigh: number
+    bedrooms: number
+    bathrooms: number
+    style: string
+    breakdown: Array<{ category: string; costLow: number; costHigh: number }>
+  }
 }
 
 const mockLeads: Lead[] = [
@@ -128,6 +140,50 @@ const mockLeads: Lead[] = [
     floodZoneVerified: true,
     utilitiesConfirmed: false,
     setbacksChecked: true,
+  },
+  {
+    id: 'est-1',
+    firstName: 'Michael',
+    lastName: 'Chen',
+    name: 'Chen Custom Home',
+    contact: 'Michael & Amy Chen',
+    email: 'michael.chen@email.com',
+    phone: '(941) 555-0847',
+    preferredContactMethod: 'email',
+    projectType: 'New Construction',
+    preconType: 'design_build',
+    estimatedSf: 4200,
+    estimatedValue: 980000,
+    stage: 'new',
+    source: 'Website Estimator',
+    sourceDetail: 'Completed full estimate wizard',
+    aiScore: 91,
+    winProbability: 68,
+    budgetRealismScore: 94,
+    assignedTo: 'Unassigned',
+    lotStatus: 'looking',
+    financingStatus: 'pre_approved',
+    timeline: '6-12 months',
+    daysInStage: 0,
+    lastActivityDate: 'Feb 20, 2026',
+    lastActivityType: 'Estimate Submitted',
+    status: 'active',
+    fromEstimator: true,
+    estimatorData: {
+      sqft: 4200,
+      finishLevel: 'premium',
+      estimateLow: 890000,
+      estimateHigh: 1100000,
+      bedrooms: 5,
+      bathrooms: 4,
+      style: 'Coastal',
+      breakdown: [
+        { category: 'Foundation & Concrete', costLow: 75600, costHigh: 92400 },
+        { category: 'Lumber & Framing', costLow: 67200, costHigh: 84000 },
+        { category: 'Cabinets & Countertops', costLow: 67200, costHigh: 100800 },
+        { category: 'Flooring', costLow: 37800, costHigh: 58800 },
+      ],
+    },
   },
   {
     id: '2',
@@ -578,6 +634,100 @@ function DuplicateWarning({ lead }: { lead: Lead }) {
   )
 }
 
+// Finish Level Colors
+const finishLevelConfig: Record<string, { label: string; color: string; bgColor: string }> = {
+  builder: { label: 'Builder Grade', color: 'text-stone-700', bgColor: 'bg-stone-100' },
+  standard: { label: 'Standard', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  premium: { label: 'Premium', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  luxury: { label: 'Luxury', color: 'text-amber-700', bgColor: 'bg-amber-100' },
+}
+
+// Estimator Data Display Component
+function EstimatorDataDisplay({ lead }: { lead: Lead }) {
+  const [showBreakdown, setShowBreakdown] = useState(false)
+
+  if (!lead.fromEstimator || !lead.estimatorData) return null
+
+  const { estimatorData } = lead
+  const finishConfig = finishLevelConfig[estimatorData.finishLevel]
+
+  return (
+    <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <Calculator className="h-4 w-4 text-indigo-600" />
+          <span className="text-xs font-semibold text-indigo-700">Website Estimate</span>
+        </div>
+        <span className={cn('text-[10px] px-2 py-0.5 rounded font-medium', finishConfig.bgColor, finishConfig.color)}>
+          {finishConfig.label}
+        </span>
+      </div>
+
+      {/* Estimate Range */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-sm font-bold text-indigo-900">
+          {formatCurrency(estimatorData.estimateLow)} - {formatCurrency(estimatorData.estimateHigh)}
+        </span>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-4 gap-2 text-[10px] mb-2">
+        <div className="text-center p-1.5 bg-white/60 rounded">
+          <div className="font-bold text-indigo-800">{estimatorData.sqft.toLocaleString()}</div>
+          <div className="text-indigo-600">Sq Ft</div>
+        </div>
+        <div className="text-center p-1.5 bg-white/60 rounded">
+          <div className="font-bold text-indigo-800">{estimatorData.bedrooms}</div>
+          <div className="text-indigo-600">Beds</div>
+        </div>
+        <div className="text-center p-1.5 bg-white/60 rounded">
+          <div className="font-bold text-indigo-800">{estimatorData.bathrooms}</div>
+          <div className="text-indigo-600">Baths</div>
+        </div>
+        <div className="text-center p-1.5 bg-white/60 rounded">
+          <div className="font-bold text-indigo-800">{estimatorData.style}</div>
+          <div className="text-indigo-600">Style</div>
+        </div>
+      </div>
+
+      {/* Breakdown Toggle */}
+      <button
+        onClick={() => setShowBreakdown(!showBreakdown)}
+        className="w-full flex items-center justify-center gap-1 text-[10px] font-medium text-indigo-600 hover:text-indigo-700 py-1 rounded hover:bg-white/50 transition-colors"
+      >
+        {showBreakdown ? 'Hide' : 'View'} Cost Breakdown
+        <ChevronRight className={cn('h-3 w-3 transition-transform', showBreakdown && 'rotate-90')} />
+      </button>
+
+      {/* Cost Breakdown */}
+      {showBreakdown && (
+        <div className="mt-2 pt-2 border-t border-indigo-200 space-y-1.5">
+          {estimatorData.breakdown.map((item, i) => (
+            <div key={i} className="flex items-center justify-between text-[10px]">
+              <span className="text-indigo-700">{item.category}</span>
+              <span className="font-medium text-indigo-800">
+                {formatCurrency(item.costLow)} - {formatCurrency(item.costHigh)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2 mt-2 pt-2 border-t border-indigo-200">
+        <button className="flex-1 flex items-center justify-center gap-1 text-[10px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 py-1.5 px-2 rounded transition-colors">
+          <FileText className="h-3 w-3" />
+          View Full Estimate
+        </button>
+        <button className="flex items-center justify-center gap-1 text-[10px] font-medium text-indigo-600 bg-white hover:bg-indigo-50 py-1.5 px-2 rounded border border-indigo-200 transition-colors">
+          <ArrowRight className="h-3 w-3" />
+          Start Proposal
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // Lot Evaluation Checklist
 function LotEvaluationChecklist({ lead }: { lead: Lead }) {
   if (lead.lotStatus !== 'owned' && lead.lotStatus !== 'under_contract') return null
@@ -785,6 +935,9 @@ function LeadCard({ lead }: { lead: Lead }) {
 
       {/* Contact Fields Detail */}
       <ContactFieldsDetail lead={lead} />
+
+      {/* Estimator Data Display */}
+      <EstimatorDataDisplay lead={lead} />
 
       <div className="space-y-1.5 mb-3">
         <div className="flex items-center gap-1.5 text-xs text-warm-600">

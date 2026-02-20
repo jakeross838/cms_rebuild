@@ -391,6 +391,73 @@ export function PriceIntelligencePreview() {
       {activeTab === 'alerts' && <AlertsTab />}
       {activeTab === 'quotes' && <QuotesTab />}
 
+      {/* Cross-Module Integration */}
+      <div className="bg-warm-50 border border-warm-200 rounded-lg px-4 py-3">
+        <div className="flex items-center gap-2 text-xs mb-2">
+          <span className="text-warm-600 font-semibold">Integration Hub:</span>
+          <span className="text-warm-500">Real-time price data flows to all connected modules</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <DollarSign className="h-3.5 w-3.5" />
+            Public Estimator
+            <span className="bg-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Live Sync</span>
+          </span>
+          <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <Users className="h-3.5 w-3.5" />
+            Leads (94 estimator leads)
+          </span>
+          <span className="bg-green-50 text-green-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <FileText className="h-3.5 w-3.5" />
+            Estimates
+          </span>
+          <span className="bg-purple-50 text-purple-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <FileText className="h-3.5 w-3.5" />
+            Change Orders
+          </span>
+          <span className="bg-orange-50 text-orange-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <Package className="h-3.5 w-3.5" />
+            Purchase Orders
+            <span className="bg-orange-200 text-orange-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Price Source</span>
+          </span>
+          <span className="bg-stone-50 text-stone-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <FileText className="h-3.5 w-3.5" />
+            Invoices
+            <span className="bg-stone-200 text-stone-800 px-1.5 py-0.5 rounded text-[10px] ml-1">Price Source</span>
+          </span>
+          <span className="bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <Clock className="h-3.5 w-3.5" />
+            Timeline Intelligence
+          </span>
+          <span className="bg-pink-50 text-pink-700 px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-medium">
+            <Eye className="h-3.5 w-3.5" />
+            Selections Catalog
+          </span>
+        </div>
+      </div>
+
+      {/* Data Flow Summary */}
+      <div className="bg-gradient-to-r from-stone-50 to-warm-50 border border-stone-200 rounded-lg px-4 py-3">
+        <div className="grid grid-cols-4 gap-4 text-xs">
+          <div className="text-center">
+            <div className="text-lg font-bold text-stone-800">1,247</div>
+            <div className="text-stone-500">Price Data Points</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-indigo-600">$182K</div>
+            <div className="text-stone-500">Estimator Revenue</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-green-600">94.2%</div>
+            <div className="text-stone-500">Estimate Accuracy</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-amber-600">2.3 days</div>
+            <div className="text-stone-500">Avg Price Freshness</div>
+          </div>
+        </div>
+      </div>
+
       {/* AI Features Panel */}
       <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg px-4 py-4">
         <AIFeaturesPanel
@@ -405,12 +472,28 @@ export function PriceIntelligencePreview() {
               detail: 'Tracking 248 materials across 14 vendors with 1,247 data points collected this quarter.',
             },
             {
+              feature: 'Public Estimator Sync',
+              trigger: 'Real-time',
+              insight: 'Automatically updates public estimator pricing based on actual PO and invoice data to ensure estimate accuracy.',
+              severity: 'success' as const,
+              confidence: 96,
+              detail: '94 leads generated via estimator this month. Estimate-to-actual accuracy: 94.2%.',
+            },
+            {
               feature: 'Price Alerts',
               trigger: 'On change',
               insight: 'Notifies you of significant price changes, anomalies, or opportunities to save by switching vendors.',
               severity: 'warning' as const,
               confidence: 91,
               detail: '3 active alerts requiring attention. Price swings over 15% trigger immediate notifications.',
+            },
+            {
+              feature: 'Timeline Intelligence',
+              trigger: 'On completion',
+              insight: 'Tracks actual project durations by phase and category to refine timeline estimates in the public estimator.',
+              severity: 'info' as const,
+              confidence: 88,
+              detail: 'Premium finish kitchens averaging 18% longer than standard. Timeline multipliers auto-adjusted.',
             },
             {
               feature: 'Vendor Comparison',
@@ -421,6 +504,14 @@ export function PriceIntelligencePreview() {
               detail: 'Best vendor recommendations generated for all 248 tracked materials with confidence scores.',
             },
             {
+              feature: 'Lead Qualification Scoring',
+              trigger: 'On lead',
+              insight: 'Scores estimator leads based on budget realism using actual price data from completed projects.',
+              severity: 'info' as const,
+              confidence: 92,
+              detail: 'Chen Custom Home: 94% budget realism. Estimate aligns with historical $210-235/SF for premium coastal builds.',
+            },
+            {
               feature: 'Cost Forecasting',
               trigger: 'Weekly',
               insight: 'Predicts future material and labor prices based on historical trends, market indicators, and seasonal patterns.',
@@ -429,12 +520,12 @@ export function PriceIntelligencePreview() {
               detail: 'Lumber prices projected to decrease 3-5% over next 60 days based on supply chain indicators.',
             },
             {
-              feature: 'Negotiation Insights',
-              trigger: 'On change',
-              insight: 'Suggests negotiation points and leverage opportunities based on vendor pricing history and market conditions.',
+              feature: 'Estimate Accuracy Loop',
+              trigger: 'On job close',
+              insight: 'Compares initial estimates to final costs and feeds variance data back to improve future pricing.',
               severity: 'success' as const,
-              confidence: 85,
-              detail: 'Gulf Lumber prices 8% above market average on sheet goods - opportunity for rate sheet renegotiation.',
+              confidence: 94,
+              detail: 'Last 10 jobs: avg variance 5.8%. Foundation consistently 12% over - category multiplier adjusted.',
             },
           ]}
           columns={2}

@@ -66,10 +66,53 @@ configurable per builder.
 | 936 | Utility coordination tracker (water, sewer, electric, gas, cable — application status, fees, timeline) | Utility availability and connection tracking per lot with application status, estimated fees, and timeline |
 | 937 | Impact fee calculator by jurisdiction (school, transportation, park, fire impact fees) | Impact fee estimator with configurable fee schedules per jurisdiction; auto-populates in feasibility estimate |
 | 938 | Design coordination issue log (conflicts between architectural, structural, MEP, interior design) | Design conflict tracker: log conflicts, assign resolution responsibility, track status, link to design revision |
+| 950 | Public estimator lead capture (instant budget ranges from website calculator) | Website estimator integration with lead capture gate, estimate snapshot storage, and automated qualification |
+| 951 | Estimator-to-estimate accuracy tracking (website estimate vs. detailed estimate) | Compare public estimator ranges to formal estimates for continuous calibration and lead qualification scoring |
+| 952 | Estimator lead prioritization (qualified by budget realism before follow-up) | AI-powered budget realism score based on estimator inputs vs. actual historical project costs |
 
 ---
 
 ## Detailed Requirements
+
+### Public Estimator Integration (Gaps 950-952)
+
+The public estimator on the builder's website allows prospective clients to get instant budget ranges by entering their project parameters (square footage, style, finish level, bedrooms, bathrooms). When they complete the estimate, they must provide contact information to see the final numbers — this creates a highly qualified lead with attached scope data.
+
+#### Estimator Lead Capture
+- Public estimator hosted on builder's website (Module 45 Price Intelligence)
+- Lead capture gate: contact info required before showing final estimate range
+- Estimator data captured and attached to lead record:
+  - Square footage
+  - Finish level (builder/standard/premium/luxury)
+  - Home style (coastal, modern, craftsman, etc.)
+  - Bedroom and bathroom counts
+  - Estimate range (low-high)
+  - Detailed cost breakdown by category
+  - Timestamp and session data
+- Source attribution: "Website Estimator" with session details
+- Auto-assignment: estimator leads can be routed based on finish level, project size, or geographic rules
+
+#### Budget Realism Scoring
+- AI-powered scoring based on estimator inputs vs. historical project data:
+  - Compare requested finish level to budget range — is the client's expectation realistic?
+  - Compare $/SF to completed projects of similar type and finish level
+  - Factor in lot complexity indicators (if provided)
+- Score feeds into overall lead qualification score (Gap 240)
+- Flag leads where budget-to-scope mismatch is significant (e.g., "premium finish expectations at builder-grade budget")
+- Automatic notification to PM when high-realism-score leads come in
+
+#### Estimate Comparison & Calibration
+- When a formal estimate is created for an estimator-sourced lead:
+  - Display the original estimator range alongside the detailed estimate
+  - Calculate variance percentage
+  - Track estimate accuracy over time for calibration
+- Calibration loop: variance data feeds back to Price Intelligence (Module 45) to improve public estimator accuracy
+- Reports: estimator-to-estimate variance by category, finish level, and project type
+
+#### Edge Cases
+1. **Lead uses estimator multiple times with different parameters.** Store all sessions and show the most recent on the lead card. Allow PM to view full session history. If significantly different project types, suggest creating multiple project interests on the same lead.
+2. **Estimator lead already exists in system (duplicate).** Apply standard deduplication (Gap 243) but flag that the existing lead has now used the estimator — merge the estimator data into the existing lead record.
+3. **Lead's estimator budget is wildly unrealistic.** Display a tactful "budget realism" indicator to the PM. Do not auto-decline leads, but provide talking points for the initial consultation. Some "unrealistic" leads are simply uninformed and can be educated.
 
 ### Lead Capture
 - Web form integration: embeddable form for builder's website with configurable fields
@@ -326,6 +369,22 @@ design_conflicts
   id, lead_id, conflict_description, disciplines_involved,
   assigned_to, resolution, resolved_date, linked_design_revision,
   status (open|in_progress|resolved), created_at
+
+estimator_leads
+  id, lead_id, session_id, created_at,
+  sqft, finish_level (builder|standard|premium|luxury),
+  home_style, bedrooms, bathrooms,
+  estimate_low, estimate_high,
+  cost_breakdown (jsonb), -- category-level breakdown
+  budget_realism_score, -- AI-calculated realism score
+  ip_address, user_agent, referrer
+
+estimator_accuracy_tracking
+  id, lead_id, estimator_lead_id, estimate_id,
+  estimator_low, estimator_high,
+  detailed_estimate_total, variance_pct,
+  variance_by_category (jsonb),
+  created_at
 ```
 
 ---
@@ -392,6 +451,13 @@ POST   /api/v2/leads/:id/design-conflicts          # Log design conflict
 PATCH  /api/v2/leads/:id/design-conflicts/:cid     # Resolve design conflict
 GET    /api/v2/leads/:id/feasibility               # Quick feasibility estimate
 POST   /api/v2/leads/:id/feasibility               # Generate feasibility estimate
+
+# Public Estimator Integration
+POST   /api/v2/public/estimator/submit             # Submit estimator with contact info (creates lead)
+GET    /api/v2/leads/:id/estimator-sessions        # Get estimator session history for lead
+GET    /api/v2/leads/:id/estimator-comparison      # Compare estimator to formal estimate
+GET    /api/v2/analytics/estimator-accuracy        # Estimator accuracy report by category/finish level
+POST   /api/v2/leads/:id/estimator-calibration     # Trigger calibration update for Price Intelligence
 ```
 
 ---
@@ -407,6 +473,7 @@ POST   /api/v2/leads/:id/feasibility               # Generate feasibility estima
 | Module 5: Notification Engine | Follow-up reminders, nurturing email delivery |
 | Module 37: Marketing & Portfolio | Lead capture form integration, source tracking |
 | Module 7: Scheduling | Consultation calendar integration |
+| Module 45: Price Intelligence | Public estimator integration, estimate accuracy calibration, budget realism scoring |
 
 ---
 

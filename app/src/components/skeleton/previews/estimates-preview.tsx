@@ -704,6 +704,11 @@ export function EstimatesPreview() {
       <div className="bg-warm-50 border-t border-warm-200 px-4 py-2">
         <div className="flex items-center gap-2 text-xs">
           <span className="text-warm-500 font-medium">Connected:</span>
+          <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded flex items-center gap-1 font-medium">
+            <DollarSign className="h-3 w-3" />
+            Public Estimator
+            <span className="bg-indigo-200 text-indigo-800 px-1 py-0 rounded text-[9px] ml-0.5">Feed</span>
+          </span>
           <span className="bg-stone-50 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
             <Package className="h-3 w-3" />
             Selections Catalog
@@ -771,12 +776,28 @@ export function EstimatesPreview() {
               severity: 'info',
             },
             {
+              feature: 'Public Estimator Calibration',
+              trigger: 'on-save',
+              insight: 'Feeds accurate pricing back to public estimator',
+              detail: 'This estimate will update the public estimator: Premium finish at $245/SF (current: $238/SF). Kitchen cabinets +8% from baseline.',
+              confidence: 94,
+              severity: 'success',
+            },
+            {
               feature: 'Market Rate Check',
               trigger: 'real-time',
               insight: 'Validates pricing against market rates',
               detail: 'Impact windows pricing is competitive. Kitchen cabinet labor rate is 12% below current market - consider adjusting to avoid margin squeeze.',
               confidence: 91,
               severity: 'success',
+            },
+            {
+              feature: 'Estimator Lead Comparison',
+              trigger: 'on-lead',
+              insight: 'Compares to what lead received on website',
+              detail: 'Lead Chen received $890K-$1.1M on estimator. This detailed estimate at $982K is within range. Budget realism: 94%.',
+              confidence: 96,
+              severity: 'info',
             },
             {
               feature: 'Scope Completeness',
@@ -800,6 +821,14 @@ export function EstimatesPreview() {
               insight: 'Predicts likelihood of winning bid',
               detail: 'Based on client profile, project type, and pricing position, estimated 73% win probability. Premium tier selections align with client history.',
               confidence: 73,
+              severity: 'info',
+            },
+            {
+              feature: 'Estimate Accuracy Tracking',
+              trigger: 'on-close',
+              insight: 'Tracks estimate vs actual for continuous improvement',
+              detail: 'Your last 10 estimates: Avg variance 5.8%. Foundation +12%, Framing -3%, Cabinets +18%. Auto-adjusting category multipliers.',
+              confidence: 92,
               severity: 'info',
             },
           ]}
