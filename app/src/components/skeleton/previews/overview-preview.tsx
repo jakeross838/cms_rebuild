@@ -33,6 +33,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { AIAssistantPanel } from './ai-assistant-panel'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -849,6 +850,7 @@ export function OverviewPreview() {
 
         {/* Right Column */}
         <div className="space-y-4">
+          <AIAssistantPanel projectName="All Projects" defaultExpanded={true} />
           <QuickActionsPanel />
           <TeamActivityPanel />
           <MeetingPrep />
