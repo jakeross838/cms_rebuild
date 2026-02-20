@@ -36,6 +36,7 @@ import {
   ListTodo,
   Send,
   Bell,
+  Sparkles,
 } from 'lucide-react'
 
 interface NavItem {
@@ -53,6 +54,12 @@ const navigation: NavItem[] = [
     href: '/skeleton',
     icon: LayoutDashboard,
     phase: 'All Phases'
+  },
+  {
+    name: 'AI Assistant',
+    href: '/skeleton/ai-assistant',
+    icon: Sparkles,
+    phase: 'Premium'
   },
 
   // Pre-Construction (Phase 0)
@@ -261,6 +268,8 @@ export function SkeletonSidebar() {
     if (phase === 'Phase 4') return 'bg-warm-100 text-sand-700'
     if (phase === 'Phase 5') return 'bg-stone-100 text-stone-700'
     if (phase === 'Phase 6') return 'bg-amber-100 text-amber-700'
+    if (phase === 'Premium') return 'bg-gradient-to-r from-stone-600 to-stone-700 text-white'
+    if (phase === 'All Phases') return 'bg-stone-200 text-stone-700'
     return 'bg-muted text-muted-foreground'
   }
 
