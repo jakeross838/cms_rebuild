@@ -16,7 +16,43 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 - Cross-module ripple effects (what changes elsewhere when something happens here)
 - Status: ✅ Working | 🚧 Mock Data | 📝 Not Yet Implemented
 
-**Key fact:** Almost everything below is **skeleton UI with mock/hardcoded data**. Supabase auth is wired (login/logout works), but RBAC is not enforced. No real CRUD API endpoints exist for jobs, invoices, vendors, etc. The 67+ skeleton pages are visual prototypes showing what each screen will look like when data is connected.
+**Key fact:** Almost everything below is **skeleton UI with mock/hardcoded data**. Supabase auth is wired (login/logout works), RBAC is enforced. **Module 03 CRUD API endpoints now exist for jobs, clients, vendors, and cost codes.** The 67+ skeleton pages are visual prototypes showing what each screen will look like when data is connected.
+
+---
+
+## Module 03 — Core Data CRUD APIs (2026-02-23)
+
+### API: `/api/v1/jobs` — Jobs CRUD
+- **GET /api/v1/jobs** — List jobs with pagination, sorting, filtering (status, contract_type, project_type, client_id, search, date range). Joins client name. Default sort: `updated_at` desc. Status: ✅ Working
+- **POST /api/v1/jobs** — Create job. Requires: owner/admin/pm. Validates via Zod schema. Sets company_id from auth context. Status: ✅ Working
+- **GET /api/v1/jobs/[id]** — Get single job with client join. 404 if not found or wrong company. Status: ✅ Working
+- **PATCH /api/v1/jobs/[id]** — Update job. Requires: owner/admin/pm/superintendent. Partial update via Zod. Status: ✅ Working
+- **DELETE /api/v1/jobs/[id]** — Soft delete (sets deleted_at). Requires: owner/admin. Status: ✅ Working
+
+### API: `/api/v1/clients` — Clients CRUD
+- **GET /api/v1/clients** — List with pagination, sorting, filtering (search, lead_source). Status: ✅ Working
+- **POST /api/v1/clients** — Create client. Any authenticated user. Status: ✅ Working
+- **GET /api/v1/clients/[id]** — Get single client. Status: ✅ Working
+- **PATCH /api/v1/clients/[id]** — Update client. Any authenticated user. Status: ✅ Working
+- **DELETE /api/v1/clients/[id]** — Soft delete. Requires: owner/admin/pm. Status: ✅ Working
+
+### API: `/api/v1/vendors` — Vendors CRUD
+- **GET /api/v1/vendors** — List with pagination, sorting, filtering (search, trade). Status: ✅ Working
+- **POST /api/v1/vendors** — Create vendor. Any authenticated user. Status: ✅ Working
+- **GET /api/v1/vendors/[id]** — Get single vendor. Status: ✅ Working
+- **PATCH /api/v1/vendors/[id]** — Update vendor. Any authenticated user. Status: ✅ Working
+- **DELETE /api/v1/vendors/[id]** — Soft delete. Requires: owner/admin. Status: ✅ Working
+
+### API: `/api/v1/cost-codes` — Cost Codes CRUD
+- **GET /api/v1/cost-codes** — List with pagination, sorting, filtering (search, division, category, is_active, parent_id). Status: ✅ Working
+- **POST /api/v1/cost-codes** — Create cost code. Requires: owner/admin. Status: ✅ Working
+- **GET /api/v1/cost-codes/[id]** — Get single cost code. Status: ✅ Working
+- **PATCH /api/v1/cost-codes/[id]** — Update cost code. Requires: owner/admin. Status: ✅ Working
+- **DELETE /api/v1/cost-codes/[id]** — Soft delete. Requires: owner/admin. Status: ✅ Working
+
+### Types & Validation
+- **database.ts** — JobStatus now includes `lead` and `closed` (8 states). New enums: `ProjectType` (6 values), `CostCodeCategory` (5 values). Jobs/clients/vendors/cost_codes types match actual DB migration columns.
+- **Zod schemas** — `createJobSchema`, `createClientSchema`, `createVendorSchema`, `createCostCodeSchema` with full field validation. Partial update schemas. List schemas with filter/sort/pagination.
 
 ## Change Log
 <!-- Newest changes at top -->

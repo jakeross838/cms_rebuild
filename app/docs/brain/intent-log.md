@@ -16,6 +16,13 @@ Each entry captures:
 
 ## Entries
 
+### 2026-02-23 — Module 03: Core Data Model CRUD APIs
+- **Why** — Every Phase 2+ module depends on CRUD endpoints for jobs, clients, vendors, and cost codes. Without them, all pages are stuck on mock data. TypeScript types were out of sync with DB migration columns, causing type errors when connecting real data.
+- **What** — Built 8 API route files (4 entity pairs of list+create and get+patch+delete), 4 Zod validation schema files, fixed database.ts types to match actual migration columns, updated test factory for Job type.
+- **How** — Followed exact pattern from users CRUD routes. Each endpoint uses `createApiHandler` with auth, rate limiting, Zod validation, and audit logging. Queries scoped to `company_id` via `ctx.companyId`. Soft delete via `deleted_at` timestamp (RLS policies already filter `deleted_at IS NULL`).
+- **Rules** — Jobs POST requires owner/admin/pm; PATCH adds superintendent. Clients/vendors POST/PATCH open to any auth user; DELETE restricted. Cost codes locked to owner/admin only. All deletes are soft deletes. No hard deletes.
+- **Connected to** — Module 01 (auth/RBAC), Module 02 (config), all Phase 2 modules (scheduling, budgets, vendor management)
+
 ### 2026-02-23 — Blueprint (3) Expansion: 8 New Skeleton Pages + 120 Features
 
 **Why:** The user provided `rossos-production-blueprint (3).md` — a 2,302-line document with 600+ features across 12 parts covering AI Accuracy Engine, gap analysis modules, deep self-learning metrics, and more. Many features overlapped with existing pages (Trade Intuition, Plan Analysis, Bidding, Selections, etc.), but 8 major new areas needed dedicated skeleton pages.

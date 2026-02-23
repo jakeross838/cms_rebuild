@@ -6,6 +6,27 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 03 — Core Data Model Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/03-core-data-model.acceptance.test.ts`) — 43 tests
+- [ ] All 4 entity types have `deleted_at` field (soft delete)
+- [ ] JobStatus enum includes all 8 states (lead, pre_construction, active, on_hold, completed, warranty, closed, cancelled)
+- [ ] ProjectType enum includes all 6 types
+- [ ] CostCodeCategory enum includes all 5 categories
+- [ ] createJobSchema: accepts valid minimal/full, rejects missing name, invalid status/contract_type/project_type/client_id, negative amounts
+- [ ] updateJobSchema: accepts empty (all optional), partial updates
+- [ ] listJobsSchema: defaults page=1/limit=20/sortBy=updated_at, validates status filter
+- [ ] createClientSchema: accepts valid minimal/full, rejects missing name, invalid email
+- [ ] createVendorSchema: accepts valid minimal/full, rejects missing name, invalid website/amounts
+- [ ] createCostCodeSchema: accepts valid minimal/full, rejects missing code/division/name, invalid category
+- [ ] All update schemas accept empty objects (partial)
+- [ ] Job type has 35+ columns matching migration (description, latitude, longitude, project_type, budget_total, etc.)
+- [ ] Client type has 20+ columns matching migration (company_name, mobile_phone, spouse fields, portal_enabled, etc.)
+- [ ] Vendor type has 28+ columns matching migration (dba_name, trades[], license/insurance fields, is_1099, etc.)
+- [ ] CostCode type has 16+ columns matching migration (division, subdivision, trade, parent_id, is_default, etc.)
+
+---
+
 ## How This Works
 
 Every element in the feature map gets test cases auto-generated:

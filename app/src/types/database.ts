@@ -126,14 +126,22 @@ export interface Database {
           id: string
           company_id: string
           name: string
+          company_name: string | null
           email: string | null
           phone: string | null
+          mobile_phone: string | null
           address: string | null
           city: string | null
           state: string | null
           zip: string | null
+          spouse_name: string | null
+          spouse_email: string | null
+          spouse_phone: string | null
+          lead_source: string | null
+          referred_by: string | null
+          portal_enabled: boolean
           notes: string | null
-          is_active: boolean
+          deleted_at: string | null
           created_at: string
           updated_at: string
         }
@@ -141,14 +149,22 @@ export interface Database {
           id?: string
           company_id: string
           name: string
+          company_name?: string | null
           email?: string | null
           phone?: string | null
+          mobile_phone?: string | null
           address?: string | null
           city?: string | null
           state?: string | null
           zip?: string | null
+          spouse_name?: string | null
+          spouse_email?: string | null
+          spouse_phone?: string | null
+          lead_source?: string | null
+          referred_by?: string | null
+          portal_enabled?: boolean
           notes?: string | null
-          is_active?: boolean
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -156,14 +172,22 @@ export interface Database {
           id?: string
           company_id?: string
           name?: string
+          company_name?: string | null
           email?: string | null
           phone?: string | null
+          mobile_phone?: string | null
           address?: string | null
           city?: string | null
           state?: string | null
           zip?: string | null
+          spouse_name?: string | null
+          spouse_email?: string | null
+          spouse_phone?: string | null
+          lead_source?: string | null
+          referred_by?: string | null
+          portal_enabled?: boolean
           notes?: string | null
-          is_active?: boolean
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -173,21 +197,37 @@ export interface Database {
           id: string
           company_id: string
           client_id: string | null
-          job_number: string | null
           name: string
+          job_number: string | null
+          description: string | null
           address: string | null
           city: string | null
           state: string | null
           zip: string | null
+          latitude: number | null
+          longitude: number | null
+          project_type: ProjectType
           status: JobStatus
+          contract_type: ContractType
           contract_amount: number | null
-          contract_type: ContractType | null
+          cost_plus_markup: number | null
           start_date: string | null
           target_completion: string | null
           actual_completion: string | null
-          notes: string | null
-          version: number
-          currency_code: string
+          sqft_conditioned: number | null
+          sqft_total: number | null
+          sqft_garage: number | null
+          bedrooms: number | null
+          bathrooms: number | null
+          stories: number | null
+          budget_total: number
+          committed_total: number
+          invoiced_total: number
+          paid_total: number
+          billed_total: number
+          received_total: number
+          settings: Json
+          deleted_at: string | null
           created_at: string
           updated_at: string
         }
@@ -195,21 +235,37 @@ export interface Database {
           id?: string
           company_id: string
           client_id?: string | null
-          job_number?: string | null
           name: string
+          job_number?: string | null
+          description?: string | null
           address?: string | null
           city?: string | null
           state?: string | null
           zip?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          project_type?: ProjectType
           status?: JobStatus
+          contract_type?: ContractType
           contract_amount?: number | null
-          contract_type?: ContractType | null
+          cost_plus_markup?: number | null
           start_date?: string | null
           target_completion?: string | null
           actual_completion?: string | null
-          notes?: string | null
-          version?: number
-          currency_code?: string
+          sqft_conditioned?: number | null
+          sqft_total?: number | null
+          sqft_garage?: number | null
+          bedrooms?: number | null
+          bathrooms?: number | null
+          stories?: number | null
+          budget_total?: number
+          committed_total?: number
+          invoiced_total?: number
+          paid_total?: number
+          billed_total?: number
+          received_total?: number
+          settings?: Json
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -217,21 +273,37 @@ export interface Database {
           id?: string
           company_id?: string
           client_id?: string | null
-          job_number?: string | null
           name?: string
+          job_number?: string | null
+          description?: string | null
           address?: string | null
           city?: string | null
           state?: string | null
           zip?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          project_type?: ProjectType
           status?: JobStatus
+          contract_type?: ContractType
           contract_amount?: number | null
-          contract_type?: ContractType | null
+          cost_plus_markup?: number | null
           start_date?: string | null
           target_completion?: string | null
           actual_completion?: string | null
-          notes?: string | null
-          version?: number
-          currency_code?: string
+          sqft_conditioned?: number | null
+          sqft_total?: number | null
+          sqft_garage?: number | null
+          bedrooms?: number | null
+          bathrooms?: number | null
+          stories?: number | null
+          budget_total?: number
+          committed_total?: number
+          invoiced_total?: number
+          paid_total?: number
+          billed_total?: number
+          received_total?: number
+          settings?: Json
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -241,16 +313,30 @@ export interface Database {
           id: string
           company_id: string
           name: string
-          trade: string | null
+          dba_name: string | null
           email: string | null
           phone: string | null
+          website: string | null
           address: string | null
           city: string | null
           state: string | null
           zip: string | null
+          trade: string | null
+          trades: string[] | null
           tax_id: string | null
-          notes: string | null
+          license_number: string | null
+          license_expiration: string | null
+          insurance_expiration: string | null
+          gl_coverage_amount: number | null
+          workers_comp_expiration: string | null
+          payment_terms: string
+          default_cost_code_id: string | null
           is_active: boolean
+          is_1099: boolean
+          w9_on_file: boolean
+          performance_score: number | null
+          notes: string | null
+          deleted_at: string | null
           created_at: string
           updated_at: string
         }
@@ -258,16 +344,30 @@ export interface Database {
           id?: string
           company_id: string
           name: string
-          trade?: string | null
+          dba_name?: string | null
           email?: string | null
           phone?: string | null
+          website?: string | null
           address?: string | null
           city?: string | null
           state?: string | null
           zip?: string | null
+          trade?: string | null
+          trades?: string[] | null
           tax_id?: string | null
-          notes?: string | null
+          license_number?: string | null
+          license_expiration?: string | null
+          insurance_expiration?: string | null
+          gl_coverage_amount?: number | null
+          workers_comp_expiration?: string | null
+          payment_terms?: string
+          default_cost_code_id?: string | null
           is_active?: boolean
+          is_1099?: boolean
+          w9_on_file?: boolean
+          performance_score?: number | null
+          notes?: string | null
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -275,16 +375,30 @@ export interface Database {
           id?: string
           company_id?: string
           name?: string
-          trade?: string | null
+          dba_name?: string | null
           email?: string | null
           phone?: string | null
+          website?: string | null
           address?: string | null
           city?: string | null
           state?: string | null
           zip?: string | null
+          trade?: string | null
+          trades?: string[] | null
           tax_id?: string | null
-          notes?: string | null
+          license_number?: string | null
+          license_expiration?: string | null
+          insurance_expiration?: string | null
+          gl_coverage_amount?: number | null
+          workers_comp_expiration?: string | null
+          payment_terms?: string
+          default_cost_code_id?: string | null
           is_active?: boolean
+          is_1099?: boolean
+          w9_on_file?: boolean
+          performance_score?: number | null
+          notes?: string | null
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -391,28 +505,55 @@ export interface Database {
           id: string
           company_id: string
           code: string
-          description: string
-          category: string | null
+          division: string
+          subdivision: string | null
+          name: string
+          description: string | null
+          category: CostCodeCategory
+          trade: string | null
+          parent_id: string | null
+          sort_order: number
           is_active: boolean
+          is_default: boolean
+          deleted_at: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           company_id: string
           code: string
-          description: string
-          category?: string | null
+          division: string
+          subdivision?: string | null
+          name: string
+          description?: string | null
+          category?: CostCodeCategory
+          trade?: string | null
+          parent_id?: string | null
+          sort_order?: number
           is_active?: boolean
+          is_default?: boolean
+          deleted_at?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           company_id?: string
           code?: string
-          description?: string
-          category?: string | null
+          division?: string
+          subdivision?: string | null
+          name?: string
+          description?: string | null
+          category?: CostCodeCategory
+          trade?: string | null
+          parent_id?: string | null
+          sort_order?: number
           is_active?: boolean
+          is_default?: boolean
+          deleted_at?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       job_assignments: {
@@ -1108,6 +1249,8 @@ export interface Database {
       job_status: JobStatus
       user_role: UserRole
       contract_type: ContractType
+      project_type: ProjectType
+      cost_code_category: CostCodeCategory
       invoice_status: InvoiceStatus
       draw_status: DrawStatus
       account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
@@ -1117,8 +1260,10 @@ export interface Database {
 
 // Enum types
 export type UserRole = 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
-export type JobStatus = 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled'
+export type JobStatus = 'lead' | 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'closed' | 'cancelled'
 export type ContractType = 'fixed_price' | 'cost_plus' | 'time_materials'
+export type ProjectType = 'new_construction' | 'renovation' | 'addition' | 'remodel' | 'commercial' | 'other'
+export type CostCodeCategory = 'labor' | 'material' | 'subcontractor' | 'equipment' | 'other'
 export type InvoiceStatus = 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied'
 export type DrawStatus = 'draft' | 'pending_approval' | 'approved' | 'submitted' | 'funded' | 'rejected'
 
