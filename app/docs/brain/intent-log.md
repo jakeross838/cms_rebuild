@@ -204,3 +204,37 @@ A comprehensive skeleton UI with 67+ page prototypes covering the planned 52 mod
 - "Enable All" on a category → all features in that category appear in UI
 - Direct URL to disabled feature → shows disabled state, not a 404
 - Stats in Feature Registry → accurate count from persistent store
+
+---
+
+### 2026-02-23 — Universal Communication Hub & Expanded Self-Learning Engine
+
+**Why:** The user asked how the AI knows when something goes wrong (estimate error, field issue) and how it self-learns. They also asked: can we merge ALL communication platforms (iPhone messages, Gmail, Outlook, on-site conversations) into a single universal system where AI reads everything and updates jobs automatically? Two-way sync so replies go back through the original channel.
+
+**What was designed:**
+Full architecture doc created at `docs/architecture/universal-comms-and-learning.md` covering:
+
+1. **Universal Communication Hub** — Every message from any platform (email, SMS, calls, on-site recordings, WhatsApp, Slack, portal) flows into one inbox. AI processes each message: identifies job, classifies type, extracts decisions/action items/dates/money, proposes downstream updates. User confirms. Replies route back through original channel (Gmail reply stays in Gmail thread, SMS reply goes back as SMS).
+
+2. **Expanded Self-Learning Engine** — 45+ metrics per trade instance (up from ~15). 10 financial, 8 schedule, 8 quality, 7 communication, 5 safety, 7 contextual tags. Plus 12 metrics per material. Plus 10 per-job aggregate metrics. All feed back into estimating, scheduling, bidding, and Trade Intuition AI.
+
+3. **On-Site Conversation Recording** — Mobile app has "Record Conversation" button. Audio → Whisper transcription → AI extraction → downstream updates with one-tap confirmation. Game-changer for capturing field decisions.
+
+4. **Two-Way Sync Architecture** — Gmail API, Microsoft Graph (Outlook), Twilio (SMS/Voice), WhatsApp Business API. Each channel has inbound capture + outbound routing. Recipients never know messages came from/through RossOS.
+
+5. **Database Schema** — `universal_messages`, `message_downstream_updates`, `channel_connections`, `trade_performance_metrics` (45 columns), `material_performance` (20+ columns).
+
+6. **Implementation Roadmap** — 5 phases: Foundation → Email → SMS/Voice → Full Hub → Community Learning.
+
+**Key design principle from user:** "You don't force anyone onto a new platform. RossOS wraps AROUND their existing tools."
+
+**Connected to:**
+- Module 05 (Notification Engine) — foundation for communication
+- Module 12/29 (Client Portal) — portal messaging channel
+- Module 30 (Vendor Portal) — vendor messaging channel
+- Module 22 (Vendor Performance) — expanded metrics feed scoring
+- Module 20 (Estimating) — actual vs estimated learning
+- Module 23 (Price Intelligence) — material metrics
+- Module 25 (Schedule Intelligence) — duration learning
+- Trade Intuition AI — master engine consuming all data
+- All intelligence pages — benefit from richer data
