@@ -33,6 +33,12 @@ import {
   Ruler,
   Droplets,
   Flame,
+  GraduationCap,
+  Database,
+  RefreshCw,
+  Globe,
+  ScanLine,
+  Crosshair,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
@@ -656,6 +662,338 @@ export function TradeIntuitionPreview(): React.ReactElement {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── Multi-Angle Validation ─────────────────────────── */}
+      <div className="bg-white rounded-xl border border-warm-200 overflow-hidden">
+        <div className="px-4 py-3 border-b border-warm-100">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+              <Crosshair className="h-4 w-4 text-indigo-600" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-warm-900">6 Systems, 6 Angles — Why Nothing Slips Through</div>
+              <div className="text-xs text-warm-500">
+                No single check catches everything. But 6 systems checking from 6 different angles catches virtually all errors.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Key insight callout */}
+          <div className="bg-indigo-50 rounded-lg border border-indigo-200 p-4">
+            <div className="flex items-start gap-3">
+              <ScanLine className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-indigo-900 mb-1">The Core Principle</p>
+                <p className="text-xs text-indigo-700 leading-relaxed">
+                  Even if one layer says &ldquo;looks fine,&rdquo; another layer sees it differently and flags it.
+                  A schedule check won&apos;t catch a material incompatibility. A cost check won&apos;t catch a trade conflict.
+                  But when 6 independent systems each examine the same decision from their own perspective,
+                  the blind spots of one system become the strengths of another.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 6 validation systems */}
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              {
+                num: 1,
+                name: 'Sequence Validator',
+                angle: 'ORDER',
+                desc: 'Is this happening in the right order? Catches: drywall before inspection, paint before primer, tile before waterproofing.',
+                color: 'text-green-700',
+                bg: 'bg-green-50',
+                border: 'border-green-200',
+                numBg: 'bg-green-600',
+              },
+              {
+                num: 2,
+                name: 'Material Cross-Reference',
+                angle: 'COMPATIBILITY',
+                desc: 'Do these materials work together? Catches: galvanic corrosion, incompatible adhesives, wrong spec for climate zone.',
+                color: 'text-blue-700',
+                bg: 'bg-blue-50',
+                border: 'border-blue-200',
+                numBg: 'bg-blue-600',
+              },
+              {
+                num: 3,
+                name: 'Cost Anomaly Detector',
+                angle: 'MONEY',
+                desc: 'Does this price make sense? Catches: suspiciously low bids, missing scope items, waste factors that defy physics.',
+                color: 'text-amber-700',
+                bg: 'bg-amber-50',
+                border: 'border-amber-200',
+                numBg: 'bg-amber-600',
+              },
+              {
+                num: 4,
+                name: 'Trade Conflict Scanner',
+                angle: 'SPACE & TIME',
+                desc: 'Who else is in this zone? Catches: two trades in the same ceiling, overlapping crane time, blocked access paths.',
+                color: 'text-purple-700',
+                bg: 'bg-purple-50',
+                border: 'border-purple-200',
+                numBg: 'bg-purple-600',
+              },
+              {
+                num: 5,
+                name: 'Compliance Checker',
+                angle: 'RULES',
+                desc: 'Does this meet code? Catches: OSHA violations, missing inspections, manufacturer warranty voids, energy code gaps.',
+                color: 'text-red-700',
+                bg: 'bg-red-50',
+                border: 'border-red-200',
+                numBg: 'bg-red-600',
+              },
+              {
+                num: 6,
+                name: 'Historical Pattern Matcher',
+                angle: 'EXPERIENCE',
+                desc: 'Have we seen this before? Catches: repeat mistakes from past projects, vendor reliability patterns, seasonal issues.',
+                color: 'text-teal-700',
+                bg: 'bg-teal-50',
+                border: 'border-teal-200',
+                numBg: 'bg-teal-600',
+              },
+            ].map((sys) => (
+              <div key={sys.num} className={cn('rounded-lg border p-3', sys.bg, sys.border)}>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={cn('h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white', sys.numBg)}>
+                    {sys.num}
+                  </div>
+                  <span className={cn('text-xs font-bold', sys.color)}>{sys.name}</span>
+                </div>
+                <div className={cn('text-[10px] font-semibold uppercase tracking-wider mb-1.5', sys.color, 'opacity-60')}>
+                  Checks from the angle of: {sys.angle}
+                </div>
+                <p className="text-[11px] text-warm-600 leading-relaxed">{sys.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Visual example */}
+          <div className="bg-warm-50 rounded-lg border border-warm-200 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Lightbulb className="h-4 w-4 text-amber-500" />
+              <span className="text-xs font-semibold text-warm-800">Example: &ldquo;Schedule tile installation for Thursday&rdquo;</span>
+            </div>
+            <div className="grid grid-cols-6 gap-2">
+              {[
+                { sys: 'Sequence', result: 'pass', note: 'Waterproofing done' },
+                { sys: 'Material', result: 'pass', note: 'Grout compatible' },
+                { sys: 'Cost', result: 'pass', note: 'Within budget' },
+                { sys: 'Conflict', result: 'pass', note: 'Zone is clear' },
+                { sys: 'Compliance', result: 'warn', note: 'No moisture test' },
+                { sys: 'History', result: 'warn', note: 'Last 2 jobs: grout cracked when laid < 48h after pour' },
+              ].map((check, idx) => (
+                <div key={idx} className="text-center">
+                  <div className={cn(
+                    'h-8 w-8 rounded-full mx-auto flex items-center justify-center mb-1',
+                    check.result === 'pass' ? 'bg-green-100' : 'bg-amber-100',
+                  )}>
+                    {check.result === 'pass' ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                    )}
+                  </div>
+                  <div className="text-[10px] font-semibold text-warm-700">{check.sys}</div>
+                  <div className={cn(
+                    'text-[9px] leading-tight mt-0.5',
+                    check.result === 'pass' ? 'text-green-600' : 'text-amber-600 font-medium',
+                  )}>
+                    {check.note}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <p className="text-[11px] text-amber-800">
+                <span className="font-bold">Result:</span> 4 of 6 systems say &ldquo;go.&rdquo; But Compliance and History both flagged concerns.
+                AI recommends: <span className="font-semibold">Wait 48h after slab pour, run moisture test, then proceed.</span> Two angles caught what four missed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 4 Training Sources ─────────────────────────────────── */}
+      <div className="bg-white rounded-xl border border-warm-200 overflow-hidden">
+        <div className="px-4 py-3 border-b border-warm-100">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-violet-100 flex items-center justify-center">
+              <GraduationCap className="h-4 w-4 text-violet-600" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-warm-900">How Trade Intuition Learns — 4 Training Sources</div>
+              <div className="text-xs text-warm-500">
+                The AI gets smarter from 4 independent data streams, starting from day 1 and compounding over time
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {/* Source 1: Industry Knowledge Base */}
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-8 w-8 rounded-lg bg-blue-200/60 flex items-center justify-center">
+                  <Database className="h-4 w-4 text-blue-700" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-blue-800">1. Industry Knowledge Base</div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    <span className="text-[10px] font-medium text-green-700">Available Day 1</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-blue-700 leading-relaxed mb-2">
+                Pre-loaded with decades of construction knowledge — building codes, material specs,
+                trade sequences, safety standards, manufacturer requirements. Every new company starts
+                with a superintendent&apos;s lifetime of experience already built in.
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {['IRC/IBC Codes', 'OSHA Standards', 'Material Specs', 'Trade Sequences', 'Cure Times'].map((tag) => (
+                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-medium">{tag}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Source 2: Your Historical Data */}
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-8 w-8 rounded-lg bg-green-200/60 flex items-center justify-center">
+                  <Activity className="h-4 w-4 text-green-700" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-green-800">2. YOUR Historical Data</div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                    <span className="text-[10px] font-medium text-amber-700">Gets Better Every Job</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-green-700 leading-relaxed mb-2">
+                Every project you complete teaches the AI YOUR patterns — your crew productivity rates,
+                your vendor lead times, your actual vs estimated costs. After 10 jobs, predictions are
+                good. After 50 jobs, the AI knows your business better than a spreadsheet ever could.
+              </p>
+              <div className="flex items-center gap-3 bg-white/60 rounded p-2">
+                <div className="text-center">
+                  <div className="text-sm font-bold text-green-800">10</div>
+                  <div className="text-[9px] text-green-600">Jobs</div>
+                </div>
+                <div className="flex-1 h-2 bg-green-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-green-300 to-green-500 rounded-full" style={{ width: '40%' }} />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-bold text-green-800">50</div>
+                  <div className="text-[9px] text-green-600">Jobs</div>
+                </div>
+                <div className="flex-1 h-2 bg-green-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-green-400 to-emerald-600 rounded-full" style={{ width: '85%' }} />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-bold text-green-800">100+</div>
+                  <div className="text-[9px] text-green-600">Jobs</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Source 3: Error Correction Feedback */}
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-8 w-8 rounded-lg bg-amber-200/60 flex items-center justify-center">
+                  <RefreshCw className="h-4 w-4 text-amber-700" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-amber-800">3. Error Correction Feedback</div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                    <span className="text-[10px] font-medium text-purple-700">Learns From Your Dismissals</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-amber-700 leading-relaxed mb-2">
+                When you dismiss a suggestion, fix an AI recommendation, or override a warning,
+                the system records the context and adjusts. Dismissed &ldquo;order lumber early&rdquo;
+                3 times because your supplier is next door? It stops suggesting it. Caught a mistake
+                the AI missed? It adds that pattern to its checklist.
+              </p>
+              <div className="space-y-1.5">
+                {[
+                  { action: 'Dismissed', result: 'AI reduces confidence for similar alerts', icon: '→' },
+                  { action: 'Fixed/Edited', result: 'AI learns the correction pattern', icon: '→' },
+                  { action: 'Overrode with reason', result: 'AI remembers context for next time', icon: '→' },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-[10px]">
+                    <span className="font-semibold text-amber-800 w-28">{item.action}</span>
+                    <span className="text-amber-500">{item.icon}</span>
+                    <span className="text-amber-700">{item.result}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Source 4: Community Learning */}
+            <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-8 w-8 rounded-lg bg-purple-200/60 flex items-center justify-center">
+                  <Globe className="h-4 w-4 text-purple-700" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-purple-800">4. Community Learning</div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                    <span className="text-[10px] font-medium text-blue-700">Anonymous Patterns From All Builders</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-purple-700 leading-relaxed mb-2">
+                Anonymized, aggregated patterns from thousands of builders using RossOS. No one sees
+                your data — but everyone benefits from collective wisdom. When 500 builders all have
+                cabinet delivery delays in Q4, your AI warns you in September.
+              </p>
+              <div className="bg-white/60 rounded p-2 space-y-1">
+                {[
+                  { stat: '10,000+', label: 'Companies contributing patterns' },
+                  { stat: '2.4M', label: 'Anonymized data points per month' },
+                  { stat: '100%', label: 'Privacy preserved — zero PII shared' },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-purple-800 w-14 text-right">{item.stat}</span>
+                    <span className="text-[10px] text-purple-600">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Compounding insight */}
+          <div className="bg-gradient-to-r from-violet-50 via-purple-50 to-indigo-50 rounded-lg border border-purple-200 p-4">
+            <div className="flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-purple-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-purple-900 mb-1">The Compounding Effect</p>
+                <p className="text-xs text-purple-700 leading-relaxed">
+                  These 4 sources don&apos;t just add up — they multiply. Industry knowledge tells the AI
+                  what&apos;s <em>generally</em> true. Your data tells it what&apos;s true <em>for you</em>.
+                  Error correction fine-tunes the confidence levels. And community learning catches
+                  emerging patterns before they hit your job site. A new company gets instant expertise
+                  from sources 1 and 4. By their 50th project, sources 2 and 3 make the AI feel like
+                  it&apos;s worked alongside your team for years.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
