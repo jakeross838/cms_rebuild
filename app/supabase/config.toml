@@ -1,8 +1,7 @@
 # RossOS Local Supabase Configuration
 # See: https://supabase.com/docs/guides/cli/config
 
-[project]
-id = "yprbbomuhugtgyqmrnhr"
+project_id = "yprbbomuhugtgyqmrnhr"
 
 [api]
 enabled = true
@@ -23,18 +22,13 @@ port = 54323
 enabled = true
 site_url = "http://localhost:3000"
 additional_redirect_urls = ["http://localhost:3000/**"]
+enable_signup = true
+minimum_password_length = 8
 
 [auth.email]
 enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
-
-[auth.sessions]
-timebox = "3600s"
-inactivity_timeout = "1800s"
-
-[auth.password]
-min_length = 8
 
 [auth.external.google]
 enabled = false
