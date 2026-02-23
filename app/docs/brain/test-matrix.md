@@ -738,11 +738,122 @@ Every element in the feature map gets test cases auto-generated:
 | LM-07 | Cross-module learning flow | Visual flow showing data → metrics → AI modules |
 | LM-08 | Live learning example | Before/after variance improvement example |
 
+### AI Accuracy Engine (`/skeleton/intelligence/accuracy-engine`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| AE-01 | Navigate to Intelligence > Accuracy Engine | Page loads with preview tab active |
+| AE-02 | Switch to Specification tab | Shows workflow, features, connections for accuracy engine |
+| AE-03 | 6 Validation Systems grid | 6 system cards with tagline, description, example, catch rate |
+| AE-04 | Live Demo: Fireplace Error | Multi-step flow showing 3 layers catching $37K error |
+| AE-05 | Accuracy Dashboard | Error types breakdown, monthly trend, key metrics |
+| AE-06 | Confidence flag types | 5 color-coded flag cards (red/orange/amber/blue/white) |
+| AE-07 | Reasonableness Bounds table | 10 items with low/typical/high/extreme ranges |
+| AE-08 | AI Features Panel | 6 features with confidence scores |
+
+### Pre-Construction Management (`/skeleton/pre-construction`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| PC-01 | Navigate to Pre-Con > Feasibility | Page loads with preview tab active |
+| PC-02 | Switch to Specification tab | Shows workflow, features, connections for pre-construction |
+| PC-03 | Pre-Con Timeline | Horizontal timeline with 7 milestones, 3 projects |
+| PC-04 | Lot Feasibility Card | Address, zoning, flood zone, buildable area |
+| PC-05 | Permit Tracker | 4 permits with status badges and timeline |
+| PC-06 | Design Review Workflow | 5-step flow with markup deduplication |
+| PC-07 | Pre-Con Checklist | 12 items with progress bar (7/12) |
+| PC-08 | Design Budget Tracker | 6 rows with Budgeted/Paid/Remaining/Status |
+
+### Contract & Legal Management (`/skeleton/contracts/legal`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| CL-01 | Navigate to Sales > Legal & Compliance | Page loads with preview tab active |
+| CL-02 | Switch to Specification tab | Shows workflow, features, connections for contracts |
+| CL-03 | Contract Template Library | 6 template cards with descriptions |
+| CL-04 | AI Contract Builder Demo | 5-step flow with mock contract preview |
+| CL-05 | Contract Comparison Tool | Side-by-side redline with 3 flagged changes |
+| CL-06 | Subcontract Generator | Bid award → auto-generated subcontract |
+| CL-07 | Lien Law Dashboard | FL rules, 3 project deadlines, NTO timeline |
+| CL-08 | Contract Milestone Tracker | 5 milestones with dates and status |
+
+### Business Management (`/skeleton/financial/business-management`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| BM-01 | Navigate to Financial > Business Mgmt | Page loads with preview tab active |
+| BM-02 | Switch to Specification tab | Shows workflow, features, connections for business mgmt |
+| BM-03 | Company P&L Dashboard | Revenue, COGS, margins, YoY comparison |
+| BM-04 | Overhead Rate Calculator | 7 categories totaling $28.5K/mo |
+| BM-05 | Capacity Planner | Team capacity bars, job overlap timeline |
+| BM-06 | Break-Even Analysis | Break-even line, contracted vs pipeline |
+| BM-07 | Cash Flow Forecast | 8-week table with In/Out/Net |
+| BM-08 | Goal & KPI Dashboard | 4 KPIs with progress bars |
+
+### HR & Workforce (`/skeleton/directory/hr`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| HR-01 | Navigate to Directory > HR & Workforce | Page loads with preview tab active |
+| HR-02 | Switch to Specification tab | Shows workflow, features, connections for HR |
+| HR-03 | Org Chart | Visual tree: Owner → PMs → Supers → Field |
+| HR-04 | Hiring Pipeline | Kanban stages for 2 open positions |
+| HR-05 | Certification Tracker | 5 employees × 7 certs with status badges |
+| HR-06 | Performance Reviews | 2 reviews with category scoring |
+| HR-07 | Workload Balancer | PM comparison: jobs, hours, capacity % |
+| HR-08 | Compensation Benchmarking | 3 roles vs market with risk badges |
+
+### Post-Build Lifecycle (`/skeleton/post-build`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| PB-01 | Navigate to Closeout > Post-Build | Page loads with preview tab active |
+| PB-02 | Switch to Specification tab | Shows workflow, features, connections for post-build |
+| PB-03 | Walkthrough Schedule | 30-day, 11-month, 2-year walkthroughs |
+| PB-04 | 30-Day Walkthrough Demo | 5 checklist items (3 resolved, 2 pending) |
+| PB-05 | Seasonal Maintenance | 4 season cards with tasks |
+| PB-06 | Client Lifetime Value | 3 clients with total value + referrals |
+| PB-07 | Referral Program | 8 referrals with status and conversion |
+| PB-08 | Knowledge Base | Personalized AI answer for installed materials |
+
+### Lien Law Compliance (`/skeleton/compliance/lien-law`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| LL-01 | Navigate to Settings > Lien Law | Page loads with preview tab active |
+| LL-02 | Switch to Specification tab | Shows workflow, features, connections for lien law |
+| LL-03 | State Selector | FL/NC/SC tabs, 4 FL rules displayed |
+| LL-04 | Lien Deadline Calendar | 6 deadlines across 3 projects, color-coded |
+| LL-05 | NTO Tracker | 6 rows with deadline, sent, confirmed status |
+| LL-06 | Waiver Status Board | Per-sub waiver matrix for Draw #3 |
+| LL-07 | Retainage Tracker | 3 projects with progress bars and held amounts |
+| LL-08 | Sub Lien Rights Dashboard | 3 subs with risk levels (HIGH/LOW/MODERATE) |
+
+### Job Close Accounting (`/skeleton/financial/job-close`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| JC-01 | Navigate to Financial > Job Close | Page loads with preview tab active |
+| JC-02 | Switch to Specification tab | Shows workflow, features, connections for job close |
+| JC-03 | Job Close Checklist | 8 items with progress bar (7/8) |
+| JC-04 | Final Cost Reconciliation | 8 cost codes: estimated vs actual with variance |
+| JC-05 | Percentage of Completion | 98% with quarterly breakdown |
+| JC-06 | Warranty Reserve Calculator | AI recommendation + historical table |
+| JC-07 | CPA Export Package | 6 items with format selector |
+| JC-08 | Post-Job Profit Analysis | Revenue vs cost, margin erosion |
+
 ### Navigation Integration
 
 | # | Test Action | Expected Result |
 |---|------------|-----------------|
-| NAV-01 | Click Intelligence in nav bar | Dropdown shows 10 sub-links with Brain icon |
-| NAV-02 | Intelligence dropdown items | Trade Intuition AI, Plan Analysis, Bidding, Selections, Production, Procurement, Smart Reports, AI Hub, Communication Hub, Learning Metrics |
+| NAV-01 | Click Intelligence in nav bar | Dropdown shows 11 sub-links with Brain icon |
+| NAV-02 | Intelligence dropdown items | Trade Intuition AI, Plan Analysis, Bidding, Selections, Production, Procurement, Smart Reports, AI Hub, Communication Hub, Learning Metrics, Accuracy Engine |
 | NAV-03 | Each intelligence link | Navigates to correct `/skeleton/intelligence/*` route |
-| NAV-04 | Features link description | Shows "Toggle 347 capabilities" under Settings |
+| NAV-04 | Features link description | Shows "Toggle 467 capabilities" under Settings |
+| NAV-05 | Pre-Con section in nav | Shows Pre-Con with Compass icon, Feasibility sub-item |
+| NAV-06 | Sales > Legal & Compliance | Link appears under Sales dropdown |
+| NAV-07 | Financial > Business Mgmt | Link appears under Financial dropdown |
+| NAV-08 | Financial > Job Close | Link appears under Financial dropdown |
+| NAV-09 | Closeout > Post-Build | Link appears under Closeout dropdown |
+| NAV-10 | Directory > HR & Workforce | Link appears under Directory dropdown |
+| NAV-11 | Settings > Lien Law | Link appears under Settings dropdown |

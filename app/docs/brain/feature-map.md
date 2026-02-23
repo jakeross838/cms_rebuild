@@ -4914,3 +4914,155 @@ The features.ts config was expanded from 205 to 347 features with these new cate
 | Cross-Module Learning Flow | Display | Visual flow: Jobs → Metrics → AI Modules (Estimating, Scheduling, Bidding, Trade Intuition) |
 | Live Learning Example | Display | Before/after example showing tile installation estimate improving from ±18% to ±6% variance |
 | AI Features Panel | Display | 6 features: Trade Performance Scoring, Anomaly Detection, Cross-Module Learning, Prediction Calibration, Material Intelligence, Community Benchmarking |
+
+---
+
+### AI Accuracy Engine (`/skeleton/intelligence/accuracy-engine`)
+**What it is:** 6-layer validation system catching errors before they become costly mistakes. Reasonableness bounds, cross-reference validation, plan-to-data reconciliation, historical pattern matching, contract vs estimate reconciliation, and live data entry guardrails.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `accuracy-engine-preview.tsx`
+**Blueprint source:** Part 0 — AI Accuracy Engine (6 validation systems)
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Errors Caught (17), Estimated Savings ($142K), AI Accuracy (94.2%), False Positive Rate (18%) |
+| 6 Validation Systems | Cards | Grid of 6 systems with tagline, description, example, catch rate, checks/day |
+| Live Demo: Fireplace Error | Display | Multi-step flow showing 3 layers catching a $37K error |
+| Accuracy Dashboard | Display | Error types breakdown, monthly trend, key metric cards |
+| Confidence & Feedback Loop | Cards | 5 flag types (Safety Block, Strong Rec, Suggestion, Nudge, Info) + override training |
+| Reasonableness Bounds Table | Table | 10 items with Unit, Low/Typical/High/Extreme ranges |
+| AI Features Panel | Display | 6 features with confidence scores |
+
+---
+
+### Pre-Construction Management (`/skeleton/pre-construction`)
+**What it is:** Everything between contract signing and ground breaking — lot feasibility, zoning, HOA/ARB, architect coordination, design reviews, engineering, permits, pre-con checklist, and design budget.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `pre-construction-preview.tsx`
+**Blueprint source:** Gap 1 (G1-G15) — 15 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Active Pre-Con Jobs (3), Permits Pending (5), Design Cycles (2), Days to Ground Break (47) |
+| Pre-Con Timeline | Display | Horizontal timeline with 7 milestones, 3 mock projects at different stages |
+| Lot Feasibility Card | Display | Address, zoning, max height, lot coverage, flood zone, buildable area, setbacks |
+| Permit Tracker | Table | 4 permits with status badges, timeline, fees, notes |
+| Design Review Workflow | Display | 5-step visual flow with AI markup deduplication |
+| Engineering Tracker | Cards | 4 engineering disciplines with firm, cost, status, deliverables |
+| Pre-Con Checklist | Checklist | 12 items across 4 categories with progress bar (7/12) |
+| Design Budget Tracker | Table | 6 budget rows with Budgeted/Paid/Remaining/Status |
+| AI Features Panel | Display | 6 features: Lot Feasibility, Permit Prediction, Design Review, Engineering Monitor, Readiness Score, Cost Benchmarking |
+
+---
+
+### Contract & Legal Management (`/skeleton/contracts/legal`)
+**What it is:** AI-powered contract creation, clause library, redline comparison, subcontract generation, lien law compliance dashboard, and milestone tracking.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `contract-legal-preview.tsx`
+**Blueprint source:** Gap 2 (G16-G27) — 12 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Active Contracts (12), Templates (8), Pending Signatures (3), Compliance Score (96%) |
+| Contract Template Library | Cards | 6 templates (Cost-Plus, Fixed-Price, GMP, T&M, Subcontract, Change Order) |
+| AI Contract Builder Demo | Display | 5-step flow with mock contract preview and clause library sidebar (8 clauses) |
+| Contract Comparison Tool | Display | Side-by-side Your Version vs Attorney Redline with 3 flagged changes |
+| Subcontract Generator | Display | Bid award → auto-generated subcontract with scope, insurance, schedule, retainage |
+| Lien Law Dashboard | Display | FL-specific rules, 3 active project deadlines, NTO timeline |
+| Contract Milestone Tracker | Table | 5 milestones with dates, status badges, notes |
+| AI Features Panel | Display | 6 features: AI Drafting, Risk Analysis, Redline Comparison, Lien Tracking, Scope Check, Amendment Mgmt |
+
+---
+
+### Business Management (`/skeleton/financial/business-management`)
+**What it is:** Company-level financial intelligence — P&L, overhead calculator, break-even analysis, capacity planner, cash flow forecast, goal/KPI tracking.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `business-management-preview.tsx`
+**Blueprint source:** Gap 4 (G38-G45) — 8 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Annual Revenue ($2.4M), Net Margin (14.8%), Active Jobs (6), Capacity (75%) |
+| Company P&L Dashboard | Display | P&L summary, monthly trend sparkline bars, YoY comparison table |
+| Overhead Rate Calculator | Table | 7 categories totaling $28.5K/mo with industry comparison |
+| Capacity Planner | Display | Team capacity bars, job overlap timeline (120-day), summary callout |
+| Break-Even Analysis | Display | Break-even vs contracted vs pipeline, visual bar chart with warning |
+| Cash Flow Forecast | Table | 8-week table with Money In/Out/Net, paired-bar chart, alerts |
+| Goal & KPI Dashboard | Cards | 4 KPIs with progress bars: Revenue, Margin, Jobs, Satisfaction |
+| AI Features Panel | Display | 6 features: Revenue Forecasting, Overhead Optimization, Capacity Planning, Cash Flow, Break-Even, Margin Improvement |
+
+---
+
+### HR & Workforce Management (`/skeleton/directory/hr`)
+**What it is:** Visual org chart, hiring pipeline, training & certification tracker, performance reviews, workload balancer, compensation benchmarking.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `hr-workforce-preview.tsx`
+**Blueprint source:** Gap 5 (G46-G53) — 8 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Team Size (14), Open Positions (2), Certifications Expiring (3), Avg Tenure (3.2 yrs) |
+| Org Chart | Display | Visual tree: Owner → PMs → Supers → Field Workers with initials, role, job count |
+| Hiring Pipeline | Kanban | Stages: Posted → Applicants → Interviews → Offer → Hired, 2 open positions |
+| Training & Certification | Table | 5 employees × 7 certifications with green/yellow/red status badges |
+| Performance Reviews | Cards | 2 reviews with category-based scoring and bars |
+| Workload Balancer | Display | Bar chart comparing PMs: jobs, volume, hours/wk, capacity % |
+| Compensation Benchmarking | Table | 3 roles: salary vs market average with retention risk badges |
+| AI Features Panel | Display | 6 features: Workload Prediction, Retention Risk, Training Compliance, Hiring Analytics, Performance Trends, Compensation Insights |
+
+---
+
+### Post-Build Client Lifecycle (`/skeleton/post-build`)
+**What it is:** Everything after keys handed over — 30-day walkthrough, 11-month warranty, seasonal maintenance, anniversary touches, lifetime value, referral pipeline, home maintenance knowledge base.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `post-build-preview.tsx`
+**Blueprint source:** Gap 7 (G62-G68) — 7 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Active Home Care (24), Upcoming Walkthroughs (3), Referrals Generated (8), Lifetime Value ($3.15M avg) |
+| Walkthrough Schedule | Timeline | 30-Day, 11-Month, 2-Year walkthroughs with color-coded dots and status |
+| 30-Day Walkthrough Demo | Checklist | 5 items: 3 resolved, 2 pending with trade assignments |
+| Seasonal Maintenance | Cards | Spring/Summer/Fall/Winter with seasonal icons and 3 tasks each |
+| Client Lifetime Value | Cards | 3 clients with total value, referrals, Google rating |
+| Referral Program | Table | 8 referrals with referrer, value, status, bonus |
+| Knowledge Base | Display | Personalized AI answer about installed material care |
+| AI Features Panel | Display | 6 features: Walkthrough AI, Maintenance Prediction, Referral Timing, Satisfaction, Warranty Patterns, Lifetime Value |
+
+---
+
+### Lien Law Compliance Engine (`/skeleton/compliance/lien-law`)
+**What it is:** State-specific lien law compliance — deadline calendars, NTO generation, waiver automation, retainage tracking, sub lien rights dashboard, mechanics lien filing.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `lien-law-preview.tsx`
+**Blueprint source:** Gap 8 (G69-G75) — 7 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Active Projects (6), NTOs Due This Month (2), Waivers Pending (8), Compliance Score (94%) |
+| State Selector + Rules | Tabs | FL/NC/SC tabs, 4 Florida lien law rules in table |
+| Lien Deadline Calendar | Timeline | 6 deadlines across 3 projects with green/amber/red color coding |
+| NTO Tracker | Table | 6 rows: Project, Sub, First Work Date, NTO Deadline, Sent, Receipt Confirmed |
+| Lien Waiver Status Board | Matrix | Per-sub waiver matrix: conditional/unconditional sent/received for Draw #3 |
+| Retainage Tracker | Cards | 3 projects with progress bars, held amounts, 50% milestone |
+| Sub Lien Rights Dashboard | Cards | 3 subs with unpaid amounts, NTO status, risk level badges |
+| AI Features Panel | Display | 6 features: Deadline Calculation, NTO Generation, Waiver Automation, Retainage, Risk Assessment, Multi-State |
+
+---
+
+### Job Close Accounting (`/skeleton/financial/job-close`)
+**What it is:** Financial close-out — close checklist, final cost reconciliation, percentage of completion, warranty reserve, CPA export, post-job profit analysis.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `job-close-preview.tsx`
+**Blueprint source:** Gap 12 (G90-G94) — 5 features
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Jobs Ready to Close (2), Open Commitments ($4,200), Retainage Held ($48,500), Warranty Reserve ($19,200) |
+| Job Close Checklist | Checklist | 8 items with progress bar (7/8, 88%), 1 incomplete item flagged |
+| Final Cost Reconciliation | Table | 8 cost codes: estimated vs actual with color-coded variance |
+| Percentage of Completion | Display | 98% complete, quarterly breakdown table (Q1-Q4) |
+| Warranty Reserve Calculator | Display | AI recommendation: 0.8% × $847K, historical table of 5 jobs |
+| CPA Export Package | Checklist | 6 export items with format selector (QuickBooks/Excel/PDF) |
+| Post-Job Profit Analysis | Display | Final revenue vs cost, margin erosion breakdown, AI recommendations |
+| AI Features Panel | Display | 6 features: Auto-Reconciliation, Warranty Prediction, POC, CPA Export, Margin Analysis, Close-Out Tracking |

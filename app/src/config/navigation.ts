@@ -25,6 +25,13 @@ import {
   Package,
   Landmark,
   ToggleRight,
+  Compass,
+  Scale,
+  Building2,
+  Heart,
+  Gavel,
+  FileCheck,
+  Shield,
 } from 'lucide-react'
 
 export interface NavSubItem {
@@ -57,6 +64,14 @@ export const companyNav: NavItem[] = [
       { name: 'Estimates', href: '/skeleton/estimates', description: 'Selection-based pricing' },
       { name: 'Proposals', href: '/skeleton/proposals', description: 'Client presentations' },
       { name: 'Contracts', href: '/skeleton/contracts', description: 'E-signature, execution' },
+      { name: 'Legal & Compliance', href: '/skeleton/contracts/legal', description: 'Contract builder, lien law, subcontracts' },
+    ],
+  },
+  {
+    label: 'Pre-Con',
+    icon: Compass,
+    items: [
+      { name: 'Feasibility', href: '/skeleton/pre-construction', description: 'Lot analysis, zoning, site due diligence' },
     ],
   },
   {
@@ -93,6 +108,8 @@ export const companyJobNav: NavItem[] = [
       { name: 'Cash Flow', href: '/skeleton/financial/cash-flow', description: 'Forecasting' },
       { name: 'Profitability', href: '/skeleton/financial/profitability', description: 'Margin analysis' },
       { name: 'Reports', href: '/skeleton/financial/reports', description: 'Financial reports' },
+      { name: 'Business Mgmt', href: '/skeleton/financial/business-management', description: 'Company P&L, overhead, capacity' },
+      { name: 'Job Close', href: '/skeleton/financial/job-close', description: 'Final reconciliation & CPA export' },
     ],
   },
   {
@@ -101,6 +118,7 @@ export const companyJobNav: NavItem[] = [
     items: [
       { name: 'Punch Lists', href: '/skeleton/punch-lists', description: 'Final punch tracking' },
       { name: 'Warranties', href: '/skeleton/warranties', description: 'Warranty tracking and claims' },
+      { name: 'Post-Build', href: '/skeleton/post-build', description: 'Warranty walkthroughs, maintenance, referrals' },
     ],
   },
 ]
@@ -121,6 +139,7 @@ export const companyIntelligenceNav: NavItem[] = [
       { name: 'AI Hub', href: '/skeleton/intelligence/ai-hub', description: 'Morning briefings & project health' },
       { name: 'Communication Hub', href: '/skeleton/intelligence/communication-hub', description: 'Universal inbox — every channel, two-way sync' },
       { name: 'Learning Metrics', href: '/skeleton/intelligence/learning-metrics', description: '67 metrics across trades, materials & jobs' },
+      { name: 'Accuracy Engine', href: '/skeleton/intelligence/accuracy-engine', description: '6 validation systems catching $37K errors' },
     ],
   },
 ]
@@ -134,6 +153,7 @@ export const companyRightNav: NavItem[] = [
       { name: 'Vendors', href: '/skeleton/directory/vendors', description: 'Subs & suppliers' },
       { name: 'Team', href: '/skeleton/directory/team', description: 'Employees & roles' },
       { name: 'Contacts', href: '/skeleton/directory/contacts', description: 'Other contacts' },
+      { name: 'HR & Workforce', href: '/skeleton/directory/hr', description: 'Org chart, hiring, training, reviews' },
     ],
   },
   {
@@ -151,11 +171,12 @@ export const companyRightNav: NavItem[] = [
     icon: Settings,
     items: [
       { name: 'Settings', href: '/skeleton/company/settings', description: 'Configuration' },
-      { name: 'Features', href: '/skeleton/company/features', description: 'Toggle 205 capabilities' },
+      { name: 'Features', href: '/skeleton/company/features', description: 'Toggle 467 capabilities' },
       { name: 'Integrations', href: '/skeleton/company/integrations', description: 'QuickBooks, Stripe' },
       { name: 'Insurance', href: '/skeleton/compliance/insurance', description: 'COIs & policies' },
       { name: 'Licenses', href: '/skeleton/compliance/licenses', description: 'Contractor licenses' },
       { name: 'Safety', href: '/skeleton/compliance/safety', description: 'OSHA & incidents' },
+      { name: 'Lien Law', href: '/skeleton/compliance/lien-law', description: 'State-specific lien deadlines & notices' },
       { name: 'Dashboards', href: '/skeleton/company/dashboards', description: 'Custom views' },
       { name: 'Email Marketing', href: '/skeleton/company/email-marketing', description: 'Client outreach' },
     ],

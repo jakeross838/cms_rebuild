@@ -1,4 +1,4 @@
-// Feature Registry — 205 features across 10 categories
+// Feature Registry — 467 features across 33 categories
 // This is the master list of all RossOS capabilities that can be toggled per company
 
 export interface Feature {
@@ -465,6 +465,178 @@ export const FEATURES: Feature[] = [
   { id: 345, cat: 'Cross-Cutting AI', name: 'Client Personality Profiler', desc: 'AI learns communication preferences: "Smiths prefer weekly email, Johnsons want immediate text for any issue."', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
   { id: 346, cat: 'Cross-Cutting AI', name: 'Business Benchmarking', desc: 'Anonymous comparison with similar builders: "Your avg margin (14.8%) is below peer group (17.2%). Key gap: change order capture rate."', phase: 3, status: 'future', effort: 'L', selfLearn: true },
   { id: 347, cat: 'Cross-Cutting AI', name: 'AI Voice Assistant', desc: 'In the truck: "Hey RossOS, what\'s on my schedule today?" Hands-free operation for field workers.', phase: 3, status: 'future', effort: 'XL', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: AI ACCURACY ENGINE (348-362)
+  // ═══════════════════════════════════════════
+  { id: 348, cat: 'AI Accuracy Engine', name: 'Reasonableness Bounds', desc: 'Every number checked against reasonable ranges. Fireplace 2,200 SF? "That\'s larger than most homes. Did you mean 220 SF?" Catches magnitude errors instantly.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 349, cat: 'AI Accuracy Engine', name: 'Cross-Reference Validation', desc: 'Compares numbers across plans, contracts, and estimates. "Plans show 4 bathrooms but estimate only prices 3. Missing scope: $15K-25K."', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 350, cat: 'AI Accuracy Engine', name: 'Plan-to-Data Reconciliation', desc: 'AI reads construction plans and compares to every data entry. Catches missing rooms, windows, doors that are on plans but not in the estimate.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
+  { id: 351, cat: 'AI Accuracy Engine', name: 'Historical Pattern Matching', desc: 'Compares new estimates against YOUR completed projects. "Electrical at $12/SF is 33% below your average of $18/SF. Missing scope?"', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 352, cat: 'AI Accuracy Engine', name: 'Contract vs Estimate Reconciliation', desc: 'Line-by-line comparison before signing. Catches: missing exclusions, scope gaps, allowance mismatches, payment schedule conflicts.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 353, cat: 'AI Accuracy Engine', name: 'Live Data Entry Guardrails', desc: 'Real-time checks as you type: magnitude alerts, decimal shift detection, duplicate entries, zero-value warnings, stale price alerts.', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 354, cat: 'AI Accuracy Engine', name: 'Unit Mismatch Detection', desc: '"200 for countertop — 200 SF = 10 kitchens. Did you mean 20 LF?" Detects when the unit doesn\'t match the number.', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 355, cat: 'AI Accuracy Engine', name: 'Phantom Scope Detection', desc: 'Rooms on plans with no line items in estimate. "Laundry room has no entries. Missing: flooring, paint, cabinets, plumbing. Est. value: $3K-8K."', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 356, cat: 'AI Accuracy Engine', name: 'Stale Price Alert', desc: '"Lumber pricing last updated 8 months ago. Prices increased 11% since then. Update before finalizing?" Prevents outdated estimates.', phase: 2, status: 'planned', effort: 'S', selfLearn: true },
+  { id: 357, cat: 'AI Accuracy Engine', name: 'Cut/Copy/Paste Detection', desc: 'Detects pasted data from another job. "These 6 line items pasted from Miller Addition — prices are 6 months old, dimensions don\'t match."', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 358, cat: 'AI Accuracy Engine', name: 'Accuracy Dashboard', desc: 'Monthly view: errors caught (17), estimated savings ($142K), error types breakdown, catch rate trend, biggest save, AI accuracy %.', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 359, cat: 'AI Accuracy Engine', name: 'Unusual Ratio Detection', desc: '"Tile material: $12K. Tile labor: $800. Labor is typically 60-80% of material. Expected: $7.2K-9.6K." Catches imbalanced estimates.', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 360, cat: 'AI Accuracy Engine', name: 'Auto-Complete Validation', desc: 'When auto-fill suggests values, validates them. "Auto-filled drywall at 8,400 SF but home has 10\' ceilings, not 9\'. Corrected: 9,200 SF."', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 361, cat: 'AI Accuracy Engine', name: 'Labor Hours vs Schedule Check', desc: '"Estimate: 240 labor hours for framing. Schedule: 10 days. That requires 24 hrs/day. You use 1 crew. Schedule should be 30 days."', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 362, cat: 'AI Accuracy Engine', name: 'Error Correction Feedback Loop', desc: 'Every flag response trains the AI. "Fixed it" = reinforce. "Actually correct" = widen range. Ignored + overrun = escalate flag next time.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: PRE-CONSTRUCTION (363-377)
+  // ═══════════════════════════════════════════
+  { id: 363, cat: 'Pre-Construction', name: 'Lot/Site Feasibility Engine', desc: 'Upload lot survey + plat → AI analyzes: setbacks, easements, buildable area, flood zone, tree buffer, utility availability. "This lot supports 2,400 SF footprint max."', phase: 3, status: 'future', effort: 'XL', selfLearn: true },
+  { id: 364, cat: 'Pre-Construction', name: 'Zoning Compliance Checker', desc: 'Enter address → AI pulls zoning: height limits, lot coverage %, impervious surface limits, parking. "R-2 zoning allows 35\' max height, 40% coverage."', phase: 3, status: 'future', effort: 'XL', selfLearn: true },
+  { id: 365, cat: 'Pre-Construction', name: 'HOA/ARB Submission Tracker', desc: 'Track: application submitted, committee review date, revision requests, approval status, conditions. Auto-remind before deadlines.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 366, cat: 'Pre-Construction', name: 'Architect Coordination Hub', desc: 'Track plan revisions: Rev A sent → comments returned → Rev B due. Central place for ALL design communication with architect.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 367, cat: 'Pre-Construction', name: 'Design Review Workflow', desc: 'Plan set → assign reviewers (PM, Super, estimator) → each marks up → AI compiles all comments into one coordinated response to architect.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 368, cat: 'Pre-Construction', name: 'Engineering Tracking', desc: 'Track structural, truss, energy rater, geotech: scope, fee, timeline, deliverable received, review status.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 369, cat: 'Pre-Construction', name: 'Permit Application Manager', desc: 'Per jurisdiction: required forms, documents, fees, typical review time. Track: submitted → plan review → response → approved.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 370, cat: 'Pre-Construction', name: 'Soil/Geotech Report Manager', desc: 'Upload geotech report → AI extracts: soil bearing capacity, water table depth, foundation recommendations. Flags mismatches with plans.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 371, cat: 'Pre-Construction', name: 'Pre-Construction Meeting System', desc: 'Agenda template: review plans, confirm selections timeline, discuss allowances, review schedule, set communication expectations. AI meeting notes.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 372, cat: 'Pre-Construction', name: 'Pre-Con Checklist', desc: 'Before breaking ground: permit ✓, survey staked ✓, silt fence ✓, temp power ✓, dumpster ✓, builder\'s risk ✓, all contracts signed ✓. Nothing starts until all green.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 373, cat: 'Pre-Construction', name: 'Spec Development Workflow', desc: 'Work with client to develop specs: finish level, material preferences, standard vs upgrade. Client reviews and signs off. Becomes reference for estimating.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 374, cat: 'Pre-Construction', name: 'Impact Fee Calculator', desc: 'By jurisdiction: impact fees, utility connection fees, school fees, park fees, transportation fees. "Total pre-construction fees: $23,400."', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 375, cat: 'Pre-Construction', name: 'Utility Connection Tracker', desc: 'Water/sewer, electrical, gas, internet. Track: applied → deposit → scheduled → connected. Some take 4-8 weeks — critical path items.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 376, cat: 'Pre-Construction', name: 'Site Due Diligence Package', desc: 'One-click: lot analysis, zoning summary, feasibility report, estimated fees, foundation recommendation, utility availability. Give to client before lot purchase.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 377, cat: 'Pre-Construction', name: 'Design Budget Tracker', desc: 'Track all pre-con costs: architect fees, engineering, survey, geotech, permits, HOA fees. Often $30K-80K before a board is cut.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: CONTRACT & LEGAL (378-389)
+  // ═══════════════════════════════════════════
+  { id: 378, cat: 'Contract & Legal', name: 'Contract Template Library', desc: 'Pre-built templates: Cost-Plus, Fixed-Price, GMP, Time & Materials. Customizable per state law. Fill-in-the-blank from estimate data.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+  { id: 379, cat: 'Contract & Legal', name: 'AI Contract Builder', desc: 'AI drafts contract from estimate data, client info, project details, your standard terms. PM reviews and edits. Faster than starting from blank.', phase: 3, status: 'future', effort: 'XL', selfLearn: true },
+  { id: 380, cat: 'Contract & Legal', name: 'Clause Library', desc: 'Standard clauses: payment terms, change orders, dispute resolution, warranty, force majeure, allowances, exclusions, termination. Drag-drop into contracts.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 381, cat: 'Contract & Legal', name: 'Contract Comparison Tool', desc: 'Attorney sends redline → AI highlights every change, categorizes by risk: deleted arbitration (HIGH), changed payment terms (MEDIUM), added clause (LOW).', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 382, cat: 'Contract & Legal', name: 'Subcontract Generator', desc: 'From bid award: auto-generate sub agreement with scope, pricing, schedule, insurance requirements, lien waiver requirements, back-charge provisions.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 383, cat: 'Contract & Legal', name: 'Preliminary Notice Tracking', desc: 'Track every Notice to Owner / Preliminary Notice received from subs and suppliers. Know who has lien rights on your project.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 384, cat: 'Contract & Legal', name: 'Payment Affidavit Generator', desc: 'Before each draw: generate sworn statement listing all subs/suppliers, amounts owed/paid. Required by many lenders and states.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 385, cat: 'Contract & Legal', name: 'Contract Milestone Tracker', desc: 'Track contractual obligations with deadlines: substantial completion, liquidated damages, selection deadlines, payment milestones.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 386, cat: 'Contract & Legal', name: 'Dispute Documentation Log', desc: 'If things go sideways: central log of all communications, photos, decisions, change orders, delays. Organized for attorney review.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 387, cat: 'Contract & Legal', name: 'Contract Amendment Tracker', desc: 'Track every amendment to original contract: what changed, why, both parties signed. Full version history.', phase: 3, status: 'future', effort: 'S', selfLearn: false },
+  { id: 388, cat: 'Contract & Legal', name: 'Insurance Requirements Matrix', desc: 'Per project: what insurance required from each party. Auto-verify coverage meets contract requirements. Flag gaps before work starts.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 389, cat: 'Contract & Legal', name: 'Change Order Language Checker', desc: 'AI checks: does contract include markup % on change orders? "Contract silent on CO markup. Your standard is 15% OH + 10% profit. ADD THIS."', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: BUSINESS MANAGEMENT (390-397)
+  // ═══════════════════════════════════════════
+  { id: 390, cat: 'Business Management', name: 'Company P&L Dashboard', desc: 'Real-time P&L across all jobs + overhead. Revenue, COGS, gross margin, overhead, net profit. Monthly trend. Year-over-year comparison.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+  { id: 391, cat: 'Business Management', name: 'Overhead Rate Calculator', desc: 'Track all overhead: rent, insurance, trucks, phones, software, staff, marketing. "Your overhead is $28,500/mo = 14.25%. Industry avg: 12-18%."', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 392, cat: 'Business Management', name: 'Break-Even Analysis', desc: '"You need $2.1M revenue to cover overhead + minimum profit. Contracted: $1.8M + pipeline $600K (60% prob) = $2.16M. Barely above break-even."', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 393, cat: 'Business Management', name: 'Capacity Planner', desc: '"You can handle 6-8 active jobs (2 PMs, 1 Super). Currently 4 active + 2 starting = 6. Room for 0-2 more starts in Q2."', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 394, cat: 'Business Management', name: 'Annual Budget Builder', desc: 'Plan next year: projected revenue by quarter, planned overhead, targeted margins, planned hires, capital expenditures. Track actual vs plan.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+  { id: 395, cat: 'Business Management', name: 'Company Cash Flow Forecast', desc: 'All jobs combined: when money comes in vs goes out. 90-day forward view. "Cash tight week of March 15 — consider accelerating a draw."', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 396, cat: 'Business Management', name: 'Goal & KPI Setting', desc: 'Set annual goals: revenue target, margin target, jobs completed, client satisfaction. Track monthly progress. Visible to leadership.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 397, cat: 'Business Management', name: 'Tax Planning Dashboard', desc: 'Estimated quarterly tax liability. "You\'ve made $480K profit through Q3. Estimated Q4 tax: $72K. Plan cash accordingly."', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: TEAM & HR (398-405)
+  // ═══════════════════════════════════════════
+  { id: 398, cat: 'Team & HR', name: 'Org Chart', desc: 'Visual org chart: who reports to whom. Roles, responsibilities, job assignments. Click any person → see current workload.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 399, cat: 'Team & HR', name: 'Hiring Pipeline', desc: 'Track open positions: posted → applicants → interviews → offer → hired. Basic applicant tracking for growing builders.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+  { id: 400, cat: 'Team & HR', name: 'Training & Certification Tracker', desc: 'Per employee: OSHA 10/30, first aid, forklift, fall protection, lead-safe, state licensing. Auto-remind before expiration.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 401, cat: 'Team & HR', name: 'Performance Review System', desc: 'Annual/quarterly reviews: self-assessment → manager assessment → meeting → goals. Track over time. Simple but structured.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 402, cat: 'Team & HR', name: 'Workload Balancer', desc: 'Per PM: active jobs, total contract value, hours logged, open tasks. "Jake has 6 jobs at $5.2M. Sarah has 2 at $1.4M. Redistribute?"', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 403, cat: 'Team & HR', name: 'Compensation Benchmarking', desc: '"Your PM salary ($85K) is 8% below market. Super ($68K) is 12% below — retention risk." Market comparison by role.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 404, cat: 'Team & HR', name: 'Team Communication (Internal)', desc: 'Internal chat by channel: #general, #smith-residence, #financial, #safety. Separate from client communication. Quick questions without email.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+  { id: 405, cat: 'Team & HR', name: 'Employee Handbook & Policies', desc: 'Digital handbook: PTO, safety, vehicles, expenses, dress code. Employees acknowledge receipt. Always up-to-date.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: MARKETING & GROWTH (406-413)
+  // ═══════════════════════════════════════════
+  { id: 406, cat: 'Marketing & Growth', name: 'Project Portfolio Showcase', desc: 'Auto-generate beautiful project pages from photos + selections. "Smith Coastal Residence — 3,500 SF, coastal modern, $1.2M." Share on website.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 407, cat: 'Marketing & Growth', name: 'Social Media Auto-Posting', desc: 'Select progress photos → auto-post to Instagram/Facebook with AI caption. Schedule posts. Build brand without effort.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 408, cat: 'Marketing & Growth', name: 'Google Review Management', desc: 'Track reviews, auto-request from happy clients (high NPS), draft responses to negative reviews, track star rating over time.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 409, cat: 'Marketing & Growth', name: 'Lead Nurturing Campaigns', desc: 'Not-ready leads → drip email: monthly market updates, project showcases, educational content. Keep top-of-mind for 6-18 months.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 410, cat: 'Marketing & Growth', name: 'Referral Program Management', desc: 'Track: who referred whom, bonus owed, bonus paid. Auto-prompt past clients for referrals at optimal time (6 months after move-in).', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 411, cat: 'Marketing & Growth', name: 'Website Lead Capture Widget', desc: 'Embed on website: "Tell us about your project" form → feeds directly into RossOS pipeline. No manual transfer.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 412, cat: 'Marketing & Growth', name: 'Market Intelligence', desc: 'Track: new permits in your area, lot sales, competitor activity, $/SF trends. "Permit volume up 12% vs last year."', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 413, cat: 'Marketing & Growth', name: 'ROI per Marketing Channel', desc: 'Track lead sources and conversions. "Referral leads convert at 45%. Houzz at 8%. Invest accordingly."', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: POST-BUILD LIFECYCLE (414-420)
+  // ═══════════════════════════════════════════
+  { id: 414, cat: 'Post-Build Lifecycle', name: '30-Day Walkthrough Scheduler', desc: 'Auto-schedule 30-day walkthrough: generate checklist, client submits pre-walkthrough notes, PM visits, punch items tracked to completion.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 415, cat: 'Post-Build Lifecycle', name: '11-Month Warranty Walkthrough', desc: 'Auto-schedule before 1-year warranty expires. Comprehensive checklist. Catch issues before they become legal problems.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 416, cat: 'Post-Build Lifecycle', name: 'Seasonal Maintenance Program', desc: 'Auto-send seasonal tips: spring (gutters, caulk), summer (HVAC filter, deck), fall (irrigation, dryer vent), winter (weather stripping). Branded.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 417, cat: 'Post-Build Lifecycle', name: 'Anniversary & Holiday Touch', desc: 'Auto-send: 1-year home anniversary card, holiday greeting, birthday. Personal touch with low effort and high referral impact.', phase: 3, status: 'future', effort: 'S', selfLearn: false },
+  { id: 418, cat: 'Post-Build Lifecycle', name: 'Client Lifetime Value Tracker', desc: '"Smiths: $1.2M home + 2 referrals ($1.95M) + 5-star review. Total value: $3.15M. Send them a nice gift."', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 419, cat: 'Post-Build Lifecycle', name: 'Repeat Client Pipeline', desc: 'Past clients wanting additions, remodels, or second homes. Track conversations, timing. Highest-conversion leads you have.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 420, cat: 'Post-Build Lifecycle', name: 'Home Maintenance Knowledge Base', desc: 'Client looks up: "How do I maintain quartz countertops?" AI gives specific instructions based on THEIR installed materials. Personalized.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: LIEN LAW COMPLIANCE (421-427)
+  // ═══════════════════════════════════════════
+  { id: 421, cat: 'Lien Law Compliance', name: 'State-Specific Lien Calendar', desc: 'Auto-calculate ALL lien deadlines per state per project. FL: NTO within 45 days. NC: Claim of Lien within 120 days. AI sends reminders.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 422, cat: 'Lien Law Compliance', name: 'Notice to Owner Generator', desc: 'Auto-generate NTO when sub/supplier first works on a job. Track: generated → sent (certified mail) → received (return receipt).', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 423, cat: 'Lien Law Compliance', name: 'Advanced Lien Waiver Automation', desc: 'Per payment: auto-generate conditional waiver (before clearance) → unconditional (after). Block next payment if prior waiver missing.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 424, cat: 'Lien Law Compliance', name: 'Retainage Compliance Engine', desc: 'Per state law: FL caps retainage at 10% → 5% after 50% completion. NC: can reduce to 0 after substantial completion. AI knows the rules.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 425, cat: 'Lien Law Compliance', name: 'Sub Lien Rights Dashboard', desc: 'At a glance: which subs have active lien rights, NTO status, waiver currency. "ABC Plumbing: $34K unpaid, valid NTO — LIEN RISK HIGH."', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 426, cat: 'Lien Law Compliance', name: 'Mechanics Lien Filing Assistant', desc: 'If you need to file a lien: AI prepares filing with correct legal descriptions, amounts, deadlines. "File by April 15 or lose rights."', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+  { id: 427, cat: 'Lien Law Compliance', name: 'Multi-State Compliance Manager', desc: 'Manage projects across FL, NC, SC simultaneously. Each with different lien laws, notice requirements, retainage rules. One dashboard.', phase: 3, status: 'future', effort: 'L', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: INSURANCE & RISK (428-432)
+  // ═══════════════════════════════════════════
+  { id: 428, cat: 'Insurance & Risk', name: 'Builder\'s Risk Policy Manager', desc: 'Per job: policy details, coverage amount, deductible, named insured, additional insured subs. Track claims if damage occurs.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 429, cat: 'Insurance & Risk', name: 'GL Claim Tracker', desc: 'If GL claim filed: incident date, claim filed, adjuster assigned, reserve amount, status, resolution. Full claim lifecycle.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 430, cat: 'Insurance & Risk', name: 'Workers Comp Audit Prep', desc: 'Annual WC audit: auto-generate payroll by classification code, sub spend, certificates. Avoid surprise audit adjustments.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 431, cat: 'Insurance & Risk', name: 'Incident Report System', desc: 'Accident, injury, damage, theft, near-miss: structured report with photos, witnesses, action taken. Auto-notify carrier if required. OSHA assessment.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 432, cat: 'Insurance & Risk', name: 'Risk Exposure Dashboard', desc: '"Total exposure: $8.4M across all projects. GL limit: $2M. Consider umbrella policy." Coverage adequacy at a glance.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: FLEET & EQUIPMENT (433-435)
+  // ═══════════════════════════════════════════
+  { id: 433, cat: 'Fleet & Equipment', name: 'Vehicle Tracker', desc: 'Company trucks: who\'s assigned, mileage, fuel card spend, maintenance due, registration expiration, insurance.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 434, cat: 'Fleet & Equipment', name: 'Equipment Inventory', desc: 'Owned equipment: trailers, generators, scaffolding, compressors, lasers. Location (which job site), condition, maintenance schedule.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 435, cat: 'Fleet & Equipment', name: 'Tool Loss Tracking', desc: 'Check-out/check-in expensive tools. "Hilti rotary hammer checked out to Smith Residence 3 weeks ago. Job complete. Where is it?"', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: JOB CLOSE ACCOUNTING (436-440)
+  // ═══════════════════════════════════════════
+  { id: 436, cat: 'Job Close Accounting', name: 'Job Close Financial Checklist', desc: 'All invoices received/paid ✓, all lien waivers ✓, retainage released ✓, final draw collected ✓, all POs closed ✓, warranty reserve booked ✓.', phase: 3, status: 'future', effort: 'M', selfLearn: false },
+  { id: 437, cat: 'Job Close Accounting', name: 'Final Cost Reconciliation', desc: 'Estimate vs actual by every cost code. Variance explained: "Framing +$2,400 (CO #3). Electrical -$1,800 (competitive bid). Net: +$600."', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 438, cat: 'Job Close Accounting', name: 'Percentage of Completion Accounting', desc: 'Auto-calculate revenue recognition per job per period for builders using POC method. Feed to accountant.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+  { id: 439, cat: 'Job Close Accounting', name: 'Warranty Reserve Calculator', desc: '"Your avg warranty cost is 0.8% of contract value. Smith Residence: $847K × 0.8% = $6,776 reserve." Based on historical data.', phase: 3, status: 'future', effort: 'M', selfLearn: true },
+  { id: 440, cat: 'Job Close Accounting', name: 'CPA Export Package', desc: 'One-click: job cost report, WIP schedule, 1099 data, equipment depreciation, overhead allocation, P&L by job. In your CPA\'s preferred format.', phase: 3, status: 'future', effort: 'L', selfLearn: false },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: AUDIT TRAIL & ACTIVITY (441-450)
+  // ═══════════════════════════════════════════
+  { id: 441, cat: 'Audit Trail & Activity', name: 'Immutable Action Log', desc: 'Every click, view, edit, login tracked. Cannot be edited or deleted — append-only. Tamper-proof. 7-year retention minimum.', phase: 1, status: 'ready', effort: 'L', selfLearn: false },
+  { id: 442, cat: 'Audit Trail & Activity', name: 'Page View Tracking', desc: 'Who opened what page, when, how long. "Jake Ross viewed Financial Dashboard — 3m 42s — Feb 23 2:14pm."', phase: 1, status: 'ready', effort: 'M', selfLearn: false },
+  { id: 443, cat: 'Audit Trail & Activity', name: 'Data Edit History', desc: 'Every field change: who, when, old value → new value. "Sarah changed Framing budget: $42,000 → $44,500." With reason/linked CO.', phase: 1, status: 'ready', effort: 'M', selfLearn: false },
+  { id: 444, cat: 'Audit Trail & Activity', name: 'AI Action Logging', desc: 'Everything the AI does automatically: auto-coding invoices, auto-updates from communications, suggestions made + accepted/rejected.', phase: 1, status: 'ready', effort: 'M', selfLearn: false },
+  { id: 445, cat: 'Audit Trail & Activity', name: 'Approval Chain Tracking', desc: 'Who approved/rejected what: invoices, change orders, selections, POs. Full chain with timestamps and linked records.', phase: 1, status: 'ready', effort: 'M', selfLearn: false },
+  { id: 446, cat: 'Audit Trail & Activity', name: 'Login & Security Monitoring', desc: 'Who logged in from where, what device, failed attempts, unusual patterns. "3 failed login attempts — Feb 22 11:30pm."', phase: 1, status: 'ready', effort: 'M', selfLearn: false },
+  { id: 447, cat: 'Audit Trail & Activity', name: 'Feature Toggle Logging', desc: 'Who turned features on/off: "Jake enabled AI Room Tagging for all users — Feb 23 8:30am." Track every configuration change.', phase: 1, status: 'ready', effort: 'S', selfLearn: false },
+  { id: 448, cat: 'Audit Trail & Activity', name: 'Communication Audit Trail', desc: 'Who sent what to whom via which channel. Every email, text, in-app message logged with job linkage and timestamps.', phase: 1, status: 'ready', effort: 'M', selfLearn: false },
+  { id: 449, cat: 'Audit Trail & Activity', name: 'Compliance Audit Package Export', desc: 'One-click: export everything for attorney or CPA. All changes, approvals, communications. Timestamped. Tamper-proof. Legal-ready.', phase: 1, status: 'ready', effort: 'L', selfLearn: false },
+  { id: 450, cat: 'Audit Trail & Activity', name: 'Real-Time Security Alerts', desc: 'Configurable: "Notify me if anyone edits a budget line >$5K" or "Alert on login from unknown device." Custom trigger rules.', phase: 2, status: 'planned', effort: 'M', selfLearn: false },
+
+  // ═══════════════════════════════════════════
+  // CATEGORY: DEEP SELF-LEARNING (451-467)
+  // ═══════════════════════════════════════════
+  { id: 451, cat: 'Deep Self-Learning', name: 'Trade-Specific Metric Libraries', desc: '~250 unique metrics across all trades. Each tracked per job, per trade, per crew. Framing (13 metrics), electrical (13), plumbing (11), and more.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
+  { id: 452, cat: 'Deep Self-Learning', name: '28-Point Task Data Capture', desc: 'Every task tracks 28 data categories: schedule (7), labor (8), material (11), cost (7), quality (8), vendor (6), coordination (7). Not just start/end/cost.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
+  { id: 453, cat: 'Deep Self-Learning', name: 'Duration Prediction Model', desc: 'From home SF, stories, foundation, roof complexity, finish level, season, crew → "This framing will take 18 days." ±1 day after 30 jobs.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
+  { id: 454, cat: 'Deep Self-Learning', name: 'Cost Prediction Model', desc: 'From takeoff, sub history, material prices, waste rates, CO likelihood → "Total job cost: $847K ±4%." ±4% accuracy after 30 jobs.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
+  { id: 455, cat: 'Deep Self-Learning', name: 'Waste Prediction Model', desc: 'From material type, crew, layout pattern, room complexity → "Expect 13% tile waste on this layout." ±2% after 30 jobs.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 456, cat: 'Deep Self-Learning', name: 'Schedule Risk Scorer', desc: 'From season, permits, sub availability, client decisiveness, plan completeness → "72% chance of delays >5 days." Calibrated after 30 jobs.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 457, cat: 'Deep Self-Learning', name: 'Change Order Predictor', desc: 'From client profile, plan detail, allowance structure → "Expect $35K-50K in change orders." ±15% after 30 jobs.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 458, cat: 'Deep Self-Learning', name: 'Cash Flow Prediction Model', desc: 'From draw schedule, client payment history, AP timing, seasonal patterns → "Cash tight week of March 15." ±3 days after 30 jobs.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 459, cat: 'Deep Self-Learning', name: 'Client Satisfaction Predictor', desc: 'From communication frequency, budget adherence, schedule, selections experience, punch count → "4.2/5.0 predicted satisfaction."', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 460, cat: 'Deep Self-Learning', name: 'Warranty Predictor', desc: 'From materials, subs, inspection results, quality scores → "Grout cracking risk: HIGH. Paint peeling: LOW." Specific predictions after 30 jobs.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 461, cat: 'Deep Self-Learning', name: 'Margin Predictor', desc: 'From all cost + revenue models + CO prediction + contingency usage → "Projected final margin: 16.2% (target: 18%)." ±1.5% after 30 jobs.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 462, cat: 'Deep Self-Learning', name: '90% Auto-Capture Engine', desc: '90% of metrics auto-captured from schedule, POs, invoices, time clock, photos, inspections, punch lists, change orders. Only 10% needs human input.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
+  { id: 463, cat: 'Deep Self-Learning', name: 'Quick-Tag Manual Input', desc: 'The 10% needing human input designed for 1-3 taps: quality observations (quick-tag), delay cause (pick from list), "would use again" (yes/no).', phase: 2, status: 'planned', effort: 'M', selfLearn: true },
+  { id: 464, cat: 'Deep Self-Learning', name: 'Framing Metrics Library', desc: '13 framing-specific metrics: BF waste rate, studs per wall, header sizes, sheathing waste, nail compliance, days per floor, crew productivity, truss vs stick, engineering changes.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 465, cat: 'Deep Self-Learning', name: 'Electrical Metrics Library', desc: '13 electrical metrics: circuit count, outlet density, dedicated circuits, low-voltage runs, panel sizing, wire footage, rough vs trim split, inspection pass rate, CO during rough.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 466, cat: 'Deep Self-Learning', name: 'Plumbing Metrics Library', desc: '11 plumbing metrics: fixture count, pipe material, water heater type, rough duration, pressure test results, hose bibs, connection type, trim hours, punch items.', phase: 2, status: 'planned', effort: 'L', selfLearn: true },
+  { id: 467, cat: 'Deep Self-Learning', name: 'All-Trades Metric Expansion', desc: 'Same depth for HVAC, insulation, drywall, cabinets, countertops, tile, paint, flooring, trim, roofing, concrete, siding, windows, landscaping, pool, gutters, appliances.', phase: 2, status: 'planned', effort: 'XL', selfLearn: true },
 ]
 
 export const CATEGORIES = [...new Set(FEATURES.map(f => f.cat))] as string[]

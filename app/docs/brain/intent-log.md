@@ -16,6 +16,43 @@ Each entry captures:
 
 ## Entries
 
+### 2026-02-23 — Blueprint (3) Expansion: 8 New Skeleton Pages + 120 Features
+
+**Why:** The user provided `rossos-production-blueprint (3).md` — a 2,302-line document with 600+ features across 12 parts covering AI Accuracy Engine, gap analysis modules, deep self-learning metrics, and more. Many features overlapped with existing pages (Trade Intuition, Plan Analysis, Bidding, Selections, etc.), but 8 major new areas needed dedicated skeleton pages.
+
+**What we built:**
+- 8 new skeleton pages with Preview/Spec tabs
+- 8 new preview components with full mock data visualizations
+- 120 new features in `features.ts` (IDs 348-467, total now 467 across 33 categories)
+- Navigation updated with 7 new nav items across 6 sections
+- New pages: AI Accuracy Engine, Pre-Construction, Contract & Legal, Business Management, HR & Workforce, Post-Build Lifecycle, Lien Law Compliance, Job Close Accounting
+
+**How it works:**
+1. AI Accuracy Engine (`/intelligence/accuracy-engine`) — 6 validation systems, live demo of $37K fireplace error catch, confidence flags, feedback loop
+2. Pre-Construction (`/pre-construction`) — Lot feasibility, permits, design review, engineering tracking, pre-con checklist
+3. Contract & Legal (`/contracts/legal`) — Template library, AI builder, redline comparison, subcontract generator, lien law dashboard
+4. Business Management (`/financial/business-management`) — Company P&L, overhead calculator, break-even, capacity planner, cash flow forecast
+5. HR & Workforce (`/directory/hr`) — Org chart, hiring pipeline, certification tracker, performance reviews, workload balancer
+6. Post-Build (`/post-build`) — Walkthroughs, seasonal maintenance, referral program, lifetime value, knowledge base
+7. Lien Law (`/compliance/lien-law`) — State-specific calendars, NTO generator, waiver automation, retainage tracking, risk dashboard
+8. Job Close (`/financial/job-close`) — Close checklist, cost reconciliation, POC accounting, warranty reserve, CPA export
+
+**Business rules discussed:**
+- AI Accuracy Engine has 6 validation layers that run on every data entry
+- 5 confidence flag levels (Safety Block → Informational) with override learning
+- Pre-construction covers everything from contract signing to ground breaking
+- Lien law rules are state-specific (FL 45-day NTO, 90-day claim, 10%→5% retainage)
+- Job close requires all 8 financial items complete before archiving
+- Post-build lifecycle tracks client relationships for years after completion
+
+**Connected to:**
+- Feature Registry — all 120 new features visible at Settings > Features
+- Navigation — 7 new links across Sales, Pre-Con, Financial, Closeout, Intelligence, Directory, Settings
+- All existing intelligence pages — Accuracy Engine validates data flowing to all modules
+- Blueprint documents (3) — source specification for all features
+
+---
+
 ### 2026-02-23 — Initial Brain Scan / Project Genesis
 
 **Why we built this:**
