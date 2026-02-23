@@ -119,6 +119,8 @@ export const companyIntelligenceNav: NavItem[] = [
       { name: 'Procurement', href: '/skeleton/intelligence/procurement', description: 'POs, deliveries & supply chain' },
       { name: 'Smart Reports', href: '/skeleton/intelligence/reports', description: 'AI-generated narratives & dashboards' },
       { name: 'AI Hub', href: '/skeleton/intelligence/ai-hub', description: 'Morning briefings & project health' },
+      { name: 'Communication Hub', href: '/skeleton/intelligence/communication-hub', description: 'Universal inbox — every channel, two-way sync' },
+      { name: 'Learning Metrics', href: '/skeleton/intelligence/learning-metrics', description: '67 metrics across trades, materials & jobs' },
     ],
   },
 ]
