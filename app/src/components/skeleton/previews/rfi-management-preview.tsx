@@ -1,29 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+
 import {
   FileQuestion,
   Send,
@@ -46,6 +24,31 @@ import {
   BarChart3,
   Bell,
 } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+
 
 // Mock data for RFIs
 const mockRFIs = [
@@ -342,14 +345,10 @@ export default function RFIManagementPreview() {
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{rfi.number}</span>
                               {getPriorityBadge(rfi.priority)}
-                              {rfi.costImpact && (
-                                <Badge variant="outline" className="text-xs">$</Badge>
-                              )}
-                              {rfi.scheduleImpact && (
-                                <Badge variant="outline" className="text-xs">
+                              {rfi.costImpact ? <Badge variant="outline" className="text-xs">$</Badge> : null}
+                              {rfi.scheduleImpact ? <Badge variant="outline" className="text-xs">
                                   <Calendar className="h-3 w-3" />
-                                </Badge>
-                              )}
+                                </Badge> : null}
                             </div>
                             <p className="text-sm mt-1">{rfi.subject}</p>
                             <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
@@ -481,8 +480,7 @@ export default function RFIManagementPreview() {
       </div>
 
       {/* New RFI Modal would go here */}
-      {showNewRFI && (
-        <Card className="fixed inset-x-4 top-20 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] z-50 shadow-lg">
+      {showNewRFI ? <Card className="fixed inset-x-4 top-20 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] z-50 shadow-lg">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>New RFI</CardTitle>
@@ -576,8 +574,7 @@ export default function RFIManagementPreview() {
               </div>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card> : null}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+
 import {
   Plus,
   Download,
@@ -35,10 +36,11 @@ import {
   Layers,
   Users,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { BulkSelectBar, AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -494,9 +496,7 @@ function DigitalSignatureIndicator({ signature }: { signature: DigitalSignature 
     <div className="flex items-center gap-1.5 text-xs bg-green-50 text-green-700 px-2 py-1 rounded">
       <BadgeCheck className="h-3.5 w-3.5" />
       <span>Signed by {signature.signedBy} on {formatDate(signature.signedAt)}</span>
-      {signature.licenseNumber && (
-        <span className="text-green-600 font-mono text-[10px]">({signature.licenseNumber})</span>
-      )}
+      {signature.licenseNumber ? <span className="text-green-600 font-mono text-[10px]">({signature.licenseNumber})</span> : null}
     </div>
   )
 }
@@ -509,13 +509,9 @@ function ReviewStampBadge({ stamp }: { stamp: ReviewStamp }) {
         <Stamp className="h-3 w-3" />
         <span className={cn('font-medium', config.color)}>{config.label}</span>
         <span className="text-warm-500">by {stamp.reviewerName}</span>
-        {stamp.licenseNumber && (
-          <span className="text-warm-400 font-mono text-[10px]">({stamp.licenseNumber})</span>
-        )}
+        {stamp.licenseNumber ? <span className="text-warm-400 font-mono text-[10px]">({stamp.licenseNumber})</span> : null}
       </div>
-      {stamp.digitalSignature && (
-        <DigitalSignatureIndicator signature={stamp.digitalSignature} />
-      )}
+      {stamp.digitalSignature ? <DigitalSignatureIndicator signature={stamp.digitalSignature} /> : null}
     </div>
   )
 }
@@ -541,11 +537,9 @@ function DistributionIndicator({ distribution }: { distribution: SubmittalDistri
           <span>{responded} responded</span>
         </div>
       )}
-      {ballInCourt && (
-        <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">
+      {ballInCourt ? <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">
           Ball: {ballInCourt.recipientName}
-        </span>
-      )}
+        </span> : null}
     </div>
   )
 }
@@ -553,14 +547,11 @@ function DistributionIndicator({ distribution }: { distribution: SubmittalDistri
 function ConnectionBadges({ submittal }: { submittal: Submittal }) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      {submittal.selectionLink && (
-        <span className="text-[10px] bg-warm-50 text-warm-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+      {submittal.selectionLink ? <span className="text-[10px] bg-warm-50 text-warm-700 px-1.5 py-0.5 rounded flex items-center gap-1">
           <Link2 className="h-2.5 w-2.5" />
           {submittal.selectionLink.selectionName} ({submittal.selectionLink.room})
-        </span>
-      )}
-      {submittal.linkedPO && (
-        <span className={cn(
+        </span> : null}
+      {submittal.linkedPO ? <span className={cn(
           'text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1',
           submittal.linkedPO.holdStatus === 'on_hold'
             ? 'bg-amber-50 text-amber-700'
@@ -569,10 +560,8 @@ function ConnectionBadges({ submittal }: { submittal: Submittal }) {
           <ShoppingCart className="h-2.5 w-2.5" />
           {submittal.linkedPO.poNumber}
           {submittal.linkedPO.holdStatus === 'on_hold' ? ' (HOLD)' : ' (Released)'}
-        </span>
-      )}
-      {submittal.scheduleDependency && (
-        <span className={cn(
+        </span> : null}
+      {submittal.scheduleDependency ? <span className={cn(
           'text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1',
           submittal.scheduleDependency.critical
             ? 'bg-red-50 text-red-700'
@@ -583,14 +572,11 @@ function ConnectionBadges({ submittal }: { submittal: Submittal }) {
           {submittal.scheduleDependency.impactDays > 0 && (
             <span className="font-medium">+{submittal.scheduleDependency.impactDays}d</span>
           )}
-        </span>
-      )}
-      {submittal.permitRequired && (
-        <span className="text-[10px] bg-stone-50 text-stone-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+        </span> : null}
+      {submittal.permitRequired ? <span className="text-[10px] bg-stone-50 text-stone-700 px-1.5 py-0.5 rounded flex items-center gap-1">
           <FileText className="h-2.5 w-2.5" />
           Permit Req
-        </span>
-      )}
+        </span> : null}
     </div>
   )
 }
@@ -610,12 +596,10 @@ function LeadTimeDisplay({ submittal }: { submittal: Submittal }) {
         <span className="text-warm-400">|</span>
         <span className="text-warm-500">Est. delivery: {expectedDelivery}</span>
       </div>
-      {leadTimeRisk?.isAtRisk && (
-        <div className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+      {leadTimeRisk?.isAtRisk ? <div className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
           <AlertTriangle className="h-3 w-3" />
           <span>{leadTimeRisk.message}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -670,7 +654,7 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
                 : 'border-warm-300 hover:border-stone-400'
             )}
           >
-            {isSelected && <Check className="h-3 w-3" />}
+            {isSelected ? <Check className="h-3 w-3" /> : null}
           </button>
           <span className="font-mono font-semibold text-warm-900">{submittal.number}</span>
           <span className="text-xs text-warm-400">Rev {submittal.revision}</span>
@@ -714,21 +698,15 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
       </div>
 
       {/* Latest stamp */}
-      {latestStamp && (
-        <div className="mb-2">
+      {latestStamp ? <div className="mb-2">
           <ReviewStampBadge stamp={latestStamp} />
-          {latestStamp.comments && (
-            <p className="text-[11px] text-warm-500 mt-1 ml-5 italic line-clamp-2">"{latestStamp.comments}"</p>
-          )}
-        </div>
-      )}
+          {latestStamp.comments ? <p className="text-[11px] text-warm-500 mt-1 ml-5 italic line-clamp-2">"{latestStamp.comments}"</p> : null}
+        </div> : null}
 
       {/* Lead Time Display */}
-      {submittal.leadTimeDays && (
-        <div className="mb-2">
+      {submittal.leadTimeDays ? <div className="mb-2">
           <LeadTimeDisplay submittal={submittal} />
-        </div>
-      )}
+        </div> : null}
 
       {/* Footer: dates, docs */}
       <div className="flex items-center gap-3 pt-2 border-t border-warm-100 text-xs text-warm-600 flex-wrap">
@@ -759,8 +737,7 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
       </div>
 
       {/* AI Note */}
-      {submittal.aiNote && (
-        <div className={cn(
+      {submittal.aiNote ? <div className={cn(
           'mt-2 p-2 rounded-md flex items-start gap-2',
           submittal.status === 'rejected' ? 'bg-red-50' :
           submittal.status === 'revise_resubmit' ? 'bg-sand-50' :
@@ -778,8 +755,7 @@ function SubmittalCard({ submittal, isSelected, onToggleSelect }: SubmittalCardP
             submittal.status === 'revise_resubmit' ? 'text-sand-700' :
             'text-amber-700'
           )}>{submittal.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -836,8 +812,8 @@ function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
                 : 'border-warm-300 hover:border-stone-400'
             )}
           >
-            {allSelected && <Check className="h-3 w-3" />}
-            {someSelected && !allSelected && <div className="w-2 h-0.5 bg-stone-500" />}
+            {allSelected ? <Check className="h-3 w-3" /> : null}
+            {someSelected && !allSelected ? <div className="w-2 h-0.5 bg-stone-500" /> : null}
           </button>
           {isExpanded ? (
             <ChevronDown className="h-4 w-4 text-warm-500" />
@@ -854,8 +830,7 @@ function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
       </div>
 
       {/* Package Contents */}
-      {isExpanded && (
-        <div className="p-4 grid grid-cols-2 gap-4">
+      {isExpanded ? <div className="p-4 grid grid-cols-2 gap-4">
           {pkg.submittals.map(submittal => (
             <SubmittalCard
               key={submittal.id}
@@ -864,8 +839,7 @@ function PackageGroup({ pkg, selectedIds, onToggleSelect }: PackageGroupProps) {
               onToggleSelect={onToggleSelect}
             />
           ))}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -1117,8 +1091,8 @@ export function SubmittalsPreview() {
                   : 'border-warm-300 hover:border-stone-400'
               )}
             >
-              {allFilteredSelected && <Check className="h-3 w-3" />}
-              {someFilteredSelected && !allFilteredSelected && <div className="w-2 h-0.5 bg-stone-500" />}
+              {allFilteredSelected ? <Check className="h-3 w-3" /> : null}
+              {someFilteredSelected && !allFilteredSelected ? <div className="w-2 h-0.5 bg-stone-500" /> : null}
             </button>
             <span className="text-xs text-warm-600">
               {allFilteredSelected ? 'Deselect all' : `Select all ${filteredSubmittals.length} submittals`}

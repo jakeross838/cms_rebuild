@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { DeliveriesPreview } from '@/components/skeleton/previews/deliveries-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const workflow = ['PO Created', 'Delivery Scheduled', 'Arriving Soon', 'Received', 'Verified']

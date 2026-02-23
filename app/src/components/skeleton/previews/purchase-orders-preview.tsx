@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Download,
@@ -32,10 +33,11 @@ import {
   ExternalLink,
   User,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface PurchaseOrder {
   id: string
@@ -520,18 +522,13 @@ function POCard({ po }: { po: PurchaseOrder }) {
           )}
           <span className="text-xs text-warm-400">{po.paymentTerms}</span>
         </div>
-        {po.expectedDelivery && po.status !== 'fully_received' && po.status !== 'invoiced' && po.status !== 'closed' && (
-          <div className="flex items-center gap-1.5 text-sm text-warm-600">
+        {po.expectedDelivery && po.status !== 'fully_received' && po.status !== 'invoiced' && po.status !== 'closed' ? <div className="flex items-center gap-1.5 text-sm text-warm-600">
             <Truck className="h-3.5 w-3.5" />
             <span>Expected: {formatDate(po.expectedDelivery)}</span>
-            {po.requiredByDate && (
-              <span className="text-xs text-warm-400">(Need by: {formatDate(po.requiredByDate)})</span>
-            )}
-          </div>
-        )}
+            {po.requiredByDate ? <span className="text-xs text-warm-400">(Need by: {formatDate(po.requiredByDate)})</span> : null}
+          </div> : null}
         {/* Tracking number display */}
-        {po.trackingNumber && po.carrier && (
-          <div className="flex items-center gap-1.5 text-sm text-warm-600">
+        {po.trackingNumber && po.carrier ? <div className="flex items-center gap-1.5 text-sm text-warm-600">
             <Truck className="h-3.5 w-3.5" />
             <span className="text-xs text-warm-500">{carrierNames[po.carrier]}:</span>
             <span className="text-xs font-mono text-warm-700">{po.trackingNumber}</span>
@@ -547,13 +544,11 @@ function POCard({ po }: { po: PurchaseOrder }) {
                 <ExternalLink className="h-3 w-3" />
               </a>
             )}
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Approval progress for pending_approval status */}
-      {po.status === 'pending_approval' && po.approvalProgress && (
-        <div className="mb-3 p-2 bg-amber-50 rounded">
+      {po.status === 'pending_approval' && po.approvalProgress ? <div className="mb-3 p-2 bg-amber-50 rounded">
           <div className="flex items-center justify-between text-xs text-amber-700 mb-1">
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
@@ -567,14 +562,11 @@ function POCard({ po }: { po: PurchaseOrder }) {
               style={{ width: `${(po.approvalProgress.completed / po.approvalProgress.total) * 100}%` }}
             />
           </div>
-          {po.approvalProgress.currentApprover && (
-            <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+          {po.approvalProgress.currentApprover ? <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
               <User className="h-3 w-3" />
               <span>Current: {po.approvalProgress.currentApprover}</span>
-            </div>
-          )}
-        </div>
-      )}
+            </div> : null}
+        </div> : null}
 
       {/* Receiving progress for partial/received */}
       {(po.status === 'partial_delivery' || po.status === 'fully_received') && (
@@ -602,8 +594,7 @@ function POCard({ po }: { po: PurchaseOrder }) {
       )}
 
       {/* Blanket PO gauge */}
-      {po.poType === 'blanket' && po.blanketLimit && po.blanketUsed !== undefined && (
-        <div className="mb-3 p-2 bg-stone-50 rounded">
+      {po.poType === 'blanket' && po.blanketLimit && po.blanketUsed !== undefined ? <div className="mb-3 p-2 bg-stone-50 rounded">
           <div className="flex items-center justify-between text-xs text-stone-700 mb-1">
             <span className="flex items-center gap-1">
               <Gauge className="h-3 w-3" />
@@ -624,16 +615,13 @@ function POCard({ po }: { po: PurchaseOrder }) {
           <div className="text-xs text-stone-600 mt-1">
             {formatCurrency(po.blanketLimit - po.blanketUsed)} remaining
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* Emergency reason */}
-      {po.isEmergency && po.emergencyReason && (
-        <div className="mb-3 p-2 bg-red-50 rounded flex items-start gap-2 text-xs">
+      {po.isEmergency && po.emergencyReason ? <div className="mb-3 p-2 bg-red-50 rounded flex items-start gap-2 text-xs">
           <ShieldAlert className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
           <span className="text-red-700">{po.emergencyReason}</span>
-        </div>
-      )}
+        </div> : null}
 
       {/* Amount section */}
       <div className="flex items-center justify-between pt-3 border-t border-warm-100">
@@ -650,8 +638,7 @@ function POCard({ po }: { po: PurchaseOrder }) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {po.threeWayMatchStatus && (
-            <span className={cn(
+          {po.threeWayMatchStatus ? <span className={cn(
               "text-xs font-medium flex items-center gap-0.5",
               matchStatusConfig[po.threeWayMatchStatus].color
             )}>
@@ -660,8 +647,7 @@ function POCard({ po }: { po: PurchaseOrder }) {
               {po.variancePct !== undefined && po.variancePct > 0 && (
                 <span className="text-red-500 ml-0.5">(+{po.variancePct}%)</span>
               )}
-            </span>
-          )}
+            </span> : null}
           {po.status === 'draft' && (
             <button className="text-xs text-stone-600 font-medium hover:text-stone-700 flex items-center gap-1">
               <Send className="h-3 w-3" />
@@ -680,42 +666,32 @@ function POCard({ po }: { po: PurchaseOrder }) {
       {/* Cross-module badges */}
       <div className="flex items-center gap-2 flex-wrap mt-2">
         <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{po.costCode}</span>
-        {po.changeOrderNumber && (
-          <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+        {po.changeOrderNumber ? <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Link2 className="h-3 w-3" />
             {po.changeOrderNumber}
-          </span>
-        )}
-        {po.bidReference && (
-          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          </span> : null}
+        {po.bidReference ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <FileText className="h-3 w-3" />
             {po.bidReference}
-          </span>
-        )}
-        {po.selectionName && (
-          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          </span> : null}
+        {po.selectionName ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Layers className="h-3 w-3" />
             {po.selectionName}
-          </span>
-        )}
-        {po.aiPriceAssessment && (
-          <span className={cn(
+          </span> : null}
+        {po.aiPriceAssessment ? <span className={cn(
             "text-xs px-1.5 py-0.5 rounded inline-flex items-center gap-0.5",
             po.aiPriceAssessment.includes('above') ? "bg-amber-50 text-amber-600" : "bg-green-50 text-green-600"
           )}>
             <BarChart3 className="h-3 w-3" />
             {po.aiPriceAssessment}
-          </span>
-        )}
+          </span> : null}
       </div>
 
       {/* AI Note */}
-      {po.aiNote && (
-        <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+      {po.aiNote ? <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-amber-700">{po.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

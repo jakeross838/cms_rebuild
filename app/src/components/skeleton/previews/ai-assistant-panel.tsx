@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+
 import {
   Sparkles,
   Send,
@@ -18,12 +19,10 @@ import {
   FileText,
   DollarSign,
   ExternalLink,
-  Mic,
   Volume2,
-  Maximize2,
-  Minimize2,
   Zap,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 // Types
@@ -135,7 +134,7 @@ const pageCapabilities: Record<string, PlaudeCapability[]> = {
 }
 
 // Legacy prop support
-interface AIAssistantPanelProps extends PlaudePanelProps {}
+type AIAssistantPanelProps = PlaudePanelProps
 
 // Mock data for the panel
 const mockMessages: Message[] = [
@@ -245,6 +244,7 @@ function AudioBriefingMini() {
       }, 300)
       return () => clearInterval(interval)
     }
+    return undefined
   }, [isPlaying])
 
   return (
@@ -328,8 +328,8 @@ export function AIAssistantPanel({
           { title: 'Inspection Log', type: 'daily_log', excerpt: 'Pending inspections', date: 'Yesterday' },
         ]
         actions = [
-          { label: 'Create mitigation tasks', type: 'create', execute: () => console.log('Creating tasks') },
-          { label: 'Notify team', type: 'create', execute: () => console.log('Notifying') },
+          { label: 'Create mitigation tasks', type: 'create', execute: () => console.warn('Creating tasks') },
+          { label: 'Notify team', type: 'create', execute: () => console.warn('Notifying') },
         ]
       } else if (inputLower.includes('budget') || inputLower.includes('cost')) {
         response = `**Budget Status for ${projectName}:**\n\nContract: $485,000\nSpent to Date: $312,400 (64.4%)\nRemaining: $172,600\n\n**Variances:**\n- Framing: +$847 (weather delays)\n- Electrical: -$1,200 (favorable)\n- Plumbing: On track\n\nProjected Final: $482,153 (**$2,847 under budget**)`
@@ -339,7 +339,7 @@ export function AIAssistantPanel({
       } else if (inputLower.includes('schedule') || inputLower.includes('timeline')) {
         response = `**Schedule Status:**\n\nBaseline Completion: March 15\nCurrent Projection: March 20 (+5 days)\n\n**Critical Path:**\n1. Roofing (weather dependent)\n2. HVAC rough-in\n3. Drywall\n\n**This Week:**\n- Mon-Wed: Complete framing punch list\n- Thu-Fri: Weather contingency\n- Sat: Roofing start (if weather permits)`
         actions = [
-          { label: 'View Gantt chart', type: 'navigate', execute: () => console.log('Navigate to schedule') },
+          { label: 'View Gantt chart', type: 'navigate', execute: () => console.warn('Navigate to schedule') },
         ]
       } else {
         response = `Based on the project data for ${projectName}:\n\n**Summary:** Project is 64% complete, currently 5 days behind baseline due to weather delays. Budget is tracking well at $2,847 under projection.\n\n**Key Items:**\n- Framing 100% complete, inspection passed\n- Roofing scheduled pending weather\n- Draw #4 awaiting client approval\n\nWhat specific aspect would you like me to dive into?`
@@ -434,11 +434,9 @@ export function AIAssistantPanel({
           >
             <tab.icon className="h-3.5 w-3.5" />
             {tab.label}
-            {tab.badge && (
-              <span className="text-[10px] bg-stone-100 text-stone-600 px-1.5 rounded-full">
+            {tab.badge ? <span className="text-[10px] bg-stone-100 text-stone-600 px-1.5 rounded-full">
                 {tab.badge}
-              </span>
-            )}
+              </span> : null}
           </button>
         ))}
       </div>
@@ -501,8 +499,7 @@ export function AIAssistantPanel({
                         })}
                       </div>
                     </div>
-                    {message.sources && message.sources.length > 0 && (
-                      <div className="mt-1">
+                    {message.sources && message.sources.length > 0 ? <div className="mt-1">
                         <button
                           onClick={() =>
                             setShowSources(showSources === message.id ? null : message.id)
@@ -524,12 +521,10 @@ export function AIAssistantPanel({
                             ))}
                           </div>
                         )}
-                      </div>
-                    )}
+                      </div> : null}
 
                     {/* Action buttons from AI response */}
-                    {message.actions && message.actions.length > 0 && (
-                      <div className="mt-2 pt-2 border-t border-warm-200 space-y-1">
+                    {message.actions && message.actions.length > 0 ? <div className="mt-2 pt-2 border-t border-warm-200 space-y-1">
                         {message.actions.map((action, i) => (
                           <button
                             key={i}
@@ -540,24 +535,21 @@ export function AIAssistantPanel({
                             {action.label}
                           </button>
                         ))}
-                      </div>
-                    )}
+                      </div> : null}
                   </div>
                 )}
               </div>
             ))}
 
             {/* Loading indicator */}
-            {isLoading && (
-              <div className="flex items-center gap-2 text-warm-500">
+            {isLoading ? <div className="flex items-center gap-2 text-warm-500">
                 <div className="flex gap-1">
                   <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
                 <span className="text-xs text-warm-500">Plaude is thinking...</span>
-              </div>
-            )}
+              </div> : null}
 
             <div ref={messagesEndRef} />
           </div>

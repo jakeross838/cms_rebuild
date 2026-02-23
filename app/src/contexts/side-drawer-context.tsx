@@ -1,6 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, type ReactNode } from 'react'
+
 import {
     Sheet,
     SheetContent,
@@ -60,12 +61,10 @@ export function SideDrawerProvider({ children }: { children: ReactNode }) {
             {children}
             <Sheet open={isOpen} onOpenChange={(open) => !open && closeDrawer()}>
                 <SheetContent className={`${getSizeClass(config.size)} overflow-y-auto`}>
-                    {(config.title || config.description) && (
-                        <SheetHeader className="mb-4">
-                            {config.title && <SheetTitle>{config.title}</SheetTitle>}
-                            {config.description && <SheetDescription>{config.description}</SheetDescription>}
-                        </SheetHeader>
-                    )}
+                    {(config.title || config.description) ? <SheetHeader className="mb-4">
+                            {config.title ? <SheetTitle>{config.title}</SheetTitle> : null}
+                            {config.description ? <SheetDescription>{config.description}</SheetDescription> : null}
+                        </SheetHeader> : null}
                     {config.content}
                 </SheetContent>
             </Sheet>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronDown,
   ChevronRight,
@@ -22,10 +23,11 @@ import {
   Target,
   Layers,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface BudgetLine {
   id: string
@@ -354,9 +356,7 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
             <span className="font-medium text-warm-900">{line.name}</span>
             <LineTypeBadge type={line.lineType} />
             <AlertBadge level={line.alertLevel} />
-            {line.aiNote && (
-              <Sparkles className="h-4 w-4 text-amber-500" />
-            )}
+            {line.aiNote ? <Sparkles className="h-4 w-4 text-amber-500" /> : null}
           </div>
         </td>
         <td className="py-3 px-3 text-right text-warm-600">{formatCurrency(line.originalBudget)}</td>
@@ -390,8 +390,7 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
           </div>
         </td>
       </tr>
-      {expanded && (
-        <tr className={cn(expanded && "bg-stone-50")}>
+      {expanded ? <tr className={cn(expanded && "bg-stone-50")}>
           <td colSpan={9} className="py-2 px-12">
             <div className="space-y-2">
               {/* Cross-module connections */}
@@ -414,11 +413,9 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
                     {line.linkedCOs} CO{line.linkedCOs > 1 ? 's' : ''}
                   </span>
                 )}
-                {line.vendor && (
-                  <span className="text-warm-500">
+                {line.vendor ? <span className="text-warm-500">
                     Vendor: <span className="font-medium text-warm-700">{line.vendor}</span>
-                  </span>
-                )}
+                  </span> : null}
                 <span className="text-warm-500">
                   Cost to Complete: <span className="font-medium text-warm-700">{formatCurrency(line.costToComplete)}</span>
                 </span>
@@ -430,16 +427,13 @@ function BudgetRow({ line, expanded, onToggle }: { line: BudgetLine; expanded: b
                 )}
               </div>
               {/* AI Note */}
-              {line.aiNote && (
-                <div className="flex items-start gap-2 text-sm text-amber-700">
+              {line.aiNote ? <div className="flex items-start gap-2 text-sm text-amber-700">
                   <Sparkles className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-500" />
                   <span>{line.aiNote}</span>
-                </div>
-              )}
+                </div> : null}
             </div>
           </td>
-        </tr>
-      )}
+        </tr> : null}
     </>
   )
 }
@@ -712,7 +706,7 @@ export function BudgetPreview() {
               <td className="py-3 px-3 text-right">
                 <VarianceIndicator variance={totalVariance} revised={totals.revisedBudget} />
               </td>
-              <td className="py-3 px-3"></td>
+              <td className="py-3 px-3" />
             </tr>
           </tfoot>
         </table>

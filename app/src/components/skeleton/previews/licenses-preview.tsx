@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   AlertTriangle,
@@ -33,10 +34,11 @@ import {
   X,
   Bell,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel, ProgressSteps, SubmissionForm, type ProgressStep, type FormField } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -676,9 +678,7 @@ function AuditTrailModal({
                       <span className="text-xs text-warm-500">{formatDateTime(event.timestamp)}</span>
                     </div>
                     <p className="text-sm text-warm-700">by {event.user}</p>
-                    {event.details && (
-                      <p className="text-xs text-warm-500 mt-1">{event.details}</p>
-                    )}
+                    {event.details ? <p className="text-xs text-warm-500 mt-1">{event.details}</p> : null}
                   </div>
                 </div>
               ))}
@@ -939,12 +939,10 @@ function LicenseCard({ license }: { license: License }) {
           )}>
             {license.entityType}
           </span>
-          {license.autoBlockEnabled && (
-            <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded flex items-center gap-1 border border-red-200">
+          {license.autoBlockEnabled ? <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded flex items-center gap-1 border border-red-200">
               <Ban className="h-3 w-3" />
               Auto-Block
-            </span>
-          )}
+            </span> : null}
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-3">
@@ -977,8 +975,7 @@ function LicenseCard({ license }: { license: License }) {
         </div>
 
         {/* Renewal status */}
-        {license.renewalStatus && (
-          <div className="flex items-center gap-2 mb-3">
+        {license.renewalStatus ? <div className="flex items-center gap-2 mb-3">
             <span className="text-xs text-warm-500">Renewal:</span>
             <span className={cn(
               "text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1",
@@ -987,11 +984,9 @@ function LicenseCard({ license }: { license: License }) {
               <RefreshCw className="h-3 w-3" />
               {renewalLabels[license.renewalStatus].label}
             </span>
-          </div>
-        )}
+          </div> : null}
 
-        {showCEU && (
-          <div className="mb-3">
+        {showCEU ? <div className="mb-3">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-warm-500 flex items-center gap-1">
                 <GraduationCap className="h-3 w-3" />
@@ -1027,12 +1022,10 @@ function LicenseCard({ license }: { license: License }) {
                 </button>
               </div>
             )}
-          </div>
-        )}
+          </div> : null}
 
         {/* Auto-blocked tasks */}
-        {license.autoBlockEnabled && license.autoBlockedTasks && license.autoBlockedTasks.length > 0 && (
-          <div className="mb-3 p-2 bg-red-50 border border-red-100 rounded text-xs">
+        {license.autoBlockEnabled && license.autoBlockedTasks && license.autoBlockedTasks.length > 0 ? <div className="mb-3 p-2 bg-red-50 border border-red-100 rounded text-xs">
             <div className="font-medium text-red-700 flex items-center gap-1 mb-1">
               <ShieldAlert className="h-3 w-3" />
               Auto-blocked tasks (requires valid cert):
@@ -1040,8 +1033,7 @@ function LicenseCard({ license }: { license: License }) {
             <div className="text-red-600">
               {license.autoBlockedTasks.join(', ')}
             </div>
-          </div>
-        )}
+          </div> : null}
 
         {/* Verification and linked modules */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -1049,7 +1041,7 @@ function LicenseCard({ license }: { license: License }) {
             <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded flex items-center gap-1">
               <CheckCircle2 className="h-3 w-3" />
               Verified
-              {license.verificationDate && <span className="text-green-500">({license.verificationDate})</span>}
+              {license.verificationDate ? <span className="text-green-500">({license.verificationDate})</span> : null}
             </span>
           ) : (
             <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded flex items-center gap-1">
@@ -1057,34 +1049,26 @@ function LicenseCard({ license }: { license: License }) {
               Unverified
             </span>
           )}
-          {license.verificationSource && (
-            <span className={cn(
+          {license.verificationSource ? <span className={cn(
               "text-xs px-2 py-0.5 rounded flex items-center gap-1",
               verificationSourceColors[license.verificationSource]
             )}>
               {license.verificationSource}
-            </span>
-          )}
-          {license.documentUrl && (
-            <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded flex items-center gap-1">
+            </span> : null}
+          {license.documentUrl ? <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded flex items-center gap-1">
               <FileText className="h-3 w-3" />
               Doc on file
-            </span>
-          )}
-          {license.stateVerificationAvailable && (
-            <span className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded flex items-center gap-1">
+            </span> : null}
+          {license.stateVerificationAvailable ? <span className="text-xs bg-stone-50 text-stone-600 px-2 py-0.5 rounded flex items-center gap-1">
               <ExternalLink className="h-3 w-3" />
               Online verify
-            </span>
-          )}
+            </span> : null}
         </div>
 
         {/* State Verification */}
-        {license.stateVerificationAvailable && (
-          <div className="mb-3">
+        {license.stateVerificationAvailable ? <div className="mb-3">
             <StateVerificationButton license={license} />
-          </div>
-        )}
+          </div> : null}
 
         {/* Linked modules */}
         {license.linkedModules.length > 0 && (
@@ -1100,8 +1084,7 @@ function LicenseCard({ license }: { license: License }) {
 
         {/* Workflow Action Buttons */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          {isExpiringOrExpired && (
-            <>
+          {isExpiringOrExpired ? <>
               <button
                 onClick={() => setShowRenewalModal(true)}
                 className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-stone-600 bg-warm-50 border border-warm-200 rounded hover:bg-warm-100"
@@ -1113,8 +1096,7 @@ function LicenseCard({ license }: { license: License }) {
                 <Mail className="h-3 w-3" />
                 Send Reminder
               </button>
-            </>
-          )}
+            </> : null}
           {(license.status === 'expired' || license.status === 'lapsed') && (
             <button className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded hover:bg-green-100">
               <Calendar className="h-3 w-3" />
@@ -1156,11 +1138,9 @@ function LicenseCard({ license }: { license: License }) {
             <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="View">
               <Eye className="h-4 w-4" />
             </button>
-            {license.stateVerificationAvailable && (
-              <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Verify with Authority">
+            {license.stateVerificationAvailable ? <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Verify with Authority">
                 <ExternalLink className="h-4 w-4" />
-              </button>
-            )}
+              </button> : null}
             <button className="p-1.5 text-warm-500 hover:bg-warm-100 rounded" title="Download">
               <Download className="h-4 w-4" />
             </button>

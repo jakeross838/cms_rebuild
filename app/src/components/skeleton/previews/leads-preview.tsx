@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   User,
   DollarSign,
@@ -30,10 +31,11 @@ import {
   Star,
   Heart,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { StatusTransition, PriorityFilter, StatusFilter, AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface Lead {
   id: string
@@ -561,8 +563,7 @@ function ConvertToJobButton({ lead }: { lead: Lead }) {
         Convert to Job
         <ArrowRight className="h-4 w-4" />
       </button>
-      {showDetails && (
-        <div className="mt-2 p-3 bg-green-50 border border-warm-200 rounded-lg">
+      {showDetails ? <div className="mt-2 p-3 bg-green-50 border border-warm-200 rounded-lg">
           <h5 className="text-sm font-medium text-green-800 mb-2">What will be created:</h5>
           <ul className="space-y-1.5 text-xs text-green-700">
             <li className="flex items-center gap-2">
@@ -601,8 +602,7 @@ function ConvertToJobButton({ lead }: { lead: Lead }) {
               Cancel
             </button>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -700,8 +700,7 @@ function EstimatorDataDisplay({ lead }: { lead: Lead }) {
       </button>
 
       {/* Cost Breakdown */}
-      {showBreakdown && (
-        <div className="mt-2 pt-2 border-t border-warm-200 space-y-1.5">
+      {showBreakdown ? <div className="mt-2 pt-2 border-t border-warm-200 space-y-1.5">
           {estimatorData.breakdown.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[10px]">
               <span className="text-warm-700">{item.category}</span>
@@ -710,8 +709,7 @@ function EstimatorDataDisplay({ lead }: { lead: Lead }) {
               </span>
             </div>
           ))}
-        </div>
-      )}
+        </div> : null}
 
       {/* Actions */}
       <div className="flex gap-2 mt-2 pt-2 border-t border-warm-200">
@@ -794,8 +792,7 @@ function QuickFeasibilityCalculator({ lead }: { lead: Lead }) {
         Quick Feasibility
         <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', showCalculator && 'rotate-90')} />
       </button>
-      {showCalculator && (
-        <div className="mt-2 p-3 bg-stone-50 border border-warm-200 rounded-lg">
+      {showCalculator ? <div className="mt-2 p-3 bg-stone-50 border border-warm-200 rounded-lg">
           <div className="text-xs text-warm-700 space-y-2">
             <div className="flex justify-between">
               <span>Budget:</span>
@@ -823,13 +820,12 @@ function QuickFeasibilityCalculator({ lead }: { lead: Lead }) {
                 isHigh && 'bg-red-100 text-red-700'
               )}
             >
-              {isFeasible && 'Feasible. Budget aligns with typical costs for this project type.'}
-              {isLow && 'Budget may be tight. Consider scope adjustments or value engineering.'}
-              {isHigh && 'Premium budget. Client may have high-end expectations to discuss.'}
+              {isFeasible ? 'Feasible. Budget aligns with typical costs for this project type.' : null}
+              {isLow ? 'Budget may be tight. Consider scope adjustments or value engineering.' : null}
+              {isHigh ? 'Premium budget. Client may have high-end expectations to discuss.' : null}
             </div>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -960,23 +956,17 @@ function LeadCard({ lead }: { lead: Lead }) {
           <Landmark className="h-3 w-3" />
           <span className={financingInfo.color}>{financingInfo.label}</span>
         </div>
-        {lead.source && (
-          <div className="flex items-center gap-1.5 text-xs text-warm-600">
+        {lead.source ? <div className="flex items-center gap-1.5 text-xs text-warm-600">
             <Target className="h-3 w-3" />
             <span>{lead.source}</span>
-            {lead.sourceDetail && (
-              <span className="text-warm-400 truncate max-w-[120px]" title={lead.sourceDetail}>
+            {lead.sourceDetail ? <span className="text-warm-400 truncate max-w-[120px]" title={lead.sourceDetail}>
                 - {lead.sourceDetail}
-              </span>
-            )}
-          </div>
-        )}
-        {lead.competitor && (
-          <div className="flex items-center gap-1.5 text-xs">
+              </span> : null}
+          </div> : null}
+        {lead.competitor ? <div className="flex items-center gap-1.5 text-xs">
             <Users className="h-3 w-3 text-warm-400" />
             <span className="text-warm-500">vs {lead.competitor}</span>
-            {lead.competitivePosition && (
-              <span
+            {lead.competitivePosition ? <span
                 className={cn(
                   'px-1 py-0.5 rounded text-[10px] font-medium',
                   lead.competitivePosition === 'strong'
@@ -987,10 +977,8 @@ function LeadCard({ lead }: { lead: Lead }) {
                 )}
               >
                 {lead.competitivePosition}
-              </span>
-            )}
-          </div>
-        )}
+              </span> : null}
+          </div> : null}
       </div>
 
       {/* Stage activity */}
@@ -1004,20 +992,14 @@ function LeadCard({ lead }: { lead: Lead }) {
       </div>
 
       {/* Design milestone / Scope iteration */}
-      {(lead.designMilestone || lead.scopeIteration) && (
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          {lead.designMilestone && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-stone-50 text-warm-700 rounded font-medium">
+      {(lead.designMilestone || lead.scopeIteration) ? <div className="flex items-center gap-2 mb-2 flex-wrap">
+          {lead.designMilestone ? <span className="text-[10px] px-1.5 py-0.5 bg-stone-50 text-warm-700 rounded font-medium">
               {lead.designMilestone}
-            </span>
-          )}
-          {lead.scopeIteration && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-warm-50 text-warm-700 rounded font-medium">
+            </span> : null}
+          {lead.scopeIteration ? <span className="text-[10px] px-1.5 py-0.5 bg-warm-50 text-warm-700 rounded font-medium">
               {lead.scopeIteration}
-            </span>
-          )}
-        </div>
-      )}
+            </span> : null}
+        </div> : null}
 
       <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className="flex items-center gap-1.5">
@@ -1063,19 +1045,15 @@ function LeadCard({ lead }: { lead: Lead }) {
       </div>
 
       {/* Lost reason */}
-      {lead.status === 'lost' && lead.lostReason && (
-        <div className="mt-2 p-2 bg-red-50 rounded-md flex items-start gap-2">
+      {lead.status === 'lost' && lead.lostReason ? <div className="mt-2 p-2 bg-red-50 rounded-md flex items-start gap-2">
           <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-red-700">Lost: {lead.lostReason}</span>
-        </div>
-      )}
+        </div> : null}
 
-      {lead.alert && lead.status !== 'lost' && (
-        <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+      {lead.alert && lead.status !== 'lost' ? <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-warning">{lead.alert}</span>
-        </div>
-      )}
+        </div> : null}
 
       {/* Lot Evaluation Checklist */}
       <LotEvaluationChecklist lead={lead} />
@@ -1094,11 +1072,10 @@ function LeadCard({ lead }: { lead: Lead }) {
           <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', showAIInsights && 'rotate-90')} />
         </button>
       )}
-      {showAIInsights && <LeadAIInsights lead={lead} />}
+      {showAIInsights ? <LeadAIInsights lead={lead} /> : null}
 
       {/* Stage Gate Validation */}
-      {nextStage && lead.status === 'active' && lead.stage !== 'won' && lead.stage !== 'lost' && (
-        <>
+      {nextStage && lead.status === 'active' && lead.stage !== 'won' && lead.stage !== 'lost' ? <>
           <button
             onClick={() => setShowStageGate(!showStageGate)}
             className="mt-2 w-full flex items-center justify-center gap-2 text-xs font-medium text-warm-600 hover:text-warm-700 py-1.5 px-3 bg-warm-100 hover:bg-warm-200 rounded-lg transition-colors"
@@ -1107,9 +1084,8 @@ function LeadCard({ lead }: { lead: Lead }) {
             Advance Stage
             <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', showStageGate && 'rotate-90')} />
           </button>
-          {showStageGate && <StageGateValidation lead={lead} targetStage={nextStage.id} />}
-        </>
-      )}
+          {showStageGate ? <StageGateValidation lead={lead} targetStage={nextStage.id} /> : null}
+        </> : null}
 
       {/* Convert to Job Button */}
       <ConvertToJobButton lead={lead} />

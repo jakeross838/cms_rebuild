@@ -28,10 +28,11 @@ import {
   BookCheck,
   Timer,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type ReportCategory = 'financial' | 'operations' | 'tax' | 'client_facing' | 'company_wide' | 'custom'
 
@@ -435,9 +436,7 @@ function ReportCard({ report }: { report: Report }) {
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h4 className="font-medium text-warm-900">{report.name}</h4>
-              {report.isLocked && (
-                <span title="Period locked"><Lock className="h-3.5 w-3.5 text-warm-400" /></span>
-              )}
+              {report.isLocked ? <span title="Period locked"><Lock className="h-3.5 w-3.5 text-warm-400" /></span> : null}
             </div>
             <p className="text-sm text-warm-500 mt-0.5">{report.description}</p>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -448,31 +447,23 @@ function ReportCard({ report }: { report: Report }) {
                 <AudIcon className="h-3 w-3" />
                 {audConfig.label}
               </span>
-              {report.aiNarrativeAvailable && (
-                <span className="text-xs text-stone-600 flex items-center gap-1">
+              {report.aiNarrativeAvailable ? <span className="text-xs text-stone-600 flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
                   AI narrative
-                </span>
-              )}
-              {report.accessRoles && (
-                <span className="text-xs text-warm-400 flex items-center gap-1">
+                </span> : null}
+              {report.accessRoles ? <span className="text-xs text-warm-400 flex items-center gap-1">
                   <Shield className="h-3 w-3" />
                   {report.accessRoles.join(', ')}
-                </span>
-              )}
+                </span> : null}
             </div>
             <div className="flex items-center gap-3 mt-1.5">
-              {report.lastRun && (
-                <span className="text-xs text-warm-400">
+              {report.lastRun ? <span className="text-xs text-warm-400">
                   Last run: {formatDate(report.lastRun)}
-                </span>
-              )}
-              {report.dataFreshness && (
-                <span className="text-xs text-green-500 flex items-center gap-1">
+                </span> : null}
+              {report.dataFreshness ? <span className="text-xs text-green-500 flex items-center gap-1">
                   <Timer className="h-3 w-3" />
                   Data: {report.dataFreshness}
-                </span>
-              )}
+                </span> : null}
             </div>
           </div>
         </div>
@@ -521,12 +512,10 @@ function ScheduledReportRow({ report }: { report: ScheduledReport }) {
         </span>
       </div>
       <div className="flex items-center gap-4">
-        {report.conditionalRule && (
-          <span className="text-xs text-stone-600 flex items-center gap-1" title={report.conditionalRule}>
+        {report.conditionalRule ? <span className="text-xs text-stone-600 flex items-center gap-1" title={report.conditionalRule}>
             <AlertTriangle className="h-3 w-3" />
             Conditional
-          </span>
-        )}
+          </span> : null}
         <div className="flex items-center gap-1 text-sm text-warm-500">
           <Mail className="h-3.5 w-3.5" />
           <span>{report.recipients.length} recipient{report.recipients.length > 1 ? 's' : ''}</span>
@@ -570,26 +559,22 @@ function RecentReportRow({ report }: { report: RecentReport }) {
             <AudIcon className="h-3 w-3" />
             {audInfo.label}
           </span>
-          {report.aiNarrative && (
-            <span className="text-xs text-stone-600 flex items-center gap-1">
+          {report.aiNarrative ? <span className="text-xs text-stone-600 flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
               AI narrative
-            </span>
-          )}
+            </span> : null}
         </div>
         <div className="flex items-center gap-4 mt-1">
           <span className="text-xs text-warm-400">{report.generatedAt}</span>
           <span className="text-xs text-warm-400">by {report.generatedBy}</span>
         </div>
-        {report.highlights && (
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
+        {report.highlights ? <div className="flex items-center gap-2 mt-2 flex-wrap">
             {report.highlights.map((highlight, idx) => (
               <span key={idx} className="text-xs bg-stone-50 text-stone-700 px-2 py-0.5 rounded">
                 {highlight}
               </span>
             ))}
-          </div>
-        )}
+          </div> : null}
       </div>
       <div className="flex items-center gap-2 ml-2">
         <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">

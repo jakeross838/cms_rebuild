@@ -21,10 +21,11 @@ import {
   Receipt,
   BookCheck,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface Payment {
   id: string
@@ -223,12 +224,10 @@ function PaymentCard({ payment }: { payment: Payment }) {
           <StatusIcon className="h-3 w-3" />
           {status.label}
         </span>
-        {methodInfo && MethodIcon && (
-          <span className="text-xs text-warm-500 bg-warm-100 px-2 py-1 rounded flex items-center gap-1">
+        {methodInfo && MethodIcon ? <span className="text-xs text-warm-500 bg-warm-100 px-2 py-1 rounded flex items-center gap-1">
             <MethodIcon className="h-3 w-3" />
             {methodInfo.label}
-          </span>
-        )}
+          </span> : null}
         {payment.qbSynced !== undefined && (
           <span className={cn(
             "text-xs px-1.5 py-0.5 rounded flex items-center gap-1",
@@ -280,23 +279,19 @@ function PaymentCard({ payment }: { payment: Payment }) {
         )}
       </div>
 
-      {payment.status === 'refunded' && payment.refundReason && (
-        <div className="mb-3 text-xs text-stone-600 bg-warm-50 px-2 py-1.5 rounded">
+      {payment.status === 'refunded' && payment.refundReason ? <div className="mb-3 text-xs text-stone-600 bg-warm-50 px-2 py-1.5 rounded">
           Reason: {payment.refundReason}
-        </div>
-      )}
+        </div> : null}
 
       {payment.status === 'pending' && (
         <div className="pt-3 border-t border-warm-100">
           <div className="text-xs text-warm-500 mb-2 flex items-center gap-2 flex-wrap">
-            {payment.linkSent && <span>Link sent: {payment.linkSent}</span>}
-            {payment.linkViewed && <span>| Viewed: {payment.linkViewed}</span>}
-            {payment.linkExpires && (
-              <span className="text-amber-500 flex items-center gap-1">
+            {payment.linkSent ? <span>Link sent: {payment.linkSent}</span> : null}
+            {payment.linkViewed ? <span>| Viewed: {payment.linkViewed}</span> : null}
+            {payment.linkExpires ? <span className="text-amber-500 flex items-center gap-1">
                 <Timer className="h-3 w-3" />
                 Expires: {payment.linkExpires}
-              </span>
-            )}
+              </span> : null}
           </div>
           <div className="flex gap-2">
             <button className="flex-1 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700 flex items-center justify-center gap-1">
@@ -338,12 +333,10 @@ function PaymentCard({ payment }: { payment: Payment }) {
         <div className="pt-3 border-t border-warm-100 flex items-center justify-between">
           <span className="text-xs text-warm-500">Paid: {payment.paidAt}</span>
           <div className="flex items-center gap-2">
-            {payment.receiptUrl && (
-              <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
+            {payment.receiptUrl ? <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                 <Download className="h-3 w-3" />
                 Receipt
-              </button>
-            )}
+              </button> : null}
           </div>
         </div>
       )}

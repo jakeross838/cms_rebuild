@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { AssembliesPreview } from '@/components/skeleton/previews/assemblies-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const workflow = ['Create Assembly', 'Add to Estimate', 'Customize', 'Track Performance']

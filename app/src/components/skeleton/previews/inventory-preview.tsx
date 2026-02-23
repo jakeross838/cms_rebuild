@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Download,
@@ -16,10 +17,11 @@ import {
   TrendingUp,
   ArrowDownToLine,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // -- Types -------------------------------------------------------------------
 
@@ -471,7 +473,7 @@ export function InventoryPreview() {
               <th className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Total Value</th>
               <th className="text-center py-2.5 px-3 text-xs font-medium text-warm-500">Status</th>
               <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Last Activity</th>
-              <th className="text-center py-2.5 px-3 text-xs font-medium text-warm-500"></th>
+              <th className="text-center py-2.5 px-3 text-xs font-medium text-warm-500" />
             </tr>
           </thead>
           <tbody>

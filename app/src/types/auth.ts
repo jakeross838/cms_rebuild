@@ -88,6 +88,13 @@ export interface UserProfile {
   updated_at: string
 }
 
+/** Company info for multi-tenant context */
+export interface CompanyInfo {
+  id: string
+  name: string
+  role: UserRole
+}
+
 /** Auth context available to components */
 export interface AuthContext {
   user: { id: string; email: string } | null
@@ -97,6 +104,10 @@ export interface AuthContext {
   signOut: () => Promise<void>
   can: (resource: PermissionResource, action: PermissionAction, scope?: PermissionScope) => boolean
   hasRole: (requiredRole: UserRole) => boolean
+  // Multi-tenant company context
+  currentCompany: CompanyInfo | null
+  companies: CompanyInfo[]
+  switchCompany: (companyId: string) => Promise<boolean>
 }
 
 /** Company settings relevant to auth */

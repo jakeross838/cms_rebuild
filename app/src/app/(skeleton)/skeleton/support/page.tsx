@@ -6,18 +6,13 @@ import {
   MessageCircle,
   BookOpen,
   FileText,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   ChevronRight,
-  ExternalLink,
-  HelpCircle,
   Star,
   Sparkles,
-  Phone,
   Mail,
   Video,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const popularArticles = [
@@ -182,7 +177,7 @@ export default function CustomerSupportPage() {
           <Sparkles className="h-5 w-5 text-stone-600 mt-0.5" />
           <div>
             <div className="font-medium text-teal-800">AI Support Assistant</div>
-            <p className="text-sm text-stone-700 mt-1">Based on your recent activity, you might find these helpful: "How to handle vendor name variations in invoice processing" and "Setting up approval thresholds for POs over $10K". Your open ticket about QuickBooks duplicates is being investigated -- typical resolution time is 4 hours.</p>
+            <p className="text-sm text-stone-700 mt-1">Based on your recent activity, you might find these helpful: &quot;How to handle vendor name variations in invoice processing&quot; and &quot;Setting up approval thresholds for POs over $10K&quot;. Your open ticket about QuickBooks duplicates is being investigated -- typical resolution time is 4 hours.</p>
           </div>
         </div>
       </div>

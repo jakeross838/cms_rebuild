@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Users,
   Mail,
@@ -23,10 +24,11 @@ import {
   Briefcase,
   Key,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types (Job-Specific Team Roster)
@@ -335,20 +337,16 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
             )}>
               {getInitials(member.name)}
             </div>
-            {member.is_primary && (
-              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber-400 flex items-center justify-center border-2 border-white">
+            {member.is_primary ? <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber-400 flex items-center justify-center border-2 border-white">
                 <Star className="h-3 w-3 text-amber-800" />
-              </div>
-            )}
+              </div> : null}
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h4 className="font-medium text-warm-900">{member.name}</h4>
-              {member.is_primary && (
-                <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
+              {member.is_primary ? <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
                   PRIMARY
-                </span>
-              )}
+                </span> : null}
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <RoleIcon className={cn("h-3.5 w-3.5", roleConfig.textColor)} />
@@ -396,12 +394,10 @@ function JobTeamMemberCard({ member }: { member: JobTeamMember }) {
           <Calendar className="h-3 w-3" />
           <span>Start: {formatDate(member.start_date)}</span>
         </div>
-        {member.end_date && (
-          <div className="flex items-center gap-1">
+        {member.end_date ? <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             <span>End: {formatDate(member.end_date)}</span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Responsibilities */}
@@ -544,7 +540,7 @@ function StatCard({
         <div>
           <p className="text-sm text-warm-500">{label}</p>
           <p className="text-xl font-semibold text-warm-900">{value}</p>
-          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
+          {subValue ? <p className="text-xs text-warm-400">{subValue}</p> : null}
         </div>
       </div>
     </div>

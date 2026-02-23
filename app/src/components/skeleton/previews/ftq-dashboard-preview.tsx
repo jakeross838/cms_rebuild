@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   TrendingUp,
   TrendingDown,
@@ -26,10 +27,11 @@ import {
   AlertCircle,
   ExternalLink,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel, type AIFeatureCardProps } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -326,8 +328,7 @@ function DateRangeSelector({
         <ChevronDown className="h-4 w-4" />
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg border border-warm-200 shadow-lg z-10">
+      {isOpen ? <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg border border-warm-200 shadow-lg z-10">
           <div className="py-1">
             {dateRangePresets.map(preset => (
               <button
@@ -345,8 +346,7 @@ function DateRangeSelector({
               </button>
             ))}
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -381,19 +381,17 @@ function KPICard({
         <div className={cn("p-2 rounded-lg", colorClasses[color].icon)}>
           <Icon className="h-5 w-5" />
         </div>
-        {trend && delta !== undefined && (
-          <div className={cn(
+        {trend && delta !== undefined ? <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
             trend === 'up' ? "text-green-600" : trend === 'down' ? "text-red-600" : "text-warm-500"
           )}>
             {trend === 'up' ? <TrendingUp className="h-3 w-3" /> : trend === 'down' ? <TrendingDown className="h-3 w-3" /> : null}
             {delta > 0 ? '+' : ''}{delta.toFixed(1)}%
-          </div>
-        )}
+          </div> : null}
       </div>
       <div className="text-2xl font-bold text-warm-900">{value}</div>
       <div className="text-sm text-warm-600 mt-1">{label}</div>
-      {subLabel && <div className="text-xs text-warm-400 mt-0.5">{subLabel}</div>}
+      {subLabel ? <div className="text-xs text-warm-400 mt-0.5">{subLabel}</div> : null}
     </div>
   )
 }
@@ -495,7 +493,7 @@ function ProjectFTQTable({ projects }: { projects: ProjectFTQScore[] }) {
                 Inspections
               </th>
               <th className="text-left py-2 px-3 font-medium text-warm-600">Last Updated</th>
-              <th className="py-2 px-3"></th>
+              <th className="py-2 px-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-100">
@@ -580,11 +578,9 @@ function FTQTrendChart({ data }: { data: TrendDataPoint[] }) {
               <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-medium text-warm-700">
                 {point.ftqScore}%
               </span>
-              {point.annotation && (
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-warm-500 whitespace-nowrap bg-white px-1 rounded">
+              {point.annotation ? <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-warm-500 whitespace-nowrap bg-white px-1 rounded">
                   {point.annotation}
-                </span>
-              )}
+                </span> : null}
             </div>
             <span className="text-xs text-warm-500">{point.date}</span>
           </div>
@@ -627,7 +623,7 @@ function VendorRankingsTable({ vendors, type }: { vendors: VendorRanking[]; type
               <th className="text-right py-2 px-3 font-medium text-warm-600">FTQ</th>
               <th className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
               <th className="text-right py-2 px-3 font-medium text-warm-600">Inspections</th>
-              <th className="py-2 px-3"></th>
+              <th className="py-2 px-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-100">

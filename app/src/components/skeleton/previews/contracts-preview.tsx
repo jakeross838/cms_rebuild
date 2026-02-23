@@ -24,10 +24,11 @@ import {
   AlertCircle,
   ArrowRight,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type ContractStatus = 'draft' | 'internal_review' | 'sent' | 'signed' | 'active' | 'complete' | 'amended'
 type ContractType = 'fixed_price' | 'cost_plus' | 'gmp' | 't_and_m' | 'hybrid'
@@ -283,12 +284,10 @@ function ContractCard({ contract }: { contract: Contract }) {
         <span className={cn("text-xs px-2 py-0.5 rounded font-medium", party.color)}>
           {party.label}
         </span>
-        {contract.insuranceVerified && (
-          <span className="text-xs px-1.5 py-0.5 rounded bg-green-50 text-green-600 flex items-center gap-0.5">
+        {contract.insuranceVerified ? <span className="text-xs px-1.5 py-0.5 rounded bg-green-50 text-green-600 flex items-center gap-0.5">
             <Shield className="h-3 w-3" />
             COI
-          </span>
-        )}
+          </span> : null}
       </div>
 
       <div className="space-y-1.5 mb-3">
@@ -312,30 +311,20 @@ function ContractCard({ contract }: { contract: Contract }) {
             <span className="text-warm-700 text-xs">{contract.retainagePct}%</span>
           </div>
         )}
-        {contract.templateName && (
-          <div className="flex items-center gap-1.5 text-xs text-warm-500">
+        {contract.templateName ? <div className="flex items-center gap-1.5 text-xs text-warm-500">
             <Layers className="h-3 w-3" />
             <span>{contract.templateName}</span>
-            {contract.clauseCount && (
-              <span className="text-warm-400">({contract.clauseCount} clauses)</span>
-            )}
-          </div>
-        )}
-        {contract.lenderName && (
-          <div className="flex items-center gap-1.5 text-xs text-warm-500">
+            {contract.clauseCount ? <span className="text-warm-400">({contract.clauseCount} clauses)</span> : null}
+          </div> : null}
+        {contract.lenderName ? <div className="flex items-center gap-1.5 text-xs text-warm-500">
             <Landmark className="h-3 w-3" />
             <span>{contract.lenderName}</span>
-            {contract.drawScheduleType && (
-              <span className="text-warm-400">({contract.drawScheduleType} draws)</span>
-            )}
-          </div>
-        )}
-        {contract.warrantyTerms && (
-          <div className="flex items-center gap-1.5 text-xs text-warm-500">
+            {contract.drawScheduleType ? <span className="text-warm-400">({contract.drawScheduleType} draws)</span> : null}
+          </div> : null}
+        {contract.warrantyTerms ? <div className="flex items-center gap-1.5 text-xs text-warm-500">
             <Shield className="h-3 w-3" />
             <span className="truncate" title={contract.warrantyTerms}>{contract.warrantyTerms}</span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Amendments and change directives */}
@@ -370,23 +359,17 @@ function ContractCard({ contract }: { contract: Contract }) {
           <span className="text-xs">{signature.label}</span>
         </div>
         <div className="flex items-center gap-2">
-          {contract.state && (
-            <span className="text-[10px] text-warm-400 bg-warm-50 px-1.5 py-0.5 rounded">{contract.state}</span>
-          )}
-          {contract.daysSinceSent && contract.status === 'sent' && (
-            <span className="text-xs text-warm-500">
+          {contract.state ? <span className="text-[10px] text-warm-400 bg-warm-50 px-1.5 py-0.5 rounded">{contract.state}</span> : null}
+          {contract.daysSinceSent && contract.status === 'sent' ? <span className="text-xs text-warm-500">
               {contract.daysSinceSent}d ago
-            </span>
-          )}
+            </span> : null}
         </div>
       </div>
 
-      {contract.aiNote && (
-        <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+      {contract.aiNote ? <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-amber-700">{contract.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

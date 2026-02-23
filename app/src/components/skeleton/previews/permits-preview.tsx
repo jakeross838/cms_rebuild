@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Download,
@@ -29,10 +30,11 @@ import {
   PauseCircle,
   PlayCircle,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -453,8 +455,7 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
       </div>
 
       {/* Hold Status UI */}
-      {permit.status === 'on_hold' && permit.hold && (
-        <div className="mb-3 p-3 bg-sand-50 border border-sand-200 rounded-lg">
+      {permit.status === 'on_hold' && permit.hold ? <div className="mb-3 p-3 bg-sand-50 border border-sand-200 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <PauseCircle className="h-4 w-4 text-sand-600" />
             <span className="font-semibold text-orange-800">{permit.hold.reason}</span>
@@ -489,31 +490,24 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
             <PlayCircle className="h-3.5 w-3.5" />
             Resolve Hold
           </button>
-        </div>
-      )}
+        </div> : null}
 
       <div className="space-y-2 mb-3">
         <div className="flex items-center gap-2 text-sm text-warm-600">
           <MapPin className="h-4 w-4 text-warm-400" />
           <span>{permit.jurisdiction}</span>
-          {permit.onlinePortalUrl && (
-            <a className="text-stone-600 hover:text-stone-700 text-xs flex items-center gap-0.5">
+          {permit.onlinePortalUrl ? <a className="text-stone-600 hover:text-stone-700 text-xs flex items-center gap-0.5">
               Portal <ChevronRight className="h-3 w-3" />
-            </a>
-          )}
+            </a> : null}
         </div>
-        {permit.permitNumber && (
-          <div className="flex items-center gap-2 text-sm text-warm-600">
+        {permit.permitNumber ? <div className="flex items-center gap-2 text-sm text-warm-600">
             <FileText className="h-4 w-4 text-warm-400" />
             <span className="font-mono">{permit.permitNumber}</span>
-          </div>
-        )}
-        {permit.codeEdition && (
-          <div className="flex items-center gap-2 text-xs text-warm-500">
+          </div> : null}
+        {permit.codeEdition ? <div className="flex items-center gap-2 text-xs text-warm-500">
             <Shield className="h-3.5 w-3.5 text-warm-400" />
             <span>{permit.codeEdition}</span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Dates */}
@@ -543,34 +537,27 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
           <span className="text-warm-400">Fee</span>
           <p className="font-medium text-warm-700">
             {permit.feeActual ? formatCurrency(permit.feeActual) : formatCurrency(permit.feeEstimated)}
-            {permit.feeActual && permit.feeActual !== permit.feeEstimated && (
-              <span className={cn('ml-1 text-xs', permit.feeActual > permit.feeEstimated ? 'text-red-500' : 'text-green-500')}>
+            {permit.feeActual && permit.feeActual !== permit.feeEstimated ? <span className={cn('ml-1 text-xs', permit.feeActual > permit.feeEstimated ? 'text-red-500' : 'text-green-500')}>
                 (est: {formatCurrency(permit.feeEstimated)})
-              </span>
-            )}
+              </span> : null}
           </p>
         </div>
       </div>
 
       {/* Inspector */}
-      {permit.inspector && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-warm-500">
+      {permit.inspector ? <div className="mt-2 flex items-center gap-2 text-xs text-warm-500">
           <Building2 className="h-3.5 w-3.5" />
           <span>{permit.inspector}</span>
-          {permit.inspectorPhone && <span className="text-warm-400">{permit.inspectorPhone}</span>}
-        </div>
-      )}
+          {permit.inspectorPhone ? <span className="text-warm-400">{permit.inspectorPhone}</span> : null}
+        </div> : null}
 
       {/* Conditions */}
-      {permit.conditions && permit.conditions.length > 0 && (
-        <div className="mt-2 p-2 bg-amber-50 rounded text-xs text-amber-700">
+      {permit.conditions && permit.conditions.length > 0 ? <div className="mt-2 p-2 bg-amber-50 rounded text-xs text-amber-700">
           <span className="font-medium">Conditions:</span> {permit.conditions.join(' | ')}
-        </div>
-      )}
+        </div> : null}
 
       {/* Required Documents */}
-      {permit.requiredDocuments && (
-        <div className="mt-2">
+      {permit.requiredDocuments ? <div className="mt-2">
           <div className="flex items-center gap-3 flex-wrap">
             {permit.requiredDocuments.map((doc, idx) => (
               <span key={idx} className={cn(
@@ -586,28 +573,23 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
               </span>
             ))}
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* Schedule Dependencies */}
-      {permit.scheduleDependencies && permit.scheduleDependencies.length > 0 && (
-        <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
+      {permit.scheduleDependencies && permit.scheduleDependencies.length > 0 ? <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
           <Link2 className="h-3.5 w-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
           <div className="text-xs text-amber-700">
             {permit.scheduleDependencies.map((dep, idx) => (
               <p key={idx}>{dep}</p>
             ))}
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* AI Note */}
-      {permit.aiNote && (
-        <div className="mt-2 p-2 bg-stone-50 rounded-md flex items-start gap-2">
+      {permit.aiNote ? <div className="mt-2 p-2 bg-stone-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-stone-600 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-stone-700">{permit.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
 
       {/* Expired permit - Renewal workflow */}
       {permit.status === 'expired' && (
@@ -619,20 +601,16 @@ function PermitCard({ permit, onResolveHold, onApplyRenewal }: {
               <p className="text-xs text-red-600 mt-0.5">Dependent work blocked until renewed</p>
             </div>
           </div>
-          {permit.renewalDeadline && (
-            <div className="flex items-center gap-4 text-xs text-red-700 mb-2">
+          {permit.renewalDeadline ? <div className="flex items-center gap-4 text-xs text-red-700 mb-2">
               <span className="flex items-center gap-1">
                 <CalendarClock className="h-3.5 w-3.5" />
                 Deadline: {formatDate(permit.renewalDeadline)}
               </span>
-              {permit.renewalFeeEstimate && (
-                <span className="flex items-center gap-1">
+              {permit.renewalFeeEstimate ? <span className="flex items-center gap-1">
                   <DollarSign className="h-3.5 w-3.5" />
                   Est. Fee: {formatCurrency(permit.renewalFeeEstimate)}
-                </span>
-              )}
-            </div>
-          )}
+                </span> : null}
+            </div> : null}
           <button
             onClick={() => onApplyRenewal?.(permit.id)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors"
@@ -762,9 +740,7 @@ function COPrerequisiteChecklist({ prerequisites }: { prerequisites: COPrerequis
                       )}>
                         {item.name}
                       </span>
-                      {item.details && (
-                        <p className="text-warm-500 text-[10px]">{item.details}</p>
-                      )}
+                      {item.details ? <p className="text-warm-500 text-[10px]">{item.details}</p> : null}
                     </div>
                   </div>
                 ))}
@@ -811,22 +787,18 @@ function UtilityCard({ utility, onTransfer }: { utility: UtilityConnection; onTr
       </p>
 
       {/* Transfer confirmation */}
-      {utility.transferConfirmed && utility.transferDate && (
-        <div className="mt-1 text-[10px] text-stone-600">
+      {utility.transferConfirmed && utility.transferDate ? <div className="mt-1 text-[10px] text-stone-600">
           Transferred {formatDate(utility.transferDate)}
-        </div>
-      )}
+        </div> : null}
 
       {/* Transfer button for complete utilities */}
-      {canTransfer && (
-        <button
+      {canTransfer ? <button
           onClick={() => onTransfer?.(utility.id)}
           className="mt-1.5 flex items-center gap-1 mx-auto px-2 py-0.5 bg-green-600 text-white text-[10px] font-medium rounded hover:bg-green-700 transition-colors"
         >
           <ArrowRightLeft className="h-2.5 w-2.5" />
           Transfer
-        </button>
-      )}
+        </button> : null}
     </div>
   )
 }

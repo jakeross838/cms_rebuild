@@ -143,6 +143,7 @@ async function flushMetrics(): Promise<void> {
     const supabase = await createClient()
 
     await supabase.from('api_metrics').insert(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       toFlush.map((m) => ({
         company_id: m.companyId,
         endpoint: m.endpoint,
@@ -179,17 +180,20 @@ export async function recordAudit(entry: AuditEntry): Promise<void> {
   try {
     const supabase = await createClient()
 
-    await supabase.from('audit_log').insert({
-      company_id: entry.companyId,
-      user_id: entry.userId,
-      action: entry.action,
-      table_name: entry.tableName,
-      record_id: entry.recordId,
-      old_data: entry.oldData,
-      new_data: entry.newData,
-      ip_address: entry.ipAddress,
-      user_agent: entry.userAgent,
-    } as any)
+    await supabase.from('audit_log').insert(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {
+        company_id: entry.companyId,
+        user_id: entry.userId,
+        action: entry.action,
+        table_name: entry.tableName,
+        record_id: entry.recordId,
+        old_data: entry.oldData,
+        new_data: entry.newData,
+        ip_address: entry.ipAddress,
+        user_agent: entry.userAgent,
+      } as any
+    )
   } catch (error) {
     console.error('Failed to record audit log:', error)
   }
@@ -261,7 +265,6 @@ export async function checkHealth(): Promise<HealthStatus> {
   services.queue = services.database
 
   // Determine overall status
-  const allUp = Object.values(services).every((s) => s === 'up')
   const anyDown = Object.values(services).some((s) => s === 'down')
 
   let status: HealthStatus['status'] = 'healthy'

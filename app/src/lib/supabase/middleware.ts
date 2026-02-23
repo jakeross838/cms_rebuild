@@ -1,5 +1,6 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+
+import { createServerClient } from '@supabase/ssr'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -35,7 +36,10 @@ export async function updateSession(request: NextRequest) {
   // Protected routes - redirect to login if not authenticated
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') ||
                       request.nextUrl.pathname.startsWith('/signup') ||
-                      request.nextUrl.pathname.startsWith('/auth')
+                      request.nextUrl.pathname.startsWith('/auth') ||
+                      request.nextUrl.pathname.startsWith('/forgot-password') ||
+                      request.nextUrl.pathname.startsWith('/reset-password') ||
+                      request.nextUrl.pathname.startsWith('/accept-invite')
 
   const isPublicRoute = request.nextUrl.pathname === '/' ||
                         request.nextUrl.pathname.startsWith('/portal') ||
@@ -49,7 +53,9 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  if (user && isAuthRoute) {
+  // Exception: reset-password needs to work with recovery sessions
+  const isPasswordResetFlow = request.nextUrl.pathname.startsWith('/reset-password')
+  if (user && isAuthRoute && !isPasswordResetFlow) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)

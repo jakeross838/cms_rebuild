@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+
 import {
-  Building2,
   DollarSign,
   Briefcase,
   Calendar,
@@ -11,15 +11,14 @@ import {
   AlertTriangle,
   Clock,
   Users,
-  Truck,
   FileText,
   ArrowRight,
   Sparkles,
   CheckCircle2,
-  XCircle,
   Target,
   ChevronRight,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 // Mock data for the dashboard

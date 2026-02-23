@@ -24,9 +24,7 @@ export default function GlobalError({
           <p style={{ color: '#666', maxWidth: '400px', textAlign: 'center' }}>
             A critical error occurred. Please refresh the page.
           </p>
-          {error.digest && (
-            <p style={{ color: '#999', fontSize: '0.75rem' }}>Error ID: {error.digest}</p>
-          )}
+          {error.digest ? <p style={{ color: '#999', fontSize: '0.75rem' }}>Error ID: {error.digest}</p> : null}
           <button
             onClick={reset}
             style={{

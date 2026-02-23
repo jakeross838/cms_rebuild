@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+
 import {
   Building2,
   MapPin,
@@ -13,10 +14,11 @@ import {
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface Job {
   id: string
@@ -186,12 +188,10 @@ function JobCard({ job }: { job: Job }) {
         </span>
       </div>
 
-      {job.alert && (
-        <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+      {job.alert ? <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-amber-700">{job.alert}</span>
-        </div>
-      )}
+        </div> : null}
     </Link>
   )
 }
@@ -220,7 +220,7 @@ function StatCard({
         <div>
           <p className="text-sm text-warm-500">{label}</p>
           <p className="text-xl font-semibold text-warm-900">{value}</p>
-          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
+          {subValue ? <p className="text-xs text-warm-400">{subValue}</p> : null}
         </div>
       </div>
     </div>

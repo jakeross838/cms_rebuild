@@ -35,8 +35,9 @@ import {
   Mail,
   Phone,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -495,9 +496,7 @@ function SummaryCardComponent({ card }: { card: SummaryCard }) {
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex items-center gap-2">
-          {card.sparkline && (
-            <MiniSparkline data={card.sparkline} color={card.color} />
-          )}
+          {card.sparkline ? <MiniSparkline data={card.sparkline} color={card.color} /> : null}
           <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
             card.trend === 'up' ? "text-green-600" : "text-red-600"
@@ -647,12 +646,10 @@ function OvernightAlertWidget({ alerts }: { alerts: OvernightAlert[] }) {
                     <span>{alert.source}</span>
                     <span className="text-warm-300">|</span>
                     <span>{alert.timestamp}</span>
-                    {alert.jobRef && (
-                      <>
+                    {alert.jobRef ? <>
                         <span className="text-warm-300">|</span>
                         <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{alert.jobRef}</span>
-                      </>
-                    )}
+                      </> : null}
                   </div>
                 </div>
                 {alert.category === 'action_required' && (
@@ -932,11 +929,9 @@ function InspectionsList({ inspections }: { inspections: UpcomingInspection[] })
                   </span>
                   <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{inspection.jobId}</span>
                 </div>
-                {inspection.permitRef && (
-                  <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded mt-1 inline-block">
+                {inspection.permitRef ? <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded mt-1 inline-block">
                     {inspection.permitRef}
-                  </span>
-                )}
+                  </span> : null}
               </div>
               <div className="text-right">
                 <div className="text-sm font-medium text-warm-900">{inspection.date}</div>
@@ -1021,12 +1016,10 @@ function ActivityFeed({ activities }: { activities: RecentActivity[] }) {
                     <span>{activity.user}</span>
                     <span className="text-warm-300">|</span>
                     <span>{activity.timestamp}</span>
-                    {activity.jobRef && (
-                      <>
+                    {activity.jobRef ? <>
                         <span className="text-warm-300">|</span>
                         <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{activity.jobRef}</span>
-                      </>
-                    )}
+                      </> : null}
                   </div>
                 </div>
               </div>

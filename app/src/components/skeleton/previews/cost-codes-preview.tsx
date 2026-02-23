@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
+
 import {
   Plus,
   Sparkles,
@@ -24,11 +25,12 @@ import {
   FileText,
   BarChart3,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
-import React from 'react'
+import { cn } from '@/lib/utils'
+
 
 interface CostCode {
   id: string
@@ -283,9 +285,7 @@ function CostCodeRow({
           </span>
         </td>
         <td className="py-3 px-3 text-center">
-          {code.defaultUnit && (
-            <span className="text-xs text-warm-500 font-mono">{code.defaultUnit}</span>
-          )}
+          {code.defaultUnit ? <span className="text-xs text-warm-500 font-mono">{code.defaultUnit}</span> : null}
         </td>
         <td className="py-3 px-3 text-right">
           {code.defaultUnitCost ? (
@@ -548,7 +548,7 @@ export function CostCodesPreview() {
               <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Labor</th>
               <th className="text-left py-3 px-3 font-medium text-warm-600 w-24">Links</th>
               <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Usage</th>
-              <th className="w-28"></th>
+              <th className="w-28" />
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-warm-100">
@@ -562,7 +562,7 @@ export function CostCodesPreview() {
                     expanded={isExpanded}
                     onToggle={() => toggleCode(code.id)}
                   />
-                  {isExpanded && code.children?.map(child => (
+                  {isExpanded ? code.children?.map(child => (
                     <CostCodeRow
                       key={child.id}
                       code={child}
@@ -570,7 +570,7 @@ export function CostCodesPreview() {
                       expanded={false}
                       onToggle={() => {}}
                     />
-                  ))}
+                  )) : null}
                 </React.Fragment>
               )
             })}

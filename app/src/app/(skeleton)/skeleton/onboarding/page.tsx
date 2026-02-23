@@ -17,6 +17,7 @@ import {
   ArrowRight,
   Play,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const setupSteps = [

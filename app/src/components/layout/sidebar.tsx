@@ -1,19 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import {
   Building2,
   LayoutDashboard,
   Briefcase,
   Users,
-  FileText,
-  Receipt,
-  ClipboardList,
-  Calendar,
-  Camera,
   FolderOpen,
   BarChart3,
   Settings,
@@ -23,8 +19,9 @@ import {
   Wrench,
   DollarSign,
   CheckSquare,
-  Shield,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 interface SidebarProps {
   user: {
@@ -137,8 +134,7 @@ export function Sidebar({ user }: SidebarProps) {
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             )}
           </button>
-          {isOpen && (
-            <div className="ml-9 mt-1 space-y-1 border-l border-border/50 pl-2 py-1">
+          {isOpen ? <div className="ml-9 mt-1 space-y-1 border-l border-border/50 pl-2 py-1">
               {item.children?.map((child) => (
                 <Link
                   key={child.href}
@@ -153,8 +149,7 @@ export function Sidebar({ user }: SidebarProps) {
                   {child.name}
                 </Link>
               ))}
-            </div>
-          )}
+            </div> : null}
         </div>
       )
     }
@@ -205,8 +200,7 @@ export function Sidebar({ user }: SidebarProps) {
       </div>
 
       {/* User info */}
-      {user && (
-        <div className="p-4 border-t border-border/40">
+      {user ? <div className="p-4 border-t border-border/40">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
               <span className="text-sm font-semibold text-primary">
@@ -220,8 +214,7 @@ export function Sidebar({ user }: SidebarProps) {
               <div className="text-xs text-muted-foreground capitalize">{user.role}</div>
             </div>
           </div>
-        </div>
-      )}
+        </div> : null}
     </aside>
   )
 }

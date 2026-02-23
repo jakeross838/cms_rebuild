@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Settings,
   Building2,
@@ -37,8 +38,9 @@ import {
   MapPin,
   BookText,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -299,20 +301,16 @@ function SettingsCategoryCard({ category, onClick }: { category: SettingsCategor
             {category.status === 'needs-attention' && (
               <AlertCircle className="h-4 w-4 text-amber-500" />
             )}
-            {category.module && (
-              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{category.module}</span>
-            )}
+            {category.module ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{category.module}</span> : null}
           </div>
           <p className="text-sm text-warm-500 mb-2">{category.description}</p>
-          {category.subItems && (
-            <div className="flex flex-wrap gap-1">
+          {category.subItems ? <div className="flex flex-wrap gap-1">
               {category.subItems.map((item, i) => (
                 <span key={i} className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
                   {item}
                 </span>
               ))}
-            </div>
-          )}
+            </div> : null}
         </div>
         <ChevronRight className="h-5 w-5 text-warm-400" />
       </div>
@@ -332,15 +330,11 @@ function QuickSettingsCard({ title, settings, icon: Icon }: { title: string; set
           <div key={i} className="flex items-center justify-between py-2 border-b border-warm-100 last:border-0">
             <div className="flex items-center gap-2">
               <span className="text-sm text-warm-600">{setting.label}</span>
-              {setting.moduleRef && (
-                <span className="text-xs bg-warm-50 text-warm-400 px-1 py-0.5 rounded">{setting.moduleRef}</span>
-              )}
+              {setting.moduleRef ? <span className="text-xs bg-warm-50 text-warm-400 px-1 py-0.5 rounded">{setting.moduleRef}</span> : null}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-warm-900">{setting.value}</span>
-              {setting.editable && (
-                <button className="text-xs text-stone-600 hover:text-stone-700">Edit</button>
-              )}
+              {setting.editable ? <button className="text-xs text-stone-600 hover:text-stone-700">Edit</button> : null}
             </div>
           </div>
         ))}
@@ -381,9 +375,7 @@ function IntegrationStatus() {
               )}>
                 {integration.status === 'connected' ? 'Connected' : 'Not Connected'}
               </span>
-              {integration.lastSync && (
-                <span className="text-xs text-warm-500">{integration.lastSync}</span>
-              )}
+              {integration.lastSync ? <span className="text-xs text-warm-500">{integration.lastSync}</span> : null}
             </div>
           </div>
         ))}

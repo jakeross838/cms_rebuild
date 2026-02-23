@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Upload,
   Download,
@@ -34,10 +35,11 @@ import {
   Lock,
   Brain,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface DocumentFile {
   id: string
@@ -468,12 +470,10 @@ function FileRow({ file }: { file: DocumentFile }) {
               v{file.version}
             </span>
           )}
-          {file.portalVisible && (
-            <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+          {file.portalVisible ? <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
               <Eye className="h-3 w-3" />
               Portal
-            </span>
-          )}
+            </span> : null}
           {file.status === 'archived' && (
             <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded">Archived</span>
           )}
@@ -487,26 +487,20 @@ function FileRow({ file }: { file: DocumentFile }) {
         <div className="flex items-center gap-3 text-xs text-warm-500 mt-0.5">
           <span className="uppercase font-medium">{file.type}</span>
           <span>{file.size}</span>
-          {file.aiClassification && (
-            <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+          {file.aiClassification ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
               {file.aiClassification.replace(/_/g, ' ')}
-            </span>
-          )}
+            </span> : null}
           {file.aiConfidence !== undefined && file.aiConfidence < 0.9 && (
             <span className="text-xs text-amber-600">
               {Math.round(file.aiConfidence * 100)}% conf.
             </span>
           )}
-          {file.extractionStatus && file.extractionStatus !== 'completed' && (
-            <span className={cn("text-xs px-1.5 py-0.5 rounded", extractionStatusConfig[file.extractionStatus]?.color)}>
+          {file.extractionStatus && file.extractionStatus !== 'completed' ? <span className={cn("text-xs px-1.5 py-0.5 rounded", extractionStatusConfig[file.extractionStatus]?.color)}>
               {extractionStatusConfig[file.extractionStatus]?.label}
-            </span>
-          )}
-          {file.ingestedVia && file.ingestedVia !== 'upload' && (
-            <span className="text-xs text-warm-400 flex items-center gap-0.5">
+            </span> : null}
+          {file.ingestedVia && file.ingestedVia !== 'upload' ? <span className="text-xs text-warm-400 flex items-center gap-0.5">
               via {ingestMethodConfig[file.ingestedVia]?.label}
-            </span>
-          )}
+            </span> : null}
         </div>
         {/* Cross-module connection badges */}
         {file.linkedEntities.length > 0 && (
@@ -532,26 +526,20 @@ function FileRow({ file }: { file: DocumentFile }) {
           </div>
         )}
         {/* Approval workflow status */}
-        {file.approvalStatus && (
-          <div className="mt-1">
+        {file.approvalStatus ? <div className="mt-1">
             <span className={cn("text-xs px-1.5 py-0.5 rounded", approvalStatusConfig[file.approvalStatus]?.color)}>
               {approvalStatusConfig[file.approvalStatus]?.label}
             </span>
-          </div>
-        )}
+          </div> : null}
         {/* Expiration warning */}
-        {isExpiringSoon && file.expiresAt && (
-          <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+        {isExpiringSoon && file.expiresAt ? <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
             <AlertTriangle className="h-3 w-3" />
             <span>Expires {formatDate(file.expiresAt)} ({daysUntil(file.expiresAt)} days)</span>
-          </div>
-        )}
-        {file.aiNote && (
-          <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+          </div> : null}
+        {file.aiNote ? <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
             <Sparkles className="h-3 w-3" />
             <span>{file.aiNote}</span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       <div className="hidden md:flex items-center gap-1.5 text-sm text-warm-500">

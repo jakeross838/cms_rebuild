@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { SettingsPreview } from '@/components/skeleton/previews/settings-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [

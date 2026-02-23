@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { ChartOfAccountsPreview } from '@/components/skeleton/previews/chart-of-accounts-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const chartOfAccountsWorkflow = ['Create Account', 'Configure Hierarchy', 'Post Transactions', 'Review Balances', 'Close Period']

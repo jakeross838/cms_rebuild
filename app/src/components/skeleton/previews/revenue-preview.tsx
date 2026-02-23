@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   TrendingUp,
   DollarSign,
@@ -31,6 +32,7 @@ import {
   Eye,
   FileText,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 // Types
@@ -319,8 +321,7 @@ function BonusCard({ bonus }: { bonus: EmployeeBonus }) {
               View breakdown
             </button>
 
-            {expanded && (
-              <div className="mt-2 space-y-2 text-sm">
+            {expanded ? <div className="mt-2 space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-warm-600">Base Bonus</span>
                   <span className="text-warm-700">{formatCurrency(bonus.baseBonus)}</span>
@@ -342,8 +343,7 @@ function BonusCard({ bonus }: { bonus: EmployeeBonus }) {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              </div> : null}
           </div>
         </div>
       </div>
@@ -379,8 +379,7 @@ function FormulaCard({ formula }: { formula: BonusFormula }) {
         </span>
       </div>
 
-      {formula.type === 'tiered' && formula.tiers && (
-        <div className="space-y-1 mb-3">
+      {formula.type === 'tiered' && formula.tiers ? <div className="space-y-1 mb-3">
           {formula.tiers.map((tier, idx) => (
             <div key={idx} className="flex items-center justify-between text-xs">
               <span className="text-warm-600">
@@ -389,14 +388,11 @@ function FormulaCard({ formula }: { formula: BonusFormula }) {
               <span className="text-warm-700 font-medium">{tier.rate}%</span>
             </div>
           ))}
-        </div>
-      )}
+        </div> : null}
 
-      {formula.type === 'percentage' && formula.basePercentage && (
-        <p className="text-sm text-warm-700 mb-3">
+      {formula.type === 'percentage' && formula.basePercentage ? <p className="text-sm text-warm-700 mb-3">
           <span className="font-semibold">{formula.basePercentage}%</span> of project profit
-        </p>
-      )}
+        </p> : null}
 
       <div className="pt-2 border-t border-warm-100">
         <p className="text-xs text-warm-500 mb-1">Conditions:</p>

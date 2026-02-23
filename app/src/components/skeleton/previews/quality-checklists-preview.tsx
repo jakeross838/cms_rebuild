@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Search,
@@ -34,10 +35,11 @@ import {
   ChevronUp,
   Settings,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -997,26 +999,20 @@ function ChecklistDetailSection() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-warm-900">{item.description}</span>
-                        {item.isFTQRated && (
-                          <span className="text-[10px] bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">
+                        {item.isFTQRated ? <span className="text-[10px] bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">
                             FTQ
-                          </span>
-                        )}
-                        {item.isConditional && (
-                          <span
+                          </span> : null}
+                        {item.isConditional ? <span
                             className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5"
                             title={item.conditionDescription}
                           >
                             <GitBranch className="h-2.5 w-2.5" />
                             Conditional
-                          </span>
-                        )}
-                        {item.isApprovalGate && (
-                          <span className="text-[10px] bg-warm-100 text-warm-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5">
+                          </span> : null}
+                        {item.isApprovalGate ? <span className="text-[10px] bg-warm-100 text-warm-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5">
                             <Lock className="h-2.5 w-2.5" />
                             Gate
-                          </span>
-                        )}
+                          </span> : null}
                       </div>
                       {/* Measurement display */}
                       {item.valueType === 'measurement' && item.measurementMin !== undefined && (
@@ -1038,12 +1034,10 @@ function ChecklistDetailSection() {
 
                     {/* Result */}
                     <div className="flex items-center gap-2">
-                      {item.hasPhoto && (
-                        <span className="text-xs text-warm-400 flex items-center gap-1">
+                      {item.hasPhoto ? <span className="text-xs text-warm-400 flex items-center gap-1">
                           <Camera className="h-3 w-3" />
                           {item.photoCount}
-                        </span>
-                      )}
+                        </span> : null}
                       {item.result === 'pass' && (
                         <span className="flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">
                           <CheckCircle2 className="h-3 w-3" />
@@ -1278,15 +1272,13 @@ export function QualityChecklistsPreview() {
             )}
 
             {/* Checklist Detail View */}
-            {showDetailView && (
-              <div className="mt-6">
+            {showDetailView ? <div className="mt-6">
                 <h4 className="font-medium text-warm-900 mb-3 flex items-center gap-2">
                   <Eye className="h-4 w-4 text-stone-600" />
                   Checklist Detail View
                 </h4>
                 <ChecklistDetailSection />
-              </div>
-            )}
+              </div> : null}
           </div>
         )}
 

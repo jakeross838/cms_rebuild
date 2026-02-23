@@ -26,10 +26,11 @@ import {
   Package,
   Shield,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type ProposalStatus = 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined' | 'expired'
 type ContractType = 'nte' | 'gmp' | 'cost_plus' | 'fixed'
@@ -329,12 +330,10 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
             Allowances: {formatCurrency(proposal.allowancesTotal)}
           </div>
         )}
-        {proposal.dateSent && (
-          <div className="flex items-center gap-1.5 text-xs text-warm-600">
+        {proposal.dateSent ? <div className="flex items-center gap-1.5 text-xs text-warm-600">
             <Calendar className="h-3 w-3" />
             <span>Sent {proposal.dateSent}</span>
-          </div>
-        )}
+          </div> : null}
         {proposal.viewCount > 0 && (
           <div className="flex items-center gap-1.5 text-xs text-warm-600">
             <Eye className="h-3 w-3" />
@@ -346,16 +345,13 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
                 <span>{proposal.timeSpentMinutes} min</span>
               </>
             )}
-            {proposal.lastViewed && (
-              <>
+            {proposal.lastViewed ? <>
                 <span className="text-warm-300">|</span>
                 <span>Last: {proposal.lastViewed}</span>
-              </>
-            )}
+              </> : null}
           </div>
         )}
-        {proposal.expiresAt && (
-          <div className={cn(
+        {proposal.expiresAt ? <div className={cn(
             "flex items-center gap-1.5 text-xs",
             proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 0 ? "text-sand-600 font-medium" :
             proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 7 ? "text-amber-600" : "text-warm-500"
@@ -366,8 +362,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
               {proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry > 0 && ` (${proposal.daysUntilExpiry}d)`}
               {proposal.daysUntilExpiry !== null && proposal.daysUntilExpiry <= 0 && ' (expired)'}
             </span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-warm-100">
@@ -404,8 +399,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
         </div>
       </div>
 
-      {proposal.aiNote && (
-        <div className={cn(
+      {proposal.aiNote ? <div className={cn(
           "mt-2 p-2 rounded-md flex items-start gap-2",
           proposal.status === 'expired' ? "bg-sand-50" : "bg-stone-50"
         )}>
@@ -417,8 +411,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
             "text-xs",
             proposal.status === 'expired' ? "text-sand-700" : "text-stone-700"
           )}>{proposal.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

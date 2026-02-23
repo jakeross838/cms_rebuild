@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   AlertCircle,
@@ -23,10 +24,11 @@ import {
   Building2,
   Link2,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -370,23 +372,17 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
         <span className={cn('text-xs px-2 py-1 rounded font-medium', determination.color)}>
           {determination.label}
         </span>
-        {claim.assignedVendor && (
-          <span className="text-xs px-2 py-1 rounded font-medium bg-stone-50 text-stone-700 flex items-center gap-1">
+        {claim.assignedVendor ? <span className="text-xs px-2 py-1 rounded font-medium bg-stone-50 text-stone-700 flex items-center gap-1">
             <User className="h-3 w-3" />
             {claim.assignedVendor}
-          </span>
-        )}
-        {claim.fromWalkthrough && (
-          <span className="text-xs px-2 py-1 rounded font-medium bg-stone-50 text-stone-700 flex items-center gap-1">
+          </span> : null}
+        {claim.fromWalkthrough ? <span className="text-xs px-2 py-1 rounded font-medium bg-stone-50 text-stone-700 flex items-center gap-1">
             <Link2 className="h-3 w-3" />
             {claim.fromWalkthrough}
-          </span>
-        )}
-        {claim.vendorDisputed && (
-          <span className="text-xs px-2 py-1 rounded font-medium bg-red-50 text-red-700">
+          </span> : null}
+        {claim.vendorDisputed ? <span className="text-xs px-2 py-1 rounded font-medium bg-red-50 text-red-700">
             Disputed
-          </span>
-        )}
+          </span> : null}
       </div>
 
       {/* SLA Timer */}
@@ -417,12 +413,10 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
           )}>
             {claim.vendorDispatchStatus.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
           </span>
-          {claim.scheduledServiceDate && (
-            <span className="flex items-center gap-1">
+          {claim.scheduledServiceDate ? <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Service: {claim.scheduledServiceDate}
-            </span>
-          )}
+            </span> : null}
         </div>
       )}
 
@@ -440,11 +434,9 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
             <span className="flex items-center gap-1 text-xs font-medium text-warm-700">
               <DollarSign className="h-3 w-3" />
               {formatCurrency(claim.cost)}
-              {claim.costBreakdown && (
-                <span className="text-warm-400 font-normal">
+              {claim.costBreakdown ? <span className="text-warm-400 font-normal">
                   (L:{formatCurrency(claim.costBreakdown.labor)} M:{formatCurrency(claim.costBreakdown.materials)})
-                </span>
-              )}
+                </span> : null}
             </span>
           )}
         </div>
@@ -456,20 +448,16 @@ function ClaimCard({ claim }: { claim: WarrantyClaim }) {
       </div>
 
       {/* Resolution Notes */}
-      {claim.resolutionNotes && (
-        <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
+      {claim.resolutionNotes ? <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
           <CheckCircle2 className="h-3 w-3 inline mr-1" />
           {claim.resolutionNotes}
-        </div>
-      )}
+        </div> : null}
 
       {/* AI Note */}
-      {claim.aiNote && (
-        <div className="mt-2 p-2 bg-stone-50 rounded-md flex items-start gap-2">
+      {claim.aiNote ? <div className="mt-2 p-2 bg-stone-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-stone-600 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-stone-700">{claim.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -498,7 +486,7 @@ function StatCard({
         <div>
           <p className="text-xs text-warm-500">{label}</p>
           <p className="text-lg font-semibold text-warm-900">{value}</p>
-          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
+          {subValue ? <p className="text-xs text-warm-400">{subValue}</p> : null}
         </div>
       </div>
     </div>

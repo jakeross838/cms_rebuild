@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Star,
@@ -31,10 +32,11 @@ import {
   Target,
   Briefcase,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface PerformanceScores {
   quality: number
@@ -486,8 +488,7 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
         </div>
       </div>
 
-      {vendor.aiNote && (
-        <div className={cn(
+      {vendor.aiNote ? <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2",
           vendor.insuranceStatus === 'expired' || vendor.status === 'conditional'
             ? "bg-amber-50"
@@ -507,8 +508,7 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
           )}>
             {vendor.aiNote}
           </span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

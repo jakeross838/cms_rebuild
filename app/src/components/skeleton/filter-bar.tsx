@@ -1,8 +1,11 @@
 'use client'
 
 import { type ReactNode } from 'react'
-import { Search, Grid3X3, List, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
+
+import { Search, Grid3X3, List, ArrowUp, ArrowDown } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
+
 import type { LucideIcon } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -106,8 +109,7 @@ export function FilterBar({
   return (
     <div className="space-y-3">
       {/* Row 1 — Tabs (only if present) */}
-      {hasTabs && (
-        <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
+      {hasTabs ? <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -125,15 +127,12 @@ export function FilterBar({
               )}
             </button>
           ))}
-        </div>
-      )}
+        </div> : null}
 
       {/* Row 2 — Search + Dropdowns + Sort + Children + View Toggle + Actions */}
-      {hasControls && (
-        <div className="flex items-center gap-2 flex-wrap">
+      {hasControls ? <div className="flex items-center gap-2 flex-wrap">
           {/* Search */}
-          {onSearchChange && (
-            <div className="relative">
+          {onSearchChange ? <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-warm-400" />
               <input
                 type="text"
@@ -142,8 +141,7 @@ export function FilterBar({
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="pl-8 pr-3 py-1.5 text-xs border border-warm-200 rounded-md w-48 bg-white focus:outline-none focus:border-stone-400 focus:shadow-[var(--shadow-focus)]"
               />
-            </div>
-          )}
+            </div> : null}
 
           {/* Dropdown filters */}
           {dropdowns?.map((dropdown, i) => (
@@ -163,8 +161,7 @@ export function FilterBar({
           ))}
 
           {/* Sort */}
-          {sortOptions && sortOptions.length > 0 && (
-            <div className="flex items-center gap-0.5">
+          {sortOptions && sortOptions.length > 0 ? <div className="flex items-center gap-0.5">
               <select
                 value={activeSort ?? ''}
                 onChange={(e) => onSortChange?.(e.target.value)}
@@ -177,8 +174,7 @@ export function FilterBar({
                   </option>
                 ))}
               </select>
-              {activeSort && onSortDirectionChange && (
-                <button
+              {activeSort && onSortDirectionChange ? <button
                   onClick={onSortDirectionChange}
                   className="p-1.5 text-warm-500 hover:bg-warm-100 rounded-lg transition-colors"
                   title={sortDirection === 'asc' ? 'Ascending' : 'Descending'}
@@ -188,10 +184,8 @@ export function FilterBar({
                   ) : (
                     <ArrowDown className="h-3.5 w-3.5" />
                   )}
-                </button>
-              )}
-            </div>
-          )}
+                </button> : null}
+            </div> : null}
 
           {/* Extra content slot */}
           {children}
@@ -209,8 +203,7 @@ export function FilterBar({
             )}
 
           {/* View toggle */}
-          {onViewModeChange && (
-            <div className="flex border border-warm-200 rounded-lg overflow-hidden">
+          {onViewModeChange ? <div className="flex border border-warm-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => onViewModeChange('grid')}
                 className={cn(
@@ -235,8 +228,7 @@ export function FilterBar({
               >
                 <List className="h-4 w-4" />
               </button>
-            </div>
-          )}
+            </div> : null}
 
           {/* Actions */}
           {actions?.map((action, i) => (
@@ -250,12 +242,11 @@ export function FilterBar({
                   : 'bg-white border border-warm-200 text-warm-700 hover:bg-warm-50',
               )}
             >
-              {action.icon && <action.icon className="h-3.5 w-3.5" />}
+              {action.icon ? <action.icon className="h-3.5 w-3.5" /> : null}
               {action.label}
             </button>
           ))}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

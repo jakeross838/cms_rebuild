@@ -11,12 +11,10 @@ import {
   Award,
   Calendar,
   Users,
-  Star,
   Sparkles,
-  ChevronRight,
   Lock,
-  BarChart3,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const courses = [
@@ -54,7 +52,7 @@ export default function TrainingCertificationPage() {
             <GraduationCap className="h-6 w-6 text-amber-700" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Training & Certification</h1>
+            <h1 className="text-2xl font-bold text-foreground">Training &amp; Certification</h1>
             <p className="text-sm text-muted-foreground">Module 47 -- Learn the platform, earn certifications, attend webinars</p>
           </div>
         </div>
@@ -187,7 +185,7 @@ export default function TrainingCertificationPage() {
           <Sparkles className="h-5 w-5 text-amber-600 mt-0.5" />
           <div>
             <div className="font-medium text-amber-800">Learning Recommendation</div>
-            <p className="text-sm text-amber-700 mt-1">You are using advanced reporting features frequently but have not completed the "Advanced Reporting & Analytics" course. Finishing it would unlock 12 power-user techniques that could save you 3+ hours per week. Your team members have an average training completion rate of 42% -- consider scheduling a group training session.</p>
+            <p className="text-sm text-amber-700 mt-1">You are using advanced reporting features frequently but have not completed the &quot;Advanced Reporting &amp; Analytics&quot; course. Finishing it would unlock 12 power-user techniques that could save you 3+ hours per week. Your team members have an average training completion rate of 42% -- consider scheduling a group training session.</p>
           </div>
         </div>
       </div>

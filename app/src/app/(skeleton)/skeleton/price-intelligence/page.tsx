@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { PriceIntelligencePreview } from '@/components/skeleton/previews/price-intelligence-preview'
-import { PageSpec } from '@/components/skeleton/page-spec'
+
 import { Eye, BookOpen } from 'lucide-react'
+
+import { PageSpec } from '@/components/skeleton/page-spec'
+import { PriceIntelligencePreview } from '@/components/skeleton/previews/price-intelligence-preview'
 import { cn } from '@/lib/utils'
 
 export default function PriceIntelligencePage() {

@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { EquipmentPreview } from '@/components/skeleton/previews/equipment-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const workflow = ['Register Asset', 'Deploy to Job', 'Track Usage/GPS', 'Schedule Maintenance', 'Return/Checkout', 'Depreciate/Dispose']

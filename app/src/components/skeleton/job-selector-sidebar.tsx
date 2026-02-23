@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname, useParams } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import {
   ArrowLeft,
   Search,
@@ -11,6 +12,8 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 // ── Mock job data ─────────────────────────────────────────────
 // In production, this would come from API/context
@@ -133,8 +136,7 @@ export function JobSelectorSidebar() {
       </button>
 
       {/* ── Jobs List ── */}
-      {isExpanded && (
-        <nav className="flex-1 overflow-y-auto">
+      {isExpanded ? <nav className="flex-1 overflow-y-auto">
           <div className="p-2 space-y-0.5">
             {filteredJobs.map((job) => {
               const isCurrentJob = job.id === currentJobId
@@ -177,8 +179,7 @@ export function JobSelectorSidebar() {
                   </Link>
 
                   {/* ── Hover card with details ── */}
-                  {isHovered && !isCurrentJob && (
-                    <div className="absolute left-full top-0 ml-2 w-64 bg-popover border border-border rounded-lg shadow-lg p-3 z-50">
+                  {isHovered && !isCurrentJob ? <div className="absolute left-full top-0 ml-2 w-64 bg-popover border border-border rounded-lg shadow-lg p-3 z-50">
                       <div className="space-y-2">
                         <div>
                           <div className="font-semibold text-sm">{job.name}</div>
@@ -195,8 +196,7 @@ export function JobSelectorSidebar() {
                           Click to view {currentPagePath ? currentPagePath.slice(1).replace(/-/g, ' ') : 'overview'}
                         </div>
                       </div>
-                    </div>
-                  )}
+                    </div> : null}
                 </div>
               )
             })}
@@ -207,8 +207,7 @@ export function JobSelectorSidebar() {
               </div>
             )}
           </div>
-        </nav>
-      )}
+        </nav> : null}
 
       {/* ── Status Legend ── */}
       <div className="p-3 border-t border-border bg-muted/30">

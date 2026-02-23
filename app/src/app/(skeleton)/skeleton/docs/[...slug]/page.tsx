@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'next/navigation'
+
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
+
+import { ArrowLeft, StickyNote, X, Plus } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { ArrowLeft, StickyNote, Save, X, Plus } from 'lucide-react'
 
 interface Note {
   id: string
@@ -90,7 +92,7 @@ export default function DocViewer() {
         <div className="h-6 bg-muted rounded animate-pulse w-32" />
         <div className="h-8 bg-muted rounded animate-pulse w-64" />
         {Array.from({ length: 20 }).map((_, i) => (
-          <div key={i} className="h-4 bg-muted rounded animate-pulse" style={{ width: `${60 + Math.random() * 40}%` }} />
+          <div key={i} className="h-4 bg-muted rounded animate-pulse" style={{ width: `${60 + (i % 5) * 8}%` }} />
         ))}
       </div>
     )
@@ -132,8 +134,7 @@ export default function DocViewer() {
       </div>
 
       {/* Notes Panel */}
-      {showNotes && (
-        <div className="w-80 shrink-0">
+      {showNotes ? <div className="w-80 shrink-0">
           <div className="sticky top-4 border rounded-lg bg-card">
             <div className="p-3 border-b flex items-center justify-between">
               <h3 className="font-semibold text-sm flex items-center gap-1.5">
@@ -200,8 +201,7 @@ export default function DocViewer() {
               )}
             </div>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
+
 import {
   Brain,
   ChevronDown,
@@ -15,6 +15,8 @@ import {
   Target,
   Lightbulb,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -181,12 +183,10 @@ export function AIFeatureCard({
             <span className={cn('text-sm font-medium', config.text)}>
               {feature}
             </span>
-            {trigger && (
-              <span className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium', config.badge)}>
+            {trigger ? <span className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium', config.badge)}>
                 <TriggerIcon className="h-2.5 w-2.5" />
                 {triggerInfo?.label || trigger}
-              </span>
-            )}
+              </span> : null}
             {confidence !== undefined && (
               <ConfidenceMeter value={confidence} />
             )}
@@ -200,22 +200,16 @@ export function AIFeatureCard({
           )}
 
           {/* Detail (if expanded) */}
-          {detail && !isCollapsed && (
-            <p className="mt-2 text-xs text-muted-foreground">
+          {detail && !isCollapsed ? <p className="mt-2 text-xs text-muted-foreground">
               {detail}
-            </p>
-          )}
+            </p> : null}
 
           {/* Footer: timestamp + action */}
-          {(!collapsible || !isCollapsed) && (timestamp || action) && (
-            <div className="mt-2 flex items-center justify-between">
-              {timestamp && (
-                <span className="text-[10px] text-muted-foreground">
+          {(!collapsible || !isCollapsed) && (timestamp || action) ? <div className="mt-2 flex items-center justify-between">
+              {timestamp ? <span className="text-[10px] text-muted-foreground">
                   {timestamp.toLocaleString()}
-                </span>
-              )}
-              {action && (
-                <button
+                </span> : null}
+              {action ? <button
                   onClick={(e) => {
                     e.stopPropagation()
                     action.onClick()
@@ -227,22 +221,18 @@ export function AIFeatureCard({
                   )}
                 >
                   {action.label}
-                </button>
-              )}
-            </div>
-          )}
+                </button> : null}
+            </div> : null}
         </div>
 
         {/* Collapse toggle */}
-        {collapsible && (
-          <div className={cn('mt-0.5', config.icon)}>
+        {collapsible ? <div className={cn('mt-0.5', config.icon)}>
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
             ) : (
               <ChevronDown className="h-4 w-4" />
             )}
-          </div>
-        )}
+          </div> : null}
       </div>
     </div>
   )

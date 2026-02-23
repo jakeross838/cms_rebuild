@@ -3,19 +3,16 @@
 import {
   Puzzle,
   CheckCircle2,
-  Circle,
   Search,
   Settings,
   Key,
   Webhook,
-  ExternalLink,
   RefreshCw,
   Sparkles,
-  AlertTriangle,
-  Clock,
   Zap,
   Filter,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const integrations = [
@@ -112,11 +109,9 @@ export default function ApiMarketplacePage() {
                     <span className="text-xs bg-muted px-1.5 py-0.5 rounded">{integ.category}</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">{integ.description}</div>
-                  {integ.lastSync && (
-                    <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                  {integ.lastSync ? <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
                       <RefreshCw className="h-3 w-3" />Last sync: {integ.lastSync}
-                    </div>
-                  )}
+                    </div> : null}
                 </div>
               </div>
               {integ.status === 'connected' ? (

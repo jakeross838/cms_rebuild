@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Upload,
   Download,
@@ -39,11 +40,11 @@ import {
   Archive,
   Check,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
+import { AIFeatureCard, AIFeaturesPanel , BulkSelectBar } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
-import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
-import { BulkSelectBar } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 interface DocumentFile {
   id: string
@@ -539,12 +540,10 @@ function FileRow({
                 v{file.version}
               </span>
             )}
-            {file.portalVisible && (
-              <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            {file.portalVisible ? <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Eye className="h-3 w-3" />
                 Client
-              </span>
-            )}
+              </span> : null}
             {file.sharedWithVendors.length > 0 && (
               <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Share2 className="h-3 w-3" />
@@ -558,11 +557,9 @@ function FileRow({
           <div className="flex items-center gap-3 text-xs text-warm-500 mt-0.5">
             <span className="uppercase font-medium">{file.type}</span>
             <span>{file.size}</span>
-            {file.aiClassification && (
-              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+            {file.aiClassification ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 {file.aiClassification.replace(/_/g, ' ')}
-              </span>
-            )}
+              </span> : null}
             {file.extractionStatus !== 'completed' && (
               <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded",
@@ -589,26 +586,20 @@ function FileRow({
             </div>
           )}
           {/* Approval status */}
-          {file.approvalStatus && (
-            <div className="mt-1">
+          {file.approvalStatus ? <div className="mt-1">
               <span className={cn("text-xs px-1.5 py-0.5 rounded", approvalStatusConfig[file.approvalStatus]?.color)}>
                 {approvalStatusConfig[file.approvalStatus]?.label}
               </span>
-            </div>
-          )}
+            </div> : null}
           {/* Expiration warning */}
-          {isExpiringSoon && file.expiresAt && (
-            <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+          {isExpiringSoon && file.expiresAt ? <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
               <AlertTriangle className="h-3 w-3" />
               <span>Expires {formatDate(file.expiresAt)} ({daysUntil(file.expiresAt)} days)</span>
-            </div>
-          )}
-          {file.aiNote && (
-            <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+            </div> : null}
+          {file.aiNote ? <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
               <Sparkles className="h-3 w-3" />
               <span>{file.aiNote}</span>
-            </div>
-          )}
+            </div> : null}
         </div>
 
         <div className="hidden md:flex items-center gap-1.5 text-sm text-warm-500">
@@ -670,11 +661,9 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
         <div className="text-sm font-medium text-warm-900 break-words">{file.name}</div>
         <div className="flex items-center gap-2 mt-1">
           <span className="text-xs text-warm-500 uppercase">{file.type} File</span>
-          {file.aiClassification && (
-            <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+          {file.aiClassification ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
               {file.aiClassification.replace(/_/g, ' ')}
-            </span>
-          )}
+            </span> : null}
         </div>
       </div>
 
@@ -726,8 +715,7 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
             </span>
           </div>
         )}
-        {file.expiresAt && (
-          <div className="flex justify-between">
+        {file.expiresAt ? <div className="flex justify-between">
             <span className="text-warm-500">Expires</span>
             <span className={cn(
               "font-medium",
@@ -737,8 +725,7 @@ function FileDetailsPanel({ file, onClose }: { file: DocumentFile; onClose: () =
             )}>
               {formatDate(file.expiresAt)}
             </span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Tags */}
@@ -1282,8 +1269,7 @@ export function JobFilesPreview() {
       </div>
 
       {/* Upload Dropzone */}
-      {showUploadZone && (
-        <div className="bg-white border-b border-warm-200 px-4 py-4 space-y-3">
+      {showUploadZone ? <div className="bg-white border-b border-warm-200 px-4 py-4 space-y-3">
           <UploadDropzone fileCount={0} totalSize={0} />
 
           {/* Upload progress indicators */}
@@ -1299,8 +1285,7 @@ export function JobFilesPreview() {
               ))}
             </div>
           )}
-        </div>
-      )}
+        </div> : null}
 
       {/* Storage Quota */}
       <div className="bg-white border-b border-warm-200 px-4 py-3">
@@ -1433,12 +1418,10 @@ export function JobFilesPreview() {
         </div>
 
         {/* File Details Panel */}
-        {selectedFile && (
-          <FileDetailsPanel
+        {selectedFile ? <FileDetailsPanel
             file={selectedFile}
             onClose={() => setSelectedFile(null)}
-          />
-        )}
+          /> : null}
       </div>
 
       {/* Document AI Insights Panel */}
@@ -1483,12 +1466,10 @@ export function JobFilesPreview() {
       </div>
 
       {/* Document Preview Modal */}
-      {previewFile && (
-        <DocumentPreviewModal
+      {previewFile ? <DocumentPreviewModal
           file={previewFile}
           onClose={() => setPreviewFile(null)}
-        />
-      )}
+        /> : null}
     </div>
   )
 }

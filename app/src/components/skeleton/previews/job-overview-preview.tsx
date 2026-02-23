@@ -41,8 +41,10 @@ import {
   FolderOpen,
   BookOpen,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel, type AIFeatureCardProps } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
+
 import { AIAssistantPanel } from './ai-assistant-panel'
 
 // ---------------------------------------------------------------------------
@@ -562,9 +564,7 @@ function SummaryHeader({ job }: { job: JobOverview }) {
               {/* Warranty Status Badge */}
               <span className={cn("text-xs px-2 py-0.5 rounded font-medium", warrantyConfig.color)}>
                 {warrantyConfig.label}
-                {job.warrantyStatus === 'warranty-period' && job.warrantyEndDate && (
-                  <span className="ml-1">- Ends: {job.warrantyEndDate}</span>
-                )}
+                {job.warrantyStatus === 'warranty-period' && job.warrantyEndDate ? <span className="ml-1">- Ends: {job.warrantyEndDate}</span> : null}
               </span>
             </div>
             <div className="flex items-center gap-4 mt-2 text-sm text-warm-600">
@@ -762,29 +762,23 @@ function MetricCardComponent({ metric }: { metric: MetricCard }) {
         <div className={cn("p-2 rounded-lg", colors.icon)}>
           <Icon className="h-5 w-5" />
         </div>
-        {metric.trend && (
-          <div className={cn(
+        {metric.trend ? <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
             metric.trend === 'up' ? "text-green-600" : metric.trend === 'down' ? "text-amber-600" : "text-warm-500"
           )}>
             {metric.trend === 'up' ? <TrendingUp className="h-3 w-3" /> : metric.trend === 'down' ? <TrendingDown className="h-3 w-3" /> : null}
             {metric.trendValue}
-          </div>
-        )}
+          </div> : null}
       </div>
       <div className="mt-3">
         <div className="text-2xl font-bold text-warm-900">{metric.value}</div>
         <div className="text-sm text-warm-600 mt-0.5">{metric.label}</div>
-        {metric.subValue && (
-          <div className="text-xs text-warm-400 mt-0.5">{metric.subValue}</div>
-        )}
+        {metric.subValue ? <div className="text-xs text-warm-400 mt-0.5">{metric.subValue}</div> : null}
       </div>
-      {metric.drillDownTo && (
-        <div className="mt-1 flex items-center gap-1 text-xs text-stone-500">
+      {metric.drillDownTo ? <div className="mt-1 flex items-center gap-1 text-xs text-stone-500">
           <ExternalLink className="h-3 w-3" />
           View details
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -815,9 +809,7 @@ function WeatherWidget({ weather }: { weather: WeatherData }) {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-warm-500">{day.high}F / {day.low}F</span>
-                {day.riskFlag && (
-                  <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Outdoor risk</span>
-                )}
+                {day.riskFlag ? <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Outdoor risk</span> : null}
               </div>
             </div>
           )
@@ -862,15 +854,11 @@ function MilestoneTracker({ milestones }: { milestones: Milestone[] }) {
                     <span className={cn("text-sm font-medium", milestone.status === 'completed' ? 'text-warm-500' : 'text-warm-900')}>
                       {milestone.name}
                     </span>
-                    {milestone.completedDate && (
-                      <span className="text-xs text-green-600 ml-2">{milestone.completedDate}</span>
-                    )}
+                    {milestone.completedDate ? <span className="text-xs text-green-600 ml-2">{milestone.completedDate}</span> : null}
                   </div>
                   <div className="text-right">
                     <span className="text-xs text-warm-500">{milestone.date}</span>
-                    {milestone.predictedDate && milestone.predictedDate !== milestone.date && (
-                      <div className="text-xs text-amber-600 font-medium">AI: {milestone.predictedDate}</div>
-                    )}
+                    {milestone.predictedDate && milestone.predictedDate !== milestone.date ? <div className="text-xs text-amber-600 font-medium">AI: {milestone.predictedDate}</div> : null}
                   </div>
                 </div>
               </div>
@@ -899,13 +887,9 @@ function TeamRoster({ team }: { team: TeamAssignment[] }) {
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm text-warm-900">{member.name}</span>
                   <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">{member.role}</span>
-                  {member.trade && (
-                    <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{member.trade}</span>
-                  )}
+                  {member.trade ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{member.trade}</span> : null}
                 </div>
-                {member.company && (
-                  <span className="text-xs text-warm-400">{member.company}</span>
-                )}
+                {member.company ? <span className="text-xs text-warm-400">{member.company}</span> : null}
               </div>
               <div className="flex items-center gap-2">
                 <span className={cn(
@@ -1012,11 +996,8 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
                       <div className="text-sm text-warm-600 mt-0.5">{activity.description}</div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      {activity.refId && (
-                        <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{activity.refId}</span>
-                      )}
-                      {activity.metadata && (
-                        <span className={cn(
+                      {activity.refId ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{activity.refId}</span> : null}
+                      {activity.metadata ? <span className={cn(
                           "text-xs font-medium px-2 py-1 rounded",
                           activity.type === 'change-order' ? "bg-amber-100 text-amber-700" :
                           activity.type === 'invoice' ? "bg-green-100 text-green-700" :
@@ -1024,8 +1005,7 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
                           "bg-warm-100 text-warm-600"
                         )}>
                           {activity.metadata}
-                        </span>
-                      )}
+                        </span> : null}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-1.5 text-xs text-warm-400">
@@ -1062,11 +1042,9 @@ function QuickLinksGrid({ links }: { links: QuickLink[] }) {
                   <div className="p-2.5 rounded-lg bg-warm-100 group-hover:bg-stone-100 transition-colors">
                     <Icon className="h-5 w-5 text-warm-600 group-hover:text-stone-600 transition-colors" />
                   </div>
-                  {link.alert && (
-                    <div className={cn("absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white",
+                  {link.alert ? <div className={cn("absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white",
                       link.badgeColor === 'amber' ? 'bg-amber-500' : 'bg-red-500'
-                    )} />
-                  )}
+                    )} /> : null}
                 </div>
                 <div className="text-center">
                   <div className="text-xs font-medium text-warm-700 group-hover:text-stone-600 transition-colors">

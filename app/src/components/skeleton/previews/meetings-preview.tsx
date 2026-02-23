@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Calendar,
   Clock,
@@ -32,6 +33,7 @@ import {
   Pause,
   Square,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 // Types
@@ -287,26 +289,20 @@ function MeetingCard({ meeting, onSelect }: { meeting: Meeting; onSelect: () => 
           <span>{meeting.startTime} - {meeting.endTime}</span>
         </div>
 
-        {meeting.location && (
-          <div className="flex items-center gap-2">
+        {meeting.location ? <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-warm-400" />
             <span>{meeting.location}</span>
-          </div>
-        )}
+          </div> : null}
 
-        {meeting.videoLink && (
-          <div className="flex items-center gap-2">
+        {meeting.videoLink ? <div className="flex items-center gap-2">
             <Video className="h-4 w-4 text-warm-400" />
             <span className="text-blue-600">Video Conference</span>
-          </div>
-        )}
+          </div> : null}
 
-        {meeting.jobName && (
-          <div className="flex items-center gap-2">
+        {meeting.jobName ? <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-warm-400" />
             <span>{meeting.jobName}</span>
-          </div>
-        )}
+          </div> : null}
 
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-warm-400" />
@@ -371,19 +367,15 @@ function MeetingDetail({ meeting, onClose }: { meeting: Meeting; onClose: () => 
                 <Clock className="h-4 w-4 text-warm-400" />
                 <span>{meeting.startTime} - {meeting.endTime}</span>
               </div>
-              {meeting.location && (
-                <div className="flex items-center gap-2 text-warm-600">
+              {meeting.location ? <div className="flex items-center gap-2 text-warm-600">
                   <MapPin className="h-4 w-4 text-warm-400" />
                   <span>{meeting.location}</span>
-                </div>
-              )}
-              {meeting.videoLink && (
-                <a href={meeting.videoLink} className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+                </div> : null}
+              {meeting.videoLink ? <a href={meeting.videoLink} className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
                   <Video className="h-4 w-4" />
                   <span>Join Video Call</span>
                   <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
+                </a> : null}
             </div>
             <div>
               <p className="text-xs text-warm-500 mb-2">Attendees</p>
@@ -417,12 +409,10 @@ function MeetingDetail({ meeting, onClose }: { meeting: Meeting; onClose: () => 
                     {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                     {isRecording ? 'Stop Recording' : 'Start Recording'}
                   </button>
-                  {isRecording && (
-                    <span className="text-xs text-red-600 flex items-center gap-1">
+                  {isRecording ? <span className="text-xs text-red-600 flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                       Recording...
-                    </span>
-                  )}
+                    </span> : null}
                 </div>
                 <span className="text-xs text-warm-500">AI transcription enabled</span>
               </div>
@@ -465,11 +455,8 @@ function MeetingDetail({ meeting, onClose }: { meeting: Meeting; onClose: () => 
                         <span className="font-medium text-warm-800">{item.title}</span>
                         <span className="text-xs text-warm-500">{item.duration} min</span>
                       </div>
-                      {item.presenter && (
-                        <p className="text-xs text-warm-500 mt-0.5">Presenter: {item.presenter}</p>
-                      )}
-                      {activeAgendaItem === item.id && item.actionItems && (
-                        <div className="mt-2 pt-2 border-t border-warm-100">
+                      {item.presenter ? <p className="text-xs text-warm-500 mt-0.5">Presenter: {item.presenter}</p> : null}
+                      {activeAgendaItem === item.id && item.actionItems ? <div className="mt-2 pt-2 border-t border-warm-100">
                           <p className="text-xs text-warm-500 mb-1">Action Items:</p>
                           <ul className="space-y-1">
                             {item.actionItems.map((action, i) => (
@@ -479,8 +466,7 @@ function MeetingDetail({ meeting, onClose }: { meeting: Meeting; onClose: () => 
                               </li>
                             ))}
                           </ul>
-                        </div>
-                      )}
+                        </div> : null}
                     </div>
                   </div>
                 </div>
@@ -489,43 +475,35 @@ function MeetingDetail({ meeting, onClose }: { meeting: Meeting; onClose: () => 
           </div>
 
           {/* Notes */}
-          {meeting.notes && (
-            <div className="mb-6">
+          {meeting.notes ? <div className="mb-6">
               <h3 className="font-medium text-warm-800 flex items-center gap-2 mb-2">
                 <FileText className="h-4 w-4 text-warm-500" />
                 Meeting Notes
               </h3>
               <p className="text-sm text-warm-600 bg-warm-50 p-3 rounded-lg">{meeting.notes}</p>
-            </div>
-          )}
+            </div> : null}
 
           {/* Completed meeting resources */}
-          {meeting.status === 'completed' && (meeting.recordingUrl || meeting.transcriptUrl) && (
-            <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+          {meeting.status === 'completed' && (meeting.recordingUrl || meeting.transcriptUrl) ? <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
               <h3 className="font-medium text-stone-800 mb-3 flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-stone-600" />
                 AI-Generated Resources
               </h3>
               <div className="flex items-center gap-4">
-                {meeting.recordingUrl && (
-                  <button className="flex items-center gap-2 px-3 py-2 bg-warm-0 border border-warm-200 rounded-lg text-sm text-warm-700 hover:bg-warm-50">
+                {meeting.recordingUrl ? <button className="flex items-center gap-2 px-3 py-2 bg-warm-0 border border-warm-200 rounded-lg text-sm text-warm-700 hover:bg-warm-50">
                     <Video className="h-4 w-4" />
                     View Recording
-                  </button>
-                )}
-                {meeting.transcriptUrl && (
-                  <button className="flex items-center gap-2 px-3 py-2 bg-warm-0 border border-warm-200 rounded-lg text-sm text-warm-700 hover:bg-warm-50">
+                  </button> : null}
+                {meeting.transcriptUrl ? <button className="flex items-center gap-2 px-3 py-2 bg-warm-0 border border-warm-200 rounded-lg text-sm text-warm-700 hover:bg-warm-50">
                     <FileText className="h-4 w-4" />
                     View Transcript
-                  </button>
-                )}
+                  </button> : null}
                 <button className="flex items-center gap-2 px-3 py-2 bg-warm-0 border border-warm-200 rounded-lg text-sm text-warm-700 hover:bg-warm-50">
                   <ClipboardList className="h-4 w-4" />
                   Action Items Summary
                 </button>
               </div>
-            </div>
-          )}
+            </div> : null}
         </div>
 
         {/* Footer */}
@@ -619,11 +597,9 @@ export default function MeetingsPreview() {
             </div>
             <div className="text-right">
               <p className="text-stone-300 text-sm">Next Meeting</p>
-              {upcomingMeetings[0] && (
-                <p className="font-medium mt-1">
+              {upcomingMeetings[0] ? <p className="font-medium mt-1">
                   {upcomingMeetings[0].startTime} - {upcomingMeetings[0].title.substring(0, 25)}...
-                </p>
-              )}
+                </p> : null}
             </div>
           </div>
         </div>
@@ -716,12 +692,10 @@ export default function MeetingsPreview() {
       </div>
 
       {/* Meeting Detail Modal */}
-      {selectedMeeting && (
-        <MeetingDetail
+      {selectedMeeting ? <MeetingDetail
           meeting={selectedMeeting}
           onClose={() => setSelectedMeeting(null)}
-        />
-      )}
+        /> : null}
     </div>
   )
 }

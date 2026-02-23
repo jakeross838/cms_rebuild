@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   DollarSign,
   TrendingUp,
@@ -40,10 +41,11 @@ import {
   Eye,
   ShoppingCart,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel, type AIFeatureCardProps } from '@/components/skeleton/ui'
+import { useFilterState } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -607,9 +609,7 @@ function SummaryCardComponent({ card }: { card: SummaryCard }) {
       <div className="text-sm text-warm-500 mt-1">{card.label}</div>
       <div className="flex items-center justify-between mt-1">
         <div className="text-xs text-warm-400">{card.changeLabel}</div>
-        {card.sparklineData && (
-          <Sparkline data={card.sparklineData} color={card.color} width={50} height={16} />
-        )}
+        {card.sparklineData ? <Sparkline data={card.sparklineData} color={card.color} width={50} height={16} /> : null}
       </div>
     </div>
   )
@@ -666,9 +666,7 @@ function SecondaryKPIRow({ widgets }: { widgets: KPIWidget[] }) {
             </div>
             <div className="flex items-center justify-between">
               <div className="text-lg font-bold text-warm-900">{w.value}</div>
-              {w.sparklineData && (
-                <Sparkline data={w.sparklineData} color={w.color} width={40} height={14} />
-              )}
+              {w.sparklineData ? <Sparkline data={w.sparklineData} color={w.color} width={40} height={14} /> : null}
             </div>
             <div className="flex items-center justify-between mt-0.5">
               <div className="text-xs text-warm-500">{w.subLabel}</div>
@@ -775,12 +773,8 @@ function PaymentsList({ payments }: { payments: PaymentDue[] }) {
                     <div className="font-medium text-warm-900 text-sm">{payment.vendor}</div>
                     <div className="text-xs text-warm-500">{payment.job}</div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      {payment.lienWaiverRequired && (
-                        <span className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Lien waiver req</span>
-                      )}
-                      {payment.earlyPayDiscount && (
-                        <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded">{payment.earlyPayDiscount}</span>
-                      )}
+                      {payment.lienWaiverRequired ? <span className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Lien waiver req</span> : null}
+                      {payment.earlyPayDiscount ? <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded">{payment.earlyPayDiscount}</span> : null}
                     </div>
                   </div>
                 </div>
@@ -835,7 +829,7 @@ function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
                 <div className="font-medium text-warm-900 text-sm">{receivable.client}</div>
                 <div className="text-xs text-warm-500">
                   {receivable.job}
-                  {receivable.drawNumber && <span> - Draw #{receivable.drawNumber}</span>}
+                  {receivable.drawNumber ? <span> - Draw #{receivable.drawNumber}</span> : null}
                 </div>
               </div>
               <div className="text-right">
@@ -850,12 +844,8 @@ function OverdueList({ receivables }: { receivables: OverdueReceivable[] }) {
               </div>
             </div>
             <div className="mt-1 flex items-center gap-3">
-              {receivable.retainageAmount && (
-                <span className="text-xs text-warm-400">Retainage: {formatCurrency(receivable.retainageAmount)}</span>
-              )}
-              {receivable.lastContact && (
-                <span className="text-xs text-warm-400">Last contact: {receivable.lastContact}</span>
-              )}
+              {receivable.retainageAmount ? <span className="text-xs text-warm-400">Retainage: {formatCurrency(receivable.retainageAmount)}</span> : null}
+              {receivable.lastContact ? <span className="text-xs text-warm-400">Last contact: {receivable.lastContact}</span> : null}
             </div>
           </div>
         ))}
@@ -963,7 +953,7 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
               <td className="py-2 px-3 text-right font-bold text-sm text-amber-600">
                 {(jobs.reduce((s, j) => s + j.projectedMargin, 0) / jobs.length).toFixed(1)}%
               </td>
-              <td colSpan={2}></td>
+              <td colSpan={2} />
             </tr>
           </tfoot>
         </table>
@@ -986,14 +976,12 @@ function PendingApprovalsBar({ approvals }: { approvals: PendingApproval[] }) {
           <h4 className="font-medium text-warm-900 text-sm">Pending Approvals</h4>
           <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">{total} total</span>
         </div>
-        {activeFilter && (
-          <button
+        {activeFilter ? <button
             onClick={() => setActiveFilter(null)}
             className="text-xs text-warm-500 hover:text-warm-700"
           >
             Clear filter
-          </button>
-        )}
+          </button> : null}
       </div>
       <div className="flex items-center gap-2">
         {approvals.map(approval => (
@@ -1115,7 +1103,7 @@ function VendorFollowUpQueue({ vendors }: { vendors: VendorFollowUp[] }) {
                   <span className={cn("text-xs px-1.5 py-0.5 rounded", getReasonColor(vendor.reason))}>
                     {vendor.reason}
                   </span>
-                  {vendor.job && <span className="text-xs text-warm-400">{vendor.job}</span>}
+                  {vendor.job ? <span className="text-xs text-warm-400">{vendor.job}</span> : null}
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -1165,7 +1153,7 @@ function ClientCommunicationQueue({ messages }: { messages: ClientMessage[] }) {
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-warm-900 text-sm">{message.client}</div>
                 <div className="text-xs text-warm-500 truncate mt-0.5">{message.subject}</div>
-                {message.job && <div className="text-xs text-warm-400 mt-0.5">{message.job}</div>}
+                {message.job ? <div className="text-xs text-warm-400 mt-0.5">{message.job}</div> : null}
               </div>
               <div className="flex items-center gap-2 ml-3">
                 <span className={cn(
@@ -1215,9 +1203,7 @@ function UpcomingInspectionsWidget({ inspections }: { inspections: UpcomingInspe
                 <div className="font-medium text-warm-900 text-sm">{inspection.job}</div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-xs text-warm-500">Permit: {inspection.permitRef}</span>
-                  {inspection.inspectorName && (
-                    <span className="text-xs text-warm-400">Inspector: {inspection.inspectorName}</span>
-                  )}
+                  {inspection.inspectorName ? <span className="text-xs text-warm-400">Inspector: {inspection.inspectorName}</span> : null}
                 </div>
               </div>
               <div className="text-right">
@@ -1349,8 +1335,7 @@ function DateRangeSelector({
         <ChevronDown className="h-4 w-4" />
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg border border-warm-200 shadow-lg z-10">
+      {isOpen ? <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg border border-warm-200 shadow-lg z-10">
           <div className="py-1">
             {dateRangePresets.map(preset => (
               <button
@@ -1368,8 +1353,7 @@ function DateRangeSelector({
               </button>
             ))}
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { ChangeOrdersPreview } from '@/components/skeleton/previews/change-orders-preview'
-import { useState } from 'react'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function JobChangeOrdersPage() {

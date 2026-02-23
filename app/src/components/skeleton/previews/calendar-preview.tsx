@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -26,10 +27,11 @@ import {
   Users,
   ThermometerSun,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface CalendarTask {
   id: string
@@ -179,16 +181,12 @@ function TaskCard({ task }: { task: CalendarTask }) {
       <div className="flex items-center gap-1 mb-0.5">
         <Icon className="h-3 w-3 flex-shrink-0" />
         <span className="font-medium truncate">{task.jobName}</span>
-        {task.isCriticalPath && <Zap className="h-2.5 w-2.5 text-red-500 flex-shrink-0" />}
+        {task.isCriticalPath ? <Zap className="h-2.5 w-2.5 text-red-500 flex-shrink-0" /> : null}
         {task.status === 'overdue' && <AlertTriangle className="h-2.5 w-2.5 text-red-600 flex-shrink-0" />}
         {task.status === 'blocked' && <CloudRain className="h-2.5 w-2.5 text-stone-600 flex-shrink-0" />}
       </div>
-      {task.vendor && (
-        <div className="text-warm-500 truncate">{task.vendor}</div>
-      )}
-      {task.time && (
-        <div className="text-warm-400 text-[10px]">{task.time}</div>
-      )}
+      {task.vendor ? <div className="text-warm-500 truncate">{task.vendor}</div> : null}
+      {task.time ? <div className="text-warm-400 text-[10px]">{task.time}</div> : null}
     </div>
   )
 }
@@ -230,15 +228,11 @@ function CalendarDay({
         >
           {day}
         </div>
-        {weather && isCurrentMonth && (
-          <div className="flex items-center gap-0.5" title={`${weather.high}F / ${weather.low}F, ${weather.condition}, Wind: ${weather.windMph}mph`}>
+        {weather && isCurrentMonth ? <div className="flex items-center gap-0.5" title={`${weather.high}F / ${weather.low}F, ${weather.condition}, Wind: ${weather.windMph}mph`}>
             <WeatherIcon condition={weather.condition} />
             <span className="text-[10px] text-warm-400">{weather.high}°</span>
-            {weather.impactsOutdoorWork && (
-              <AlertTriangle className="h-2.5 w-2.5 text-red-400" />
-            )}
-          </div>
-        )}
+            {weather.impactsOutdoorWork ? <AlertTriangle className="h-2.5 w-2.5 text-red-400" /> : null}
+          </div> : null}
       </div>
       <div className="space-y-1">
         {visibleTasks.map(task => (
@@ -525,7 +519,7 @@ export function CalendarPreview() {
               key={index}
               day={dayInfo.day}
               tasks={dayInfo.isCurrentMonth ? (tasksByDay[dayInfo.day] || []) : []}
-              isToday={dayInfo.isCurrentMonth && dayInfo.day === today}
+              isToday={dayInfo.isCurrentMonth ? dayInfo.day === today : false}
               isCurrentMonth={dayInfo.isCurrentMonth}
               weather={dayInfo.isCurrentMonth ? weatherByDay[dayInfo.day] : undefined}
             />

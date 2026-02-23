@@ -3,17 +3,15 @@
 import {
   Megaphone,
   Star,
-  TrendingUp,
   Eye,
   Camera,
   Share2,
   FileText,
   ExternalLink,
-  ThumbsUp,
-  BarChart3,
   Users,
   Globe,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const portfolioProjects = [
@@ -105,7 +103,7 @@ export default function MarketingPortfolioPage() {
                   <div>
                     <div className="font-medium flex items-center gap-2">
                       {p.name}
-                      {p.featured && <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Featured</span>}
+                      {p.featured ? <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Featured</span> : null}
                     </div>
                     <div className="text-xs text-muted-foreground">{p.type} -- {p.sqft} SF -- {p.value}</div>
                   </div>

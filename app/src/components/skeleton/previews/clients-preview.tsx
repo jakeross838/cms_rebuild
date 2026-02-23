@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   User,
   Building2,
@@ -25,10 +26,11 @@ import {
   Download,
   Upload,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type ClientStatus = 'active' | 'pending' | 'completed' | 'on-hold' | 'warranty'
 
@@ -318,15 +320,11 @@ function ClientCard({ client }: { client: Client }) {
                 <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
               )}
             </div>
-            {client.company && (
-              <div className="flex items-center gap-1 text-sm text-warm-500">
+            {client.company ? <div className="flex items-center gap-1 text-sm text-warm-500">
                 <Building2 className="h-3 w-3" />
                 <span>{client.company}</span>
-              </div>
-            )}
-            {client.currentProjectName && (
-              <div className="text-xs text-warm-400 mt-0.5">Current: {client.currentProjectName}</div>
-            )}
+              </div> : null}
+            {client.currentProjectName ? <div className="text-xs text-warm-400 mt-0.5">Current: {client.currentProjectName}</div> : null}
           </div>
         </div>
         <button className="p-1 hover:bg-warm-100 rounded">
@@ -382,11 +380,9 @@ function ClientCard({ client }: { client: Client }) {
         <span className={cn("text-xs px-1.5 py-0.5 rounded", tier.color)}>
           {tier.label}
         </span>
-        {client.portalEnabled && (
-          <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+        {client.portalEnabled ? <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
             <Globe className="h-3 w-3" />Portal
-          </span>
-        )}
+          </span> : null}
         {!client.portalEnabled && (
           <span className="text-xs bg-warm-50 text-warm-400 px-1.5 py-0.5 rounded">No Portal</span>
         )}
@@ -409,19 +405,14 @@ function ClientCard({ client }: { client: Client }) {
       </div>
 
       {/* AI Profile row */}
-      {(client.aiDecisionSpeed || client.aiBudgetSensitivity || client.aiStylePreferences) && (
-        <div className="flex items-center gap-1.5 flex-wrap mb-3 pt-2 border-t border-warm-100">
+      {(client.aiDecisionSpeed || client.aiBudgetSensitivity || client.aiStylePreferences) ? <div className="flex items-center gap-1.5 flex-wrap mb-3 pt-2 border-t border-warm-100">
           <Sparkles className="h-3 w-3 text-stone-500" />
-          {client.aiDecisionSpeed && (
-            <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
+          {client.aiDecisionSpeed ? <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
               {client.aiDecisionSpeed} decisions
-            </span>
-          )}
-          {client.aiBudgetSensitivity && (
-            <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
+            </span> : null}
+          {client.aiBudgetSensitivity ? <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
               {client.aiBudgetSensitivity} budget sensitivity
-            </span>
-          )}
+            </span> : null}
           {client.aiStylePreferences?.slice(0, 2).map(pref => (
             <span key={pref} className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">
               {pref}
@@ -430,8 +421,7 @@ function ClientCard({ client }: { client: Client }) {
           {(client.aiStylePreferences?.length ?? 0) > 2 && (
             <span className="text-xs text-warm-400">+{(client.aiStylePreferences?.length ?? 0) - 2} more</span>
           )}
-        </div>
-      )}
+        </div> : null}
 
       {/* Footer row */}
       <div className="flex items-center justify-between pt-2 border-t border-warm-100">
@@ -451,12 +441,10 @@ function ClientCard({ client }: { client: Client }) {
         )}
       </div>
 
-      {client.aiInsight && (
-        <div className="mt-3 p-2 bg-stone-50 rounded-md flex items-start gap-2">
+      {client.aiInsight ? <div className="mt-3 p-2 bg-stone-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-stone-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-stone-700">{client.aiInsight}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

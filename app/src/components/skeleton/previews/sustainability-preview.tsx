@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Leaf,
   Recycle,
@@ -38,10 +39,11 @@ import {
   Globe,
   BadgeCheck,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -513,8 +515,7 @@ function MetricCard({ metric }: { metric: CarbonMetric }) {
             "text-warm-600"
           )} />
         </div>
-        {metric.change && (
-          <div className={cn(
+        {metric.change ? <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
             metric.trend === 'down' ? "text-green-600" :
             metric.trend === 'up' && metric.status === 'success' ? "text-green-600" :
@@ -524,12 +525,11 @@ function MetricCard({ metric }: { metric: CarbonMetric }) {
             {metric.trend === 'up' && <TrendingUp className="h-3 w-3" />}
             {metric.trend === 'down' && <TrendingDown className="h-3 w-3" />}
             {metric.change}
-          </div>
-        )}
+          </div> : null}
       </div>
       <div className="text-2xl font-bold text-warm-900">
         {metric.value}
-        {metric.unit && <span className="text-sm font-normal text-warm-500 ml-1">{metric.unit}</span>}
+        {metric.unit ? <span className="text-sm font-normal text-warm-500 ml-1">{metric.unit}</span> : null}
       </div>
       <div className="text-sm text-warm-500">{metric.label}</div>
     </div>
@@ -555,7 +555,7 @@ function ProjectCarbonCard({ project }: { project: ProjectCarbon }) {
           </div>
           <p className="text-xs text-warm-500 mt-0.5">
             {project.squareFootage.toLocaleString()} sqft
-            {project.certificationGoal && <span className="ml-2 text-green-600">{project.certificationGoal}</span>}
+            {project.certificationGoal ? <span className="ml-2 text-green-600">{project.certificationGoal}</span> : null}
           </p>
         </div>
         <button className="p-1 hover:bg-warm-100 rounded">
@@ -606,12 +606,10 @@ function ProjectCarbonCard({ project }: { project: ProjectCarbon }) {
       </div>
 
       {/* Renewable Energy */}
-      {project.renewableEnergy && (
-        <div className="mt-3 flex items-center gap-2 text-xs text-stone-600 bg-stone-50 rounded px-2 py-1">
+      {project.renewableEnergy ? <div className="mt-3 flex items-center gap-2 text-xs text-stone-600 bg-stone-50 rounded px-2 py-1">
           <Sun className="h-3 w-3" />
           {project.renewableEnergy}
-        </div>
-      )}
+        </div> : null}
 
       <div className="mt-3 flex items-center justify-between text-xs text-warm-400">
         <span>Updated {project.lastUpdated}</span>
@@ -657,12 +655,10 @@ function MaterialRow({ material }: { material: MaterialCarbon }) {
         </div>
       </td>
       <td className="px-3 py-2 text-center">
-        {material.hasAlternative && (
-          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded flex items-center gap-1 w-fit mx-auto">
+        {material.hasAlternative ? <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded flex items-center gap-1 w-fit mx-auto">
             <Leaf className="h-3 w-3" />
             -{material.alternativeSavingsPct}%
-          </span>
-        )}
+          </span> : null}
       </td>
     </tr>
   )

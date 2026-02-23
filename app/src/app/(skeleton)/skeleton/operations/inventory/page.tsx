@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { InventoryPreview } from '@/components/skeleton/previews/inventory-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const inventoryWorkflow = ['Catalog Setup', 'Receive Materials', 'Issue to Job', 'Track Consumption', 'Reorder']

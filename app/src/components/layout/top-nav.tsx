@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+
 import {
   Bell,
   Search,
@@ -13,6 +12,12 @@ import {
   Settings,
   ChevronDown,
 } from 'lucide-react'
+
+import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { createClient } from '@/lib/supabase/client'
+
 
 interface TopNavProps {
   user: {
@@ -35,15 +40,21 @@ export function TopNav({ user }: TopNavProps) {
 
   return (
     <header className="h-16 bg-card/95 backdrop-blur supports-backdrop-blur:bg-card/60 border-b border-border/40 flex items-center justify-between px-6 z-10 shadow-sm">
-      {/* Search */}
-      <div className="flex-1 max-w-md">
-        <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-          <Input
-            type="search"
-            placeholder="Search jobs, invoices, vendors..."
-            className="pl-10 h-10 w-full rounded-full bg-muted/60 border-transparent hover:bg-muted focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all text-sm"
-          />
+      {/* Left side: Tenant switcher + Search */}
+      <div className="flex items-center gap-4 flex-1">
+        {/* Tenant Switcher */}
+        <TenantSwitcher />
+
+        {/* Search */}
+        <div className="max-w-md flex-1">
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+            <Input
+              type="search"
+              placeholder="Search jobs, invoices, vendors..."
+              className="pl-10 h-10 w-full rounded-full bg-muted/60 border-transparent hover:bg-muted focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all text-sm"
+            />
+          </div>
         </div>
       </div>
 
@@ -73,11 +84,14 @@ export function TopNav({ user }: TopNavProps) {
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </button>
 
-          {showUserMenu && (
-            <>
+          {showUserMenu ? <>
               <div
                 className="fixed inset-0 z-10"
                 onClick={() => setShowUserMenu(false)}
+                onKeyDown={(e) => e.key === 'Escape' && setShowUserMenu(false)}
+                role="button"
+                tabIndex={-1}
+                aria-label="Close menu"
               />
               <div className="absolute right-0 mt-2 w-56 rounded-md bg-background shadow-lg ring-1 ring-border z-20">
                 <div className="py-1">
@@ -109,8 +123,7 @@ export function TopNav({ user }: TopNavProps) {
                   </button>
                 </div>
               </div>
-            </>
-          )}
+            </> : null}
         </div>
       </div>
     </header>

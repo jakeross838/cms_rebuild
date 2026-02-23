@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Bell,
   AlertTriangle,
@@ -25,10 +26,11 @@ import {
   Inbox,
   Send,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types (aligned to Module 05 - Notification Engine spec)
@@ -340,21 +342,15 @@ function NotificationCard({ notification }: { notification: Notification }) {
               <CategoryIcon className="h-3 w-3" />
               {notification.source}
             </span>
-            {notification.sourceModule && (
-              <span className="bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{notification.sourceModule}</span>
-            )}
-            {notification.job && (
-              <>
+            {notification.sourceModule ? <span className="bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{notification.sourceModule}</span> : null}
+            {notification.job ? <>
                 <span className="text-warm-300">|</span>
                 <span className="bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{notification.job}</span>
-              </>
-            )}
-            {notification.entityType && notification.entityId && (
-              <>
+              </> : null}
+            {notification.entityType && notification.entityId ? <>
                 <span className="text-warm-300">|</span>
                 <span className="bg-warm-50 text-warm-500 px-1.5 py-0.5 rounded font-mono">{notification.entityId}</span>
-              </>
-            )}
+              </> : null}
             <span className="text-warm-300">|</span>
             <span>{notification.time}</span>
           </div>
@@ -382,26 +378,20 @@ function NotificationCard({ notification }: { notification: Notification }) {
           </div>
 
           {/* Action buttons */}
-          {(notification.actionLabel || notification.secondaryActionLabel) && (
-            <div className="flex gap-2 mt-3">
-              {notification.actionLabel && (
-                <button className="px-3 py-1 text-xs bg-stone-600 text-white rounded hover:bg-stone-700">
+          {(notification.actionLabel || notification.secondaryActionLabel) ? <div className="flex gap-2 mt-3">
+              {notification.actionLabel ? <button className="px-3 py-1 text-xs bg-stone-600 text-white rounded hover:bg-stone-700">
                   {notification.actionLabel}
-                </button>
-              )}
-              {notification.secondaryActionLabel && (
-                <button className="px-3 py-1 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200">
+                </button> : null}
+              {notification.secondaryActionLabel ? <button className="px-3 py-1 text-xs bg-warm-100 text-warm-700 rounded hover:bg-warm-200">
                   {notification.secondaryActionLabel}
-                </button>
-              )}
+                </button> : null}
               <button className="px-3 py-1 text-xs text-warm-400 hover:text-warm-600">
                 Snooze
               </button>
               <button className="px-3 py-1 text-xs text-warm-400 hover:text-warm-600">
                 Dismiss
               </button>
-            </div>
-          )}
+            </div> : null}
         </div>
         <ChevronRight className="h-4 w-4 text-warm-400 flex-shrink-0" />
       </div>

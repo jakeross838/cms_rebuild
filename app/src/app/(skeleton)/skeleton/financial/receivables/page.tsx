@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { ReceivablesPreview } from '@/components/skeleton/previews/receivables-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const receivablesWorkflow = ['Draw Approved', 'Invoice Sent', 'Payment Due', 'Follow Up', 'Payment Received']

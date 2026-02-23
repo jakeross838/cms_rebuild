@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Activity,
   Clock,
@@ -11,7 +12,6 @@ import {
   Trash2,
   Plus,
   Eye,
-  Filter,
   Download,
   Search,
   ChevronRight,
@@ -21,6 +21,7 @@ import {
   Calendar,
   Building,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 // Types
@@ -171,16 +172,13 @@ function ActivityCard({ item, onUndo }: { item: ActivityItem; onUndo: () => void
             </span>
           </div>
 
-          {item.jobName && (
-            <p className="text-xs text-warm-500 mt-1 flex items-center gap-1">
+          {item.jobName ? <p className="text-xs text-warm-500 mt-1 flex items-center gap-1">
               <Building className="h-3 w-3" />
               {item.jobName}
-            </p>
-          )}
+            </p> : null}
 
           {/* Changed fields */}
-          {item.changedFields && item.changedFields.length > 0 && (
-            <div className="mt-2">
+          {item.changedFields && item.changedFields.length > 0 ? <div className="mt-2">
               <button
                 onClick={() => setExpanded(!expanded)}
                 className="flex items-center gap-1 text-xs text-warm-500 hover:text-warm-700"
@@ -189,8 +187,7 @@ function ActivityCard({ item, onUndo }: { item: ActivityItem; onUndo: () => void
                 {item.changedFields.length} field{item.changedFields.length > 1 ? 's' : ''} changed
               </button>
 
-              {expanded && (
-                <div className="mt-2 space-y-1">
+              {expanded ? <div className="mt-2 space-y-1">
                   {item.changedFields.map((field) => (
                     <div key={field} className="flex items-center gap-2 text-xs">
                       <span className="font-medium text-warm-600 capitalize">{field.replace('_', ' ')}:</span>
@@ -199,10 +196,8 @@ function ActivityCard({ item, onUndo }: { item: ActivityItem; onUndo: () => void
                       <span className="text-success">{item.newValues?.[field]}</span>
                     </div>
                   ))}
-                </div>
-              )}
-            </div>
-          )}
+                </div> : null}
+            </div> : null}
 
           {/* Timestamp and actions */}
           <div className="flex items-center justify-between mt-2">
@@ -320,10 +315,10 @@ export default function ActivityPreview() {
             <div key={stat.label} className="bg-warm-0 border border-warm-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-warm-500">{stat.label}</span>
-                {stat.icon && <stat.icon className={cn('h-4 w-4', stat.color)} />}
+                {stat.icon ? <stat.icon className={cn('h-4 w-4', stat.color)} /> : null}
               </div>
               <p className={cn('text-2xl font-semibold', stat.color)}>{stat.value}</p>
-              {stat.change && <p className="text-xs text-warm-500 mt-1">{stat.change}</p>}
+              {stat.change ? <p className="text-xs text-warm-500 mt-1">{stat.change}</p> : null}
             </div>
           ))}
         </div>
@@ -334,7 +329,7 @@ export default function ActivityPreview() {
             <ActivityCard
               key={item.id}
               item={item}
-              onUndo={() => console.log('Undo', item.id)}
+              onUndo={() => console.warn('Undo', item.id)}
             />
           ))}
         </div>

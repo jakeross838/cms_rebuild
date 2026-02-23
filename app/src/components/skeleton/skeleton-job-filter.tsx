@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import {
   Search,
   Building2,
@@ -39,6 +40,8 @@ import {
   Shield,
   BarChart3,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 interface Job {
   id: string
@@ -372,8 +375,7 @@ export function SkeletonJobFilter() {
           <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', isFilterOpen && 'rotate-180')} />
         </button>
 
-        {isFilterOpen && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+        {isFilterOpen ? <div className="mt-2 flex flex-wrap gap-1.5">
             {Object.entries(statusConfig).map(([status, config]) => (
               <button
                 key={status}
@@ -389,8 +391,7 @@ export function SkeletonJobFilter() {
                 {config.label}
               </button>
             ))}
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* All Jobs option */}

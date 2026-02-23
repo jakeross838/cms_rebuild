@@ -8,12 +8,13 @@ import {
   Eye,
   Palette,
   Type,
-  Image,
   ExternalLink,
   CheckCircle2,
   Sparkles,
   Monitor,
+  ImageIcon,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const colorSwatches = [
@@ -64,7 +65,7 @@ export default function WhiteLabelBrandingPage() {
             <Paintbrush className="h-6 w-6 text-sand-700" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">White Label & Branding</h1>
+            <h1 className="text-2xl font-bold text-foreground">White Label &amp; Branding</h1>
             <p className="text-sm text-muted-foreground">Module 44 -- Customize every touchpoint with your brand</p>
           </div>
         </div>
@@ -81,11 +82,11 @@ export default function WhiteLabelBrandingPage() {
         <div className="col-span-2 space-y-6">
           {/* Logo & Identity */}
           <div className="bg-card border rounded-lg p-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2"><Image className="h-4 w-4 text-sand-600" />Logo & Identity</h3>
+            <h3 className="font-semibold mb-4 flex items-center gap-2"><ImageIcon className="h-4 w-4 text-sand-600" />Logo &amp; Identity</h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center">
                 <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center mb-2">
-                  <Image className="h-8 w-8 text-muted-foreground" />
+                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="text-sm font-medium">Primary Logo</div>
                 <div className="text-xs text-muted-foreground">400x120px recommended</div>
@@ -93,7 +94,7 @@ export default function WhiteLabelBrandingPage() {
               </div>
               <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center mb-2">
-                  <Image className="h-6 w-6 text-muted-foreground" />
+                  <ImageIcon className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div className="text-sm font-medium">Icon / Favicon</div>
                 <div className="text-xs text-muted-foreground">64x64px square</div>
@@ -101,7 +102,7 @@ export default function WhiteLabelBrandingPage() {
               </div>
               <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center">
                 <div className="w-20 h-20 bg-warm-800 rounded-lg flex items-center justify-center mb-2">
-                  <Image className="h-8 w-8 text-warm-400" />
+                  <ImageIcon className="h-8 w-8 text-warm-400" />
                 </div>
                 <div className="text-sm font-medium">Dark Mode Logo</div>
                 <div className="text-xs text-muted-foreground">Light version for dark bg</div>
@@ -137,7 +138,7 @@ export default function WhiteLabelBrandingPage() {
                     </div>
                     <div className="text-muted-foreground text-sm mt-0.5" style={{ fontFamily: f.name }}>{f.sample}</div>
                   </div>
-                  {f.selected && <CheckCircle2 className="h-5 w-5 text-sand-600" />}
+                  {f.selected ? <CheckCircle2 className="h-5 w-5 text-sand-600" /> : null}
                 </div>
               ))}
             </div>
@@ -210,7 +211,7 @@ export default function WhiteLabelBrandingPage() {
             <h3 className="font-semibold mb-3 flex items-center gap-2"><Smartphone className="h-4 w-4 text-sand-600" />Mobile App</h3>
             <div className="flex items-center gap-4">
               <div className="w-16 h-28 bg-muted rounded-xl border-2 flex items-center justify-center">
-                <Image className="h-6 w-6 text-muted-foreground" />
+                <ImageIcon className="h-6 w-6 text-muted-foreground" />
               </div>
               <div className="space-y-2 text-sm">
                 <div><span className="text-muted-foreground">App Icon:</span> <span className="text-amber-600">Not set</span></div>

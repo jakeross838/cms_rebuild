@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Mail,
@@ -35,10 +36,11 @@ import {
   Inbox,
   ArrowRightLeft,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type CommunicationType = 'email' | 'call' | 'meeting' | 'note' | 'sms' | 'push' | 'in_app'
 type CommunicationDirection = 'inbound' | 'outbound'
@@ -367,23 +369,17 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                 {!communication.isRead && (
                   <span className="w-2 h-2 rounded-full bg-stone-500 flex-shrink-0" />
                 )}
-                {communication.isImportant && (
-                  <Star className="h-4 w-4 text-amber-500 fill-amber-500 flex-shrink-0" />
-                )}
-                {communication.hasAttachment && (
-                  <Paperclip className="h-4 w-4 text-warm-400 flex-shrink-0" />
-                )}
+                {communication.isImportant ? <Star className="h-4 w-4 text-amber-500 fill-amber-500 flex-shrink-0" /> : null}
+                {communication.hasAttachment ? <Paperclip className="h-4 w-4 text-warm-400 flex-shrink-0" /> : null}
                 {communication.urgency !== 'normal' && communication.urgency !== 'low' && (
                   <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", urgency.bgColor, urgency.color)}>
                     {urgency.label}
                   </span>
                 )}
-                {communication.digestBatched && (
-                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-stone-50 text-stone-600 flex items-center gap-0.5">
+                {communication.digestBatched ? <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-stone-50 text-stone-600 flex items-center gap-0.5">
                     <Timer className="h-2.5 w-2.5" />
                     Digest ({communication.batchCount})
-                  </span>
-                )}
+                  </span> : null}
               </div>
               <div className="flex items-center gap-2 text-sm text-warm-600 mb-2">
                 <span className="flex items-center gap-1">
@@ -400,11 +396,9 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                     </>
                   )}
                 </span>
-                {communication.relatedModule && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-warm-100 text-warm-500 rounded">
+                {communication.relatedModule ? <span className="text-[10px] px-1.5 py-0.5 bg-warm-100 text-warm-500 rounded">
                     {communication.relatedModule}
-                  </span>
-                )}
+                  </span> : null}
               </div>
               <p className="text-sm text-warm-600 line-clamp-2">{communication.preview}</p>
 
@@ -424,20 +418,16 @@ function CommunicationRow({ communication }: { communication: Communication }) {
               </div>
 
               {/* Decision Badge */}
-              {communication.hasDecision && communication.decisionText && (
-                <div className="mt-2 p-2 bg-green-50 rounded-md flex items-start gap-2">
+              {communication.hasDecision && communication.decisionText ? <div className="mt-2 p-2 bg-green-50 rounded-md flex items-start gap-2">
                   <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                   <span className="text-sm text-green-700">{communication.decisionText}</span>
-                </div>
-              )}
+                </div> : null}
 
               {/* Action Item */}
-              {communication.actionItem && !communication.hasDecision && (
-                <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+              {communication.actionItem && !communication.hasDecision ? <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
                   <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
                   <span className="text-sm text-amber-700">{communication.actionItem}</span>
-                </div>
-              )}
+                </div> : null}
             </div>
 
             <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -445,9 +435,7 @@ function CommunicationRow({ communication }: { communication: Communication }) {
                 <Clock className="h-3 w-3" />
                 <span>{communication.timeAgo}</span>
               </div>
-              {communication.eventType && (
-                <span className="text-[10px] text-warm-400 font-mono">{communication.eventType}</span>
-              )}
+              {communication.eventType ? <span className="text-[10px] text-warm-400 font-mono">{communication.eventType}</span> : null}
               <div className="flex items-center gap-1">
                 <button className="p-1.5 hover:bg-warm-100 rounded text-warm-400 hover:text-warm-600" title="Reply">
                   <Reply className="h-4 w-4" />

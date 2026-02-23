@@ -3,20 +3,13 @@
 import {
   Users,
   MessageSquare,
-  ThumbsUp,
   Award,
-  Search,
-  Filter,
   Plus,
   TrendingUp,
   Star,
   CheckCircle,
-  Clock,
-  ChevronRight,
-  Building,
   Sparkles,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 // Placeholder community preview - will be expanded later
 export default function CommunityPage() {

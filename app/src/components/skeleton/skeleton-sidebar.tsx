@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import {
   Building2,
   LayoutDashboard,
@@ -47,6 +48,8 @@ import {
   TrendingUp,
   Wallet,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 interface NavItem {
   name: string
@@ -391,8 +394,7 @@ export function SkeletonSidebar() {
               )}
             </div>
           </button>
-          {isOpen && (
-            <div className="ml-6 mt-1 space-y-0.5 border-l-2 border-border pl-2">
+          {isOpen ? <div className="ml-6 mt-1 space-y-0.5 border-l-2 border-border pl-2">
               {item.children?.map((child) => (
                 <Link
                   key={child.href}
@@ -407,8 +409,7 @@ export function SkeletonSidebar() {
                   {child.name}
                 </Link>
               ))}
-            </div>
-          )}
+            </div> : null}
         </div>
       )
     }
@@ -427,11 +428,9 @@ export function SkeletonSidebar() {
           <item.icon className={cn('h-4 w-4', active ? 'text-sidebar-primary' : 'text-muted-foreground')} />
           {item.name}
         </span>
-        {item.phase && (
-          <span className={cn('text-[10px] px-1.5 py-0.5 rounded', getPhaseColor(item.phase))}>
+        {item.phase ? <span className={cn('text-[10px] px-1.5 py-0.5 rounded', getPhaseColor(item.phase))}>
             {item.phase}
-          </span>
-        )}
+          </span> : null}
       </Link>
     )
   }

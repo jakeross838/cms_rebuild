@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { SelectionsCatalogPreview } from '@/components/skeleton/previews/selections-catalog-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const workflow = ['Catalog Setup', 'Estimate Creation', 'Client Selection', 'Procurement']

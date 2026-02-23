@@ -1,12 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Building2, Loader2 } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { createClient } from '@/lib/supabase/client'
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -57,11 +62,9 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-            {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+            {error ? <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                 {error}
-              </div>
-            )}
+              </div> : null}
 
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
@@ -107,7 +110,23 @@ export default function LoginPage() {
                 'Sign in'
               )}
             </Button>
+
+            <div className="text-center">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+              >
+                Forgot your password?
+              </Link>
+            </div>
           </form>
+
+          <div className="mt-6 text-center text-sm">
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" className="text-primary hover:underline font-medium">
+              Sign up
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

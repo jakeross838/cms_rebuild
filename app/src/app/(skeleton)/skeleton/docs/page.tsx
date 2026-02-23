@@ -1,8 +1,11 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+
 import Link from 'next/link'
+
 import { FileText, BookOpen, ChevronRight, Layers, CheckCircle2, Circle, Paintbrush, ChevronDown, ChevronUp } from 'lucide-react'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { cn } from '@/lib/utils'
 
@@ -177,11 +180,9 @@ export default function DocsIndex() {
       />
 
       {/* Gap Tracker View */}
-      {showGaps && (
-        <>
+      {showGaps ? <>
           {/* Summary stats */}
-          {gapSummary && (
-            <div className="grid grid-cols-4 gap-3">
+          {gapSummary ? <div className="grid grid-cols-4 gap-3">
               <button
                 onClick={() => setGapFilter('all')}
                 className={cn(
@@ -225,12 +226,10 @@ export default function DocsIndex() {
                 <div className="text-xs text-muted-foreground">Planned</div>
                 <div className="text-xs text-warm-500 font-medium">{((gapSummary.planned / gapSummary.total) * 100).toFixed(0)}%</div>
               </button>
-            </div>
-          )}
+            </div> : null}
 
           {/* Progress bar */}
-          {gapSummary && (
-            <div className="space-y-1">
+          {gapSummary ? <div className="space-y-1">
               <div className="h-2 rounded-full bg-warm-200 overflow-hidden flex">
                 <div
                   className="bg-green-500 transition-all"
@@ -246,8 +245,7 @@ export default function DocsIndex() {
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-stone-500" /> Prototyped</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-warm-300" /> Planned</span>
               </div>
-            </div>
-          )}
+            </div> : null}
 
           {/* Grouped gap items */}
           <div className="space-y-2">
@@ -271,8 +269,7 @@ export default function DocsIndex() {
                       <span className="text-muted-foreground font-mono">({items.length})</span>
                     </div>
                   </button>
-                  {isExpanded && (
-                    <div className="border-t divide-y">
+                  {isExpanded ? <div className="border-t divide-y">
                       {items.map(gap => {
                         const cfg = statusConfig[gap.status] ?? statusConfig.planned
                         const Icon = cfg.icon
@@ -287,17 +284,14 @@ export default function DocsIndex() {
                               <span className={cn('text-xs px-1.5 py-0.5 rounded font-medium', priorityColors[gap.priority] ?? 'bg-warm-100 text-warm-600')}>
                                 {gap.priority}
                               </span>
-                              {gap.phase && (
-                                <span className={cn('text-xs px-1.5 py-0.5 rounded-full font-medium', phaseColors[String(gap.phase)] ?? 'bg-warm-100 text-warm-800')}>
+                              {gap.phase ? <span className={cn('text-xs px-1.5 py-0.5 rounded-full font-medium', phaseColors[String(gap.phase)] ?? 'bg-warm-100 text-warm-800')}>
                                   P{gap.phase}
-                                </span>
-                              )}
+                                </span> : null}
                             </div>
                           </div>
                         )
                       })}
-                    </div>
-                  )}
+                    </div> : null}
                 </div>
               )
             })}
@@ -308,12 +302,10 @@ export default function DocsIndex() {
               No gap items matching your filters
             </div>
           )}
-        </>
-      )}
+        </> : null}
 
       {/* Docs Views */}
-      {showDocs && (
-        <>
+      {showDocs ? <>
           {/* Architecture Docs */}
           {architecture.length > 0 && (
             <div>
@@ -361,9 +353,7 @@ export default function DocsIndex() {
                       <div className="font-medium text-sm truncate">{doc.title}</div>
                       <div className="flex items-center gap-2 mt-0.5">
                         {getPhaseBadge(doc.phase)}
-                        {doc.status && (
-                          <span className="text-xs text-muted-foreground">{doc.status}</span>
-                        )}
+                        {doc.status ? <span className="text-xs text-muted-foreground">{doc.status}</span> : null}
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -378,8 +368,7 @@ export default function DocsIndex() {
               No docs matching &quot;{search}&quot;
             </div>
           )}
-        </>
-      )}
+        </> : null}
     </div>
   )
 }

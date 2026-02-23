@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronDown,
   ChevronRight,
@@ -28,15 +29,16 @@ import {
   TrendingDown,
   Target,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import {
   PriorityFilter,
   GroupByToggle,
   AIFeaturesPanel,
   AIFeatureCard,
 } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -498,11 +500,9 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
               )}>
                 {priority.label}
               </span>
-              {item.warrantyConversion && (
-                <span className="text-xs px-2 py-0.5 rounded font-medium bg-warm-100 text-warm-700">
+              {item.warrantyConversion ? <span className="text-xs px-2 py-0.5 rounded font-medium bg-warm-100 text-warm-700">
                   Warranty
-                </span>
-              )}
+                </span> : null}
             </div>
             <p className="font-medium text-warm-900 text-base">{item.description}</p>
           </div>
@@ -540,15 +540,11 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-mono text-xs text-warm-500">{item.itemNumber}</span>
-            {item.hasPlanPin && (
-              <span title="Pinned to floor plan"><MapPin className="h-3 w-3 text-stone-500" /></span>
-            )}
+            {item.hasPlanPin ? <span title="Pinned to floor plan"><MapPin className="h-3 w-3 text-stone-500" /></span> : null}
             <PhotoStages photos={item.photos} />
-            {item.warrantyConversion && (
-              <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-warm-100 text-warm-700">
+            {item.warrantyConversion ? <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-warm-100 text-warm-700">
                 Warranty
-              </span>
-            )}
+              </span> : null}
           </div>
           <p className="font-medium text-warm-900 text-sm line-clamp-2">{item.description}</p>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -577,8 +573,7 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
         </div>
         <span className="text-xs text-warm-600">{item.assignedVendor}</span>
         {/* FTQ Score Badge */}
-        {vendorFTQData[item.assignedVendorId] && (
-          <span 
+        {vendorFTQData[item.assignedVendorId] ? <span 
             className={cn(
               "text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5 font-medium border",
               ftqThresholdConfig[vendorFTQData[item.assignedVendorId].ftqThreshold].bgColor,
@@ -591,53 +586,43 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
             FTQ {vendorFTQData[item.assignedVendorId].ftqScore}%
             {vendorFTQData[item.assignedVendorId].ftqTrend === 'up' && <TrendingUp className="h-2.5 w-2.5" />}
             {vendorFTQData[item.assignedVendorId].ftqTrend === 'down' && <TrendingDown className="h-2.5 w-2.5" />}
-          </span>
-        )}
-        {item.dueDate && (
-          <span className={cn(
+          </span> : null}
+        {item.dueDate ? <span className={cn(
             "text-xs ml-auto flex items-center gap-0.5",
             isOverdue ? "text-red-600 font-medium" : "text-warm-400"
           )}>
             <Calendar className="h-3 w-3" />
             Due: {item.dueDate}
-            {isOverdue && <AlertTriangle className="h-3 w-3" />}
-          </span>
-        )}
+            {isOverdue ? <AlertTriangle className="h-3 w-3" /> : null}
+          </span> : null}
       </div>
 
       {/* Assigned person */}
-      {item.assignedTo && (
-        <div className="flex items-center gap-2 mb-2">
+      {item.assignedTo ? <div className="flex items-center gap-2 mb-2">
           <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
             <span className="text-xs font-medium text-green-700">{item.assignedTo.name[0]}</span>
           </div>
           <span className="text-xs text-warm-500">Assigned to:</span>
           <span className="text-xs text-warm-700 font-medium">{item.assignedTo.name}</span>
-        </div>
-      )}
+        </div> : null}
 
       {/* Rejection notice */}
-      {item.status === 'rejected' && item.lastRejectionReason && (
-        <div className="mb-2 p-1.5 bg-red-50 rounded text-xs text-red-700 flex items-start gap-1.5">
+      {item.status === 'rejected' && item.lastRejectionReason ? <div className="mb-2 p-1.5 bg-red-50 rounded text-xs text-red-700 flex items-start gap-1.5">
           <RotateCcw className="h-3 w-3 mt-0.5 shrink-0" />
           <div>
             <span className="font-medium">Rejected ({item.rejectionCount}x): </span>
             {item.lastRejectionReason}
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* Checklist reference */}
-      {item.checklistRef && (
-        <div className="mb-2 text-xs text-stone-600 flex items-center gap-1">
+      {item.checklistRef ? <div className="mb-2 text-xs text-stone-600 flex items-center gap-1">
           <ClipboardCheck className="h-3 w-3" />
           From: {item.checklistRef}
-        </div>
-      )}
+        </div> : null}
 
       {/* Notes expandable section */}
-      {item.notes && (
-        <div className="mb-2">
+      {item.notes ? <div className="mb-2">
           <button
             onClick={() => setNotesExpanded(!notesExpanded)}
             className="flex items-center gap-1 text-xs text-warm-500 hover:text-warm-700"
@@ -645,13 +630,10 @@ function PunchItemCard({ item, isWalkthroughMode }: { item: PunchItem; isWalkthr
             {notesExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             <span>Notes</span>
           </button>
-          {notesExpanded && (
-            <div className="mt-1 p-2 bg-warm-50 rounded text-xs text-warm-600">
+          {notesExpanded ? <div className="mt-1 p-2 bg-warm-50 rounded text-xs text-warm-600">
               {item.notes}
-            </div>
-          )}
-        </div>
-      )}
+            </div> : null}
+        </div> : null}
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-2 border-t border-warm-100">
@@ -710,7 +692,7 @@ function StatCard({
         <div>
           <p className="text-xs text-warm-500">{label}</p>
           <p className="text-lg font-semibold text-warm-900">{value}</p>
-          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
+          {subValue ? <p className="text-xs text-warm-400">{subValue}</p> : null}
         </div>
       </div>
     </div>
@@ -1056,13 +1038,11 @@ export function PunchListPreview() {
                 </button>
 
                 {/* Group Items */}
-                {isExpanded && (
-                  <div className="p-4 space-y-3 bg-white">
+                {isExpanded ? <div className="p-4 space-y-3 bg-white">
                     {items.map(item => (
                       <PunchItemCard key={item.id} item={item} isWalkthroughMode={isWalkthroughMode} />
                     ))}
-                  </div>
-                )}
+                  </div> : null}
               </div>
             )
           })
@@ -1077,14 +1057,12 @@ export function PunchListPreview() {
       </div>
 
       {/* Walkthrough Mode Add Item Button */}
-      {isWalkthroughMode && (
-        <div className="bg-white border-t border-warm-200 px-4 py-3">
+      {isWalkthroughMode ? <div className="bg-white border-t border-warm-200 px-4 py-3">
           <button className="w-full flex items-center justify-center gap-2 py-3 bg-stone-600 text-white rounded-lg hover:bg-stone-700 transition-colors">
             <Plus className="h-5 w-5" />
             <span className="font-medium">Add New Item</span>
           </button>
-        </div>
-      )}
+        </div> : null}
 
       {/* AI Features Panel */}
       <div className="bg-gradient-to-r from-purple-50 to-stone-50 border-t border-warm-200 px-4 py-4">

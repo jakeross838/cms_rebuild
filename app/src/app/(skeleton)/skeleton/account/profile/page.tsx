@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+
 import {
   ChevronRight,
   Mail,
@@ -14,6 +14,8 @@ import {
   MapPin,
   LogOut,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -251,11 +253,9 @@ export default function ProfilePage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground">{session.device}</span>
-                    {session.current && (
-                      <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium">
+                    {session.current ? <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium">
                         Current
-                      </span>
-                    )}
+                      </span> : null}
                   </div>
                   <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
                     <span>{session.browser} / {session.os}</span>

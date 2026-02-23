@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Upload,
   Calendar,
@@ -26,10 +27,11 @@ import {
   AlertTriangle,
   Pencil,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface Photo {
   id: string
@@ -344,33 +346,25 @@ function PhotoCard({
       </div>
 
       {/* Selection checkbox */}
-      {bulkSelectMode && (
-        <div className="absolute top-2 left-2">
+      {bulkSelectMode ? <div className="absolute top-2 left-2">
           {isSelected ? (
             <CheckSquare className="h-5 w-5 text-stone-500 bg-white rounded" />
           ) : (
             <Square className="h-5 w-5 text-warm-400 bg-warm-50 rounded" />
           )}
-        </div>
-      )}
+        </div> : null}
 
       {/* Top-right badges */}
       <div className="absolute top-2 right-2 flex items-center gap-1">
-        {photo.isMilestone && (
-          <span className="bg-amber-400 text-amber-900 p-1 rounded">
+        {photo.isMilestone ? <span className="bg-amber-400 text-amber-900 p-1 rounded">
             <Award className="h-3.5 w-3.5" />
-          </span>
-        )}
-        {photo.clientSuitable && (
-          <span className="bg-green-400 text-white p-1 rounded">
+          </span> : null}
+        {photo.clientSuitable ? <span className="bg-green-400 text-white p-1 rounded">
             <Eye className="h-3.5 w-3.5" />
-          </span>
-        )}
-        {photo.isDuplicate && (
-          <span className="bg-red-400 text-white p-1 rounded">
+          </span> : null}
+        {photo.isDuplicate ? <span className="bg-red-400 text-white p-1 rounded">
             <Layers className="h-3.5 w-3.5" />
-          </span>
-        )}
+          </span> : null}
         {photo.qualityScore < 0.6 && (
           <span className="bg-red-500 text-white p-1 rounded">
             <AlertTriangle className="h-3.5 w-3.5" />
@@ -399,16 +393,12 @@ function PhotoCard({
           </div>
           {/* Cross-module links */}
           <div className="flex items-center gap-1">
-            {photo.dailyLogId && (
-              <span className="text-[10px] bg-stone-500/80 text-white px-1 py-0.5 rounded">
+            {photo.dailyLogId ? <span className="text-[10px] bg-stone-500/80 text-white px-1 py-0.5 rounded">
                 {photo.dailyLogId}
-              </span>
-            )}
-            {photo.punchItemId && (
-              <span className="text-[10px] bg-sand-500/80 text-white px-1 py-0.5 rounded">
+              </span> : null}
+            {photo.punchItemId ? <span className="text-[10px] bg-sand-500/80 text-white px-1 py-0.5 rounded">
                 {photo.punchItemId}
-              </span>
-            )}
+              </span> : null}
           </div>
         </div>
       </div>
@@ -611,8 +601,7 @@ export function PhotosPreview() {
       </div>
 
       {/* Bulk Actions Bar (when in bulk select mode) */}
-      {bulkSelectMode && (
-        <div className="bg-stone-50 border-b border-stone-200 px-4 py-2 flex items-center justify-between">
+      {bulkSelectMode ? <div className="bg-stone-50 border-b border-stone-200 px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-sm text-stone-700 font-medium">
               {selectedPhotos.size} selected
@@ -680,8 +669,7 @@ export function PhotosPreview() {
               Archive
             </button>
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* Photo Grid */}
       <div className="p-4 max-h-[450px] overflow-y-auto">

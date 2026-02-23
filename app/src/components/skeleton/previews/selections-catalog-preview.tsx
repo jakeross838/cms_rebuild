@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Sparkles,
@@ -29,10 +30,11 @@ import {
   History,
   Download,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type AvailabilityStatus = 'in_stock' | 'low_stock' | 'backordered' | 'discontinued' | 'special_order'
 type ItemSource = 'builder' | 'designer' | 'client' | 'catalog'
@@ -382,20 +384,14 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-            {selection.isCoastalRated && (
-              <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded">Coastal</span>
-            )}
-            {selection.isDefaultForTier && (
-              <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            {selection.isCoastalRated ? <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded">Coastal</span> : null}
+            {selection.isDefaultForTier ? <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Star className="h-3 w-3" />
                 Default
-              </span>
-            )}
-            {selection.isAllowanceItem && (
-              <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
+              </span> : null}
+            {selection.isAllowanceItem ? <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
                 Allow: {formatCurrency(selection.allowanceAmount ?? 0)}
-              </span>
-            )}
+              </span> : null}
             <span className={cn("text-xs px-1.5 py-0.5 rounded", srcCfg.color)}>
               {srcCfg.label}
             </span>
@@ -478,8 +474,7 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
         </span>
       </div>
 
-      {selection.aiNote && (
-        <div className={cn(
+      {selection.aiNote ? <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2 text-xs",
           selection.availabilityStatus === 'discontinued' ? "bg-red-50" : "bg-amber-50"
         )}>
@@ -490,8 +485,7 @@ function SelectionCard({ selection }: { selection: SelectionItem }) {
           <span className={selection.availabilityStatus === 'discontinued' ? "text-red-700" : "text-amber-700"}>
             {selection.aiNote}
           </span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -548,8 +542,7 @@ function CategorySidebar({
                 </span>
                 <span className="text-xs text-warm-400">{cat.count}</span>
               </button>
-              {isExpanded && (
-                <div className="ml-6 py-1">
+              {isExpanded ? <div className="ml-6 py-1">
                   {cat.subcategories.map(sub => (
                     <button
                       key={sub}
@@ -565,8 +558,7 @@ function CategorySidebar({
                       {sub}
                     </button>
                   ))}
-                </div>
-              )}
+                </div> : null}
             </div>
           )
         })}

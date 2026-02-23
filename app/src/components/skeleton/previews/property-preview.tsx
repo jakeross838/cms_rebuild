@@ -23,8 +23,9 @@ import {
   Shield,
   FileText,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 type ConstructionType = 'new_construction' | 'renovation' | 'addition' | 'tear_down_rebuild'
 
@@ -240,14 +241,12 @@ function DataRow({
       <span className="text-sm text-warm-600">{label}</span>
       <div className="flex items-center gap-1.5">
         <span className="text-sm font-medium text-warm-900">{value}</span>
-        {aiMeta && (
-          <span className={cn(
+        {aiMeta ? <span className={cn(
             "text-xs px-1.5 py-0.5 rounded flex items-center gap-0.5",
             aiMeta.confidence >= 0.9 ? "bg-stone-100 text-stone-700" : "bg-amber-100 text-amber-700"
           )}>
             AI {Math.round(aiMeta.confidence * 100)}%
-          </span>
-        )}
+          </span> : null}
       </div>
     </div>
   )
@@ -296,15 +295,11 @@ export function PropertyPreview() {
               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
                 {constructionTypeLabels[p.constructionType]}
               </span>
-              {p.isCoastal && (
-                <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full font-medium">Coastal</span>
-              )}
+              {p.isCoastal ? <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full font-medium">Coastal</span> : null}
               {p.foundationType === 'Pilings' && (
                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Elevated</span>
               )}
-              {p.isHistoric && (
-                <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded-full font-medium">Historic District</span>
-              )}
+              {p.isHistoric ? <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded-full font-medium">Historic District</span> : null}
             </div>
             <div className="flex items-center gap-4 text-sm text-warm-500 mt-1">
               <div className="flex items-center gap-1.5">
@@ -335,11 +330,9 @@ export function PropertyPreview() {
                   {aiFieldCount} AI-extracted fields
                 </span>
               )}
-              {p.lastPlanSync && (
-                <span className="text-xs text-warm-400">
+              {p.lastPlanSync ? <span className="text-xs text-warm-400">
                   Plan sync: {new Date(p.lastPlanSync).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
-              )}
+                </span> : null}
             </div>
           </div>
           <div className="flex items-center gap-2">

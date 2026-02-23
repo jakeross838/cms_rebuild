@@ -131,7 +131,7 @@ export function classifyRequest(message: string): RequestClassification {
     'create', 'format', 'convert'
   ]
 
-  const simpleIndicators = [
+  const _simpleIndicators = [
     'what is', 'when', 'who', 'status', 'yes or no',
     'how many', 'how much', 'current'
   ]
@@ -235,7 +235,7 @@ Use actual project data and format professionally.
  */
 export function formatPlaudeResponse(raw: string): string {
   // Convert markdown-style formatting
-  let formatted = raw
+  const formatted = raw
     // Bold text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     // Headers

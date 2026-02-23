@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   MessageSquare,
   Plus,
@@ -32,10 +33,11 @@ import {
   Target,
   BarChart3,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -344,22 +346,17 @@ function ResponseWorkflowButtons({ rfi }: { rfi: RFI }) {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      {isOpen && (
-        <>
+      {isOpen ? <>
           <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-stone-50 text-stone-700 hover:bg-stone-100 rounded-md transition-colors">
             <Bell className="h-3 w-3" />
             Send Reminder
           </button>
-          {isOverdue && (
-            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 rounded-md transition-colors">
+          {isOverdue ? <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 rounded-md transition-colors">
               <ArrowUpCircle className="h-3 w-3" />
               Escalate
-            </button>
-          )}
-        </>
-      )}
-      {hasResponse && (
-        <>
+            </button> : null}
+        </> : null}
+      {hasResponse ? <>
           <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 rounded-md transition-colors">
             <ThumbsUp className="h-3 w-3" />
             Accept Answer
@@ -368,8 +365,7 @@ function ResponseWorkflowButtons({ rfi }: { rfi: RFI }) {
             <HelpCircle className="h-3 w-3" />
             Request Clarification
           </button>
-        </>
-      )}
+        </> : null}
     </div>
   )
 }
@@ -410,18 +406,14 @@ function ImpactBadges({ rfi }: { rfi: RFI }) {
           +{rfi.scheduleImpactDays}d schedule
         </span>
       )}
-      {rfi.changeOrderNumber && (
-        <span className="text-xs px-1.5 py-0.5 bg-warm-50 text-warm-700 rounded flex items-center gap-0.5">
+      {rfi.changeOrderNumber ? <span className="text-xs px-1.5 py-0.5 bg-warm-50 text-warm-700 rounded flex items-center gap-0.5">
           <Link2 className="h-3 w-3" />
           {rfi.changeOrderNumber}
-        </span>
-      )}
-      {rfi.linkedScheduleTask && (
-        <span className="text-xs px-1.5 py-0.5 bg-stone-50 text-stone-700 rounded flex items-center gap-0.5">
+        </span> : null}
+      {rfi.linkedScheduleTask ? <span className="text-xs px-1.5 py-0.5 bg-stone-50 text-stone-700 rounded flex items-center gap-0.5">
           <Calendar className="h-3 w-3" />
           {rfi.linkedScheduleTask}
-        </span>
-      )}
+        </span> : null}
     </div>
   )
 }
@@ -459,9 +451,7 @@ function SlowResponderAnalytics() {
             )}>
               {stat.avgDays} days
             </span>
-            {stat.isAboveAverage && (
-              <span className="text-red-500 text-[10px]">(above avg)</span>
-            )}
+            {stat.isAboveAverage ? <span className="text-red-500 text-[10px]">(above avg)</span> : null}
           </div>
         ))}
       </div>
@@ -485,9 +475,7 @@ function RFICard({ rfi }: { rfi: RFI }) {
     )}>
       {/* SLA Escalation Warning - Prominent Position */}
       <SLAEscalationWarning rfi={rfi} />
-      {(isOverdue || (isOpen && Math.ceil((new Date(rfi.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 2)) && (
-        <div className="mb-3" />
-      )}
+      {(isOverdue || (isOpen && Math.ceil((new Date(rfi.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 2)) ? <div className="mb-3" /> : null}
 
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
@@ -541,39 +529,31 @@ function RFICard({ rfi }: { rfi: RFI }) {
 
       {/* References */}
       <div className="flex items-center gap-3 mb-3 flex-wrap">
-        {rfi.drawingReference && (
-          <span className="text-xs text-stone-600 flex items-center gap-1">
+        {rfi.drawingReference ? <span className="text-xs text-stone-600 flex items-center gap-1">
             <MapPin className="h-3 w-3" />
             {rfi.drawingReference}
-          </span>
-        )}
-        {rfi.specReference && (
-          <span className="text-xs text-stone-600 flex items-center gap-1">
+          </span> : null}
+        {rfi.specReference ? <span className="text-xs text-stone-600 flex items-center gap-1">
             <Hash className="h-3 w-3" />
             {rfi.specReference}
-          </span>
-        )}
-        {rfi.planMarkup && (
-          <span className="text-xs text-stone-600 flex items-center gap-1">
+          </span> : null}
+        {rfi.planMarkup ? <span className="text-xs text-stone-600 flex items-center gap-1">
             <FileText className="h-3 w-3" />
             Plan markup
-          </span>
-        )}
+          </span> : null}
         {rfi.photoCount > 0 && (
           <span className="text-xs text-warm-500">
             {rfi.photoCount} photo{rfi.photoCount > 1 ? 's' : ''}
           </span>
         )}
-        {rfi.tradeCategory && (
-          <span className="text-xs px-2 py-0.5 bg-warm-100 text-warm-600 rounded">
+        {rfi.tradeCategory ? <span className="text-xs px-2 py-0.5 bg-warm-100 text-warm-600 rounded">
             {rfi.tradeCategory}
-          </span>
-        )}
+          </span> : null}
       </div>
 
       {/* Ball in court + Impact badges */}
       <div className="space-y-2 mb-3">
-        {isOpen && <BallInCourtBadge routing={rfi.routing} />}
+        {isOpen ? <BallInCourtBadge routing={rfi.routing} /> : null}
         <ImpactBadges rfi={rfi} />
       </div>
 
@@ -609,16 +589,14 @@ function RFICard({ rfi }: { rfi: RFI }) {
             <Calendar className="h-3.5 w-3.5" />
             <span>{rfi.dateSubmitted}</span>
           </div>
-          {isOpen && (
-            <div className={cn(
+          {isOpen ? <div className={cn(
               "flex items-center gap-1.5",
               isOverdue ? "text-red-600" : "text-warm-500"
             )}>
               <Clock className="h-3.5 w-3.5" />
               <span>{rfi.daysOpen}d open</span>
-              {isOverdue && <AlertTriangle className="h-3.5 w-3.5" />}
-            </div>
-          )}
+              {isOverdue ? <AlertTriangle className="h-3.5 w-3.5" /> : null}
+            </div> : null}
           {rfi.status === 'closed' && (
             <div className="flex items-center gap-1.5 text-green-600">
               <CheckCircle className="h-3.5 w-3.5" />
@@ -631,22 +609,18 @@ function RFICard({ rfi }: { rfi: RFI }) {
         </div>
       </div>
 
-      {rfi.aiNote && (
-        <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+      {rfi.aiNote ? <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-amber-700">{rfi.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
 
-      {rfi.aiSuggestedResponse && isOpen && (
-        <div className="mt-2 p-2 bg-warm-50 rounded-md flex items-start gap-2">
+      {rfi.aiSuggestedResponse && isOpen ? <div className="mt-2 p-2 bg-warm-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-stone-600 mt-0.5 flex-shrink-0" />
           <div>
             <span className="text-xs font-medium text-warm-700">AI-Suggested Response: </span>
             <span className="text-xs text-stone-600">{rfi.aiSuggestedResponse}</span>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

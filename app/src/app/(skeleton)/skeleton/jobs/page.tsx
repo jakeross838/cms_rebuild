@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
+
+import { Eye, BookOpen, ArrowRight } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { JobsListPreview } from '@/components/skeleton/previews/jobs-list-preview'
-import { Eye, BookOpen, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const constructionWorkflow = [

@@ -1,7 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { formatCurrency, formatRelativeDate, getStatusColor } from '@/lib/utils'
+import Link from 'next/link'
+
 import {
   Briefcase,
   Receipt,
@@ -12,7 +10,11 @@ import {
   AlertCircle,
   ArrowRight,
 } from 'lucide-react'
-import Link from 'next/link'
+
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { createClient } from '@/lib/supabase/server'
+import { formatCurrency, formatRelativeDate, getStatusColor } from '@/lib/utils'
 import type { Job, Client } from '@/types/database'
 
 type JobWithClient = Job & { clients: Pick<Client, 'name'> | null }

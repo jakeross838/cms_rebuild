@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   Plus,
@@ -19,10 +20,11 @@ import {
   SlidersHorizontal,
   Eye,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type JEType = 'auto' | 'manual' | 'recurring' | 'adjusting'
 type JEStatus = 'posted' | 'draft' | 'pending_approval'
@@ -281,11 +283,9 @@ function JournalEntryRow({ entry, isExpanded, onToggle }: { entry: JournalEntry;
               {formatFullCurrency(entry.totalAmount)}
             </span>
 
-            {entry.sourceModule && (
-              <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded w-32 text-center truncate">
+            {entry.sourceModule ? <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded w-32 text-center truncate">
                 {entry.sourceModule}
-              </span>
-            )}
+              </span> : null}
 
             <button className="p-1.5 hover:bg-warm-100 rounded">
               <MoreHorizontal className="h-4 w-4 text-warm-400" />
@@ -295,8 +295,7 @@ function JournalEntryRow({ entry, isExpanded, onToggle }: { entry: JournalEntry;
       </div>
 
       {/* Expanded detail lines */}
-      {isExpanded && (
-        <div className="border-t border-warm-100 bg-warm-50 px-4 py-3">
+      {isExpanded ? <div className="border-t border-warm-100 bg-warm-50 px-4 py-3">
           <div className="ml-8">
             {/* Line items header */}
             <div className="grid grid-cols-12 gap-2 text-xs font-medium text-warm-500 uppercase tracking-wider mb-2">
@@ -333,13 +332,9 @@ function JournalEntryRow({ entry, isExpanded, onToggle }: { entry: JournalEntry;
 
             {/* Metadata */}
             <div className="mt-3 flex items-center gap-4 text-xs text-warm-500">
-              {entry.createdBy && <span>Created by: {entry.createdBy}</span>}
-              {entry.approver && (
-                <span className="text-amber-600">Approver: {entry.approver}</span>
-              )}
-              {entry.memo && (
-                <span className="italic text-warm-400">Memo: {entry.memo}</span>
-              )}
+              {entry.createdBy ? <span>Created by: {entry.createdBy}</span> : null}
+              {entry.approver ? <span className="text-amber-600">Approver: {entry.approver}</span> : null}
+              {entry.memo ? <span className="italic text-warm-400">Memo: {entry.memo}</span> : null}
             </div>
 
             {/* Approval actions */}
@@ -356,8 +351,7 @@ function JournalEntryRow({ entry, isExpanded, onToggle }: { entry: JournalEntry;
               </div>
             )}
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

@@ -1,19 +1,20 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronDown,
   ChevronRight,
   Database,
   Sparkles,
   Link2,
-  FileText,
   ArrowRight,
   ArrowLeft,
   ArrowLeftRight,
   Check,
   Layers,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 interface Connection {
@@ -96,7 +97,7 @@ function Section({
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         )}
       </button>
-      {isOpen && <div className="p-4 border-t border-border">{children}</div>}
+      {isOpen ? <div className="p-4 border-t border-border">{children}</div> : null}
     </div>
   )
 }
@@ -127,12 +128,10 @@ export function PageSpec({
             <div className="flex items-center gap-2 mb-1">
               <span className={cn('h-2 w-2 rounded-full', phaseStyle.bg)} />
               <span className="text-xs font-medium text-muted-foreground">{phase}</span>
-              {planFile && (
-                <>
+              {planFile ? <>
                   <span className="text-warm-400">|</span>
                   <span className="text-xs text-muted-foreground">{planFile}</span>
-                </>
-              )}
+                </> : null}
             </div>
             <h1 className="text-2xl font-bold text-foreground font-display tracking-tight">{title}</h1>
             <p className="mt-1 text-muted-foreground">{description}</p>
@@ -290,11 +289,9 @@ export function PageSpec({
                   <span className="font-medium text-sm text-foreground">{feature.name}</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">{feature.description}</p>
-                {feature.trigger && (
-                  <p className="mt-2 text-xs text-amber-700 font-medium">
+                {feature.trigger ? <p className="mt-2 text-xs text-amber-700 font-medium">
                     Trigger: {feature.trigger}
-                  </p>
-                )}
+                  </p> : null}
               </div>
             ))}
           </div>
@@ -341,13 +338,11 @@ export function PageSpec({
       )}
 
       {/* ASCII Mockup - Collapsible */}
-      {mockupAscii && (
-        <Section title="Layout Mockup" icon={Layers} iconColor="text-warm-600">
+      {mockupAscii ? <Section title="Layout Mockup" icon={Layers} iconColor="text-warm-600">
           <pre className="bg-warm-900 text-green-400 p-4 rounded-lg overflow-x-auto text-xs font-mono leading-relaxed">
             {mockupAscii}
           </pre>
-        </Section>
-      )}
+        </Section> : null}
     </div>
   )
 }

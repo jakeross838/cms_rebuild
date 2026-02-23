@@ -1,8 +1,10 @@
 'use client'
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { TeamPreview } from '@/components/skeleton/previews/team-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function JobTeamPage() {

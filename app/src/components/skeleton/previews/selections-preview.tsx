@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Sparkles,
@@ -24,10 +25,11 @@ import {
   Star,
   LinkIcon,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type SelectionStatus =
   | 'not_started'
@@ -427,12 +429,10 @@ function SelectionCard({ selection }: { selection: Selection }) {
             <span className="text-xs font-medium text-warm-500 uppercase">{selection.category}</span>
             <span className="text-xs text-warm-400">-</span>
             <span className="text-xs text-warm-500">{selection.room}</span>
-            {isUrgent && <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
-            {selection.designerRecommended && (
-              <span className="flex items-center gap-0.5 text-xs text-sand-600" title="Designer recommended">
+            {isUrgent ? <AlertTriangle className="h-3.5 w-3.5 text-amber-500" /> : null}
+            {selection.designerRecommended ? <span className="flex items-center gap-0.5 text-xs text-sand-600" title="Designer recommended">
                 <Palette className="h-3 w-3" />
-              </span>
-            )}
+              </span> : null}
           </div>
           <h4 className="font-medium text-warm-900">{selection.itemName}</h4>
         </div>
@@ -448,15 +448,11 @@ function SelectionCard({ selection }: { selection: Selection }) {
           <p className="text-sm text-warm-400 italic">No selection made</p>
         )}
         <div className="flex items-center gap-3 mt-1">
-          {selection.vendor && (
-            <p className="text-xs text-warm-500">{selection.vendor}</p>
-          )}
-          {selection.poNumber && (
-            <span className="text-xs text-stone-600 flex items-center gap-0.5">
+          {selection.vendor ? <p className="text-xs text-warm-500">{selection.vendor}</p> : null}
+          {selection.poNumber ? <span className="text-xs text-stone-600 flex items-center gap-0.5">
               <LinkIcon className="h-3 w-3" />
               {selection.poNumber}
-            </span>
-          )}
+            </span> : null}
         </div>
       </div>
 
@@ -505,11 +501,9 @@ function SelectionCard({ selection }: { selection: Selection }) {
             {selection.inspirationCount}
           </span>
         )}
-        {selection.hasSignature && (
-          <span className="flex items-center gap-0.5 text-green-500" title="E-signature captured">
+        {selection.hasSignature ? <span className="flex items-center gap-0.5 text-green-500" title="E-signature captured">
             <FileSignature className="h-3 w-3" />
-          </span>
-        )}
+          </span> : null}
         {selection.leadTimeDays !== null && (
           <span className="flex items-center gap-0.5" title={`${selection.leadTimeDays} day lead time`}>
             <Truck className="h-3 w-3" />
@@ -535,15 +529,12 @@ function SelectionCard({ selection }: { selection: Selection }) {
         </div>
       </div>
 
-      {selection.scheduleDependency && (
-        <div className="mt-2 text-xs text-warm-400 flex items-center gap-1">
+      {selection.scheduleDependency ? <div className="mt-2 text-xs text-warm-400 flex items-center gap-1">
           <Clock className="h-3 w-3" />
           {selection.scheduleDependency}
-        </div>
-      )}
+        </div> : null}
 
-      {selection.aiNote && (
-        <div className={cn(
+      {selection.aiNote ? <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2 text-xs",
           selection.status === 'change_requested' ? "bg-sand-50" : isUrgent ? "bg-amber-50" : "bg-stone-50"
         )}>
@@ -554,8 +545,7 @@ function SelectionCard({ selection }: { selection: Selection }) {
           <span className={selection.status === 'change_requested' ? "text-sand-700" : isUrgent ? "text-amber-700" : "text-stone-700"}>
             {selection.aiNote}
           </span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -578,16 +568,14 @@ function SelectionRow({ selection }: { selection: Selection }) {
           <span className="text-xs font-medium text-warm-500 uppercase bg-warm-100 px-1.5 py-0.5 rounded">
             {selection.category}
           </span>
-          {isUrgent && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-          {selection.designerRecommended && <Palette className="h-3.5 w-3.5 text-sand-600" />}
+          {isUrgent ? <AlertTriangle className="h-4 w-4 text-amber-500" /> : null}
+          {selection.designerRecommended ? <Palette className="h-3.5 w-3.5 text-sand-600" /> : null}
         </div>
       </td>
       <td className="py-3 px-4 text-xs text-warm-500">{selection.room}</td>
       <td className="py-3 px-4">
         <div className="font-medium text-warm-900">{selection.itemName}</div>
-        {selection.vendor && (
-          <div className="text-xs text-warm-500">{selection.vendor}</div>
-        )}
+        {selection.vendor ? <div className="text-xs text-warm-500">{selection.vendor}</div> : null}
       </td>
       <td className="py-3 px-4">
         {selection.selectedProduct ? (

@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { CrewSchedulePreview } from '@/components/skeleton/previews/crew-schedule-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const workflow = ['View Assignments', 'Drag to Assign', 'Check Capacity', 'Resolve Conflicts']

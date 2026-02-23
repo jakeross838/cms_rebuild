@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Calendar,
@@ -27,10 +28,11 @@ import {
   Target,
   Gauge,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -398,12 +400,10 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
               <span className={cn("text-xs px-2 py-0.5 rounded font-medium", config.color)}>
                 {config.label}
               </span>
-              {inspection.reinspectionOf && (
-                <span className="text-xs px-2 py-0.5 rounded bg-amber-50 text-amber-700 flex items-center gap-1">
+              {inspection.reinspectionOf ? <span className="text-xs px-2 py-0.5 rounded bg-amber-50 text-amber-700 flex items-center gap-1">
                   <Link2 className="h-3 w-3" />
                   Re-inspection
-                </span>
-              )}
+                </span> : null}
               {inspection.photos > 0 && (
                 <span className="text-xs text-warm-400 flex items-center gap-1">
                   <Camera className="h-3 w-3" />
@@ -438,16 +438,13 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
             </div>
 
             {/* Prerequisite */}
-            {inspection.prerequisite && inspection.status === 'ready_to_schedule' && (
-              <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
+            {inspection.prerequisite && inspection.status === 'ready_to_schedule' ? <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 Prerequisite: {inspection.prerequisite}
-              </p>
-            )}
+              </p> : null}
 
             {/* Notes */}
-            {inspection.notes && (
-              <p className={cn(
+            {inspection.notes ? <p className={cn(
                 "text-sm mt-2 p-2 rounded-md",
                 inspection.status === 'failed' ? 'bg-red-50 text-red-700' :
                 inspection.status === 'passed' ? 'bg-green-50 text-green-700' :
@@ -455,12 +452,10 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
               )}>
                 <FileText className="h-3.5 w-3.5 inline mr-1.5" />
                 {inspection.notes}
-              </p>
-            )}
+              </p> : null}
 
             {/* Deficiencies */}
-            {inspection.deficiencies && inspection.deficiencies.length > 0 && (
-              <div className="mt-2 space-y-2">
+            {inspection.deficiencies && inspection.deficiencies.length > 0 ? <div className="mt-2 space-y-2">
                 <p className="text-xs font-medium text-red-700">Deficiencies ({inspection.deficiencies.length}):</p>
                 {inspection.deficiencies.map((def, idx) => (
                   <div key={idx} className={cn(
@@ -469,13 +464,12 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                   )}>
                     <div className="flex items-start justify-between">
                       <p className={def.resolved ? 'text-green-700' : 'text-red-700'}>{def.description}</p>
-                      {def.resolved && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0 ml-2" />}
+                      {def.resolved ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0 ml-2" /> : null}
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-warm-500 flex-wrap">
                       <span className="flex items-center gap-1"><Wrench className="h-3 w-3" />{def.responsibleVendor}</span>
                       {/* Vendor FTQ Badge */}
-                      {def.responsibleVendorId && vendorFTQData[def.responsibleVendorId] && (
-                        <span className={cn(
+                      {def.responsibleVendorId && vendorFTQData[def.responsibleVendorId] ? <span className={cn(
                           "flex items-center gap-0.5 px-1 py-0.5 rounded text-[10px] font-medium",
                           ftqThresholdConfig[vendorFTQData[def.responsibleVendorId].ftqThreshold].bgColor,
                           ftqThresholdConfig[vendorFTQData[def.responsibleVendorId].ftqThreshold].textColor
@@ -484,19 +478,16 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                           FTQ {vendorFTQData[def.responsibleVendorId].ftqScore}%
                           {vendorFTQData[def.responsibleVendorId].ftqTrend === 'up' && <TrendingUp className="h-2.5 w-2.5" />}
                           {vendorFTQData[def.responsibleVendorId].ftqTrend === 'down' && <TrendingDown className="h-2.5 w-2.5" />}
-                        </span>
-                      )}
-                      {def.correctionTaskCreated && <span className="text-stone-600 flex items-center gap-1"><ClipboardCheck className="h-3 w-3" />Task created</span>}
+                        </span> : null}
+                      {def.correctionTaskCreated ? <span className="text-stone-600 flex items-center gap-1"><ClipboardCheck className="h-3 w-3" />Task created</span> : null}
                       {def.photos > 0 && <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{def.photos} photos</span>}
                     </div>
                   </div>
                 ))}
-              </div>
-            )}
+              </div> : null}
 
             {/* Pre-inspection Checklist */}
-            {inspection.preInspectionChecklist && inspection.status === 'scheduled' && (
-              <div className="mt-2 p-2 bg-stone-50 rounded">
+            {inspection.preInspectionChecklist && inspection.status === 'scheduled' ? <div className="mt-2 p-2 bg-stone-50 rounded">
                 <p className="text-xs font-medium text-stone-700 mb-1 flex items-center gap-1">
                   <ListChecks className="h-3 w-3" />
                   Pre-Inspection Checklist ({inspection.preInspectionChecklist.filter(i => i.checked).length}/{inspection.preInspectionChecklist.length})
@@ -513,16 +504,13 @@ function InspectionCard({ inspection }: { inspection: Inspection }) {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              </div> : null}
 
             {/* Schedule Impact */}
-            {inspection.scheduleImpact && (
-              <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
+            {inspection.scheduleImpact ? <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
                 <AlertTriangle className="h-3.5 w-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
                 <span className="text-xs text-amber-700">{inspection.scheduleImpact}</span>
-              </div>
-            )}
+              </div> : null}
           </div>
         </div>
 

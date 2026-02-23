@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   Clock,
@@ -25,10 +26,11 @@ import {
   TrendingDown,
   Ban,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type PayableStatus = 'pending' | 'approved' | 'scheduled' | 'paid' | 'disputed'
 
@@ -422,21 +424,17 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                   Credit Memo
                 </span>
               )}
-              {payable.earlyPayDiscount && payable.status !== 'paid' && (
-                <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium flex items-center gap-1">
+              {payable.earlyPayDiscount && payable.status !== 'paid' ? <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium flex items-center gap-1">
                   <DollarSign className="h-3 w-3" />
                   {payable.earlyPayDiscount.percent}% discount available
-                </span>
-              )}
+                </span> : null}
               {payable.aiConfidence !== undefined && (
                 <ConfidenceBadge score={payable.aiConfidence} />
               )}
-              {payable.duplicateWarning && (
-                <span className="text-xs px-2 py-0.5 rounded bg-sand-100 text-sand-700 font-medium flex items-center gap-1">
+              {payable.duplicateWarning ? <span className="text-xs px-2 py-0.5 rounded bg-sand-100 text-sand-700 font-medium flex items-center gap-1">
                   <Copy className="h-3 w-3" />
                   Possible Duplicate
-                </span>
-              )}
+                </span> : null}
             </div>
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
@@ -453,35 +451,26 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
             <div className="mt-2 flex items-center gap-3 text-sm flex-wrap">
               <span className="text-warm-500">{payable.paymentTerms}</span>
               <LienWaiverBadge status={payable.lienWaiverStatus} />
-              {payable.retainage && payable.retainage > 0 && (
-                <span className="text-xs text-warm-500">
+              {payable.retainage && payable.retainage > 0 ? <span className="text-xs text-warm-500">
                   Retainage: {formatCurrency(payable.retainage)}
-                </span>
-              )}
-              {payable.poNumber && (
-                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+                </span> : null}
+              {payable.poNumber ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   {payable.poNumber}
-                </span>
-              )}
-              {payable.drawNumber && (
-                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+                </span> : null}
+              {payable.drawNumber ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   Draw #{payable.drawNumber}
-                </span>
-              )}
-              {payable.costCodes && payable.costCodes.length > 0 && (
-                <span className="text-xs text-warm-400 flex items-center gap-1">
+                </span> : null}
+              {payable.costCodes && payable.costCodes.length > 0 ? <span className="text-xs text-warm-400 flex items-center gap-1">
                   <FileText className="h-3 w-3" />
                   {payable.costCodes.join(', ')}
-                </span>
-              )}
+                </span> : null}
               <span className="text-xs text-warm-400 flex items-center gap-1" title={`Uploaded via ${payable.uploadSource}`}>
                 <SourceIcon className="h-3 w-3" />
               </span>
               <QboSyncBadge status={payable.qboSyncStatus} />
             </div>
 
-            {payable.anomaly && (
-              <div className={cn(
+            {payable.anomaly ? <div className={cn(
                 "mt-2 p-2 rounded-md flex items-start gap-2 text-sm",
                 payable.anomaly.severity === 'high' ? "bg-red-50" :
                 payable.anomaly.severity === 'medium' ? "bg-amber-50" :
@@ -503,11 +492,9 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 <button className="ml-auto text-xs text-warm-500 hover:text-warm-700 whitespace-nowrap">
                   Dismiss
                 </button>
-              </div>
-            )}
+              </div> : null}
 
-            {payable.aiNote && !payable.anomaly && (
-              <div className={cn(
+            {payable.aiNote && !payable.anomaly ? <div className={cn(
                 "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
                 payable.lienWaiverStatus === 'pending' ? "bg-amber-50" : "bg-stone-50"
               )}>
@@ -518,8 +505,7 @@ function PayableRow({ payable, selected, onSelect }: { payable: Payable; selecte
                 <span className={payable.lienWaiverStatus === 'pending' ? "text-amber-700" : "text-stone-700"}>
                   {payable.aiNote}
                 </span>
-              </div>
-            )}
+              </div> : null}
           </div>
         </div>
 

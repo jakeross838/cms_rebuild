@@ -1,10 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+
 import { Plus, Search, Building2 } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { createClient } from '@/lib/supabase/server'
+import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Job, Client } from '@/types/database'
 
 type JobWithClient = Job & { clients: Pick<Client, 'name'> | null }
@@ -110,11 +112,9 @@ export default async function JobsPage({
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          {job.job_number && (
-                            <span className="text-sm text-muted-foreground">
+                          {job.job_number ? <span className="text-sm text-muted-foreground">
                               {job.job_number}
-                            </span>
-                          )}
+                            </span> : null}
                           <span className="font-medium text-foreground">
                             {job.name}
                           </span>

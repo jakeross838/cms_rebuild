@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Home,
   Camera,
@@ -24,8 +25,10 @@ import {
   PenLine,
   BarChart3,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
+
 import { AIAssistantPanel } from './ai-assistant-panel'
 
 interface PortalMilestone {
@@ -210,16 +213,14 @@ export function PortalPreview() {
               >
                 <Icon className="h-4 w-4" />
                 <span>{tab.label}</span>
-                {tab.badge && (
-                  <span className={cn(
+                {tab.badge ? <span className={cn(
                     "text-xs px-1.5 py-0.5 rounded-full",
                     tab.urgent
                       ? "bg-red-100 text-red-700"
                       : "bg-warm-100 text-warm-600"
                   )}>
                     {tab.badge}
-                  </span>
-                )}
+                  </span> : null}
               </button>
             )
           })}
@@ -308,9 +309,7 @@ export function PortalPreview() {
                   </div>
                 )}
               </div>
-              {milestone.status === 'completed' && milestone.date && (
-                <span className="text-xs text-warm-400 flex-shrink-0">{new Date(milestone.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-              )}
+              {milestone.status === 'completed' && milestone.date ? <span className="text-xs text-warm-400 flex-shrink-0">{new Date(milestone.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span> : null}
               {milestone.status === 'in_progress' && (
                 <span className="text-xs text-stone-600 font-medium flex-shrink-0">{milestone.percentComplete}%</span>
               )}
@@ -342,14 +341,12 @@ export function PortalPreview() {
                 <span className="text-xs text-warm-500 ml-2">{sel.room}</span>
               </div>
               <div className="flex items-center gap-3">
-                {sel.budgetImpact && (
-                  <span className={cn(
+                {sel.budgetImpact ? <span className={cn(
                     "text-xs px-1.5 py-0.5 rounded",
                     sel.budgetImpact.includes('+') ? "bg-amber-50 text-amber-600" : "bg-green-50 text-green-600"
                   )}>
                     {sel.budgetImpact}
-                  </span>
-                )}
+                  </span> : null}
                 <span className="text-xs text-warm-500">{sel.optionCount} options</span>
                 {sel.daysRemaining !== undefined && (
                   <span className={cn(

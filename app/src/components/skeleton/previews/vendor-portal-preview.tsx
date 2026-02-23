@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Home,
   FileText,
@@ -32,8 +33,9 @@ import {
   MapPin,
   AlertTriangle,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -938,12 +940,8 @@ export function VendorPortalPreview() {
                       <p className="text-xs text-warm-500">
                         Retainage: {formatCurrency(inv.retainageHeld)} | Net: {formatCurrency(inv.netAmount)}
                       </p>
-                      {inv.paidAt && (
-                        <p className="text-xs text-green-600 mt-0.5">Paid {formatDate(inv.paidAt)} - Ref: {inv.paymentRef}</p>
-                      )}
-                      {inv.rejectionReason && (
-                        <p className="text-xs text-red-600 mt-0.5">{inv.rejectionReason}</p>
-                      )}
+                      {inv.paidAt ? <p className="text-xs text-green-600 mt-0.5">Paid {formatDate(inv.paidAt)} - Ref: {inv.paymentRef}</p> : null}
+                      {inv.rejectionReason ? <p className="text-xs text-red-600 mt-0.5">{inv.rejectionReason}</p> : null}
                     </div>
                   </div>
                 )
@@ -1062,14 +1060,12 @@ export function VendorPortalPreview() {
                         {doc.fileName ? (
                           <p className="text-xs text-warm-500">
                             {doc.fileName}
-                            {doc.expirationDate && ` - Expires ${formatDate(doc.expirationDate)}`}
+                            {doc.expirationDate ? ` - Expires ${formatDate(doc.expirationDate)}` : null}
                           </p>
                         ) : (
                           <p className="text-xs text-red-500">Not uploaded</p>
                         )}
-                        {doc.policyNumber && (
-                          <p className="text-xs text-warm-400">Policy: {doc.policyNumber}</p>
-                        )}
+                        {doc.policyNumber ? <p className="text-xs text-warm-400">Policy: {doc.policyNumber}</p> : null}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1230,14 +1226,10 @@ export function VendorPortalPreview() {
                     <p className="text-xs text-warm-500">Net: {formatCurrency(inv.netAmount)}</p>
                   </div>
                 </div>
-                {inv.rejectionReason && (
-                  <div className="mt-2 p-2 bg-red-50 rounded text-sm text-red-700">
+                {inv.rejectionReason ? <div className="mt-2 p-2 bg-red-50 rounded text-sm text-red-700">
                     <XCircle className="h-3.5 w-3.5 inline mr-1" />Rejected: {inv.rejectionReason}
-                  </div>
-                )}
-                {inv.paidAt && (
-                  <div className="mt-2 text-xs text-green-600">Paid {formatDate(inv.paidAt)} - Ref: {inv.paymentRef}</div>
-                )}
+                  </div> : null}
+                {inv.paidAt ? <div className="mt-2 text-xs text-green-600">Paid {formatDate(inv.paidAt)} - Ref: {inv.paymentRef}</div> : null}
               </div>
             )
           })}
@@ -1349,10 +1341,10 @@ export function VendorPortalPreview() {
                      <FileCheck className={cn('h-5 w-5', doc.status === 'expiring_soon' ? 'text-amber-600' : 'text-red-600')} />}
                     <div>
                       <p className="font-medium text-warm-900">{complianceDocTypeLabels[doc.type]}</p>
-                      {doc.fileName && <p className="text-sm text-warm-500">{doc.fileName}</p>}
-                      {doc.expirationDate && <p className="text-xs text-warm-400">Expires: {formatDate(doc.expirationDate)}</p>}
-                      {doc.coverageAmount && <p className="text-xs text-warm-400">Coverage: {formatCurrency(doc.coverageAmount)}</p>}
-                      {doc.policyNumber && <p className="text-xs text-warm-400">Policy: {doc.policyNumber}</p>}
+                      {doc.fileName ? <p className="text-sm text-warm-500">{doc.fileName}</p> : null}
+                      {doc.expirationDate ? <p className="text-xs text-warm-400">Expires: {formatDate(doc.expirationDate)}</p> : null}
+                      {doc.coverageAmount ? <p className="text-xs text-warm-400">Coverage: {formatCurrency(doc.coverageAmount)}</p> : null}
+                      {doc.policyNumber ? <p className="text-xs text-warm-400">Policy: {doc.policyNumber}</p> : null}
                     </div>
                   </div>
                   <span className={cn('text-xs px-2 py-1 rounded-full font-medium', statusInfo.color)}>{statusInfo.label}</span>

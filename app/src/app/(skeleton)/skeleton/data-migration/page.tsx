@@ -2,19 +2,17 @@
 
 import {
   DatabaseZap,
-  Upload,
   CheckCircle2,
   Clock,
   AlertTriangle,
   ArrowRight,
-  FileSpreadsheet,
   RefreshCw,
   Shield,
   Sparkles,
   CircleDot,
   XCircle,
-  BarChart3,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const migrationSources = [
@@ -138,7 +136,7 @@ export default function DataMigrationPage() {
                 <thead className="bg-muted/50">
                   <tr>
                     <th className="text-left py-2 px-4 font-medium text-muted-foreground">Source Field</th>
-                    <th className="text-center py-2 px-4 font-medium text-muted-foreground"></th>
+                    <th className="text-center py-2 px-4 font-medium text-muted-foreground" />
                     <th className="text-left py-2 px-4 font-medium text-muted-foreground">Target Field</th>
                     <th className="text-center py-2 px-4 font-medium text-muted-foreground">Confidence</th>
                     <th className="text-center py-2 px-4 font-medium text-muted-foreground">Status</th>
@@ -216,7 +214,7 @@ export default function DataMigrationPage() {
           <Sparkles className="h-5 w-5 text-stone-600 mt-0.5" />
           <div>
             <div className="font-medium text-cyan-800">AI Migration Assistant</div>
-            <p className="text-sm text-stone-700 mt-1">6 vendor records had name variations (e.g., "ABC Electric LLC" vs "ABC Electrical") -- auto-merged into single records. 2 cost code mappings need your review: Buildertrend uses combined "Site Work" while RossOS splits into "Grading" and "Utilities". Budget migration is 76% complete and on track to finish in ~15 minutes.</p>
+            <p className="text-sm text-stone-700 mt-1">6 vendor records had name variations (e.g., &quot;ABC Electric LLC&quot; vs &quot;ABC Electrical&quot;) -- auto-merged into single records. 2 cost code mappings need your review: Buildertrend uses combined &quot;Site Work&quot; while RossOS splits into &quot;Grading&quot; and &quot;Utilities&quot;. Budget migration is 76% complete and on track to finish in ~15 minutes.</p>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   Plus,
@@ -25,10 +26,11 @@ import {
   Ban,
   FileText,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type WaiverStatus = 'draft' | 'requested' | 'submitted' | 'approved' | 'rejected' | 'void' | 'missing'
 type WaiverType = 'conditional_progress' | 'unconditional_progress' | 'conditional_final' | 'unconditional_final'
@@ -389,12 +391,10 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               {waiverType.shortLabel}
             </span>
             <ComplianceRiskBadge risk={waiver.complianceRisk} />
-            {waiver.paymentHold && (
-              <span className="text-xs px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
+            {waiver.paymentHold ? <span className="text-xs px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-medium flex items-center gap-1">
                 <Ban className="h-3 w-3" />
                 Payment Hold
-              </span>
-            )}
+              </span> : null}
           </div>
 
           <div className="grid grid-cols-4 gap-x-4 gap-y-1 text-sm">
@@ -413,9 +413,7 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
             <div className="flex items-center gap-2 text-warm-600">
               <MapPin className="h-4 w-4 text-warm-400" />
               <span>{waiver.stateCode}</span>
-              {waiver.isStatutoryForm && (
-                <span className="text-xs text-warm-400">(Statutory)</span>
-              )}
+              {waiver.isStatutoryForm ? <span className="text-xs text-warm-400">(Statutory)</span> : null}
             </div>
           </div>
 
@@ -424,11 +422,9 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               <Calendar className="h-3 w-3" />
               Through: {formatDate(waiver.throughDate)}
             </span>
-            {waiver.invoiceNumber && (
-              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+            {waiver.invoiceNumber ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 {waiver.invoiceNumber}
-              </span>
-            )}
+              </span> : null}
             <SignatureBadge type={waiver.signatureType} />
             {waiver.remindersSent > 0 && (
               <span className="text-xs text-warm-400 flex items-center gap-1">
@@ -446,20 +442,17 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
                 Lien deadline: {waiver.lienDeadlineDays}d
               </span>
             )}
-            {waiver.preliminaryNoticeStatus && waiver.preliminaryNoticeStatus !== 'not_required' && (
-              <span className={cn(
+            {waiver.preliminaryNoticeStatus && waiver.preliminaryNoticeStatus !== 'not_required' ? <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded",
                 waiver.preliminaryNoticeStatus === 'confirmed' ? "bg-green-50 text-green-600" :
                 waiver.preliminaryNoticeStatus === 'sent' ? "bg-stone-50 text-stone-600" :
                 "bg-red-50 text-red-600"
               )}>
                 Prelim: {waiver.preliminaryNoticeStatus}
-              </span>
-            )}
+              </span> : null}
           </div>
 
-          {waiver.aiNote && (
-            <div className={cn(
+          {waiver.aiNote ? <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
               waiver.complianceRisk === 'high' ? "bg-red-50" : "bg-amber-50"
             )}>
@@ -470,8 +463,7 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               <span className={waiver.complianceRisk === 'high' ? "text-red-700" : "text-amber-700"}>
                 {waiver.aiNote}
               </span>
-            </div>
-          )}
+            </div> : null}
         </div>
 
         <div className="flex items-start gap-4 ml-4">
@@ -480,11 +472,9 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
               <Calendar className="h-3.5 w-3.5 text-warm-400" />
               <span className="text-warm-500">Requested {formatDate(waiver.dateRequested)}</span>
             </div>
-            {waiver.status === 'approved' && waiver.dateReceived && (
-              <div className="text-xs text-green-600 mt-1">
+            {waiver.status === 'approved' && waiver.dateReceived ? <div className="text-xs text-green-600 mt-1">
                 Received {formatDate(waiver.dateReceived)}
-              </div>
-            )}
+              </div> : null}
             {(waiver.status === 'requested' || waiver.status === 'missing') && (
               <div className={cn(
                 "text-xs mt-1",
@@ -495,11 +485,9 @@ function WaiverRow({ waiver }: { waiver: LienWaiver }) {
                 {daysSinceRequested} days ago
               </div>
             )}
-            {waiver.nextReminderDate && (waiver.status === 'requested' || waiver.status === 'submitted') && (
-              <div className="text-xs text-warm-400 mt-1">
+            {waiver.nextReminderDate && (waiver.status === 'requested' || waiver.status === 'submitted') ? <div className="text-xs text-warm-400 mt-1">
                 Next reminder: {formatDate(waiver.nextReminderDate)}
-              </div>
-            )}
+              </div> : null}
           </div>
           <button className="p-1.5 hover:bg-warm-100 rounded">
             <MoreHorizontal className="h-4 w-4 text-warm-400" />

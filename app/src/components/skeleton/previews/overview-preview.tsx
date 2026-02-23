@@ -31,8 +31,10 @@ import {
   ClipboardList,
   ExternalLink,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
+
 import { AIAssistantPanel } from './ai-assistant-panel'
 
 // ---------------------------------------------------------------------------
@@ -441,7 +443,7 @@ function MetricCardComponent({ card }: { card: MetricCard }) {
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex items-center gap-2">
-          {card.sparkline && <MiniSparkline data={card.sparkline} color={card.color} />}
+          {card.sparkline ? <MiniSparkline data={card.sparkline} color={card.color} /> : null}
           <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
             card.trend === 'up' ? "text-green-600" : card.trend === 'down' ? "text-red-600" : "text-warm-600"
@@ -454,12 +456,10 @@ function MetricCardComponent({ card }: { card: MetricCard }) {
       <div className="text-2xl font-bold text-warm-900">{card.value}</div>
       <div className="text-sm text-warm-500 mt-1">{card.label}</div>
       <div className="text-xs text-warm-400 mt-0.5">{card.changeLabel}</div>
-      {card.drillDownTo && (
-        <div className="mt-1 flex items-center gap-1 text-xs text-stone-500">
+      {card.drillDownTo ? <div className="mt-1 flex items-center gap-1 text-xs text-stone-500">
           <ExternalLink className="h-3 w-3" />
           Click to drill down
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -504,13 +504,9 @@ function AIInsightsPanel() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium text-sm text-warm-900">{insight.title}</span>
-                  {insight.actionable && (
-                    <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Actionable</span>
-                  )}
+                  {insight.actionable ? <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Actionable</span> : null}
                   <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">{insight.category}</span>
-                  {insight.relatedJobId && (
-                    <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{insight.relatedJobId}</span>
-                  )}
+                  {insight.relatedJobId ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{insight.relatedJobId}</span> : null}
                 </div>
                 <p className="text-xs text-warm-500 mt-1">{insight.description}</p>
               </div>
@@ -565,9 +561,7 @@ function NeedsAttentionPanel() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm text-warm-900">{item.title}</span>
                     <span className={cn("text-xs px-1.5 py-0.5 rounded font-medium", urgencyConfig.bg)}>{item.urgency}</span>
-                    {item.jobRef && (
-                      <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{item.jobRef}</span>
-                    )}
+                    {item.jobRef ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{item.jobRef}</span> : null}
                   </div>
                   <p className="text-xs text-warm-500 mt-0.5">{item.description}</p>
                   <div className="flex items-center gap-2 mt-1 text-xs text-warm-400">
@@ -611,9 +605,7 @@ function QuickActionsPanel() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {action.shortcut && (
-                    <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded font-mono">{action.shortcut}</span>
-                  )}
+                  {action.shortcut ? <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded font-mono">{action.shortcut}</span> : null}
                   <ArrowRight className="h-4 w-4 text-warm-300" />
                 </div>
               </div>
@@ -658,9 +650,7 @@ function TeamActivityPanel() {
                   <div>
                     <div className="font-medium text-sm text-warm-900">{member.name}</div>
                     <div className="text-xs text-warm-500">{member.role}</div>
-                    {member.currentActivity && (
-                      <div className="text-xs text-warm-400 mt-0.5">{member.currentActivity}</div>
-                    )}
+                    {member.currentActivity ? <div className="text-xs text-warm-400 mt-0.5">{member.currentActivity}</div> : null}
                   </div>
                 </div>
                 {member.activeJobs > 0 && (
@@ -713,9 +703,7 @@ function PipelineSummary() {
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-semibold text-warm-900">{item.value}</div>
-                  {item.conversionRate && (
-                    <div className="text-xs text-warm-400">{item.conversionRate} conversion</div>
-                  )}
+                  {item.conversionRate ? <div className="text-xs text-warm-400">{item.conversionRate} conversion</div> : null}
                 </div>
               </div>
               <div className="w-full bg-warm-100 rounded-full h-2">
@@ -772,12 +760,10 @@ function MeetingPrep() {
                 <p className="text-sm text-warm-700">{item.topic}</p>
                 <div className="flex items-center gap-2 mt-0.5 text-xs text-warm-400">
                   <span>{item.source}</span>
-                  {item.jobRef && (
-                    <>
+                  {item.jobRef ? <>
                       <span className="text-warm-300">|</span>
                       <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">{item.jobRef}</span>
-                    </>
-                  )}
+                    </> : null}
                 </div>
               </div>
             </div>

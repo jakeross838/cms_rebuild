@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+
 import {
   DollarSign,
   TrendingDown,
@@ -34,9 +35,10 @@ import {
   Award,
   Info,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn , formatCurrency } from '@/lib/utils'
+
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -663,8 +665,7 @@ function MaterialsTab() {
                 {cat.name}
                 <span className="text-xs font-normal text-muted-foreground">({mats.length} items &middot; {catVendors.length} vendors)</span>
               </button>
-              {isExpanded && (
-                <div className="overflow-x-auto">
+              {isExpanded ? <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="bg-muted/50">
                       <tr>
@@ -702,13 +703,11 @@ function MaterialsTab() {
                               )
                             })}
                             <td className="py-2 px-4 text-center">
-                              {best && (
-                                <span className="font-semibold text-green-600">
+                              {best ? <span className="font-semibold text-green-600">
                                   ${(convFactor !== 1 ? best.price * convFactor : best.price) < 1
                                     ? (convFactor !== 1 ? best.price * convFactor : best.price).toFixed(3)
                                     : (convFactor !== 1 ? best.price * convFactor : best.price).toFixed(2)}
-                                </span>
-                              )}
+                                </span> : null}
                             </td>
                             <td className="py-2 px-4">
                               <div className="flex items-center justify-center gap-1.5">
@@ -723,8 +722,7 @@ function MaterialsTab() {
                       })}
                     </tbody>
                   </table>
-                </div>
-              )}
+                </div> : null}
             </div>
           )
         })}
@@ -827,8 +825,7 @@ function LaborTab() {
         <div className="space-y-4">
           <div className="bg-card border rounded-lg p-4">
             <h3 className="font-semibold capitalize mb-3">Market Stats: {selectedTrade}</h3>
-            {tradeStats && (
-              <div className="space-y-3">
+            {tradeStats ? <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Low</span>
                   <span className="font-medium text-green-600">${tradeStats.low.toFixed(2)}/sf</span>
@@ -870,8 +867,7 @@ function LaborTab() {
                     })}
                   </div>
                 </div>
-              </div>
-            )}
+              </div> : null}
           </div>
 
           {/* Scope Checklist */}
@@ -1349,7 +1345,7 @@ function QuotesTab() {
                 <td className="py-2.5 px-4 text-xs text-muted-foreground">{item.source}</td>
                 <td className="py-2.5 px-4 text-center">
                   <div className="flex items-center gap-1 justify-center">
-                    {item.suggestion && <button className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded hover:bg-green-200">Confirm</button>}
+                    {item.suggestion ? <button className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded hover:bg-green-200">Confirm</button> : null}
                     <button className="text-xs px-2 py-0.5 bg-stone-100 text-stone-700 rounded hover:bg-stone-200">
                       {item.suggestion ? 'Edit' : 'Create New'}
                     </button>

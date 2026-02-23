@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { CashFlowPreview } from '@/components/skeleton/previews/cash-flow-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const cashFlowWorkflow = ['Current Position', 'Project Inflows', 'Project Outflows', 'Identify Gaps', 'Plan Actions']

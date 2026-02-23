@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   Plus,
@@ -24,10 +25,11 @@ import {
   Scale,
   Eye,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type InvoiceStatus = 'needs_review' | 'ready_for_approval' | 'approved' | 'in_draw' | 'paid' | 'disputed' | 'denied' | 'split' | 'voided'
 
@@ -373,11 +375,9 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
             {invoice.contractType === 'cost_plus' && (
               <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Cost Plus</span>
             )}
-            {invoice.isAutoCoded && (
-              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            {invoice.isAutoCoded ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Sparkles className="h-2.5 w-2.5" />AI Coded
-              </span>
-            )}
+              </span> : null}
             {invoice.aiConfidence !== undefined && invoice.aiConfidence < 0.9 && (
               <span className="text-xs bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded">
                 {Math.round(invoice.aiConfidence * 100)}% conf
@@ -396,14 +396,11 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
             </div>
           </div>
 
-          {invoice.description && (
-            <p className="text-sm text-warm-500 mt-2">{invoice.description}</p>
-          )}
+          {invoice.description ? <p className="text-sm text-warm-500 mt-2">{invoice.description}</p> : null}
 
           {/* Cross-module connection badges */}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            {invoice.poNumber && (
-              <span className={cn(
+            {invoice.poNumber ? <span className={cn(
                 "text-xs px-1.5 py-0.5 rounded flex items-center gap-1",
                 invoice.poVariance && invoice.poVariance > 0
                   ? "bg-amber-50 text-amber-700"
@@ -416,18 +413,13 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
                     {invoice.poVariance > 0 ? '+' : ''}{formatCurrency(invoice.poVariance)}
                   </span>
                 )}
-              </span>
-            )}
-            {invoice.costCode && (
-              <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded font-mono">
+              </span> : null}
+            {invoice.costCode ? <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded font-mono">
                 {invoice.costCode}
-              </span>
-            )}
-            {invoice.drawNumber && (
-              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+              </span> : null}
+            {invoice.drawNumber ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 Draw #{invoice.drawNumber}
-              </span>
-            )}
+              </span> : null}
             <span className={cn(
               "text-xs px-1.5 py-0.5 rounded flex items-center gap-1",
               invoice.lienWaiverStatus === 'received' ? "bg-green-50 text-green-600" :
@@ -445,16 +437,13 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
                 Ret: {formatCurrency(invoice.retainageAmount)}
               </span>
             )}
-            {invoice.approvalStep && invoice.status !== 'paid' && (
-              <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
+            {invoice.approvalStep && invoice.status !== 'paid' ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                 {invoice.approvalStep}
-              </span>
-            )}
+              </span> : null}
             <span className="text-xs text-warm-400">{invoice.paymentTerms}</span>
           </div>
 
-          {invoice.aiNote && (
-            <div className={cn(
+          {invoice.aiNote ? <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
               isWarning ? "bg-amber-50" : "bg-stone-50"
             )}>
@@ -465,8 +454,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
               <span className={isWarning ? "text-amber-700" : "text-stone-700"}>
                 {invoice.aiNote}
               </span>
-            </div>
-          )}
+            </div> : null}
         </div>
 
         <div className="flex items-start gap-4 ml-4">
@@ -492,15 +480,11 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
                   {dueInfo.label}
                 </span>
               )}
-              {invoice.paidDate && (
-                <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+              {invoice.paidDate ? <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
                   Paid {formatDate(invoice.paidDate)}
-                </span>
-              )}
+                </span> : null}
             </div>
-            {invoice.paymentMethod && invoice.status === 'paid' && (
-              <div className="text-xs text-warm-400 mt-0.5 uppercase">{invoice.paymentMethod}</div>
-            )}
+            {invoice.paymentMethod && invoice.status === 'paid' ? <div className="text-xs text-warm-400 mt-0.5 uppercase">{invoice.paymentMethod}</div> : null}
           </div>
           <button className="p-1.5 hover:bg-warm-100 rounded">
             <MoreHorizontal className="h-4 w-4 text-warm-400" />

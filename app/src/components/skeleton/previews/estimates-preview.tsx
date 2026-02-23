@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronDown,
   ChevronRight,
@@ -25,10 +26,11 @@ import {
   Send,
   Calendar,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type ItemType = 'line' | 'allowance' | 'exclusion' | 'alternate'
 type ContractType = 'nte' | 'gmp' | 'cost_plus' | 'fixed'
@@ -355,14 +357,10 @@ function LineItemCard({ item }: { item: LineItem }) {
                 {typeConfig.label}
               </span>
               <span className="font-medium text-warm-900">{item.name}</span>
-              {item.aiSuggested && (
-                <span title="AI-suggested pricing"><Sparkles className="h-3.5 w-3.5 text-stone-500" /></span>
-              )}
-              {item.altGroup && (
-                <span className="text-xs text-stone-600 bg-warm-50 px-1.5 py-0.5 rounded">
+              {item.aiSuggested ? <span title="AI-suggested pricing"><Sparkles className="h-3.5 w-3.5 text-stone-500" /></span> : null}
+              {item.altGroup ? <span className="text-xs text-stone-600 bg-warm-50 px-1.5 py-0.5 rounded">
                   {item.altGroup}
-                </span>
-              )}
+                </span> : null}
             </div>
             <div className="flex items-center gap-2 text-sm text-warm-500">
               <span className="font-mono text-xs">{item.costCode}</span>
@@ -393,8 +391,7 @@ function LineItemCard({ item }: { item: LineItem }) {
         </div>
       </button>
 
-      {expanded && (
-        <div className="px-4 pb-4 border-t border-warm-100">
+      {expanded ? <div className="px-4 pb-4 border-t border-warm-100">
           <div className="mt-3 grid grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-medium text-warm-500 uppercase">Selection</label>
@@ -441,8 +438,7 @@ function LineItemCard({ item }: { item: LineItem }) {
             </div>
           </div>
 
-          {item.aiNote && (
-            <div className={cn(
+          {item.aiNote ? <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
               item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "bg-amber-50" : "bg-stone-50"
             )}>
@@ -453,10 +449,8 @@ function LineItemCard({ item }: { item: LineItem }) {
               <span className={item.aiNote.includes('concern') || item.aiNote.includes('Lead time') ? "text-amber-700" : "text-stone-700"}>
                 {item.aiNote}
               </span>
-            </div>
-          )}
-        </div>
-      )}
+            </div> : null}
+        </div> : null}
     </div>
   )
 }

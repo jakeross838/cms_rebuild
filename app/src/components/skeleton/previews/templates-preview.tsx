@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Sparkles,
@@ -33,10 +34,11 @@ import {
   Target,
   Wand2,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ══════════════════════════════════════════════════════════════════════════════
 // DOCUMENT TEMPLATES TYPES & DATA
@@ -165,11 +167,11 @@ function TemplateCard({ template }: { template: Template }) {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', categoryColors[template.category])}>{template.category}</span>
-            {template.isFavorite && <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />}
-            {template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}
+            {template.isFavorite ? <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" /> : null}
+            {template.isDefault ? <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span> : null}
             {template.source === 'platform' && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />Official</span>}
-            {isMarketplace && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
-            {template.isLegallyReviewed && <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded flex items-center gap-0.5" title={`Reviewed ${template.reviewedDate}`}><Shield className="h-3 w-3" />Reviewed</span>}
+            {isMarketplace ? <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span> : null}
+            {template.isLegallyReviewed ? <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded flex items-center gap-0.5" title={`Reviewed ${template.reviewedDate}`}><Shield className="h-3 w-3" />Reviewed</span> : null}
           </div>
           <h4 className="font-medium text-warm-900">{template.name}</h4>
           <span className="text-[10px] text-warm-400">v{template.version}</span>
@@ -183,10 +185,10 @@ function TemplateCard({ template }: { template: Template }) {
         <div className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.clauseCount} clauses</span></div>
         <div className="flex items-center gap-1.5"><Edit className="h-3.5 w-3.5 text-warm-400" /><span className="text-warm-600 text-xs">{template.signatureFields} sig</span></div>
       </div>
-      {template.stateApplicability && template.stateApplicability.length > 0 && <div className="flex items-center gap-1.5 mb-2"><MapPin className="h-3 w-3 text-warm-400" />{template.stateApplicability.map(state => <span key={state} className="text-[10px] px-1 py-0.5 bg-warm-100 text-warm-600 rounded">{state}</span>)}</div>}
-      {isMarketplace && <div className="flex items-center gap-3 mb-2 text-xs"><div className="flex items-center gap-1"><Star className="h-3 w-3 text-amber-400 fill-amber-400" /><span className="font-medium text-warm-700">{template.marketplaceRating}</span></div><span className="text-warm-400">{template.marketplaceInstalls} installs</span><span className="text-warm-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-warm-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div>}
+      {template.stateApplicability && template.stateApplicability.length > 0 ? <div className="flex items-center gap-1.5 mb-2"><MapPin className="h-3 w-3 text-warm-400" />{template.stateApplicability.map(state => <span key={state} className="text-[10px] px-1 py-0.5 bg-warm-100 text-warm-600 rounded">{state}</span>)}</div> : null}
+      {isMarketplace ? <div className="flex items-center gap-3 mb-2 text-xs"><div className="flex items-center gap-1"><Star className="h-3 w-3 text-amber-400 fill-amber-400" /><span className="font-medium text-warm-700">{template.marketplaceRating}</span></div><span className="text-warm-400">{template.marketplaceInstalls} installs</span><span className="text-warm-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-warm-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div> : null}
       <div className="flex items-center justify-between pt-3 border-t border-warm-100"><div className="flex items-center gap-2">{!isMarketplace && <><span className="text-xs text-warm-500">Used {template.usageCount}x</span><span className="text-xs text-warm-400">|</span><div className="flex items-center gap-1 text-xs text-warm-500"><Clock className="h-3.5 w-3.5" />{template.lastUsed}</div></>}</div></div>
-      {template.aiSuggestion && <div className="mt-3 p-2 rounded-md bg-amber-50 flex items-start gap-2 text-xs"><Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" /><span className="text-amber-700">{template.aiSuggestion}</span></div>}
+      {template.aiSuggestion ? <div className="mt-3 p-2 rounded-md bg-amber-50 flex items-start gap-2 text-xs"><Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" /><span className="text-amber-700">{template.aiSuggestion}</span></div> : null}
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
         {isMarketplace ? (<><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700"><Download className="h-3.5 w-3.5" />{template.price === 0 ? 'Install' : `Buy $${template.price}`}</button></>) : (<><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Copy className="h-3.5 w-3.5" />Clone</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700"><Edit className="h-3.5 w-3.5" />Edit</button></>)}
       </div>
@@ -197,7 +199,7 @@ function TemplateCard({ template }: { template: Template }) {
 function TemplateRow({ template }: { template: Template }) {
   return (
     <tr className="hover:bg-warm-50">
-      <td className="py-3 px-4"><div className="flex items-center gap-2">{template.isFavorite && <Star className="h-4 w-4 text-amber-400 fill-amber-400" />}<div><div className="font-medium text-warm-900 flex items-center gap-2">{template.name}{template.isDefault && <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span>}{template.source === 'marketplace' && <ShoppingBag className="h-3.5 w-3.5 text-stone-600" />}{template.isLegallyReviewed && <Shield className="h-3.5 w-3.5 text-green-500" />}</div><div className="text-xs text-warm-500">{template.description}</div></div></div></td>
+      <td className="py-3 px-4"><div className="flex items-center gap-2">{template.isFavorite ? <Star className="h-4 w-4 text-amber-400 fill-amber-400" /> : null}<div><div className="font-medium text-warm-900 flex items-center gap-2">{template.name}{template.isDefault ? <span className="text-xs font-medium text-warm-600 bg-warm-100 px-1.5 py-0.5 rounded">Default</span> : null}{template.source === 'marketplace' && <ShoppingBag className="h-3.5 w-3.5 text-stone-600" />}{template.isLegallyReviewed ? <Shield className="h-3.5 w-3.5 text-green-500" /> : null}</div><div className="text-xs text-warm-500">{template.description}</div></div></div></td>
       <td className="py-3 px-4"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', categoryColors[template.category])}>{template.category}</span></td>
       <td className="py-3 px-4 text-center text-xs text-warm-600">{template.pages}p</td>
       <td className="py-3 px-4 text-center text-xs text-warm-600">{template.variables}</td>
@@ -223,8 +225,8 @@ function QualityTemplateCard({ template, onPreview }: { template: QualityTemplat
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span>
             <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>
-            {template.isSystem && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}
-            {isMarketplace && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span>}
+            {template.isSystem ? <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span> : null}
+            {isMarketplace ? <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><ShoppingBag className="h-3 w-3" />Marketplace</span> : null}
           </div>
           <h4 className="font-medium text-warm-900">{template.name}</h4>
           <span className="text-[10px] text-warm-400">v{template.version}</span>
@@ -236,7 +238,7 @@ function QualityTemplateCard({ template, onPreview }: { template: QualityTemplat
       <div className="flex items-center gap-2 mb-2"><div className="flex items-center gap-0.5">{[1,2,3,4,5].map(star => <Star key={star} className={cn("h-3 w-3", star <= Math.round(template.rating) ? "text-amber-400 fill-amber-400" : "text-warm-300")} />)}</div><span className="text-xs text-warm-600">{template.rating.toFixed(1)}</span></div>
       <div className="flex items-center gap-1.5 mb-2 text-xs text-warm-500"><Users className="h-3 w-3" /><span>Used by {template.cloneCount} builders</span></div>
       <div className="flex items-center gap-1.5 mb-2 text-xs"><Target className="h-3 w-3 text-green-500" /><span className="text-green-700">FTQ Rated: {template.ftqRatedItems} of {template.ftqTotalItems} items</span></div>
-      {isMarketplace && template.marketplaceRating && <div className="flex items-center gap-3 mb-2 text-xs"><span className="text-warm-400">{template.marketplaceInstalls} installs</span><span className="text-warm-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-warm-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div>}
+      {isMarketplace && template.marketplaceRating ? <div className="flex items-center gap-3 mb-2 text-xs"><span className="text-warm-400">{template.marketplaceInstalls} installs</span><span className="text-warm-500">by {template.publisherName}</span>{template.price !== undefined && <span className={cn("font-medium", template.price === 0 ? "text-green-600" : "text-warm-900")}>{template.price === 0 ? 'Free' : `$${template.price}`}</span>}</div> : null}
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100"><button onClick={() => onPreview(template)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"><Eye className="h-3.5 w-3.5" />Preview</button><button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs bg-stone-600 text-white rounded hover:bg-stone-700"><Copy className="h-3.5 w-3.5" />{isMarketplace ? (template.price === 0 ? 'Install' : `Buy $${template.price}`) : 'Clone / Use'}</button></div>
     </div>
   )
@@ -248,7 +250,7 @@ function QualityTemplatePreviewModal({ template, onClose }: { template: QualityT
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
         <div className="flex items-start justify-between p-4 border-b border-warm-200">
           <div>
-            <div className="flex items-center gap-2 mb-1 flex-wrap"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>{template.isSystem && <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span>}</div>
+            <div className="flex items-center gap-2 mb-1 flex-wrap"><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityTradeColors[template.trade])}>{template.trade}</span><span className={cn('text-xs font-medium px-1.5 py-0.5 rounded', qualityPhaseColors[template.phase])}>{template.phase}</span>{template.isSystem ? <span className="text-xs font-medium text-stone-600 bg-stone-50 px-1.5 py-0.5 rounded flex items-center gap-0.5"><Award className="h-3 w-3" />System</span> : null}</div>
             <h3 className="text-lg font-semibold text-warm-900">{template.name}</h3>
             <p className="text-sm text-warm-500 mt-1">{template.description}</p>
           </div>
@@ -353,7 +355,7 @@ function QualityChecklistsSection() {
           { feature: 'Industry Best Practices', trigger: 'On demand', insight: 'Compares your checklists against industry standards (ICC, NAHB, Energy Star) and identifies gaps.', severity: 'info', action: { label: 'Compare Standards', onClick: () => {} } },
         ]} />
       </div>
-      {selectedTemplate && <QualityTemplatePreviewModal template={selectedTemplate} onClose={() => setSelectedTemplate(null)} />}
+      {selectedTemplate ? <QualityTemplatePreviewModal template={selectedTemplate} onClose={() => setSelectedTemplate(null)} /> : null}
     </div>
   )
 }
@@ -401,7 +403,7 @@ export function TemplatesPreview() {
           <div className="bg-white border-b border-warm-200 px-4 py-2">
             <div className="flex items-center gap-3 text-xs"><span className="text-warm-500 font-medium">Connections:</span><span className="flex items-center gap-1 px-2 py-0.5 bg-warm-50 text-warm-700 rounded"><FileText className="h-3 w-3" />Contracts (Module 38)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-stone-50 text-stone-700 rounded"><BookOpen className="h-3 w-3" />Estimating (Module 20)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded"><Globe className="h-3 w-3" />Marketplace (Module 48)</span><span className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded"><Tag className="h-3 w-3" />State Compliance</span></div>
           </div>
-          {viewMode === 'grid' ? <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto">{filteredTemplates.map(t => <TemplateCard key={t.id} template={t} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-warm-500">No templates match your search</div>}</div> : <div className="overflow-x-auto max-h-[500px] overflow-y-auto"><table className="w-full text-sm"><thead className="bg-warm-100 border-b border-warm-200 sticky top-0"><tr><th className="text-left py-3 px-4 font-medium text-warm-600">Template</th><th className="text-left py-3 px-4 font-medium text-warm-600">Category</th><th className="text-center py-3 px-4 font-medium text-warm-600">Pages</th><th className="text-center py-3 px-4 font-medium text-warm-600">Variables</th><th className="text-center py-3 px-4 font-medium text-warm-600">Clauses</th><th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th><th className="text-center py-3 px-4 font-medium text-warm-600">Version</th><th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th><th className="w-10"></th></tr></thead><tbody className="bg-white divide-y divide-warm-100">{filteredTemplates.map(t => <TemplateRow key={t.id} template={t} />)}</tbody></table></div>}
+          {viewMode === 'grid' ? <div className="p-4 grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto">{filteredTemplates.map(t => <TemplateCard key={t.id} template={t} />)}{filteredTemplates.length === 0 && <div className="col-span-3 text-center py-12 text-warm-500">No templates match your search</div>}</div> : <div className="overflow-x-auto max-h-[500px] overflow-y-auto"><table className="w-full text-sm"><thead className="bg-warm-100 border-b border-warm-200 sticky top-0"><tr><th className="text-left py-3 px-4 font-medium text-warm-600">Template</th><th className="text-left py-3 px-4 font-medium text-warm-600">Category</th><th className="text-center py-3 px-4 font-medium text-warm-600">Pages</th><th className="text-center py-3 px-4 font-medium text-warm-600">Variables</th><th className="text-center py-3 px-4 font-medium text-warm-600">Clauses</th><th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th><th className="text-center py-3 px-4 font-medium text-warm-600">Version</th><th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th><th className="w-10" /></tr></thead><tbody className="bg-white divide-y divide-warm-100">{filteredTemplates.map(t => <TemplateRow key={t.id} template={t} />)}</tbody></table></div>}
           <div className="bg-warm-50 border-t border-amber-200 px-4 py-3"><div className="flex items-start gap-3"><div className="flex items-center gap-2 flex-shrink-0"><Sparkles className="h-4 w-4 text-amber-600" /><span className="font-medium text-sm text-amber-800">AI Insights:</span></div><div className="flex-1 text-sm text-amber-700 space-y-1"><p>SC mechanic lien statute updated Jan 2026 - 2 templates need clause updates for compliance. Review recommended.</p><p>Standard Cost-Plus with GMP is your most-used contract. Consider publishing to the marketplace to help other SC builders.</p><p>"Florida Builder Starter Pack" is trending in the marketplace (234 installs). Regional packs for your state are available.</p></div></div></div>
           <div className="bg-white border-t border-warm-200 px-4 py-4">
             <AIFeaturesPanel title="AI Features for Templates" columns={2} features={[

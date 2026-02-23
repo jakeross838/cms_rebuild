@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
+
 import {
   Check,
   ChevronDown,
@@ -13,6 +13,8 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 // ── View Mode Toggle ────────────────────────────────────────────
 
@@ -107,8 +109,7 @@ export function GroupByToggle({
         <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
-      {isOpen && (
-        <>
+      {isOpen ? <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className="absolute top-full left-0 mt-1 w-48 bg-popover border border-border rounded-lg shadow-lg py-1 z-50">
             {options.map((option) => (
@@ -128,8 +129,7 @@ export function GroupByToggle({
               </button>
             ))}
           </div>
-        </>
-      )}
+        </> : null}
     </div>
   )
 }
@@ -190,8 +190,7 @@ export function PriorityFilter({
         <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
-      {isOpen && (
-        <>
+      {isOpen ? <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className="absolute top-full left-0 mt-1 w-56 bg-popover border border-border rounded-lg shadow-lg py-1 z-50">
             {/* Header */}
@@ -227,8 +226,7 @@ export function PriorityFilter({
               </button>
             ))}
           </div>
-        </>
-      )}
+        </> : null}
     </div>
   )
 }
@@ -288,8 +286,7 @@ export function StatusFilter({
         <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
-      {isOpen && (
-        <>
+      {isOpen ? <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className="absolute top-full left-0 mt-1 w-56 bg-popover border border-border rounded-lg shadow-lg py-1 z-50">
             {options.map((option) => (
@@ -311,8 +308,7 @@ export function StatusFilter({
               </button>
             ))}
           </div>
-        </>
-      )}
+        </> : null}
     </div>
   )
 }
@@ -366,11 +362,9 @@ export function BulkSelectBar({
         </div>
       </div>
 
-      {children && (
-        <div className="flex items-center gap-2">
+      {children ? <div className="flex items-center gap-2">
           {children}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -405,18 +399,15 @@ export function SearchWithFilters({
           placeholder={placeholder}
           className="w-full pl-9 pr-4 py-2 text-sm border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
         />
-        {value && (
-          <button
+        {value ? <button
             onClick={() => onChange('')}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             <X className="h-4 w-4" />
-          </button>
-        )}
+          </button> : null}
       </div>
 
-      {onFilterClick && (
-        <button
+      {onFilterClick ? <button
           onClick={onFilterClick}
           className={cn(
             'inline-flex items-center gap-2 px-3 py-2 text-sm border rounded-lg transition-colors',
@@ -432,8 +423,7 @@ export function SearchWithFilters({
               {filterCount}
             </span>
           )}
-        </button>
-      )}
+        </button> : null}
     </div>
   )
 }

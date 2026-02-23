@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   Plus,
@@ -20,10 +21,11 @@ import {
   BarChart3,
   Layers,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type AccountType = 'Asset' | 'Liability' | 'Equity' | 'Revenue' | 'Expense'
 type AccountStatus = 'active' | 'inactive' | 'locked'
@@ -270,8 +272,7 @@ export function ChartOfAccountsPreview() {
 
                 {/* Account Name */}
                 <div className="col-span-4 flex items-center gap-1.5">
-                  {account.hasChildren && (
-                    <button
+                  {account.hasChildren ? <button
                       onClick={() => toggleGroup(account.id)}
                       className="p-0.5 hover:bg-warm-200 rounded"
                     >
@@ -280,8 +281,7 @@ export function ChartOfAccountsPreview() {
                       ) : (
                         <ChevronRight className="h-3.5 w-3.5 text-warm-500" />
                       )}
-                    </button>
-                  )}
+                    </button> : null}
                   <span
                     className={cn('text-sm text-warm-900', !account.hasChildren && 'ml-5')}
                     style={{ paddingLeft: account.depth > 0 ? `${account.depth * 16}px` : undefined }}

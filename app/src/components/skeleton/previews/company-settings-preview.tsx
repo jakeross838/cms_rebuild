@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Building2,
   User,
@@ -40,8 +41,9 @@ import {
   ToggleRight,
   ArrowUpDown,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types

@@ -1,28 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+
 import {
   FileText,
   Download,
@@ -33,17 +12,30 @@ import {
   DollarSign,
   Calculator,
   FileSignature,
-  Building,
-  Calendar,
   Printer,
   Eye,
   Plus,
-  ArrowRight,
   Lock,
   Unlock,
   History,
   Shield,
 } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Progress } from '@/components/ui/progress'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
 
 // Mock data for AIA billing
 const mockPayApplications = [
@@ -207,7 +199,7 @@ const lienWaiverTypes = {
 
 export default function AIABillingPreview() {
   const [activeTab, setActiveTab] = useState('pay-applications')
-  const [selectedApplication, setSelectedApplication] = useState(mockPayApplications[0])
+  const [selectedApplication, _setSelectedApplication] = useState(mockPayApplications[0])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

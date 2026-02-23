@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { PurchaseOrdersPreview } from '@/components/skeleton/previews/purchase-orders-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-const constructionWorkflow = [
-  'Budget', 'Purchase Orders', 'Invoices', 'Draws', 'Cost of Sales'
-]
 
 export default function PurchaseOrdersSkeleton() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

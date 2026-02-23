@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
+
 import {
   X,
   Check,
@@ -15,6 +15,8 @@ import {
   Clock,
   ArrowRight,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -91,9 +93,7 @@ export function ApprovalModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
             <h2 className="text-lg font-semibold">{title}</h2>
-            {description && (
-              <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
-            )}
+            {description ? <p className="text-sm text-muted-foreground mt-0.5">{description}</p> : null}
           </div>
           <button
             onClick={onClose}
@@ -130,11 +130,9 @@ export function ApprovalModal({
                   <span className="text-xs mt-1 text-center max-w-[80px] truncate">
                     {step.label}
                   </span>
-                  {step.approver && (
-                    <span className="text-[10px] text-muted-foreground">
+                  {step.approver ? <span className="text-[10px] text-muted-foreground">
                       {step.approver}
-                    </span>
-                  )}
+                    </span> : null}
                 </div>
 
                 {/* Connector */}
@@ -154,7 +152,7 @@ export function ApprovalModal({
         {/* Comment input */}
         <div className="px-6 py-4">
           <label className="block text-sm font-medium mb-2">
-            Comment {requireComment && <span className="text-red-500">*</span>}
+            Comment {requireComment ? <span className="text-red-500">*</span> : null}
           </label>
           <textarea
             value={comment}
@@ -166,9 +164,7 @@ export function ApprovalModal({
             className="w-full px-3 py-2 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
             rows={3}
           />
-          {error && (
-            <p className="text-sm text-red-500 mt-1">{error}</p>
-          )}
+          {error ? <p className="text-sm text-red-500 mt-1">{error}</p> : null}
         </div>
 
         {/* Actions */}
@@ -256,8 +252,7 @@ export function StatusTransition({
       </button>
 
       {/* Validation errors popover */}
-      {showErrors && hasErrors && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-red-50 border border-red-200 rounded-lg p-3 shadow-lg z-10">
+      {showErrors && hasErrors ? <div className="absolute top-full left-0 mt-2 w-64 bg-red-50 border border-red-200 rounded-lg p-3 shadow-lg z-10">
           <div className="flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5" />
             <div>
@@ -275,8 +270,7 @@ export function StatusTransition({
           >
             <X className="h-3 w-3" />
           </button>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -423,9 +417,7 @@ export function SubmissionForm({
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
             <h2 className="text-lg font-semibold">{title}</h2>
-            {description && (
-              <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
-            )}
+            {description ? <p className="text-sm text-muted-foreground mt-0.5">{description}</p> : null}
           </div>
           <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg">
             <X className="h-4 w-4" />
@@ -438,7 +430,7 @@ export function SubmissionForm({
             <div key={field.id}>
               <label className="block text-sm font-medium mb-1.5">
                 {field.label}
-                {field.required && <span className="text-red-500 ml-0.5">*</span>}
+                {field.required ? <span className="text-red-500 ml-0.5">*</span> : null}
               </label>
 
               {field.type === 'text' && (
@@ -503,9 +495,7 @@ export function SubmissionForm({
                 </div>
               )}
 
-              {errors[field.id] && (
-                <p className="text-xs text-red-500 mt-1">{errors[field.id]}</p>
-              )}
+              {errors[field.id] ? <p className="text-xs text-red-500 mt-1">{errors[field.id]}</p> : null}
             </div>
           ))}
         </div>
@@ -590,9 +580,7 @@ export function ProgressSteps({
               >
                 {step.label}
               </span>
-              {step.description && (
-                <p className="text-xs text-muted-foreground">{step.description}</p>
-              )}
+              {step.description ? <p className="text-xs text-muted-foreground">{step.description}</p> : null}
             </div>
           </div>
 

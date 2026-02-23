@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Download,
@@ -33,10 +34,11 @@ import {
   AlertCircle,
   ArrowRight,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeatureCard, AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface ChangeOrder {
   id: string
@@ -487,7 +489,7 @@ function BudgetCascadePreview({ co }: { co: ChangeOrder }) {
       feature="Budget Cascade Preview"
       trigger="On change"
       severity={newContingency < 10000 ? 'warning' : 'info'}
-      insight={`Approval will impact project budget and draw schedule.`}
+      insight="Approval will impact project budget and draw schedule."
       detail={`Update ${co.costCode} budget ${formatCurrency(co.totalAmount)}, ${co.isCredit ? 'increase' : 'reduce'} contingency from ${formatCurrencyPlain(currentContingency)} to ${formatCurrencyPlain(Math.max(0, newContingency))}, adjust Draw #4 by ${formatCurrency(co.totalAmount)}`}
       action={{ label: 'Preview Full Impact', onClick: () => {} }}
     />
@@ -541,11 +543,9 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
         <span className={cn("text-xs px-2 py-0.5 rounded", sourceInfo.color)}>
           {sourceInfo.label}
         </span>
-        {co.isCredit && (
-          <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-medium">
+        {co.isCredit ? <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-medium">
             CREDIT
-          </span>
-        )}
+          </span> : null}
       </div>
 
       {/* AI Feature 1: Cost Estimation - Comparative Analysis */}
@@ -639,14 +639,12 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
       )}
 
       {/* Negotiation status */}
-      {co.status === 'negotiation' && co.negotiationStatus && (
-        <div className="mb-3 p-2 bg-warm-50 rounded flex items-center gap-2 text-xs">
+      {co.status === 'negotiation' && co.negotiationStatus ? <div className="mb-3 p-2 bg-warm-50 rounded flex items-center gap-2 text-xs">
           <MessageSquare className="h-3.5 w-3.5 text-stone-600" />
           <span className="text-warm-700 font-medium">
             Negotiation: {negotiationLabels[co.negotiationStatus]}
           </span>
-        </div>
-      )}
+        </div> : null}
 
       {/* AI Feature 4: Documentation Completeness (before approval) */}
       {(co.status === 'draft' || co.status === 'internal_review' || co.status === 'client_presented') && (
@@ -665,35 +663,26 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
       {/* Cross-module badges */}
       <div className="flex items-center gap-2 flex-wrap mb-2">
         <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{co.costCode}</span>
-        {co.rfiNumber && (
-          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+        {co.rfiNumber ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Link2 className="h-3 w-3" />
             {co.rfiNumber}
-          </span>
-        )}
-        {co.selectionName && (
-          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          </span> : null}
+        {co.selectionName ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <Layers className="h-3 w-3" />
             {co.selectionName}
-          </span>
-        )}
-        {co.linkedPoIds && co.linkedPoIds.length > 0 && (
-          <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          </span> : null}
+        {co.linkedPoIds && co.linkedPoIds.length > 0 ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <FileText className="h-3 w-3" />
             {co.linkedPoIds[0]}
-          </span>
-        )}
-        {co.clientSignature && (
-          <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          </span> : null}
+        {co.clientSignature ? <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <PenLine className="h-3 w-3" />
             e-Signed
-          </span>
-        )}
+          </span> : null}
       </div>
 
       {/* AI Note */}
-      {co.aiNote && (
-        <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+      {co.aiNote ? <div className="mt-2 p-2 bg-amber-50 rounded-md flex items-start gap-2">
           <Sparkles className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
           <span className="text-xs text-amber-700">{co.aiNote}</span>
           {co.aiConfidence !== undefined && co.aiConfidence < 0.95 && (
@@ -701,8 +690,7 @@ function ChangeOrderCard({ co }: { co: ChangeOrder }) {
               {Math.round(co.aiConfidence * 100)}%
             </span>
           )}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

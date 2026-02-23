@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   DollarSign,
@@ -21,8 +22,9 @@ import {
   Plus,
   Landmark,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 type MatchStatus = 'matched' | 'unmatched' | 'outstanding'
 
@@ -299,7 +301,7 @@ export function BankReconciliationPreview() {
           <div className="max-h-[340px] overflow-y-auto">
             {/* Column headers */}
             <div className="grid grid-cols-12 gap-1 px-4 py-1.5 text-[10px] font-medium text-warm-500 uppercase tracking-wider bg-warm-50 border-b border-warm-100 sticky top-0">
-              <div className="col-span-1"></div>
+              <div className="col-span-1" />
               <div className="col-span-2">Date</div>
               <div className="col-span-2">Ref</div>
               <div className="col-span-4">Description</div>
@@ -373,7 +375,7 @@ export function BankReconciliationPreview() {
           <div className="max-h-[340px] overflow-y-auto">
             {/* Column headers */}
             <div className="grid grid-cols-12 gap-1 px-4 py-1.5 text-[10px] font-medium text-warm-500 uppercase tracking-wider bg-warm-50 border-b border-warm-100 sticky top-0">
-              <div className="col-span-1"></div>
+              <div className="col-span-1" />
               <div className="col-span-2">Date</div>
               <div className="col-span-2">Ref</div>
               <div className="col-span-4">Description</div>

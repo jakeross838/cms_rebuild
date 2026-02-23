@@ -7,18 +7,16 @@ import {
   Activity,
   TrendingUp,
   DollarSign,
-  Server,
   BarChart3,
   Zap,
   AlertTriangle,
   CheckCircle2,
-  Globe,
   Sparkles,
-  Database,
   Clock,
   ArrowUp,
   ArrowDown,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const platformMetrics = [

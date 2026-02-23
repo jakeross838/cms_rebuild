@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Download,
@@ -24,10 +25,11 @@ import {
   Clipboard,
   PackageX,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface Delivery {
   id: string
@@ -422,24 +424,20 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
       )}
 
       {/* Tracking info */}
-      {delivery.trackingNumber && delivery.status !== 'delivered' && (
-        <div className="flex items-center gap-2 mb-2 text-xs text-warm-500">
+      {delivery.trackingNumber && delivery.status !== 'delivered' ? <div className="flex items-center gap-2 mb-2 text-xs text-warm-500">
           <MapPin className="h-3 w-3" />
           <span>{delivery.carrier}: {delivery.trackingNumber}</span>
           <button className="text-stone-600 hover:text-stone-700 inline-flex items-center gap-0.5">
             Track <ExternalLink className="h-3 w-3" />
           </button>
-        </div>
-      )}
+        </div> : null}
 
       {/* Site contact & receiving info */}
       <div className="flex items-center gap-2 mb-2 text-sm text-warm-600">
         <User className="h-3.5 w-3.5 text-warm-400" />
         {delivery.receivedBy ? (
           <span>Received by: {delivery.receivedBy}
-            {delivery.receivedLocation && (
-              <span className="text-xs text-warm-400 ml-1">({delivery.receivedLocation.replace('_', ' ')})</span>
-            )}
+            {delivery.receivedLocation ? <span className="text-xs text-warm-400 ml-1">({delivery.receivedLocation.replace('_', ' ')})</span> : null}
           </span>
         ) : (
           <span>Site Contact: {delivery.siteContact}</span>
@@ -447,8 +445,7 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
       </div>
 
       {/* Condition status for delivered items */}
-      {delivery.conditionStatus && delivery.status === 'delivered' && (
-        <div className={cn(
+      {delivery.conditionStatus && delivery.status === 'delivered' ? <div className={cn(
           "mb-2 p-2 rounded flex items-start gap-2 text-xs",
           delivery.conditionStatus === 'good' ? "bg-green-50" : "bg-red-50"
         )}>
@@ -461,20 +458,15 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
             <span className={conditionColors[delivery.conditionStatus].color + " font-medium"}>
               {conditionColors[delivery.conditionStatus].label}
             </span>
-            {delivery.damageNotes && (
-              <p className="text-red-600 mt-0.5">{delivery.damageNotes}</p>
-            )}
+            {delivery.damageNotes ? <p className="text-red-600 mt-0.5">{delivery.damageNotes}</p> : null}
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* Special instructions */}
-      {delivery.specialInstructions && delivery.status !== 'delivered' && (
-        <div className="mb-2 p-2 rounded bg-amber-50 flex items-start gap-2 text-xs">
+      {delivery.specialInstructions && delivery.status !== 'delivered' ? <div className="mb-2 p-2 rounded bg-amber-50 flex items-start gap-2 text-xs">
           <AlertCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
           <span className="text-amber-700">{delivery.specialInstructions}</span>
-        </div>
-      )}
+        </div> : null}
 
       {/* Footer - Status & Actions */}
       <div className="flex items-center justify-between pt-3 border-t border-warm-100">
@@ -486,12 +478,10 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
           <span className="text-xs text-warm-400">{formatCurrency(delivery.poAmount)}</span>
         </div>
         <div className="flex items-center gap-2">
-          {delivery.hasPhotos && (
-            <span className="flex items-center gap-1 text-xs text-warm-500">
+          {delivery.hasPhotos ? <span className="flex items-center gap-1 text-xs text-warm-500">
               <Image className="h-3.5 w-3.5" />
               {delivery.photoCount}
-            </span>
-          )}
+            </span> : null}
           {delivery.status !== 'delivered' && delivery.status !== 'delayed' && (
             <button className="flex items-center gap-1 px-2 py-1 text-xs text-green-600 border border-green-200 rounded hover:bg-green-50">
               <Clipboard className="h-3.5 w-3.5" />
@@ -516,8 +506,7 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
       {/* Cross-module badges */}
       <div className="flex items-center gap-2 flex-wrap mt-2">
         <span className="text-xs bg-warm-50 text-warm-600 px-1.5 py-0.5 rounded">{delivery.costCode}</span>
-        {delivery.scheduleTaskName && (
-          <span className={cn(
+        {delivery.scheduleTaskName ? <span className={cn(
             "text-xs px-1.5 py-0.5 rounded inline-flex items-center gap-0.5",
             delivery.scheduleImpactDays && delivery.scheduleImpactDays > 0
               ? "bg-red-50 text-red-600"
@@ -528,14 +517,11 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
             {delivery.scheduleImpactDays !== undefined && delivery.scheduleImpactDays > 0 && (
               <span className="font-medium ml-0.5">+{delivery.scheduleImpactDays}d</span>
             )}
-          </span>
-        )}
-        {delivery.invoiceMatched && (
-          <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+          </span> : null}
+        {delivery.invoiceMatched ? <span className="text-xs bg-green-50 text-green-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <CheckCircle className="h-3 w-3" />
             Invoice Matched
-          </span>
-        )}
+          </span> : null}
         {delivery.backorderedItems > 0 && (
           <span className="text-xs bg-sand-50 text-sand-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
             <PackageX className="h-3 w-3" />
@@ -545,12 +531,10 @@ function DeliveryCard({ delivery }: { delivery: Delivery }) {
       </div>
 
       {/* AI Note */}
-      {delivery.aiNote && (
-        <div className="mt-2 p-2 rounded-md bg-stone-50 flex items-start gap-2 text-xs">
+      {delivery.aiNote ? <div className="mt-2 p-2 rounded-md bg-stone-50 flex items-start gap-2 text-xs">
           <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-stone-500" />
           <span className="text-stone-700">{delivery.aiNote}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

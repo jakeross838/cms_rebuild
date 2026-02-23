@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   LayoutDashboard,
   Plus,
@@ -37,8 +38,9 @@ import {
   Lock,
   Smartphone,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -246,12 +248,8 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
         <div className="flex items-center gap-2">
           <LayoutDashboard className="h-5 w-5 text-stone-600" />
           <h4 className="font-medium text-warm-900">{dashboard.name}</h4>
-          {dashboard.isDefault && (
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-          )}
-          {dashboard.embedInPortal && (
-            <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">Portal</span>
-          )}
+          {dashboard.isDefault ? <Star className="h-4 w-4 fill-amber-400 text-amber-400" /> : null}
+          {dashboard.embedInPortal ? <span className="text-xs bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded font-medium">Portal</span> : null}
         </div>
         <button className="p-1 hover:bg-warm-100 rounded">
           <MoreHorizontal className="h-4 w-4 text-warm-400" />
@@ -269,26 +267,20 @@ function DashboardCard({ dashboard, isSelected, onClick }: { dashboard: Dashboar
             {dashboard.visibility}
           </span>
           <span>{dashboard.widgets} widgets</span>
-          {dashboard.autoRefresh && (
-            <span className="flex items-center gap-1 text-warm-400">
+          {dashboard.autoRefresh ? <span className="flex items-center gap-1 text-warm-400">
               <RefreshCw className="h-3 w-3" />
               {dashboard.autoRefresh < 60 ? `${dashboard.autoRefresh}s` : `${dashboard.autoRefresh / 60}m`}
-            </span>
-          )}
+            </span> : null}
         </div>
         <span>Last viewed: {dashboard.lastViewed}</span>
       </div>
-      {dashboard.sharedWith && dashboard.sharedWith.length > 0 && (
-        <div className="mt-2 flex items-center gap-1 text-xs text-warm-400">
+      {dashboard.sharedWith && dashboard.sharedWith.length > 0 ? <div className="mt-2 flex items-center gap-1 text-xs text-warm-400">
           <Share2 className="h-3 w-3" />
           Shared with {dashboard.sharedWith.join(', ')}
-        </div>
-      )}
-      {dashboard.role && (
-        <div className="mt-2 text-xs text-warm-400">
+        </div> : null}
+      {dashboard.role ? <div className="mt-2 text-xs text-warm-400">
           <span className="bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">Role: {dashboard.role}</span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -350,9 +342,7 @@ function WidgetLibrary() {
               </div>
               <span className="text-xs text-warm-600 text-center leading-tight">{widget.name}</span>
               <span className="text-xs text-warm-400">{widget.size}</span>
-              {widget.requiredPermission && (
-                <Lock className="h-2.5 w-2.5 text-warm-400 absolute top-1 right-1" />
-              )}
+              {widget.requiredPermission ? <Lock className="h-2.5 w-2.5 text-warm-400 absolute top-1 right-1" /> : null}
             </div>
           )
         })}
@@ -376,12 +366,10 @@ function DashboardEditor({ dashboard }: { dashboard: Dashboard }) {
           )}>
             {dashboard.visibility}
           </span>
-          {dashboard.autoRefresh && (
-            <span className="flex items-center gap-1 text-xs text-warm-400">
+          {dashboard.autoRefresh ? <span className="flex items-center gap-1 text-xs text-warm-400">
               <RefreshCw className="h-3 w-3" />
               Auto-refresh: {dashboard.autoRefresh / 60}m
-            </span>
-          )}
+            </span> : null}
         </div>
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
@@ -620,8 +608,7 @@ export function DashboardsPreview() {
           </div>
 
           {/* Selected Dashboard Actions */}
-          {selectedDashboard && (
-            <div className="bg-white rounded-lg border border-warm-200 p-4">
+          {selectedDashboard ? <div className="bg-white rounded-lg border border-warm-200 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-medium text-warm-900">{selectedDashboard.name}</h4>
@@ -661,12 +648,11 @@ export function DashboardsPreview() {
                   )}
                 </div>
               </div>
-            </div>
-          )}
+            </div> : null}
         </div>
       ) : (
         <div className="p-4">
-          {selectedDashboard && <DashboardEditor dashboard={selectedDashboard} />}
+          {selectedDashboard ? <DashboardEditor dashboard={selectedDashboard} /> : null}
         </div>
       )}
 

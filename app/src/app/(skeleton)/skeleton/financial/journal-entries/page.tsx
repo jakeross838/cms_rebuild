@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { JournalEntriesPreview } from '@/components/skeleton/previews/journal-entries-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const journalEntriesWorkflow = ['Create Entry', 'Add Line Items', 'Verify Balance', 'Submit for Approval', 'Post to GL']

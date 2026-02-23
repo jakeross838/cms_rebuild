@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+
 import {
   Sparkles,
   Send,
@@ -24,7 +25,6 @@ import {
   Lightbulb,
   MessageSquare,
   Headphones,
-  X,
   Maximize2,
   Minimize2,
 } from 'lucide-react'
@@ -198,6 +198,7 @@ function AudioBriefingPlayer() {
       }, 156) // ~5 min total
       return () => clearInterval(interval)
     }
+    return undefined
   }, [isPlaying])
 
   const formatTime = (seconds: number) => {
@@ -297,13 +298,10 @@ function MessageBubble({ message }: { message: Message }) {
                 })}
               </div>
 
-              {message.isStreaming && (
-                <span className="inline-block w-2 h-4 bg-stone-400 animate-pulse ml-1" />
-              )}
+              {message.isStreaming ? <span className="inline-block w-2 h-4 bg-stone-400 animate-pulse ml-1" /> : null}
             </div>
 
-            {message.sources && message.sources.length > 0 && (
-              <div className="mt-2">
+            {message.sources && message.sources.length > 0 ? <div className="mt-2">
                 <button
                   onClick={() => setShowSources(!showSources)}
                   className="flex items-center gap-1 text-xs text-warm-500 hover:text-warm-700 transition-colors"
@@ -313,15 +311,12 @@ function MessageBubble({ message }: { message: Message }) {
                   {showSources ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                 </button>
 
-                {showSources && (
-                  <div className="mt-2 space-y-2">
+                {showSources ? <div className="mt-2 space-y-2">
                     {message.sources.map((source, i) => (
                       <SourceCard key={i} source={source} />
                     ))}
-                  </div>
-                )}
-              </div>
-            )}
+                  </div> : null}
+              </div> : null}
 
             <span className="text-[10px] text-warm-400 mt-1 block">
               {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

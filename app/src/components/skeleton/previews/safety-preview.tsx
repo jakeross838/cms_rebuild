@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Shield,
   AlertTriangle,
@@ -39,10 +40,11 @@ import {
   Trophy,
   Download,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -677,8 +679,7 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
             "text-warm-600"
           )} />
         </div>
-        {metric.change && (
-          <div className={cn(
+        {metric.change ? <div className={cn(
             "flex items-center gap-1 text-xs font-medium",
             metric.trend === 'down' ? "text-green-600" :
             metric.trend === 'up' && metric.status === 'warning' ? "text-amber-600" :
@@ -687,8 +688,7 @@ function MetricCard({ metric }: { metric: SafetyMetric }) {
             {metric.trend === 'up' && <TrendingUp className="h-3 w-3" />}
             {metric.trend === 'down' && <TrendingDown className="h-3 w-3" />}
             {metric.change}
-          </div>
-        )}
+          </div> : null}
       </div>
       <div className="text-2xl font-bold text-warm-900">{metric.value}</div>
       <div className="text-sm text-warm-500">{metric.label}</div>
@@ -807,24 +807,18 @@ function ObservationCard({ observation }: { observation: SafetyObservation }) {
             <><User className="h-3 w-3" /> {observation.observedBy}</>
           )}
         </span>
-        {observation.vendorName && (
-          <span className="flex items-center gap-1 text-sand-600">
+        {observation.vendorName ? <span className="flex items-center gap-1 text-sand-600">
             <Link2 className="h-3 w-3" />
             {observation.vendorName}
-          </span>
-        )}
-        {observation.hasPhotos && (
-          <span className="flex items-center gap-1 text-stone-600">
+          </span> : null}
+        {observation.hasPhotos ? <span className="flex items-center gap-1 text-stone-600">
             <Camera className="h-3 w-3" />
             {observation.photoCount} photo{observation.photoCount !== 1 ? 's' : ''}
-          </span>
-        )}
+          </span> : null}
       </div>
-      {observation.correctiveAction && (
-        <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
+      {observation.correctiveAction ? <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
           <span className="font-medium">Corrective Action:</span> {observation.correctiveAction}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -853,8 +847,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           <span className={cn("text-xs px-2 py-0.5 rounded font-medium", incidentStatusColors[incident.status])}>
             {incidentStatusLabels[incident.status]}
           </span>
-          {incident.oshaClassification && (
-            <span className={cn(
+          {incident.oshaClassification ? <span className={cn(
               "text-xs px-2 py-0.5 rounded font-medium",
               incident.oshaClassification === 'first_aid' ? "bg-green-100 text-green-700" :
               incident.oshaClassification === 'recordable' ? "bg-sand-100 text-sand-700" :
@@ -864,8 +857,7 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
               OSHA: {incident.oshaClassification === 'first_aid' ? 'First Aid' :
                      incident.oshaClassification === 'recordable' ? 'Recordable' :
                      incident.oshaClassification === 'lost_time' ? 'Lost Time' : 'Fatality'}
-            </span>
-          )}
+            </span> : null}
         </div>
         <span className="text-xs text-warm-500">{incident.date}</span>
       </div>
@@ -882,35 +874,27 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
         <span className="text-warm-400">
           {incident.time} at {incident.location}
         </span>
-        {incident.vendorName && (
-          <span className="flex items-center gap-1 text-sand-600">
+        {incident.vendorName ? <span className="flex items-center gap-1 text-sand-600">
             <Link2 className="h-3 w-3" />
             {incident.vendorName}
-          </span>
-        )}
+          </span> : null}
         {incident.witnessCount > 0 && (
           <span className="flex items-center gap-1">
             <Users className="h-3 w-3" />
             {incident.witnessCount} witness{incident.witnessCount !== 1 ? 'es' : ''}
           </span>
         )}
-        {incident.hasPhotos && (
-          <span className="flex items-center gap-1 text-stone-600">
+        {incident.hasPhotos ? <span className="flex items-center gap-1 text-stone-600">
             <Camera className="h-3 w-3" />
             Photos
-          </span>
-        )}
+          </span> : null}
       </div>
-      {incident.rootCause && (
-        <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
+      {incident.rootCause ? <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
           <span className="font-medium">Root Cause:</span> {incident.rootCause}
-        </div>
-      )}
-      {incident.correctiveAction && (
-        <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
+        </div> : null}
+      {incident.correctiveAction ? <div className="mt-2 p-2 bg-warm-50 rounded text-xs text-warm-700">
           <span className="font-medium">Corrective Action:</span> {incident.correctiveAction}
-        </div>
-      )}
+        </div> : null}
       {(incident.daysAway !== undefined || incident.daysRestricted !== undefined) && (
         <div className="mt-2 flex items-center gap-3 text-xs">
           {incident.daysAway !== undefined && (
@@ -919,19 +903,13 @@ function IncidentCard({ incident }: { incident: SafetyIncident }) {
           {incident.daysRestricted !== undefined && (
             <span className="text-amber-600 font-medium">{incident.daysRestricted} days restricted</span>
           )}
-          {incident.returnToWorkDate && (
-            <span className="text-green-600">Returned: {incident.returnToWorkDate}</span>
-          )}
+          {incident.returnToWorkDate ? <span className="text-green-600">Returned: {incident.returnToWorkDate}</span> : null}
         </div>
       )}
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-warm-100">
         <div className="flex items-center gap-2 flex-wrap">
-          {incident.oshaReportable && (
-            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">OSHA Reportable</span>
-          )}
-          {incident.drugTestRequired && (
-            <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded">Drug Test Required</span>
-          )}
+          {incident.oshaReportable ? <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-medium">OSHA Reportable</span> : null}
+          {incident.drugTestRequired ? <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded">Drug Test Required</span> : null}
           <span className={cn(
             "text-xs px-2 py-0.5 rounded",
             incident.investigationStatus === 'complete' ? "bg-green-100 text-green-700" :
@@ -973,12 +951,10 @@ function InspectionItem({ inspection }: { inspection: SafetyInspection }) {
             <span>{inspection.job}</span>
             <span className="text-warm-300">|</span>
             <span>{inspection.inspector}</span>
-            {inspection.checklistItems && (
-              <>
+            {inspection.checklistItems ? <>
                 <span className="text-warm-300">|</span>
                 <span>{inspection.completedItems ?? 0}/{inspection.checklistItems} items</span>
-              </>
-            )}
+              </> : null}
           </div>
         </div>
       </div>
@@ -1127,15 +1103,11 @@ function SafetyChecklistCard({ checklist }: { checklist: SafetyChecklist }) {
               {checklist.deficienciesFound} deficiencies
             </span>
           )}
-          {checklist.status === 'completed' && checklist.completedBy && (
-            <span className="text-warm-500">
+          {checklist.status === 'completed' && checklist.completedBy ? <span className="text-warm-500">
               by {checklist.completedBy}
-            </span>
-          )}
+            </span> : null}
         </div>
-        {checklist.completedDate && (
-          <span className="text-warm-400">{checklist.completedDate}</span>
-        )}
+        {checklist.completedDate ? <span className="text-warm-400">{checklist.completedDate}</span> : null}
       </div>
     </div>
   )

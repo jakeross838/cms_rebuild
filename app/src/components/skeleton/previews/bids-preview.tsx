@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   FileText,
   Send,
@@ -28,10 +29,11 @@ import {
   Calendar,
   Hash,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -289,11 +291,9 @@ function InvitationTracker({ invitations }: { invitations: BidInvitation[] }) {
               className={cn('text-xs px-2 py-0.5 rounded-full flex items-center gap-1', cfg.color)}
               title={inv.declineReason ? `Declined: ${inv.declineReason}` : inv.vendorName}
             >
-              {inv.prequalified && <Shield className="h-2.5 w-2.5" />}
+              {inv.prequalified ? <Shield className="h-2.5 w-2.5" /> : null}
               <span className="truncate max-w-[100px]">{inv.vendorName}</span>
-              {inv.performanceScore && (
-                <span className="text-[10px] opacity-75">({inv.performanceScore})</span>
-              )}
+              {inv.performanceScore ? <span className="text-[10px] opacity-75">({inv.performanceScore})</span> : null}
             </div>
           )
         })}
@@ -336,30 +336,24 @@ function BidComparisonRow({ response, budgetAmount, isRecommended }: { response:
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-warm-900 truncate">{response.vendorName}</span>
-          {isRecommended && (
-            <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+          {isRecommended ? <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-0.5">
               <Award className="h-2.5 w-2.5" /> Recommended
-            </span>
-          )}
-          {response.aiExtracted && (
-            <span className="text-[10px] bg-warm-100 text-warm-700 px-1 py-0.5 rounded flex items-center gap-0.5">
+            </span> : null}
+          {response.aiExtracted ? <span className="text-[10px] bg-warm-100 text-warm-700 px-1 py-0.5 rounded flex items-center gap-0.5">
               <Sparkles className="h-2.5 w-2.5" /> AI Parsed
-            </span>
-          )}
-          {response.anomalyFlag && (
-            <span className={cn(
+            </span> : null}
+          {response.anomalyFlag ? <span className={cn(
               'text-[10px] px-1 py-0.5 rounded flex items-center gap-0.5',
               response.anomalyFlag === 'low' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
             )}>
               <AlertTriangle className="h-2.5 w-2.5" />
               {response.anomalyFlag === 'low' ? 'Suspiciously Low' : 'Suspiciously High'}
-            </span>
-          )}
+            </span> : null}
         </div>
         <div className="flex items-center gap-3 mt-0.5 text-xs text-warm-500">
           <span>Scope: {response.scopeCoverage}%</span>
           <span>Valid: {response.validityDays}d</span>
-          {response.paymentTerms && <span>{response.paymentTerms}</span>}
+          {response.paymentTerms ? <span>{response.paymentTerms}</span> : null}
           {response.exclusions.length > 0 && (
             <span className="text-amber-600">{response.exclusions.length} exclusion{response.exclusions.length > 1 ? 's' : ''}</span>
           )}
@@ -397,9 +391,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h4 className="font-medium text-warm-900 truncate">{bid.name}</h4>
-              {bid.templateName && (
-                <span className="text-[10px] bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Template</span>
-              )}
+              {bid.templateName ? <span className="text-[10px] bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded">Template</span> : null}
             </div>
             <div className="flex items-center gap-1.5 text-sm text-warm-500 mt-0.5">
               <Building2 className="h-3.5 w-3.5" />
@@ -425,12 +417,10 @@ function BidCard({ bid }: { bid: BidPackage }) {
               Due: {formatDate(bid.dueDate)}
             </span>
           )}
-          {bid.preBidMeetingDate && (
-            <span className="text-xs text-stone-600 flex items-center gap-1">
+          {bid.preBidMeetingDate ? <span className="text-xs text-stone-600 flex items-center gap-1">
               <Users className="h-3 w-3" />
               Pre-bid: {formatDate(bid.preBidMeetingDate)}
-            </span>
-          )}
+            </span> : null}
           {bid.clarificationCount > 0 && (
             <span className="text-xs text-stone-600 flex items-center gap-1">
               <MessageSquare className="h-3 w-3" />
@@ -465,8 +455,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
               </span>
             </div>
           )}
-          {lowestBid && (
-            <div className="flex items-center justify-between text-sm">
+          {lowestBid ? <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-1.5 text-warm-600">
                 <TrendingDown className="h-3.5 w-3.5" />
                 <span>Lowest Bid</span>
@@ -477,10 +466,8 @@ function BidCard({ bid }: { bid: BidPackage }) {
                   ({savings >= 0 ? '-' : '+'}{Math.abs(Number(savingsPercent))}%)
                 </span>
               </span>
-            </div>
-          )}
-          {bid.awardedVendor && (
-            <div className="flex items-center justify-between text-sm">
+            </div> : null}
+          {bid.awardedVendor ? <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-1.5 text-warm-600">
                 <Award className="h-3.5 w-3.5" />
                 <span>Awarded To</span>
@@ -488,8 +475,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
               <span className="font-medium text-green-700">
                 {bid.awardedVendor} &mdash; {formatCurrency(bid.awardedAmount || 0)}
               </span>
-            </div>
-          )}
+            </div> : null}
         </div>
 
         {/* Scope coverage bar */}
@@ -515,8 +501,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
           </div>
         )}
 
-        {bid.recommendedVendor && bid.status === 'closed' && (
-          <div className="pt-3 border-t border-warm-100">
+        {bid.recommendedVendor && bid.status === 'closed' ? <div className="pt-3 border-t border-warm-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-sm">
                 <Award className="h-4 w-4 text-amber-500" />
@@ -527,23 +512,19 @@ function BidCard({ bid }: { bid: BidPackage }) {
                 Award Bid
               </button>
             </div>
-          </div>
-        )}
+          </div> : null}
 
         <InvitationTracker invitations={bid.invitations} />
         <ScopeGapIndicator bid={bid} />
 
-        {bid.aiRecommendation && (
-          <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
+        {bid.aiRecommendation ? <div className="mt-3 p-2 bg-amber-50 rounded-md flex items-start gap-2">
             <Sparkles className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
             <span className="text-xs text-amber-700">{bid.aiRecommendation}</span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Expanded: Bid Comparison Matrix */}
-      {expanded && bid.responses.length > 0 && (
-        <div className="border-t border-warm-200 p-4 bg-warm-50">
+      {expanded && bid.responses.length > 0 ? <div className="border-t border-warm-200 p-4 bg-warm-50">
           <h5 className="text-sm font-medium text-warm-900 mb-3 flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-stone-600" />
             Bid Comparison Matrix
@@ -593,8 +574,7 @@ function BidCard({ bid }: { bid: BidPackage }) {
               )}
             </div>
           )}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

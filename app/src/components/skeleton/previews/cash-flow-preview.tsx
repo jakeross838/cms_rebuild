@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   TrendingUp,
   TrendingDown,
@@ -21,10 +22,11 @@ import {
   Sliders,
   GitBranch,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface CashFlowWeek {
   id: string
@@ -311,8 +313,7 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
           {formatCurrency(week.lowScenario)} - {formatCurrency(week.highScenario)}
         </td>
       </tr>
-      {expanded && (
-        <tr className="bg-stone-50/50">
+      {expanded ? <tr className="bg-stone-50/50">
           <td colSpan={7} className="py-4 px-8">
             <div className="grid grid-cols-2 gap-6">
               {/* Inflows */}
@@ -365,15 +366,12 @@ function WeekDetailRow({ week, expanded, onToggle }: { week: CashFlowWeek; expan
                 </div>
               </div>
             </div>
-            {week.aiNote && (
-              <div className="mt-4 p-3 bg-amber-50 rounded-lg flex items-start gap-2">
+            {week.aiNote ? <div className="mt-4 p-3 bg-amber-50 rounded-lg flex items-start gap-2">
                 <Sparkles className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
                 <span className="text-sm text-amber-700">{week.aiNote}</span>
-              </div>
-            )}
+              </div> : null}
           </td>
-        </tr>
-      )}
+        </tr> : null}
     </>
   )
 }

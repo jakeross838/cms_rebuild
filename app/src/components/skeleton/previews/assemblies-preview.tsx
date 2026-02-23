@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Sparkles,
@@ -28,10 +29,11 @@ import {
   ArrowUpDown,
   Check,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface AssemblyItem {
   costCode: string
@@ -514,9 +516,7 @@ function TierComparisonModal({ isOpen, onClose, assembly }: { isOpen: boolean; o
                 <span className={cn("text-xs px-2 py-1 rounded font-medium", tierCfg.color)}>
                   {tierCfg.label}
                 </span>
-                {isDefault && (
-                  <span className="text-xs bg-stone-600 text-white px-1.5 py-0.5 rounded">Current</span>
-                )}
+                {isDefault ? <span className="text-xs bg-stone-600 text-white px-1.5 py-0.5 rounded">Current</span> : null}
               </div>
               <div className="text-right">
                 <div className="font-medium text-warm-900">{formatCurrencyFull(price)}</div>
@@ -568,18 +568,14 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
               <span className="text-xs font-medium text-warm-500 uppercase bg-warm-100 px-1.5 py-0.5 rounded">
                 {assembly.category}
               </span>
-              {assembly.isFavorite && (
-                <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-              )}
+              {assembly.isFavorite ? <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" /> : null}
               {!assembly.isActive && (
                 <span className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded">Inactive</span>
               )}
-              {assembly.hasNestedAssemblies && (
-                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              {assembly.hasNestedAssemblies ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   <Layers className="h-3 w-3" />
                   Nested
-                </span>
-              )}
+                </span> : null}
               {assembly.costChange !== undefined && assembly.costChangeDirection === 'up' && (
                 <span className="flex items-center gap-0.5 text-xs text-red-600">
                   <TrendingUp className="h-3 w-3" />
@@ -608,8 +604,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
               {tierCfg.label}
               <ChevronDown className="h-3 w-3" />
             </button>
-            {showTierDropdown && (
-              <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10 py-1 min-w-[160px]">
+            {showTierDropdown ? <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10 py-1 min-w-[160px]">
                 {tiers.map(tier => {
                   const cfg = tierConfig[tier]
                   const price = assembly.tierPricing?.[tier] || assembly.totalCost
@@ -635,8 +630,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                     </button>
                   )
                 })}
-              </div>
-            )}
+              </div> : null}
           </div>
         </div>
 
@@ -669,8 +663,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
         </div>
 
         {/* Cost History */}
-        {assembly.costHistory && (
-          <div className="flex items-center gap-2 text-xs text-warm-500 mb-3">
+        {assembly.costHistory ? <div className="flex items-center gap-2 text-xs text-warm-500 mb-3">
             <BarChart3 className="h-3 w-3" />
             <span>
               60 days: <span className={assembly.costHistory.sixtyDays >= 0 ? "text-red-600" : "text-green-600"}>
@@ -683,19 +676,15 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                 {assembly.costHistory.sixMonths >= 0 ? '+' : ''}{assembly.costHistory.sixMonths}%
               </span>
             </span>
-          </div>
-        )}
+          </div> : null}
 
-        {assembly.wasteFactorApplied && (
-          <div className="flex items-center gap-1 text-xs text-warm-400 mb-3">
+        {assembly.wasteFactorApplied ? <div className="flex items-center gap-1 text-xs text-warm-400 mb-3">
             <RefreshCw className="h-3 w-3" />
             <span>Waste factors applied</span>
-          </div>
-        )}
+          </div> : null}
 
         {/* Cost Change Details */}
-        {assembly.costChange !== undefined && assembly.costChangeDetails && (
-          <div className="mb-3">
+        {assembly.costChange !== undefined && assembly.costChangeDetails ? <div className="mb-3">
             <button
               onClick={() => setShowCostDetails(!showCostDetails)}
               className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1"
@@ -703,8 +692,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
               {showCostDetails ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               View Details
             </button>
-            {showCostDetails && (
-              <div className="mt-2 p-2 bg-warm-50 rounded text-xs space-y-1">
+            {showCostDetails ? <div className="mt-2 p-2 bg-warm-50 rounded text-xs space-y-1">
                 {assembly.costChangeDetails.map((detail, idx) => (
                   <div key={idx} className="flex justify-between">
                     <span className="text-warm-600">{detail.item}</span>
@@ -713,10 +701,8 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                     </span>
                   </div>
                 ))}
-              </div>
-            )}
-          </div>
-        )}
+              </div> : null}
+          </div> : null}
 
         <div className="flex items-center justify-between pt-3 border-t border-warm-100">
           <div className="flex items-center gap-3">
@@ -733,16 +719,13 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
           </div>
         </div>
 
-        {assembly.aiNote && (
-          <div className="mt-3 p-2 rounded-md bg-amber-50 flex items-start gap-2 text-xs">
+        {assembly.aiNote ? <div className="mt-3 p-2 rounded-md bg-amber-50 flex items-start gap-2 text-xs">
             <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
             <span className="text-amber-700">{assembly.aiNote}</span>
-          </div>
-        )}
+          </div> : null}
 
         {/* Expandable Line Items Section */}
-        {assembly.sampleItems && assembly.sampleItems.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-warm-100">
+        {assembly.sampleItems && assembly.sampleItems.length > 0 ? <div className="mt-3 pt-3 border-t border-warm-100">
             <button
               onClick={() => setShowLineItems(!showLineItems)}
               className="flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-700"
@@ -751,8 +734,7 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
               <Layers className="h-3.5 w-3.5" />
               View Line Items ({assembly.sampleItems.length})
             </button>
-            {showLineItems && (
-              <div className="mt-2 bg-warm-50 rounded-lg p-2">
+            {showLineItems ? <div className="mt-2 bg-warm-50 rounded-lg p-2">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="text-warm-500 border-b border-warm-200">
@@ -778,10 +760,8 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                 {remainingItems > 0 && (
                   <p className="text-xs text-warm-500 mt-2 text-center">... and {remainingItems} more items</p>
                 )}
-              </div>
-            )}
-          </div>
-        )}
+              </div> : null}
+          </div> : null}
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
@@ -839,18 +819,14 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
     )}>
       <td className="py-3 px-4">
         <div className="flex items-center gap-2">
-          {assembly.isFavorite && (
-            <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-          )}
+          {assembly.isFavorite ? <Star className="h-4 w-4 text-amber-400 fill-amber-400" /> : null}
           <div>
             <div className="flex items-center gap-2">
               <span className="font-medium text-warm-900">{assembly.name}</span>
               {!assembly.isActive && (
                 <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded">Inactive</span>
               )}
-              {assembly.hasNestedAssemblies && (
-                <span title="Contains nested assemblies"><Layers className="h-3.5 w-3.5 text-stone-600" /></span>
-              )}
+              {assembly.hasNestedAssemblies ? <span title="Contains nested assemblies"><Layers className="h-3.5 w-3.5 text-stone-600" /></span> : null}
             </div>
             <div className="text-xs text-warm-500">{assembly.description}</div>
           </div>
@@ -871,8 +847,7 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
             {tierCfg.label}
             <ChevronDown className="h-3 w-3" />
           </button>
-          {showTierDropdown && (
-            <div className="absolute left-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10 py-1 min-w-[140px]">
+          {showTierDropdown ? <div className="absolute left-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10 py-1 min-w-[140px]">
               {tiers.map(tier => {
                 const cfg = tierConfig[tier]
                 return (
@@ -889,8 +864,7 @@ function AssemblyRow({ assembly }: { assembly: Assembly }) {
                   </button>
                 )
               })}
-            </div>
-          )}
+            </div> : null}
         </div>
       </td>
       <td className="py-3 px-4 text-right">
@@ -1147,7 +1121,7 @@ export function AssembliesPreview() {
                 <th className="text-right py-3 px-4 font-medium text-warm-600">Total Cost</th>
                 <th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th>
                 <th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th>
-                <th className="w-10"></th>
+                <th className="w-10" />
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-warm-100">

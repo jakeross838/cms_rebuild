@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Download,
   Clock,
   AlertTriangle,
-  CheckCircle,
+  type CheckCircle,
   DollarSign,
   Calendar,
   Building2,
@@ -27,10 +28,11 @@ import {
   Eye,
   MousePointer,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { SubmissionForm, ViewModeToggle, AIFeaturesPanel, type ViewMode } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type AgingBucket = 'current' | '1-30' | '31-60' | '61-90' | '90+'
 type LocalViewMode = 'list' | 'grid' | 'table'
@@ -398,8 +400,8 @@ function PaymentLinkStatus({ tracking }: { tracking?: PaymentLinkTracking }) {
   return (
     <div className="flex items-center gap-1.5 text-xs text-stone-600 bg-stone-50 px-2 py-1 rounded">
       <Link className="h-3 w-3" />
-      {tracking.viewedAt && <Eye className="h-3 w-3" />}
-      {tracking.clickedAt && <MousePointer className="h-3 w-3" />}
+      {tracking.viewedAt ? <Eye className="h-3 w-3" /> : null}
+      {tracking.clickedAt ? <MousePointer className="h-3 w-3" /> : null}
       <span>{parts.join(', ')}</span>
     </div>
   )
@@ -433,7 +435,7 @@ function WriteOffHistory({ history }: { history?: WriteOffRecord[] }) {
         <div key={record.id} className="text-xs text-warm-600 flex items-center gap-2">
           <XCircle className="h-3 w-3 text-warm-400" />
           <span>{formatDate(record.date)}: {formatCurrency(record.amount)} - {record.reason}</span>
-          {record.approvedBy && <span className="text-warm-400">| Approved by: {record.approvedBy}</span>}
+          {record.approvedBy ? <span className="text-warm-400">| Approved by: {record.approvedBy}</span> : null}
         </div>
       ))}
     </div>
@@ -508,11 +510,9 @@ function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
           }}
           submitLabel="Submit Write-off"
         />
-        {receivable.writeOffHistory && receivable.writeOffHistory.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-warm-200">
+        {receivable.writeOffHistory && receivable.writeOffHistory.length > 0 ? <div className="mt-4 pt-4 border-t border-warm-200">
             <WriteOffHistory history={receivable.writeOffHistory} />
-          </div>
-        )}
+          </div> : null}
       </div>
     </div>
   )
@@ -567,11 +567,9 @@ function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
           }}
           submitLabel="Log Email"
         />
-        {receivable.emailFollowUps && receivable.emailFollowUps.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-warm-200">
+        {receivable.emailFollowUps && receivable.emailFollowUps.length > 0 ? <div className="mt-4 pt-4 border-t border-warm-200">
             <EmailFollowUpHistory emails={receivable.emailFollowUps} />
-          </div>
-        )}
+          </div> : null}
       </div>
     </div>
   )
@@ -642,45 +640,34 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
               <StatusIcon className="h-3.5 w-3.5" />
               <span>{collectionStatus.label}</span>
             </div>
-            {receivable.lastContact && (
-              <span className="text-xs text-warm-400">
+            {receivable.lastContact ? <span className="text-xs text-warm-400">
                 Last contact: {formatDate(receivable.lastContact)}
-              </span>
-            )}
-            {receivable.paymentMethod && (
-              <span className="text-xs text-warm-400 bg-warm-100 px-1.5 py-0.5 rounded">
+              </span> : null}
+            {receivable.paymentMethod ? <span className="text-xs text-warm-400 bg-warm-100 px-1.5 py-0.5 rounded">
                 Preferred: {receivable.paymentMethod}
-              </span>
-            )}
+              </span> : null}
           </div>
 
           {/* Payment Link Tracking */}
-          {receivable.paymentLinkTracking && (
-            <div className="mt-2">
+          {receivable.paymentLinkTracking ? <div className="mt-2">
               <PaymentLinkStatus tracking={receivable.paymentLinkTracking} />
-            </div>
-          )}
+            </div> : null}
 
           {/* Lien Deadline Alert */}
-          {receivable.lienDeadline && (
-            <div className="mt-2">
+          {receivable.lienDeadline ? <div className="mt-2">
               <LienDeadlineAlert deadline={receivable.lienDeadline} collectionStatus={receivable.collectionStatus} />
-            </div>
-          )}
+            </div> : null}
 
           {/* Retainage info */}
           {receivable.retainageAmount > 0 && (
             <div className="mt-2 flex items-center gap-2 text-xs text-stone-600 bg-warm-50 px-2 py-1 rounded">
               <DollarSign className="h-3 w-3" />
               <span>Retainage held: {formatCurrency(receivable.retainageAmount)}</span>
-              {receivable.retainageReleaseDate && (
-                <span className="text-purple-400">| Release: {formatDate(receivable.retainageReleaseDate)}</span>
-              )}
+              {receivable.retainageReleaseDate ? <span className="text-purple-400">| Release: {formatDate(receivable.retainageReleaseDate)}</span> : null}
             </div>
           )}
 
-          {receivable.aiNote && (
-            <div className={cn(
+          {receivable.aiNote ? <div className={cn(
               "mt-3 p-2 rounded-md flex items-start gap-2 text-sm",
               isHighRisk ? "bg-red-50" : "bg-stone-50"
             )}>
@@ -691,8 +678,7 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
               <span className={isHighRisk ? "text-red-700" : "text-stone-700"}>
                 {receivable.aiNote}
               </span>
-            </div>
-          )}
+            </div> : null}
 
           {/* Write-off History */}
           <WriteOffHistory history={receivable.writeOffHistory} />
@@ -758,15 +744,13 @@ function ReceivableRow({ receivable, onWriteOff, onLogEmail }: {
             Send Lien Notice
           </button>
         )}
-        {isSeverelyOverdue && (
-          <button
+        {isSeverelyOverdue ? <button
             onClick={() => onWriteOff(receivable)}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-50"
           >
             <XCircle className="h-3.5 w-3.5" />
             Write Off
-          </button>
-        )}
+          </button> : null}
         <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-warm-600 border border-warm-200 rounded-lg hover:bg-warm-50">
           <ExternalLink className="h-3.5 w-3.5" />
           Payment Link
@@ -1168,22 +1152,18 @@ export function ReceivablesPreview() {
       </div>
 
       {/* Write-off Modal */}
-      {writeOffModal.receivable && (
-        <WriteOffModal
+      {writeOffModal.receivable ? <WriteOffModal
           isOpen={writeOffModal.isOpen}
           onClose={() => setWriteOffModal({ isOpen: false, receivable: null })}
           receivable={writeOffModal.receivable}
-        />
-      )}
+        /> : null}
 
       {/* Email Log Modal */}
-      {emailLogModal.receivable && (
-        <EmailLogModal
+      {emailLogModal.receivable ? <EmailLogModal
           isOpen={emailLogModal.isOpen}
           onClose={() => setEmailLogModal({ isOpen: false, receivable: null })}
           receivable={emailLogModal.receivable}
-        />
-      )}
+        /> : null}
     </div>
   )
 }

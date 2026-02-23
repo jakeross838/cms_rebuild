@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Mic,
@@ -31,10 +32,11 @@ import {
   Shield,
   Pencil,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface WorkItem {
   description: string
@@ -393,23 +395,17 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                 <StatusIcon className="h-3 w-3" />
                 {statusCfg.label}
               </span>
-              {log.isImmutable && (
-                <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              {log.isImmutable ? <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   <Lock className="h-3 w-3" />
                   Immutable
-                </span>
-              )}
-              {log.hasAmendments && (
-                <span className="text-xs bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded">
+                </span> : null}
+              {log.hasAmendments ? <span className="text-xs bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded">
                   Amended
-                </span>
-              )}
-              {log.hasVoiceTranscript && (
-                <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                </span> : null}
+              {log.hasVoiceTranscript ? <span className="text-xs bg-warm-50 text-stone-600 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   <Mic className="h-3 w-3" />
                   Voice
-                </span>
-              )}
+                </span> : null}
               {log.scheduleUpdates > 0 && (
                 <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded">
                   {log.scheduleUpdates} schedule update{log.scheduleUpdates > 1 ? 's' : ''}
@@ -444,16 +440,12 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                     </span>
                     <span className="text-warm-500">{issueCategoryLabels[issue.category]}</span>
                     <span className="text-warm-600 truncate">{issue.description}</span>
-                    {issue.scheduleImpactDays && issue.scheduleImpactDays > 0 && (
-                      <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded flex-shrink-0">
+                    {issue.scheduleImpactDays && issue.scheduleImpactDays > 0 ? <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded flex-shrink-0">
                         -{issue.scheduleImpactDays}d
-                      </span>
-                    )}
-                    {issue.triggeredEntity && (
-                      <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded flex-shrink-0">
+                      </span> : null}
+                    {issue.triggeredEntity ? <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded flex-shrink-0">
                         {issue.triggeredEntity}
-                      </span>
-                    )}
+                      </span> : null}
                   </div>
                 ))}
               </div>
@@ -466,16 +458,12 @@ function DailyLogCard({ log }: { log: DailyLog }) {
                   <div key={idx} className="flex items-center gap-2 text-xs text-warm-600">
                     <Truck className="h-3 w-3 text-warm-400" />
                     <span className="truncate">{delivery.description}</span>
-                    {delivery.poMatched && (
-                      <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded flex-shrink-0">
+                    {delivery.poMatched ? <span className="text-xs bg-stone-50 text-stone-600 px-1 py-0.5 rounded flex-shrink-0">
                         {delivery.poMatched}
-                      </span>
-                    )}
-                    {delivery.hasDiscrepancy && (
-                      <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded flex-shrink-0">
+                      </span> : null}
+                    {delivery.hasDiscrepancy ? <span className="text-xs bg-red-50 text-red-600 px-1 py-0.5 rounded flex-shrink-0">
                         Discrepancy
-                      </span>
-                    )}
+                      </span> : null}
                   </div>
                 ))}
               </div>
@@ -494,20 +482,16 @@ function DailyLogCard({ log }: { log: DailyLog }) {
             )}
 
             {/* Review note */}
-            {log.reviewNote && (
-              <div className="flex items-start gap-1 mt-1.5 text-xs text-sand-600 bg-sand-50 p-2 rounded">
+            {log.reviewNote ? <div className="flex items-start gap-1 mt-1.5 text-xs text-sand-600 bg-sand-50 p-2 rounded">
                 <MessageSquare className="h-3 w-3 mt-0.5 flex-shrink-0" />
                 <span>{log.reviewNote}</span>
-              </div>
-            )}
+              </div> : null}
 
             {/* AI summaries */}
-            {log.aiSummary && (
-              <p className="text-xs text-stone-600 mt-1.5 flex items-center gap-1">
+            {log.aiSummary ? <p className="text-xs text-stone-600 mt-1.5 flex items-center gap-1">
                 <Sparkles className="h-3 w-3 flex-shrink-0" />
                 <span>{log.aiSummary}</span>
-              </p>
-            )}
+              </p> : null}
           </div>
         </div>
 
@@ -538,14 +522,12 @@ function DailyLogCard({ log }: { log: DailyLog }) {
           <span className={photoBelowMinimum ? "text-amber-500" : "text-warm-400"}>
             photos {photoBelowMinimum ? `(min ${log.photoMinimum})` : ''}
           </span>
-          {photoBelowMinimum && <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
+          {photoBelowMinimum ? <AlertTriangle className="h-3.5 w-3.5 text-amber-500" /> : null}
         </div>
-        {log.submittedBy && (
-          <div className="flex items-center gap-1.5 text-xs text-warm-400 ml-auto">
+        {log.submittedBy ? <div className="flex items-center gap-1.5 text-xs text-warm-400 ml-auto">
             Submitted by {log.submittedBy} at {log.submittedAt}
-            {log.reviewedBy && <span>| Reviewed by {log.reviewedBy}</span>}
-          </div>
-        )}
+            {log.reviewedBy ? <span>| Reviewed by {log.reviewedBy}</span> : null}
+          </div> : null}
       </div>
     </div>
   )
@@ -662,8 +644,7 @@ export function DailyLogsPreview() {
                 isRecording ? "border-red-300 bg-red-50" : "border-warm-200"
               )}
             />
-            {isRecording && (
-              <div className="flex items-center gap-2 mt-2">
+            {isRecording ? <div className="flex items-center gap-2 mt-2">
                 <div className="flex gap-1">
                   <div className="w-1 h-4 bg-red-500 rounded animate-pulse" style={{ animationDelay: '0ms' }} />
                   <div className="w-1 h-6 bg-red-500 rounded animate-pulse" style={{ animationDelay: '150ms' }} />
@@ -672,8 +653,7 @@ export function DailyLogsPreview() {
                   <div className="w-1 h-4 bg-red-500 rounded animate-pulse" style={{ animationDelay: '600ms' }} />
                 </div>
                 <span className="text-xs text-red-600">Recording voice input...</span>
-              </div>
-            )}
+              </div> : null}
           </div>
           <div className="flex items-center gap-3 text-sm text-warm-500">
             <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1.5 rounded-lg">

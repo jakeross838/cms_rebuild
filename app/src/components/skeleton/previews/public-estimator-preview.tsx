@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
-import { AIFeaturesPanel } from '../ui/ai-features-panel'
+
 import {
   Home,
   Ruler,
@@ -40,6 +39,10 @@ import {
   Target,
   BarChart3,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
+
+import { AIFeaturesPanel } from '../ui'
 
 // ── Types ────────────────────────────────────────────────
 
@@ -557,16 +560,14 @@ export function PublicEstimatorPreview() {
               </div>
 
               {/* Actions */}
-              {leadCaptured && (
-                <div className="flex gap-3">
+              {leadCaptured ? <div className="flex gap-3">
                   <button className="flex-1 bg-white/10 text-white py-2.5 rounded-lg text-sm hover:bg-white/20 transition-colors flex items-center justify-center gap-2">
                     <Download className="h-4 w-4" /> Download PDF
                   </button>
                   <button className="flex-1 bg-white/10 text-white py-2.5 rounded-lg text-sm hover:bg-white/20 transition-colors flex items-center justify-center gap-2">
                     <Share2 className="h-4 w-4" /> Share
                   </button>
-                </div>
-              )}
+                </div> : null}
             </div>
           )}
 

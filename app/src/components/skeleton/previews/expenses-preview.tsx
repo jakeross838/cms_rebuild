@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Receipt,
   DollarSign,
@@ -34,6 +35,7 @@ import {
   TrendingUp,
   Sparkles,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 // Types
@@ -213,19 +215,15 @@ function ExpenseRow({ expense, onView }: { expense: Expense; onView: () => void 
                   <Calendar className="h-3.5 w-3.5" />
                   {formatDate(expense.date)}
                 </span>
-                {expense.jobName && (
-                  <>
+                {expense.jobName ? <>
                     <span className="text-warm-300">|</span>
                     <span className="flex items-center gap-1">
                       <Building className="h-3.5 w-3.5" />
                       {expense.jobName}
                     </span>
-                  </>
-                )}
+                  </> : null}
               </div>
-              {expense.notes && expense.status === 'rejected' && (
-                <p className="text-xs text-red-600 mt-1">{expense.notes}</p>
-              )}
+              {expense.notes && expense.status === 'rejected' ? <p className="text-xs text-red-600 mt-1">{expense.notes}</p> : null}
             </div>
 
             {/* Amount */}
@@ -238,22 +236,16 @@ function ExpenseRow({ expense, onView }: { expense: Expense; onView: () => void 
           {/* Footer */}
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-warm-100">
             <div className="flex items-center gap-3">
-              {expense.receiptUrl && (
-                <span className="flex items-center gap-1 text-xs text-warm-500">
+              {expense.receiptUrl ? <span className="flex items-center gap-1 text-xs text-warm-500">
                   <FileText className="h-3.5 w-3.5" />
                   Receipt attached
-                </span>
-              )}
-              {expense.costCode && (
-                <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">
+                </span> : null}
+              {expense.costCode ? <span className="text-xs bg-warm-100 text-warm-600 px-1.5 py-0.5 rounded">
                   {expense.costCode}
-                </span>
-              )}
-              {expense.mileage && (
-                <span className="text-xs text-warm-500">
+                </span> : null}
+              {expense.mileage ? <span className="text-xs text-warm-500">
                   {expense.mileage} miles
-                </span>
-              )}
+                </span> : null}
             </div>
             <ChevronRight className="h-4 w-4 text-warm-400" />
           </div>
@@ -610,7 +602,7 @@ export default function ExpensesPreview() {
       </div>
 
       {/* New Expense Modal */}
-      {showNewExpense && <NewExpenseForm onClose={() => setShowNewExpense(false)} />}
+      {showNewExpense ? <NewExpenseForm onClose={() => setShowNewExpense(false)} /> : null}
     </div>
   )
 }

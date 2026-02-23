@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import {
   ChevronDown,
   ChevronRight,
@@ -24,6 +25,7 @@ import {
   FileCheck,
   FileText,
 } from 'lucide-react'
+
 import {
   companyNav,
   companyJobNav,
@@ -33,6 +35,7 @@ import {
   type NavItem,
   type NavSubItem,
 } from '@/config/navigation'
+import { cn } from '@/lib/utils'
 
 // ── Dropdown for nav items with sub-items ─────────────────────
 
@@ -77,8 +80,7 @@ function NavDropdown({
         <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-popover rounded-lg shadow-lg border border-border py-2 z-[100]">
+      {isOpen ? <div className="absolute top-full left-0 mt-1 w-64 bg-popover rounded-lg shadow-lg border border-border py-2 z-[100]">
           {resolvedItems.map((page) => (
             <Link
               key={page.href}
@@ -95,8 +97,7 @@ function NavDropdown({
               <div className="text-xs text-muted-foreground">{page.description}</div>
             </Link>
           ))}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -198,8 +199,7 @@ function SettingsMegaMenu() {
         <Settings className="h-5 w-5" />
       </button>
 
-      {isOpen && (
-        <div className="absolute top-full right-0 mt-1 w-[640px] bg-popover rounded-lg shadow-lg border border-border p-4 z-[100]">
+      {isOpen ? <div className="absolute top-full right-0 mt-1 w-[640px] bg-popover rounded-lg shadow-lg border border-border p-4 z-[100]">
           <div className="grid grid-cols-3 gap-6">
             {companyRightNav.map((section) => (
               <div key={section.label}>
@@ -227,8 +227,7 @@ function SettingsMegaMenu() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -355,8 +354,7 @@ function NotificationDropdown() {
         )}
       </button>
 
-      {isOpen && (
-        <div className="absolute top-full right-0 mt-1 w-[400px] bg-popover rounded-lg shadow-lg border border-border z-[100]">
+      {isOpen ? <div className="absolute top-full right-0 mt-1 w-[400px] bg-popover rounded-lg shadow-lg border border-border z-[100]">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
@@ -427,8 +425,7 @@ function NotificationDropdown() {
               View all notifications
             </Link>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -485,8 +482,7 @@ function AccountDropdown() {
         </div>
       </button>
 
-      {isOpen && (
-        <div className="absolute top-full right-0 mt-1 w-[320px] bg-popover rounded-lg shadow-lg border border-border z-[100]">
+      {isOpen ? <div className="absolute top-full right-0 mt-1 w-[320px] bg-popover rounded-lg shadow-lg border border-border z-[100]">
           {/* User header */}
           <div className="px-4 py-3 border-b border-border">
             <div className="flex items-center gap-3">
@@ -540,8 +536,7 @@ function AccountDropdown() {
               </span>
               <ChevronRight className={cn('h-4 w-4 text-muted-foreground transition-transform', rolesExpanded && 'rotate-90')} />
             </button>
-            {rolesExpanded && (
-              <div className="mt-1 ml-2 space-y-0.5">
+            {rolesExpanded ? <div className="mt-1 ml-2 space-y-0.5">
                 {systemRoles.map((role) => (
                   <button
                     key={role.key}
@@ -562,8 +557,7 @@ function AccountDropdown() {
                     )}
                   </button>
                 ))}
-              </div>
-            )}
+              </div> : null}
           </div>
 
           {/* Quick actions */}
@@ -618,8 +612,7 @@ function AccountDropdown() {
               <span>Sign out</span>
             </button>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

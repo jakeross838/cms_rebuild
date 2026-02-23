@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Target,
   TrendingUp,
@@ -37,8 +38,9 @@ import {
   CalendarDays,
   ClipboardCheck,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -691,8 +693,7 @@ export function VendorPerformancePreview() {
                 )}
               </button>
 
-              {ftqHistoryExpanded && (
-                <div className="p-4 space-y-2 max-h-80 overflow-y-auto">
+              {ftqHistoryExpanded ? <div className="p-4 space-y-2 max-h-80 overflow-y-auto">
                   {vendor.ftq_history.map((item, i) => (
                     <div
                       key={i}
@@ -713,16 +714,12 @@ export function VendorPerformancePreview() {
                       <div className="flex items-center gap-2 text-xs text-warm-500">
                         <CalendarDays className="h-3 w-3" />
                         {item.date}
-                        {item.defectCategory && (
-                          <>
+                        {item.defectCategory ? <>
                             <span className="text-warm-300">|</span>
                             <span className="text-amber-600">Defect: {item.defectCategory}</span>
-                          </>
-                        )}
+                          </> : null}
                       </div>
-                      {item.notes && (
-                        <p className="mt-1 text-xs text-warm-600 italic">{item.notes}</p>
-                      )}
+                      {item.notes ? <p className="mt-1 text-xs text-warm-600 italic">{item.notes}</p> : null}
                     </div>
                   ))}
 
@@ -744,8 +741,7 @@ export function VendorPerformancePreview() {
                       AI Note: Box placement errors are decreasing. Focus training on electrical scope work.
                     </p>
                   </div>
-                </div>
-              )}
+                </div> : null}
             </div>
 
             {/* Quick Stats */}

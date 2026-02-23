@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   User,
   Building,
@@ -24,10 +25,11 @@ import {
   Briefcase,
   ExternalLink,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types (aligned to Module 03 - Core Data Model, contacts table)
@@ -443,9 +445,7 @@ function ContactCard({ contact }: { contact: Contact }) {
               <h4 className="font-medium text-warm-900">
                 {contact.displayName}
               </h4>
-              {contact.isFavorite && (
-                <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-              )}
+              {contact.isFavorite ? <Star className="h-4 w-4 text-amber-400 fill-amber-400" /> : null}
               {contact.status === 'archived' && (
                 <span className="text-xs bg-warm-100 text-warm-500 px-1.5 py-0.5 rounded flex items-center gap-1">
                   <Archive className="h-3 w-3" />
@@ -462,12 +462,10 @@ function ContactCard({ contact }: { contact: Contact }) {
       </div>
 
       <div className="space-y-1.5 mb-3">
-        {contact.companyName && (
-          <div className="flex items-center gap-2 text-sm text-warm-600">
+        {contact.companyName ? <div className="flex items-center gap-2 text-sm text-warm-600">
             <Building className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
             <span>{contact.companyName}</span>
-          </div>
-        )}
+          </div> : null}
         <div className="flex items-center gap-2 text-sm text-warm-600">
           <Mail className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
           <span className="truncate">{contact.email}</span>
@@ -475,26 +473,20 @@ function ContactCard({ contact }: { contact: Contact }) {
         <div className="flex items-center gap-2 text-sm text-warm-600">
           <Phone className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
           <span>{contact.phone}</span>
-          {contact.mobile && (
-            <>
+          {contact.mobile ? <>
               <span className="text-warm-300">|</span>
               <Smartphone className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
               <span>{contact.mobile}</span>
-            </>
-          )}
+            </> : null}
         </div>
-        {contact.website && (
-          <div className="flex items-center gap-2 text-sm text-warm-600">
+        {contact.website ? <div className="flex items-center gap-2 text-sm text-warm-600">
             <Globe className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
             <span className="truncate">{contact.website}</span>
-          </div>
-        )}
-        {contact.address && (
-          <div className="flex items-center gap-2 text-sm text-warm-600">
+          </div> : null}
+        {contact.address ? <div className="flex items-center gap-2 text-sm text-warm-600">
             <MapPin className="h-3.5 w-3.5 text-warm-400 flex-shrink-0" />
             <span className="truncate">{contact.address}</span>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {/* Tags */}
@@ -535,8 +527,7 @@ function ContactCard({ contact }: { contact: Contact }) {
               {contact.w9OnFile ? 'On File' : 'Missing'}
             </span>
           </div>
-          {contact.paymentTerms && (
-            <div className="flex items-center justify-between text-xs">
+          {contact.paymentTerms ? <div className="flex items-center justify-between text-xs">
               <span className="text-warm-500 flex items-center gap-1">
                 <CreditCard className="h-3 w-3" /> Terms:
               </span>
@@ -546,44 +537,35 @@ function ContactCard({ contact }: { contact: Contact }) {
                  contact.paymentTerms === 'due_on_receipt' ? 'Due on Receipt' :
                  contact.paymentTerms}
               </span>
-            </div>
-          )}
-          {contact.licenseNumber && (
-            <div className="flex items-center justify-between text-xs">
+            </div> : null}
+          {contact.licenseNumber ? <div className="flex items-center justify-between text-xs">
               <span className="text-warm-500 flex items-center gap-1">
                 <Briefcase className="h-3 w-3" /> License:
               </span>
               <span className="font-medium text-warm-700">{contact.licenseNumber}</span>
-            </div>
-          )}
+            </div> : null}
         </div>
       )}
 
       {/* Client-specific fields */}
-      {contact.contactType === 'client' && contact.clientSource && (
-        <div className="bg-emerald-50 rounded p-2 mb-3 space-y-1">
+      {contact.contactType === 'client' && contact.clientSource ? <div className="bg-emerald-50 rounded p-2 mb-3 space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="text-warm-500 flex items-center gap-1">
               <UserPlus className="h-3 w-3" /> Source:
             </span>
             <span className="font-medium text-warm-700 capitalize">{contact.clientSource}</span>
           </div>
-          {contact.referredBy && (
-            <div className="flex items-center justify-between text-xs">
+          {contact.referredBy ? <div className="flex items-center justify-between text-xs">
               <span className="text-warm-500">Referred by:</span>
               <span className="font-medium text-warm-700">{contact.referredBy}</span>
-            </div>
-          )}
-        </div>
-      )}
+            </div> : null}
+        </div> : null}
 
       {/* License for non-vendors (architects, engineers, inspectors) */}
-      {contact.contactType !== 'vendor' && contact.contactType !== 'client' && contact.licenseNumber && (
-        <div className="flex items-center gap-2 text-xs text-warm-500 mb-3">
+      {contact.contactType !== 'vendor' && contact.contactType !== 'client' && contact.licenseNumber ? <div className="flex items-center gap-2 text-xs text-warm-500 mb-3">
           <Briefcase className="h-3 w-3" />
           License: <span className="font-medium text-warm-700">{contact.licenseNumber}</span>
-        </div>
-      )}
+        </div> : null}
 
       {/* Footer: type badge + project count + module badge */}
       <div className="flex items-center justify-between pt-3 border-t border-warm-100">
@@ -610,11 +592,9 @@ function ContactCard({ contact }: { contact: Contact }) {
               <span className="truncate flex items-center gap-1">
                 <ExternalLink className="h-3 w-3" />
                 {pa.projectName}
-                {pa.isPrimary && <span className="text-stone-500 font-medium">(Primary)</span>}
+                {pa.isPrimary ? <span className="text-stone-500 font-medium">(Primary)</span> : null}
               </span>
-              {pa.contractAmount && (
-                <span className="font-medium text-warm-600">${pa.contractAmount.toLocaleString()}</span>
-              )}
+              {pa.contractAmount ? <span className="font-medium text-warm-600">${pa.contractAmount.toLocaleString()}</span> : null}
             </div>
           ))}
           {contact.projectAssignments.length > 3 && (

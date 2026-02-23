@@ -28,10 +28,11 @@ import {
   FileText,
   DollarSign,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type CampaignStatus = 'draft' | 'scheduled' | 'sent' | 'automated'
 type CampaignType = 'one-time' | 'automated' | 'drip'
@@ -245,12 +246,10 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
               <Users className="h-3.5 w-3.5" />
               {campaign.recipientCount > 0 ? `${campaign.recipientCount} recipients` : 'Automated'}
             </span>
-            {campaign.utmCampaign && (
-              <span className="flex items-center gap-1 text-warm-400">
+            {campaign.utmCampaign ? <span className="flex items-center gap-1 text-warm-400">
                 <Globe className="h-3.5 w-3.5" />
                 {campaign.utmCampaign}
-              </span>
-            )}
+              </span> : null}
           </div>
 
           {/* Performance metrics for sent campaigns */}
@@ -274,21 +273,17 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
             </div>
           )}
 
-          {campaign.aiNote && (
-            <div className="p-2 bg-amber-50 rounded-md flex items-start gap-2">
+          {campaign.aiNote ? <div className="p-2 bg-amber-50 rounded-md flex items-start gap-2">
               <Sparkles className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
               <span className="text-xs text-amber-700">{campaign.aiNote}</span>
-            </div>
-          )}
+            </div> : null}
         </div>
 
         <div className="flex flex-col items-end gap-3 flex-shrink-0">
-          {campaign.status === 'scheduled' && campaign.scheduledAt && (
-            <div className="text-right">
+          {campaign.status === 'scheduled' && campaign.scheduledAt ? <div className="text-right">
               <div className="text-xs text-warm-500">Scheduled</div>
               <div className="text-sm font-medium text-warm-900">{campaign.scheduledAt}</div>
-            </div>
-          )}
+            </div> : null}
 
           {campaign.status === 'sent' && (
             <div className="text-right">
@@ -318,9 +313,7 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
                 <CheckCircle className="h-3 w-3" />
                 Active
               </div>
-              {campaign.openRate && (
-                <div className="text-xs text-warm-500">{campaign.openRate}% open rate</div>
-              )}
+              {campaign.openRate ? <div className="text-xs text-warm-500">{campaign.openRate}% open rate</div> : null}
             </div>
           )}
 

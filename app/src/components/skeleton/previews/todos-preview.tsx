@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronDown,
   ChevronRight,
@@ -33,10 +34,11 @@ import {
   CalendarDays,
   Hash,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -447,12 +449,10 @@ function TaskCard({ task }: { task: Task }) {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-0.5">
               <span className="text-xs text-warm-400 font-mono">{task.id}</span>
-              {task.isRecurring && (
-                <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5" title={task.recurringSchedule}>
+              {task.isRecurring ? <span className="text-xs bg-stone-50 text-stone-600 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5" title={task.recurringSchedule}>
                   <Repeat className="h-3 w-3" />
                   {task.recurringSchedule}
-                </span>
-              )}
+                </span> : null}
               {task.sourceModule !== 'manual' && (
                 <span className={cn("text-xs px-1.5 py-0.5 rounded", source.color)}>
                   {task.sourceModule === 'ai-suggested' && <Sparkles className="h-3 w-3 inline mr-0.5" />}
@@ -466,62 +466,46 @@ function TaskCard({ task }: { task: Task }) {
             )}>
               {task.title}
             </p>
-            {task.description && (
-              <p className="text-xs text-warm-500 mt-1 line-clamp-2">{task.description}</p>
-            )}
+            {task.description ? <p className="text-xs text-warm-500 mt-1 line-clamp-2">{task.description}</p> : null}
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               <span className={cn("text-xs px-2 py-0.5 rounded inline-flex items-center gap-1", category.color)}>
                 <CategoryIcon className="h-3 w-3" />
                 {category.label}
               </span>
-              {task.linkedJob && (
-                <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1 cursor-pointer hover:bg-stone-100">
+              {task.linkedJob ? <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1 cursor-pointer hover:bg-stone-100">
                   <Building2 className="h-3 w-3" />
                   {task.linkedJob}
-                  {task.linkedJobId && <span className="text-stone-400 font-mono text-[10px]">{task.linkedJobId}</span>}
-                </span>
-              )}
-              {task.linkedVendor && (
-                <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1">
+                  {task.linkedJobId ? <span className="text-stone-400 font-mono text-[10px]">{task.linkedJobId}</span> : null}
+                </span> : null}
+              {task.linkedVendor ? <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1">
                   <Hash className="h-3 w-3" />
                   {task.linkedVendor}
-                </span>
-              )}
-              {task.linkedClient && (
-                <span className="text-xs px-2 py-0.5 rounded bg-green-50 text-green-600 inline-flex items-center gap-1">
+                </span> : null}
+              {task.linkedClient ? <span className="text-xs px-2 py-0.5 rounded bg-green-50 text-green-600 inline-flex items-center gap-1">
                   <Users className="h-3 w-3" />
                   {task.linkedClient}
-                </span>
-              )}
-              {task.linkedScheduleTask && (
-                <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1 cursor-pointer hover:bg-stone-100">
+                </span> : null}
+              {task.linkedScheduleTask ? <span className="text-xs px-2 py-0.5 rounded bg-stone-50 text-stone-600 inline-flex items-center gap-1 cursor-pointer hover:bg-stone-100">
                   <Link2 className="h-3 w-3" />
                   {task.linkedScheduleTask}
-                </span>
-              )}
-              {task.linkedDailyLog && (
-                <span className="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 inline-flex items-center gap-1 cursor-pointer hover:bg-emerald-100">
+                </span> : null}
+              {task.linkedDailyLog ? <span className="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 inline-flex items-center gap-1 cursor-pointer hover:bg-emerald-100">
                   <ClipboardList className="h-3 w-3" />
                   {task.linkedDailyLog}
-                </span>
-              )}
+                </span> : null}
             </div>
 
             {/* Subtasks */}
-            {task.subtasks && task.subtasks.length > 0 && (
-              <SubtaskList subtasks={task.subtasks} />
-            )}
+            {task.subtasks && task.subtasks.length > 0 ? <SubtaskList subtasks={task.subtasks} /> : null}
 
             {/* Tags */}
-            {task.tags && task.tags.length > 0 && (
-              <div className="flex items-center gap-1 mt-2">
+            {task.tags && task.tags.length > 0 ? <div className="flex items-center gap-1 mt-2">
                 {task.tags.map(tag => (
                   <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-warm-100 text-warm-500">
                     #{tag}
                   </span>
                 ))}
-              </div>
-            )}
+              </div> : null}
           </div>
         </div>
         <button className="p-1 hover:bg-warm-100 rounded">
@@ -537,16 +521,13 @@ function TaskCard({ task }: { task: Task }) {
             </div>
             <span className="text-xs text-warm-500">{task.assignedTo}</span>
           </div>
-          {task.commentCount && task.commentCount > 0 && (
-            <span className="text-xs text-warm-400 flex items-center gap-1">
+          {task.commentCount && task.commentCount > 0 ? <span className="text-xs text-warm-400 flex items-center gap-1">
               <MessageSquare className="h-3 w-3" />
               {task.commentCount}
-            </span>
-          )}
+            </span> : null}
         </div>
         <div className="flex items-center gap-2">
-          {task.dueDate && (
-            <span className={cn(
+          {task.dueDate ? <span className={cn(
               "text-xs px-1.5 py-0.5 rounded flex items-center gap-1 font-medium",
               daysOverdue > 0 ? "bg-red-50 text-red-600" : "bg-warm-100 text-warm-600"
             )}>
@@ -555,8 +536,7 @@ function TaskCard({ task }: { task: Task }) {
               {daysOverdue > 0 && (
                 <span className="text-red-500 font-semibold">({daysOverdue}d overdue)</span>
               )}
-            </span>
-          )}
+            </span> : null}
           <span className={cn(
             "text-xs px-1.5 py-0.5 rounded font-medium",
             priority.bgColor,
@@ -595,20 +575,15 @@ function KanbanCard({ task }: { task: Task }) {
       </div>
       <p className="text-xs font-medium text-warm-900 mb-1.5 line-clamp-2">{task.title}</p>
       <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
-        {task.linkedJob && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-50 text-stone-600">
+        {task.linkedJob ? <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-50 text-stone-600">
             {task.linkedJob}
-          </span>
-        )}
-        {task.isRecurring && (
-          <Repeat className="h-3 w-3 text-stone-500" />
-        )}
+          </span> : null}
+        {task.isRecurring ? <Repeat className="h-3 w-3 text-stone-500" /> : null}
         {task.sourceModule === 'ai-suggested' && (
           <Sparkles className="h-3 w-3 text-amber-500" />
         )}
       </div>
-      {task.subtasks && task.subtasks.length > 0 && (
-        <div className="flex items-center gap-1 mb-1.5">
+      {task.subtasks && task.subtasks.length > 0 ? <div className="flex items-center gap-1 mb-1.5">
           <CheckSquare className="h-3 w-3 text-warm-400" />
           <span className="text-[10px] text-warm-500">
             {task.subtasks.filter(s => s.done).length}/{task.subtasks.length}
@@ -619,29 +594,24 @@ function KanbanCard({ task }: { task: Task }) {
               style={{ width: `${(task.subtasks.filter(s => s.done).length / task.subtasks.length) * 100}%` }}
             />
           </div>
-        </div>
-      )}
+        </div> : null}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <div className="h-4 w-4 rounded-full bg-stone-100 flex items-center justify-center">
             <span className="text-[10px] font-medium text-stone-700">{task.assignedTo[0]}</span>
           </div>
-          {task.commentCount && task.commentCount > 0 && (
-            <span className="text-[10px] text-warm-400 flex items-center gap-0.5">
+          {task.commentCount && task.commentCount > 0 ? <span className="text-[10px] text-warm-400 flex items-center gap-0.5">
               <MessageSquare className="h-2.5 w-2.5" />
               {task.commentCount}
-            </span>
-          )}
+            </span> : null}
         </div>
-        {task.dueDate && (
-          <span className={cn(
+        {task.dueDate ? <span className={cn(
             "text-[10px] px-1 py-0.5 rounded",
             daysOverdue > 0 ? "bg-red-50 text-red-600 font-semibold" : "text-warm-500"
           )}>
             {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             {daysOverdue > 0 && ` (${daysOverdue}d)`}
-          </span>
-        )}
+          </span> : null}
       </div>
     </div>
   )
@@ -704,7 +674,7 @@ function StatCard({
             {trend === 'down' && <span className="text-green-500 text-xs">-2</span>}
             {trend === 'up' && <span className="text-red-500 text-xs">+3</span>}
           </div>
-          {subValue && <p className="text-xs text-warm-400">{subValue}</p>}
+          {subValue ? <p className="text-xs text-warm-400">{subValue}</p> : null}
         </div>
       </div>
     </div>
@@ -1050,8 +1020,7 @@ export function TodosPreview() {
                 </button>
 
                 {/* Category Tasks */}
-                {isExpanded && (
-                  <div className="p-4 space-y-3 bg-white">
+                {isExpanded ? <div className="p-4 space-y-3 bg-white">
                     {categoryTasks.length > 0 ? (
                       categoryTasks.map(task => (
                         <TaskCard key={task.id} task={task} />
@@ -1062,8 +1031,7 @@ export function TodosPreview() {
                         <p className="text-sm">No tasks in this category</p>
                       </div>
                     )}
-                  </div>
-                )}
+                  </div> : null}
               </div>
             )
           })}

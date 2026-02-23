@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronDown,
   ChevronRight,
@@ -14,10 +15,11 @@ import {
   BarChart3,
   Target,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface JobProfitability {
   id: string
@@ -293,7 +295,7 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-medium text-warm-900">{job.name}</span>
-                {job.aiNote && <Sparkles className="h-3 w-3 text-amber-500" />}
+                {job.aiNote ? <Sparkles className="h-3 w-3 text-amber-500" /> : null}
                 {job.marginTrend === 'declining' && <TrendingDown className="h-3 w-3 text-red-500" />}
                 {job.marginTrend === 'improving' && <TrendingUp className="h-3 w-3 text-green-500" />}
               </div>
@@ -326,8 +328,7 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
           <span className="text-xs text-warm-500">{job.completionPct}%</span>
         </td>
       </tr>
-      {expanded && (
-        <tr className="bg-stone-50/50">
+      {expanded ? <tr className="bg-stone-50/50">
           <td colSpan={9} className="py-4 px-8">
             {/* Overhead + Net Profit Summary */}
             <div className="mb-4 grid grid-cols-5 gap-3">
@@ -347,16 +348,13 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
                 <div className="text-xs text-warm-500">Net Profit</div>
                 <div className={cn("text-sm font-semibold", job.netProfit >= 0 ? "text-green-600" : "text-red-600")}>{formatCurrency(job.netProfit)}</div>
               </div>
-              {job.costPerSqFt && (
-                <div className="bg-white rounded-lg border border-warm-200 p-2.5">
+              {job.costPerSqFt ? <div className="bg-white rounded-lg border border-warm-200 p-2.5">
                   <div className="text-xs text-warm-500">Cost/SF ({job.sqFt?.toLocaleString()} SF)</div>
                   <div className="text-sm font-semibold text-warm-900">${job.costPerSqFt}/SF</div>
-                </div>
-              )}
+                </div> : null}
             </div>
 
-            {job.costBreakdown && (
-              <div className="mb-4">
+            {job.costBreakdown ? <div className="mb-4">
                 <h5 className="text-sm font-medium text-warm-700 mb-2">Variance by Cost Code</h5>
                 <div className="bg-white rounded-lg border border-warm-200 overflow-hidden">
                   <table className="w-full text-sm">
@@ -386,24 +384,20 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
                             item.isOver ? "text-red-600" : "text-green-600"
                           )}>
                             {item.variance >= 0 ? '+' : ''}{formatCurrency(item.variance)}
-                            {item.isOver && <AlertTriangle className="h-3 w-3 inline ml-1" />}
+                            {item.isOver ? <AlertTriangle className="h-3 w-3 inline ml-1" /> : null}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
-            )}
-            {job.aiNote && (
-              <div className="p-3 bg-amber-50 rounded-lg flex items-start gap-2">
+              </div> : null}
+            {job.aiNote ? <div className="p-3 bg-amber-50 rounded-lg flex items-start gap-2">
                 <Sparkles className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
                 <span className="text-sm text-amber-700">{job.aiNote}</span>
-              </div>
-            )}
+              </div> : null}
           </td>
-        </tr>
-      )}
+        </tr> : null}
     </>
   )
 }

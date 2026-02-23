@@ -7,13 +7,12 @@ import {
   HardDrive,
   Zap,
   Building2,
-  ArrowUpRight,
   Receipt,
   Shield,
   Sparkles,
   Star,
-  Calendar,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 const currentPlan = {
@@ -115,7 +114,7 @@ export default function SubscriptionBillingPage() {
               <div key={i} className={cn('p-4', plan.current && 'bg-warm-50/50')}>
                 <div className="flex items-center gap-2 mb-2">
                   <h4 className="font-semibold text-lg">{plan.name}</h4>
-                  {plan.current && <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded-full">Current</span>}
+                  {plan.current ? <span className="text-xs bg-warm-100 text-warm-700 px-2 py-0.5 rounded-full">Current</span> : null}
                 </div>
                 <div className="mb-4">
                   <span className="text-2xl font-bold">${plan.price}</span>

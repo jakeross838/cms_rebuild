@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,10 +28,11 @@ import {
   AlertCircle,
   Move,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel, AIFeatureCard } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 interface Assignment {
   id: string
@@ -356,20 +358,14 @@ function AssignmentCell({
         </div>
         <div className="flex items-center gap-1 pl-2">
           <span className="font-medium truncate">{assignment.jobName}</span>
-          {assignment.isCriticalPath && <Zap className="h-2.5 w-2.5 text-red-500 flex-shrink-0" />}
-          {isBlocked && <AlertCircle className="h-2.5 w-2.5 text-red-500 flex-shrink-0" />}
+          {assignment.isCriticalPath ? <Zap className="h-2.5 w-2.5 text-red-500 flex-shrink-0" /> : null}
+          {isBlocked ? <AlertCircle className="h-2.5 w-2.5 text-red-500 flex-shrink-0" /> : null}
         </div>
         <div className="text-[10px] opacity-75 truncate pl-2">{assignment.task}</div>
-        {assignment.phase && (
-          <div className="text-[9px] opacity-50 truncate pl-2">{assignment.phase}</div>
-        )}
+        {assignment.phase ? <div className="text-[9px] opacity-50 truncate pl-2">{assignment.phase}</div> : null}
         <div className="flex items-center gap-1 pl-2">
-          {assignment.hours && (
-            <span className="text-[9px] opacity-50">{assignment.hours}h</span>
-          )}
-          {assignment.startTime && assignment.endTime && (
-            <span className="text-[9px] opacity-40 ml-1">{assignment.startTime}</span>
-          )}
+          {assignment.hours ? <span className="text-[9px] opacity-50">{assignment.hours}h</span> : null}
+          {assignment.startTime && assignment.endTime ? <span className="text-[9px] opacity-40 ml-1">{assignment.startTime}</span> : null}
         </div>
       </div>
     </div>
@@ -398,8 +394,7 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
   return (
     <>
       {/* Expired cert alert row */}
-      {hasExpiredCert && (
-        <tr className="bg-red-50 border-b border-red-100">
+      {hasExpiredCert ? <tr className="bg-red-50 border-b border-red-100">
           <td colSpan={showTwoWeek ? 10 : 9} className="py-1.5 px-3">
             <div className="flex items-center gap-2 text-red-700 text-xs">
               <AlertTriangle className="h-3.5 w-3.5" />
@@ -411,8 +406,7 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
               ))}
             </div>
           </td>
-        </tr>
-      )}
+        </tr> : null}
       <tr className={cn(
         "border-b border-warm-100 hover:bg-warm-50/50",
         hasExpiredCert && "bg-red-50/30"
@@ -442,12 +436,11 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
               </div>
               <div className="flex items-center gap-1 text-xs text-warm-500">
                 <span>{member.role}</span>
-                {member.trade && <span className="text-warm-300">|</span>}
-                {member.trade && <span>{member.trade}</span>}
+                {member.trade ? <span className="text-warm-300">|</span> : null}
+                {member.trade ? <span>{member.trade}</span> : null}
               </div>
               {/* Certifications */}
-              {member.certifications && (
-                <div className="flex items-center gap-1 mt-0.5">
+              {member.certifications ? <div className="flex items-center gap-1 mt-0.5">
                   {member.certifications.map(cert => (
                     <span
                       key={cert.name}
@@ -459,8 +452,7 @@ function TeamMemberRow({ member, showTwoWeek }: { member: TeamMember; showTwoWee
                       {cert.valid ? cert.name : `${cert.name} EXPIRED`}
                     </span>
                   ))}
-                </div>
-              )}
+                </div> : null}
             </div>
           </div>
         </td>
@@ -553,7 +545,7 @@ function MonthlyCalendarView({ members }: { members: TeamMember[] }) {
             <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Total</th>
           </tr>
           <tr className="bg-warm-50">
-            <th className="sticky left-0 bg-warm-50 z-10"></th>
+            <th className="sticky left-0 bg-warm-50 z-10" />
             {monthWeeks.map(week => (
               weekDays.map((day, idx) => (
                 <th key={`${week.weekNum}-${day}`} className="text-center py-1 px-1 text-[10px] text-warm-400 font-normal">
@@ -561,7 +553,7 @@ function MonthlyCalendarView({ members }: { members: TeamMember[] }) {
                 </th>
               ))
             ))}
-            <th></th>
+            <th />
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -715,8 +707,8 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
               {getTypeIcon(item.type)}
               <span className="font-medium text-warm-700 w-16">{item.date}</span>
               <span className="flex-1">{item.title}</span>
-              {item.job && <span className="text-xs text-warm-500">{item.job}</span>}
-              {item.assignee && <span className="text-xs bg-white px-2 py-0.5 rounded">{item.assignee}</span>}
+              {item.job ? <span className="text-xs text-warm-500">{item.job}</span> : null}
+              {item.assignee ? <span className="text-xs bg-white px-2 py-0.5 rounded">{item.assignee}</span> : null}
             </div>
           ))}
         </div>
@@ -734,8 +726,8 @@ function TwoWeekLookAhead({ items }: { items: TwoWeekItem[] }) {
               {getTypeIcon(item.type)}
               <span className="font-medium text-warm-700 w-16">{item.date}</span>
               <span className="flex-1">{item.title}</span>
-              {item.job && <span className="text-xs text-warm-500">{item.job}</span>}
-              {item.assignee && <span className="text-xs bg-white px-2 py-0.5 rounded">{item.assignee}</span>}
+              {item.job ? <span className="text-xs text-warm-500">{item.job}</span> : null}
+              {item.assignee ? <span className="text-xs bg-white px-2 py-0.5 rounded">{item.assignee}</span> : null}
             </div>
           ))}
         </div>
@@ -1110,7 +1102,7 @@ export function CrewSchedulePreview() {
                     >
                       <div className="flex items-center justify-center gap-1">
                         <span>{day}</span>
-                        {weather && <WeatherIcon condition={weather.condition} />}
+                        {weather ? <WeatherIcon condition={weather.condition} /> : null}
                       </div>
                       <div className="text-xs font-normal">{weekDates[idx]}</div>
                     </th>
@@ -1120,7 +1112,7 @@ export function CrewSchedulePreview() {
                 <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-12">OT</th>
                 <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-14">Util</th>
                 <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Cost</th>
-                <th className="w-10"></th>
+                <th className="w-10" />
               </tr>
             </thead>
             <tbody className="bg-white">

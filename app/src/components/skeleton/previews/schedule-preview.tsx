@@ -1,6 +1,19 @@
 'use client'
 
 import { useState, useMemo, useRef } from 'react'
+
+import {
+  differenceInCalendarDays,
+  addDays,
+  format,
+  eachWeekOfInterval,
+  eachMonthOfInterval,
+  eachDayOfInterval,
+  isWeekend,
+  isBefore,
+  isAfter,
+  parseISO,
+} from 'date-fns'
 import {
   ChevronRight,
   ChevronDown,
@@ -40,22 +53,11 @@ import {
   HelpCircle,
   Info,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
-import {
-  differenceInCalendarDays,
-  addDays,
-  format,
-  eachWeekOfInterval,
-  eachMonthOfInterval,
-  eachDayOfInterval,
-  isWeekend,
-  isBefore,
-  isAfter,
-  parseISO,
-} from 'date-fns'
+import { useFilterState, matchesSearch } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ============================================================================
 // 1. Types & Constants
@@ -552,7 +554,7 @@ function TimelineHeader({ columns, zoom, timelineWidth }: {
     <div className="flex border-b border-warm-200 bg-warm-100" style={{ width: timelineWidth }}>
       {columns.map((col, i) => (
         <div key={i} className={cn('text-center py-1.5 text-xs text-warm-500 border-l border-warm-200 flex-shrink-0', zoom === 'day' && isWeekend(col.date) && 'bg-warm-200/60')} style={{ width: colWidth }}>
-          {col.subLabel && <div className="text-[10px] text-warm-400">{col.subLabel}</div>}
+          {col.subLabel ? <div className="text-[10px] text-warm-400">{col.subLabel}</div> : null}
           <div>{col.label}</div>
         </div>
       ))}
@@ -612,8 +614,7 @@ function AIWhyTooltip({ item }: { item: ScheduleItem }) {
       >
         <HelpCircle className="h-3 w-3" />
       </button>
-      {isOpen && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-3 bg-white rounded-lg shadow-lg border border-warm-200">
+      {isOpen ? <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-3 bg-white rounded-lg shadow-lg border border-warm-200">
           <div className="text-xs font-medium text-warm-900 mb-2 flex items-center gap-1">
             <Sparkles className="h-3 w-3 text-amber-500" />
             AI Prediction Factors
@@ -629,8 +630,7 @@ function AIWhyTooltip({ item }: { item: ScheduleItem }) {
           <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1">
             <div className="w-2 h-2 bg-white border-b border-r border-warm-200 transform rotate-45" />
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -674,13 +674,9 @@ function GanttBar({ item, timelineStart, totalDays, showBaseline }: {
   return (
     <div className="relative h-7 flex items-center">
       {/* Baseline bar (ghost) */}
-      {showBaseline && item.baselineStartDate && item.baselineEndDate && (
-        <div className={cn('absolute h-2 rounded opacity-30', config.barColor)} style={{ left: `${getDatePosition(item.baselineStartDate, timelineStart, totalDays)}%`, width: `${getBarWidth(item.baselineStartDate, item.baselineEndDate, totalDays)}%`, top: '2px' }} />
-      )}
+      {showBaseline && item.baselineStartDate && item.baselineEndDate ? <div className={cn('absolute h-2 rounded opacity-30', config.barColor)} style={{ left: `${getDatePosition(item.baselineStartDate, timelineStart, totalDays)}%`, width: `${getBarWidth(item.baselineStartDate, item.baselineEndDate, totalDays)}%`, top: '2px' }} /> : null}
       {/* Actual dates overlay (thin solid bar above) */}
-      {item.actualStartDate && (
-        <div className="absolute h-1.5 rounded bg-emerald-500 opacity-60" style={{ left: `${getDatePosition(item.actualStartDate, timelineStart, totalDays)}%`, width: `${getBarWidth(item.actualStartDate, item.actualEndDate ?? item.endDate, totalDays)}%`, top: '1px' }} />
-      )}
+      {item.actualStartDate ? <div className="absolute h-1.5 rounded bg-emerald-500 opacity-60" style={{ left: `${getDatePosition(item.actualStartDate, timelineStart, totalDays)}%`, width: `${getBarWidth(item.actualStartDate, item.actualEndDate ?? item.endDate, totalDays)}%`, top: '1px' }} /> : null}
       {/* Main bar track */}
       <div className={cn('absolute h-5 rounded', barBg)} style={{ left: `${left}%`, width: `${width}%` }}>
         {pct > 0 && (
@@ -692,33 +688,23 @@ function GanttBar({ item, timelineStart, totalDays, showBaseline }: {
         )}
       </div>
       {/* AI predicted end marker with confidence */}
-      {item.aiPredictedEndDate && (
-        <div className="absolute top-1/2 -translate-y-1/2 flex items-center" style={{ left: `${getDatePosition(item.aiPredictedEndDate, timelineStart, totalDays)}%` }}>
+      {item.aiPredictedEndDate ? <div className="absolute top-1/2 -translate-y-1/2 flex items-center" style={{ left: `${getDatePosition(item.aiPredictedEndDate, timelineStart, totalDays)}%` }}>
           <div className="w-0 h-5 border-l-2 border-dashed border-orange-400 opacity-70" />
-          {item.aiConfidence && (
-            <div className={cn('ml-1 px-1 py-0.5 rounded text-[9px] font-medium', getConfidenceBgColor(item.aiConfidence), getConfidenceColor(item.aiConfidence))}>
+          {item.aiConfidence ? <div className={cn('ml-1 px-1 py-0.5 rounded text-[9px] font-medium', getConfidenceBgColor(item.aiConfidence), getConfidenceColor(item.aiConfidence))}>
               {item.aiConfidence}%
-            </div>
-          )}
-        </div>
-      )}
+            </div> : null}
+        </div> : null}
       {/* Sub confirmation on bar */}
-      {item.vendor && item.subConfirmation === 'confirmed' && (
-        <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${left + width}%`, marginLeft: '2px' }}>
+      {item.vendor && item.subConfirmation === 'confirmed' ? <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${left + width}%`, marginLeft: '2px' }}>
           <Check className="h-3 w-3 text-green-600" />
-        </div>
-      )}
-      {item.vendor && item.subConfirmation === 'pending' && (
-        <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${left + width}%`, marginLeft: '2px' }}>
+        </div> : null}
+      {item.vendor && item.subConfirmation === 'pending' ? <div className="absolute top-1/2 -translate-y-1/2" style={{ left: `${left + width}%`, marginLeft: '2px' }}>
           <CircleDashed className="h-3 w-3 text-amber-600" />
-        </div>
-      )}
+        </div> : null}
       {/* Weather icon */}
-      {item.isWeatherSensitive && (
-        <div className="absolute -top-1" style={{ left: `${left + width / 2}%`, marginLeft: '-6px' }}>
+      {item.isWeatherSensitive ? <div className="absolute -top-1" style={{ left: `${left + width / 2}%`, marginLeft: '-6px' }}>
           <Cloud className="h-3 w-3 text-warm-400" />
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -756,9 +742,7 @@ function PhaseRow({ phase, isExpanded, onToggle, timelineStart, totalDays, timel
         {isExpanded ? <ChevronDown className="h-4 w-4 text-warm-500 flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-warm-500 flex-shrink-0" />}
         <span className="font-semibold text-warm-900 text-sm truncate">{phase.name}</span>
         <span className="text-xs text-warm-400 flex-shrink-0">({taskCount}t, {checkCount}c)</span>
-        {range && (
-          <span className={cn('text-xs px-1.5 py-0.5 rounded ml-auto flex-shrink-0', range.percent >= 100 ? 'bg-green-100 text-green-700' : 'bg-stone-100 text-stone-700')}>{range.percent}%</span>
-        )}
+        {range ? <span className={cn('text-xs px-1.5 py-0.5 rounded ml-auto flex-shrink-0', range.percent >= 100 ? 'bg-green-100 text-green-700' : 'bg-stone-100 text-stone-700')}>{range.percent}%</span> : null}
       </div>
       <div className="relative" style={{ width: timelineWidth }}>
         <AggregateBar range={range} timelineStart={timelineStart} totalDays={totalDays} level="phase" />
@@ -808,9 +792,7 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
           ) : (
             <span className="text-sm text-warm-700 truncate">{item.name}</span>
           )}
-          {item.isCriticalPath && item.taskType !== 'milestone' && (
-            <span className="text-[10px] bg-red-100 text-red-600 px-1 rounded flex-shrink-0">CP</span>
-          )}
+          {item.isCriticalPath && item.taskType !== 'milestone' ? <span className="text-[10px] bg-red-100 text-red-600 px-1 rounded flex-shrink-0">CP</span> : null}
           {item.totalFloat === 0 && item.status !== 'complete' && !item.isCriticalPath && (
             <span className="text-[10px] bg-sand-100 text-sand-600 px-1 rounded flex-shrink-0">0F</span>
           )}
@@ -826,15 +808,11 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
           )}
         </div>
         <div className="flex items-center gap-2 mt-0.5 text-xs text-warm-400 flex-wrap">
-          {item.trade && (
-            <span className="text-warm-300">{item.trade}</span>
-          )}
-          {item.vendor && (
-            <span className="flex items-center gap-0.5 truncate">
+          {item.trade ? <span className="text-warm-300">{item.trade}</span> : null}
+          {item.vendor ? <span className="flex items-center gap-0.5 truncate">
               <User className="h-3 w-3 flex-shrink-0" />{item.vendor}
-            </span>
-          )}
-          {item.vendor && item.subConfirmation && (() => {
+            </span> : null}
+          {item.vendor && item.subConfirmation ? (() => {
             const cfg = SUB_CONFIRMATION_CONFIG[item.subConfirmation]
             return (
               <span className={cn('flex items-center gap-0.5 px-1 py-px rounded text-[10px] font-medium flex-shrink-0', cfg.badgeClass)}>
@@ -843,30 +821,22 @@ function TaskRow({ item, timelineStart, totalDays, timelineWidth, showBaseline }
                 {cfg.label}
               </span>
             )
-          })()}
-          {item.linkedInspection && (
-            <span className="flex items-center gap-0.5 text-stone-600 flex-shrink-0">
+          })() : null}
+          {item.linkedInspection ? <span className="flex items-center gap-0.5 text-stone-600 flex-shrink-0">
               <ExternalLink className="h-3 w-3" />{item.linkedInspection}
-            </span>
-          )}
-          {item.linkedPO && (
-            <span className="flex items-center gap-0.5 text-amber-500 flex-shrink-0">
+            </span> : null}
+          {item.linkedPO ? <span className="flex items-center gap-0.5 text-amber-500 flex-shrink-0">
               <Package className="h-3 w-3" />{item.linkedPO}
-            </span>
-          )}
-          {item.linkedDailyLog && (
-            <span className="flex items-center gap-0.5 text-stone-500 flex-shrink-0">
+            </span> : null}
+          {item.linkedDailyLog ? <span className="flex items-center gap-0.5 text-stone-500 flex-shrink-0">
               <FileText className="h-3 w-3" />{item.linkedDailyLog}
-            </span>
-          )}
+            </span> : null}
           {/* AI Predicted date with confidence */}
-          {item.aiPredictedEndDate && item.aiConfidence && (
-            <span className={cn('flex items-center gap-0.5 text-[10px] font-medium flex-shrink-0', getConfidenceColor(item.aiConfidence))}>
+          {item.aiPredictedEndDate && item.aiConfidence ? <span className={cn('flex items-center gap-0.5 text-[10px] font-medium flex-shrink-0', getConfidenceColor(item.aiConfidence))}>
               <Sparkles className="h-2.5 w-2.5" />
               Predicted: {format(parseISO(item.aiPredictedEndDate), 'MMM d')} ({item.aiConfidence}%)
               <AIWhyTooltip item={item} />
-            </span>
-          )}
+            </span> : null}
         </div>
       </div>
       <div className="relative" style={{ width: timelineWidth }}>
@@ -1002,7 +972,7 @@ function DependencyArrows({ dependencies, itemMap, timelineStart, totalDays, row
                 stroke={badgeStroke}
                 strokeWidth="0.75"
                 opacity={0.95}
-                transform={`translate(-11, 0)`}
+                transform="translate(-11, 0)"
               />
               <text
                 x={`${badgeXPct}%`}
@@ -1139,8 +1109,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
           {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </div>
       </button>
-      {isOpen && (
-        <div className="px-4 pb-3 grid grid-cols-2 gap-4 text-sm">
+      {isOpen ? <div className="px-4 pb-3 grid grid-cols-2 gap-4 text-sm">
           {/* Starting soon */}
           <div>
             <h4 className="font-medium text-warm-700 mb-1.5 flex items-center gap-1"><ArrowRight className="h-3.5 w-3.5 text-stone-500" /> Starting Soon</h4>
@@ -1150,7 +1119,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
                   <div key={t.id} className="flex items-center gap-2 text-xs">
                     <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
                     <span className="text-warm-700 truncate">{t.name}</span>
-                    {t.vendor && <span className="text-warm-400 truncate">— {t.vendor}</span>}
+                    {t.vendor ? <span className="text-warm-400 truncate">— {t.vendor}</span> : null}
                     {t.subConfirmation === 'pending' && <CircleDashed className="h-3 w-3 text-amber-500 flex-shrink-0" />}
                     {t.subConfirmation === 'not_sent' && <AlertTriangle className="h-3 w-3 text-warm-400 flex-shrink-0" />}
                   </div>
@@ -1167,7 +1136,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
                   <div key={t.id} className="flex items-center gap-2 text-xs">
                     <span className="text-warm-400 w-12">{t.percentComplete}%</span>
                     <span className="text-warm-700 truncate">{t.name}</span>
-                    {t.vendor && <span className="text-warm-400 truncate">— {t.vendor}</span>}
+                    {t.vendor ? <span className="text-warm-400 truncate">— {t.vendor}</span> : null}
                   </div>
                 ))}
               </div>
@@ -1184,7 +1153,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
                       <div key={t.id} className="flex items-center gap-2 text-xs">
                         <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
                         <span className="text-warm-700 truncate">{t.name}</span>
-                        {t.linkedPO && <span className="text-amber-500">{t.linkedPO}</span>}
+                        {t.linkedPO ? <span className="text-amber-500">{t.linkedPO}</span> : null}
                       </div>
                     ))}
                   </div>
@@ -1198,7 +1167,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
                       <div key={t.id} className="flex items-center gap-2 text-xs">
                         <span className="text-warm-400 w-12">{format(parseISO(t.startDate!), 'MMM d')}</span>
                         <span className="text-warm-700 truncate">{t.name}</span>
-                        {t.linkedInspection && <span className="text-stone-600">{t.linkedInspection}</span>}
+                        {t.linkedInspection ? <span className="text-stone-600">{t.linkedInspection}</span> : null}
                       </div>
                     ))}
                   </div>
@@ -1221,8 +1190,7 @@ function LookAheadPanel({ phases }: { phases: SchedulePhase[] }) {
               </div>
             </div>
           )}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -1469,21 +1437,21 @@ export function SchedulePreview() {
             return (
               <div key={phase.id}>
                 <PhaseRow phase={phase} isExpanded={phaseExpanded} onToggle={() => togglePhase(phase.id)} timelineStart={PROJECT_START} totalDays={totalDays} timelineWidth={timelineWidth} />
-                {phaseExpanded && phase.groups.map(group => {
+                {phaseExpanded ? phase.groups.map(group => {
                   const groupExpanded = expandedGroups.has(group.id)
                   return (
                     <div key={group.id}>
                       <GroupRow group={group} isExpanded={groupExpanded} onToggle={() => toggleGroup(group.id)} timelineStart={PROJECT_START} totalDays={totalDays} timelineWidth={timelineWidth} />
-                      {groupExpanded && group.items.map(item => (
+                      {groupExpanded ? group.items.map(item => (
                         item.kind === 'checklist' ? (
                           <ChecklistRow key={item.id} item={item} timelineWidth={timelineWidth} />
                         ) : (
                           <TaskRow key={item.id} item={item} timelineStart={PROJECT_START} totalDays={totalDays} timelineWidth={timelineWidth} showBaseline={showBaseline} />
                         )
-                      ))}
+                      )) : null}
                     </div>
                   )
-                })}
+                }) : null}
               </div>
             )
           })}

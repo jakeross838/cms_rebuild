@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   RefreshCw,
   CheckCircle2,
@@ -29,8 +30,9 @@ import {
   Eye,
   BookOpen,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { cn } from '@/lib/utils'
 
 type ConnectionHealth = 'healthy' | 'warning' | 'error' | 'disconnected'
 type ConflictStrategy = 'last_write_wins' | 'platform_wins' | 'qbo_wins' | 'manual_review'
@@ -437,7 +439,7 @@ function AccountMappingTable() {
             <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Name</th>
             <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Type</th>
             <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">QuickBooks Account</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500"></th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500" />
           </tr>
         </thead>
         <tbody className="divide-y divide-warm-200">
@@ -534,11 +536,8 @@ function SyncLogPanel() {
                   {entry.direction === 'push' && <ArrowRight className="h-3 w-3 text-warm-300" />}
                   {entry.direction === 'pull' && <ArrowRight className="h-3 w-3 text-warm-300 rotate-180" />}
                 </div>
-                {entry.details && (
-                  <p className="text-xs text-warm-500 mt-0.5">{entry.details}</p>
-                )}
-                {entry.retryCount && entry.retryCount > 0 && (
-                  <div className="flex items-center gap-2 mt-1">
+                {entry.details ? <p className="text-xs text-warm-500 mt-0.5">{entry.details}</p> : null}
+                {entry.retryCount && entry.retryCount > 0 ? <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-red-600">{entry.retryCount} retries failed</span>
                     <button className="text-xs text-stone-600 hover:text-stone-700 flex items-center gap-1">
                       <RotateCcw className="h-3 w-3" />
@@ -547,8 +546,7 @@ function SyncLogPanel() {
                     <button className="text-xs text-warm-400 hover:text-warm-600">
                       Dismiss
                     </button>
-                  </div>
-                )}
+                  </div> : null}
               </div>
             </div>
           </div>

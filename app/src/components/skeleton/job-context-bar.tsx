@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import { ChevronLeft } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 // Mock job data - in real app this would come from context/API
 const mockJob = {
@@ -18,8 +20,7 @@ const mockJob = {
 }
 
 export function JobContextBar() {
-  const params = useParams()
-  const jobId = params.id as string
+  const _params = useParams()
 
   return (
     <div className="bg-card border-b border-border px-4 py-3">

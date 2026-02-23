@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   Sparkles,
@@ -36,10 +37,11 @@ import {
   MapPinned,
   Circle,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel, SubmissionForm, type FormField } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -1048,13 +1050,11 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
         equipment.geofenceStatus === 'outside' && "border-red-300"
       )}>
         {/* Overdue Maintenance Alert */}
-        {maintenanceOverdue && (
-          <div className="mb-3 -mt-1 -mx-1 px-3 py-2 bg-red-100 border border-red-200 rounded-t-lg flex items-center gap-2">
+        {maintenanceOverdue ? <div className="mb-3 -mt-1 -mx-1 px-3 py-2 bg-red-100 border border-red-200 rounded-t-lg flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
             <span className="text-sm font-semibold text-red-700">OVERDUE</span>
             <span className="text-sm text-red-600">{overdueDays} days overdue</span>
-          </div>
-        )}
+          </div> : null}
 
         {/* Geofence Alert */}
         {equipment.geofenceStatus === 'outside' && (
@@ -1063,11 +1063,9 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               <AlertTriangle className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium">Outside designated area</span>
             </div>
-            {equipment.geofenceAlertTime && (
-              <div className="text-xs text-red-600 mt-1 ml-6">
+            {equipment.geofenceAlertTime ? <div className="text-xs text-red-600 mt-1 ml-6">
                 Since {equipment.geofenceAlertTime}
-              </div>
-            )}
+              </div> : null}
             <button className="mt-2 ml-6 flex items-center gap-1 text-xs text-red-700 hover:text-red-800 font-medium">
               <MapPinned className="h-3 w-3" />
               View on Map
@@ -1083,9 +1081,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
             <div>
               <h4 className="font-medium text-warm-900">
                 {equipment.name}
-                {equipment.isRental && (
-                  <span className="ml-1.5 text-xs bg-sand-100 text-sand-700 px-1.5 py-0.5 rounded">Rental</span>
-                )}
+                {equipment.isRental ? <span className="ml-1.5 text-xs bg-sand-100 text-sand-700 px-1.5 py-0.5 rounded">Rental</span> : null}
               </h4>
               <div className="flex items-center gap-2 mt-0.5 text-sm text-warm-500">
                 <span className="font-mono">{equipment.assetTag}</span>
@@ -1097,9 +1093,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
                   <QrCode className="h-3 w-3" />
                   <span className="text-[10px] font-medium">QR</span>
                 </button>
-                {equipment.serialNumber && equipment.serialNumber !== 'N/A - Rental' && (
-                  <span className="text-xs text-warm-400">SN: {equipment.serialNumber.slice(0, 10)}...</span>
-                )}
+                {equipment.serialNumber && equipment.serialNumber !== 'N/A - Rental' ? <span className="text-xs text-warm-400">SN: {equipment.serialNumber.slice(0, 10)}...</span> : null}
               </div>
             </div>
           </div>
@@ -1109,8 +1103,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
         </div>
 
         {/* Photo Gallery Thumbnails */}
-        {equipment.photoUrls && equipment.photoUrls.length > 0 && (
-          <div className="flex items-center gap-1.5 mb-3">
+        {equipment.photoUrls && equipment.photoUrls.length > 0 ? <div className="flex items-center gap-1.5 mb-3">
             {equipment.photoUrls.slice(0, 3).map((photo, idx) => (
               <button
                 key={idx}
@@ -1130,29 +1123,23 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               </button>
             )}
             <span className="text-[10px] text-warm-400 ml-1">{equipment.photoUrls.length} photo{equipment.photoUrls.length !== 1 ? 's' : ''}</span>
-          </div>
-        )}
+          </div> : null}
 
         <div className="text-sm text-warm-600 mb-3">
           {equipment.make} {equipment.model} ({equipment.year})
         </div>
 
-        {equipment.currentJob && (
-          <div className="flex items-center gap-2 mb-2 text-sm">
+        {equipment.currentJob ? <div className="flex items-center gap-2 mb-2 text-sm">
             <MapPin className="h-4 w-4 text-warm-400" />
             <span className="text-warm-700">{equipment.currentJob}</span>
-          </div>
-        )}
+          </div> : null}
 
-        {equipment.assignedTo && (
-          <div className="flex items-center gap-2 mb-2 text-sm">
+        {equipment.assignedTo ? <div className="flex items-center gap-2 mb-2 text-sm">
             <User className="h-4 w-4 text-warm-400" />
             <span className="text-warm-700">{equipment.assignedTo}</span>
-          </div>
-        )}
+          </div> : null}
 
-        {equipment.usage && (
-          <div className="flex items-center gap-2 mb-2 text-sm">
+        {equipment.usage ? <div className="flex items-center gap-2 mb-2 text-sm">
             <Gauge className="h-4 w-4 text-warm-400" />
             <span className="text-warm-700">{equipment.usage}</span>
             {equipment.utilizationRate !== undefined && (
@@ -1165,11 +1152,9 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
                 {equipment.utilizationRate}% util
               </span>
             )}
-          </div>
-        )}
+          </div> : null}
 
-        {equipment.gpsEnabled && (
-          <div className="flex items-center gap-2 mb-2 text-xs text-warm-500">
+        {equipment.gpsEnabled ? <div className="flex items-center gap-2 mb-2 text-xs text-warm-500">
             <Navigation className={cn(
               "h-3.5 w-3.5",
               equipment.geofenceStatus === 'inside' ? "text-green-500" :
@@ -1177,57 +1162,45 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               "text-warm-400"
             )} />
             <span>{equipment.gpsLastLocation}</span>
-          </div>
-        )}
+          </div> : null}
 
         {/* Rental info with return reminders */}
-        {equipment.isRental && (
-          <div className="mb-3 p-2 rounded bg-sand-50 text-xs text-sand-700 space-y-1">
+        {equipment.isRental ? <div className="mb-3 p-2 rounded bg-sand-50 text-xs text-sand-700 space-y-1">
             <div className="font-medium">Rental from {equipment.rentalVendor}</div>
             <div>Rate: {equipment.rentalRate}</div>
-            {equipment.rentalExpectedReturn && (
-              <div className="flex items-center gap-2">
+            {equipment.rentalExpectedReturn ? <div className="flex items-center gap-2">
                 <span>Return by: {formatDate(equipment.rentalExpectedReturn)}</span>
-                {rentalOverdue && (
-                  <span className="px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-semibold">
+                {rentalOverdue ? <span className="px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-semibold">
                     OVERDUE by {Math.abs(rentalDaysUntilReturn!)} days
-                  </span>
-                )}
-                {rentalSoonDue && (
-                  <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium">
+                  </span> : null}
+                {rentalSoonDue ? <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium">
                     Return in {rentalDaysUntilReturn} days
-                  </span>
-                )}
-              </div>
-            )}
+                  </span> : null}
+              </div> : null}
             {rentalCostAccumulated > 0 && (
               <div className="flex items-center gap-1 mt-1 pt-1 border-t border-sand-200">
                 <DollarSign className="h-3 w-3" />
                 <span>Cost accumulated: ${rentalCostAccumulated.toLocaleString()}</span>
               </div>
             )}
-          </div>
-        )}
+          </div> : null}
 
         {/* Checkout info */}
         {equipment.checkoutStatus === 'checked_out' && !equipment.isRental && (
           <div className="mb-2 text-xs text-warm-500 flex items-center gap-1">
             <Package className="h-3 w-3" />
             Checked out: {equipment.checkoutDate ? formatDate(equipment.checkoutDate) : ''}
-            {equipment.expectedReturnDate && <span> (Return: {formatDate(equipment.expectedReturnDate)})</span>}
+            {equipment.expectedReturnDate ? <span> (Return: {formatDate(equipment.expectedReturnDate)})</span> : null}
           </div>
         )}
 
-        {equipment.maintenanceNote && (
-          <div className="mb-3 p-2 rounded bg-amber-50 flex items-start gap-2 text-xs">
+        {equipment.maintenanceNote ? <div className="mb-3 p-2 rounded bg-amber-50 flex items-start gap-2 text-xs">
             <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
             <span className="text-amber-700">{equipment.maintenanceNote}</span>
-          </div>
-        )}
+          </div> : null}
 
         {/* Checklist Status */}
-        {hasChecklist && (
-          <div className="mb-3">
+        {hasChecklist ? <div className="mb-3">
             <button
               onClick={() => setInlineChecklistOpen(!inlineChecklistOpen)}
               className="flex items-center gap-2 text-xs w-full group"
@@ -1250,8 +1223,7 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
             </button>
 
             {/* Inline Maintenance Checklist */}
-            {inlineChecklistOpen && inlineChecklist && (
-              <div className="mt-2 border border-warm-200 rounded-lg overflow-hidden">
+            {inlineChecklistOpen && inlineChecklist ? <div className="mt-2 border border-warm-200 rounded-lg overflow-hidden">
                 <div className="px-3 py-2 bg-warm-50 border-b border-warm-200">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-warm-700">{equipment.category} Checklist</span>
@@ -1292,10 +1264,8 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
                     )
                   })}
                 </div>
-              </div>
-            )}
-          </div>
-        )}
+              </div> : null}
+          </div> : null}
 
         {/* Value and depreciation */}
         {!equipment.isRental && (
@@ -1308,12 +1278,10 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               <div className="text-warm-500">Book Value</div>
               <div className="font-medium text-warm-900">{formatCurrency(equipment.currentValue)}</div>
             </div>
-            {equipment.costPerHour && (
-              <div className="bg-warm-50 rounded p-1.5 text-center">
+            {equipment.costPerHour ? <div className="bg-warm-50 rounded p-1.5 text-center">
                 <div className="text-warm-500">Cost/Hr</div>
                 <div className="font-medium text-warm-900">${equipment.costPerHour.toFixed(2)}</div>
-              </div>
-            )}
+              </div> : null}
           </div>
         )}
 
@@ -1323,24 +1291,20 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
             {statusCfg.label}
           </div>
           <div className="flex items-center gap-2">
-            {equipment.nextMaintenance && (
-              <span className={cn(
+            {equipment.nextMaintenance ? <span className={cn(
                 "text-xs flex items-center gap-1",
                 maintenanceOverdue ? "text-red-600 font-medium" : "text-warm-500"
               )}>
                 <Calendar className="h-3 w-3" />
                 {formatDate(equipment.nextMaintenance)}
-              </span>
-            )}
+              </span> : null}
           </div>
         </div>
 
-        {equipment.aiNote && (
-          <div className="mt-3 p-2 rounded-md bg-stone-50 flex items-start gap-2 text-xs">
+        {equipment.aiNote ? <div className="mt-3 p-2 rounded-md bg-stone-50 flex items-start gap-2 text-xs">
             <Sparkles className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-stone-500" />
             <span className="text-stone-700">{equipment.aiNote}</span>
-          </div>
-        )}
+          </div> : null}
 
         <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-100">
           {equipment.status === 'available' && (
@@ -1370,15 +1334,13 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
               View Maintenance
             </button>
           )}
-          {hasChecklist && !equipment.checklistCompleted && (
-            <button
+          {hasChecklist && !equipment.checklistCompleted ? <button
               onClick={() => setChecklistModalOpen(true)}
               className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-stone-600 border border-warm-200 rounded hover:bg-warm-50"
             >
               <FileText className="h-3.5 w-3.5" />
               Checklist
-            </button>
-          )}
+            </button> : null}
           <button
             onClick={() => setQrModalOpen(true)}
             className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-warm-600 border border-warm-200 rounded hover:bg-warm-50"
@@ -1395,15 +1357,13 @@ function EquipmentCard({ equipment }: { equipment: Equipment }) {
         onClose={() => setQrModalOpen(false)}
       />
 
-      {equipment.photoUrls && (
-        <PhotoGalleryModal
+      {equipment.photoUrls ? <PhotoGalleryModal
           photos={equipment.photoUrls}
           equipmentName={equipment.name}
           isOpen={photoModalOpen}
           onClose={() => setPhotoModalOpen(false)}
           initialIndex={photoIndex}
-        />
-      )}
+        /> : null}
 
       <ChecklistModal
         equipment={equipment}
@@ -1761,12 +1721,10 @@ export function EquipmentPreview() {
                       overdue ? "bg-red-50 border-red-200" : "bg-white border-amber-100"
                     )}>
                       <div className="flex items-center gap-2">
-                        {overdue && (
-                          <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded flex items-center gap-1">
+                        {overdue ? <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded flex items-center gap-1">
                             <AlertCircle className="h-3 w-3" />
                             OVERDUE
-                          </span>
-                        )}
+                          </span> : null}
                         <span className="font-mono text-xs text-warm-500">{eq.assetTag}</span>
                         <span className="text-sm font-medium text-warm-900">{eq.name}</span>
                       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Link,
   CheckCircle2,
@@ -51,10 +52,11 @@ import {
   ArrowRightLeft,
   Send,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 type IntegrationStatus = 'connected' | 'disconnected' | 'error' | 'paused'
 type IntegrationCategory = 'accounting' | 'calendar' | 'communication' | 'storage' | 'automation' | 'payment' | 'esignature' | 'construction' | 'financial_feeds' | 'suppliers' | 'design' | 'geospatial' | 'weather' | 'building_codes' | 'licensing' | 'energy' | 'smart_home' | 'site_services' | 'crm'
@@ -639,17 +641,14 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
                 Error
               </span>
             )}
-            {integration.isFeatured && type === 'available' && (
-              <span className="flex items-center gap-1 text-xs text-stone-600 bg-stone-50 px-2 py-0.5 rounded-full">
+            {integration.isFeatured && type === 'available' ? <span className="flex items-center gap-1 text-xs text-stone-600 bg-stone-50 px-2 py-0.5 rounded-full">
                 <Star className="h-3 w-3 fill-stone-400" />
                 Featured
-              </span>
-            )}
+              </span> : null}
           </div>
           <p className="text-sm text-warm-500 mb-3">{integration.description}</p>
 
-          {type === 'connected' && integration.syncItems && (
-            <div className="mb-3">
+          {type === 'connected' && integration.syncItems ? <div className="mb-3">
               <p className="text-xs text-warm-500 mb-1">Syncing:</p>
               <div className="flex flex-wrap gap-1">
                 {integration.syncItems.map((item, i) => (
@@ -658,8 +657,7 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
                   </span>
                 ))}
               </div>
-            </div>
-          )}
+            </div> : null}
 
           {type === 'connected' && (
             <div className="flex items-center gap-4 text-xs text-warm-500 flex-wrap">
@@ -677,47 +675,37 @@ function IntegrationCard({ integration, type }: { integration: Integration; type
                   Health: {integration.healthScore}%
                 </span>
               )}
-              {integration.circuitBreaker && (
-                <span className={cn("flex items-center gap-1", integration.circuitBreaker === 'closed' ? "text-green-600" : integration.circuitBreaker === 'open' ? "text-red-600" : "text-amber-600")} title="Circuit breaker status">
+              {integration.circuitBreaker ? <span className={cn("flex items-center gap-1", integration.circuitBreaker === 'closed' ? "text-green-600" : integration.circuitBreaker === 'open' ? "text-red-600" : "text-amber-600")} title="Circuit breaker status">
                   <Shield className="h-3 w-3" />
                   CB: {integration.circuitBreaker}
-                </span>
-              )}
+                </span> : null}
             </div>
           )}
 
           {type === 'available' && (
             <div className="flex items-center gap-3 text-xs text-warm-500 flex-wrap">
-              {integration.avgRating && (
-                <span className="flex items-center gap-1">
+              {integration.avgRating ? <span className="flex items-center gap-1">
                   <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
                   <span className="font-medium text-warm-700">{integration.avgRating}</span>
                   <span>({integration.reviewCount})</span>
-                </span>
-              )}
-              {integration.installCount && (
-                <span className="flex items-center gap-1">
+                </span> : null}
+              {integration.installCount ? <span className="flex items-center gap-1">
                   <Download className="h-3 w-3" />
                   {integration.installCount.toLocaleString()} installs
-                </span>
-              )}
-              {integration.pricing && (
-                <span className={cn("font-medium", integration.pricing === 'free' ? "text-green-600" : "text-warm-900")}>
+                </span> : null}
+              {integration.pricing ? <span className={cn("font-medium", integration.pricing === 'free' ? "text-green-600" : "text-warm-900")}>
                   {integration.pricing === 'free' ? 'Free' : integration.priceMonthly ? `$${integration.priceMonthly}/mo` : 'Paid'}
-                </span>
-              )}
+                </span> : null}
               <span className="text-xs px-1.5 py-0.5 bg-warm-100 text-warm-500 rounded">
                 {categoryConfig[integration.category]?.label}
               </span>
             </div>
           )}
 
-          {integration.status === 'error' && integration.errorMessage && (
-            <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-700 flex items-start gap-2">
+          {integration.status === 'error' && integration.errorMessage ? <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-700 flex items-start gap-2">
               <AlertCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
               {integration.errorMessage}
-            </div>
-          )}
+            </div> : null}
         </div>
       </div>
 
@@ -777,9 +765,7 @@ function SyncLogItem({ entry }: { entry: SyncLogEntry }) {
           <span className="text-xs text-warm-400">{entry.timestamp}</span>
         </div>
         <p className="text-sm text-warm-600">{entry.action}</p>
-        {entry.details && (
-          <p className="text-xs text-warm-400 mt-0.5">{entry.details}</p>
-        )}
+        {entry.details ? <p className="text-xs text-warm-400 mt-0.5">{entry.details}</p> : null}
       </div>
     </div>
   )

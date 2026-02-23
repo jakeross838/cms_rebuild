@@ -3,9 +3,9 @@
 import { QueryClient, QueryClientProvider, isServer } from '@tanstack/react-query'
 
 
-import { AuthProvider } from '@/lib/auth/auth-context'
 import { SideDrawerProvider } from '@/contexts/side-drawer-context'
-import type { PermissionsMode, UserProfile } from '@/types/auth'
+import { AuthProvider } from '@/lib/auth/auth-context'
+import type { CompanyInfo, PermissionsMode, UserProfile } from '@/types/auth'
 
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
@@ -36,6 +36,8 @@ interface ProvidersProps {
   children: React.ReactNode
   initialUser?: SupabaseUser | null
   initialProfile?: UserProfile | null
+  initialCompany?: CompanyInfo | null
+  initialCompanies?: CompanyInfo[]
   permissionsMode?: PermissionsMode
 }
 
@@ -43,6 +45,8 @@ export default function Providers({
   children,
   initialUser = null,
   initialProfile = null,
+  initialCompany = null,
+  initialCompanies = [],
   permissionsMode = 'open',
 }: ProvidersProps) {
   const queryClient = getQueryClient()
@@ -52,6 +56,8 @@ export default function Providers({
       <AuthProvider
         initialUser={initialUser}
         initialProfile={initialProfile}
+        initialCompany={initialCompany}
+        initialCompanies={initialCompanies}
         permissionsMode={permissionsMode}
       >
         <SideDrawerProvider>

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+
 import {
     Sheet,
     SheetContent,
@@ -42,18 +43,16 @@ export function SideDrawer({
             <SheetContent className={`flex flex-col gap-0 p-0 ${widthClasses[width]}`}>
                 <SheetHeader className="px-6 py-4 border-b border-border/40 shrink-0 bg-card">
                     <SheetTitle className="text-xl tracking-tight">{title}</SheetTitle>
-                    {description && <SheetDescription>{description}</SheetDescription>}
+                    {description ? <SheetDescription>{description}</SheetDescription> : null}
                 </SheetHeader>
 
                 <div className="flex-1 overflow-y-auto bg-muted/30 p-6">
                     {children}
                 </div>
 
-                {footer && (
-                    <SheetFooter className="px-6 py-4 border-t border-border/40 shrink-0 bg-card">
+                {footer ? <SheetFooter className="px-6 py-4 border-t border-border/40 shrink-0 bg-card">
                         {footer}
-                    </SheetFooter>
-                )}
+                    </SheetFooter> : null}
             </SheetContent>
         </Sheet>
     )

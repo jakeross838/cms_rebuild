@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Clock,
   MapPin,
@@ -23,10 +24,11 @@ import {
   ArrowRight,
   User,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
 import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -455,16 +457,12 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
         <div>
           <h4 className="font-semibold text-warm-900">{employee.name}</h4>
           <p className="text-xs text-warm-500">{employee.role}</p>
-          {employee.crew && (
-            <p className="text-xs text-stone-600 flex items-center gap-1 mt-0.5">
+          {employee.crew ? <p className="text-xs text-stone-600 flex items-center gap-1 mt-0.5">
               <Users className="h-3 w-3" /> {employee.crew}
-            </p>
-          )}
+            </p> : null}
         </div>
         <div className="flex items-center gap-2">
-          {employee.gpsVerified && (
-            <span title="GPS Verified"><Navigation className="h-3.5 w-3.5 text-green-500" /></span>
-          )}
+          {employee.gpsVerified ? <span title="GPS Verified"><Navigation className="h-3.5 w-3.5 text-green-500" /></span> : null}
           <div
             className={cn(
               'w-3 h-3 rounded-full',
@@ -505,11 +503,9 @@ function EmployeeCard({ employee }: { employee: EmployeeTimeSummary }) {
       <div className="pt-3 border-t border-warm-100 flex items-center justify-between">
         <div>
           <p className="text-xs text-warm-600">{employee.lastClockTime}</p>
-          {employee.currentJob && (
-            <p className="text-xs text-warm-400 flex items-center gap-1">
+          {employee.currentJob ? <p className="text-xs text-warm-400 flex items-center gap-1">
               <MapPin className="h-3 w-3" /> {employee.currentJob}
-            </p>
-          )}
+            </p> : null}
         </div>
         <span className={cn(
           "text-xs px-2 py-0.5 rounded",
@@ -753,19 +749,13 @@ export function TimeClockPreview() {
                       <td className="py-3 px-4">
                         <div className="font-medium text-warm-900">{entry.employeeName}</div>
                         <div className="text-xs text-warm-400 flex items-center gap-1">
-                          {entry.isOfflineEntry && (
-                            <span className="flex items-center gap-0.5 text-amber-600">
+                          {entry.isOfflineEntry ? <span className="flex items-center gap-0.5 text-amber-600">
                               <WifiOff className="h-3 w-3" /> Offline
-                            </span>
-                          )}
-                          {entry.photoVerification && (
-                            <span className="flex items-center gap-0.5 text-stone-600">
+                            </span> : null}
+                          {entry.photoVerification ? <span className="flex items-center gap-0.5 text-stone-600">
                               <Camera className="h-3 w-3" /> Photo
-                            </span>
-                          )}
-                          {entry.driveTime && (
-                            <span className="text-warm-400">+{entry.driveTime}min drive</span>
-                          )}
+                            </span> : null}
+                          {entry.driveTime ? <span className="text-warm-400">+{entry.driveTime}min drive</span> : null}
                         </div>
                       </td>
                       <td className="py-3 px-4 text-warm-600">{entry.jobSite}</td>
@@ -840,9 +830,7 @@ export function TimeClockPreview() {
                   <div>
                     <h5 className="font-semibold text-warm-900">{ts.employeeName}</h5>
                     <p className="text-xs text-warm-500">{ts.periodStart} - {ts.periodEnd}</p>
-                    {ts.submittedAt && (
-                      <p className="text-xs text-warm-400">Submitted: {ts.submittedAt}</p>
-                    )}
+                    {ts.submittedAt ? <p className="text-xs text-warm-400">Submitted: {ts.submittedAt}</p> : null}
                   </div>
                   <TimesheetStatusBadge status={ts.status} />
                 </div>
@@ -889,11 +877,9 @@ export function TimeClockPreview() {
                   </div>
                 </div>
 
-                {ts.rejectionNotes && (
-                  <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-xs text-red-700">
+                {ts.rejectionNotes ? <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-xs text-red-700">
                     <span className="font-medium">Rejection Notes:</span> {ts.rejectionNotes}
-                  </div>
-                )}
+                  </div> : null}
 
                 {ts.status === 'submitted' && (
                   <div className="flex items-center gap-2 justify-end pt-3 border-t border-warm-100">
@@ -905,11 +891,9 @@ export function TimeClockPreview() {
                     </button>
                   </div>
                 )}
-                {ts.approvedBy && (
-                  <div className="text-xs text-green-600 pt-2 border-t border-warm-100">
+                {ts.approvedBy ? <div className="text-xs text-green-600 pt-2 border-t border-warm-100">
                     Approved by {ts.approvedBy}
-                  </div>
-                )}
+                  </div> : null}
               </div>
             ))}
           </div>
@@ -932,22 +916,18 @@ export function TimeClockPreview() {
                         <div>
                           <h5 className="font-semibold text-warm-900">{entry.employeeName}</h5>
                           <p className="text-sm text-warm-600">{entry.jobSite}</p>
-                          {entry.location && (
-                            <div className="flex items-center gap-1 text-xs text-warm-500 mt-1">
+                          {entry.location ? <div className="flex items-center gap-1 text-xs text-warm-500 mt-1">
                               <MapPin className="h-3 w-3" />
                               {entry.location}
-                              {entry.gpsVerified && entry.geofenceStatus === 'inside' && (
-                                <span className="text-green-600 flex items-center gap-0.5 ml-1">
+                              {entry.gpsVerified && entry.geofenceStatus === 'inside' ? <span className="text-green-600 flex items-center gap-0.5 ml-1">
                                   <Navigation className="h-3 w-3" /> Inside Geofence
-                                </span>
-                              )}
+                                </span> : null}
                               {entry.geofenceStatus === 'outside' && (
                                 <span className="text-red-600 flex items-center gap-0.5 ml-1">
                                   <AlertTriangle className="h-3 w-3" /> Outside Geofence
                                 </span>
                               )}
-                            </div>
-                          )}
+                            </div> : null}
                         </div>
                         <StatusBadge status={entry.status} />
                       </div>
@@ -977,34 +957,24 @@ export function TimeClockPreview() {
 
                       {/* Indicators */}
                       <div className="flex items-center gap-2 flex-wrap mb-3">
-                        {entry.isOfflineEntry && (
-                          <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
+                        {entry.isOfflineEntry ? <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
                             <WifiOff className="h-3 w-3" /> Offline Entry
-                          </span>
-                        )}
-                        {entry.photoVerification && (
-                          <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
+                          </span> : null}
+                        {entry.photoVerification ? <span className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded flex items-center gap-1">
                             <Camera className="h-3 w-3" /> Photo Verified
-                          </span>
-                        )}
-                        {entry.driveTime && (
-                          <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
+                          </span> : null}
+                        {entry.driveTime ? <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded">
                             Drive time: {entry.driveTime}min
-                          </span>
-                        )}
+                          </span> : null}
                       </div>
 
-                      {entry.flagReason && (
-                        <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-xs text-red-700">
+                      {entry.flagReason ? <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-xs text-red-700">
                           <AlertTriangle className="h-3 w-3 inline mr-1" />
                           {entry.flagReason}
-                        </div>
-                      )}
-                      {entry.notes && (
-                        <div className="mb-3 p-2 bg-stone-50 border border-stone-200 rounded text-xs text-stone-700">
+                        </div> : null}
+                      {entry.notes ? <div className="mb-3 p-2 bg-stone-50 border border-stone-200 rounded text-xs text-stone-700">
                           Employee note: {entry.notes}
-                        </div>
-                      )}
+                        </div> : null}
 
                       <div className="flex items-center gap-2 justify-end">
                         <button className="px-3 py-1.5 text-sm font-medium text-warm-700 border border-warm-200 rounded-lg hover:bg-warm-100">

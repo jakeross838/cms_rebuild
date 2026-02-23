@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
+import { Eye, BookOpen } from 'lucide-react'
+
 import { PageSpec } from '@/components/skeleton/page-spec'
 import { ProfitabilityPreview } from '@/components/skeleton/previews/profitability-preview'
-import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const profitabilityWorkflow = ['Select Job', 'View Margins', 'Analyze Variances', 'Identify Patterns', 'Apply Learnings']

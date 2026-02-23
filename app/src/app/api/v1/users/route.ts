@@ -2,7 +2,7 @@
  * User Management API — List & Invite
  *
  * GET  /api/v1/users — List users for company (paginated, filterable)
- * POST /api/v1/users — Invite a new user to the company
+ * POST /api/v1/users — Invite a new user to the company (sends email)
  */
 
 import { NextResponse } from 'next/server'
@@ -13,6 +13,8 @@ import {
   paginatedResponse,
   type ApiContext,
 } from '@/lib/api/middleware'
+import { generateInviteToken } from '@/lib/auth/tokens'
+import { sendInviteEmail } from '@/lib/email/resend'
 import { createLogger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
@@ -109,7 +111,7 @@ export const GET = createApiHandler(
 )
 
 // ============================================================================
-// POST /api/v1/users — Invite a new user
+// POST /api/v1/users — Invite a new user (creates invitation, sends email)
 // ============================================================================
 
 export const POST = createApiHandler(
@@ -151,63 +153,96 @@ export const POST = createApiHandler(
       )
     }
 
-    // Step 1: Create auth user via admin client (bypasses RLS)
-    const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
-      email: body.email,
-      password: crypto.randomUUID(),
-      email_confirm: true,
-    })
+    // Check if there's already a pending invitation for this email
+    const { data: existingInvite } = await adminClient
+      .from('user_invitations')
+      .select('id, expires_at')
+      .eq('company_id', ctx.companyId!)
+      .eq('email', body.email)
+      .is('accepted_at', null)
+      .is('revoked_at', null)
+      .gt('expires_at', new Date().toISOString())
+      .maybeSingle()
 
-    if (authError) {
-      // Supabase returns specific error if the email is already in auth.users
-      // (could be in a different company)
-      logger.error('Failed to create auth user', { error: authError.message, email: body.email })
+    if (existingInvite) {
       return NextResponse.json(
         {
           error: 'Conflict',
-          message: 'An account with this email already exists',
+          message: 'A pending invitation already exists for this email. Revoke it first or wait for it to expire.',
           requestId: ctx.requestId,
         },
         { status: 409 }
       )
     }
 
-    const authUser = authData.user
+    // Get company name for the email
+    const { data: company } = await supabase
+      .from('companies')
+      .select('name')
+      .eq('id', ctx.companyId!)
+      .single() as { data: { name: string } | null; error: unknown }
 
-    // Step 2: Insert user profile into public.users
-    const { data: newUser, error: profileError } = await (supabase
+    const companyName = company?.name || 'your company'
+
+    // Get inviter name
+    const { data: inviter } = await supabase
       .from('users')
+      .select('name')
+      .eq('id', ctx.user!.id)
+      .single() as { data: { name: string } | null; error: unknown }
+
+    const inviterName = inviter?.name || 'A team member'
+
+    // Generate invite token
+    const { token, hash: tokenHash } = generateInviteToken()
+
+    // Create invitation record
+    const { data: invitation, error: inviteError } = await adminClient
+      .from('user_invitations')
       .insert({
-        id: authUser.id,
         company_id: ctx.companyId!,
         email: body.email,
         name: body.name,
         role: body.role,
-        phone: body.phone ?? null,
+        token_hash: tokenHash,
+        invited_by: ctx.user!.id,
+        invited_at: new Date().toISOString(),
       } as never)
       .select()
-      .single() as unknown as Promise<{ data: User | null; error: { message: string } | null }>)
+      .single()
 
-    if (profileError || !newUser) {
-      // Rollback: delete the auth user we just created
-      logger.error('Failed to create user profile, rolling back auth user', {
-        error: profileError?.message ?? 'Unknown error',
-        authUserId: authUser.id,
-      })
-
-      await adminClient.auth.admin.deleteUser(authUser.id)
-
+    if (inviteError || !invitation) {
+      logger.error('Failed to create invitation', { error: inviteError?.message })
       return NextResponse.json(
         {
           error: 'Internal Server Error',
-          message: 'Failed to create user profile',
+          message: 'Failed to create invitation',
           requestId: ctx.requestId,
         },
         { status: 500 }
       )
     }
 
-    // Log to auth_audit_log via admin client (untyped, bypasses RLS)
+    // Build invite URL
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const inviteUrl = `${appUrl}/accept-invite?token=${token}`
+
+    // Send invitation email
+    const emailResult = await sendInviteEmail({
+      to: body.email,
+      inviterName,
+      companyName,
+      role: body.role,
+      inviteUrl,
+    })
+
+    if (!emailResult.success) {
+      logger.warn('Failed to send invitation email', { error: emailResult.error, email: body.email })
+      // Don't fail the request - invitation is created, email just failed to send
+      // In production, you might want to queue a retry
+    }
+
+    // Log to auth_audit_log via admin client
     await adminClient
       .from('auth_audit_log')
       .insert({
@@ -217,26 +252,45 @@ export const POST = createApiHandler(
         ip_address: req.headers.get('x-forwarded-for'),
         user_agent: req.headers.get('user-agent'),
         metadata: {
-          invited_user_id: newUser.id,
+          invitation_id: (invitation as { id: string }).id,
           invited_email: body.email,
           invited_role: body.role,
+          email_sent: emailResult.success,
         },
       } as never)
       .then(({ error }: { error: { message: string } | null }) => {
         if (error) logger.warn('Failed to write auth audit log', { error: error.message })
       })
 
-    logger.info('User invited successfully', {
-      invitedUserId: newUser.id,
+    logger.info('User invitation created', {
+      invitationId: (invitation as { id: string }).id,
       invitedEmail: body.email,
       companyId: ctx.companyId!,
+      emailSent: emailResult.success,
     })
 
-    return NextResponse.json({ data: newUser }, { status: 201 })
+    return NextResponse.json(
+      {
+        data: {
+          invitation: {
+            id: (invitation as { id: string }).id,
+            email: body.email,
+            name: body.name,
+            role: body.role,
+            expires_at: (invitation as { expires_at: string }).expires_at,
+          },
+          emailSent: emailResult.success,
+        },
+        message: emailResult.success
+          ? `Invitation sent to ${body.email}`
+          : `Invitation created but email failed to send. The user can still use the invite link.`,
+      },
+      { status: 201 }
+    )
   },
   {
     requireAuth: true,
-    requiredRoles: ['owner', 'admin'],
+    requiredRoles: ['owner', 'admin', 'pm'],
     schema: inviteUserSchema,
     permission: 'users:create:all',
     auditAction: 'user.invite',

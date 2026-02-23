@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Plus,
   ShieldCheck,
@@ -38,10 +39,11 @@ import {
   Brain,
   ListChecks,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { FilterBar } from '@/components/skeleton/filter-bar'
-import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
 import { AIFeaturesPanel } from '@/components/skeleton/ui'
+import { useFilterState, matchesSearch, sortItems } from '@/hooks/use-filter-state'
+import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -726,8 +728,7 @@ function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) 
       <p className="text-sm font-medium text-warm-900">{formatDate(walkthrough.scheduledDate)}</p>
 
       {/* Checklist Info */}
-      {walkthrough.checklistId && (
-        <div className="mt-2 pt-2 border-t border-warm-200/50">
+      {walkthrough.checklistId ? <div className="mt-2 pt-2 border-t border-warm-200/50">
           <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-stone-700 mb-1">
             <ListChecks className="h-3 w-3" />
             <span className="truncate">{walkthrough.checklistName}</span>
@@ -754,8 +755,7 @@ function WalkthroughCard({ walkthrough }: { walkthrough: WalkthroughSchedule }) 
               )}
             </div>
           )}
-        </div>
-      )}
+        </div> : null}
 
       {walkthrough.findingsCount !== undefined && (
         <p className="text-xs text-warm-500 mt-1">{walkthrough.findingsCount} findings | {walkthrough.homeownerSigned ? 'Signed' : 'Unsigned'}</p>
@@ -786,12 +786,10 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
           <div className="flex items-center gap-1.5 text-sm text-warm-500 mt-0.5">
             <Wrench className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="truncate">{warranty.vendor}</span>
-            {warranty.manufacturer && (
-              <>
+            {warranty.manufacturer ? <>
                 <span className="text-warm-300">|</span>
                 <span className="truncate text-xs">{warranty.manufacturer}</span>
-              </>
-            )}
+              </> : null}
           </div>
         </div>
         <button className="p-1 hover:bg-warm-100 rounded flex-shrink-0">
@@ -847,36 +845,28 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
       </div>
 
       {/* Quality Tracking Section */}
-      {(warranty.originalConstructionFTQ || warranty.repairFTQ) && (
-        <div className="mb-3 pt-2 border-t border-warm-100">
+      {(warranty.originalConstructionFTQ || warranty.repairFTQ) ? <div className="mb-3 pt-2 border-t border-warm-100">
           <div className="flex items-center gap-1.5 text-xs text-warm-500 mb-2">
             <Target className="h-3 w-3" />
             <span>Quality Tracking</span>
           </div>
           <div className="flex items-center gap-3">
-            {warranty.originalConstructionFTQ && (
-              <div className="flex items-center gap-1">
+            {warranty.originalConstructionFTQ ? <div className="flex items-center gap-1">
                 <span className="text-xs text-warm-500">Construction FTQ:</span>
                 <span className={cn("text-xs font-medium", getFTQColor(warranty.originalConstructionFTQ))}>
                   {warranty.originalConstructionFTQ}%
                 </span>
-                {warranty.inspectionLink && (
-                  <button className="text-stone-600 hover:text-stone-700">
+                {warranty.inspectionLink ? <button className="text-stone-600 hover:text-stone-700">
                     <ExternalLink className="h-3 w-3" />
-                  </button>
-                )}
-              </div>
-            )}
-            {warranty.repairFTQ && (
-              <div className="flex items-center gap-1">
+                  </button> : null}
+              </div> : null}
+            {warranty.repairFTQ ? <div className="flex items-center gap-1">
                 <span className="text-xs text-warm-500">Repair FTQ:</span>
                 <span className={cn("text-xs font-medium", getFTQColor(warranty.repairFTQ))}>
                   {warranty.repairFTQ}%
                 </span>
-              </div>
-            )}
-            {warranty.vendorCallbackRate && (
-              <div className="flex items-center gap-1">
+              </div> : null}
+            {warranty.vendorCallbackRate ? <div className="flex items-center gap-1">
                 <span className="text-xs text-warm-500">Callback:</span>
                 <span className={cn(
                   "text-xs font-medium",
@@ -885,11 +875,9 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
                 )}>
                   {warranty.vendorCallbackRate}%
                 </span>
-              </div>
-            )}
+              </div> : null}
           </div>
-        </div>
-      )}
+        </div> : null}
 
       {/* Claim & Cost info */}
       {(warranty.claimCount !== undefined && warranty.claimCount > 0) && (
@@ -910,21 +898,15 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
       {/* Registration & Contact */}
       <div className="flex items-center justify-between pt-2 border-t border-warm-100">
         <div className="flex items-center gap-3">
-          {warranty.documentUrl && (
-            <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-stone-700">
+          {warranty.documentUrl ? <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-stone-700">
               <FileText className="h-3.5 w-3.5" />
               <span>Document</span>
-            </button>
-          )}
-          {warranty.selectionLink && (
-            <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-warm-700">
+            </button> : null}
+          {warranty.selectionLink ? <button className="flex items-center gap-1 text-xs text-stone-600 hover:text-warm-700">
               <Link2 className="h-3.5 w-3.5" />
               <span>Selection</span>
-            </button>
-          )}
-          {warranty.registrationNumber && (
-            <span className="text-xs text-warm-400 font-mono">{warranty.registrationNumber}</span>
-          )}
+            </button> : null}
+          {warranty.registrationNumber ? <span className="text-xs text-warm-400 font-mono">{warranty.registrationNumber}</span> : null}
         </div>
         {warranty.daysUntilExpiry !== undefined && warranty.status !== 'expired' && (
           <span className={cn(
@@ -937,16 +919,13 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
       </div>
 
       {/* Claim contact */}
-      {warranty.claimContact && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-warm-400">
+      {warranty.claimContact ? <div className="mt-2 flex items-center gap-2 text-xs text-warm-400">
           <Phone className="h-3 w-3" />
           <span>{warranty.claimContact}</span>
-          {warranty.claimPhone && <span>- {warranty.claimPhone}</span>}
-        </div>
-      )}
+          {warranty.claimPhone ? <span>- {warranty.claimPhone}</span> : null}
+        </div> : null}
 
-      {warranty.aiNote && (
-        <div className={cn(
+      {warranty.aiNote ? <div className={cn(
           "mt-3 p-2 rounded-md flex items-start gap-2",
           warranty.status === 'expired' || warranty.status === 'expiring_soon'
             ? "bg-amber-50"
@@ -966,8 +945,7 @@ function WarrantyCard({ warranty }: { warranty: Warranty }) {
           )}>
             {warranty.aiNote}
           </span>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
