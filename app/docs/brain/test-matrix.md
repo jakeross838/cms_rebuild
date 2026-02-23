@@ -712,11 +712,37 @@ Every element in the feature map gets test cases auto-generated:
 | SR-01 | Navigate to Intelligence > Smart Reports | Page loads with preview tab active |
 | SR-02 | Switch to Specification tab | Shows workflow, features, connections for AI reports |
 
+### Communication Hub (`/skeleton/intelligence/communication-hub`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| CH-01 | Navigate to Intelligence > Communication Hub | Page loads with preview tab active |
+| CH-02 | Switch to Specification tab | Shows workflow, features, connections for universal inbox |
+| CH-03 | Preview shows 6 connected channels | Gmail, Outlook, SMS/iMessage, Phone Calls, WhatsApp, Slack with sync status |
+| CH-04 | Universal inbox section | 6 mock messages from different channels with AI tags and job auto-tagging |
+| CH-05 | AI Extraction Pipeline | 4-step flow visible: Receive → Identify → Extract → Propose |
+| CH-06 | Two-Way Sync visualization | Shows reply routing back through original channel |
+| CH-07 | On-Site Recording section | Shows mobile recording → transcription → extraction flow |
+| CH-08 | Channel Setup Guide | 6-step setup process displayed |
+
+### Learning Metrics (`/skeleton/intelligence/learning-metrics`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| LM-01 | Navigate to Intelligence > Learning Metrics | Page loads with preview tab active |
+| LM-02 | Switch to Specification tab | Shows workflow, features, connections for metrics dashboard |
+| LM-03 | Trade metrics section | 45 metrics across 5 collapsible categories (Financial, Schedule, Quality, Communication, Safety) |
+| LM-04 | Material metrics section | 12 material tracking metrics displayed |
+| LM-05 | Job aggregate metrics | 10 job-level metrics displayed |
+| LM-06 | Learning Progress panel | 4 training sources with progress bars + AI maturity indicator |
+| LM-07 | Cross-module learning flow | Visual flow showing data → metrics → AI modules |
+| LM-08 | Live learning example | Before/after variance improvement example |
+
 ### Navigation Integration
 
 | # | Test Action | Expected Result |
 |---|------------|-----------------|
-| NAV-01 | Click Intelligence in nav bar | Dropdown shows 8 sub-links with Brain icon |
-| NAV-02 | Intelligence dropdown items | Trade Intuition AI, Plan Analysis, Bidding, Selections, Production, Procurement, Smart Reports, AI Hub |
+| NAV-01 | Click Intelligence in nav bar | Dropdown shows 10 sub-links with Brain icon |
+| NAV-02 | Intelligence dropdown items | Trade Intuition AI, Plan Analysis, Bidding, Selections, Production, Procurement, Smart Reports, AI Hub, Communication Hub, Learning Metrics |
 | NAV-03 | Each intelligence link | Navigates to correct `/skeleton/intelligence/*` route |
-| NAV-04 | Features link description | Shows "Toggle 205 capabilities" under Settings |
+| NAV-04 | Features link description | Shows "Toggle 347 capabilities" under Settings |

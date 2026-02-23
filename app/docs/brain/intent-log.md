@@ -207,6 +207,25 @@ A comprehensive skeleton UI with 67+ page prototypes covering the planned 52 mod
 
 ---
 
+### 2026-02-23 — Communication Hub & Learning Metrics Skeleton Pages
+
+**Why:** The user wanted visual skeleton prototypes for both the Universal Communication Hub and the Expanded Self-Learning Engine before the execution phase. "I want this setup properly for the execution phase making all features work together." The user specifically wanted to SEE all 67 tracked metrics in the UI so they could verify coverage.
+
+**What we built:**
+- 2 new skeleton pages under `/skeleton/intelligence/*` with Preview/Spec tabs
+- 2 new preview components in `src/components/skeleton/previews/`
+- 2 new nav items in `companyIntelligenceNav` (total now 10 sub-links)
+- Communication Hub preview: 6 connected channels, universal inbox with 6 mock messages from different platforms, AI extraction pipeline demo, two-way sync visualization, on-site recording flow, and channel setup guide
+- Learning Metrics preview: All 67 metrics displayed (45 trade in 5 collapsible categories + 12 material + 10 job aggregate), AI maturity progression, 4 training sources, cross-module learning flow, and live learning example
+
+**Connected to:**
+- Architecture doc: `docs/architecture/universal-comms-and-learning.md`
+- Navigation: `companyIntelligenceNav` in `src/config/navigation.ts`
+- All other intelligence pages — Communication Hub feeds data to all AI modules
+- Feature Registry — features appear in Settings > Features
+
+---
+
 ### 2026-02-23 — Universal Communication Hub & Expanded Self-Learning Engine
 
 **Why:** The user asked how the AI knows when something goes wrong (estimate error, field issue) and how it self-learns. They also asked: can we merge ALL communication platforms (iPhone messages, Gmail, Outlook, on-site conversations) into a single universal system where AI reads everything and updates jobs automatically? Two-way sync so replies go back through the original channel.

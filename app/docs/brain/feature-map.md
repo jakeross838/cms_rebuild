@@ -4880,3 +4880,37 @@ The features.ts config was expanded from 205 to 347 features with these new cate
 | Procurement | 17 | 299-315 |
 | Smart Reports | 15 | 316-330 |
 | Cross-Cutting AI | 17 | 331-347 |
+
+### Universal Communication Hub (`/skeleton/intelligence/communication-hub`)
+**What it is:** Every message from any platform — email, SMS, calls, on-site recordings, WhatsApp, Slack, portal — flows into one AI-powered inbox. Two-way sync routes replies back through the original channel. AI auto-tags to jobs, extracts decisions, and proposes downstream updates.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `communication-hub-preview.tsx`
+**Architecture:** `docs/architecture/universal-comms-and-learning.md` (Part 1)
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Total messages (1,247), AI processed (1,198), Decisions extracted (89), Pending review (12) |
+| Connected Channels | Display | 6 channels: Gmail, Outlook, SMS/iMessage, Phone Calls, WhatsApp, Slack — each with sync status |
+| Universal Inbox | Interactive | 6 mock messages from different channels with AI extraction tags, job auto-tag, urgency indicators |
+| AI Extraction Pipeline | Display | 4-step flow: Receive → Identify → Extract → Propose Updates with confidence scores |
+| Two-Way Sync Demo | Display | Shows reply routing back through original channel (Gmail → Gmail, SMS → SMS) |
+| On-Site Recording | Display | Mobile recording flow: Record → Transcribe (Whisper) → Extract → Confirm updates |
+| Channel Setup Guide | Display | 6-step setup: Gmail OAuth → Outlook → Twilio SMS → WhatsApp → Slack → Portal |
+| AI Features Panel | Display | 6 features: Job Auto-Tagging, Decision Extraction, On-Site Transcription, Channel Intelligence, Meeting Mode, Contact Learning |
+
+### Self-Learning Metrics Dashboard (`/skeleton/intelligence/learning-metrics`)
+**What it is:** 67 metrics tracked across trades, materials, and jobs. Every datapoint feeds back into estimating, scheduling, bidding, and Trade Intuition AI. Shows exactly what the AI learns, how accurate it is, and how it improves over time.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `learning-metrics-preview.tsx`
+**Architecture:** `docs/architecture/universal-comms-and-learning.md` (Part 2)
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | Total metrics (67), Trade metrics (45), Material metrics (12), Job metrics (10) |
+| Learning Progress | Display | 4 training sources with progress bars + AI Maturity progression (Cold Start → Learning → Calibrated → Expert) |
+| Trade Metrics | Collapsible | 45 metrics in 5 categories: Financial (10), Schedule (8), Quality (8), Communication (7), Safety (5) + 7 contextual tags |
+| Material Metrics | Cards | 12 metrics: price variance, lead time accuracy, defect rate, waste factor, etc. |
+| Job Aggregate Metrics | Cards | 10 metrics: overall profitability, schedule adherence, client satisfaction, etc. |
+| Cross-Module Learning Flow | Display | Visual flow: Jobs → Metrics → AI Modules (Estimating, Scheduling, Bidding, Trade Intuition) |
+| Live Learning Example | Display | Before/after example showing tile installation estimate improving from ±18% to ±6% variance |
+| AI Features Panel | Display | 6 features: Trade Performance Scoring, Anomaly Detection, Cross-Module Learning, Prediction Calibration, Material Intelligence, Community Benchmarking |
