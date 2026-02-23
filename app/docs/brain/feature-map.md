@@ -4667,3 +4667,136 @@ This documents which pages and actions read from and write to each of the 9 exis
 | WRITE | `createApiHandler` middleware | INSERT on every API request: endpoint, method, status_code, response_time_ms, user_id, company_id, timestamp |
 | WRITE | Rate limit events | INSERT when rate limit hit: endpoint, user_id, limit_type |
 | WRITE | `/api/cron/cleanup` | DELETE old metrics entries beyond retention period |
+
+---
+
+## Settings > Features (Feature Registry)
+
+**Page:** `/skeleton/company/features` (`src/app/(skeleton)/skeleton/company/features/page.tsx`)
+**Preview:** `src/components/skeleton/previews/feature-registry-preview.tsx`
+**Config:** `src/config/features.ts`
+**Status:** 🚧 Skeleton with Mock Data
+**Nav:** Settings > Features in `companyRightNav`
+
+Central registry of all 205 RossOS capabilities organized into 10 categories. Allows companies to toggle features on/off, search/filter, and see which features use self-learning AI.
+
+### Stats Cards (6 cards, grid-cols-6)
+
+| Card | Value Source | Icon |
+|------|-------------|------|
+| Total Features | `FEATURES.length` (205) | Zap |
+| Enabled | `enabledFeatures.size` (toggleable state) | ToggleRight |
+| Self-Learning | Features with `selfLearn: true` | Brain |
+| Ready to Build | Features with `status: 'ready'` | CheckCircle |
+| Planned | Features with `status: 'planned'` | Clock |
+| Future | Features with `status: 'future'` | Star |
+
+### Smart Onboarding Walkthrough Section
+
+**Collapsible section** — shows 6-step AI-powered onboarding flow:
+1. Upload License & Insurance (30 sec) — AI extracts company info
+2. Connect QuickBooks (60 sec) — one-click import
+3. Import Contacts via Magic Link (2 min) — vendor self-service
+4. Upload a Contract (45 sec) — AI extracts job details
+5. Invite Your Team (30 sec) — role-based invites
+6. You're Live! — readiness checklist
+
+- **Expand/Collapse toggle** — chevron button on header
+- **UI effect:** Toggles visibility of the 3-column onboarding grid
+- **Status:** 🚧 Mock Data
+
+### Search & Filters Bar
+
+**Search input**
+- **What it does:** Filters all 205 features by name, description, or category
+- **UI effect:** Real-time filtering as user types. Shows X of 205 count.
+- **Status:** 🚧 Mock Data (client-side filter, no API)
+
+**Status filter dropdown**
+- **Options:** All Statuses, Ready to Build, Planned, Future
+- **UI effect:** Filters feature list by build status
+- **Status:** 🚧 Mock Data
+
+**"Self-Learning Only" toggle button**
+- **What it does:** Filters to show only features with `selfLearn: true`
+- **UI effect:** Button changes to purple when active. Filters list.
+- **Status:** 🚧 Mock Data
+
+### Category Sections (10 categories)
+
+Each category is a collapsible card with:
+
+**Category header** (click to collapse/expand)
+- Shows: icon, category name, feature count, enabled count, AI-powered count
+- **UI effect:** Toggles visibility of feature cards within the category
+
+**"Enable All" button** (per category)
+- **What it does:** Enables all features in this category
+- **UI effect:** All toggles in category switch to amber (on). Stats update.
+- **Backend effect:** (Not wired) Would INSERT/UPDATE `company_features` rows
+- **Status:** 🚧 Mock Data
+
+**"Disable All" button** (per category)
+- **What it does:** Disables all features in this category
+- **UI effect:** All toggles in category switch to gray (off). Stats update.
+- **Backend effect:** (Not wired) Would UPDATE `company_features` rows
+- **Status:** 🚧 Mock Data
+
+### Feature Cards (205 features)
+
+Each feature row has:
+
+**Toggle switch**
+- **What it does:** Enables/disables individual feature for this company
+- **UI effect:** Switch animates amber (on) / gray (off). Feature text dims when disabled. Stats cards update count.
+- **Backend effect:** (Not wired) Would INSERT/UPDATE `company_features(company_id, feature_id, enabled)`
+- **Reverse action:** Toggle again to re-enable/disable
+- **Who can use it:** owner, admin (when wired)
+- **Status:** 🚧 Mock Data
+
+**Self-Learning badge** (purple, shows on AI features)
+- Brain icon + "Self-Learning" text
+- **Only shows when:** `feature.selfLearn === true`
+
+**Status badge** (colored)
+- Ready to Build: green
+- Planned: amber
+- Future: indigo
+
+**Effort badge** (colored text)
+- S: green, M: yellow, L: orange, XL: red
+
+**Phase indicator**
+- "Phase 1", "Phase 2", or "Phase 3"
+
+### AI Insights Bar
+
+Amber-tinted bar with Sparkles icon showing summary:
+- Count of self-learning features
+- Count of ready features
+- Recommendation to enable Phase 1 features
+
+### AI Features Panel (3 features)
+
+| Feature | Insight |
+|---------|---------|
+| Smart Feature Recommendations | AI suggests which features to enable based on company profile |
+| Usage-Based Suggestions | After 30 days, AI identifies which disabled features would save the most time |
+| Self-Learning Dashboard | Track AI accuracy improvements across all self-learning features |
+
+### 10 Feature Categories
+
+| Category | Count | Example Features |
+|----------|-------|-----------------|
+| Onboarding & Setup | 18 | Smart Company Setup Wizard, Business Card Scanner, QuickBooks Import |
+| Photo & Media | 17 | AI Room Auto-Tagging, Before/After Slider, Bulk Photo Upload |
+| Activity & Analytics | 17 | Real-Time Activity Feed, Audit Trail, Feature Usage Heatmap |
+| Self-Learning AI | 20 | Feedback Loop, Invoice Auto-Coding, Estimate vs Actual Learning |
+| Self-Debugging | 16 | Global Error Boundary, API Retry, Dead Button Detection |
+| Daily Operations | 20 | Daily Log with Voice-to-Text, Punch List, Change Order Workflow |
+| Financial | 20 | WIP Report, Draw Request Builder, Budget Alerts |
+| Client Experience | 17 | Homeowner Portal, Selection Tracking, Digital Signatures |
+| Mobile & Field | 15 | PWA, Offline Mode, Push Notifications, QR Code Scanning |
+| Reports & Docs | 15 | Report Builder, WIP Report, Job Cost Detail |
+| Integrations | 15 | QuickBooks Online, Email Integration, Zapier/Webhooks |
+| Security & Admin | 15 | RBAC, 2FA, SSO, Data Export, Feature Flag System |

@@ -563,3 +563,77 @@ Every element in the feature map gets test cases auto-generated:
 | `auth_audit_log` | Yes | Login tracking |
 | `audit_log` | Yes | Audit log API |
 | `api_metrics` | Indirect | Rate limiting verification |
+
+---
+
+## Settings > Features (Feature Registry) — Test Cases
+
+**Page:** `/skeleton/company/features`
+**Components:** `feature-registry-preview.tsx`, `features.ts`
+**Status:** 🚧 Mock Data — All tests are UI-only
+
+### Navigation
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-01 | Click Settings > Features in nav | Page loads at `/skeleton/company/features` |
+| FR-02 | Click Preview tab | Feature Registry preview component renders |
+| FR-03 | Click Specification tab | PageSpec component renders with feature details |
+
+### Stats Cards
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-04 | Load page | 6 stat cards show: Total (205), Enabled (count), Self-Learning (count), Ready (count), Planned (count), Future (count) |
+| FR-05 | Toggle a feature off | Enabled count decreases by 1 |
+| FR-06 | Toggle a feature on | Enabled count increases by 1 |
+
+### Smart Onboarding Section
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-07 | Click onboarding header | Section collapses, chevron changes to right |
+| FR-08 | Click collapsed header | Section expands, shows 6 onboarding steps in 3-column grid |
+| FR-09 | Verify step content | Each step shows number, icon, title, time estimate, description |
+
+### Search & Filters
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-10 | Type "invoice" in search | Only features with "invoice" in name/desc/category shown |
+| FR-11 | Clear search | All 205 features shown again |
+| FR-12 | Select "Ready to Build" status | Only ready features shown |
+| FR-13 | Select "Planned" status | Only planned features shown |
+| FR-14 | Select "Future" status | Only future features shown |
+| FR-15 | Select "All Statuses" | All features shown |
+| FR-16 | Click Self-Learning Only | Only selfLearn=true features shown, button turns purple |
+| FR-17 | Click Self-Learning Only again | All features shown, button reverts to default |
+| FR-18 | Combine search + status filter | Both filters apply simultaneously |
+
+### Category Sections
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-19 | Click category header | Category collapses, features hidden |
+| FR-20 | Click collapsed category header | Category expands, features visible |
+| FR-21 | Click "Enable All" on a category | All features in that category toggle on |
+| FR-22 | Click "Disable All" on a category | All features in that category toggle off |
+| FR-23 | Verify all 10 categories present | All categories visible with correct feature counts |
+
+### Feature Toggle Switches
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-24 | Click toggle on enabled feature | Toggle turns gray, feature text dims, enabled stat decreases |
+| FR-25 | Click toggle on disabled feature | Toggle turns amber, feature text brightens, enabled stat increases |
+| FR-26 | Verify self-learning badge | Purple "Self-Learning" badge shown only on selfLearn features |
+| FR-27 | Verify status badges | Green=Ready, Amber=Planned, Indigo=Future |
+| FR-28 | Verify effort badges | Green=S, Yellow=M, Orange=L, Red=XL |
+| FR-29 | Verify phase indicators | "Phase 1", "Phase 2", "Phase 3" shown correctly |
+
+### AI Panels
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| FR-30 | Verify AI Insights bar | Amber bar with Sparkles icon, shows self-learning count and ready count |
+| FR-31 | Verify AI Features Panel | 3 AI features shown: Smart Recommendations, Usage-Based, Self-Learning Dashboard |

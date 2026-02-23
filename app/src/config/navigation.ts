@@ -24,6 +24,7 @@ import {
   Clock,
   Package,
   Landmark,
+  ToggleRight,
 } from 'lucide-react'
 
 export interface NavSubItem {
@@ -130,6 +131,7 @@ export const companyRightNav: NavItem[] = [
     icon: Settings,
     items: [
       { name: 'Settings', href: '/skeleton/company/settings', description: 'Configuration' },
+      { name: 'Features', href: '/skeleton/company/features', description: 'Toggle 205 capabilities' },
       { name: 'Integrations', href: '/skeleton/company/integrations', description: 'QuickBooks, Stripe' },
       { name: 'Insurance', href: '/skeleton/compliance/insurance', description: 'COIs & policies' },
       { name: 'Licenses', href: '/skeleton/compliance/licenses', description: 'Contractor licenses' },

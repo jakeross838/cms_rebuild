@@ -69,3 +69,38 @@ A comprehensive skeleton UI with 67+ page prototypes covering the planned 52 mod
 - No real CRUD endpoints exist yet — all pages use mock data
 - Phase 1 implementation is next: start with Module 01 (Auth & Access Control)
 - Validation cycle required before every commit: types, acceptance tests, unit tests, integration tests
+
+---
+
+### 2026-02-23 — Feature Registry Skeleton Page
+
+**Why:** The user has a comprehensive list of 205 features across 10 categories that RossOS will offer. They wanted to see WHERE these features would live in the actual software — a visual registry page showing every capability, what it does, and toggles for enabling/disabling. The user explicitly said: "I don't want to actually build anything out yet, I just wanna see where the features would go within the website but have it into the website saying what it does but don't build code behind it yet, I'm gonna execute on all of it later." This is a common pattern in the project — build the skeleton UI first, wire it up later.
+
+**What we built:**
+- Feature config file (`src/config/features.ts`) with all 205 features, types, status/effort configs, and onboarding steps
+- Feature Registry preview component (`src/components/skeleton/previews/feature-registry-preview.tsx`) with search, filters, category toggles, onboarding walkthrough, stats, and AI panels
+- Skeleton page at `/skeleton/company/features` following standard Preview/Spec tab pattern
+- Navigation link under Settings > Features in `companyRightNav`
+
+**How it works:**
+1. User navigates to Settings > Features in the nav bar
+2. Sees 205 features organized into 10 categories with toggle switches
+3. Can search by name, description, or category
+4. Can filter by status (Ready/Planned/Future) or self-learning AI only
+5. Each category has Enable All / Disable All buttons
+6. Smart Onboarding walkthrough section shows the 6-step AI-powered setup flow
+7. Stats cards show total features, enabled count, self-learning count, ready/planned/future counts
+8. AI insights bar and AI Features Panel at bottom
+
+**Connected to:**
+- Module 02 (Configuration Engine) — feature flags are part of company configuration
+- Module 43 (Subscription Billing) — feature tiers will be tied to subscription plans
+- Module 01 (Auth & Access Control) — feature access will be gated by role
+- All 52 modules — each module's features appear in this registry
+
+**Business rules discussed:**
+- All 205 features should be visible even if not yet built — status badges show readiness
+- Self-learning AI features are tagged with a purple badge
+- Features default to enabled for "ready" status features
+- Categories are collapsible for easy browsing
+- This is skeleton only — no real database writes, no API, no feature flag enforcement
