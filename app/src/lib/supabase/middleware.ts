@@ -6,9 +6,27 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // If Supabase is not configured, allow public routes and skip auth
+  if (!supabaseUrl || !supabaseAnonKey) {
+    const isPublicRoute = request.nextUrl.pathname === '/' ||
+                          request.nextUrl.pathname.startsWith('/portal') ||
+                          request.nextUrl.pathname.startsWith('/skeleton') ||
+                          request.nextUrl.pathname.startsWith('/api/docs')
+    if (isPublicRoute) {
+      return supabaseResponse
+    }
+    // Redirect non-public routes to skeleton when Supabase is not configured
+    const url = request.nextUrl.clone()
+    url.pathname = '/skeleton'
+    return NextResponse.redirect(url)
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
