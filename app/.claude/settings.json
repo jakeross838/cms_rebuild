@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/brain-update.sh",
+            "timeout": 10,
+            "statusMessage": "Brain: tracking change..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/brain-remind.sh",
+            "timeout": 5,
+            "statusMessage": "Brain: checking if update needed..."
+          }
+        ]
+      }
+    ]
+  }
+}

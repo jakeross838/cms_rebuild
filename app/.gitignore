@@ -36,6 +36,11 @@ yarn-error.log*
 .env*
 !.env.example
 
+# brain tracker
+docs/brain/secrets.local.md
+docs/brain/scripts/changed-files.log
+docs/brain/scripts/last-scan.json
+
 # vercel
 .vercel
 

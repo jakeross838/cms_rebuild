@@ -1,5 +1,24 @@
 # CLAUDE.md — Build Rules for RossOS Construction Intelligence Platform
 
+@docs/brain/feature-map.md
+@docs/brain/intent-log.md
+@docs/brain/secrets.local.md
+@docs/brain/test-matrix.md
+
+## Brain Tracker — MANDATORY (Never Skip)
+
+**After EVERY coding task that edits source files (tsx, ts, css, sql), you MUST:**
+1. Update `docs/brain/feature-map.md` with the FULL behavioral spec of what changed — what each button does to UI, backend, and other pages
+2. Update `docs/brain/intent-log.md` with WHY the change was made
+3. Update `docs/brain/test-matrix.md` with new test cases for the changed features
+4. Clear `docs/brain/scripts/changed-files.log` after updating
+
+**This is not optional.** Do not ask if you should update the brain. Do not skip it for "small changes." Every edit gets tracked. A one-line CSS fix, a new button, a refactored function — ALL get logged.
+
+**The feature map is the source of truth for what every button SHOULD do.** When writing a new feature, first write its behavioral spec in the feature map, THEN build it. When testing, the test matrix tells you exactly what to verify.
+
+---
+
 ## Project Overview
 
 - **Product:** RossOS — Multi-tenant construction management SaaS (10,000+ companies, 1,000,000+ users)
