@@ -27,6 +27,9 @@ export interface Database {
           logo_url: string | null
           primary_color: string | null
           settings: Json | null
+          subscription_tier: string
+          subscription_status: string
+          trial_ends_at: string | null
           created_at: string
           updated_at: string
         }
@@ -44,6 +47,9 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string | null
           settings?: Json | null
+          subscription_tier?: string
+          subscription_status?: string
+          trial_ends_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -61,6 +67,9 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string | null
           settings?: Json | null
+          subscription_tier?: string
+          subscription_status?: string
+          trial_ends_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -727,6 +736,352 @@ export interface Database {
           created_at?: string
         }
       }
+      tenant_configs: {
+        Row: {
+          id: string
+          company_id: string
+          section: string
+          key: string
+          value: Json
+          description: string | null
+          data_type: string
+          is_sensitive: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          section: string
+          key: string
+          value: Json
+          description?: string | null
+          data_type?: string
+          is_sensitive?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          section?: string
+          key?: string
+          value?: Json
+          description?: string | null
+          data_type?: string
+          is_sensitive?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      feature_flags: {
+        Row: {
+          id: string
+          company_id: string
+          flag_key: string
+          enabled: boolean
+          plan_required: string | null
+          metadata: Json
+          enabled_at: string | null
+          enabled_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          flag_key: string
+          enabled?: boolean
+          plan_required?: string | null
+          metadata?: Json
+          enabled_at?: string | null
+          enabled_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          flag_key?: string
+          enabled?: boolean
+          plan_required?: string | null
+          metadata?: Json
+          enabled_at?: string | null
+          enabled_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      project_phases: {
+        Row: {
+          id: string
+          company_id: string
+          name: string
+          description: string | null
+          color: string
+          default_duration_days: number | null
+          sort_order: number
+          is_active: boolean
+          is_system: boolean
+          milestone_type: string | null
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          name: string
+          description?: string | null
+          color?: string
+          default_duration_days?: number | null
+          sort_order?: number
+          is_active?: boolean
+          is_system?: boolean
+          milestone_type?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          name?: string
+          description?: string | null
+          color?: string
+          default_duration_days?: number | null
+          sort_order?: number
+          is_active?: boolean
+          is_system?: boolean
+          milestone_type?: string | null
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+      }
+      terminology_overrides: {
+        Row: {
+          id: string
+          company_id: string
+          term_key: string
+          display_value: string
+          plural_value: string | null
+          context: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          term_key: string
+          display_value: string
+          plural_value?: string | null
+          context?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          term_key?: string
+          display_value?: string
+          plural_value?: string | null
+          context?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      numbering_patterns: {
+        Row: {
+          id: string
+          company_id: string
+          entity_type: string
+          pattern: string
+          scope: string
+          current_sequence: number
+          prefix: string | null
+          suffix: string | null
+          padding: number
+          reset_yearly: boolean
+          last_reset_year: number | null
+          sample_output: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          entity_type: string
+          pattern: string
+          scope?: string
+          current_sequence?: number
+          prefix?: string | null
+          suffix?: string | null
+          padding?: number
+          reset_yearly?: boolean
+          last_reset_year?: number | null
+          sample_output?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          entity_type?: string
+          pattern?: string
+          scope?: string
+          current_sequence?: number
+          prefix?: string | null
+          suffix?: string | null
+          padding?: number
+          reset_yearly?: boolean
+          last_reset_year?: number | null
+          sample_output?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      custom_field_definitions: {
+        Row: {
+          id: string
+          company_id: string
+          entity_type: string
+          field_key: string
+          field_label: string
+          field_type: string
+          description: string | null
+          placeholder: string | null
+          default_value: Json | null
+          options: Json | null
+          validation: Json
+          show_conditions: Json | null
+          section: string | null
+          sort_order: number
+          visible_to_roles: string[] | null
+          editable_by_roles: string[] | null
+          show_in_portal: boolean
+          show_in_list_view: boolean
+          is_required: boolean
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          deleted_at: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          entity_type: string
+          field_key: string
+          field_label: string
+          field_type: string
+          description?: string | null
+          placeholder?: string | null
+          default_value?: Json | null
+          options?: Json | null
+          validation?: Json
+          show_conditions?: Json | null
+          section?: string | null
+          sort_order?: number
+          visible_to_roles?: string[] | null
+          editable_by_roles?: string[] | null
+          show_in_portal?: boolean
+          show_in_list_view?: boolean
+          is_required?: boolean
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          entity_type?: string
+          field_key?: string
+          field_label?: string
+          field_type?: string
+          description?: string | null
+          placeholder?: string | null
+          default_value?: Json | null
+          options?: Json | null
+          validation?: Json
+          show_conditions?: Json | null
+          section?: string | null
+          sort_order?: number
+          visible_to_roles?: string[] | null
+          editable_by_roles?: string[] | null
+          show_in_portal?: boolean
+          show_in_list_view?: boolean
+          is_required?: boolean
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          deleted_at?: string | null
+        }
+      }
+      custom_field_values: {
+        Row: {
+          id: string
+          company_id: string
+          field_definition_id: string
+          entity_type: string
+          entity_id: string
+          value: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          field_definition_id: string
+          entity_type: string
+          entity_id: string
+          value: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          field_definition_id?: string
+          entity_type?: string
+          entity_id?: string
+          value?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      numbering_sequences: {
+        Row: {
+          id: string
+          company_id: string
+          pattern_id: string
+          job_id: string | null
+          year: number | null
+          current_value: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          pattern_id: string
+          job_id?: string | null
+          year?: number | null
+          current_value?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          pattern_id?: string
+          job_id?: string | null
+          year?: number | null
+          current_value?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -743,6 +1098,10 @@ export interface Database {
       allocate_amount: {
         Args: { total: number; parts: number }
         Returns: number[]
+      }
+      get_next_sequence_number: {
+        Args: { p_company_id: string; p_entity_type: string; p_job_id: string | null }
+        Returns: string
       }
     }
     Enums: {
@@ -785,3 +1144,11 @@ export type GlJournalLine = Tables<'gl_journal_lines'>
 export type RoleRow = Tables<'roles'>
 export type AuthAuditLogRow = Tables<'auth_audit_log'>
 export type ProjectUserRoleRow = Tables<'project_user_roles'>
+export type TenantConfig = Tables<'tenant_configs'>
+export type FeatureFlag = Tables<'feature_flags'>
+export type ProjectPhase = Tables<'project_phases'>
+export type TerminologyOverride = Tables<'terminology_overrides'>
+export type NumberingPattern = Tables<'numbering_patterns'>
+export type NumberingSequence = Tables<'numbering_sequences'>
+export type CustomFieldDefinition = Tables<'custom_field_definitions'>
+export type CustomFieldValue = Tables<'custom_field_values'>
