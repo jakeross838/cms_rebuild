@@ -4800,3 +4800,83 @@ Amber-tinted bar with Sparkles icon showing summary:
 | Reports & Docs | 15 | Report Builder, WIP Report, Job Cost Detail |
 | Integrations | 15 | QuickBooks Online, Email Integration, Zapier/Webhooks |
 | Security & Admin | 15 | RBAC, 2FA, SSO, Data Export, Feature Flag System |
+
+---
+
+## Construction Intelligence Pages (8 pages)
+<!-- Added: 2026-02-23 — Intelligence skeleton pages from Production Blueprint -->
+**Route:** `/skeleton/intelligence/*`
+**Nav Location:** Intelligence dropdown in companyIntelligenceNav (Brain icon)
+
+### Trade Intuition AI (`/skeleton/intelligence/trade-intuition`)
+**What it is:** The construction superintendent's brain — 30 years of trade knowledge embedded in every AI decision. 80 knowledge domains across 8 categories + 7-Layer Thinking Engine.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `trade-intuition-preview.tsx`
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Header with stats | Display | Shows 80 domains, 8 categories, 7 layers |
+| 8 Category cards | Cards | Material Science, Installation Sequences, Real-World Physics, Problem-Solving, Trade Knowledge, Coordination, Cost Intelligence, Safety & Compliance — each shows 10 domains |
+| 7-Layer Thinking Engine | Interactive demo | Live example showing framing start decision evaluated through: Prerequisites, Material Validation, Trade Conflict Scan, Downstream Impact, Cost & Budget, Quality & Warranty, Client Communication |
+| Knowledge Domains accordion | Expandable | Click category to see 4 example domains with descriptions |
+| Confidence & Override System | Display | 5 flag levels: Safety Block (red), Strong Recommendation (orange), Suggestion (yellow), Learning Nudge (blue), Informational (white) |
+| Cross-module examples | Cards | 6 examples: Scheduling, Invoices, Daily Logs, Change Orders, Vendor Management, Selections |
+| AI Insights panel | Display | 3 insights: Self-Learning, Cross-Module Intelligence, Confidence Calibration |
+
+### Plan Analysis (`/skeleton/intelligence/plan-analysis`)
+**What it is:** AI plan reading and quantity takeoffs — upload blueprints, get automated material quantities, detect scope gaps, and generate material lists.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `plan-analysis-preview.tsx`
+
+### Bidding & Estimating (`/skeleton/intelligence/bidding`)
+**What it is:** Bid analysis and estimating — assembly-based pricing, bid comparison, margin optimization, and competitive intelligence.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `bidding-estimating-preview.tsx`
+
+### Selections Experience (`/skeleton/intelligence/selections`)
+**What it is:** Vibe boards and visual product selections — mood boards, side-by-side comparisons, AR room visualization, and selection gamification.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `selections-experience-preview.tsx`
+
+### Production & Quality (`/skeleton/intelligence/production`)
+**What it is:** Gantt charts with dependencies, quality checklists with photo verification, crew management, and AI-powered production intelligence.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `production-quality-preview.tsx`
+
+### Procurement & Supply Chain (`/skeleton/intelligence/procurement`)
+**What it is:** PO workflows from takeoff to delivery to invoice match. Delivery tracking, vendor compliance, order consolidation, and AI supply chain optimization.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `procurement-preview.tsx`
+
+### Smart Reports (`/skeleton/intelligence/reports`)
+**What it is:** AI-generated narrative reports, portfolio health dashboards, cash flow forecasting, and automated report scheduling.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `smart-reports-preview.tsx`
+
+### AI Hub / Command Center (`/skeleton/intelligence/ai-hub`)
+**What it is:** Cross-cutting AI features — morning briefings, project health scores (0-100), "What If" scenario engine, risk register, and vendor intelligence.
+**Status:** 🚧 Skeleton (mock data)
+**Preview:** `ai-hub-preview.tsx`
+
+| Element | Type | Behavior |
+|---------|------|----------|
+| Stats cards | Display | AI Accuracy (94.2%), Predictions Today (12), Active Alerts (5), Learning Events (847) |
+| Morning Briefing | Display | AI-generated daily summary with weather, financial updates, inspections, crew status |
+| Project Health Scores | Interactive cards | 4 projects with health scores (54-91), budget/schedule status, trend arrows, risk flags |
+| "What If" Scenario Engine | Interactive | Models budget/schedule/margin impact of decisions — shows Viking appliance upgrade example |
+| AI Risk Register | Table | 3 active risks with probability/impact levels and AI-suggested actions |
+| AI Intelligence bar | Display | Amber bar summarizing model accuracy improvements and learned patterns |
+| AI Features Panel | Display | 6 features: Morning Briefings, Health Score Engine, Scenario Modeling, Risk Prediction, Cross-Project Learning, Vendor Intelligence |
+
+### Feature Count Expansion
+The features.ts config was expanded from 205 to 347 features with these new categories:
+| Category | Count | IDs |
+|----------|-------|-----|
+| Trade Intuition AI | 20 | 206-225 |
+| Plan Analysis | 15 | 226-240 |
+| Bidding & Estimating | 18 | 241-258 |
+| Selections Experience | 20 | 259-278 |
+| Production & Quality | 20 | 279-298 |
+| Procurement | 17 | 299-315 |
+| Smart Reports | 15 | 316-330 |
+| Cross-Cutting AI | 17 | 331-347 |

@@ -105,6 +105,24 @@ export const companyJobNav: NavItem[] = [
   },
 ]
 
+// Intelligence: AI-powered construction tools
+export const companyIntelligenceNav: NavItem[] = [
+  {
+    label: 'Intelligence',
+    icon: Brain,
+    items: [
+      { name: 'Trade Intuition AI', href: '/skeleton/intelligence/trade-intuition', description: '80 knowledge domains + 7-Layer Engine' },
+      { name: 'Plan Analysis', href: '/skeleton/intelligence/plan-analysis', description: 'AI plan reading & takeoffs' },
+      { name: 'Bidding', href: '/skeleton/intelligence/bidding', description: 'Bid analysis & estimating' },
+      { name: 'Selections', href: '/skeleton/intelligence/selections', description: 'Vibe boards & visual selections' },
+      { name: 'Production', href: '/skeleton/intelligence/production', description: 'Gantt, quality & crew management' },
+      { name: 'Procurement', href: '/skeleton/intelligence/procurement', description: 'POs, deliveries & supply chain' },
+      { name: 'Smart Reports', href: '/skeleton/intelligence/reports', description: 'AI-generated narratives & dashboards' },
+      { name: 'AI Hub', href: '/skeleton/intelligence/ai-hub', description: 'Morning briefings & project health' },
+    ],
+  },
+]
+
 export const companyRightNav: NavItem[] = [
   {
     label: 'Directory',

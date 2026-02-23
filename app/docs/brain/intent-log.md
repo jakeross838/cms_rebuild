@@ -104,3 +104,37 @@ A comprehensive skeleton UI with 67+ page prototypes covering the planned 52 mod
 - Features default to enabled for "ready" status features
 - Categories are collapsible for easy browsing
 - This is skeleton only — no real database writes, no API, no feature flag enforcement
+
+---
+
+### 2026-02-23 — Construction Intelligence Skeleton Pages (8 pages)
+
+**Why:** The user provided 3 blueprint files (rossos-production-blueprint.md) containing 480+ production and construction intelligence features organized into: Trade Intuition AI (80 knowledge domains + 7-Layer Thinking Engine), Plan Analysis & Takeoffs, Bidding & Estimating, Selections Experience, Production & Quality, Procurement & Supply Chain, Smart Reports, and Cross-Cutting AI. The user said: "start work on these features and make these features have their own spot in the ui too" — meaning each major section should have its own dedicated skeleton page in the UI, following the same visual prototype pattern as all other 67+ skeleton pages.
+
+**What we built:**
+- 8 new skeleton pages under `/skeleton/intelligence/*` with Preview/Spec tabs
+- 8 new preview components in `src/components/skeleton/previews/`
+- New `companyIntelligenceNav` navigation section with Brain icon and 8 sub-links
+- Expanded features.ts from 205 to 347 features with 8 new categories from the blueprint
+- Trade Intuition preview includes full 7-Layer Thinking Engine live demo, 80 knowledge domains across 8 categories, confidence/override system, and cross-module intelligence examples
+- AI Hub preview includes morning briefings, project health scores, "What If" scenario engine, risk register
+
+**How it works:**
+1. User clicks Intelligence in the nav bar dropdown
+2. Sees 8 sub-pages: Trade Intuition AI, Plan Analysis, Bidding, Selections, Production, Procurement, Smart Reports, AI Hub
+3. Each page has Preview tab (visual mock) and Specification tab (PageSpec with workflow, features, connections, AI features)
+4. Trade Intuition is the foundational engine — it powers all other intelligence pages
+5. All 142 new features also appear in the Feature Registry at Settings > Features
+
+**Connected to:**
+- Feature Registry (`/skeleton/company/features`) — all 142 new features visible there
+- All existing skeleton pages — Trade Intuition AI is described as enhancing every module
+- Navigation system — new `companyIntelligenceNav` array exported alongside existing nav arrays
+- Module specs in docs/modules/ and docs/architecture/ai-engine-design.md
+
+**Business rules discussed:**
+- Trade Intuition AI has 80 knowledge domains across 8 categories (10 domains each)
+- 7-Layer Thinking Engine validates every AI decision: Prerequisites → Material Validation → Trade Conflict Scan → Downstream Impact → Cost & Budget → Quality & Warranty → Client Communication
+- 5 confidence flag levels: Safety Block (red, cannot override), Strong Recommendation (orange, requires documented reason), Suggestion (yellow, one-click dismiss), Learning Nudge (blue, based on history), Informational (white, hover context)
+- The system learns from overrides — when you dismiss a suggestion, it records the context and adjusts
+- All skeleton only — no real backend, mock data throughout

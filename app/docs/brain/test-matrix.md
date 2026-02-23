@@ -637,3 +637,86 @@ Every element in the feature map gets test cases auto-generated:
 |---|------------|-----------------|
 | FR-30 | Verify AI Insights bar | Amber bar with Sparkles icon, shows self-learning count and ready count |
 | FR-31 | Verify AI Features Panel | 3 AI features shown: Smart Recommendations, Usage-Based, Self-Learning Dashboard |
+
+---
+
+## Construction Intelligence Pages (8 pages)
+
+### Trade Intuition AI (`/skeleton/intelligence/trade-intuition`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| TI-01 | Navigate to Intelligence > Trade Intuition AI | Page loads with header showing 80 domains, 8 categories, 7 layers |
+| TI-02 | View 8 category cards | All 8 shown: Material Science, Installation Sequences, Real-World Physics, Problem-Solving, Trade Knowledge, Coordination, Cost Intelligence, Safety & Compliance |
+| TI-03 | View 7-Layer Thinking Engine | Live example shows framing decision evaluated through all 7 layers with check/warning items |
+| TI-04 | Expand layer details | Each layer shows specific items with check/warning/info icons |
+| TI-05 | View final recommendation | Shows "Proceed with 1 condition" at 94% confidence |
+| TI-06 | Click Knowledge Domains accordion | Category expands to show 4 example domains with descriptions |
+| TI-07 | View Confidence & Override System | 5 flag levels with colored indicators and example scenarios |
+| TI-08 | View cross-module examples | 6 cards: Scheduling, Invoices, Daily Logs, Change Orders, Vendor Management, Selections |
+| TI-09 | View AI Insights panel | 3 insights: Self-Learning, Cross-Module Intelligence, Confidence Calibration |
+| TI-10 | Switch to Specification tab | PageSpec shows with workflow, features, connections, AI features |
+
+### AI Hub (`/skeleton/intelligence/ai-hub`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| AH-01 | Navigate to Intelligence > AI Hub | Page loads with stats: AI Accuracy, Predictions, Alerts, Learning Events |
+| AH-02 | View Morning Briefing | Shows date, weather, financial, inspection, crew updates |
+| AH-03 | View Project Health Scores | 4 projects with scores (54-91), budget/schedule status, trend arrows |
+| AH-04 | View "What If" Scenario Engine | Viking appliance upgrade example with budget/schedule/margin impacts |
+| AH-05 | View AI Risk Register | 3 risks with probability/impact and AI-suggested mitigations |
+| AH-06 | View AI Intelligence bar | Amber bar with model accuracy and learning summary |
+| AH-07 | View AI Features Panel | 6 features with confidence scores and descriptions |
+| AH-08 | Switch to Specification tab | PageSpec shows correctly |
+
+### Plan Analysis (`/skeleton/intelligence/plan-analysis`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| PA-01 | Navigate to Intelligence > Plan Analysis | Page loads with preview tab active |
+| PA-02 | Switch to Specification tab | Shows workflow, features, connections for AI plan reading |
+
+### Bidding & Estimating (`/skeleton/intelligence/bidding`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| BE-01 | Navigate to Intelligence > Bidding | Page loads with preview tab active |
+| BE-02 | Switch to Specification tab | Shows workflow, features, connections for bid analysis |
+
+### Selections Experience (`/skeleton/intelligence/selections`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| SE-01 | Navigate to Intelligence > Selections | Page loads with preview tab active |
+| SE-02 | Switch to Specification tab | Shows workflow, features, connections for vibe boards |
+
+### Production & Quality (`/skeleton/intelligence/production`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| PQ-01 | Navigate to Intelligence > Production | Page loads with preview tab active |
+| PQ-02 | Switch to Specification tab | Shows workflow, features, connections for Gantt/quality |
+
+### Procurement & Supply Chain (`/skeleton/intelligence/procurement`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| PR-01 | Navigate to Intelligence > Procurement | Page loads with preview tab active |
+| PR-02 | Switch to Specification tab | Shows workflow, features, connections for PO/delivery |
+
+### Smart Reports (`/skeleton/intelligence/reports`)
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| SR-01 | Navigate to Intelligence > Smart Reports | Page loads with preview tab active |
+| SR-02 | Switch to Specification tab | Shows workflow, features, connections for AI reports |
+
+### Navigation Integration
+
+| # | Test Action | Expected Result |
+|---|------------|-----------------|
+| NAV-01 | Click Intelligence in nav bar | Dropdown shows 8 sub-links with Brain icon |
+| NAV-02 | Intelligence dropdown items | Trade Intuition AI, Plan Analysis, Bidding, Selections, Production, Procurement, Smart Reports, AI Hub |
+| NAV-03 | Each intelligence link | Navigates to correct `/skeleton/intelligence/*` route |
+| NAV-04 | Features link description | Shows "Toggle 205 capabilities" under Settings |
