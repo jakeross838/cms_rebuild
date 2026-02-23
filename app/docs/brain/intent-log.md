@@ -138,3 +138,69 @@ A comprehensive skeleton UI with 67+ page prototypes covering the planned 52 mod
 - 5 confidence flag levels: Safety Block (red, cannot override), Strong Recommendation (orange, requires documented reason), Suggestion (yellow, one-click dismiss), Learning Nudge (blue, based on history), Informational (white, hover context)
 - The system learns from overrides — when you dismiss a suggestion, it records the context and adjusts
 - All skeleton only — no real backend, mock data throughout
+
+---
+
+### 2026-02-23 — Feature Flag Wiring Requirements (Future: Module 02)
+
+**Why:** The user asked whether enabling features in the Feature Registry would make them show/hide in the frontend UI. Answer: not yet — toggles are mock only. When Module 02 (Configuration Engine) is built, the Feature Registry must be wired up so toggles actually control what appears in the UI.
+
+**What needs to be built (Module 02 scope):**
+
+1. **Persistent Feature Flag Store**
+   - Save enabled/disabled state per company (start with localStorage, migrate to Supabase `company_feature_flags` table)
+   - Schema: `company_id, feature_id, enabled (boolean), enabled_at, enabled_by`
+   - Default state: all "ready" features enabled, "planned"/"future" disabled
+   - Must survive page refresh and work across tabs
+
+2. **`useFeatureFlag()` Hook**
+   - `useFeatureFlag('ai-morning-briefing')` → returns `{ enabled: boolean, toggle: () => void }`
+   - Reads from the persistent store
+   - Used by any component that needs to check if a feature is on/off
+   - Memoized, doesn't re-render unless the specific flag changes
+
+3. **`<FeatureGate>` Wrapper Component**
+   - `<FeatureGate flag="ai-morning-briefing" fallback={<UpgradeBanner />}>` wraps any feature UI
+   - Renders children only if the feature is enabled
+   - Optional fallback for disabled state (e.g., "Enable this in Settings > Features")
+   - Used on dashboard widgets, page sections, nav items, etc.
+
+4. **Navigation Filtering**
+   - `companyIntelligenceNav` items should only appear if their corresponding feature group is enabled
+   - Settings > Features link always visible (can't hide the control panel)
+   - Job-level nav items filtered by job-relevant feature flags
+   - Nav config in `navigation.ts` needs a `featureFlag?: string` field on each NavItem/NavSubItem
+
+5. **Module-Level Page Gating**
+   - Each skeleton page wraps content in `<FeatureGate>`
+   - Disabled pages show a "This feature is not enabled" state with a link to Settings > Features
+   - Prevents direct URL access to disabled features
+
+6. **Feature Registry Integration**
+   - Toggle switches in Feature Registry write to the persistent store (not just React state)
+   - "Enable All" / "Disable All" per category updates all flags in that category
+   - Changes take effect immediately across the entire UI (no page refresh needed)
+   - Stats cards reflect real enabled/disabled counts from the store
+
+7. **Feature-to-Route Mapping**
+   - Each feature in `features.ts` needs a `routes?: string[]` field mapping to affected pages
+   - Each feature needs a `navItems?: string[]` field mapping to nav items it controls
+   - This creates the link between "toggle feature X" and "hide/show these UI elements"
+
+**What the user said:**
+"just note what needs to be done, so when we do execute on it, it remembers to do all this to make sure the buttons work. I wanna keep it as a skeleton, no actual working buttons."
+
+**Connected to:**
+- Module 02 (Configuration Engine) — this IS the feature flag system
+- Feature Registry page (`/skeleton/company/features`) — the control panel
+- Navigation system (`src/config/navigation.ts`) — filtered by flags
+- All 75+ skeleton pages — each gated by their feature flag
+- Module 43 (Subscription Billing) — feature tiers will restrict which features can be enabled based on plan
+
+**Testing requirements when built:**
+- Toggle feature off → disappears from nav and page renders "not enabled" state
+- Toggle feature on → reappears in nav and page renders normally
+- Refresh page → toggle state persists
+- "Enable All" on a category → all features in that category appear in UI
+- Direct URL to disabled feature → shows disabled state, not a 404
+- Stats in Feature Registry → accurate count from persistent store
