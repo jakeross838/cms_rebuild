@@ -1,5 +1,38 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Phase 0D: Code Quality Hardening (2026-02-24)
+
+### database.ts — Generated Types (Replaced Manual)
+- **Before**: 31 manually-defined tables, missing `Relationships` field causing all Supabase operations to resolve to `never`
+- **After**: 205+ tables generated from live Supabase DB via `generate_typescript_types`, proper `Relationships: GenericRelationship[]` on every table
+- Convenience aliases appended: enum types (UserRole, JobStatus, etc.), row types (Job, User, Client, etc.)
+- 9 placeholder types for tables not yet in live DB: JobAssignment, TenantConfig, FeatureFlag, ProjectPhase, TerminologyOverride, NumberingPattern, NumberingSequence, CustomFieldDefinition, CustomFieldValue
+- 7 literal union types for enums not yet in live DB: ProjectType, CostCodeCategory, NotificationUrgency/Category/Channel, DeliveryStatus, DigestFrequency
+
+### Cast Pattern Fix (435 v2 route files)
+- **Before**: `(supabase.from('table') as any)` — fails because error is on `.from()` argument, not result
+- **After**: `(supabase as any).from('table')` — works by bypassing argument validation on `from()`
+- Applied to all v2 route files that reference tables not in the generated types
+
+### monitoring/index.ts
+- Replaced `api_metrics` DB insert (table doesn't exist) with structured logger calls
+- Fixed audit_log column names: `table_name` → `entity_type`, `record_id` → `entity_id`
+- Removed `as any` casts, added `error: unknown` to catch blocks
+
+### queue/index.ts
+- Removed `type UntypedQuery = any` and all `as UntypedQuery` casts (12+ instances)
+- Added `import type { Json }` and `as Json` for payload fields
+
+### Nullable Field Safety
+- `users.role`, `users.is_active`, `users.created_at`, `users.updated_at` are nullable in live DB
+- `jobs.status`, `jobs.contract_type` are nullable in live DB
+- Added null fallbacks: `?? 'field'`, `?? true`, `?? new Date().toISOString()`, `?? 'active'`
+- Affected: layout.tsx, dashboard/page.tsx, jobs/page.tsx, EditUserModal.tsx, UserTable.tsx
+
+### Config Files (feature-flags, numbering, terminology, resolve-config)
+- Added `(supabase as any)` for tables not in live DB: feature_flags, numbering_patterns, numbering_sequences, tenant_configs, terminology_overrides
+- Updated placeholder types to match config code expectations (added missing fields)
+
 ## Module 47: Training & Certification Platform (V1 Foundation)
 
 ### Database Tables

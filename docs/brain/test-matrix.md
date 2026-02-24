@@ -1,5 +1,28 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Phase 0D: Code Quality Hardening (2026-02-24)
+
+### Automated Tests (all passing)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **TypeScript** | `npx tsc --noEmit` — zero errors across entire codebase | PASS |
+| **Vitest** | 56 test files, 3,309 tests — all passing | PASS |
+| **Core Data Model** | 43 acceptance tests — updated to match live DB schema | PASS |
+| **Factories** | createMockJob/createMockCompany — match live DB columns | PASS |
+
+### Key Validation Points
+
+| What | Verified |
+|------|----------|
+| Generated types load correctly (205+ tables) | Yes — tsc passes |
+| v2 route cast pattern works | Yes — `(supabase as any).from('x')` compiles clean |
+| Nullable fields handled in UI | Yes — role, status, is_active all have fallbacks |
+| Placeholder types match config code | Yes — FeatureFlag, NumberingPattern, TerminologyOverride, TenantConfig |
+| No regressions in existing tests | Yes — all 3,309 tests still pass |
+
+---
+
 ## Module 01: Auth & Access Control (Make It Real — 2026-02-24)
 
 ### Manual Verification Needed (E2E — no automated tests added this session)

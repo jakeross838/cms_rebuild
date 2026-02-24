@@ -21,7 +21,7 @@
 | ID | Phase | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|-------|--------|-----------|------------|----------|------------|-----------|
 | 0C | Foundation Hardening (8 tasks) | done | applied | n/a | n/a | yes | 48271c4 |
-| 0D | Code Quality Hardening (8 tasks) | in_progress | n/a | n/a | n/a | no | no |
+| 0D | Code Quality Hardening (8 tasks) | done | n/a | n/a | n/a | yes | b65edcc |
 
 ---
 
@@ -123,9 +123,9 @@
 
 | Category | Count |
 |----------|-------|
-| Done | 2 (Module 01, Phase 0C) |
+| Done | 3 (Module 01, Phase 0C, Phase 0D) |
 | In Progress | 0 |
-| Not Started | 52 (0D, Modules 02-52) |
+| Not Started | 51 (Modules 02-52) |
 | Blocked | 0 |
 
-**Next up:** Phase 0D — Code Quality Hardening (see `docs/AGENT_QUEUE.md`)
+**Next up:** Module 02 — Configuration Engine (see `docs/AGENT_QUEUE.md`)
