@@ -30,7 +30,7 @@
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
 | 01 | Auth & Access Control | done | applied | yes | yes | yes | 5e345c8 |
-| 02 | Configuration Engine | done | applied | yes | no | yes | pending |
+| 02 | Configuration Engine | done | applied | yes | no | yes | fea8850 |
 | 03 | Core Data Model | not_started | applied | no | no | no | no |
 | 04 | Navigation, Search & Dashboard | not_started | n/a | no | no | no | no |
 | 05 | Notification Engine | not_started | applied | no | no | no | no |
