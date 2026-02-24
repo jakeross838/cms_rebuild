@@ -13,9 +13,9 @@ import {
   ChevronDown,
 } from 'lucide-react'
 
+import { CommandPalette } from '@/components/command-palette/command-palette'
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 
 
@@ -45,17 +45,21 @@ export function TopNav({ user }: TopNavProps) {
         {/* Tenant Switcher */}
         <TenantSwitcher />
 
-        {/* Search */}
-        <div className="max-w-md flex-1">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-            <Input
-              type="search"
-              placeholder="Search jobs, invoices, vendors..."
-              className="pl-10 h-10 w-full rounded-full bg-muted/60 border-transparent hover:bg-muted focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all text-sm"
-            />
+        {/* Search trigger */}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+          className="max-w-md flex-1"
+        >
+          <div className="relative flex items-center pl-10 pr-3 h-10 w-full rounded-full bg-muted/60 border-transparent hover:bg-muted text-sm text-muted-foreground transition-all cursor-pointer">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+            <span>Search jobs, invoices, vendors...</span>
+            <kbd className="ml-auto hidden sm:inline-flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground border">
+              <span className="text-xs">⌘</span>K
+            </kbd>
           </div>
-        </div>
+        </button>
+        <CommandPalette />
       </div>
 
       {/* Right side */}

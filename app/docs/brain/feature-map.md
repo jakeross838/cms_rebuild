@@ -20,6 +20,34 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 
 ---
 
+## Module 04 — Cmd+K Global Search / Command Palette (2026-02-23)
+
+### TopNav Search Trigger (`components/layout/top-nav.tsx`)
+- **Search button** — Replaces the old non-functional `<Input>`. Styled as a rounded pill showing "Search jobs, invoices, vendors..." with ⌘K kbd hint. Click dispatches `'open-command-palette'` custom event. Status: ✅ Working
+- **CommandPalette mount** — `<CommandPalette />` rendered inside TopNav (client component boundary). Opens via ⌘K/Ctrl+K or click on search button. Status: ✅ Working
+
+### Command Palette (`components/command-palette/command-palette.tsx`)
+- **Dialog** — Radix Dialog at `top-[20%]`, max-width `sm:max-w-xl`, no close button (uses Esc). `shouldFilter={false}` (server-side filtering for entity results, client-side for quick actions). Status: ✅ Working
+- **Search input** — `<Command.Input>` with Search icon. Debounced 250ms via `useSearch` hook. Minimum 2 chars to trigger API search. Status: ✅ Working
+- **Recent searches** — Shown when query is empty and recent searches exist. Clock icon + term. Click populates query. "Clear" button removes all. Max 10 items in localStorage (`rossos-recent-searches`). Status: ✅ Working
+- **Search results** — Grouped by entity type (Jobs, Clients, Vendors, Invoices). Each `<SearchResultItem>` shows entity icon (color-coded: blue/green/purple/amber), title, subtitle, optional status badge. Status: ✅ Working
+- **Quick actions** — Shown below search results (or as primary content when no query). Create actions (Create New Job, Add New Client, Add New Vendor) plus navigation actions derived from nav config. Arrow icon appears on hover. Status: ✅ Working
+- **Keyboard footer** — Shows ↑↓ navigate, ↵ select, esc close hints. Status: ✅ Working
+- **On select** — `router.push(result.url)`, closes palette, adds query to recent searches. Status: ✅ Working
+
+### Search API (`api/v2/search/route.ts`)
+- **GET /api/v2/search** — Params: `q` (required, 2-200 chars), `types` (optional CSV: jobs,clients,vendors,invoices), `limit` (optional, default 5, max 20). Auth required, rate limited. Queries 4 entity tables in parallel via `Promise.all`. Filters by `company_id`, `deleted_at IS NULL` (except invoices), uses `.ilike()` + `.or()`. Returns `{ data: { query, groups, total } }`. Status: ✅ Working
+
+### Search Utilities
+- **recent-searches.ts** (`lib/search/recent-searches.ts`) — `getRecentSearches()`, `addRecentSearch(term)`, `clearRecentSearches()`. localStorage backed, max 10 items, deduplicates, trims, rejects <2 char terms. Status: ✅ Working
+- **quick-actions.ts** (`lib/search/quick-actions.ts`) — `getQuickActions()`, `filterQuickActions(query)`. 3 create actions (job/client/vendor) + navigation actions derived from all 4 nav config exports. Cached after first call. Status: ✅ Working
+
+### Hooks
+- **useSearch** (`hooks/use-search.ts`) — Debounced 250ms, React Query with `queryKey: ['search', debouncedQuery]`, `staleTime: 30s`. Only fires when `debouncedQuery.length >= 2`. Status: ✅ Working
+- **useCommandPalette** (`hooks/use-command-palette.ts`) — Manages open/close state, ⌘K/Ctrl+K listener, `'open-command-palette'` event listener, recent search state, quick actions. Status: ✅ Working
+
+---
+
 ## Module 02 — Configuration Engine Settings UI (2026-02-23)
 
 ### Settings Layout

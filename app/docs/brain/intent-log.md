@@ -14,6 +14,16 @@ Each entry captures:
 
 ---
 
+## Module 04 — Cmd+K Global Search / Command Palette (2026-02-23)
+
+- **Why** — Module 04 spec requires a keyboard-activated search overlay for fast navigation. Navigation config and dashboard were already done, but the Cmd+K command palette (the main UX differentiator for power users) was missing. The TopNav had a non-functional placeholder `<Input>` for search.
+- **What** — 11 new files + 2 modified files. Types, Zod schema, search API endpoint, recent-searches localStorage utility, quick-actions nav-derived utility, 2 React hooks (useSearch, useCommandPalette), 3 command palette components (search-result-item, quick-actions, command-palette), TopNav modification, 21 acceptance tests. Added `cmdk` package (~4KB).
+- **How** — Cmd+K or search button click opens Radix Dialog wrapping `cmdk`'s `<Command>` component. Query debounced 250ms, hits `/api/v2/search` which queries jobs/clients/vendors/invoices in parallel with `.ilike()` + `.or()` (same pattern as existing CRUD APIs). Results grouped by entity type. Quick actions derived from all 4 nav config exports. Recent searches stored in localStorage (max 10, deduped). On select: `router.push()` + close + save to recents.
+- **Rules** — (1) `shouldFilter={false}` on Command: server-side filtering for entity results, client-side keyword matching for quick actions. (2) Query must be 2-200 chars. (3) Default limit 5 results per entity, max 20. (4) All queries filter by `company_id` (multi-tenant). (5) CommandPalette renders inside TopNav (client component) — no server component boundary issues.
+- **Connected to** — Module 01 (auth required for search API), Module 03 (searches across jobs, clients, vendors tables), Nav config (quick actions derived from all nav sections)
+
+---
+
 ## Module 02 — Settings UI Pages (2026-02-23)
 
 - **Why** — Module 02 backend (5 API routes, config engine lib, DB tables) was complete but had NO settings UI. Users need to configure company settings, toggle features, customize terminology, set numbering patterns, and manage project phases from the UI.

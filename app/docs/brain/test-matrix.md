@@ -6,6 +6,33 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 04 — Global Search Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/04-search.acceptance.test.ts`) — 21 tests
+- [x] Accepts valid query with 2+ chars
+- [x] Rejects query < 2 chars
+- [x] Rejects query > 200 chars
+- [x] Parses types CSV into array
+- [x] Rejects invalid entity types
+- [x] Default limit = 5
+- [x] Rejects limit > 20
+- [x] SearchEntityType covers jobs, clients, vendors, invoices
+- [x] SearchResult has required fields
+- [x] SearchResponse groups results by entity
+- [x] Includes create actions for jobs, clients, vendors
+- [x] Includes navigation actions derived from nav config
+- [x] Each action has id, label, href, category, keywords
+- [x] No duplicate action IDs
+- [x] Create actions have category = create
+- [x] Filters actions by query keyword
+- [x] Stores up to 10 items (recent searches)
+- [x] Deduplicates entries with most recent first
+- [x] Trims whitespace
+- [x] Rejects terms under 2 chars
+- [x] clearRecentSearches empties the store
+
+---
+
 ## Module 02 — Config Engine Tests (2026-02-23)
 
 ### Acceptance Tests (`tests/acceptance/02-config-engine.acceptance.test.ts`) — 30 tests
