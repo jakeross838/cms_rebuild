@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Module 01 — Auth & Access Control (Make It Real)
+
+### Why
+Signup and login were functional via Supabase Auth, but the auth system was incomplete. The DB was missing critical tables (roles, auth_audit_log, user_invitations, project_user_roles) and columns (users.last_login_at, users.deleted_at, companies.subscription_status, companies.permissions_mode). The API routes referenced these missing structures and would crash on real data operations. Settings > Users and Settings > Roles pages were wired to API endpoints that would fail without the tables. This change makes Module 01 production-real — DB schema matches code, signup seeds roles, login logs audits, settings pages show live data.
+
+### What was built
+- **Migration** (via Supabase MCP `auth_module_complete`): Added 16 columns to companies (including permissions_mode, subscription_tier, subscription_status, trial_ends_at), 4 columns to users (last_login_at, preferences, deleted_at, updated_at), created roles/auth_audit_log/user_invitations/project_user_roles tables with full RLS policies and triggers. Created prevent_company_id_change() trigger function.
+- **Signup route fix**: Uncommented role seeding (7 system roles per company), added user_company_memberships insert, added auth_audit_log entry for signup, set company defaults (permissions_mode=open, subscription_tier=trial, trial_ends_at=14 days).
+- **Login route fix**: Changed failed login audit from sentinel UUID (would fail FK) to looking up the user by email to get company_id. Wrapped in try/catch so audit failure doesn't block login.
+- **Me route fix**: Read permissions_mode directly from companies.permissions_mode column instead of nested settings JSON.
+- **UserTable pagination fix**: Changed `data.pagination?.totalCount` to `data.pagination?.total` to match paginatedResponse() shape.
+
+### Design decisions
+1. **Migration via Supabase MCP**: Applied directly to live DB rather than local migration file, since many prior migrations in the local `supabase/migrations/` folder hadn't been applied to the remote DB. The migration uses `IF NOT EXISTS` / `IF NOT EXISTS` guards and `DROP POLICY IF EXISTS` to be idempotent.
+2. **ip_address as TEXT not INET**: The migration uses TEXT for auth_audit_log.ip_address because the application code passes raw string headers. The local migration file used INET which would reject x-forwarded-for headers with port numbers.
+3. **No code changes needed for Users/Roles pages and API routes**: All the routes and UI components were already built and wired correctly. The only blocker was missing DB tables, which the migration fixed.
+4. **user_invitations.role uses user_role enum**: The live migration uses the native `user_role` enum type for the role column (matching the type system), whereas the local migration file used TEXT with CHECK constraint.
+
+---
+
 ## 2026-02-23: Module 47 — Training & Certification Platform V1 Foundation
 
 ### Why

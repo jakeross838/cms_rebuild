@@ -1,5 +1,45 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Module 01: Auth & Access Control (Make It Real — 2026-02-24)
+
+### Manual Verification Needed (E2E — no automated tests added this session)
+
+| Category | Test Case | Expected Result |
+|----------|-----------|-----------------|
+| **Signup** | New user signs up with email/password/name/company | Account created, 7 system roles seeded, membership created, audit log entry written |
+| **Signup** | Check company defaults after signup | permissions_mode=open, subscription_tier=trial, trial_ends_at=14 days |
+| **Login** | Login with valid credentials | Session created, last_login_at updated, audit log entry |
+| **Login** | Login with wrong password | 401 returned, audit log entry (if user exists) |
+| **Login** | Login as deactivated user | 403 "Account is deactivated" |
+| **Me** | GET /api/v1/auth/me | Returns profile + company + permissions + permissionsMode |
+| **Users** | Settings > Users loads | Shows list of company users from API |
+| **Users** | Invite user | Creates invitation, sends email |
+| **Users** | Edit user role | PATCH updates role (admin+ only, cannot change self) |
+| **Users** | Deactivate user | Sets is_active=false, deleted_at=now |
+| **Users** | Cannot deactivate last owner | Returns 403 with message |
+| **Users** | Reactivate user | Sets is_active=true, deleted_at=null |
+| **Roles** | Settings > Roles loads | Shows 7 system roles + any custom roles |
+| **Roles** | System roles are read-only | Lock icon, no edit/delete actions |
+| **Roles** | Create custom role | POST with name, base_role, permissions |
+| **Roles** | Edit custom role | PATCH updates name/description/permissions |
+| **Roles** | Delete custom role | Soft-delete (sets deleted_at) |
+| **Roles** | Cannot delete system role | Returns 403 |
+
+### Existing Automated Tests (37 tests in `tests/unit/auth/permissions.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Permissions** | resolvePermissions returns base role permissions | PASS |
+| **Permissions** | resolvePermissions adds custom permissions | PASS |
+| **Permissions** | resolvePermissions removes permissions | PASS |
+| **Permissions** | canPerform checks permission strings | PASS |
+| **Permissions** | hasPermission open mode allows everything | PASS |
+| **Permissions** | hasPermission open mode blocks billing for non-owners | PASS |
+| **Permissions** | isRoleAtLeast checks hierarchy correctly | PASS |
+| **Permissions** | 30+ additional permission resolution tests | PASS |
+
+---
+
 ## Module 47: Training & Certification Platform
 
 ### Acceptance Tests (95 tests in `tests/acceptance/47-training.acceptance.test.ts`)

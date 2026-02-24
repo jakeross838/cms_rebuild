@@ -30,18 +30,30 @@ export const POST = createApiHandler(
     })
 
     if (authError || !authData.user || !authData.session) {
-      // Log the failed login attempt via admin client (bypasses RLS)
-      const admin = createAdminClient()
-      const failedEntry: AuthAuditLogInsert = {
-        // We don't know the company_id for a failed login; use a sentinel
-        company_id: '00000000-0000-0000-0000-000000000000',
-        user_id: null,
-        event_type: 'login_failed',
-        ip_address: ipAddress,
-        user_agent: userAgent,
-        metadata: { email, reason: authError?.message ?? 'Unknown error' },
+      // Log the failed login attempt — look up user to get company_id
+      try {
+        const admin = createAdminClient()
+        const { data: failedUser } = await admin
+          .from('users')
+          .select('id, company_id')
+          .eq('email', email)
+          .limit(1)
+          .single() as { data: { id: string; company_id: string } | null; error: unknown }
+
+        if (failedUser) {
+          const failedEntry: AuthAuditLogInsert = {
+            company_id: failedUser.company_id,
+            user_id: failedUser.id,
+            event_type: 'login_failed',
+            ip_address: ipAddress,
+            user_agent: userAgent,
+            metadata: { email, reason: authError?.message ?? 'Unknown error' },
+          }
+          await admin.from('auth_audit_log').insert(failedEntry as never)
+        }
+      } catch {
+        // Don't block login response if audit logging fails
       }
-      await admin.from('auth_audit_log').insert(failedEntry as never)
 
       return NextResponse.json(
         {

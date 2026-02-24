@@ -50,13 +50,12 @@ export const GET = createApiHandler(
     // Fetch company settings for permissions_mode
     const { data: company } = await supabase
       .from('companies')
-      .select('id, name, settings')
+      .select('id, name, settings, permissions_mode')
       .eq('id', profile.company_id)
-      .single() as { data: Pick<Company, 'id' | 'name' | 'settings'> | null; error: unknown }
+      .single() as { data: (Pick<Company, 'id' | 'name' | 'settings'> & { permissions_mode?: string }) | null; error: unknown }
 
-    const settings = company?.settings as Record<string, unknown> | null
     const permissionsMode: PermissionsMode =
-      (settings?.permissions_mode as PermissionsMode) ?? 'open'
+      (company?.permissions_mode as PermissionsMode) ?? 'open'
 
     // Resolve the user's effective permissions
     const permissions = resolvePermissions(profile.role as UserRole)

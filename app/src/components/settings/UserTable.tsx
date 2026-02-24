@@ -86,7 +86,7 @@ export function UserTable({
         const data = await response.json()
         setUsers(data.data || [])
         setTotalPages(data.pagination?.totalPages || 1)
-        setTotalCount(data.pagination?.totalCount || 0)
+        setTotalCount(data.pagination?.total || 0)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {

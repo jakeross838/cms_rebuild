@@ -1451,3 +1451,57 @@
 - listReleasesSchema (page/limit/release_type/status/q)
 - createReleaseSchema (requires version max 50; defaults: release_type=minor, status=planned, affected_services=[])
 - updateReleaseSchema (all fields optional)
+
+---
+
+## Module 01: Auth & Access Control (Make It Real — 2026-02-24)
+
+### Database Migration Applied
+- **companies table**: Added 16 columns — legal_name, email, phone, website, address, city, state, zip, logo_url, primary_color, subscription_tier (default 'trial'), subscription_status (default 'active'), trial_ends_at, permissions_mode (default 'open'), updated_at, deleted_at
+- **users table**: Added 4 columns — last_login_at, preferences (JSONB), deleted_at, updated_at
+- **roles table**: Created — id, company_id (FK), name, description, base_role (user_role enum), is_system, permissions (JSONB), field_overrides (JSONB), timestamps, deleted_at. Partial unique on (company_id, name) WHERE deleted_at IS NULL. RLS: select=same company, insert/update=owner/admin only.
+- **auth_audit_log table**: Created — id, company_id (FK), user_id (FK nullable), event_type, ip_address, user_agent, metadata (JSONB), created_at. RLS: select=owner/admin, inserts via service role only.
+- **user_invitations table**: Created — id, company_id (FK), email, name, role (user_role enum), token_hash (unique), expires_at (default 7 days), accepted_at, revoked_at, invited_by (FK), timestamps. RLS: select=owner/admin, insert=owner/admin/pm, update=owner/admin. Token lookup function `get_invitation_by_token()`.
+- **project_user_roles table**: Created — id, company_id (FK), user_id (FK), job_id (FK), role_id (FK nullable), role_override (user_role), granted_by (FK), created_at. UNIQUE(user_id, job_id). Infrastructure only, not enforced v1.
+- **prevent_company_id_change()**: Trigger function created, attached to users, roles, user_invitations, project_user_roles.
+- **updated_at triggers**: Attached to companies, users, roles, user_invitations.
+
+### Signup Route Changes (`/api/v1/auth/signup`)
+- Company insert now includes: permissions_mode='open', subscription_tier='trial', subscription_status='active', trial_ends_at (14 days from now)
+- After creating user profile: inserts user_company_memberships row (auth_user_id, company_id, role=owner, status=active)
+- Seeds 7 system roles for the company: Owner, Admin, PM, Superintendent, Office, Field, Read Only
+- Logs signup event to auth_audit_log with IP + user agent
+
+### Login Route Changes (`/api/v1/auth/login`)
+- Failed login audit: now looks up user by email to get company_id (was using sentinel UUID that would fail FK). Wrapped in try/catch to avoid blocking login response.
+- Successful login: updates last_login_at and inserts auth_audit_log entry (both worked already, but columns/table now exist)
+
+### Me Route Changes (`/api/v1/auth/me`)
+- Reads permissions_mode directly from companies.permissions_mode column instead of nested settings JSON
+
+### Settings > Users Page (already wired)
+- UserTable component fetches from GET /api/v1/users with search, role filter, status filter, pagination
+- Fixed pagination: reads `data.pagination.total` instead of non-existent `totalCount`
+- InviteUserModal POSTs to /api/v1/users
+- EditUserModal GETs /api/v1/users/:id and PATCHes
+- Deactivate/Reactivate via POST /api/v1/users/:id/deactivate and /reactivate
+
+### Settings > Roles Page (already wired)
+- Fetches GET /api/v1/roles — splits into system (read-only with lock icon) vs custom (editable)
+- RoleModal creates/edits via POST/PATCH /api/v1/roles and /api/v1/roles/:id
+- Delete via DELETE /api/v1/roles/:id (soft delete, sets deleted_at)
+
+### API Endpoints (all existed, now functional with DB)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v1/users | List users for company. Filters: search (name/email ilike), role, status (active/inactive/all). Paginated. |
+| POST | /api/v1/users | Invite user. Creates user_invitations row + sends email. Checks for existing user/pending invite. |
+| GET | /api/v1/users/:id | Get single user by ID. Scoped to company. |
+| PATCH | /api/v1/users/:id | Update user (name, phone, avatar_url, role). Self-update cannot change role. Non-admin can only update self. |
+| POST | /api/v1/users/:id/deactivate | Soft-deactivate: is_active=false, deleted_at=now. Cannot deactivate self or last owner. |
+| POST | /api/v1/users/:id/reactivate | Reactivate: is_active=true, deleted_at=null. |
+| GET | /api/v1/roles | List roles. Returns system + custom roles sorted by hierarchy. Paginated. |
+| POST | /api/v1/roles | Create custom role. Requires name, base_role. Permissions + field_overrides optional. |
+| GET | /api/v1/roles/:id | Get single role. |
+| PATCH | /api/v1/roles/:id | Update custom role. System roles return 403. |
+| DELETE | /api/v1/roles/:id | Soft-delete custom role. System roles return 403. |
