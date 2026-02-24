@@ -14,6 +14,16 @@ Each entry captures:
 
 ---
 
+## Module 06 — Document Storage (2026-02-23)
+
+- **Why** — Module 06 spec requires shared infrastructure for all file/document operations. Construction projects generate enormous volumes of documents — plans, specs, contracts, invoices, COIs, permits, photos. The system needs upload, organized storage, versioning, tagging, access control, and expiration tracking. This is a Phase 1 Foundation module that nearly every downstream module depends on.
+- **What** — 9 DB tables (migration applied to Supabase), document types + constants file, Zod validation schemas (10 schemas), storage utility lib (validate, path build, MIME categorize, format), 8 API routes (document CRUD + download + versions + folder CRUD), 40 acceptance tests. V1 foundation scope — defers AI classification, OCR, e-signatures, redaction, email ingestion to later phases.
+- **How** — Files uploaded via client → POST metadata to `/api/v2/documents` → record created with storage path `{company}/{job}/{uuid}_{filename}` → initial version created → tags attached. Download via signed URL (1hr expiry) from Supabase Storage. Folders use materialized path pattern for hierarchy. Versions auto-increment. Soft delete only (status='archived'). Blocked extensions prevent malicious uploads.
+- **Rules** — (1) Multi-tenant: all queries filter by company_id, RLS on all tables. (2) Soft delete only. (3) Blocked extensions: exe, bat, sh, cmd, ps1, msi, dll, etc. (4) Max file size 500MB. (5) Max 20 simultaneous uploads. (6) Folder deletion blocked if has children or active documents. (7) Document types: 14 categories from invoice through other. (8) Signed URLs expire in 1 hour. (9) Quarantined/deleted documents blocked from download.
+- **Connected to** — Module 01 (auth required for all endpoints), Module 03 (job_id references), Module 05 (expiration alerts via notification engine), Module 04 (document search integration future), all future modules (document attachment)
+
+---
+
 ## Module 05 — Notification Engine (2026-02-23)
 
 - **Why** — Module 05 spec requires a real-time notification system for construction operations. Users need to be notified about financial events, schedule changes, document uploads, field operations, approvals, and system events. The TopNav had a static bell icon placeholder with no functionality.

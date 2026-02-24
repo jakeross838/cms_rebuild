@@ -20,6 +20,44 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 
 ---
 
+## Module 06 — Document Storage (2026-02-23)
+
+### Documents API (`app/api/v2/documents/`)
+- **GET /api/v2/documents** — Paginated list/search. Filters: job_id, folder_id, document_type, status, tag, q (filename search). Excludes deleted. Ordered by created_at desc. Auth required. Status: ✅ Working
+- **POST /api/v2/documents** — Create document record. Validates file (extension blocklist, 500MB max). Builds storage path `{company}/{job}/{uuid}_{filename}`. Creates initial version record. Optionally adds tags. Returns 201. Status: ✅ Working
+- **GET /api/v2/documents/:id** — Get document with tags array and version history. Excludes deleted. Status: ✅ Working
+- **PUT /api/v2/documents/:id** — Update filename, folder_id, document_type, tags. Tags replaced atomically (delete all + insert new). Status: ✅ Working
+- **DELETE /api/v2/documents/:id** — Soft delete: sets status='archived' and deleted_at timestamp. Status: ✅ Working
+- **GET /api/v2/documents/:id/download** — Returns signed URL (1 hour expiry) from Supabase Storage. Blocks download of deleted/quarantined documents. Status: ✅ Working
+- **GET /api/v2/documents/:id/versions** — List version history, newest first. Status: ✅ Working
+- **POST /api/v2/documents/:id/versions** — Upload new version. Auto-increments version_number. Updates document's current_version_id, storage_path, file_size. Status: ✅ Working
+
+### Folders API (`app/api/v2/folders/`)
+- **GET /api/v2/folders?job_id=** — List folder tree for a job (or company-level if no job_id). Ordered by sort_order, then name. Status: ✅ Working
+- **POST /api/v2/folders** — Create folder. Builds materialized path from parent. 409 on duplicate path. Status: ✅ Working
+- **PUT /api/v2/folders/:id** — Rename or move folder. Updates path when renamed. Status: ✅ Working
+- **DELETE /api/v2/folders/:id** — Delete folder. Blocked (409) if folder has sub-folders or active documents. Status: ✅ Working
+
+### Storage Utility (`lib/documents/storage.ts`)
+- **validateFile()** — Rejects blocked extensions (exe, bat, sh, cmd, ps1, etc.) and files > 500MB or 0 bytes. Returns null if valid, error string if not. Status: ✅ Working
+- **getFileExtension()** — Extracts lowercase extension from filename. Status: ✅ Working
+- **buildStoragePath()** — Creates `{company}/{job}/{uuid}_{sanitized_filename}`. Uses `_company` segment when no job. Sanitizes special characters. Status: ✅ Working
+- **getMimeCategory()** — Categorizes MIME types: image, pdf, document, spreadsheet, archive, other. Status: ✅ Working
+- **formatFileSize()** — Human-readable bytes (B, KB, MB, GB, TB). Status: ✅ Working
+
+### Database Tables (Supabase migration `20260223210000`)
+- **document_folders** — Hierarchical folders with materialized path. Unique on company+job+path. RLS. Status: ✅ Applied
+- **documents** — Core document records. Indexes on company+job+folder, company+type, company+status, filename trigram. RLS. Status: ✅ Applied
+- **document_versions** — Version history per document. Unique on document+version_number. Status: ✅ Applied
+- **document_tags** — Many-to-many tags. Unique on document+tag. Status: ✅ Applied
+- **company_tag_library** — Company-defined tag vocabulary. RLS. Status: ✅ Applied
+- **document_search_content** — Full-text search with tsvector GIN index. Status: ✅ Applied
+- **document_expirations** — Expiration tracking with multi-level alert flags. RLS. Status: ✅ Applied
+- **company_document_settings** — Folder templates, retention policy, blocked extensions. RLS. Status: ✅ Applied
+- **company_storage_usage** — Usage tracking with quota (default 50GB). RLS. Status: ✅ Applied
+
+---
+
 ## Module 05 — Notification Engine (2026-02-23)
 
 ### NotificationBell (`components/notifications/notification-bell.tsx`)

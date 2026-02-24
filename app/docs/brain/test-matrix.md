@@ -6,6 +6,52 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 06 — Document Storage Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/06-document-storage.acceptance.test.ts`) — 40 tests
+- [x] DocumentStatus has 5 values
+- [x] DocumentType has 14 document types
+- [x] ExtractionStatus has 4 values
+- [x] Document interface has all required fields
+- [x] DocumentFolder interface has all required fields
+- [x] DocumentVersion interface has all required fields
+- [x] CompanyDocumentSettings has folder_templates and retention_policy
+- [x] CompanyStorageUsage tracks bytes and quota
+- [x] BLOCKED_EXTENSIONS includes dangerous file types
+- [x] MAX_FILE_SIZE_BYTES is 500 MB
+- [x] MAX_SIMULTANEOUS_UPLOADS is 20
+- [x] DOCUMENT_TYPES has 14 entries with value and label
+- [x] DEFAULT_FOLDER_TEMPLATE has 14 folders
+- [x] STORAGE_BUCKET is defined
+- [x] SIGNED_URL_EXPIRY_SECONDS is 1 hour
+- [x] documentStatusEnum accepts all 5 statuses
+- [x] documentTypeEnum accepts all 14 types
+- [x] documentTypeEnum rejects invalid type
+- [x] listDocumentsSchema accepts valid params
+- [x] listDocumentsSchema rejects limit > 100
+- [x] uploadDocumentSchema accepts valid upload
+- [x] uploadDocumentSchema requires filename, mime_type, file_size
+- [x] uploadDocumentSchema rejects file_size > 500MB
+- [x] updateDocumentSchema accepts partial updates
+- [x] createFolderSchema requires name
+- [x] createVersionSchema accepts valid version
+- [x] setExpirationSchema requires valid date format
+- [x] addTagSchema requires non-empty tag
+- [x] updateDocumentSettingsSchema accepts folder templates
+- [x] updateDocumentSettingsSchema accepts retention policy
+- [x] validateFile rejects blocked extensions
+- [x] validateFile accepts valid files
+- [x] validateFile rejects oversized files
+- [x] validateFile rejects zero-size files
+- [x] getFileExtension extracts correctly
+- [x] buildStoragePath creates correct structure
+- [x] buildStoragePath uses _company when no job
+- [x] buildStoragePath sanitizes filenames
+- [x] getMimeCategory categorizes correctly
+- [x] formatFileSize formats correctly
+
+---
+
 ## Module 05 — Notification Engine Tests (2026-02-23)
 
 ### Acceptance Tests (`tests/acceptance/05-notification-engine.acceptance.test.ts`) — 27 tests

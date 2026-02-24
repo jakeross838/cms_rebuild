@@ -1,0 +1,163 @@
+/**
+ * Document Versions API
+ *
+ * GET  /api/v2/documents/:id/versions — List version history
+ * POST /api/v2/documents/:id/versions — Upload new version
+ */
+
+import { type NextRequest, NextResponse } from 'next/server'
+
+import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { createVersionSchema } from '@/lib/validation/schemas/documents'
+import { buildStoragePath, validateFile } from '@/lib/documents/storage'
+
+// ============================================================================
+// GET /api/v2/documents/:id/versions
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req: NextRequest, ctx: ApiContext) => {
+    const segments = req.nextUrl.pathname.split('/')
+    const id = segments[segments.length - 2] // /documents/:id/versions
+    if (!id) {
+      return NextResponse.json({ error: 'Bad Request', message: 'Missing document ID', requestId: ctx.requestId }, { status: 400 })
+    }
+
+    const supabase = await createClient()
+
+    // Verify document belongs to company
+    const { error: docError } = await (supabase
+      .from('documents') as any)
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .single()
+
+    if (docError) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Document not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    const { data: versions, error } = await (supabase
+      .from('document_versions') as any)
+      .select('id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at')
+      .eq('document_id', id)
+      .order('version_number', { ascending: false })
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data: versions ?? [], requestId: ctx.requestId })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// POST /api/v2/documents/:id/versions — Create new version
+// ============================================================================
+
+export const POST = createApiHandler(
+  async (req: NextRequest, ctx: ApiContext) => {
+    const segments = req.nextUrl.pathname.split('/')
+    const id = segments[segments.length - 2]
+    if (!id) {
+      return NextResponse.json({ error: 'Bad Request', message: 'Missing document ID', requestId: ctx.requestId }, { status: 400 })
+    }
+
+    const body = await req.json()
+    const parseResult = createVersionSchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid version data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+
+    // Validate file
+    const fileError = validateFile(input.filename, input.file_size)
+    if (fileError) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: fileError, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const supabase = await createClient()
+
+    // Get current document and latest version number
+    const { data: doc, error: docError } = await (supabase
+      .from('documents') as any)
+      .select('id, job_id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .single()
+
+    if (docError || !doc) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Document not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    const { data: latestVersion } = await (supabase
+      .from('document_versions') as any)
+      .select('version_number')
+      .eq('document_id', id)
+      .order('version_number', { ascending: false })
+      .limit(1)
+      .single()
+
+    const nextVersion = (latestVersion?.version_number ?? 0) + 1
+    const versionId = crypto.randomUUID()
+    const storagePath = buildStoragePath(ctx.companyId!, doc.job_id, input.filename, versionId)
+
+    // Create version record
+    const { data: version, error: versionError } = await (supabase
+      .from('document_versions') as any)
+      .insert({
+        id: versionId,
+        document_id: id,
+        version_number: nextVersion,
+        storage_path: storagePath,
+        file_size: input.file_size,
+        mime_type: input.mime_type,
+        change_notes: input.change_notes ?? null,
+        uploaded_by: ctx.user!.id,
+      })
+      .select('*')
+      .single()
+
+    if (versionError) {
+      return NextResponse.json(
+        { error: 'Database Error', message: versionError.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    // Update document's current version and metadata
+    await (supabase
+      .from('documents') as any)
+      .update({
+        current_version_id: versionId,
+        storage_path: storagePath,
+        file_size: input.file_size,
+        mime_type: input.mime_type,
+        filename: input.filename,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+
+    return NextResponse.json({ data: version, requestId: ctx.requestId }, { status: 201 })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
