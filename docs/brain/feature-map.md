@@ -1,5 +1,44 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Module 04: Navigation, Search & Dashboard (2026-02-24)
+
+### Search API (`/api/v2/search`)
+- GET with query params: q (2-200 chars), types (CSV: jobs,clients,vendors,invoices), limit (default 5, max 20)
+- Parallel queries to jobs, clients, vendors, invoices tables
+- Returns grouped SearchResponse: { query, groups[{ entity_type, label, results[], total }], total }
+- LIKE-based search on name, job_number, email, company_name fields
+- Tenant-isolated (company_id filter), soft-delete aware
+
+### Command Palette (`components/command-palette/command-palette.tsx`)
+- Dialog triggered by Cmd+K / Ctrl+K global listener
+- States: empty (shows recent searches), typing (shows search results + quick actions)
+- 250ms debounced API calls, min 2 chars
+- Keyboard navigation: ↑↓ navigate, Enter select, Esc close
+- Sub-components: QuickActionItem, SearchResultItem (with entity-type color coding)
+
+### Quick Actions (`lib/search/quick-actions.ts`)
+- `getQuickActions()` — returns create actions + nav-derived actions (cached)
+- `filterQuickActions(query)` — keyword-based filtering
+- Create actions: "Create New Job", "Add New Client", "Add New Vendor"
+- Nav actions: flattened from companyNav, companyJobNav, companyRightNav, companyIntelligenceNav
+
+### Recent Searches (`lib/search/recent-searches.ts`)
+- localStorage-based persistence
+- 10-item cap, deduplication, 2-char minimum, whitespace trimming
+- `getRecentSearches()`, `addRecentSearch(term)`, `clearRecentSearches()`
+
+### Hooks
+- `useCommandPalette()` — open/close state, recent searches, quick actions, Cmd+K listener
+- `useSearch(query, enabled)` — debounced React Query, 30s stale time
+
+### Types (`types/search.ts`)
+- SearchEntityType: 'jobs' | 'clients' | 'vendors' | 'invoices'
+- SearchResult: { id, entity_type, title, subtitle, status, url }
+- SearchResponse: { query, groups[], total }
+- QuickAction: { id, label, description, icon, href, category, keywords[] }
+
+---
+
 ## Module 05: Notification Engine (2026-02-24)
 
 ### API Routes (6 endpoints at /api/v2/notifications/)

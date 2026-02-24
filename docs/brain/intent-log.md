@@ -1,5 +1,27 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Module 04 — Navigation, Search & Dashboard
+
+### Why
+Module 04 provides the application shell — global search (Cmd+K), command palette, quick actions, and navigation config. Queue position #6 (after Module 05). Dependency: Module 03 (done).
+
+### What was built
+Already fully scaffolded from previous bulk commits:
+- Search API (`/api/v2/search`) with LIKE-based queries across jobs, clients, vendors, invoices
+- Command palette component with Cmd+K trigger, debounced search, keyboard navigation
+- Quick actions derived from navigation config (create actions + "Go to X" nav actions)
+- Recent searches with localStorage persistence (10-item cap, dedup, 2-char min)
+- useSearch and useCommandPalette React Query hooks
+- Top nav integration with search trigger button
+- All 21 acceptance tests passing
+
+### Design decisions
+- UI marked as `partial` — command palette works but dashboard page, widget system, project switcher, breadcrumbs not yet built
+- Search uses basic LIKE (not full-text tsvector) — sufficient for Phase 1, will upgrade when search_index migration is applied
+- Dashboard widgets deferred — each module will contribute widgets as it's built
+
+---
+
 ## 2026-02-24: Module 05 — Notification Engine
 
 ### Why
