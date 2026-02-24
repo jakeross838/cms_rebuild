@@ -20,6 +20,55 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 
 ---
 
+## Module 02 — Configuration Engine Settings UI (2026-02-23)
+
+### Settings Layout
+- **SettingsSidebar** (`components/settings/SettingsSidebar.tsx`) — Client component with `usePathname()`. 7 nav items: General, Features, Terminology, Numbering, Phases, Users, Roles. Active link highlighted with `bg-muted`. Fixed `w-56` sidebar card. Status: ✅ Working
+- **Settings Layout** (`(authenticated)/settings/layout.tsx`) — Server component. Flex row with sidebar + content area. Wraps all `/settings/*` pages. Status: ✅ Working
+
+### Page: `/settings/general` — Company Profile & Config
+- **6-tab layout** using Radix Tabs (Profile, Financial, Regional, AI & Automation, Portals, Notifications)
+- **Profile tab** — Company name, legal name, email, phone, website, address fields, primary color picker (hex + swatch), subscription info (read-only). Save Profile button → PATCH `/api/v1/settings/company`. Status: ✅ Working
+- **Financial tab** — Invoice/PO approval thresholds, default markup %, retainage %, payment terms (select), fiscal year start month. Save Financial → PATCH with `settings` payload. Status: ✅ Working
+- **Regional tab** — Timezone, date format, currency, measurement system selects. Status: ✅ Working
+- **AI & Automation tab** — Auto-match confidence (0-100), invoice auto-route threshold ($), cost code suggestion toggle, risk detection toggle. Status: ✅ Working
+- **Portals tab** — Client/vendor portal enabled toggles, photo upload toggle, budget visibility toggle. Status: ✅ Working
+- **Notifications tab** — Email/push notification toggles, digest frequency select (realtime/hourly/daily/weekly). Status: ✅ Working
+- Per-tab Save button in CardFooter. Green "Saved" auto-dismiss 3s on success. Red alert on error.
+
+### Page: `/settings/features` — Feature Flags
+- **Owner only**. GET + PATCH `/api/v1/settings/feature-flags`.
+- One Card per flag category (ai, integrations, portals, features, advanced).
+- Each flag row: name + description + plan badge (gray/blue/purple/amber) + toggle switch.
+- Toggle disabled if `available === false` (plan too low), shows amber "Requires {plan} plan" text.
+- Dirty tracking: compares current toggles against fetched state. "Save Changes" button appears when dirty.
+- Batch save: one PATCH with all changed flags. Status: ✅ Working
+
+### Page: `/settings/terminology` — Custom Term Overrides
+- **Search bar** filtering terms by key or display name.
+- Stats: "X of Y terms customized".
+- **Table**: term key (formatted), default singular/plural (read-only), override singular/plural (Input fields).
+- Dirty tracking via Map — only saves changed terms.
+- Per-row "Reset" button → POST reset with termKey → refetch.
+- "Reset All" button → confirm dialog → POST reset → refetch.
+- "Save Changes" button when dirty. Status: ✅ Working
+
+### Page: `/settings/numbering` — Numbering Pattern Editor
+- **Token reference Card** at top (collapsible) listing 8 pattern tokens ({YYYY}, {YY}, {MM}, {###}, {##}, {#}, {####}, {JOB}).
+- **One Card per entity type** (8: job, invoice, purchase_order, change_order, draw, estimate, contract, rfi).
+- Each card: entity label, current pattern, preview text, Edit button.
+- **Edit mode** (one at a time): pattern input, scope select, padding input, reset yearly checkbox, Preview button (calls POST), Save/Cancel. Status: ✅ Working
+
+### Page: `/settings/phases` — Project Phase CRUD
+- Header with "Add Phase" button.
+- Phase list ordered by sortOrder. Each row: color swatch, name, duration, milestone type badge, active/inactive badge.
+- System phases: lock icon, delete disabled.
+- **Actions dropdown**: Edit, Move Up/Down, Activate/Deactivate, Delete (confirm dialog → soft delete).
+- **Add/Edit modal** (following RoleModal pattern): name, description, color picker + hex, duration days, milestone type select.
+- Save/Cancel buttons. Status: ✅ Working
+
+---
+
 ## Module 03 — Core Data CRUD APIs (2026-02-23)
 
 ### API: `/api/v1/jobs` — Jobs CRUD

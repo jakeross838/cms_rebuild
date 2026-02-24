@@ -14,6 +14,16 @@ Each entry captures:
 
 ---
 
+## Module 02 — Settings UI Pages (2026-02-23)
+
+- **Why** — Module 02 backend (5 API routes, config engine lib, DB tables) was complete but had NO settings UI. Users need to configure company settings, toggle features, customize terminology, set numbering patterns, and manage project phases from the UI.
+- **What** — 8 files: SettingsSidebar + layout wrapper + 5 settings pages (general, features, terminology, numbering, phases) + 30 acceptance tests. No new API routes needed.
+- **How** — Settings layout wraps all `/settings/*` pages with a sidebar. Each page fetches from existing API routes, provides per-section forms with dirty tracking, and PATCHes changes. Phases page has full CRUD with modal. Feature flags have plan gating and batch save.
+- **Rules** — (1) Feature flags: toggle disabled if company plan < required plan. (2) Terminology: override-only — leave empty to use default. (3) Numbering: one entity editable at a time, pattern validated server-side. (4) Phases: system phases locked (no rename/delete), soft delete only.
+- **Connected to** — Module 01 (auth/RBAC gates settings access), Module 03+ (all downstream modules consume config values from these settings)
+
+---
+
 ## Entries
 
 ### 2026-02-23 — Module 03: Core Data Model CRUD APIs

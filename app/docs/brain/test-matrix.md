@@ -6,6 +6,42 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 02 — Config Engine Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/02-config-engine.acceptance.test.ts`) — 30 tests
+- [x] 18+ feature flag definitions exist
+- [x] Every flag has key, name, description, category
+- [x] All flag keys are unique
+- [x] Flags span 5 categories: ai, integrations, portals, features, advanced
+- [x] getFeatureFlagDefinitions groups flags by category
+- [x] Known flags exist: ai_invoice_processing, client_portal, quickbooks_sync
+- [x] Plan hierarchy: all flags have valid plan requirements
+- [x] 35+ default terminology terms
+- [x] Every term has singular and plural
+- [x] Known terms exist: job, client, vendor, invoice, estimate
+- [x] Job term defaults to "Job" / "Jobs"
+- [x] Change order term defaults to "Change Order" / "Change Orders"
+- [x] 8 entity type numbering defaults exist
+- [x] Each default has pattern, scope, and padding
+- [x] validatePattern accepts valid patterns
+- [x] validatePattern rejects patterns without sequence token
+- [x] validatePattern rejects patterns with invalid tokens
+- [x] validatePattern rejects empty patterns
+- [x] Platform defaults for all 7 config sections
+- [x] Financial defaults include all 6 required fields
+- [x] Regional defaults: timezone, date_format, currency, measurement_system
+- [x] AI defaults include auto_match_confidence = 85
+- [x] Notification defaults include digest_frequency = daily
+- [x] getPlatformDefault returns individual values
+- [x] getPlatformDefault returns undefined for unknown keys
+- [x] Config barrel exports company route functions
+- [x] Config barrel exports feature-flags route functions
+- [x] Config barrel exports terminology route functions
+- [x] Config barrel exports numbering route functions
+- [x] validatePattern works through barrel re-export
+
+---
+
 ## Module 03 — Core Data Model Tests (2026-02-23)
 
 ### Acceptance Tests (`tests/acceptance/03-core-data-model.acceptance.test.ts`) — 43 tests
