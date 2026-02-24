@@ -1,0 +1,135 @@
+/**
+ * Selection Categories API — List & Create
+ *
+ * GET  /api/v2/selections/categories — List selection categories
+ * POST /api/v2/selections/categories — Create a new selection category
+ */
+
+import { NextResponse } from 'next/server'
+
+import {
+  createApiHandler,
+  getPaginationParams,
+  paginatedResponse,
+  type ApiContext,
+} from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { listSelectionCategoriesSchema, createSelectionCategorySchema } from '@/lib/validation/schemas/selections'
+
+// ============================================================================
+// GET /api/v2/selections/categories
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const url = req.nextUrl
+    const parseResult = listSelectionCategoriesSchema.safeParse({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+      job_id: url.searchParams.get('job_id') ?? undefined,
+      room: url.searchParams.get('room') ?? undefined,
+      status: url.searchParams.get('status') ?? undefined,
+      pricing_model: url.searchParams.get('pricing_model') ?? undefined,
+      q: url.searchParams.get('q') ?? undefined,
+    })
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid query parameters', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const filters = parseResult.data
+    const { page, limit, offset } = getPaginationParams(req)
+    const supabase = await createClient()
+
+    let query = (supabase
+      .from('selection_categories') as any)
+      .select('*', { count: 'exact' })
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+
+    if (filters.job_id) {
+      query = query.eq('job_id', filters.job_id)
+    }
+    if (filters.room) {
+      query = query.eq('room', filters.room)
+    }
+    if (filters.status) {
+      query = query.eq('status', filters.status)
+    }
+    if (filters.pricing_model) {
+      query = query.eq('pricing_model', filters.pricing_model)
+    }
+    if (filters.q) {
+      query = query.or(`name.ilike.%${filters.q}%,room.ilike.%${filters.q}%`)
+    }
+
+    query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false })
+
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit))
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// POST /api/v2/selections/categories — Create category
+// ============================================================================
+
+export const POST = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const body = await req.json()
+    const parseResult = createSelectionCategorySchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid category data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+    const supabase = await createClient()
+
+    const { data, error } = await (supabase
+      .from('selection_categories') as any)
+      .insert({
+        company_id: ctx.companyId!,
+        job_id: input.job_id,
+        name: input.name,
+        room: input.room ?? null,
+        sort_order: input.sort_order,
+        pricing_model: input.pricing_model,
+        allowance_amount: input.allowance_amount,
+        deadline: input.deadline ?? null,
+        lead_time_buffer_days: input.lead_time_buffer_days,
+        assigned_to: input.assigned_to ?? null,
+        status: input.status,
+        designer_access: input.designer_access,
+        notes: input.notes ?? null,
+        created_by: ctx.user!.id,
+      })
+      .select('*')
+      .single()
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
