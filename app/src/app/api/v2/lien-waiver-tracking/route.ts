@@ -1,0 +1,121 @@
+/**
+ * Lien Waiver Tracking API — List & Create
+ *
+ * GET  /api/v2/lien-waiver-tracking — List compliance tracking records
+ * POST /api/v2/lien-waiver-tracking — Create a new tracking record
+ */
+
+import { NextResponse } from 'next/server'
+
+import {
+  createApiHandler,
+  getPaginationParams,
+  paginatedResponse,
+  type ApiContext,
+} from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { listLienWaiverTrackingSchema, createLienWaiverTrackingSchema } from '@/lib/validation/schemas/lien-waivers'
+
+// ============================================================================
+// GET /api/v2/lien-waiver-tracking
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const url = req.nextUrl
+    const parseResult = listLienWaiverTrackingSchema.safeParse({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+      job_id: url.searchParams.get('job_id') ?? undefined,
+      vendor_id: url.searchParams.get('vendor_id') ?? undefined,
+      is_compliant: url.searchParams.get('is_compliant') ?? undefined,
+    })
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid query parameters', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const filters = parseResult.data
+    const { page, limit, offset } = getPaginationParams(req)
+    const supabase = await createClient()
+
+    let query = (supabase
+      .from('lien_waiver_tracking') as any)
+      .select('*', { count: 'exact' })
+      .eq('company_id', ctx.companyId!)
+
+    if (filters.job_id) {
+      query = query.eq('job_id', filters.job_id)
+    }
+    if (filters.vendor_id) {
+      query = query.eq('vendor_id', filters.vendor_id)
+    }
+    if (filters.is_compliant !== undefined) {
+      query = query.eq('is_compliant', filters.is_compliant)
+    }
+
+    query = query.order('created_at', { ascending: false })
+
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit))
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// POST /api/v2/lien-waiver-tracking
+// ============================================================================
+
+export const POST = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const body = await req.json()
+    const parseResult = createLienWaiverTrackingSchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid tracking data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+    const supabase = await createClient()
+
+    const { data, error } = await (supabase
+      .from('lien_waiver_tracking') as any)
+      .insert({
+        company_id: ctx.companyId!,
+        job_id: input.job_id,
+        vendor_id: input.vendor_id ?? null,
+        period_start: input.period_start ?? null,
+        period_end: input.period_end ?? null,
+        expected_amount: input.expected_amount ?? null,
+        waiver_id: input.waiver_id ?? null,
+        is_compliant: input.is_compliant ?? false,
+        notes: input.notes ?? null,
+      })
+      .select('*')
+      .single()
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)

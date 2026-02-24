@@ -1,0 +1,77 @@
+/**
+ * Sync Logs API — List
+ *
+ * GET /api/v2/integrations/sync-logs — List sync log entries
+ */
+
+import { NextResponse } from 'next/server'
+
+import {
+  createApiHandler,
+  getPaginationParams,
+  paginatedResponse,
+  type ApiContext,
+} from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { listSyncLogsSchema } from '@/lib/validation/schemas/integrations'
+
+// ============================================================================
+// GET /api/v2/integrations/sync-logs
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const url = req.nextUrl
+    const parseResult = listSyncLogsSchema.safeParse({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+      connection_id: url.searchParams.get('connection_id') ?? undefined,
+      sync_type: url.searchParams.get('sync_type') ?? undefined,
+      direction: url.searchParams.get('direction') ?? undefined,
+      status: url.searchParams.get('status') ?? undefined,
+    })
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid query parameters', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const filters = parseResult.data
+    const { page, limit, offset } = getPaginationParams(req)
+    const supabase = await createClient()
+
+    let query = (supabase
+      .from('sync_logs') as any)
+      .select('*', { count: 'exact' })
+      .eq('company_id', ctx.companyId!)
+
+    if (filters.connection_id) {
+      query = query.eq('connection_id', filters.connection_id)
+    }
+    if (filters.sync_type) {
+      query = query.eq('sync_type', filters.sync_type)
+    }
+    if (filters.direction) {
+      query = query.eq('direction', filters.direction)
+    }
+    if (filters.status) {
+      query = query.eq('status', filters.status)
+    }
+
+    query = query.order('started_at', { ascending: false })
+
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit))
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)

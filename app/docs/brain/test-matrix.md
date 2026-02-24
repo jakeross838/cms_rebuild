@@ -6,6 +6,195 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 52 — Inventory & Materials Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/52-inventory.acceptance.test.ts`) -- 44 tests
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | LocationType has 4 values | PASS |
+| **Types** | TransactionType has 5 values | PASS |
+| **Types** | RequestStatus has 6 values | PASS |
+| **Types** | RequestPriority has 4 values | PASS |
+| **Types** | InventoryItem interface has all required fields | PASS |
+| **Types** | InventoryLocation interface has all required fields | PASS |
+| **Types** | InventoryStock interface has all required fields | PASS |
+| **Types** | InventoryTransaction interface has all required fields | PASS |
+| **Types** | MaterialRequest interface has all required fields including deleted_at | PASS |
+| **Types** | MaterialRequestItem interface has all required fields | PASS |
+| **Constants** | LOCATION_TYPES has 4 entries with value/label | PASS |
+| **Constants** | TRANSACTION_TYPES has 5 entries with value/label | PASS |
+| **Constants** | REQUEST_STATUSES has 6 entries with value/label | PASS |
+| **Constants** | REQUEST_PRIORITIES has 4 entries with value/label | PASS |
+| **Enum Schemas** | locationTypeEnum accepts all 4 types | PASS |
+| **Enum Schemas** | locationTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | transactionTypeEnum accepts all 5 types | PASS |
+| **Enum Schemas** | transactionTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | requestStatusEnum accepts all 6 statuses | PASS |
+| **Enum Schemas** | requestStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | requestPriorityEnum accepts all 4 priorities | PASS |
+| **Enum Schemas** | requestPriorityEnum rejects invalid priority | PASS |
+| **Item Schemas** | listInventoryItemsSchema accepts valid params | PASS |
+| **Item Schemas** | listInventoryItemsSchema rejects limit > 100 | PASS |
+| **Item Schemas** | createInventoryItemSchema accepts valid item | PASS |
+| **Item Schemas** | createInventoryItemSchema requires name | PASS |
+| **Item Schemas** | createInventoryItemSchema applies defaults | PASS |
+| **Item Schemas** | updateInventoryItemSchema accepts partial updates | PASS |
+| **Location Schemas** | listInventoryLocationsSchema accepts valid params | PASS |
+| **Location Schemas** | createInventoryLocationSchema accepts valid location | PASS |
+| **Location Schemas** | createInventoryLocationSchema requires name | PASS |
+| **Location Schemas** | updateInventoryLocationSchema accepts partial updates | PASS |
+| **Stock Schemas** | listInventoryStockSchema accepts item_id and location_id filters | PASS |
+| **Transaction Schemas** | listInventoryTransactionsSchema accepts date filters | PASS |
+| **Transaction Schemas** | listInventoryTransactionsSchema rejects invalid date format | PASS |
+| **Transaction Schemas** | createInventoryTransactionSchema accepts valid transaction | PASS |
+| **Transaction Schemas** | createInventoryTransactionSchema requires item_id, type, quantity | PASS |
+| **Transaction Schemas** | createInventoryTransactionSchema rejects zero/negative quantity | PASS |
+| **Request Schemas** | listMaterialRequestsSchema accepts valid params with status filter | PASS |
+| **Request Schemas** | createMaterialRequestSchema requires at least 1 item | PASS |
+| **Request Schemas** | createMaterialRequestSchema accepts valid request with items | PASS |
+| **Request Schemas** | createMaterialRequestSchema rejects invalid needed_by format | PASS |
+| **Request Schemas** | updateMaterialRequestSchema accepts partial updates | PASS |
+| **Request Schemas** | updateMaterialRequestSchema accepts status change | PASS |
+
+---
+
+## Module 14 — Lien Waiver Management Tests (2026-02-24)
+
+### Acceptance Tests (`tests/acceptance/14-lien-waivers.acceptance.test.ts`) -- 32 tests
+- [x] WaiverType has 4 values
+- [x] WaiverStatus has 6 values
+- [x] LienWaiver interface has all required fields
+- [x] LienWaiverTemplate interface has all required fields
+- [x] LienWaiverTracking interface has all required fields
+- [x] LienWaiver supports soft delete via deleted_at
+- [x] WAIVER_TYPES has 4 entries with value and label
+- [x] WAIVER_TYPES includes all 4 types
+- [x] WAIVER_STATUSES has 6 entries with value and label
+- [x] WAIVER_STATUSES includes all 6 statuses
+- [x] waiverTypeEnum accepts all 4 types
+- [x] waiverTypeEnum rejects invalid type
+- [x] waiverStatusEnum accepts all 6 statuses
+- [x] waiverStatusEnum rejects invalid status
+- [x] listLienWaiversSchema accepts valid params
+- [x] listLienWaiversSchema rejects limit > 100
+- [x] listLienWaiversSchema accepts all filter types
+- [x] createLienWaiverSchema accepts valid waiver
+- [x] createLienWaiverSchema requires job_id and waiver_type
+- [x] createLienWaiverSchema rejects invalid through_date format
+- [x] updateLienWaiverSchema accepts partial updates
+- [x] updateLienWaiverSchema accepts nullable fields
+- [x] listLienWaiverTemplatesSchema accepts valid params
+- [x] listLienWaiverTemplatesSchema accepts state_code filter
+- [x] createLienWaiverTemplateSchema accepts valid template
+- [x] createLienWaiverTemplateSchema requires waiver_type and template_name
+- [x] updateLienWaiverTemplateSchema accepts partial updates
+- [x] listLienWaiverTrackingSchema accepts valid params
+- [x] listLienWaiverTrackingSchema accepts compliance filter
+- [x] createLienWaiverTrackingSchema accepts valid tracking record
+- [x] createLienWaiverTrackingSchema requires job_id
+- [x] createLienWaiverTrackingSchema rejects invalid date format
+
+---
+
+## Module 15 — Draw Requests Tests (2026-02-24)
+
+### Acceptance Tests (`tests/acceptance/15-draw-requests.acceptance.test.ts`) -- 36 tests
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | DrawRequestStatus has 6 values matching AIA lifecycle | PASS |
+| **Types** | DrawHistoryAction has 6 values | PASS |
+| **Types** | DrawRequest interface has all AIA G702 fields | PASS |
+| **Types** | DrawRequestLine interface has all G703 continuation sheet columns | PASS |
+| **Types** | DrawRequestHistory interface has all audit fields | PASS |
+| **Types** | DrawRequest supports soft delete via deleted_at | PASS |
+| **Constants** | DRAW_STATUSES has 6 entries with value and label | PASS |
+| **Constants** | DRAW_STATUSES includes all lifecycle phases | PASS |
+| **Constants** | DRAW_HISTORY_ACTIONS has 6 entries | PASS |
+| **Constants** | DRAW_HISTORY_ACTIONS includes all audit actions | PASS |
+| **Enum Schemas** | drawRequestStatusEnum accepts all 6 statuses | PASS |
+| **Enum Schemas** | drawRequestStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | drawHistoryActionEnum accepts all 6 actions | PASS |
+| **Enum Schemas** | drawHistoryActionEnum rejects invalid action | PASS |
+| **List Schema** | listDrawRequestsSchema accepts valid params | PASS |
+| **List Schema** | listDrawRequestsSchema rejects limit > 100 | PASS |
+| **List Schema** | listDrawRequestsSchema accepts all filter fields | PASS |
+| **List Schema** | listDrawRequestsSchema rejects invalid date format | PASS |
+| **Create Schema** | createDrawRequestSchema accepts valid draw request | PASS |
+| **Create Schema** | createDrawRequestSchema requires job_id, draw_number, dates, contract_amount | PASS |
+| **Create Schema** | createDrawRequestSchema rejects negative contract amount | PASS |
+| **Create Schema** | createDrawRequestSchema accepts optional lender_reference and notes | PASS |
+| **Create Schema** | createDrawRequestSchema rejects retainage_pct > 100 | PASS |
+| **Update Schema** | updateDrawRequestSchema accepts partial updates | PASS |
+| **Update Schema** | updateDrawRequestSchema accepts all optional fields | PASS |
+| **Update Schema** | updateDrawRequestSchema accepts nullable lender_reference | PASS |
+| **Line Schemas** | createDrawRequestLineSchema accepts valid line | PASS |
+| **Line Schemas** | createDrawRequestLineSchema requires description and scheduled_value | PASS |
+| **Line Schemas** | createDrawRequestLineSchema defaults previous/current/stored to 0 | PASS |
+| **Line Schemas** | updateDrawRequestLineSchema accepts partial updates | PASS |
+| **Line Schemas** | batchCreateDrawLinesSchema requires at least 1 line | PASS |
+| **Line Schemas** | batchCreateDrawLinesSchema accepts multiple lines | PASS |
+| **Workflow Schemas** | submitDrawRequestSchema accepts optional notes | PASS |
+| **Workflow Schemas** | submitDrawRequestSchema accepts empty body | PASS |
+| **Workflow Schemas** | approveDrawRequestSchema accepts optional notes | PASS |
+| **Workflow Schemas** | approveDrawRequestSchema accepts empty body | PASS |
+
+---
+
+## Module 13 — AI Invoice Processing Tests (2026-02-24)
+
+### Acceptance Tests (`tests/acceptance/13-invoice-processing.acceptance.test.ts`) -- 47 tests
+- [x] ExtractionStatus has 5 values
+- [x] FieldDataType has 4 values
+- [x] ExtractionRuleType has 4 values
+- [x] ExtractionAuditAction has 8 values
+- [x] ReviewDecision has 2 values
+- [x] InvoiceExtraction interface has all required fields
+- [x] ExtractionFieldMapping interface has all required fields
+- [x] InvoiceLineExtraction interface has all required fields
+- [x] ExtractionRule interface has all required fields
+- [x] ExtractionAuditLog interface has all required fields
+- [x] EXTRACTION_STATUSES has 5 entries with value and label
+- [x] EXTRACTION_STATUSES includes needs_review
+- [x] FIELD_DATA_TYPES has 4 entries
+- [x] RULE_TYPES has 4 entries
+- [x] AUDIT_ACTIONS has 8 entries
+- [x] REVIEW_DECISIONS has 2 entries
+- [x] CONFIDENCE_THRESHOLDS has spec-defined defaults (95/80/70/50)
+- [x] CONFIDENCE_THRESHOLDS are in descending order
+- [x] extractionStatusEnum accepts all 5 statuses
+- [x] extractionStatusEnum rejects invalid status
+- [x] fieldDataTypeEnum accepts all 4 types
+- [x] fieldDataTypeEnum rejects invalid type
+- [x] extractionRuleTypeEnum accepts all 4 types
+- [x] auditActionEnum accepts all 8 actions
+- [x] reviewDecisionEnum accepts approved and rejected
+- [x] reviewDecisionEnum rejects invalid decision
+- [x] listExtractionsSchema accepts valid params
+- [x] listExtractionsSchema rejects limit > 100
+- [x] listExtractionsSchema accepts status filter
+- [x] createExtractionSchema requires document_id
+- [x] createExtractionSchema accepts optional extraction_model
+- [x] updateExtractionSchema accepts partial updates
+- [x] updateExtractionSchema rejects confidence_score > 100
+- [x] updateExtractionSchema rejects confidence_score < 0
+- [x] reviewExtractionSchema requires decision
+- [x] reviewExtractionSchema accepts optional notes and corrections
+- [x] createBillFromExtractionSchema requires vendor_id, bill_number, bill_date, amount
+- [x] createBillFromExtractionSchema rejects invalid date format
+- [x] createBillFromExtractionSchema accepts optional lines
+- [x] createFieldMappingSchema requires field_name and extraction_path
+- [x] createFieldMappingSchema accepts all data types
+- [x] updateFieldMappingSchema accepts partial updates
+- [x] listExtractionRulesSchema accepts valid params
+- [x] createExtractionRuleSchema requires rule_type
+- [x] createExtractionRuleSchema accepts full rule with conditions and actions
+- [x] updateExtractionRuleSchema accepts partial updates
+- [x] createExtractionRuleSchema rejects priority > 9999
+
+---
+
 ## Module 11 — Native Accounting (GL/AP/AR) Tests (2026-02-24)
 
 ### Acceptance Tests (`tests/acceptance/11-accounting.acceptance.test.ts`) -- 57 tests

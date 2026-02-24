@@ -20,6 +20,113 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 
 ---
 
+## Module 52 — Inventory & Materials V1 Foundation (2026-02-23)
+
+### Database Schema (`supabase/migrations/20260224100008_inventory_materials.sql`)
+- **inventory_items** — Master catalog of materials/products. Fields: id, company_id, name (varchar 255), sku (varchar 100), description (text), category (varchar 100), unit_of_measure (varchar 50, default 'each'), unit_cost (numeric 15,2), reorder_point (numeric 10,2), reorder_quantity (numeric 10,2), is_active (default true), created_at, updated_at, deleted_at (soft delete). RLS enabled. Indexes on company_id, (company_id, sku), (company_id, category), GIN trigram on name.
+- **inventory_locations** — Where inventory is stored (warehouse, job site, vehicle, other). Fields: id, company_id, name (varchar 200), location_type (enum: warehouse/job_site/vehicle/other), address (text), job_id (FK jobs), is_active (default true), created_at, updated_at. RLS enabled. Indexes on company_id, job_id, (company_id, location_type).
+- **inventory_stock** — Current stock levels per item per location. Fields: id, company_id, item_id (FK), location_id (FK), quantity_on_hand (numeric 10,3 default 0), quantity_reserved (numeric 10,3 default 0), quantity_available (numeric 10,3 default 0), last_counted_at, created_at, updated_at. UNIQUE(item_id, location_id). RLS enabled. Indexes on company_id, item_id, location_id.
+- **inventory_transactions** — Movement log for all inventory operations. Fields: id, company_id, item_id (FK), from_location_id (FK nullable), to_location_id (FK nullable), transaction_type (enum: receive/transfer/consume/adjust/return), quantity (numeric 10,3), unit_cost (numeric 15,2), total_cost (numeric 15,2), reference_type (varchar 50), reference_id, job_id (FK), cost_code_id (FK), notes, performed_by (FK users), created_at. RLS enabled. Indexes on company_id, item_id, from/to location, job_id, (company_id, transaction_type), (company_id, created_at).
+- **material_requests** — Field-to-office material requests. Fields: id, company_id, job_id (FK), requested_by (FK users), status (enum: draft/submitted/approved/partially_fulfilled/fulfilled/rejected), priority (enum: low/normal/high/urgent), needed_by (date), notes, approved_by (FK users), approved_at, created_at, updated_at, deleted_at (soft delete). RLS enabled. Indexes on company_id, job_id, (company_id, status), requested_by.
+- **material_request_items** — Line items on material requests. Fields: id, request_id (FK cascade), item_id (FK nullable), description, quantity_requested (numeric 10,3), quantity_fulfilled (numeric 10,3 default 0), unit (varchar 50), notes, created_at. No RLS (parent-controlled). Indexes on request_id, item_id.
+
+### Types (`src/types/inventory.ts`)
+- **Type unions** (4): LocationType (4 values), TransactionType (5 values), RequestStatus (6 values), RequestPriority (4 values)
+- **Interfaces** (6): InventoryItem, InventoryLocation, InventoryStock, InventoryTransaction, MaterialRequest, MaterialRequestItem
+- **Constants** (4): LOCATION_TYPES, TRANSACTION_TYPES, REQUEST_STATUSES, REQUEST_PRIORITIES (all value/label arrays)
+
+### Validation Schemas (`src/lib/validation/schemas/inventory.ts`)
+- **Enums** (4): locationTypeEnum, transactionTypeEnum, requestStatusEnum, requestPriorityEnum
+- **Item schemas**: listInventoryItemsSchema, createInventoryItemSchema (name required, defaults for unit_cost/reorder_point/reorder_quantity/is_active/unit_of_measure), updateInventoryItemSchema (all optional)
+- **Location schemas**: listInventoryLocationsSchema, createInventoryLocationSchema (name required), updateInventoryLocationSchema (all optional)
+- **Stock schemas**: listInventoryStockSchema (page/limit/item_id/location_id)
+- **Transaction schemas**: listInventoryTransactionsSchema (with date filters), createInventoryTransactionSchema (item_id/transaction_type/quantity required)
+- **Request schemas**: listMaterialRequestsSchema, createMaterialRequestSchema (items array min 1 required), updateMaterialRequestSchema (all optional including items and status)
+
+### API Routes (9 route files, 17 endpoint handlers)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/inventory/items | List items. Paginated. Excludes soft-deleted. Sorted by name. |
+| POST | /api/v2/inventory/items | Create item. Returns 201. |
+| GET | /api/v2/inventory/items/:id | Get single item. 404 if not found or soft-deleted. |
+| PUT | /api/v2/inventory/items/:id | Partial update item. |
+| DELETE | /api/v2/inventory/items/:id | Soft delete via deleted_at. |
+| GET | /api/v2/inventory/locations | List locations. Paginated. Sorted by name. |
+| POST | /api/v2/inventory/locations | Create location. Returns 201. |
+| GET | /api/v2/inventory/locations/:id | Get single location. |
+| PUT | /api/v2/inventory/locations/:id | Partial update location. |
+| DELETE | /api/v2/inventory/locations/:id | Deactivate (is_active=false). |
+| GET | /api/v2/inventory/stock | List stock levels with item/location filters. |
+| GET | /api/v2/inventory/transactions | List transactions with filters. |
+| POST | /api/v2/inventory/transactions | Record transaction. Auto-calculates total_cost. Returns 201. |
+| GET | /api/v2/material-requests | List requests. Excludes soft-deleted. |
+| POST | /api/v2/material-requests | Create request with items. Returns 201. |
+| GET | /api/v2/material-requests/:id | Get request with items. |
+| PUT | /api/v2/material-requests/:id | Update (draft/submitted only). |
+| DELETE | /api/v2/material-requests/:id | Soft delete (draft only). |
+| POST | /api/v2/material-requests/:id/approve | Approve (submitted only). |
+
+---
+
+## Module 15 — Draw Requests V1 Foundation (2026-02-24)
+
+### Database Schema (`supabase/migrations/20260224100003_draw_requests.sql`)
+- **draw_requests** — Main draw request (payment application) table. AIA G702 format. Fields: id, company_id (FK companies), job_id (FK jobs), draw_number (int), application_date (date), period_to (date), status (draft/pending_review/approved/submitted_to_lender/funded/rejected), contract_amount (numeric 15,2), total_completed (numeric 15,2), retainage_pct (numeric 5,2 default 10), retainage_amount (numeric 15,2), total_earned (numeric 15,2), less_previous (numeric 15,2), current_due (numeric 15,2), balance_to_finish (numeric 15,2), submitted_by (FK users), submitted_at, approved_by (FK users), approved_at, lender_reference (varchar 100), notes (text), created_at, updated_at, deleted_at (soft delete). RLS enabled. Indexes on company_id, job_id, (company_id, status), (company_id, job_id, draw_number).
+- **draw_request_lines** — G703 continuation sheet line items. Fields: id, draw_request_id (FK cascade), cost_code_id (FK cost_codes), description (text), scheduled_value (numeric 15,2), previous_applications (numeric 15,2), current_work (numeric 15,2), materials_stored (numeric 15,2), total_completed (numeric 15,2), pct_complete (numeric 5,2 CHECK 0-100), balance_to_finish (numeric 15,2), retainage (numeric 15,2), sort_order (int), created_at, updated_at. No independent RLS (parent-controlled). Indexes on draw_request_id, cost_code_id.
+- **draw_request_history** — Audit trail for draw request lifecycle. Fields: id, draw_request_id (FK cascade), action (created/submitted/approved/rejected/funded/revised), details (jsonb), performed_by (FK users), created_at. No independent RLS (parent-controlled). Indexes on draw_request_id, action.
+
+### Types (`src/types/draw-requests.ts`)
+- **Type unions** (2): DrawRequestStatus (6 values: draft, pending_review, approved, submitted_to_lender, funded, rejected), DrawHistoryAction (6 values: created, submitted, approved, rejected, funded, revised)
+- **Interfaces** (3): DrawRequest (full G702 summary fields + soft delete), DrawRequestLine (G703 continuation sheet columns), DrawRequestHistory (audit trail)
+- **Constants** (2): DRAW_STATUSES (6 value/label pairs), DRAW_HISTORY_ACTIONS (6 value/label pairs)
+
+### Validation Schemas (`src/lib/validation/schemas/draw-requests.ts`)
+- **Enums** (2): drawRequestStatusEnum, drawHistoryActionEnum
+- **Draw Request schemas**: listDrawRequestsSchema (page/limit/job_id/status/start_date/end_date/q), createDrawRequestSchema (job_id/draw_number/application_date/period_to/contract_amount + optional retainage_pct default 10, lender_reference, notes), updateDrawRequestSchema (all optional)
+- **Line schemas**: createDrawRequestLineSchema (description/scheduled_value + optional cost_code_id/previous_applications/current_work/materials_stored/sort_order with defaults), updateDrawRequestLineSchema (all optional), batchCreateDrawLinesSchema (lines array min 1 max 500)
+- **Workflow schemas**: submitDrawRequestSchema (optional notes), approveDrawRequestSchema (optional notes)
+
+### API Routes (5 route files)
+- **Draw Requests List/Create** — `GET /api/v2/draw-requests` (list with job_id/status/date/q filters, paginated, soft-delete filtered), `POST /api/v2/draw-requests` (create draft, records 'created' history entry)
+- **Draw Request by ID** — `GET /api/v2/draw-requests/:id` (returns draw with lines sorted by sort_order + history sorted by created_at desc), `PUT /api/v2/draw-requests/:id` (update draft/rejected only, 409 on other statuses), `DELETE /api/v2/draw-requests/:id` (soft delete draft only, 409 on non-draft)
+- **Submit** — `POST /api/v2/draw-requests/:id/submit` (draft -> pending_review, requires at least 1 line item, sets submitted_by/submitted_at, records 'submitted' history)
+- **Approve** — `POST /api/v2/draw-requests/:id/approve` (pending_review -> approved, 409 on other statuses, sets approved_by/approved_at, records 'approved' history)
+- **Lines** — `GET /api/v2/draw-requests/:id/lines` (list lines for a draw, verifies draw ownership), `POST /api/v2/draw-requests/:id/lines` (batch add lines to draft/rejected draw, auto-calculates total_completed/pct_complete/balance_to_finish per line, recalculates draw totals including retainage)
+
+---
+
+## Module 13 — AI Invoice Processing V1 Foundation (2026-02-24)
+
+### Database Schema (`supabase/migrations/20260224100001_ai_invoice_processing.sql`)
+- **invoice_extractions** — AI extraction pipeline for invoices. Fields: id, company_id, document_id (uuid), status (pending/processing/completed/failed/needs_review), extracted_data (jsonb), confidence_score (numeric 5,2 range 0-100), vendor_match_id (uuid), job_match_id (uuid), matched_bill_id (uuid), extraction_model (varchar 50), processing_time_ms (int), error_message (text), reviewed_by (FK users), reviewed_at (timestamptz), created_at, updated_at. RLS enabled. Indexes on company_id, document_id, status, vendor_match_id, (company_id, status).
+- **extraction_field_mappings** — Configurable field-to-path mappings per company. Fields: id, company_id, field_name (varchar 100), extraction_path (text), data_type (string/number/date/currency), is_required (default false), default_value (text), created_at, updated_at. RLS enabled. Index on company_id.
+- **invoice_line_extractions** — Extracted line items from invoices. Fields: id, extraction_id (FK cascade), line_number (int), description (text), quantity (numeric 10,3), unit_price (numeric 15,2), amount (numeric 15,2), cost_code_match_id (uuid), confidence_score (numeric 5,2 range 0-100), created_at. No RLS (parent-controlled). Index on extraction_id.
+- **extraction_rules** — Per-company/vendor automation rules. Fields: id, company_id, vendor_id (uuid), rule_type (field_mapping/auto_code/auto_approve/skip_review), conditions (jsonb), actions (jsonb), is_active (default true), priority (int default 0), created_by (FK users), created_at, updated_at. RLS enabled. Indexes on company_id, vendor_id, (company_id, rule_type).
+- **extraction_audit_log** — Immutable audit trail for extractions. Fields: id, extraction_id (FK cascade), action (created/processing/completed/failed/reviewed/approved/rejected/matched), details (jsonb), performed_by (FK users), created_at. No RLS (parent-controlled). Index on extraction_id.
+
+### Types (`src/types/invoice-processing.ts`)
+- **Type unions** (5): ExtractionStatus (5 values), FieldDataType (4 values), ExtractionRuleType (4 values), ExtractionAuditAction (8 values), ReviewDecision (2 values)
+- **Interfaces** (5): InvoiceExtraction, ExtractionFieldMapping, InvoiceLineExtraction, ExtractionRule, ExtractionAuditLog
+- **Constants** (7): EXTRACTION_STATUSES, FIELD_DATA_TYPES, RULE_TYPES, AUDIT_ACTIONS, REVIEW_DECISIONS (all value/label arrays), CONFIDENCE_THRESHOLDS (AUTO_APPROVE=95, HUMAN_REVIEW=80, NEEDS_ATTENTION=70, REJECT=50)
+
+### Validation Schemas (`src/lib/validation/schemas/invoice-processing.ts`)
+- **Enums** (5): extractionStatusEnum, fieldDataTypeEnum, extractionRuleTypeEnum, auditActionEnum, reviewDecisionEnum
+- **Extraction schemas**: listExtractionsSchema (page/limit/status/document_id/vendor_match_id/job_match_id/q), createExtractionSchema (document_id required + optional extraction_model), updateExtractionSchema (all optional: status/extracted_data/confidence_score/vendor_match_id/job_match_id/matched_bill_id/extraction_model/error_message)
+- **Review schemas**: reviewExtractionSchema (decision required + optional notes/corrections)
+- **Bill creation schema**: createBillFromExtractionSchema (vendor_id/bill_number/bill_date/amount required + optional due_date/job_id/description/lines)
+- **Field mapping schemas**: createFieldMappingSchema (field_name/extraction_path required + data_type default string + is_required default false), updateFieldMappingSchema (all optional)
+- **Rule schemas**: listExtractionRulesSchema (page/limit/vendor_id/rule_type/is_active), createExtractionRuleSchema (rule_type required + optional vendor_id/conditions/actions + is_active default true + priority default 0 max 9999), updateExtractionRuleSchema (all optional)
+
+### API Routes (6 route files, 10 endpoint handlers)
+- **Invoice Extractions** — `GET /api/v2/invoice-extractions` (list with filters, paginated, sorted by created_at desc), `POST /api/v2/invoice-extractions` (trigger extraction — creates pending record + audit log entry)
+- **Extraction Detail** — `GET /api/v2/invoice-extractions/:id` (single extraction + line items + audit log), `PUT /api/v2/invoice-extractions/:id` (update/correct extraction data)
+- **Review** — `POST /api/v2/invoice-extractions/:id/review` (approve/reject extraction, validates reviewable status [pending/completed/needs_review], applies corrections, logs audit entry)
+- **Create Bill** — `POST /api/v2/invoice-extractions/:id/create-bill` (creates AP bill from completed extraction, prevents duplicate bill creation, links extraction to bill, logs audit entry)
+- **Extraction Rules** — `GET /api/v2/extraction-rules` (list with filters by vendor/type/active, sorted by priority desc), `POST /api/v2/extraction-rules` (create rule)
+- **Rule Detail** — `PUT /api/v2/extraction-rules/:id` (update rule), `DELETE /api/v2/extraction-rules/:id` (soft delete — deactivates rule)
+
+---
+
 ## Module 11 — Native Accounting (GL/AP/AR) V1 Foundation (2026-02-24)
 
 ### Database Schema (`supabase/migrations/20260224000005_native_accounting.sql`)
@@ -5526,3 +5633,31 @@ The features.ts config was expanded from 205 to 347 features with these new cate
 | CPA Export Package | Checklist | 6 export items with format selector (QuickBooks/Excel/PDF) |
 | Post-Job Profit Analysis | Display | Final revenue vs cost, margin erosion breakdown, AI recommendations |
 | AI Features Panel | Display | 6 features: Auto-Reconciliation, Warranty Prediction, POC, CPA Export, Margin Analysis, Close-Out Tracking |
+
+---
+
+## Module 14 — Lien Waiver Management V1 Foundation (2026-02-24)
+
+### Database Schema (`supabase/migrations/20260224100002_lien_waivers.sql`)
+- **lien_waivers** — Core waiver records. Fields: id, company_id, job_id (FK jobs), vendor_id (FK vendors), waiver_type (conditional_progress/unconditional_progress/conditional_final/unconditional_final CHECK), status (draft/pending/sent/received/approved/rejected CHECK, default draft), amount (numeric 15,2), through_date (date), document_id, payment_id, check_number (varchar 50), claimant_name (text), notes (text), requested_by, requested_at (timestamptz), received_at (timestamptz), approved_by, approved_at (timestamptz), created_at, updated_at, deleted_at (soft delete). RLS enabled. Indexes on company_id, job_id, vendor_id, (company_id, status), (company_id, waiver_type), (company_id, through_date).
+- **lien_waiver_templates** — Reusable waiver form templates per state and type. Fields: id, company_id, waiver_type (same 4 values CHECK), template_name (varchar 200), template_content (text), state_code (varchar 2), is_default (boolean default false), created_at, updated_at. RLS enabled. Indexes on company_id, (company_id, waiver_type), (company_id, state_code).
+- **lien_waiver_tracking** — Compliance tracking per vendor per payment period. Fields: id, company_id, job_id (FK jobs), vendor_id (FK vendors), period_start (date), period_end (date), expected_amount (numeric 15,2), waiver_id (FK lien_waivers), is_compliant (boolean default false), notes (text), created_at, updated_at. RLS enabled. Indexes on company_id, (company_id, job_id), (company_id, vendor_id), (company_id, is_compliant).
+
+### Types (`src/types/lien-waivers.ts`)
+- **Type unions** (2): WaiverType (4 values), WaiverStatus (6 values)
+- **Interfaces** (3): LienWaiver (22 fields incl deleted_at for soft delete), LienWaiverTemplate (9 fields), LienWaiverTracking (12 fields)
+- **Constants** (2): WAIVER_TYPES (4 entries), WAIVER_STATUSES (6 entries) — all value/label arrays
+
+### Validation Schemas (`src/lib/validation/schemas/lien-waivers.ts`)
+- **Enums** (2): waiverTypeEnum, waiverStatusEnum
+- **Lien waiver schemas**: listLienWaiversSchema (page/limit/job_id/vendor_id/waiver_type/status/q), createLienWaiverSchema (job_id required, waiver_type required, + optional amount/through_date/document_id/payment_id/check_number/claimant_name/notes/vendor_id/status), updateLienWaiverSchema (all optional, nullable where appropriate)
+- **Template schemas**: listLienWaiverTemplatesSchema (page/limit/waiver_type/state_code), createLienWaiverTemplateSchema (waiver_type + template_name required, + optional template_content/state_code/is_default), updateLienWaiverTemplateSchema (all optional)
+- **Tracking schemas**: listLienWaiverTrackingSchema (page/limit/job_id/vendor_id/is_compliant), createLienWaiverTrackingSchema (job_id required, + optional vendor_id/period_start/period_end/expected_amount/waiver_id/is_compliant/notes)
+
+### API Routes (6 route files, 11 endpoint handlers)
+- **Lien Waivers** — `GET /api/v2/lien-waivers` (list with filters, paginated, excludes soft-deleted), `POST /api/v2/lien-waivers` (create, sets requested_by to current user)
+- **Lien Waivers [id]** — `GET /api/v2/lien-waivers/:id` (single, excludes soft-deleted), `PUT /api/v2/lien-waivers/:id` (update, blocks if approved/rejected with 403), `DELETE /api/v2/lien-waivers/:id` (soft delete via deleted_at)
+- **Approve** — `POST /api/v2/lien-waivers/:id/approve` (received -> approved, sets approved_by and approved_at, rejects non-received with 403)
+- **Templates** — `GET /api/v2/lien-waiver-templates` (list with filters), `POST /api/v2/lien-waiver-templates` (create)
+- **Templates [id]** — `PUT /api/v2/lien-waiver-templates/:id` (update), `DELETE /api/v2/lien-waiver-templates/:id` (hard delete)
+- **Tracking** — `GET /api/v2/lien-waiver-tracking` (list with filters incl compliance), `POST /api/v2/lien-waiver-tracking` (create)
