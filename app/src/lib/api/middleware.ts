@@ -7,6 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 import { canPerform, resolvePermissions } from '@/lib/auth/permissions'
 import { recordMetric, createLogger, recordAudit } from '@/lib/monitoring'
@@ -18,13 +19,15 @@ import {
 } from '@/lib/rate-limit'
 import { createClient } from '@/lib/supabase/server'
 import type { PermissionsMode } from '@/types/auth'
-import type { UserRole } from '@/types/database'
+import type { Database, UserRole } from '@/types/database'
 
 import type { z } from 'zod'
 
 type RateLimitType = keyof typeof RATE_LIMITS
 
 export interface ApiContext {
+  /** Authenticated Supabase client (available when requireAuth is true) */
+  supabase: SupabaseClient<Database> | null
   user: {
     id: string
     companyId: string
@@ -74,6 +77,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
 
     // Initialize context
     const ctx: ApiContext = {
+      supabase: null,
       user: null,
       companyId: null,
       requestId,
@@ -98,9 +102,11 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         }
       }
 
-      // 2. Authentication
+      // 2. Authentication (single Supabase client reused for auth + permission checks)
+      const supabase = await createClient()
+      ctx.supabase = supabase
+
       if (requireAuth) {
-        const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
         if (authError || !user) {
@@ -195,10 +201,9 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         ctx.validatedBody = result.data
       }
 
-      // 6. Permission check
+      // 6. Permission check (reuses the same supabase client from step 2)
       if (permission && ctx.user) {
         // Get company permissions_mode from settings
-        const supabase = await createClient()
         const { data: company } = await supabase
           .from('companies')
           .select('settings')

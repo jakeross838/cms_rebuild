@@ -12,6 +12,7 @@
 
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
+import { serverEnv } from '@/lib/env.server'
 import type { Database } from '@/types/database'
 
 let adminClient: ReturnType<typeof createSupabaseClient<Database>> | null = null
@@ -19,22 +20,16 @@ let adminClient: ReturnType<typeof createSupabaseClient<Database>> | null = null
 export function createAdminClient() {
   if (adminClient) return adminClient
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY. ' +
-      'The admin client requires these env vars and should only be used server-side.'
-    )
-  }
-
-  adminClient = createSupabaseClient<Database>(supabaseUrl, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
+  adminClient = createSupabaseClient<Database>(
+    serverEnv.NEXT_PUBLIC_SUPABASE_URL,
+    serverEnv.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  )
 
   return adminClient
 }
