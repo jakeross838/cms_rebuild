@@ -40,8 +40,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify punch item belongs to company
-    const { data: existing, error: existError } = await (supabase
-      .from('punch_items') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('punch_items')
       .select('id')
       .eq('id', punchItemId)
       .eq('company_id', ctx.companyId!)
@@ -55,8 +55,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('punch_item_photos') as any)
+    const { error } = await (supabase as any)
+      .from('punch_item_photos')
       .delete()
       .eq('id', photoId)
       .eq('punch_item_id', punchItemId)

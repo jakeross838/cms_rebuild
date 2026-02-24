@@ -60,8 +60,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify job belongs to company
-    const { data: job, error: jError } = await (supabase
-      .from('migration_jobs') as any)
+    const { data: job, error: jError } = await (supabase as any)
+      .from('migration_jobs')
       .select('id')
       .eq('id', jobId)
       .eq('company_id', ctx.companyId!)
@@ -75,8 +75,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('migration_reconciliation') as any)
+    let query = (supabase as any)
+      .from('migration_reconciliation')
       .select('*', { count: 'exact' })
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
@@ -132,8 +132,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify job belongs to company
-    const { data: job, error: jError } = await (supabase
-      .from('migration_jobs') as any)
+    const { data: job, error: jError } = await (supabase as any)
+      .from('migration_jobs')
       .select('id')
       .eq('id', jobId)
       .eq('company_id', ctx.companyId!)
@@ -147,8 +147,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('migration_reconciliation') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_reconciliation')
       .insert({
         company_id: ctx.companyId!,
         job_id: jobId,

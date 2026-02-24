@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit ownership
-    const { error: permitError } = await (supabase
-      .from('permits') as any)
+    const { error: permitError } = await (supabase as any)
+      .from('permits')
       .select('id')
       .eq('id', permitId)
       .eq('company_id', ctx.companyId!)
@@ -57,8 +57,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('permit_documents') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('permit_documents')
       .select('*', { count: 'exact' })
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
@@ -100,8 +100,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit ownership
-    const { error: permitError } = await (supabase
-      .from('permits') as any)
+    const { error: permitError } = await (supabase as any)
+      .from('permits')
       .select('id')
       .eq('id', permitId)
       .eq('company_id', ctx.companyId!)
@@ -115,8 +115,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('permit_documents') as any)
+    const { data, error } = await (supabase as any)
+      .from('permit_documents')
       .insert({
         company_id: ctx.companyId!,
         permit_id: permitId,

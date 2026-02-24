@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('sync_logs') as any)
+    let query = (supabase as any)
+      .from('sync_logs')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 

@@ -36,8 +36,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Get current folder
-    const { data: current, error: fetchError } = await (supabase
-      .from('document_folders') as any)
+    const { data: current, error: fetchError } = await (supabase as any)
+      .from('document_folders')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -64,8 +64,8 @@ export const PUT = createApiHandler(
       updates.parent_folder_id = input.parent_folder_id
     }
 
-    const { data, error } = await (supabase
-      .from('document_folders') as any)
+    const { data, error } = await (supabase as any)
+      .from('document_folders')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -98,8 +98,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Check for child folders
-    const { data: children } = await (supabase
-      .from('document_folders') as any)
+    const { data: children } = await (supabase as any)
+      .from('document_folders')
       .select('id')
       .eq('parent_folder_id', id)
       .eq('company_id', ctx.companyId!)
@@ -113,8 +113,8 @@ export const DELETE = createApiHandler(
     }
 
     // Check for documents in this folder
-    const { data: docs } = await (supabase
-      .from('documents') as any)
+    const { data: docs } = await (supabase as any)
+      .from('documents')
       .select('id')
       .eq('folder_id', id)
       .eq('company_id', ctx.companyId!)
@@ -128,8 +128,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('document_folders') as any)
+    const { error } = await (supabase as any)
+      .from('document_folders')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

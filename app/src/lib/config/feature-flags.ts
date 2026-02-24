@@ -285,7 +285,7 @@ export async function isFeatureEnabled(
   const companyPlan = (company?.subscription_tier as SubscriptionPlan) || 'free'
 
   // Get all flags for this company
-  const { data: flagsData } = await supabase
+  const { data: flagsData } = await (supabase as any)
     .from('feature_flags')
     .select('*')
     .eq('company_id', companyId)
@@ -364,7 +364,7 @@ export async function getFeatureFlags(companyId: string): Promise<{
   const companyPlan = (company?.subscription_tier as SubscriptionPlan) || 'free'
 
   // Get saved flags
-  const { data: savedFlagsData } = await supabase
+  const { data: savedFlagsData } = await (supabase as any)
     .from('feature_flags')
     .select('*')
     .eq('company_id', companyId)
@@ -411,8 +411,8 @@ export async function setFeatureFlag(
   const definition = FEATURE_FLAG_DEFINITIONS.find((d) => d.key === flagKey)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase
-    .from('feature_flags') as any)
+  const { error } = await (supabase as any)
+    .from('feature_flags')
     .upsert({
       company_id: companyId,
       flag_key: flagKey,
@@ -444,8 +444,8 @@ export async function setFeatureFlags(
   const now = new Date().toISOString()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase
-    .from('feature_flags') as any)
+  const { error } = await (supabase as any)
+    .from('feature_flags')
     .upsert(
       flags.map((flag) => {
         const definition = FEATURE_FLAG_DEFINITIONS.find((d) => d.key === flag.key)

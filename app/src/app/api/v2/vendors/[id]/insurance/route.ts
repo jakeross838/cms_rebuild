@@ -62,8 +62,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('vendor_insurance') as any)
+    let query = (supabase as any)
+      .from('vendor_insurance')
       .select('*', { count: 'exact' })
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
@@ -120,8 +120,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('vendor_insurance') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_insurance')
       .insert({
         vendor_id: vendorId,
         company_id: ctx.companyId!,

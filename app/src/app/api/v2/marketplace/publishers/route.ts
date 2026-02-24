@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('marketplace_publishers') as any)
+    let query = (supabase as any)
+      .from('marketplace_publishers')
       .select('*', { count: 'exact' })
 
     if (filters.publisher_type) {
@@ -91,8 +91,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('marketplace_publishers') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_publishers')
       .insert({
         user_id: input.user_id,
         publisher_type: input.publisher_type,

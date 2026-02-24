@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('offline_sync_queue') as any)
+    const { data, error } = await (supabase as any)
+      .from('offline_sync_queue')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -81,8 +81,8 @@ export const PUT = createApiHandler(
     if (input.error_message !== undefined) updates.error_message = input.error_message
     if (input.synced_at !== undefined) updates.synced_at = input.synced_at
 
-    const { data, error } = await (supabase
-      .from('offline_sync_queue') as any)
+    const { data, error } = await (supabase as any)
+      .from('offline_sync_queue')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -117,8 +117,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('offline_sync_queue') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('offline_sync_queue')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -131,8 +131,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('offline_sync_queue') as any)
+    const { error } = await (supabase as any)
+      .from('offline_sync_queue')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

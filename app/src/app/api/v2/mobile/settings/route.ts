@@ -19,8 +19,8 @@ export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('mobile_app_settings') as any)
+    const { data, error } = await (supabase as any)
+      .from('mobile_app_settings')
       .select('*')
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)
@@ -75,8 +75,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check if settings exist
-    const { data: existing } = await (supabase
-      .from('mobile_app_settings') as any)
+    const { data: existing } = await (supabase as any)
+      .from('mobile_app_settings')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)
@@ -99,8 +99,8 @@ export const PUT = createApiHandler(
       if (input.theme !== undefined) updates.theme = input.theme
       if (input.preferences !== undefined) updates.preferences = input.preferences
 
-      const { data, error } = await (supabase
-        .from('mobile_app_settings') as any)
+      const { data, error } = await (supabase as any)
+        .from('mobile_app_settings')
         .update(updates)
         .eq('company_id', ctx.companyId!)
         .eq('user_id', ctx.user!.id)
@@ -117,8 +117,8 @@ export const PUT = createApiHandler(
       return NextResponse.json({ data, requestId: ctx.requestId })
     } else {
       // Insert new settings
-      const { data, error } = await (supabase
-        .from('mobile_app_settings') as any)
+      const { data, error } = await (supabase as any)
+        .from('mobile_app_settings')
         .insert({
           company_id: ctx.companyId!,
           user_id: ctx.user!.id,

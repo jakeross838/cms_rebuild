@@ -55,8 +55,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify checklist belongs to company
-    const { data: checklist, error: clError } = await (supabase
-      .from('quality_checklists') as any)
+    const { data: checklist, error: clError } = await (supabase as any)
+      .from('quality_checklists')
       .select('id')
       .eq('id', checklistId)
       .eq('company_id', ctx.companyId!)
@@ -70,8 +70,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('quality_checklist_items') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('quality_checklist_items')
       .select('*', { count: 'exact' })
       .eq('checklist_id', checklistId)
       .order('sort_order', { ascending: true })
@@ -117,8 +117,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify checklist belongs to company
-    const { data: checklist, error: clError } = await (supabase
-      .from('quality_checklists') as any)
+    const { data: checklist, error: clError } = await (supabase as any)
+      .from('quality_checklists')
       .select('id')
       .eq('id', checklistId)
       .eq('company_id', ctx.companyId!)
@@ -132,8 +132,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('quality_checklist_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('quality_checklist_items')
       .insert({
         company_id: ctx.companyId!,
         checklist_id: checklistId,

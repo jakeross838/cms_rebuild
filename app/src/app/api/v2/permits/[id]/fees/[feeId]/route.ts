@@ -23,8 +23,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('permit_fees') as any)
+    const { data, error } = await (supabase as any)
+      .from('permit_fees')
       .select('*')
       .eq('id', feeId)
       .eq('company_id', ctx.companyId!)
@@ -65,8 +65,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify fee exists
-    const { data: existing, error: existError } = await (supabase
-      .from('permit_fees') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('permit_fees')
       .select('id')
       .eq('id', feeId)
       .eq('company_id', ctx.companyId!)
@@ -90,8 +90,8 @@ export const PUT = createApiHandler(
     if (input.receipt_url !== undefined) updates.receipt_url = input.receipt_url
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('permit_fees') as any)
+    const { data, error } = await (supabase as any)
+      .from('permit_fees')
       .update(updates)
       .eq('id', feeId)
       .eq('company_id', ctx.companyId!)
@@ -122,8 +122,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify ownership
-    const { data: existing, error: existError } = await (supabase
-      .from('permit_fees') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('permit_fees')
       .select('id')
       .eq('id', feeId)
       .eq('company_id', ctx.companyId!)
@@ -136,8 +136,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('permit_fees') as any)
+    const { error } = await (supabase as any)
+      .from('permit_fees')
       .delete()
       .eq('id', feeId)
       .eq('company_id', ctx.companyId!)

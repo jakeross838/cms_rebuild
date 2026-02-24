@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('marketplace_reviews') as any)
+    let query = (supabase as any)
+      .from('marketplace_reviews')
       .select('*', { count: 'exact' })
 
     if (filters.template_id) {
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify template exists
-    const { data: template } = await (supabase
-      .from('marketplace_templates') as any)
+    const { data: template } = await (supabase as any)
+      .from('marketplace_templates')
       .select('id')
       .eq('id', input.template_id)
       .is('deleted_at', null)
@@ -106,8 +106,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('marketplace_reviews') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_reviews')
       .insert({
         company_id: ctx.companyId!,
         template_id: input.template_id,

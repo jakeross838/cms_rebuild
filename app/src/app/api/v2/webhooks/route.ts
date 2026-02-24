@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('webhook_subscriptions') as any)
+    let query = (supabase as any)
+      .from('webhook_subscriptions')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     // Generate HMAC secret
     const secret = `whsec_${crypto.randomUUID()}`
 
-    const { data, error } = await (supabase
-      .from('webhook_subscriptions') as any)
+    const { data, error } = await (supabase as any)
+      .from('webhook_subscriptions')
       .insert({
         company_id: ctx.companyId!,
         url: input.url,

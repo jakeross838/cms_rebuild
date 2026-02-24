@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('vendor_portal_access') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_portal_access')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     if (input.can_send_messages !== undefined) updates.can_send_messages = input.can_send_messages
     if (input.allowed_job_ids !== undefined) updates.allowed_job_ids = input.allowed_job_ids
 
-    const { data, error } = await (supabase
-      .from('vendor_portal_access') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_portal_access')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -126,8 +126,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('vendor_portal_access') as any)
+    const { data: existing } = await (supabase as any)
+      .from('vendor_portal_access')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -141,8 +141,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('vendor_portal_access') as any)
+    const { error } = await (supabase as any)
+      .from('vendor_portal_access')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

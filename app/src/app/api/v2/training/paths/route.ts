@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('training_paths') as any)
+    let query = (supabase as any)
+      .from('training_paths')
       .select('*', { count: 'exact' })
 
     // Show platform paths (company_id IS NULL) + company-specific paths
@@ -94,8 +94,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('training_paths') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_paths')
       .insert({
         company_id: ctx.companyId!,
         name: input.name,

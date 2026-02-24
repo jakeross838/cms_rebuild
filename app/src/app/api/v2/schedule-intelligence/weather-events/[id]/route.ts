@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('schedule_weather_events') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_weather_events')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -90,8 +90,8 @@ export const PUT = createApiHandler(
     if (input.auto_logged !== undefined) updates.auto_logged = input.auto_logged
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('schedule_weather_events') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_weather_events')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -127,8 +127,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('schedule_weather_events') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('schedule_weather_events')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -142,8 +142,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('schedule_weather_events') as any)
+    const { error } = await (supabase as any)
+      .from('schedule_weather_events')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

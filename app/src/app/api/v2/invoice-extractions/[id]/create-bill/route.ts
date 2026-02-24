@@ -45,8 +45,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists, belongs to company, and is in completed status
-    const { data: extraction, error: fetchError } = await (supabase
-      .from('invoice_extractions') as any)
+    const { data: extraction, error: fetchError } = await (supabase as any)
+      .from('invoice_extractions')
       .select('id, status, matched_bill_id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -75,8 +75,8 @@ export const POST = createApiHandler(
     }
 
     // Create the AP bill
-    const { data: bill, error: billError } = await (supabase
-      .from('ap_bills') as any)
+    const { data: bill, error: billError } = await (supabase as any)
+      .from('ap_bills')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
@@ -110,13 +110,13 @@ export const POST = createApiHandler(
         job_id: line.job_id ?? null,
         cost_code_id: line.cost_code_id ?? null,
       }))
-      await (supabase.from('ap_bill_lines') as any).insert(lineRecords)
+      await (supabase as any).from('ap_bill_lines').insert(lineRecords)
     }
 
     // Link extraction to the bill
     const now = new Date().toISOString()
-    await (supabase
-      .from('invoice_extractions') as any)
+    await (supabase as any)
+      .from('invoice_extractions')
       .update({
         matched_bill_id: bill.id,
         updated_at: now,
@@ -125,8 +125,8 @@ export const POST = createApiHandler(
       .eq('company_id', ctx.companyId!)
 
     // Log audit entry
-    await (supabase
-      .from('extraction_audit_log') as any)
+    await (supabase as any)
+      .from('extraction_audit_log')
       .insert({
         extraction_id: id,
         action: 'matched',

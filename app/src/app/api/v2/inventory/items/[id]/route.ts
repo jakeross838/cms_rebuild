@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('inventory_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('inventory_items')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -80,8 +80,8 @@ export const PUT = createApiHandler(
     if (input.reorder_quantity !== undefined) updates.reorder_quantity = input.reorder_quantity
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('inventory_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('inventory_items')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -114,8 +114,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('inventory_items') as any)
+    const { error } = await (supabase as any)
+      .from('inventory_items')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

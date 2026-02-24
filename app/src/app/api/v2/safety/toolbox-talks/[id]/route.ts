@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('toolbox_talks') as any)
+    const { data, error } = await (supabase as any)
+      .from('toolbox_talks')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch attendees
-    const { data: attendees } = await (supabase
-      .from('toolbox_talk_attendees') as any)
+    const { data: attendees } = await (supabase as any)
+      .from('toolbox_talk_attendees')
       .select('*')
       .eq('talk_id', id)
       .eq('company_id', ctx.companyId!)
@@ -89,8 +89,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify talk exists
-    const { data: existing, error: existError } = await (supabase
-      .from('toolbox_talks') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('toolbox_talks')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -117,8 +117,8 @@ export const PUT = createApiHandler(
     if (input.materials !== undefined) updates.materials = input.materials
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('toolbox_talks') as any)
+    const { data, error } = await (supabase as any)
+      .from('toolbox_talks')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

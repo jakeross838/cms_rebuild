@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('client_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_messages')
       .select('*')
       .eq('id', messageId)
       .eq('company_id', ctx.companyId!)
@@ -76,8 +76,8 @@ export const PUT = createApiHandler(
     }
     if (input.read_at !== undefined) updateFields.read_at = input.read_at
 
-    const { data, error } = await (supabase
-      .from('client_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_messages')
       .update(updateFields)
       .eq('id', messageId)
       .eq('company_id', ctx.companyId!)

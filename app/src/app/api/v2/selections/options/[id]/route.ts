@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('selection_options') as any)
+    const { data, error } = await (supabase as any)
+      .from('selection_options')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -76,8 +76,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify option exists
-    const { data: existing, error: existError } = await (supabase
-      .from('selection_options') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('selection_options')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -107,8 +107,8 @@ export const PUT = createApiHandler(
     if (input.is_recommended !== undefined) updates.is_recommended = input.is_recommended
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase
-      .from('selection_options') as any)
+    const { data, error } = await (supabase as any)
+      .from('selection_options')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -145,8 +145,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify option exists
-    const { data: existing, error: existError } = await (supabase
-      .from('selection_options') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('selection_options')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -160,8 +160,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('selection_options') as any)
+    const { error } = await (supabase as any)
+      .from('selection_options')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

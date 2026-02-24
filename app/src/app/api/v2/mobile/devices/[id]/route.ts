@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('mobile_devices') as any)
+    const { data, error } = await (supabase as any)
+      .from('mobile_devices')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,14 +44,14 @@ export const GET = createApiHandler(
     }
 
     // Fetch push token count
-    const { data: tokens } = await (supabase
-      .from('push_notification_tokens') as any)
+    const { data: tokens } = await (supabase as any)
+      .from('push_notification_tokens')
       .select('id')
       .eq('device_id', id)
 
     // Fetch active sessions count
-    const { data: sessions } = await (supabase
-      .from('mobile_sessions') as any)
+    const { data: sessions } = await (supabase as any)
+      .from('mobile_sessions')
       .select('id')
       .eq('device_id', id)
       .eq('status', 'active')
@@ -107,8 +107,8 @@ export const PUT = createApiHandler(
     if (input.last_ip_address !== undefined) updates.last_ip_address = input.last_ip_address
     if (input.metadata !== undefined) updates.metadata = input.metadata
 
-    const { data, error } = await (supabase
-      .from('mobile_devices') as any)
+    const { data, error } = await (supabase as any)
+      .from('mobile_devices')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -145,8 +145,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify device exists
-    const { data: existing, error: existError } = await (supabase
-      .from('mobile_devices') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('mobile_devices')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -160,8 +160,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('mobile_devices') as any)
+    const { error } = await (supabase as any)
+      .from('mobile_devices')
       .update({ deleted_at: new Date().toISOString(), status: 'revoked' })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

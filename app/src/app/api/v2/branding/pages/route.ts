@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('builder_content_pages') as any)
+    let query = (supabase as any)
+      .from('builder_content_pages')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -108,8 +108,8 @@ export const POST = createApiHandler(
       insertData.published_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('builder_content_pages') as any)
+    const { data, error } = await (supabase as any)
+      .from('builder_content_pages')
       .insert(insertData)
       .select('*')
       .single()

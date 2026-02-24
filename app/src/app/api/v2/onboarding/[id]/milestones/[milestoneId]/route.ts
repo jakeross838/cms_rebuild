@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('onboarding_milestones') as any)
+    const { data, error } = await (supabase as any)
+      .from('onboarding_milestones')
       .select('*')
       .eq('id', milestoneId)
       .eq('company_id', ctx.companyId!)
@@ -85,8 +85,8 @@ export const PUT = createApiHandler(
       updateFields.skipped_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('onboarding_milestones') as any)
+    const { data, error } = await (supabase as any)
+      .from('onboarding_milestones')
       .update(updateFields)
       .eq('id', milestoneId)
       .eq('company_id', ctx.companyId!)

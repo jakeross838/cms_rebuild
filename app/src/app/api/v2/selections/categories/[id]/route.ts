@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('selection_categories') as any)
+    const { data, error } = await (supabase as any)
+      .from('selection_categories')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,15 +44,15 @@ export const GET = createApiHandler(
     }
 
     // Fetch options count
-    const { data: options } = await (supabase
-      .from('selection_options') as any)
+    const { data: options } = await (supabase as any)
+      .from('selection_options')
       .select('id')
       .eq('category_id', id)
       .is('deleted_at', null)
 
     // Fetch selections count
-    const { data: selections } = await (supabase
-      .from('selections') as any)
+    const { data: selections } = await (supabase as any)
+      .from('selections')
       .select('id')
       .eq('category_id', id)
       .is('deleted_at', null)
@@ -97,8 +97,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify category exists
-    const { data: existing, error: existError } = await (supabase
-      .from('selection_categories') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('selection_categories')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -126,8 +126,8 @@ export const PUT = createApiHandler(
     if (input.designer_access !== undefined) updates.designer_access = input.designer_access
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('selection_categories') as any)
+    const { data, error } = await (supabase as any)
+      .from('selection_categories')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -164,8 +164,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify category exists
-    const { data: existing, error: existError } = await (supabase
-      .from('selection_categories') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('selection_categories')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -179,8 +179,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('selection_categories') as any)
+    const { error } = await (supabase as any)
+      .from('selection_categories')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

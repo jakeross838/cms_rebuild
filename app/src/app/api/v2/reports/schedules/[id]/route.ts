@@ -45,8 +45,8 @@ export const PUT = createApiHandler(
     if (input.recipients !== undefined) updates.recipients = input.recipients
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('report_schedules') as any)
+    const { data, error } = await (supabase as any)
+      .from('report_schedules')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -81,8 +81,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('report_schedules') as any)
+    const { error } = await (supabase as any)
+      .from('report_schedules')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

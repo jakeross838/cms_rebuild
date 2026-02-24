@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('report_dashboards') as any)
+    const { data, error } = await (supabase as any)
+      .from('report_dashboards')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch widgets count
-    const { data: widgets } = await (supabase
-      .from('dashboard_widgets') as any)
+    const { data: widgets } = await (supabase as any)
+      .from('dashboard_widgets')
       .select('id')
       .eq('dashboard_id', id)
 
@@ -96,8 +96,8 @@ export const PUT = createApiHandler(
     if (input.target_roles !== undefined) updates.target_roles = input.target_roles
     if (input.global_filters !== undefined) updates.global_filters = input.global_filters
 
-    const { data, error } = await (supabase
-      .from('report_dashboards') as any)
+    const { data, error } = await (supabase as any)
+      .from('report_dashboards')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -133,8 +133,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('report_dashboards') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('report_dashboards')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -148,8 +148,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('report_dashboards') as any)
+    const { error } = await (supabase as any)
+      .from('report_dashboards')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

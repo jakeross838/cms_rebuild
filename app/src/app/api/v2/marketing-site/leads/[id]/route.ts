@@ -34,8 +34,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('marketing_leads') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketing_leads')
       .select('*')
       .eq('id', id)
       .is('deleted_at', null)
@@ -97,8 +97,8 @@ export const PUT = createApiHandler(
       }
     }
 
-    const { data, error } = await (supabase
-      .from('marketing_leads') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketing_leads')
       .update(updates)
       .eq('id', id)
       .is('deleted_at', null)
@@ -133,8 +133,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('marketing_leads') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketing_leads')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .is('deleted_at', null)

@@ -44,8 +44,8 @@ export const PUT = createApiHandler(
     if (input.state_code !== undefined) updates.state_code = input.state_code
     if (input.is_default !== undefined) updates.is_default = input.is_default
 
-    const { data, error } = await (supabase
-      .from('lien_waiver_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('lien_waiver_templates')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -78,8 +78,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('lien_waiver_templates') as any)
+    const { error } = await (supabase as any)
+      .from('lien_waiver_templates')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

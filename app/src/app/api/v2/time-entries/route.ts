@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('time_entries') as any)
+    let query = (supabase as any)
+      .from('time_entries')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -105,8 +105,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('time_entries') as any)
+    const { data, error } = await (supabase as any)
+      .from('time_entries')
       .insert({
         company_id: ctx.companyId!,
         user_id: input.user_id,

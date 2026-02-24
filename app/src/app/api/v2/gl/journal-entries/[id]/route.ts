@@ -24,8 +24,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: entry, error } = await (supabase
-      .from('gl_journal_entries') as any)
+    const { data: entry, error } = await (supabase as any)
+      .from('gl_journal_entries')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -39,8 +39,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch lines
-    const { data: lines } = await (supabase
-      .from('gl_journal_lines') as any)
+    const { data: lines } = await (supabase as any)
+      .from('gl_journal_lines')
       .select('*')
       .eq('journal_entry_id', id)
       .order('created_at', { ascending: true })
@@ -78,8 +78,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is in draft status
-    const { data: existing } = await (supabase
-      .from('gl_journal_entries') as any)
+    const { data: existing } = await (supabase as any)
+      .from('gl_journal_entries')
       .select('status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -118,8 +118,8 @@ export const PUT = createApiHandler(
     if (input.reference_number !== undefined) updates.reference_number = input.reference_number
     if (input.memo !== undefined) updates.memo = input.memo
 
-    const { data: entry, error: entryError } = await (supabase
-      .from('gl_journal_entries') as any)
+    const { data: entry, error: entryError } = await (supabase as any)
+      .from('gl_journal_entries')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -136,8 +136,8 @@ export const PUT = createApiHandler(
     // Replace lines if provided
     if (input.lines) {
       // Delete existing lines
-      await (supabase
-        .from('gl_journal_lines') as any)
+      await (supabase as any)
+        .from('gl_journal_lines')
         .delete()
         .eq('journal_entry_id', id)
 
@@ -154,14 +154,14 @@ export const PUT = createApiHandler(
         client_id: line.client_id ?? null,
       }))
 
-      await (supabase
-        .from('gl_journal_lines') as any)
+      await (supabase as any)
+        .from('gl_journal_lines')
         .insert(lineRecords)
     }
 
     // Fetch updated lines
-    const { data: lines } = await (supabase
-      .from('gl_journal_lines') as any)
+    const { data: lines } = await (supabase as any)
+      .from('gl_journal_lines')
       .select('*')
       .eq('journal_entry_id', id)
       .order('created_at', { ascending: true })

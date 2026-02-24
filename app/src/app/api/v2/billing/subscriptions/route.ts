@@ -43,8 +43,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('company_subscriptions') as any)
+    let query = (supabase as any)
+      .from('company_subscriptions')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -94,8 +94,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing subscription (UNIQUE constraint on company_id)
-    const { data: existing } = await (supabase
-      .from('company_subscriptions') as any)
+    const { data: existing } = await (supabase as any)
+      .from('company_subscriptions')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .single()
@@ -107,8 +107,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('company_subscriptions') as any)
+    const { data, error } = await (supabase as any)
+      .from('company_subscriptions')
       .insert({
         company_id: ctx.companyId!,
         plan_id: input.plan_id,

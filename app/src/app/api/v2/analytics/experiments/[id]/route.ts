@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('ab_experiments') as any)
+    const { data, error } = await (supabase as any)
+      .from('ab_experiments')
       .select('*')
       .eq('id', id)
       .single()
@@ -83,8 +83,8 @@ export const PUT = createApiHandler(
     if (input.sample_percentage !== undefined) updates.sample_percentage = input.sample_percentage
     if (input.results !== undefined) updates.results = input.results
 
-    const { data, error } = await (supabase
-      .from('ab_experiments') as any)
+    const { data, error } = await (supabase as any)
+      .from('ab_experiments')
       .update(updates)
       .eq('id', id)
       .select('*')

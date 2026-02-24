@@ -23,8 +23,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('client_payments') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_payments')
       .select('*')
       .eq('id', paymentId)
       .eq('company_id', ctx.companyId!)

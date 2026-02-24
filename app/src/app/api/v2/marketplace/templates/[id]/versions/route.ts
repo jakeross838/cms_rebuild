@@ -48,8 +48,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify template exists
-    const { data: template } = await (supabase
-      .from('marketplace_templates') as any)
+    const { data: template } = await (supabase as any)
+      .from('marketplace_templates')
       .select('id')
       .eq('id', templateId)
       .is('deleted_at', null)
@@ -62,8 +62,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('marketplace_template_versions') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('marketplace_template_versions')
       .select('*', { count: 'exact' })
       .eq('template_id', templateId)
       .order('published_at', { ascending: false })
@@ -110,8 +110,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify template exists
-    const { data: template } = await (supabase
-      .from('marketplace_templates') as any)
+    const { data: template } = await (supabase as any)
+      .from('marketplace_templates')
       .select('id')
       .eq('id', templateId)
       .is('deleted_at', null)
@@ -124,8 +124,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('marketplace_template_versions') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_template_versions')
       .insert({
         template_id: templateId,
         version: input.version,
@@ -149,8 +149,8 @@ export const POST = createApiHandler(
     }
 
     // Update the template's version field
-    await (supabase
-      .from('marketplace_templates') as any)
+    await (supabase as any)
+      .from('marketplace_templates')
       .update({ version: input.version })
       .eq('id', templateId)
 

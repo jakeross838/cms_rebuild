@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('master_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('master_items')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch vendor prices count
-    const { data: prices } = await (supabase
-      .from('vendor_item_prices') as any)
+    const { data: prices } = await (supabase as any)
+      .from('vendor_item_prices')
       .select('id')
       .eq('master_item_id', id)
       .eq('company_id', ctx.companyId!)
@@ -99,8 +99,8 @@ export const PUT = createApiHandler(
     if (input.default_unit_price !== undefined) updates.default_unit_price = input.default_unit_price
     if (input.sku !== undefined) updates.sku = input.sku
 
-    const { data, error } = await (supabase
-      .from('master_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('master_items')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -138,8 +138,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify exists
-    const { data: existing, error: existError } = await (supabase
-      .from('master_items') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('master_items')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -153,8 +153,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('master_items') as any)
+    const { error } = await (supabase as any)
+      .from('master_items')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

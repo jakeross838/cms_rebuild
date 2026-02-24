@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { data, error } = await (supabase as any)
+      .from('maintenance_schedules')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch tasks count
-    const { data: tasks } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { data: tasks } = await (supabase as any)
+      .from('maintenance_tasks')
       .select('id')
       .eq('schedule_id', id)
       .eq('company_id', ctx.companyId!)
@@ -89,8 +89,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify schedule exists
-    const { data: existing, error: existError } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('maintenance_schedules')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -119,8 +119,8 @@ export const PUT = createApiHandler(
     if (input.is_active !== undefined) updates.is_active = input.is_active
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { data, error } = await (supabase as any)
+      .from('maintenance_schedules')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -156,8 +156,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('maintenance_schedules')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -171,8 +171,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { error } = await (supabase as any)
+      .from('maintenance_schedules')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

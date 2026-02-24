@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('blog_posts') as any)
+    let query = (supabase as any)
+      .from('blog_posts')
       .select('*', { count: 'exact' })
       .is('deleted_at', null)
 
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('blog_posts') as any)
+    const { data, error } = await (supabase as any)
+      .from('blog_posts')
       .insert({
         title: input.title,
         slug: input.slug,

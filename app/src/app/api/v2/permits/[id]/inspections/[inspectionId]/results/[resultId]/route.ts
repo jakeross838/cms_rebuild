@@ -22,8 +22,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('inspection_results') as any)
+    const { data, error } = await (supabase as any)
+      .from('inspection_results')
       .select('*')
       .eq('id', resultId)
       .eq('company_id', ctx.companyId!)
@@ -64,8 +64,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify result exists
-    const { data: existing, error: existError } = await (supabase
-      .from('inspection_results') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('inspection_results')
       .select('id')
       .eq('id', resultId)
       .eq('company_id', ctx.companyId!)
@@ -89,8 +89,8 @@ export const PUT = createApiHandler(
     if (input.is_first_time_pass !== undefined) updates.is_first_time_pass = input.is_first_time_pass
     if (input.responsible_vendor_id !== undefined) updates.responsible_vendor_id = input.responsible_vendor_id
 
-    const { data, error } = await (supabase
-      .from('inspection_results') as any)
+    const { data, error } = await (supabase as any)
+      .from('inspection_results')
       .update(updates)
       .eq('id', resultId)
       .eq('company_id', ctx.companyId!)

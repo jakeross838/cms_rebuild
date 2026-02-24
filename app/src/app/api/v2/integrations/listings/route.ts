@@ -43,8 +43,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Integration listings are global — no company_id filter
-    let query = (supabase
-      .from('integration_listings') as any)
+    let query = (supabase as any)
+      .from('integration_listings')
       .select('*', { count: 'exact' })
 
     if (filters.category) {

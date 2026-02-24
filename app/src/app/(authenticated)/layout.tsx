@@ -43,15 +43,15 @@ export default async function AuthenticatedLayout({
         company_id: profile.company_id,
         email: profile.email,
         name: profile.name,
-        role: profile.role,
+        role: profile.role ?? 'field',
         phone: profile.phone,
         avatar_url: profile.avatar_url,
-        is_active: profile.is_active,
+        is_active: profile.is_active ?? true,
         last_login_at: profile.last_login_at ?? null,
         preferences: profile.preferences as Record<string, unknown> | null,
         deleted_at: profile.deleted_at ?? null,
-        created_at: profile.created_at,
-        updated_at: profile.updated_at,
+        created_at: profile.created_at ?? new Date().toISOString(),
+        updated_at: profile.updated_at ?? new Date().toISOString(),
       }
     : null
 
@@ -59,7 +59,7 @@ export default async function AuthenticatedLayout({
   const sidebarUser = profile
     ? {
         name: profile.name,
-        role: profile.role,
+        role: profile.role ?? 'field',
         companies: profile.companies ? { name: profile.companies.name } : undefined,
       }
     : null

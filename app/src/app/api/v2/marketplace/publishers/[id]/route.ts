@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('marketplace_publishers') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_publishers')
       .select('*')
       .eq('id', id)
       .single()
@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     }
 
     // Get template count
-    const { count: templatesCount } = await (supabase
-      .from('marketplace_templates') as any)
+    const { count: templatesCount } = await (supabase as any)
+      .from('marketplace_templates')
       .select('id', { count: 'exact', head: true })
       .eq('publisher_id', id)
       .is('deleted_at', null)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing, error: existError } = await (supabase
-      .from('marketplace_publishers') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('marketplace_publishers')
       .select('id')
       .eq('id', id)
       .single()
@@ -111,8 +111,8 @@ export const PUT = createApiHandler(
     if (input.is_verified !== undefined) updates.is_verified = input.is_verified
     if (input.revenue_share_pct !== undefined) updates.revenue_share_pct = input.revenue_share_pct
 
-    const { data, error } = await (supabase
-      .from('marketplace_publishers') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_publishers')
       .update(updates)
       .eq('id', id)
       .select('*')

@@ -38,8 +38,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify contract exists and is in draft or pending_review status
-    const { data: existing, error: existError } = await (supabase
-      .from('contracts') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('contracts')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -61,8 +61,8 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase
-      .from('contracts') as any)
+    const { data, error } = await (supabase as any)
+      .from('contracts')
       .update({
         status: 'sent_for_signature',
         updated_at: now,

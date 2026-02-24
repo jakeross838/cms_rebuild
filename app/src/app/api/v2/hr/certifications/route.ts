@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('employee_certifications') as any)
+    let query = (supabase as any)
+      .from('employee_certifications')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -93,8 +93,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify employee exists and belongs to company
-    const { data: emp, error: empError } = await (supabase
-      .from('employees') as any)
+    const { data: emp, error: empError } = await (supabase as any)
+      .from('employees')
       .select('id')
       .eq('id', input.employee_id)
       .eq('company_id', ctx.companyId!)
@@ -108,8 +108,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('employee_certifications') as any)
+    const { data, error } = await (supabase as any)
+      .from('employee_certifications')
       .insert({
         company_id: ctx.companyId!,
         employee_id: input.employee_id,

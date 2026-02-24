@@ -27,8 +27,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify submission exists and is draft
-    const { data: existing, error: existError } = await (supabase
-      .from('vendor_submissions') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('vendor_submissions')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -49,8 +49,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('vendor_submissions') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_submissions')
       .update({
         status: 'submitted',
         submitted_at: new Date().toISOString(),

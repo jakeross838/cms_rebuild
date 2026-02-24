@@ -41,8 +41,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { data, error } = await (supabase as any)
+      .from('maintenance_tasks')
       .select('*')
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
@@ -89,8 +89,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify task exists
-    const { data: existing, error: existError } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('maintenance_tasks')
       .select('id')
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
@@ -113,8 +113,8 @@ export const PUT = createApiHandler(
     if (input.actual_cost !== undefined) updates.actual_cost = input.actual_cost
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { data, error } = await (supabase as any)
+      .from('maintenance_tasks')
       .update(updates)
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
@@ -150,8 +150,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('maintenance_tasks')
       .select('id')
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
@@ -165,8 +165,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { error } = await (supabase as any)
+      .from('maintenance_tasks')
       .delete()
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)

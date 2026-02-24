@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('contracts') as any)
+    const { data, error } = await (supabase as any)
+      .from('contracts')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,14 +44,14 @@ export const GET = createApiHandler(
     }
 
     // Fetch signers count
-    const { data: signers } = await (supabase
-      .from('contract_signers') as any)
+    const { data: signers } = await (supabase as any)
+      .from('contract_signers')
       .select('id')
       .eq('contract_id', id)
 
     // Fetch versions
-    const { data: versions } = await (supabase
-      .from('contract_versions') as any)
+    const { data: versions } = await (supabase as any)
+      .from('contract_versions')
       .select('*')
       .eq('contract_id', id)
       .order('version_number', { ascending: false })
@@ -96,8 +96,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify contract exists and is editable (draft or pending_review)
-    const { data: existing, error: existError } = await (supabase
-      .from('contracts') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('contracts')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -136,8 +136,8 @@ export const PUT = createApiHandler(
     if (input.content !== undefined) updates.content = input.content
     if (input.metadata !== undefined) updates.metadata = input.metadata
 
-    const { data, error } = await (supabase
-      .from('contracts') as any)
+    const { data, error } = await (supabase as any)
+      .from('contracts')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -174,8 +174,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Only draft contracts can be deleted
-    const { data: existing, error: existError } = await (supabase
-      .from('contracts') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('contracts')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -196,8 +196,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('contracts') as any)
+    const { error } = await (supabase as any)
+      .from('contracts')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

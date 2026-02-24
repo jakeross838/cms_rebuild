@@ -61,8 +61,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify schedule belongs to company
-    const { data: schedule, error: sError } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { data: schedule, error: sError } = await (supabase as any)
+      .from('maintenance_schedules')
       .select('id')
       .eq('id', scheduleId)
       .eq('company_id', ctx.companyId!)
@@ -76,8 +76,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('maintenance_tasks') as any)
+    let query = (supabase as any)
+      .from('maintenance_tasks')
       .select('*', { count: 'exact' })
       .eq('schedule_id', scheduleId)
       .eq('company_id', ctx.companyId!)
@@ -136,8 +136,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify schedule belongs to company
-    const { data: schedule, error: sError } = await (supabase
-      .from('maintenance_schedules') as any)
+    const { data: schedule, error: sError } = await (supabase as any)
+      .from('maintenance_schedules')
       .select('id')
       .eq('id', scheduleId)
       .eq('company_id', ctx.companyId!)
@@ -151,8 +151,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('maintenance_tasks') as any)
+    const { data, error } = await (supabase as any)
+      .from('maintenance_tasks')
       .insert({
         company_id: ctx.companyId!,
         schedule_id: scheduleId,

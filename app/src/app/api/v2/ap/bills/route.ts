@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('ap_bills') as any)
+    let query = (supabase as any)
+      .from('ap_bills')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -106,8 +106,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the bill
-    const { data: bill, error: billError } = await (supabase
-      .from('ap_bills') as any)
+    const { data: bill, error: billError } = await (supabase as any)
+      .from('ap_bills')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
@@ -144,8 +144,8 @@ export const POST = createApiHandler(
         cost_code_id: line.cost_code_id ?? null,
       }))
 
-      const { data: lines, error: linesError } = await (supabase
-        .from('ap_bill_lines') as any)
+      const { data: lines, error: linesError } = await (supabase as any)
+        .from('ap_bill_lines')
         .insert(lineRecords)
         .select('*')
 

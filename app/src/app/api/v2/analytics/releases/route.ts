@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('deployment_releases') as any)
+    let query = (supabase as any)
+      .from('deployment_releases')
       .select('*', { count: 'exact' })
 
     if (filters.release_type) {
@@ -91,8 +91,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('deployment_releases') as any)
+    const { data, error } = await (supabase as any)
+      .from('deployment_releases')
       .insert({
         version: input.version,
         release_type: input.release_type,

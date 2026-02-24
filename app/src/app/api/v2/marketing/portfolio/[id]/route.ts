@@ -35,8 +35,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('portfolio_projects') as any)
+    const { data, error } = await (supabase as any)
+      .from('portfolio_projects')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -51,8 +51,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch photos count
-    const { data: photos } = await (supabase
-      .from('portfolio_photos') as any)
+    const { data: photos } = await (supabase as any)
+      .from('portfolio_photos')
       .select('id')
       .eq('portfolio_project_id', id)
 
@@ -107,8 +107,8 @@ export const PUT = createApiHandler(
       updates.published_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('portfolio_projects') as any)
+    const { data, error } = await (supabase as any)
+      .from('portfolio_projects')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -144,8 +144,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('portfolio_projects') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('portfolio_projects')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -159,8 +159,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('portfolio_projects') as any)
+    const { error } = await (supabase as any)
+      .from('portfolio_projects')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

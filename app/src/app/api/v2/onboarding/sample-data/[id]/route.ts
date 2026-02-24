@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('sample_data_sets') as any)
+    const { data, error } = await (supabase as any)
+      .from('sample_data_sets')
       .select('*')
       .eq('id', dataSetId)
       .eq('company_id', ctx.companyId!)
@@ -85,8 +85,8 @@ export const PUT = createApiHandler(
       updateFields.applied_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('sample_data_sets') as any)
+    const { data, error } = await (supabase as any)
+      .from('sample_data_sets')
       .update(updateFields)
       .eq('id', dataSetId)
       .eq('company_id', ctx.companyId!)

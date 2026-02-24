@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('rfi_templates') as any)
+    let query = (supabase as any)
+      .from('rfi_templates')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('is_active', true)
@@ -89,8 +89,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('rfi_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('rfi_templates')
       .insert({
         company_id: ctx.companyId!,
         name: input.name,

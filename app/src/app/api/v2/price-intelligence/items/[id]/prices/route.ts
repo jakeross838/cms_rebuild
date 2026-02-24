@@ -56,8 +56,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify item exists and belongs to company
-    const { data: item, error: itemError } = await (supabase
-      .from('master_items') as any)
+    const { data: item, error: itemError } = await (supabase as any)
+      .from('master_items')
       .select('id')
       .eq('id', itemId)
       .eq('company_id', ctx.companyId!)
@@ -71,8 +71,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('vendor_item_prices') as any)
+    let query = (supabase as any)
+      .from('vendor_item_prices')
       .select('*', { count: 'exact' })
       .eq('master_item_id', itemId)
       .eq('company_id', ctx.companyId!)
@@ -126,8 +126,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify item exists
-    const { data: item, error: itemError } = await (supabase
-      .from('master_items') as any)
+    const { data: item, error: itemError } = await (supabase as any)
+      .from('master_items')
       .select('id')
       .eq('id', itemId)
       .eq('company_id', ctx.companyId!)
@@ -141,8 +141,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('vendor_item_prices') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_item_prices')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,

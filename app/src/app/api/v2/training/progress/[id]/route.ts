@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('user_training_progress') as any)
+    const { data, error } = await (supabase as any)
+      .from('user_training_progress')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -81,8 +81,8 @@ export const PUT = createApiHandler(
     if (input.started_at !== undefined) updates.started_at = input.started_at
     if (input.completed_at !== undefined) updates.completed_at = input.completed_at
 
-    const { data, error } = await (supabase
-      .from('user_training_progress') as any)
+    const { data, error } = await (supabase as any)
+      .from('user_training_progress')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

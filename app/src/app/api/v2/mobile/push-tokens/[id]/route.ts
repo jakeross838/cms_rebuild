@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('push_notification_tokens') as any)
+    const { data, error } = await (supabase as any)
+      .from('push_notification_tokens')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -79,8 +79,8 @@ export const PUT = createApiHandler(
     if (input.provider !== undefined) updates.provider = input.provider
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('push_notification_tokens') as any)
+    const { data, error } = await (supabase as any)
+      .from('push_notification_tokens')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -115,8 +115,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('push_notification_tokens') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('push_notification_tokens')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -129,8 +129,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('push_notification_tokens') as any)
+    const { error } = await (supabase as any)
+      .from('push_notification_tokens')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

@@ -57,8 +57,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the RFI belongs to this company
-    const { data: rfi, error: rfiError } = await (supabase
-      .from('rfis') as any)
+    const { data: rfi, error: rfiError } = await (supabase as any)
+      .from('rfis')
       .select('id')
       .eq('id', rfiId)
       .eq('company_id', ctx.companyId!)
@@ -72,8 +72,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('rfi_responses') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('rfi_responses')
       .select('*', { count: 'exact' })
       .eq('rfi_id', rfiId)
       .order('created_at', { ascending: true })
@@ -119,8 +119,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI exists and belongs to company
-    const { data: rfi, error: rfiError } = await (supabase
-      .from('rfis') as any)
+    const { data: rfi, error: rfiError } = await (supabase as any)
+      .from('rfis')
       .select('id, status')
       .eq('id', rfiId)
       .eq('company_id', ctx.companyId!)
@@ -141,8 +141,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('rfi_responses') as any)
+    const { data, error } = await (supabase as any)
+      .from('rfi_responses')
       .insert({
         rfi_id: rfiId,
         company_id: ctx.companyId!,
@@ -164,8 +164,8 @@ export const POST = createApiHandler(
     // If this is an official response, update RFI status to answered
     if (input.is_official) {
       const now = new Date().toISOString()
-      await (supabase
-        .from('rfis') as any)
+      await (supabase as any)
+        .from('rfis')
         .update({
           status: 'answered',
           answered_at: now,

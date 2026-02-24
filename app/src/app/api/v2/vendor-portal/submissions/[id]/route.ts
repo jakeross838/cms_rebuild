@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('vendor_submissions') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_submissions')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -78,8 +78,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing, error: existError } = await (supabase
-      .from('vendor_submissions') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('vendor_submissions')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -103,8 +103,8 @@ export const PUT = createApiHandler(
     if (input.status !== undefined) updates.status = input.status
     if (input.rejection_reason !== undefined) updates.rejection_reason = input.rejection_reason
 
-    const { data, error } = await (supabase
-      .from('vendor_submissions') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_submissions')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -141,8 +141,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('vendor_submissions') as any)
+    const { data: existing } = await (supabase as any)
+      .from('vendor_submissions')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -164,8 +164,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('vendor_submissions') as any)
+    const { error } = await (supabase as any)
+      .from('vendor_submissions')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

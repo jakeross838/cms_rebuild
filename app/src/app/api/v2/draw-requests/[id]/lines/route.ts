@@ -29,8 +29,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists and belongs to this company
-    const { data: draw } = await (supabase
-      .from('draw_requests') as any)
+    const { data: draw } = await (supabase as any)
+      .from('draw_requests')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch line items sorted by sort_order
-    const { data: lines, error } = await (supabase
-      .from('draw_request_lines') as any)
+    const { data: lines, error } = await (supabase as any)
+      .from('draw_request_lines')
       .select('*')
       .eq('draw_request_id', id)
       .order('sort_order', { ascending: true })
@@ -89,8 +89,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists, belongs to company, and is editable
-    const { data: draw } = await (supabase
-      .from('draw_requests') as any)
+    const { data: draw } = await (supabase as any)
+      .from('draw_requests')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -135,8 +135,8 @@ export const POST = createApiHandler(
       }
     })
 
-    const { data: lines, error: linesError } = await (supabase
-      .from('draw_request_lines') as any)
+    const { data: lines, error: linesError } = await (supabase as any)
+      .from('draw_request_lines')
       .insert(lineRecords)
       .select('*')
 
@@ -148,8 +148,8 @@ export const POST = createApiHandler(
     }
 
     // Recalculate draw totals based on all lines
-    const { data: allLines } = await (supabase
-      .from('draw_request_lines') as any)
+    const { data: allLines } = await (supabase as any)
+      .from('draw_request_lines')
       .select('scheduled_value, previous_applications, current_work, materials_stored, total_completed, balance_to_finish')
       .eq('draw_request_id', id)
 
@@ -161,8 +161,8 @@ export const POST = createApiHandler(
       const currentWork = allLines.reduce((sum: number, l: { current_work: number; materials_stored: number }) => sum + Number(l.current_work) + Number(l.materials_stored), 0)
 
       // Fetch retainage_pct from the draw
-      const { data: drawData } = await (supabase
-        .from('draw_requests') as any)
+      const { data: drawData } = await (supabase as any)
+        .from('draw_requests')
         .select('retainage_pct')
         .eq('id', id)
         .single()
@@ -172,8 +172,8 @@ export const POST = createApiHandler(
       const totalEarned = totalCompleted - retainageAmount
       const currentDue = totalEarned - totalPrevious
 
-      await (supabase
-        .from('draw_requests') as any)
+      await (supabase as any)
+        .from('draw_requests')
         .update({
           contract_amount: totalScheduled,
           total_completed: totalCompleted,

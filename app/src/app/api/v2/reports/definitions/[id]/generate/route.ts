@@ -39,8 +39,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify the report definition exists and is active
-    const { data: definition, error: defError } = await (supabase
-      .from('report_definitions') as any)
+    const { data: definition, error: defError } = await (supabase as any)
+      .from('report_definitions')
       .select('id, report_type, config, is_active')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -73,8 +73,8 @@ export const POST = createApiHandler(
       data: {},
     }
 
-    const { data: snapshot, error: snapError } = await (supabase
-      .from('report_snapshots') as any)
+    const { data: snapshot, error: snapError } = await (supabase as any)
+      .from('report_snapshots')
       .insert({
         company_id: ctx.companyId!,
         report_definition_id: id,

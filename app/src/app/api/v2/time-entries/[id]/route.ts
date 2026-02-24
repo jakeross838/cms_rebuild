@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('time_entries') as any)
+    const { data, error } = await (supabase as any)
+      .from('time_entries')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch allocations
-    const { data: allocations } = await (supabase
-      .from('time_entry_allocations') as any)
+    const { data: allocations } = await (supabase as any)
+      .from('time_entry_allocations')
       .select('*')
       .eq('time_entry_id', id)
       .eq('company_id', ctx.companyId!)
@@ -83,8 +83,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is editable (pending status)
-    const { data: existing, error: fetchError } = await (supabase
-      .from('time_entries') as any)
+    const { data: existing, error: fetchError } = await (supabase as any)
+      .from('time_entries')
       .select('status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -118,8 +118,8 @@ export const PUT = createApiHandler(
     if (input.break_minutes !== undefined) updates.break_minutes = input.break_minutes
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('time_entries') as any)
+    const { data, error } = await (supabase as any)
+      .from('time_entries')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -152,8 +152,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is deletable (pending status)
-    const { data: existing, error: fetchError } = await (supabase
-      .from('time_entries') as any)
+    const { data: existing, error: fetchError } = await (supabase as any)
+      .from('time_entries')
       .select('status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -174,8 +174,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('time_entries') as any)
+    const { error } = await (supabase as any)
+      .from('time_entries')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

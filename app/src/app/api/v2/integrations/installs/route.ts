@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('integration_installs') as any)
+    let query = (supabase as any)
+      .from('integration_installs')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify listing exists
-    const { data: listing } = await (supabase
-      .from('integration_listings') as any)
+    const { data: listing } = await (supabase as any)
+      .from('integration_listings')
       .select('id')
       .eq('id', input.listing_id)
       .single()
@@ -106,8 +106,8 @@ export const POST = createApiHandler(
     }
 
     // Check for existing install
-    const { data: existing } = await (supabase
-      .from('integration_installs') as any)
+    const { data: existing } = await (supabase as any)
+      .from('integration_installs')
       .select('id, status')
       .eq('company_id', ctx.companyId!)
       .eq('listing_id', input.listing_id)
@@ -120,8 +120,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('integration_installs') as any)
+    const { data, error } = await (supabase as any)
+      .from('integration_installs')
       .insert({
         company_id: ctx.companyId!,
         listing_id: input.listing_id,

@@ -12,8 +12,8 @@ export const PUT = createApiHandler(
   async (_req, ctx: ApiContext) => {
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('notifications') as any)
+    const { error } = await (supabase as any)
+      .from('notifications')
       .update({ read: true, read_at: new Date().toISOString() })
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)

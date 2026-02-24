@@ -48,8 +48,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection exists and is in_progress or scheduled
-    const { data: existing, error: existError } = await (supabase
-      .from('safety_inspections') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('safety_inspections')
       .select('id, status')
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)
@@ -80,8 +80,8 @@ export const POST = createApiHandler(
     if (input.notes !== undefined) updates.notes = input.notes
     if (input.score !== undefined) updates.score = input.score
 
-    const { data, error } = await (supabase
-      .from('safety_inspections') as any)
+    const { data, error } = await (supabase as any)
+      .from('safety_inspections')
       .update(updates)
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)

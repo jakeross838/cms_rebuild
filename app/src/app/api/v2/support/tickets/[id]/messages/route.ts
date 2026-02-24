@@ -51,8 +51,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify ticket ownership
-    const { data: ticket } = await (supabase
-      .from('support_tickets') as any)
+    const { data: ticket } = await (supabase as any)
+      .from('support_tickets')
       .select('id')
       .eq('id', ticketId)
       .eq('company_id', ctx.companyId!)
@@ -66,8 +66,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('ticket_messages') as any)
+    let query = (supabase as any)
+      .from('ticket_messages')
       .select('*', { count: 'exact' })
       .eq('ticket_id', ticketId)
       .eq('company_id', ctx.companyId!)
@@ -124,8 +124,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify ticket ownership
-    const { data: ticket } = await (supabase
-      .from('support_tickets') as any)
+    const { data: ticket } = await (supabase as any)
+      .from('support_tickets')
       .select('id, first_response_at')
       .eq('id', ticketId)
       .eq('company_id', ctx.companyId!)
@@ -139,8 +139,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('ticket_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('ticket_messages')
       .insert({
         company_id: ctx.companyId!,
         ticket_id: ticketId,
@@ -162,8 +162,8 @@ export const POST = createApiHandler(
 
     // Set first_response_at on ticket if this is the first agent response
     if (input.sender_type === 'agent' && !ticket.first_response_at) {
-      await (supabase
-        .from('support_tickets') as any)
+      await (supabase as any)
+        .from('support_tickets')
         .update({ first_response_at: new Date().toISOString() })
         .eq('id', ticketId)
         .eq('company_id', ctx.companyId!)

@@ -30,8 +30,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('training_paths') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_paths')
       .select('*')
       .eq('id', id)
       .single()
@@ -52,8 +52,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch items count
-    const { data: items } = await (supabase
-      .from('training_path_items') as any)
+    const { data: items } = await (supabase as any)
+      .from('training_path_items')
       .select('id')
       .eq('path_id', id)
 
@@ -105,8 +105,8 @@ export const PUT = createApiHandler(
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('training_paths') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_paths')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -143,8 +143,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('training_paths') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_paths')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

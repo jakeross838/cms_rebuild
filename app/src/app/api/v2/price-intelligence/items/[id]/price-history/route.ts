@@ -52,8 +52,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify item exists and belongs to company
-    const { data: item, error: itemError } = await (supabase
-      .from('master_items') as any)
+    const { data: item, error: itemError } = await (supabase as any)
+      .from('master_items')
       .select('id')
       .eq('id', itemId)
       .eq('company_id', ctx.companyId!)
@@ -67,8 +67,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('price_history') as any)
+    let query = (supabase as any)
+      .from('price_history')
       .select('*', { count: 'exact' })
       .eq('master_item_id', itemId)
       .eq('company_id', ctx.companyId!)

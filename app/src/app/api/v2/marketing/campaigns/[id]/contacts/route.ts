@@ -56,8 +56,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify campaign ownership
-    const { data: campaign, error: campaignError } = await (supabase
-      .from('marketing_campaigns') as any)
+    const { data: campaign, error: campaignError } = await (supabase as any)
+      .from('marketing_campaigns')
       .select('id')
       .eq('id', campaignId)
       .eq('company_id', ctx.companyId!)
@@ -70,8 +70,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('campaign_contacts') as any)
+    let query = (supabase as any)
+      .from('campaign_contacts')
       .select('*', { count: 'exact' })
       .eq('campaign_id', campaignId)
       .eq('company_id', ctx.companyId!)
@@ -127,8 +127,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify campaign ownership
-    const { data: campaign, error: campaignError } = await (supabase
-      .from('marketing_campaigns') as any)
+    const { data: campaign, error: campaignError } = await (supabase as any)
+      .from('marketing_campaigns')
       .select('id')
       .eq('id', campaignId)
       .eq('company_id', ctx.companyId!)
@@ -141,8 +141,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('campaign_contacts') as any)
+    const { data, error } = await (supabase as any)
+      .from('campaign_contacts')
       .insert({
         campaign_id: campaignId,
         company_id: ctx.companyId!,

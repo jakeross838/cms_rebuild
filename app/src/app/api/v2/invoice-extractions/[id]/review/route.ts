@@ -45,8 +45,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists and is in a reviewable state
-    const { data: existing, error: fetchError } = await (supabase
-      .from('invoice_extractions') as any)
+    const { data: existing, error: fetchError } = await (supabase as any)
+      .from('invoice_extractions')
       .select('id, status, extracted_data')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -79,8 +79,8 @@ export const POST = createApiHandler(
     const newStatus = decision === 'approved' ? 'completed' : 'failed'
 
     // Update extraction
-    const { data: updated, error: updateError } = await (supabase
-      .from('invoice_extractions') as any)
+    const { data: updated, error: updateError } = await (supabase as any)
+      .from('invoice_extractions')
       .update({
         status: newStatus,
         extracted_data: updatedData,
@@ -101,8 +101,8 @@ export const POST = createApiHandler(
     }
 
     // Log audit entry
-    await (supabase
-      .from('extraction_audit_log') as any)
+    await (supabase as any)
+      .from('extraction_audit_log')
       .insert({
         extraction_id: id,
         action: decision === 'approved' ? 'approved' : 'rejected',

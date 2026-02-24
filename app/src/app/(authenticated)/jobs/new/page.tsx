@@ -10,22 +10,8 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { CONTRACT_TYPES, US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
-
-
-const US_STATES = [
-  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-]
-
-const CONTRACT_TYPES = [
-  { value: 'fixed_price', label: 'Fixed Price' },
-  { value: 'cost_plus', label: 'Cost Plus' },
-  { value: 'time_materials', label: 'Time & Materials' },
-]
 
 export default function NewJobPage() {
   const router = useRouter()
@@ -71,9 +57,7 @@ export default function NewJobPage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
-      // Create job - using type assertion until proper schema is connected
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: job, error: insertError } = await (supabase as any)
+      const { data: job, error: insertError } = await supabase
         .from('jobs')
         .insert({
           company_id: companyId,
@@ -84,11 +68,11 @@ export default function NewJobPage() {
           state: formData.state || null,
           zip: formData.zip || null,
           contract_amount: formData.contract_amount ? parseFloat(formData.contract_amount) : null,
-          contract_type: formData.contract_type,
+          contract_type: formData.contract_type as 'fixed_price' | 'cost_plus' | 'time_materials',
           start_date: formData.start_date || null,
           target_completion: formData.target_completion || null,
           notes: formData.notes || null,
-          status: 'pre_construction',
+          status: 'pre_construction' as const,
         })
         .select()
         .single()
@@ -329,7 +313,6 @@ export default function NewJobPage() {
           </Link>
           <Button
             type="submit"
-            className=""
             disabled={loading}
           >
             {loading ? (

@@ -43,8 +43,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify rule exists and belongs to company
-    const { data: existing, error: fetchError } = await (supabase
-      .from('extraction_rules') as any)
+    const { data: existing, error: fetchError } = await (supabase as any)
+      .from('extraction_rules')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -57,8 +57,8 @@ export const PUT = createApiHandler(
       )
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('extraction_rules') as any)
+    const { data: updated, error: updateError } = await (supabase as any)
+      .from('extraction_rules')
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
@@ -98,8 +98,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify rule exists and belongs to company
-    const { data: existing, error: fetchError } = await (supabase
-      .from('extraction_rules') as any)
+    const { data: existing, error: fetchError } = await (supabase as any)
+      .from('extraction_rules')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -113,8 +113,8 @@ export const DELETE = createApiHandler(
     }
 
     // Soft delete: deactivate the rule
-    const { data: deactivated, error: updateError } = await (supabase
-      .from('extraction_rules') as any)
+    const { data: deactivated, error: updateError } = await (supabase as any)
+      .from('extraction_rules')
       .update({
         is_active: false,
         updated_at: new Date().toISOString(),

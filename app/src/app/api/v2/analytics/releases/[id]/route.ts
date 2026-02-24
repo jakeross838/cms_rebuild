@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('deployment_releases') as any)
+    const { data, error } = await (supabase as any)
+      .from('deployment_releases')
       .select('*')
       .eq('id', id)
       .single()
@@ -82,8 +82,8 @@ export const PUT = createApiHandler(
     if (input.rollback_reason !== undefined) updates.rollback_reason = input.rollback_reason
     if (input.affected_services !== undefined) updates.affected_services = input.affected_services
 
-    const { data, error } = await (supabase
-      .from('deployment_releases') as any)
+    const { data, error } = await (supabase as any)
+      .from('deployment_releases')
       .update(updates)
       .eq('id', id)
       .select('*')

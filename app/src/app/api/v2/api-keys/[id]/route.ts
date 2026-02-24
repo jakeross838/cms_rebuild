@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('api_keys') as any)
+    const { data, error } = await (supabase as any)
+      .from('api_keys')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
       }
     }
 
-    const { data, error } = await (supabase
-      .from('api_keys') as any)
+    const { data, error } = await (supabase as any)
+      .from('api_keys')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -125,8 +125,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('api_keys') as any)
+    const { data: existing } = await (supabase as any)
+      .from('api_keys')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -146,8 +146,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('api_keys') as any)
+    const { error } = await (supabase as any)
+      .from('api_keys')
       .update({
         status: 'revoked',
         revoked_at: new Date().toISOString(),

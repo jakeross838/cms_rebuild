@@ -39,8 +39,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify it exists
-    const { data: existing, error: existError } = await (supabase
-      .from('vendor_notes') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('vendor_notes')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -61,8 +61,8 @@ export const PUT = createApiHandler(
     if (input.tags !== undefined) updates.tags = input.tags
     if (input.is_internal !== undefined) updates.is_internal = input.is_internal
 
-    const { data, error } = await (supabase
-      .from('vendor_notes') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_notes')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -98,8 +98,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('vendor_notes') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('vendor_notes')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -113,8 +113,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('vendor_notes') as any)
+    const { error } = await (supabase as any)
+      .from('vendor_notes')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

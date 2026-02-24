@@ -27,8 +27,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify document belongs to company
-    const { error: docError } = await (supabase
-      .from('documents') as any)
+    const { error: docError } = await (supabase as any)
+      .from('documents')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -41,8 +41,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data: versions, error } = await (supabase
-      .from('document_versions') as any)
+    const { data: versions, error } = await (supabase as any)
+      .from('document_versions')
       .select('id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at')
       .eq('document_id', id)
       .order('version_number', { ascending: false })
@@ -95,8 +95,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Get current document and latest version number
-    const { data: doc, error: docError } = await (supabase
-      .from('documents') as any)
+    const { data: doc, error: docError } = await (supabase as any)
+      .from('documents')
       .select('id, job_id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -109,8 +109,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: latestVersion } = await (supabase
-      .from('document_versions') as any)
+    const { data: latestVersion } = await (supabase as any)
+      .from('document_versions')
       .select('version_number')
       .eq('document_id', id)
       .order('version_number', { ascending: false })
@@ -122,8 +122,8 @@ export const POST = createApiHandler(
     const storagePath = buildStoragePath(ctx.companyId!, doc.job_id, input.filename, versionId)
 
     // Create version record
-    const { data: version, error: versionError } = await (supabase
-      .from('document_versions') as any)
+    const { data: version, error: versionError } = await (supabase as any)
+      .from('document_versions')
       .insert({
         id: versionId,
         document_id: id,
@@ -145,8 +145,8 @@ export const POST = createApiHandler(
     }
 
     // Update document's current version and metadata
-    await (supabase
-      .from('documents') as any)
+    await (supabase as any)
+      .from('documents')
       .update({
         current_version_id: versionId,
         storage_path: storagePath,

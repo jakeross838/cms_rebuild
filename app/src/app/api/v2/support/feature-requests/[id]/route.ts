@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('feature_requests') as any)
+    const { data, error } = await (supabase as any)
+      .from('feature_requests')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     }
 
     // Get votes count
-    const { count: votes_count } = await (supabase
-      .from('feature_request_votes') as any)
+    const { count: votes_count } = await (supabase as any)
+      .from('feature_request_votes')
       .select('id', { count: 'exact', head: true })
       .eq('feature_request_id', id)
       .eq('company_id', ctx.companyId!)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing } = await (supabase
-      .from('feature_requests') as any)
+    const { data: existing } = await (supabase as any)
+      .from('feature_requests')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -110,8 +110,8 @@ export const PUT = createApiHandler(
     if (input.priority !== undefined) updates.priority = input.priority
     if (input.category !== undefined) updates.category = input.category
 
-    const { data, error } = await (supabase
-      .from('feature_requests') as any)
+    const { data, error } = await (supabase as any)
+      .from('feature_requests')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -148,8 +148,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('feature_requests') as any)
+    const { data: existing } = await (supabase as any)
+      .from('feature_requests')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -163,8 +163,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('feature_requests') as any)
+    const { error } = await (supabase as any)
+      .from('feature_requests')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

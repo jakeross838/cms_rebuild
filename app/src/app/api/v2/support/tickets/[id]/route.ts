@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('support_tickets') as any)
+    const { data, error } = await (supabase as any)
+      .from('support_tickets')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     }
 
     // Get messages count
-    const { count: messages_count } = await (supabase
-      .from('ticket_messages') as any)
+    const { count: messages_count } = await (supabase as any)
+      .from('ticket_messages')
       .select('id', { count: 'exact', head: true })
       .eq('ticket_id', id)
       .eq('company_id', ctx.companyId!)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing, error: existError } = await (supabase
-      .from('support_tickets') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('support_tickets')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -126,8 +126,8 @@ export const PUT = createApiHandler(
     if (input.tags !== undefined) updates.tags = input.tags
     if (input.satisfaction_rating !== undefined) updates.satisfaction_rating = input.satisfaction_rating
 
-    const { data, error } = await (supabase
-      .from('support_tickets') as any)
+    const { data, error } = await (supabase as any)
+      .from('support_tickets')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -164,8 +164,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('support_tickets') as any)
+    const { data: existing } = await (supabase as any)
+      .from('support_tickets')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -179,8 +179,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('support_tickets') as any)
+    const { error } = await (supabase as any)
+      .from('support_tickets')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

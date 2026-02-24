@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('warranties') as any)
+    const { data, error } = await (supabase as any)
+      .from('warranties')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch claims count
-    const { data: claims } = await (supabase
-      .from('warranty_claims') as any)
+    const { data: claims } = await (supabase as any)
+      .from('warranty_claims')
       .select('id')
       .eq('warranty_id', id)
       .is('deleted_at', null)
@@ -89,8 +89,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify warranty exists
-    const { data: existing, error: existError } = await (supabase
-      .from('warranties') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('warranties')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -126,8 +126,8 @@ export const PUT = createApiHandler(
       updates.transferred_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('warranties') as any)
+    const { data, error } = await (supabase as any)
+      .from('warranties')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -163,8 +163,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('warranties') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('warranties')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -178,8 +178,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('warranties') as any)
+    const { error } = await (supabase as any)
+      .from('warranties')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

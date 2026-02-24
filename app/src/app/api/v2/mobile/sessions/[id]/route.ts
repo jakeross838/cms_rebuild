@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('mobile_sessions') as any)
+    const { data, error } = await (supabase as any)
+      .from('mobile_sessions')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -81,8 +81,8 @@ export const PUT = createApiHandler(
     if (input.last_activity_at !== undefined) updates.last_activity_at = input.last_activity_at
     if (input.ended_at !== undefined) updates.ended_at = input.ended_at
 
-    const { data, error } = await (supabase
-      .from('mobile_sessions') as any)
+    const { data, error } = await (supabase as any)
+      .from('mobile_sessions')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -118,8 +118,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('mobile_sessions') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('mobile_sessions')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -139,8 +139,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('mobile_sessions') as any)
+    const { error } = await (supabase as any)
+      .from('mobile_sessions')
       .update({
         status: 'expired',
         ended_at: new Date().toISOString(),

@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('marketplace_reviews') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_reviews')
       .select('*')
       .eq('id', id)
       .single()
@@ -76,8 +76,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing, error: existError } = await (supabase
-      .from('marketplace_reviews') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
       .single()
@@ -99,8 +99,8 @@ export const PUT = createApiHandler(
       updates.publisher_responded_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('marketplace_reviews') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_reviews')
       .update(updates)
       .eq('id', id)
       .select('*')
@@ -135,8 +135,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('marketplace_reviews') as any)
+    const { data: existing } = await (supabase as any)
+      .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
       .single()
@@ -148,8 +148,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('marketplace_reviews') as any)
+    const { error } = await (supabase as any)
+      .from('marketplace_reviews')
       .delete()
       .eq('id', id)
 

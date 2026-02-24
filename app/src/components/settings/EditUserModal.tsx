@@ -51,7 +51,7 @@ export function EditUserModal({ userId, onClose, onSuccess }: EditUserModalProps
         setUser(userData)
         setName(userData.name || '')
         setPhone(userData.phone || '')
-        setRole(userData.role)
+        setRole(userData.role ?? 'field')
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load user')
       } finally {

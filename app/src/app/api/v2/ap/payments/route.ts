@@ -43,8 +43,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('ap_payments') as any)
+    let query = (supabase as any)
+      .from('ap_payments')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -107,8 +107,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the payment
-    const { data: payment, error: paymentError } = await (supabase
-      .from('ap_payments') as any)
+    const { data: payment, error: paymentError } = await (supabase as any)
+      .from('ap_payments')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
@@ -137,8 +137,8 @@ export const POST = createApiHandler(
       amount: app.amount,
     }))
 
-    const { data: applications, error: appError } = await (supabase
-      .from('ap_payment_applications') as any)
+    const { data: applications, error: appError } = await (supabase as any)
+      .from('ap_payment_applications')
       .insert(appRecords)
       .select('*')
 
@@ -152,8 +152,8 @@ export const POST = createApiHandler(
     // Update bill balance_due and status for each applied bill
     for (const app of input.applications) {
       // Get current bill
-      const { data: bill } = await (supabase
-        .from('ap_bills') as any)
+      const { data: bill } = await (supabase as any)
+        .from('ap_bills')
         .select('balance_due, amount')
         .eq('id', app.bill_id)
         .single()
@@ -162,8 +162,8 @@ export const POST = createApiHandler(
         const newBalance = Number(bill.balance_due) - app.amount
         const newStatus = newBalance <= 0.01 ? 'paid' : 'partially_paid'
 
-        await (supabase
-          .from('ap_bills') as any)
+        await (supabase as any)
+          .from('ap_bills')
           .update({
             balance_due: Math.max(0, newBalance),
             status: newStatus,

@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('schedule_risk_scores') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_risk_scores')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -87,8 +87,8 @@ export const PUT = createApiHandler(
     // Update assessed_at when risk data changes
     updates.assessed_at = new Date().toISOString()
 
-    const { data, error } = await (supabase
-      .from('schedule_risk_scores') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_risk_scores')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

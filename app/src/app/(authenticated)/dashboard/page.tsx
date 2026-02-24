@@ -129,8 +129,8 @@ export default async function DashboardPage() {
                         <span className="font-medium text-foreground truncate">
                           {job.name}
                         </span>
-                        <Badge className={getStatusColor(job.status)}>
-                          {job.status.replace('_', ' ')}
+                        <Badge className={getStatusColor(job.status ?? 'active')}>
+                          {(job.status ?? 'active').replace('_', ' ')}
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">

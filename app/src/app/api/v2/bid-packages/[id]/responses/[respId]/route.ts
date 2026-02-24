@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase
-      .from('bid_packages') as any)
+    const { data: bp, error: bpError } = await (supabase as any)
+      .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
@@ -56,8 +56,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('bid_responses') as any)
+    const { data, error } = await (supabase as any)
+      .from('bid_responses')
       .select('*')
       .eq('id', respId)
       .eq('bid_package_id', bidPackageId)
@@ -103,8 +103,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase
-      .from('bid_packages') as any)
+    const { data: bp, error: bpError } = await (supabase as any)
+      .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
@@ -126,8 +126,8 @@ export const PUT = createApiHandler(
     if (input.attachments !== undefined) updates.attachments = input.attachments
     if (input.is_qualified !== undefined) updates.is_qualified = input.is_qualified
 
-    const { data, error } = await (supabase
-      .from('bid_responses') as any)
+    const { data, error } = await (supabase as any)
+      .from('bid_responses')
       .update(updates)
       .eq('id', respId)
       .eq('bid_package_id', bidPackageId)

@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('migration_mapping_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_mapping_templates')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -83,8 +83,8 @@ export const PUT = createApiHandler(
     if (input.mappings !== undefined) updates.mappings = input.mappings
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('migration_mapping_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_mapping_templates')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -120,8 +120,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('migration_mapping_templates') as any)
+    const { data: existing } = await (supabase as any)
+      .from('migration_mapping_templates')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -134,8 +134,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('migration_mapping_templates') as any)
+    const { error } = await (supabase as any)
+      .from('migration_mapping_templates')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

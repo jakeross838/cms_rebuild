@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('lien_waiver_tracking') as any)
+    let query = (supabase as any)
+      .from('lien_waiver_tracking')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('lien_waiver_tracking') as any)
+    const { data, error } = await (supabase as any)
+      .from('lien_waiver_tracking')
       .insert({
         company_id: ctx.companyId!,
         job_id: input.job_id,

@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('selections') as any)
+    const { data, error } = await (supabase as any)
+      .from('selections')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch history for this selection's category
-    const { data: history } = await (supabase
-      .from('selection_history') as any)
+    const { data: history } = await (supabase as any)
+      .from('selection_history')
       .select('*')
       .eq('category_id', data.category_id)
       .eq('company_id', ctx.companyId!)
@@ -90,8 +90,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify selection exists
-    const { data: existing, error: existError } = await (supabase
-      .from('selections') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('selections')
       .select('id, status, category_id, option_id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -115,8 +115,8 @@ export const PUT = createApiHandler(
     if (input.confirmed_at !== undefined) updates.confirmed_at = input.confirmed_at
     if (input.superseded_by !== undefined) updates.superseded_by = input.superseded_by
 
-    const { data, error } = await (supabase
-      .from('selections') as any)
+    const { data, error } = await (supabase as any)
+      .from('selections')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -134,8 +134,8 @@ export const PUT = createApiHandler(
     // Record history if status or option changed
     if (input.status !== undefined || input.option_id !== undefined) {
       const action = input.option_id !== undefined ? 'changed' : 'selected'
-      await (supabase
-        .from('selection_history') as any)
+      await (supabase as any)
+        .from('selection_history')
         .insert({
           company_id: ctx.companyId!,
           category_id: existing.category_id,
@@ -169,8 +169,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify selection exists
-    const { data: existing, error: existError } = await (supabase
-      .from('selections') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('selections')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -184,8 +184,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('selections') as any)
+    const { error } = await (supabase as any)
+      .from('selections')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

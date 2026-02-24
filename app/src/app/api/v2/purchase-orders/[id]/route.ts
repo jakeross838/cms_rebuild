@@ -38,8 +38,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('purchase_orders') as any)
+    const { data, error } = await (supabase as any)
+      .from('purchase_orders')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -54,15 +54,15 @@ export const GET = createApiHandler(
     }
 
     // Fetch line items
-    const { data: lines } = await (supabase
-      .from('purchase_order_lines') as any)
+    const { data: lines } = await (supabase as any)
+      .from('purchase_order_lines')
       .select('*')
       .eq('po_id', id)
       .order('sort_order', { ascending: true })
 
     // Fetch receipts
-    const { data: receipts } = await (supabase
-      .from('po_receipts') as any)
+    const { data: receipts } = await (supabase as any)
+      .from('po_receipts')
       .select('*')
       .eq('po_id', id)
       .order('received_date', { ascending: false })
@@ -125,8 +125,8 @@ export const PUT = createApiHandler(
     if (input.terms !== undefined) updates.terms = input.terms
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('purchase_orders') as any)
+    const { data, error } = await (supabase as any)
+      .from('purchase_orders')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -162,8 +162,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('purchase_orders') as any)
+    const { error } = await (supabase as any)
+      .from('purchase_orders')
       .update({ deleted_at: new Date().toISOString(), status: 'voided' })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

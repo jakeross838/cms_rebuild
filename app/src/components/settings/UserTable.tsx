@@ -229,10 +229,10 @@ export function UserTable({
                     <span
                       className={cn(
                         'inline-flex px-2 py-1 text-xs font-medium rounded',
-                        ROLE_COLORS[user.role]
+                        ROLE_COLORS[user.role ?? 'field']
                       )}
                     >
-                      {ROLE_LABELS[user.role]}
+                      {ROLE_LABELS[user.role ?? 'field']}
                     </span>
                   </td>
 

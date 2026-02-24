@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('equipment_inspections') as any)
+    const { data, error } = await (supabase as any)
+      .from('equipment_inspections')
       .select('*')
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)
@@ -84,8 +84,8 @@ export const PUT = createApiHandler(
     if (input.corrective_action !== undefined) updates.corrective_action = input.corrective_action
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('equipment_inspections') as any)
+    const { data, error } = await (supabase as any)
+      .from('equipment_inspections')
       .update(updates)
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)
@@ -120,8 +120,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('equipment_inspections') as any)
+    const { error } = await (supabase as any)
+      .from('equipment_inspections')
       .delete()
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)

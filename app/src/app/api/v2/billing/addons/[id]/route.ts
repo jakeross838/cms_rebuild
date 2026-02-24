@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('plan_addons') as any)
+    const { data, error } = await (supabase as any)
+      .from('plan_addons')
       .select('*')
       .eq('id', id)
       .single()
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     if (input.is_active !== undefined) updates.is_active = input.is_active
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase
-      .from('plan_addons') as any)
+    const { data, error } = await (supabase as any)
+      .from('plan_addons')
       .update(updates)
       .eq('id', id)
       .select('*')
@@ -124,8 +124,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('plan_addons') as any)
+    const { data: existing } = await (supabase as any)
+      .from('plan_addons')
       .select('id')
       .eq('id', id)
       .single()
@@ -137,8 +137,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('plan_addons') as any)
+    const { error } = await (supabase as any)
+      .from('plan_addons')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
 

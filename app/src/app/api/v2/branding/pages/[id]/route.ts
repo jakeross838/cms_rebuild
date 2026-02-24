@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('builder_content_pages') as any)
+    const { data, error } = await (supabase as any)
+      .from('builder_content_pages')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -90,8 +90,8 @@ export const PUT = createApiHandler(
     }
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase
-      .from('builder_content_pages') as any)
+    const { data, error } = await (supabase as any)
+      .from('builder_content_pages')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -128,8 +128,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('builder_content_pages') as any)
+    const { data: existing } = await (supabase as any)
+      .from('builder_content_pages')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -143,8 +143,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('builder_content_pages') as any)
+    const { error } = await (supabase as any)
+      .from('builder_content_pages')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

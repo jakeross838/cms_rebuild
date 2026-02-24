@@ -29,8 +29,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify task exists and belongs to company
-    const { error: taskError } = await (supabase
-      .from('schedule_tasks') as any)
+    const { error: taskError } = await (supabase as any)
+      .from('schedule_tasks')
       .select('id')
       .eq('id', taskId)
       .eq('company_id', ctx.companyId!)
@@ -45,13 +45,13 @@ export const GET = createApiHandler(
     }
 
     // Get dependencies where this task is predecessor or successor
-    const { data: asPredecessor } = await (supabase
-      .from('schedule_dependencies') as any)
+    const { data: asPredecessor } = await (supabase as any)
+      .from('schedule_dependencies')
       .select('*')
       .eq('predecessor_id', taskId)
 
-    const { data: asSuccessor } = await (supabase
-      .from('schedule_dependencies') as any)
+    const { data: asSuccessor } = await (supabase as any)
+      .from('schedule_dependencies')
       .select('*')
       .eq('successor_id', taskId)
 
@@ -95,8 +95,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify both tasks exist and belong to same company
-    const { data: tasks, error: tasksError } = await (supabase
-      .from('schedule_tasks') as any)
+    const { data: tasks, error: tasksError } = await (supabase as any)
+      .from('schedule_tasks')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -117,8 +117,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('schedule_dependencies') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_dependencies')
       .insert({
         predecessor_id: input.predecessor_id,
         successor_id: input.successor_id,

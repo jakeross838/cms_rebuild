@@ -26,8 +26,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('marketplace_installs') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketplace_installs')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

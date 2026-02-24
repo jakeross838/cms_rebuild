@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('vendor_messages') as any)
+    let query = (supabase as any)
+      .from('vendor_messages')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -101,8 +101,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('vendor_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_messages')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,

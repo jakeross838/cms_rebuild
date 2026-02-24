@@ -43,8 +43,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // KB articles can be platform-level (company_id IS NULL) or company-specific
-    let query = (supabase
-      .from('kb_articles') as any)
+    let query = (supabase as any)
+      .from('kb_articles')
       .select('*', { count: 'exact' })
       .is('deleted_at', null)
 
@@ -94,8 +94,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for duplicate slug
-    const { data: existingSlug } = await (supabase
-      .from('kb_articles') as any)
+    const { data: existingSlug } = await (supabase as any)
+      .from('kb_articles')
       .select('id')
       .eq('slug', input.slug)
       .single()
@@ -107,8 +107,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('kb_articles') as any)
+    const { data, error } = await (supabase as any)
+      .from('kb_articles')
       .insert({
         company_id: ctx.companyId!,
         title: input.title,

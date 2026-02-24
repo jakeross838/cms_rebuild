@@ -42,8 +42,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify conflict exists and is still pending
-    const { data: existing } = await (supabase
-      .from('sync_conflicts') as any)
+    const { data: existing } = await (supabase as any)
+      .from('sync_conflicts')
       .select('id, resolution')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -63,8 +63,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: conflict, error: conflictError } = await (supabase
-      .from('sync_conflicts') as any)
+    const { data: conflict, error: conflictError } = await (supabase as any)
+      .from('sync_conflicts')
       .update({
         resolution: input.resolution,
         resolved_by: ctx.user!.id,

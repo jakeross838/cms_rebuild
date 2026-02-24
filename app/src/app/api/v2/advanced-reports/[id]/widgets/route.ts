@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify report exists
-    const { data: report, error: reportError } = await (supabase
-      .from('custom_reports') as any)
+    const { data: report, error: reportError } = await (supabase as any)
+      .from('custom_reports')
       .select('id')
       .eq('id', reportId)
       .eq('company_id', ctx.companyId!)
@@ -57,8 +57,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('custom_report_widgets') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('custom_report_widgets')
       .select('*', { count: 'exact' })
       .eq('report_id', reportId)
       .eq('company_id', ctx.companyId!)
@@ -100,8 +100,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify report exists and belongs to company
-    const { data: report, error: reportError } = await (supabase
-      .from('custom_reports') as any)
+    const { data: report, error: reportError } = await (supabase as any)
+      .from('custom_reports')
       .select('id')
       .eq('id', reportId)
       .eq('company_id', ctx.companyId!)
@@ -115,8 +115,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('custom_report_widgets') as any)
+    const { data, error } = await (supabase as any)
+      .from('custom_report_widgets')
       .insert({
         report_id: reportId,
         company_id: ctx.companyId!,

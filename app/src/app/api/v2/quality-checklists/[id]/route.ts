@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('quality_checklists') as any)
+    const { data, error } = await (supabase as any)
+      .from('quality_checklists')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch checklist items
-    const { data: items } = await (supabase
-      .from('quality_checklist_items') as any)
+    const { data: items } = await (supabase as any)
+      .from('quality_checklist_items')
       .select('*')
       .eq('checklist_id', id)
       .order('sort_order', { ascending: true })
@@ -103,8 +103,8 @@ export const PUT = createApiHandler(
     if (input.failed_items !== undefined) updates.failed_items = input.failed_items
     if (input.na_items !== undefined) updates.na_items = input.na_items
 
-    const { data, error } = await (supabase
-      .from('quality_checklists') as any)
+    const { data, error } = await (supabase as any)
+      .from('quality_checklists')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -140,8 +140,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('quality_checklists') as any)
+    const { error } = await (supabase as any)
+      .from('quality_checklists')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

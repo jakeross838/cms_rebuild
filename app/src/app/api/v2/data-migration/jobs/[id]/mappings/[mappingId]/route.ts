@@ -36,8 +36,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('migration_field_mappings') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_field_mappings')
       .select('*')
       .eq('id', mappingId)
       .eq('company_id', ctx.companyId!)
@@ -94,8 +94,8 @@ export const PUT = createApiHandler(
     if (input.sample_target_value !== undefined) updates.sample_target_value = input.sample_target_value
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase
-      .from('migration_field_mappings') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_field_mappings')
       .update(updates)
       .eq('id', mappingId)
       .eq('company_id', ctx.companyId!)
@@ -130,8 +130,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('migration_field_mappings') as any)
+    const { data: existing } = await (supabase as any)
+      .from('migration_field_mappings')
       .select('id')
       .eq('id', mappingId)
       .eq('company_id', ctx.companyId!)
@@ -144,8 +144,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('migration_field_mappings') as any)
+    const { error } = await (supabase as any)
+      .from('migration_field_mappings')
       .delete()
       .eq('id', mappingId)
       .eq('company_id', ctx.companyId!)

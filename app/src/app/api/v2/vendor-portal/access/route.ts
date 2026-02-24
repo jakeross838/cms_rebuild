@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('vendor_portal_access') as any)
+    let query = (supabase as any)
+      .from('vendor_portal_access')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -90,8 +90,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing access for this vendor
-    const { data: existing } = await (supabase
-      .from('vendor_portal_access') as any)
+    const { data: existing } = await (supabase as any)
+      .from('vendor_portal_access')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .eq('vendor_id', input.vendor_id)
@@ -105,8 +105,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('vendor_portal_access') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_portal_access')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,

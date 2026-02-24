@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('labor_rates') as any)
+    const { data, error } = await (supabase as any)
+      .from('labor_rates')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -45,8 +45,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch history count
-    const { data: history } = await (supabase
-      .from('labor_rate_history') as any)
+    const { data: history } = await (supabase as any)
+      .from('labor_rate_history')
       .select('id')
       .eq('labor_rate_id', id)
       .eq('company_id', ctx.companyId!)
@@ -99,8 +99,8 @@ export const PUT = createApiHandler(
     if (input.region !== undefined) updates.region = input.region
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('labor_rates') as any)
+    const { data, error } = await (supabase as any)
+      .from('labor_rates')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -138,8 +138,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify exists
-    const { data: existing, error: existError } = await (supabase
-      .from('labor_rates') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('labor_rates')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -153,8 +153,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('labor_rates') as any)
+    const { error } = await (supabase as any)
+      .from('labor_rates')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

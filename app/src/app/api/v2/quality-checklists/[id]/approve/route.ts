@@ -38,8 +38,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify checklist exists and is completed
-    const { data: existing, error: existError } = await (supabase
-      .from('quality_checklists') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('quality_checklists')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -61,8 +61,8 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase
-      .from('quality_checklists') as any)
+    const { data, error } = await (supabase as any)
+      .from('quality_checklists')
       .update({
         status: 'approved',
         approved_by: ctx.user!.id,

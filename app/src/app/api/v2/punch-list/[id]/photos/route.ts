@@ -37,8 +37,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify punch item exists and belongs to company
-    const { data: existing, error: existError } = await (supabase
-      .from('punch_items') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('punch_items')
       .select('id')
       .eq('id', punchItemId)
       .eq('company_id', ctx.companyId!)
@@ -52,8 +52,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('punch_item_photos') as any)
+    const { data, error } = await (supabase as any)
+      .from('punch_item_photos')
       .select('*')
       .eq('punch_item_id', punchItemId)
       .order('uploaded_at', { ascending: true })
@@ -98,8 +98,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify punch item exists and belongs to company
-    const { data: existing, error: existError } = await (supabase
-      .from('punch_items') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('punch_items')
       .select('id')
       .eq('id', punchItemId)
       .eq('company_id', ctx.companyId!)
@@ -113,8 +113,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('punch_item_photos') as any)
+    const { data, error } = await (supabase as any)
+      .from('punch_item_photos')
       .insert({
         company_id: ctx.companyId!,
         punch_item_id: punchItemId,

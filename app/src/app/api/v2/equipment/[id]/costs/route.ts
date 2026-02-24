@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('equipment_costs') as any)
+    let query = (supabase as any)
+      .from('equipment_costs')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('equipment_id', equipmentId)
@@ -96,8 +96,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify equipment exists
-    const { data: equip, error: equipError } = await (supabase
-      .from('equipment') as any)
+    const { data: equip, error: equipError } = await (supabase as any)
+      .from('equipment')
       .select('id')
       .eq('id', equipmentId)
       .eq('company_id', ctx.companyId!)
@@ -111,8 +111,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('equipment_costs') as any)
+    const { data, error } = await (supabase as any)
+      .from('equipment_costs')
       .insert({
         company_id: ctx.companyId!,
         equipment_id: input.equipment_id,

@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('schedule_tasks') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_tasks')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -41,13 +41,13 @@ export const GET = createApiHandler(
     }
 
     // Fetch dependencies where this task is predecessor or successor
-    const { data: predecessors } = await (supabase
-      .from('schedule_dependencies') as any)
+    const { data: predecessors } = await (supabase as any)
+      .from('schedule_dependencies')
       .select('*')
       .eq('successor_id', id)
 
-    const { data: successors } = await (supabase
-      .from('schedule_dependencies') as any)
+    const { data: successors } = await (supabase as any)
+      .from('schedule_dependencies')
       .select('*')
       .eq('predecessor_id', id)
 
@@ -109,8 +109,8 @@ export const PUT = createApiHandler(
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('schedule_tasks') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_tasks')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -143,8 +143,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('schedule_tasks') as any)
+    const { error } = await (supabase as any)
+      .from('schedule_tasks')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

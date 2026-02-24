@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('user_certifications') as any)
+    const { data, error } = await (supabase as any)
+      .from('user_certifications')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     if (input.time_limit_minutes !== undefined) updates.time_limit_minutes = input.time_limit_minutes
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('user_certifications') as any)
+    const { data, error } = await (supabase as any)
+      .from('user_certifications')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

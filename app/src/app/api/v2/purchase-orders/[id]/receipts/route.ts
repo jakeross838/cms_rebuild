@@ -57,8 +57,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists and belongs to company
-    const { data: po, error: poError } = await (supabase
-      .from('purchase_orders') as any)
+    const { data: po, error: poError } = await (supabase as any)
+      .from('purchase_orders')
       .select('id')
       .eq('id', poId)
       .eq('company_id', ctx.companyId!)
@@ -72,8 +72,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('po_receipts') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('po_receipts')
       .select('*', { count: 'exact' })
       .eq('po_id', poId)
       .eq('company_id', ctx.companyId!)
@@ -90,8 +90,8 @@ export const GET = createApiHandler(
     // For each receipt, fetch receipt lines
     const receiptsWithLines = await Promise.all(
       (data ?? []).map(async (receipt: Record<string, unknown>) => {
-        const { data: lines } = await (supabase
-          .from('po_receipt_lines') as any)
+        const { data: lines } = await (supabase as any)
+          .from('po_receipt_lines')
           .select('*')
           .eq('receipt_id', receipt.id)
 
@@ -132,8 +132,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists, belongs to company, and is in a receivable status
-    const { data: po, error: poError } = await (supabase
-      .from('purchase_orders') as any)
+    const { data: po, error: poError } = await (supabase as any)
+      .from('purchase_orders')
       .select('id, status')
       .eq('id', poId)
       .eq('company_id', ctx.companyId!)
@@ -156,8 +156,8 @@ export const POST = createApiHandler(
     }
 
     // Create receipt record
-    const { data: receipt, error: receiptError } = await (supabase
-      .from('po_receipts') as any)
+    const { data: receipt, error: receiptError } = await (supabase as any)
+      .from('po_receipts')
       .insert({
         po_id: poId,
         company_id: ctx.companyId!,
@@ -184,8 +184,8 @@ export const POST = createApiHandler(
       notes: line.notes ?? null,
     }))
 
-    const { data: lines, error: linesError } = await (supabase
-      .from('po_receipt_lines') as any)
+    const { data: lines, error: linesError } = await (supabase as any)
+      .from('po_receipt_lines')
       .insert(receiptLines)
       .select('*')
 
@@ -198,24 +198,24 @@ export const POST = createApiHandler(
 
     // Update received_quantity on each PO line
     for (const line of input.lines) {
-      const { data: poLine } = await (supabase
-        .from('purchase_order_lines') as any)
+      const { data: poLine } = await (supabase as any)
+        .from('purchase_order_lines')
         .select('received_quantity')
         .eq('id', line.po_line_id)
         .single()
 
       if (poLine) {
         const newReceived = Number(poLine.received_quantity) + line.quantity_received
-        await (supabase
-          .from('purchase_order_lines') as any)
+        await (supabase as any)
+          .from('purchase_order_lines')
           .update({ received_quantity: newReceived, updated_at: new Date().toISOString() })
           .eq('id', line.po_line_id)
       }
     }
 
     // Check if all PO lines are fully received, update PO status accordingly
-    const { data: allLines } = await (supabase
-      .from('purchase_order_lines') as any)
+    const { data: allLines } = await (supabase as any)
+      .from('purchase_order_lines')
       .select('quantity, received_quantity')
       .eq('po_id', poId)
 
@@ -234,8 +234,8 @@ export const POST = createApiHandler(
     }
 
     if (newStatus !== po.status) {
-      await (supabase
-        .from('purchase_orders') as any)
+      await (supabase as any)
+        .from('purchase_orders')
         .update({ status: newStatus, updated_at: new Date().toISOString() })
         .eq('id', poId)
     }

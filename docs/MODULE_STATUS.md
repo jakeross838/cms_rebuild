@@ -20,8 +20,8 @@
 
 | ID | Phase | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|-------|--------|-----------|------------|----------|------------|-----------|
-| 0C | Foundation Hardening (8 tasks) | done | applied | n/a | n/a | yes | pending |
-| 0D | Code Quality Hardening (8 tasks) | not_started | n/a | n/a | n/a | no | no |
+| 0C | Foundation Hardening (8 tasks) | done | applied | n/a | n/a | yes | 48271c4 |
+| 0D | Code Quality Hardening (8 tasks) | in_progress | n/a | n/a | n/a | no | no |
 
 ---
 

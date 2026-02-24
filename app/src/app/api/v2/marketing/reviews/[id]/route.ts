@@ -33,8 +33,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('client_reviews') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_reviews')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -108,8 +108,8 @@ export const PUT = createApiHandler(
       updates.response_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('client_reviews') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_reviews')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

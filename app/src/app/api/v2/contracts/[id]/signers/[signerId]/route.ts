@@ -41,8 +41,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('contract_signers') as any)
+    const { data, error } = await (supabase as any)
+      .from('contract_signers')
       .select('*')
       .eq('id', signerId)
       .eq('contract_id', contractId)
@@ -94,8 +94,8 @@ export const PUT = createApiHandler(
     if (input.role !== undefined) updates.role = input.role
     if (input.sign_order !== undefined) updates.sign_order = input.sign_order
 
-    const { data, error } = await (supabase
-      .from('contract_signers') as any)
+    const { data, error } = await (supabase as any)
+      .from('contract_signers')
       .update(updates)
       .eq('id', signerId)
       .eq('contract_id', contractId)
@@ -131,8 +131,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('contract_signers') as any)
+    const { error } = await (supabase as any)
+      .from('contract_signers')
       .delete()
       .eq('id', signerId)
       .eq('contract_id', contractId)

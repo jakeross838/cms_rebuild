@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('usage_meters') as any)
+    const { data, error } = await (supabase as any)
+      .from('usage_meters')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -85,8 +85,8 @@ export const PUT = createApiHandler(
     if (input.overage_quantity !== undefined) updates.overage_quantity = input.overage_quantity
     if (input.overage_cost !== undefined) updates.overage_cost = input.overage_cost
 
-    const { data, error } = await (supabase
-      .from('usage_meters') as any)
+    const { data, error } = await (supabase as any)
+      .from('usage_meters')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

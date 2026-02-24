@@ -57,8 +57,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify contract belongs to company
-    const { data: contract, error: contractError } = await (supabase
-      .from('contracts') as any)
+    const { data: contract, error: contractError } = await (supabase as any)
+      .from('contracts')
       .select('id')
       .eq('id', contractId)
       .eq('company_id', ctx.companyId!)
@@ -72,8 +72,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('contract_versions') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('contract_versions')
       .select('*', { count: 'exact' })
       .eq('contract_id', contractId)
       .order('version_number', { ascending: false })
@@ -119,8 +119,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify contract belongs to company
-    const { data: contract, error: contractError } = await (supabase
-      .from('contracts') as any)
+    const { data: contract, error: contractError } = await (supabase as any)
+      .from('contracts')
       .select('id')
       .eq('id', contractId)
       .eq('company_id', ctx.companyId!)
@@ -134,8 +134,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('contract_versions') as any)
+    const { data, error } = await (supabase as any)
+      .from('contract_versions')
       .insert({
         contract_id: contractId,
         company_id: ctx.companyId!,

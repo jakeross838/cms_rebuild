@@ -57,8 +57,8 @@ export const PUT = createApiHandler(
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
     if (input.is_required !== undefined) updates.is_required = input.is_required
 
-    const { data, error } = await (supabase
-      .from('training_path_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_path_items')
       .update(updates)
       .eq('id', itemId)
       .eq('path_id', pathId)
@@ -94,8 +94,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('training_path_items') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('training_path_items')
       .select('id')
       .eq('id', itemId)
       .eq('path_id', pathId)
@@ -109,8 +109,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('training_path_items') as any)
+    const { error } = await (supabase as any)
+      .from('training_path_items')
       .delete()
       .eq('id', itemId)
       .eq('path_id', pathId)

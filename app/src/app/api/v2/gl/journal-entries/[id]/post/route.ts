@@ -24,8 +24,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is in draft status
-    const { data: existing } = await (supabase
-      .from('gl_journal_entries') as any)
+    const { data: existing } = await (supabase as any)
+      .from('gl_journal_entries')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -46,8 +46,8 @@ export const POST = createApiHandler(
     }
 
     // Verify lines exist and balance
-    const { data: lines } = await (supabase
-      .from('gl_journal_lines') as any)
+    const { data: lines } = await (supabase as any)
+      .from('gl_journal_lines')
       .select('debit_amount, credit_amount')
       .eq('journal_entry_id', id)
 
@@ -70,8 +70,8 @@ export const POST = createApiHandler(
 
     // Post the entry
     const now = new Date().toISOString()
-    const { data: entry, error } = await (supabase
-      .from('gl_journal_entries') as any)
+    const { data: entry, error } = await (supabase as any)
+      .from('gl_journal_entries')
       .update({
         status: 'posted',
         posted_by: ctx.user!.id,

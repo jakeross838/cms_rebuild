@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('builder_custom_domains') as any)
+    let query = (supabase as any)
+      .from('builder_custom_domains')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     // Generate verification token
     const verificationToken = crypto.randomUUID().replace(/-/g, '')
 
-    const { data, error } = await (supabase
-      .from('builder_custom_domains') as any)
+    const { data, error } = await (supabase as any)
+      .from('builder_custom_domains')
       .insert({
         company_id: ctx.companyId!,
         domain: input.domain,

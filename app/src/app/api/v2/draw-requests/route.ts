@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('draw_requests') as any)
+    let query = (supabase as any)
+      .from('draw_requests')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -102,8 +102,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the draw request
-    const { data: draw, error: drawError } = await (supabase
-      .from('draw_requests') as any)
+    const { data: draw, error: drawError } = await (supabase as any)
+      .from('draw_requests')
       .insert({
         company_id: ctx.companyId!,
         job_id: input.job_id,
@@ -128,8 +128,8 @@ export const POST = createApiHandler(
     }
 
     // Record creation in history
-    await (supabase
-      .from('draw_request_history') as any)
+    await (supabase as any)
+      .from('draw_request_history')
       .insert({
         draw_request_id: draw.id,
         action: 'created',

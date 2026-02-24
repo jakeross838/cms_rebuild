@@ -197,8 +197,8 @@ export async function setNumberingPattern(
   } as NumberingPattern, 1)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase
-    .from('numbering_patterns') as any)
+  const { error } = await (supabase as any)
+    .from('numbering_patterns')
     .upsert({
       company_id: companyId,
       entity_type: input.entityType,
@@ -231,8 +231,8 @@ export async function resetSequence(
   const supabase = await createClient()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase
-    .from('numbering_patterns') as any)
+  const { error } = await (supabase as any)
+    .from('numbering_patterns')
     .update({ current_sequence: newValue })
     .eq('company_id', companyId)
     .eq('entity_type', entityType)
@@ -304,7 +304,7 @@ async function getPattern(companyId: string, entityType: NumberingEntityType): P
 async function loadPatternsToCache(companyId: string): Promise<void> {
   const supabase = await createClient()
 
-  const { data: patternsData } = await supabase
+  const { data: patternsData } = await (supabase as any)
     .from('numbering_patterns')
     .select('*')
     .eq('company_id', companyId)
@@ -379,7 +379,7 @@ async function generateNumberManually(
     // Get or create job-specific sequence
     const year = new Date().getFullYear()
 
-    const { data: seqDataRaw } = await supabase
+    const { data: seqDataRaw } = await (supabase as any)
       .from('numbering_sequences')
       .select('current_value')
       .eq('pattern_id', pattern.id)
@@ -391,8 +391,8 @@ async function generateNumberManually(
     if (seqData) {
       sequence = seqData.current_value + 1
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase
-        .from('numbering_sequences') as any)
+      await (supabase as any)
+        .from('numbering_sequences')
         .update({ current_value: sequence })
         .eq('pattern_id', pattern.id)
         .eq('job_id', jobId)
@@ -400,8 +400,8 @@ async function generateNumberManually(
     } else {
       sequence = 1
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase
-        .from('numbering_sequences') as any)
+      await (supabase as any)
+        .from('numbering_sequences')
         .insert({
           company_id: companyId,
           pattern_id: pattern.id,
@@ -416,16 +416,16 @@ async function generateNumberManually(
 
     if (pattern.id) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase
-        .from('numbering_patterns') as any)
+      await (supabase as any)
+        .from('numbering_patterns')
         .update({ current_sequence: sequence })
         .eq('id', pattern.id)
     } else {
       // Create the pattern if it doesn't exist
       const defaultPattern = DEFAULT_PATTERNS[entityType]
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase
-        .from('numbering_patterns') as any)
+      await (supabase as any)
+        .from('numbering_patterns')
         .insert({
           company_id: companyId,
           entity_type: entityType,

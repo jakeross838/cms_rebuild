@@ -63,8 +63,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify warranty belongs to company
-    const { data: warranty, error: wError } = await (supabase
-      .from('warranties') as any)
+    const { data: warranty, error: wError } = await (supabase as any)
+      .from('warranties')
       .select('id')
       .eq('id', warrantyId)
       .eq('company_id', ctx.companyId!)
@@ -78,8 +78,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('warranty_claims') as any)
+    let query = (supabase as any)
+      .from('warranty_claims')
       .select('*', { count: 'exact' })
       .eq('warranty_id', warrantyId)
       .eq('company_id', ctx.companyId!)
@@ -145,8 +145,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify warranty belongs to company and is active
-    const { data: warranty, error: wError } = await (supabase
-      .from('warranties') as any)
+    const { data: warranty, error: wError } = await (supabase as any)
+      .from('warranties')
       .select('id, status')
       .eq('id', warrantyId)
       .eq('company_id', ctx.companyId!)
@@ -160,8 +160,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('warranty_claims') as any)
+    const { data, error } = await (supabase as any)
+      .from('warranty_claims')
       .insert({
         company_id: ctx.companyId!,
         warranty_id: warrantyId,
@@ -189,8 +189,8 @@ export const POST = createApiHandler(
     }
 
     // Record history entry
-    await (supabase
-      .from('warranty_claim_history') as any)
+    await (supabase as any)
+      .from('warranty_claim_history')
       .insert({
         claim_id: data.id,
         company_id: ctx.companyId!,

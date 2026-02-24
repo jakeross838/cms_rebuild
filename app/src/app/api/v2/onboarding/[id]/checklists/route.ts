@@ -48,8 +48,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('onboarding_checklists') as any)
+    let query = (supabase as any)
+      .from('onboarding_checklists')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('session_id', sessionId)
@@ -103,8 +103,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify session exists and belongs to company
-    const { data: session, error: sessionError } = await (supabase
-      .from('onboarding_sessions') as any)
+    const { data: session, error: sessionError } = await (supabase as any)
+      .from('onboarding_sessions')
       .select('id')
       .eq('id', sessionId)
       .eq('company_id', ctx.companyId!)
@@ -118,8 +118,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('onboarding_checklists') as any)
+    const { data, error } = await (supabase as any)
+      .from('onboarding_checklists')
       .insert({
         company_id: ctx.companyId!,
         session_id: sessionId,

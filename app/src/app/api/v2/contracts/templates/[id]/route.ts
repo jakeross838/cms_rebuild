@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('contract_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('contract_templates')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -83,8 +83,8 @@ export const PUT = createApiHandler(
     if (input.variables !== undefined) updates.variables = input.variables
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('contract_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('contract_templates')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -119,8 +119,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('contract_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('contract_templates')
       .update({ is_active: false })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

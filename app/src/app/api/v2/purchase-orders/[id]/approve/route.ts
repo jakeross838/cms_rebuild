@@ -47,8 +47,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists and is in pending_approval or draft status
-    const { data: po, error: poError } = await (supabase
-      .from('purchase_orders') as any)
+    const { data: po, error: poError } = await (supabase as any)
+      .from('purchase_orders')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -69,8 +69,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('purchase_orders') as any)
+    const { data, error } = await (supabase as any)
+      .from('purchase_orders')
       .update({
         status: 'approved',
         approved_by: ctx.user!.id,

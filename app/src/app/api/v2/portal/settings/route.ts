@@ -38,8 +38,8 @@ export const GET = createApiHandler(
     const { job_id } = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('portal_settings') as any)
+    const { data, error } = await (supabase as any)
+      .from('portal_settings')
       .select('*')
       .eq('company_id', ctx.companyId!)
       .eq('job_id', job_id)
@@ -109,8 +109,8 @@ export const PUT = createApiHandler(
     if (input.show_photos !== undefined) payload.show_photos = input.show_photos
     if (input.show_daily_logs !== undefined) payload.show_daily_logs = input.show_daily_logs
 
-    const { data, error } = await (supabase
-      .from('portal_settings') as any)
+    const { data, error } = await (supabase as any)
+      .from('portal_settings')
       .upsert(payload, { onConflict: 'company_id,job_id' })
       .select('*')
       .single()

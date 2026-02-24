@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('employee_certifications') as any)
+    const { data, error } = await (supabase as any)
+      .from('employee_certifications')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -87,8 +87,8 @@ export const PUT = createApiHandler(
     if (input.document_url !== undefined) updates.document_url = input.document_url
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase
-      .from('employee_certifications') as any)
+    const { data, error } = await (supabase as any)
+      .from('employee_certifications')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -124,8 +124,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('employee_certifications') as any)
+    const { error } = await (supabase as any)
+      .from('employee_certifications')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

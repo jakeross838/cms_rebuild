@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('company_subscriptions') as any)
+    const { data, error } = await (supabase as any)
+      .from('company_subscriptions')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -95,8 +95,8 @@ export const PUT = createApiHandler(
       updates.cancelled_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase
-      .from('company_subscriptions') as any)
+    const { data, error } = await (supabase as any)
+      .from('company_subscriptions')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

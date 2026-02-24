@@ -38,8 +38,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI exists and is in answered status
-    const { data: existing, error: existError } = await (supabase
-      .from('rfis') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('rfis')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -61,8 +61,8 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase
-      .from('rfis') as any)
+    const { data, error } = await (supabase as any)
+      .from('rfis')
       .update({
         status: 'closed',
         closed_at: now,

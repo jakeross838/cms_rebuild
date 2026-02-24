@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('schedule_scenarios') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_scenarios')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -85,8 +85,8 @@ export const PUT = createApiHandler(
     if (input.projected_completion !== undefined) updates.projected_completion = input.projected_completion
     if (input.projected_cost_impact !== undefined) updates.projected_cost_impact = input.projected_cost_impact
 
-    const { data, error } = await (supabase
-      .from('schedule_scenarios') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_scenarios')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -122,8 +122,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase
-      .from('schedule_scenarios') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('schedule_scenarios')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -137,8 +137,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('schedule_scenarios') as any)
+    const { error } = await (supabase as any)
+      .from('schedule_scenarios')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

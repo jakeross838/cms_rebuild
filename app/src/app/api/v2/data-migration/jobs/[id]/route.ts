@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('migration_jobs') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_jobs')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -46,15 +46,15 @@ export const GET = createApiHandler(
 
     // Get counts for related entities
     const [mappingsResult, validationsResult, reconciliationResult] = await Promise.all([
-      (supabase.from('migration_field_mappings') as any)
+      (supabase as any).from('migration_field_mappings')
         .select('id', { count: 'exact', head: true })
         .eq('job_id', id)
         .eq('company_id', ctx.companyId!),
-      (supabase.from('migration_validation_results') as any)
+      (supabase as any).from('migration_validation_results')
         .select('id', { count: 'exact', head: true })
         .eq('job_id', id)
         .eq('company_id', ctx.companyId!),
-      (supabase.from('migration_reconciliation') as any)
+      (supabase as any).from('migration_reconciliation')
         .select('id', { count: 'exact', head: true })
         .eq('job_id', id)
         .eq('company_id', ctx.companyId!),
@@ -126,8 +126,8 @@ export const PUT = createApiHandler(
       updates.rolled_back_by = ctx.user!.id
     }
 
-    const { data, error } = await (supabase
-      .from('migration_jobs') as any)
+    const { data, error } = await (supabase as any)
+      .from('migration_jobs')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -164,8 +164,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase
-      .from('migration_jobs') as any)
+    const { data: existing } = await (supabase as any)
+      .from('migration_jobs')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -179,8 +179,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('migration_jobs') as any)
+    const { error } = await (supabase as any)
+      .from('migration_jobs')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

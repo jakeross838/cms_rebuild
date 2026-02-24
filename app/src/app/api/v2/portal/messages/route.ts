@@ -43,8 +43,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('portal_messages') as any)
+    let query = (supabase as any)
+      .from('portal_messages')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
@@ -84,8 +84,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('portal_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('portal_messages')
       .insert({
         company_id: ctx.companyId!,
         job_id: input.job_id,

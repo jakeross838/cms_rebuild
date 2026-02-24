@@ -48,8 +48,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify talk exists and is scheduled
-    const { data: existing, error: existError } = await (supabase
-      .from('toolbox_talks') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('toolbox_talks')
       .select('id, status')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
@@ -77,8 +77,8 @@ export const POST = createApiHandler(
     if (input.notes !== undefined) updates.notes = input.notes
     if (input.duration_minutes !== undefined) updates.duration_minutes = input.duration_minutes
 
-    const { data, error } = await (supabase
-      .from('toolbox_talks') as any)
+    const { data, error } = await (supabase as any)
+      .from('toolbox_talks')
       .update(updates)
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)

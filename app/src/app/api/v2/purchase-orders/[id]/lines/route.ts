@@ -57,8 +57,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists and belongs to company
-    const { data: po, error: poError } = await (supabase
-      .from('purchase_orders') as any)
+    const { data: po, error: poError } = await (supabase as any)
+      .from('purchase_orders')
       .select('id')
       .eq('id', poId)
       .eq('company_id', ctx.companyId!)
@@ -72,8 +72,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase
-      .from('purchase_order_lines') as any)
+    const { data, count, error } = await (supabase as any)
+      .from('purchase_order_lines')
       .select('*', { count: 'exact' })
       .eq('po_id', poId)
       .order('sort_order', { ascending: true })
@@ -119,8 +119,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists and belongs to company
-    const { data: po, error: poError } = await (supabase
-      .from('purchase_orders') as any)
+    const { data: po, error: poError } = await (supabase as any)
+      .from('purchase_orders')
       .select('id')
       .eq('id', poId)
       .eq('company_id', ctx.companyId!)
@@ -134,8 +134,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('purchase_order_lines') as any)
+    const { data, error } = await (supabase as any)
+      .from('purchase_order_lines')
       .insert({
         po_id: poId,
         description: input.description,

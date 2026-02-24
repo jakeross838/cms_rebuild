@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('platform_metrics_snapshots') as any)
+    let query = (supabase as any)
+      .from('platform_metrics_snapshots')
       .select('*', { count: 'exact' })
 
     // Filter by company — show platform-wide (null) + own company
@@ -103,8 +103,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('platform_metrics_snapshots') as any)
+    const { data, error } = await (supabase as any)
+      .from('platform_metrics_snapshots')
       .insert({
         company_id: ctx.companyId!,
         snapshot_date: input.snapshot_date ?? new Date().toISOString().split('T')[0],

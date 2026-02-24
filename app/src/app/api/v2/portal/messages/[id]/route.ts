@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('portal_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('portal_messages')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -73,8 +73,8 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('portal_messages') as any)
+    const { data, error } = await (supabase as any)
+      .from('portal_messages')
       .update({
         is_read: input.is_read,
         updated_at: new Date().toISOString(),

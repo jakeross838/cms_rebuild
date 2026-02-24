@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('plan_addons') as any)
+    let query = (supabase as any)
+      .from('plan_addons')
       .select('*', { count: 'exact' })
 
     if (filters.addon_type) {
@@ -92,8 +92,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for duplicate slug
-    const { data: existing } = await (supabase
-      .from('plan_addons') as any)
+    const { data: existing } = await (supabase as any)
+      .from('plan_addons')
       .select('id')
       .eq('slug', input.slug)
       .single()
@@ -105,8 +105,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('plan_addons') as any)
+    const { data, error } = await (supabase as any)
+      .from('plan_addons')
       .insert({
         name: input.name,
         slug: input.slug,

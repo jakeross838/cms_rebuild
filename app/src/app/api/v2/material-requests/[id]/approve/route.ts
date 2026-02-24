@@ -24,8 +24,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify request exists and is in submitted status
-    const { data: existing, error: existError } = await (supabase
-      .from('material_requests') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('material_requests')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -47,8 +47,8 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase
-      .from('material_requests') as any)
+    const { data, error } = await (supabase as any)
+      .from('material_requests')
       .update({
         status: 'approved',
         approved_by: ctx.user!.id,

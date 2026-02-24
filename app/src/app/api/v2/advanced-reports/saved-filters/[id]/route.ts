@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('saved_filters') as any)
+    const { data, error } = await (supabase as any)
+      .from('saved_filters')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -81,8 +81,8 @@ export const PUT = createApiHandler(
     if (input.filter_config !== undefined) updates.filter_config = input.filter_config
     if (input.is_global !== undefined) updates.is_global = input.is_global
 
-    const { data, error } = await (supabase
-      .from('saved_filters') as any)
+    const { data, error } = await (supabase as any)
+      .from('saved_filters')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -117,8 +117,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('saved_filters') as any)
+    const { error } = await (supabase as any)
+      .from('saved_filters')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

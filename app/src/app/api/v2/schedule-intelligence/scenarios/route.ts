@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('schedule_scenarios') as any)
+    let query = (supabase as any)
+      .from('schedule_scenarios')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -89,8 +89,8 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('schedule_scenarios') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_scenarios')
       .insert({
         company_id: ctx.companyId!,
         job_id: input.job_id,

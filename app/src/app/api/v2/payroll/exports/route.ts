@@ -40,8 +40,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('payroll_exports') as any)
+    let query = (supabase as any)
+      .from('payroll_exports')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -85,8 +85,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify payroll period exists and belongs to this company
-    const { data: period, error: periodError } = await (supabase
-      .from('payroll_periods') as any)
+    const { data: period, error: periodError } = await (supabase as any)
+      .from('payroll_periods')
       .select('id, period_start, period_end, status')
       .eq('id', input.payroll_period_id)
       .eq('company_id', ctx.companyId!)
@@ -100,8 +100,8 @@ export const POST = createApiHandler(
     }
 
     // Gather approved time entries for this period
-    const { data: entries, error: entriesError } = await (supabase
-      .from('time_entries') as any)
+    const { data: entries, error: entriesError } = await (supabase as any)
+      .from('time_entries')
       .select('regular_hours, overtime_hours, double_time_hours, user_id')
       .eq('company_id', ctx.companyId!)
       .eq('status', 'approved')
@@ -124,8 +124,8 @@ export const POST = createApiHandler(
     )
     const uniqueEmployees = new Set(entryList.map((e: { user_id: string }) => e.user_id))
 
-    const { data, error } = await (supabase
-      .from('payroll_exports') as any)
+    const { data, error } = await (supabase as any)
+      .from('payroll_exports')
       .insert({
         company_id: ctx.companyId!,
         payroll_period_id: input.payroll_period_id,
@@ -146,8 +146,8 @@ export const POST = createApiHandler(
     }
 
     // Mark the entries as exported
-    await (supabase
-      .from('time_entries') as any)
+    await (supabase as any)
+      .from('time_entries')
       .update({ status: 'exported', updated_at: new Date().toISOString() })
       .eq('company_id', ctx.companyId!)
       .eq('status', 'approved')
@@ -156,8 +156,8 @@ export const POST = createApiHandler(
       .lte('entry_date', period.period_end)
 
     // Mark the payroll period as exported
-    await (supabase
-      .from('payroll_periods') as any)
+    await (supabase as any)
+      .from('payroll_periods')
       .update({
         status: 'exported',
         exported_at: new Date().toISOString(),

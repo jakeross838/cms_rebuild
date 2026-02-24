@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('training_courses') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_courses')
       .select('*')
       .eq('id', id)
       .is('deleted_at', null)
@@ -102,8 +102,8 @@ export const PUT = createApiHandler(
     if (input.is_published !== undefined) updates.is_published = input.is_published
     if (input.view_count !== undefined) updates.view_count = input.view_count
 
-    const { data, error } = await (supabase
-      .from('training_courses') as any)
+    const { data, error } = await (supabase as any)
+      .from('training_courses')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -141,8 +141,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify exists and belongs to company
-    const { data: existing, error: existError } = await (supabase
-      .from('training_courses') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('training_courses')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -156,8 +156,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('training_courses') as any)
+    const { error } = await (supabase as any)
+      .from('training_courses')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

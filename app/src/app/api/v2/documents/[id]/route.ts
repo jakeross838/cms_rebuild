@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('documents') as any)
+    const { data, error } = await (supabase as any)
+      .from('documents')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -41,14 +41,14 @@ export const GET = createApiHandler(
     }
 
     // Fetch tags
-    const { data: tags } = await (supabase
-      .from('document_tags') as any)
+    const { data: tags } = await (supabase as any)
+      .from('document_tags')
       .select('tag')
       .eq('document_id', id)
 
     // Fetch versions
-    const { data: versions } = await (supabase
-      .from('document_versions') as any)
+    const { data: versions } = await (supabase as any)
+      .from('document_versions')
       .select('id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at')
       .eq('document_id', id)
       .order('version_number', { ascending: false })
@@ -95,8 +95,8 @@ export const PUT = createApiHandler(
     if (input.folder_id !== undefined) updates.folder_id = input.folder_id
     if (input.document_type !== undefined) updates.document_type = input.document_type
 
-    const { data, error } = await (supabase
-      .from('documents') as any)
+    const { data, error } = await (supabase as any)
+      .from('documents')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -113,7 +113,7 @@ export const PUT = createApiHandler(
     // Update tags if provided
     if (input.tags !== undefined) {
       // Remove existing tags
-      await (supabase.from('document_tags') as any)
+      await (supabase as any).from('document_tags')
         .delete()
         .eq('document_id', id)
 
@@ -123,7 +123,7 @@ export const PUT = createApiHandler(
           document_id: id,
           tag,
         }))
-        await (supabase.from('document_tags') as any).insert(tagRecords)
+        await (supabase as any).from('document_tags').insert(tagRecords)
       }
     }
 
@@ -145,8 +145,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('documents') as any)
+    const { error } = await (supabase as any)
+      .from('documents')
       .update({ status: 'archived', deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

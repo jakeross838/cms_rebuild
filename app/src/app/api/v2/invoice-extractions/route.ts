@@ -47,8 +47,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('invoice_extractions') as any)
+    let query = (supabase as any)
+      .from('invoice_extractions')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -101,8 +101,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the extraction record with pending status
-    const { data: extraction, error: extractionError } = await (supabase
-      .from('invoice_extractions') as any)
+    const { data: extraction, error: extractionError } = await (supabase as any)
+      .from('invoice_extractions')
       .insert({
         company_id: ctx.companyId!,
         document_id: input.document_id,
@@ -121,8 +121,8 @@ export const POST = createApiHandler(
     }
 
     // Log audit entry
-    await (supabase
-      .from('extraction_audit_log') as any)
+    await (supabase as any)
+      .from('extraction_audit_log')
       .insert({
         extraction_id: extraction.id,
         action: 'created',

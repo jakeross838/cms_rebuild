@@ -14,7 +14,13 @@ interface DocFile {
   path: string
 }
 
-function extractFrontmatter(content: string): { title: string; phase?: string; status?: string } {
+interface Frontmatter {
+  title: string
+  phase?: string
+  status?: string
+}
+
+function extractFrontmatter(content: string): Frontmatter {
   const titleMatch = content.match(/^#\s+(.+)/m)
   const phaseMatch = content.match(/\*\*Phase:\*\*\s*(.+)/m)
   const statusMatch = content.match(/\*\*Status:\*\*\s*(.+)/m)

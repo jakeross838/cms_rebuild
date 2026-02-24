@@ -29,8 +29,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('pipelines') as any)
+    const { data, error } = await (supabase as any)
+      .from('pipelines')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     }
 
     // Fetch stages count
-    const { data: stages } = await (supabase
-      .from('pipeline_stages') as any)
+    const { data: stages } = await (supabase as any)
+      .from('pipeline_stages')
       .select('id')
       .eq('pipeline_id', id)
       .eq('company_id', ctx.companyId!)
@@ -95,8 +95,8 @@ export const PUT = createApiHandler(
     if (input.is_default !== undefined) updates.is_default = input.is_default
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('pipelines') as any)
+    const { data, error } = await (supabase as any)
+      .from('pipelines')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -132,8 +132,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('pipelines') as any)
+    const { data, error } = await (supabase as any)
+      .from('pipelines')
       .update({ is_active: false })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

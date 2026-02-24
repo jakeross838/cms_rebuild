@@ -38,8 +38,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify the period exists and is in an open state
-    const { data: existing, error: existError } = await (supabase
-      .from('financial_periods') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('financial_periods')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -67,8 +67,8 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase
-      .from('financial_periods') as any)
+    const { data, error } = await (supabase as any)
+      .from('financial_periods')
       .update({
         status: 'closed',
         closed_by: ctx.user!.id,

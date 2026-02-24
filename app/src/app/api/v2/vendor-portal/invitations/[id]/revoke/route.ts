@@ -27,8 +27,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify invitation exists and is pending
-    const { data: existing, error: existError } = await (supabase
-      .from('vendor_portal_invitations') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('vendor_portal_invitations')
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -49,8 +49,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('vendor_portal_invitations') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_portal_invitations')
       .update({
         status: 'revoked',
         updated_at: new Date().toISOString(),

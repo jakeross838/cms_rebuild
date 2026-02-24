@@ -39,8 +39,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify mapping exists and belongs to this company
-    const { data: existing } = await (supabase
-      .from('sync_mappings') as any)
+    const { data: existing } = await (supabase as any)
+      .from('sync_mappings')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -60,8 +60,8 @@ export const PUT = createApiHandler(
     if (input.sync_status !== undefined) updates.sync_status = input.sync_status
     if (input.error_message !== undefined) updates.error_message = input.error_message
 
-    const { data: mapping, error: mapError } = await (supabase
-      .from('sync_mappings') as any)
+    const { data: mapping, error: mapError } = await (supabase as any)
+      .from('sync_mappings')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -97,8 +97,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify mapping exists
-    const { data: existing } = await (supabase
-      .from('sync_mappings') as any)
+    const { data: existing } = await (supabase as any)
+      .from('sync_mappings')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -111,8 +111,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('sync_mappings') as any)
+    const { error } = await (supabase as any)
+      .from('sync_mappings')
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

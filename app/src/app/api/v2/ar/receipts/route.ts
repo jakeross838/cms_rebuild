@@ -43,8 +43,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('ar_receipts') as any)
+    let query = (supabase as any)
+      .from('ar_receipts')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -107,8 +107,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the receipt
-    const { data: receipt, error: receiptError } = await (supabase
-      .from('ar_receipts') as any)
+    const { data: receipt, error: receiptError } = await (supabase as any)
+      .from('ar_receipts')
       .insert({
         company_id: ctx.companyId!,
         client_id: input.client_id,
@@ -137,8 +137,8 @@ export const POST = createApiHandler(
       amount: app.amount,
     }))
 
-    const { data: applications, error: appError } = await (supabase
-      .from('ar_receipt_applications') as any)
+    const { data: applications, error: appError } = await (supabase as any)
+      .from('ar_receipt_applications')
       .insert(appRecords)
       .select('*')
 
@@ -152,8 +152,8 @@ export const POST = createApiHandler(
     // Update invoice balance_due and status for each applied invoice
     for (const app of input.applications) {
       // Get current invoice
-      const { data: invoice } = await (supabase
-        .from('ar_invoices') as any)
+      const { data: invoice } = await (supabase as any)
+        .from('ar_invoices')
         .select('balance_due, amount')
         .eq('id', app.invoice_id)
         .single()
@@ -162,8 +162,8 @@ export const POST = createApiHandler(
         const newBalance = Number(invoice.balance_due) - app.amount
         const newStatus = newBalance <= 0.01 ? 'paid' : 'partially_paid'
 
-        await (supabase
-          .from('ar_invoices') as any)
+        await (supabase as any)
+          .from('ar_invoices')
           .update({
             balance_due: Math.max(0, newBalance),
             status: newStatus,

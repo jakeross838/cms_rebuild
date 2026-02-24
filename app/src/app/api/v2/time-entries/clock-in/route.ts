@@ -32,8 +32,8 @@ export const POST = createApiHandler(
     const now = new Date()
 
     // Check for existing open time entry (no clock_out)
-    const { data: openEntry } = await (supabase
-      .from('time_entries') as any)
+    const { data: openEntry } = await (supabase as any)
+      .from('time_entries')
       .select('id, job_id, clock_in')
       .eq('company_id', ctx.companyId!)
       .eq('user_id', userId)
@@ -58,8 +58,8 @@ export const POST = createApiHandler(
     // Create new clock-in entry
     const entryDate = now.toISOString().split('T')[0]
 
-    const { data, error } = await (supabase
-      .from('time_entries') as any)
+    const { data, error } = await (supabase as any)
+      .from('time_entries')
       .insert({
         company_id: ctx.companyId!,
         user_id: userId,

@@ -42,8 +42,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('marketing_referrals') as any)
+    let query = (supabase as any)
+      .from('marketing_referrals')
       .select('*', { count: 'exact' })
       .eq('referrer_company_id', ctx.companyId!)
 
@@ -93,8 +93,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for duplicate referral_code
-    const { data: existing } = await (supabase
-      .from('marketing_referrals') as any)
+    const { data: existing } = await (supabase as any)
+      .from('marketing_referrals')
       .select('id')
       .eq('referral_code', input.referral_code)
       .single()
@@ -106,8 +106,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('marketing_referrals') as any)
+    const { data, error } = await (supabase as any)
+      .from('marketing_referrals')
       .insert({
         referrer_company_id: ctx.companyId!,
         referral_code: input.referral_code,

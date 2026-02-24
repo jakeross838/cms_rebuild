@@ -26,8 +26,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('document_classifications') as any)
+    const { data, error } = await (supabase as any)
+      .from('document_classifications')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

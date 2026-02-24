@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('platform_metrics_snapshots') as any)
+    const { data, error } = await (supabase as any)
+      .from('platform_metrics_snapshots')
       .select('*')
       .eq('id', id)
       .single()
@@ -79,8 +79,8 @@ export const PUT = createApiHandler(
     if (input.breakdown !== undefined) updates.breakdown = input.breakdown
     if (input.period !== undefined) updates.period = input.period
 
-    const { data, error } = await (supabase
-      .from('platform_metrics_snapshots') as any)
+    const { data, error } = await (supabase as any)
+      .from('platform_metrics_snapshots')
       .update(updates)
       .eq('id', id)
       .select('*')

@@ -59,8 +59,8 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase
-      .from('bid_packages') as any)
+    const { data: bp, error: bpError } = await (supabase as any)
+      .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
@@ -74,8 +74,8 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase
-      .from('bid_invitations') as any)
+    let query = (supabase as any)
+      .from('bid_invitations')
       .select('*', { count: 'exact' })
       .eq('bid_package_id', bidPackageId)
 
@@ -127,8 +127,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package exists and is draft or published
-    const { data: bp, error: bpError } = await (supabase
-      .from('bid_packages') as any)
+    const { data: bp, error: bpError } = await (supabase as any)
+      .from('bid_packages')
       .select('id, status')
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
@@ -149,8 +149,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('bid_invitations') as any)
+    const { data, error } = await (supabase as any)
+      .from('bid_invitations')
       .insert({
         company_id: ctx.companyId!,
         bid_package_id: bidPackageId,

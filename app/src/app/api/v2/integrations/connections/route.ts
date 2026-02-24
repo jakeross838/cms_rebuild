@@ -41,8 +41,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('accounting_connections') as any)
+    let query = (supabase as any)
+      .from('accounting_connections')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -90,8 +90,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check if connection already exists for this provider
-    const { data: existing } = await (supabase
-      .from('accounting_connections') as any)
+    const { data: existing } = await (supabase as any)
+      .from('accounting_connections')
       .select('id, status')
       .eq('company_id', ctx.companyId!)
       .eq('provider', input.provider)
@@ -105,8 +105,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: connection, error: connError } = await (supabase
-      .from('accounting_connections') as any)
+    const { data: connection, error: connError } = await (supabase as any)
+      .from('accounting_connections')
       .insert({
         company_id: ctx.companyId!,
         provider: input.provider,

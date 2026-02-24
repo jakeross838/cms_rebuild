@@ -40,8 +40,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('payroll_periods') as any)
+    let query = (supabase as any)
+      .from('payroll_periods')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -93,8 +93,8 @@ export const POST = createApiHandler(
     }
 
     // Check for overlapping periods
-    const { data: overlapping } = await (supabase
-      .from('payroll_periods') as any)
+    const { data: overlapping } = await (supabase as any)
+      .from('payroll_periods')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .lte('period_start', input.period_end)
@@ -108,8 +108,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase
-      .from('payroll_periods') as any)
+    const { data, error } = await (supabase as any)
+      .from('payroll_periods')
       .insert({
         company_id: ctx.companyId!,
         period_start: input.period_start,

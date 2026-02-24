@@ -42,8 +42,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify connection exists and is connected
-    const { data: connection } = await (supabase
-      .from('accounting_connections') as any)
+    const { data: connection } = await (supabase as any)
+      .from('accounting_connections')
       .select('id, status, provider')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -72,8 +72,8 @@ export const POST = createApiHandler(
     }
 
     // Create sync log entry
-    const { data: syncLog, error: logError } = await (supabase
-      .from('sync_logs') as any)
+    const { data: syncLog, error: logError } = await (supabase as any)
+      .from('sync_logs')
       .insert({
         company_id: ctx.companyId!,
         connection_id: id,
@@ -93,8 +93,8 @@ export const POST = createApiHandler(
     }
 
     // Update connection status to syncing
-    await (supabase
-      .from('accounting_connections') as any)
+    await (supabase as any)
+      .from('accounting_connections')
       .update({
         status: 'syncing',
         updated_at: new Date().toISOString(),

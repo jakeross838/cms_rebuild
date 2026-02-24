@@ -140,19 +140,18 @@ async function flushMetrics(): Promise<void> {
   }
 
   try {
-    const supabase = await createClient()
-
-    await supabase.from('api_metrics').insert(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toFlush.map((m) => ({
-        company_id: m.companyId,
+    // TODO: Create api_metrics table migration when metrics storage is needed.
+    // For now, log metrics to structured logger for observability.
+    for (const m of toFlush) {
+      logger.debug('api_metric', {
         endpoint: m.endpoint,
         method: m.method,
-        status_code: m.statusCode,
-        response_time_ms: m.responseTimeMs,
-      })) as any
-    )
-  } catch (error) {
+        statusCode: String(m.statusCode),
+        responseTimeMs: String(m.responseTimeMs),
+        companyId: m.companyId,
+      })
+    }
+  } catch (error: unknown) {
     console.error('Failed to flush metrics:', error)
   }
 }
@@ -165,8 +164,8 @@ interface AuditEntry {
   companyId: string
   userId?: string
   action: string
-  tableName?: string
-  recordId?: string
+  entityType?: string
+  entityId?: string
   oldData?: Record<string, unknown>
   newData?: Record<string, unknown>
   ipAddress?: string
@@ -180,21 +179,18 @@ export async function recordAudit(entry: AuditEntry): Promise<void> {
   try {
     const supabase = await createClient()
 
-    await supabase.from('audit_log').insert(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {
-        company_id: entry.companyId,
-        user_id: entry.userId,
-        action: entry.action,
-        table_name: entry.tableName,
-        record_id: entry.recordId,
-        old_data: entry.oldData,
-        new_data: entry.newData,
-        ip_address: entry.ipAddress,
-        user_agent: entry.userAgent,
-      } as any
-    )
-  } catch (error) {
+    await supabase.from('audit_log').insert({
+      company_id: entry.companyId,
+      user_id: entry.userId,
+      action: entry.action,
+      entity_type: entry.entityType,
+      entity_id: entry.entityId,
+      old_data: entry.oldData as import('@/types/database').Json,
+      new_data: entry.newData as import('@/types/database').Json,
+      ip_address: entry.ipAddress,
+      user_agent: entry.userAgent,
+    })
+  } catch (error: unknown) {
     console.error('Failed to record audit log:', error)
   }
 }

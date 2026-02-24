@@ -44,8 +44,8 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase
-      .from('gl_journal_entries') as any)
+    let query = (supabase as any)
+      .from('gl_journal_entries')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
@@ -113,8 +113,8 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the journal entry
-    const { data: entry, error: entryError } = await (supabase
-      .from('gl_journal_entries') as any)
+    const { data: entry, error: entryError } = await (supabase as any)
+      .from('gl_journal_entries')
       .insert({
         company_id: ctx.companyId!,
         entry_date: input.entry_date,
@@ -148,8 +148,8 @@ export const POST = createApiHandler(
       client_id: line.client_id ?? null,
     }))
 
-    const { data: lines, error: linesError } = await (supabase
-      .from('gl_journal_lines') as any)
+    const { data: lines, error: linesError } = await (supabase as any)
+      .from('gl_journal_lines')
       .insert(lineRecords)
       .select('*')
 

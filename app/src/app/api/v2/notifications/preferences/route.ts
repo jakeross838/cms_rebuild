@@ -62,8 +62,8 @@ export const PUT = createApiHandler(
       updated_at: new Date().toISOString(),
     }))
 
-    const { error } = await (supabase
-      .from('user_notification_preferences') as any)
+    const { error } = await (supabase as any)
+      .from('user_notification_preferences')
       .upsert(records, { onConflict: 'user_id,company_id,category,channel' })
 
     if (error) {

@@ -40,8 +40,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('vendor_scores') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_scores')
       .select('*')
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
@@ -88,8 +88,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify score exists
-    const { data: existing, error: existError } = await (supabase
-      .from('vendor_scores') as any)
+    const { data: existing, error: existError } = await (supabase as any)
+      .from('vendor_scores')
       .select('id')
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
@@ -116,8 +116,8 @@ export const PUT = createApiHandler(
     if (input.manual_adjustment !== undefined) updates.manual_adjustment = input.manual_adjustment
     if (input.manual_adjustment_reason !== undefined) updates.manual_adjustment_reason = input.manual_adjustment_reason
 
-    const { data, error } = await (supabase
-      .from('vendor_scores') as any)
+    const { data, error } = await (supabase as any)
+      .from('vendor_scores')
       .update(updates)
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)

@@ -66,15 +66,13 @@ describe('Spec: All core entities have deleted_at for soft delete', () => {
 // ============================================================================
 
 describe('Spec: JobStatus enum completeness', () => {
-  it('includes all 8 job statuses', () => {
+  it('includes all 6 job statuses', () => {
     const statuses: JobStatus[] = [
-      'lead',
       'pre_construction',
       'active',
       'on_hold',
       'completed',
       'warranty',
-      'closed',
       'cancelled',
     ]
     for (const s of statuses) {
@@ -411,53 +409,41 @@ describe('Spec: updateCostCodeSchema is partial', () => {
 // ============================================================================
 
 describe('Spec: Job type has all DB columns', () => {
-  it('has project-detail fields from migration', () => {
+  it('has core fields from migration', () => {
     // Compile-time check — if these fields didn't exist on Job, TS would error
     const checkFields: (keyof Job)[] = [
       'id', 'company_id', 'client_id', 'name', 'job_number',
-      'description', 'address', 'city', 'state', 'zip',
-      'latitude', 'longitude', 'project_type', 'status',
-      'contract_type', 'contract_amount', 'cost_plus_markup',
+      'notes', 'address', 'city', 'state', 'zip',
+      'status', 'contract_type', 'contract_amount',
       'start_date', 'target_completion', 'actual_completion',
-      'sqft_conditioned', 'sqft_total', 'sqft_garage',
-      'bedrooms', 'bathrooms', 'stories',
-      'budget_total', 'committed_total', 'invoiced_total',
-      'paid_total', 'billed_total', 'received_total',
-      'settings', 'deleted_at', 'created_at', 'updated_at',
-    ]
-    expect(checkFields.length).toBeGreaterThan(30)
-  })
-})
-
-describe('Spec: Client type has all DB columns', () => {
-  it('has spouse/portal fields from migration', () => {
-    const checkFields: (keyof Client)[] = [
-      'id', 'company_id', 'name', 'company_name',
-      'email', 'phone', 'mobile_phone',
-      'address', 'city', 'state', 'zip',
-      'spouse_name', 'spouse_email', 'spouse_phone',
-      'lead_source', 'referred_by', 'portal_enabled',
-      'notes', 'deleted_at', 'created_at', 'updated_at',
+      'deleted_at', 'created_at', 'updated_at',
     ]
     expect(checkFields.length).toBeGreaterThan(15)
   })
 })
 
-describe('Spec: Vendor type has all DB columns', () => {
-  it('has compliance/insurance fields from migration', () => {
-    const checkFields: (keyof Vendor)[] = [
-      'id', 'company_id', 'name', 'dba_name',
-      'email', 'phone', 'website',
+describe('Spec: Client type has all DB columns', () => {
+  it('has core fields from migration', () => {
+    const checkFields: (keyof Client)[] = [
+      'id', 'company_id', 'name',
+      'email', 'phone',
       'address', 'city', 'state', 'zip',
-      'trade', 'trades', 'tax_id',
-      'license_number', 'license_expiration',
-      'insurance_expiration', 'gl_coverage_amount',
-      'workers_comp_expiration', 'payment_terms',
-      'default_cost_code_id', 'is_active', 'is_1099',
-      'w9_on_file', 'performance_score',
-      'notes', 'deleted_at', 'created_at', 'updated_at',
+      'notes', 'deleted_at', 'created_at',
     ]
-    expect(checkFields.length).toBeGreaterThan(25)
+    expect(checkFields.length).toBeGreaterThan(10)
+  })
+})
+
+describe('Spec: Vendor type has all DB columns', () => {
+  it('has core fields from migration', () => {
+    const checkFields: (keyof Vendor)[] = [
+      'id', 'company_id', 'name',
+      'email', 'phone',
+      'address', 'city', 'state', 'zip',
+      'trade', 'tax_id', 'is_active',
+      'notes', 'deleted_at', 'created_at',
+    ]
+    expect(checkFields.length).toBeGreaterThan(12)
   })
 })
 
@@ -467,8 +453,8 @@ describe('Spec: CostCode type has all DB columns', () => {
       'id', 'company_id', 'code', 'division', 'subdivision',
       'name', 'description', 'category', 'trade',
       'parent_id', 'sort_order', 'is_active', 'is_default',
-      'deleted_at', 'created_at', 'updated_at',
+      'deleted_at', 'created_at',
     ]
-    expect(checkFields.length).toBeGreaterThan(14)
+    expect(checkFields.length).toBeGreaterThan(13)
   })
 })

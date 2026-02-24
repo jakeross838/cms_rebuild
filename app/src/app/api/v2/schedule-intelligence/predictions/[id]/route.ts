@@ -27,8 +27,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('schedule_predictions') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_predictions')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -90,8 +90,8 @@ export const PUT = createApiHandler(
       }
     }
 
-    const { data, error } = await (supabase
-      .from('schedule_predictions') as any)
+    const { data, error } = await (supabase as any)
+      .from('schedule_predictions')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

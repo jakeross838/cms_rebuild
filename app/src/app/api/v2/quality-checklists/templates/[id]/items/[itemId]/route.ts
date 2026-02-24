@@ -53,8 +53,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify template belongs to company
-    const { data: template, error: tError } = await (supabase
-      .from('quality_checklist_templates') as any)
+    const { data: template, error: tError } = await (supabase as any)
+      .from('quality_checklist_templates')
       .select('id')
       .eq('id', templateId)
       .eq('company_id', ctx.companyId!)
@@ -74,8 +74,8 @@ export const PUT = createApiHandler(
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
     if (input.is_required !== undefined) updates.is_required = input.is_required
 
-    const { data, error } = await (supabase
-      .from('quality_checklist_template_items') as any)
+    const { data, error } = await (supabase as any)
+      .from('quality_checklist_template_items')
       .update(updates)
       .eq('id', itemId)
       .eq('template_id', templateId)
@@ -111,8 +111,8 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify template belongs to company
-    const { data: template, error: tError } = await (supabase
-      .from('quality_checklist_templates') as any)
+    const { data: template, error: tError } = await (supabase as any)
+      .from('quality_checklist_templates')
       .select('id')
       .eq('id', templateId)
       .eq('company_id', ctx.companyId!)
@@ -125,8 +125,8 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase
-      .from('quality_checklist_template_items') as any)
+    const { error } = await (supabase as any)
+      .from('quality_checklist_template_items')
       .delete()
       .eq('id', itemId)
       .eq('template_id', templateId)

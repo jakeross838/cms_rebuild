@@ -7,9 +7,20 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
-import type { Job, Client } from '@/types/database'
+import type { JobStatus } from '@/types/database'
 
-type JobWithClient = Job & { clients: Pick<Client, 'name'> | null }
+interface JobWithClient {
+  id: string
+  name: string
+  job_number: string | null
+  status: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  contract_amount: number | null
+  start_date: string | null
+  clients: { name: string } | null
+}
 
 export default async function JobsPage({
   searchParams,
@@ -19,15 +30,13 @@ export default async function JobsPage({
   const params = await searchParams
   const supabase = await createClient()
 
-  // Build query - using type assertion until proper schema is connected
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let query = (supabase as any)
+  let query = supabase
     .from('jobs')
     .select('*, clients(name)')
     .order('updated_at', { ascending: false })
 
   if (params.status) {
-    query = query.eq('status', params.status)
+    query = query.eq('status', params.status as JobStatus)
   }
 
   if (params.search) {
@@ -85,7 +94,7 @@ export default async function JobsPage({
               <Button
                 variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
                 size="sm"
-                className=""
+
               >
                 {filter.label}
               </Button>
@@ -118,8 +127,8 @@ export default async function JobsPage({
                           <span className="font-medium text-foreground">
                             {job.name}
                           </span>
-                          <Badge className={getStatusColor(job.status)}>
-                            {job.status.replace('_', ' ')}
+                          <Badge className={getStatusColor(job.status ?? 'active')}>
+                            {(job.status ?? 'active').replace('_', ' ')}
                           </Badge>
                         </div>
                         <div className="text-sm text-muted-foreground mt-0.5">

@@ -61,13 +61,15 @@ export function createMockCompany(overrides?: Partial<Company>): Company {
     logo_url: null,
     primary_color: '#2563eb',
     settings: null,
+    permissions_mode: null,
     subscription_tier: 'pro',
     subscription_status: 'active',
     trial_ends_at: null,
+    deleted_at: null,
     created_at: '2025-01-15T08:00:00.000Z',
     updated_at: '2025-01-15T08:00:00.000Z',
     ...overrides,
-  }
+  } as Company
 }
 
 export function createMockJob(overrides?: Partial<Job>): Job {
@@ -77,39 +79,22 @@ export function createMockJob(overrides?: Partial<Job>): Job {
     client_id: crypto.randomUUID(),
     name: 'Lakewood Residence Remodel',
     job_number: 'JOB-2025-042',
-    description: 'Full kitchen and master bath remodel with addition',
+    notes: 'Full kitchen and master bath remodel with addition',
     address: '4500 Lakeshore Dr',
     city: 'Austin',
     state: 'TX',
     zip: '78746',
-    latitude: null,
-    longitude: null,
-    project_type: 'remodel',
     status: 'active',
     contract_type: 'fixed_price',
     contract_amount: 485000,
-    cost_plus_markup: null,
     start_date: '2025-09-01',
     target_completion: '2026-03-15',
     actual_completion: null,
-    sqft_conditioned: null,
-    sqft_total: null,
-    sqft_garage: null,
-    bedrooms: null,
-    bathrooms: null,
-    stories: null,
-    budget_total: 0,
-    committed_total: 0,
-    invoiced_total: 0,
-    paid_total: 0,
-    billed_total: 0,
-    received_total: 0,
-    settings: {},
     deleted_at: null,
     created_at: '2025-08-20T14:30:00.000Z',
     updated_at: '2025-08-20T14:30:00.000Z',
     ...overrides,
-  }
+  } as Job
 }
 
 export function createMockRole(overrides?: Partial<Role>): Role {

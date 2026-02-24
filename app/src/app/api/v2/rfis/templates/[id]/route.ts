@@ -28,8 +28,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('rfi_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('rfi_templates')
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -83,8 +83,8 @@ export const PUT = createApiHandler(
     if (input.default_priority !== undefined) updates.default_priority = input.default_priority
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase
-      .from('rfi_templates') as any)
+    const { data, error } = await (supabase as any)
+      .from('rfi_templates')
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -119,8 +119,8 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase
-      .from('rfi_templates') as any)
+    const { error } = await (supabase as any)
+      .from('rfi_templates')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

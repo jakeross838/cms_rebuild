@@ -25,8 +25,8 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase
-      .from('client_approvals') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_approvals')
       .select('*')
       .eq('id', approvalId)
       .eq('company_id', ctx.companyId!)
@@ -68,8 +68,8 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check existing approval
-    const { data: existing, error: fetchError } = await (supabase
-      .from('client_approvals') as any)
+    const { data: existing, error: fetchError } = await (supabase as any)
+      .from('client_approvals')
       .select('*')
       .eq('id', approvalId)
       .eq('company_id', ctx.companyId!)
@@ -103,8 +103,8 @@ export const PUT = createApiHandler(
     if (input.signature_ip !== undefined) updateFields.signature_ip = input.signature_ip
     if (input.signature_hash !== undefined) updateFields.signature_hash = input.signature_hash
 
-    const { data, error } = await (supabase
-      .from('client_approvals') as any)
+    const { data, error } = await (supabase as any)
+      .from('client_approvals')
       .update(updateFields)
       .eq('id', approvalId)
       .eq('company_id', ctx.companyId!)
