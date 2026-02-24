@@ -334,3 +334,46 @@ When operating as the "Executor" AI (Claude Code) following a plan created by th
 - Hard delete anything — always soft delete (archive) with restore capability
 - Use `any` types in TypeScript
 - Commit broken code — fix before committing
+
+---
+
+## Autonomous Agent Protocol
+
+When operating in autopilot mode (user says "continue building", "keep going", or "autopilot"):
+
+### Finding What's Next
+1. **READ** `docs/MODULE_STATUS.md` — find the first `not_started` item
+2. **READ** `docs/AGENT_QUEUE.md` — confirm it's next in queue and all dependencies are `done`
+3. **UPDATE** `docs/MODULE_STATUS.md` — set status to `in_progress`
+
+### Per-Module Build Loop
+4. **READ** the module spec (`docs/3-modules/XX-*.md`)
+5. **READ** the acceptance tests (`app/tests/acceptance/XX-*.acceptance.test.ts`)
+6. **READ** `docs/BUILD_PLAN.md` — find the sub-task breakdown for this module
+7. **EXECUTE** the build:
+   a. Apply migration via Supabase MCP if migration status is `local_only` (read the local SQL file, apply via `apply_migration`)
+   b. Build API routes using `createApiHandler` pattern from `src/lib/api/middleware.ts`
+   c. Add React Query hooks in `src/hooks/` or `src/lib/hooks/`
+   d. Wire UI pages to real data (replace mock data in skeleton pages)
+   e. Run `cd app && npm run validate` — types + all tests must pass
+   f. Fix any failures before proceeding
+
+### After Each Module
+8. **UPDATE** brain files per Brain Tracker rules (feature-map, intent-log, test-matrix)
+9. **UPDATE** `docs/MODULE_STATUS.md` — mark module as `done`, fill in all columns
+10. **COMMIT** with message format: `"Add Module XX — [name] (real data, validated)"`
+11. **Move** to next item in queue — go back to step 1
+
+### Error Handling
+- If validation fails: fix the issue, re-run validation. Do NOT skip to next module.
+- If blocked by a dependency: mark as `blocked` in MODULE_STATUS.md, skip to next unblocked item.
+- If migration fails: check Supabase logs via `get_logs`, fix SQL, retry.
+- If stuck for more than 3 attempts: stop and ask the user for guidance.
+
+### Rules
+- **One module at a time** — never start a new module before the current one passes validation
+- **Always validate** — `npm run validate` must pass before any commit
+- **Always update brain** — feature-map, intent-log, test-matrix after every code change
+- **Always update tracker** — MODULE_STATUS.md reflects reality at all times
+- **Never skip phases** — 0C and 0D must complete before Module 02+
+- **Migration before code** — apply DB migration before building API routes that depend on it
