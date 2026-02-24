@@ -32,9 +32,9 @@
 | 01 | Auth & Access Control | done | applied | yes | yes | yes | 5e345c8 |
 | 02 | Configuration Engine | done | applied | yes | no | yes | fea8850 |
 | 03 | Core Data Model | done | applied | yes | no | yes | 534d1d8 |
-| 04 | Navigation, Search & Dashboard | done | n/a | yes | partial | yes | pending |
+| 04 | Navigation, Search & Dashboard | done | n/a | yes | partial | yes | 87e414e |
 | 05 | Notification Engine | done | applied | yes | partial | yes | 6a897e7 |
-| 06 | Document Storage | not_started | applied | no | no | no | no |
+| 06 | Document Storage | done | applied | yes | partial | yes | pending |
 
 ---
 
@@ -42,13 +42,13 @@
 
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
-| 07 | Scheduling & Calendar | not_started | applied | no | no | no | no |
-| 08 | Daily Logs | not_started | applied | no | no | no | no |
-| 09 | Budget & Cost Tracking | not_started | applied | no | no | no | no |
-| 10 | Vendor Management | not_started | applied | no | no | no | no |
-| 11 | Native Accounting (GL/AP/AR) | not_started | applied | no | no | no | no |
-| 12 | Basic Client Portal | not_started | applied | no | no | no | no |
-| 51 | Time Tracking & Labor | not_started | applied | no | no | no | no |
+| 07 | Scheduling & Calendar | done | applied | yes | partial | yes | pending |
+| 08 | Daily Logs | done | applied | yes | partial | yes | pending |
+| 09 | Budget & Cost Tracking | done | applied | yes | partial | yes | pending |
+| 10 | Vendor Management | done | applied | yes | partial | yes | pending |
+| 11 | Native Accounting (GL/AP/AR) | done | applied | yes | partial | yes | pending |
+| 12 | Basic Client Portal | done | applied | yes | partial | yes | pending |
+| 51 | Time Tracking & Labor | done | applied | yes | partial | yes | pending |
 
 ---
 
@@ -56,14 +56,14 @@
 
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
-| 13 | AI Invoice Processing | not_started | applied | no | no | no | no |
-| 14 | Lien Waivers | not_started | applied | no | no | no | no |
-| 15 | Draw Requests | not_started | applied | no | no | no | no |
-| 16 | QuickBooks Integration | not_started | applied | no | no | no | no |
-| 17 | Change Orders | not_started | applied | no | no | no | no |
-| 18 | Purchase Orders | not_started | applied | no | no | no | no |
-| 19 | Financial Reporting | not_started | applied | no | no | no | no |
-| 52 | Inventory & Materials | not_started | applied | no | no | no | no |
+| 13 | AI Invoice Processing | done | applied | yes | partial | yes | pending |
+| 14 | Lien Waivers | done | applied | yes | partial | yes | pending |
+| 15 | Draw Requests | done | applied | yes | partial | yes | pending |
+| 16 | QuickBooks Integration | done | applied | yes | partial | yes | pending |
+| 17 | Change Orders | done | applied | yes | partial | yes | pending |
+| 18 | Purchase Orders | done | applied | yes | partial | yes | pending |
+| 19 | Financial Reporting | done | applied | yes | partial | yes | pending |
+| 52 | Inventory & Materials | done | applied | yes | partial | yes | pending |
 
 ---
 
@@ -71,15 +71,15 @@
 
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
-| 20 | Estimating Engine | not_started | applied | no | no | no | no |
-| 21 | Selection Management | not_started | applied | no | no | no | no |
-| 22 | Vendor Performance | not_started | applied | no | no | no | no |
-| 23 | Price Intelligence | not_started | applied | no | no | no | no |
-| 24 | AI Document Processing | not_started | applied | no | no | no | no |
-| 25 | Schedule Intelligence | not_started | applied | no | no | no | no |
-| 26 | Bid Management | not_started | applied | no | no | no | no |
-| 27 | RFI Management | not_started | applied | no | no | no | no |
-| 28 | Punch List & Quality | not_started | applied | no | no | no | no |
+| 20 | Estimating Engine | done | applied | yes | partial | yes | pending |
+| 21 | Selection Management | done | applied | yes | partial | yes | pending |
+| 22 | Vendor Performance | done | applied | yes | partial | yes | pending |
+| 23 | Price Intelligence | done | applied | yes | partial | yes | pending |
+| 24 | AI Document Processing | done | applied | yes | partial | yes | pending |
+| 25 | Schedule Intelligence | done | applied | yes | partial | yes | pending |
+| 26 | Bid Management | done | applied | yes | partial | yes | pending |
+| 27 | RFI Management | done | applied | yes | partial | yes | pending |
+| 28 | Punch List & Quality | done | applied | yes | partial | yes | pending |
 
 ---
 
@@ -87,18 +87,18 @@
 
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
-| 29 | Full Client Portal | not_started | applied | no | no | no | no |
-| 30 | Vendor Portal | not_started | applied | no | no | no | no |
-| 31 | Warranty & Home Care | not_started | applied | no | no | no | no |
-| 32 | Permitting & Inspections | not_started | applied | no | no | no | no |
-| 33 | Safety & Compliance | not_started | applied | no | no | no | no |
-| 34 | HR & Workforce | not_started | applied | no | no | no | no |
-| 35 | Equipment & Assets | not_started | applied | no | no | no | no |
-| 36 | Lead Pipeline & CRM | not_started | applied | no | no | no | no |
-| 37 | Marketing & Portfolio | not_started | applied | no | no | no | no |
-| 38 | Contracts & E-Signature | not_started | applied | no | no | no | no |
-| 39 | Advanced Reporting | not_started | applied | no | no | no | no |
-| 40 | Mobile App | not_started | applied | no | no | no | no |
+| 29 | Full Client Portal | done | applied | yes | partial | yes | pending |
+| 30 | Vendor Portal | done | applied | yes | partial | yes | pending |
+| 31 | Warranty & Home Care | done | applied | yes | partial | yes | pending |
+| 32 | Permitting & Inspections | done | applied | yes | partial | yes | pending |
+| 33 | Safety & Compliance | done | applied | yes | partial | yes | pending |
+| 34 | HR & Workforce | done | applied | yes | partial | yes | pending |
+| 35 | Equipment & Assets | done | applied | yes | partial | yes | pending |
+| 36 | Lead Pipeline & CRM | done | applied | yes | partial | yes | pending |
+| 37 | Marketing & Portfolio | done | applied | yes | partial | yes | pending |
+| 38 | Contracts & E-Signature | done | applied | yes | partial | yes | pending |
+| 39 | Advanced Reporting | done | applied | yes | partial | yes | pending |
+| 40 | Mobile App | done | applied | yes | partial | yes | pending |
 
 ---
 
@@ -106,16 +106,16 @@
 
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
-| 41 | Onboarding Wizard | not_started | local_only | no | no | no | no |
-| 42 | Data Migration | not_started | local_only | no | no | no | no |
-| 43 | Subscription Billing | not_started | local_only | no | no | no | no |
-| 44 | White-Label & Branding | not_started | local_only | no | no | no | no |
-| 45 | API & Marketplace | not_started | local_only | no | no | no | no |
-| 46 | Customer Support | not_started | local_only | no | no | no | no |
-| 47 | Training Platform | not_started | local_only | no | no | no | no |
-| 48 | Template Marketplace | not_started | local_only | no | no | no | no |
-| 49 | Platform Analytics | not_started | local_only | no | no | no | no |
-| 50 | Marketing Website | not_started | local_only | no | no | no | no |
+| 41 | Onboarding Wizard | done | local_only | yes | partial | yes | pending |
+| 42 | Data Migration | done | local_only | yes | partial | yes | pending |
+| 43 | Subscription Billing | done | local_only | yes | partial | yes | pending |
+| 44 | White-Label & Branding | done | local_only | yes | partial | yes | pending |
+| 45 | API & Marketplace | done | local_only | yes | partial | yes | pending |
+| 46 | Customer Support | done | local_only | yes | partial | yes | pending |
+| 47 | Training Platform | done | local_only | yes | partial | yes | pending |
+| 48 | Template Marketplace | done | local_only | yes | partial | yes | pending |
+| 49 | Platform Analytics | done | local_only | yes | partial | yes | pending |
+| 50 | Marketing Website | done | local_only | yes | partial | yes | pending |
 
 ---
 
@@ -123,9 +123,11 @@
 
 | Category | Count |
 |----------|-------|
-| Done | 7 (Module 01, Module 02, Module 03, Module 04, Module 05, Phase 0C, Phase 0D) |
+| Done | 54 (All modules + Phase 0C + Phase 0D) |
 | In Progress | 0 |
-| Not Started | 47 (Modules 06-52) |
+| Not Started | 0 |
 | Blocked | 0 |
 
-**Next up:** Module 06 — Document Storage (see `docs/AGENT_QUEUE.md`)
+**All 52 modules have: migrations (applied or local), API routes, validation schemas, service layer, types, and passing acceptance tests.**
+
+**Remaining work:** UI wiring — connect skeleton pages (mock data) to real API endpoints via React Query hooks. Phase 6 modules need migrations applied to live DB.
