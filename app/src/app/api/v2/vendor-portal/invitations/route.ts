@@ -1,0 +1,131 @@
+/**
+ * Vendor Portal Invitations API — List & Create
+ *
+ * GET  /api/v2/vendor-portal/invitations — List invitations
+ * POST /api/v2/vendor-portal/invitations — Create a new invitation
+ */
+
+import { NextResponse } from 'next/server'
+
+import {
+  createApiHandler,
+  getPaginationParams,
+  paginatedResponse,
+  type ApiContext,
+} from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { listInvitationsSchema, createInvitationSchema } from '@/lib/validation/schemas/vendor-portal'
+
+// ============================================================================
+// GET /api/v2/vendor-portal/invitations
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const url = req.nextUrl
+    const parseResult = listInvitationsSchema.safeParse({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+      status: url.searchParams.get('status') ?? undefined,
+      email: url.searchParams.get('email') ?? undefined,
+      q: url.searchParams.get('q') ?? undefined,
+    })
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid query parameters', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const filters = parseResult.data
+    const { page, limit, offset } = getPaginationParams(req)
+    const supabase = await createClient()
+
+    let query = (supabase
+      .from('vendor_portal_invitations') as any)
+      .select('*', { count: 'exact' })
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+
+    if (filters.status) {
+      query = query.eq('status', filters.status)
+    }
+    if (filters.email) {
+      query = query.eq('email', filters.email)
+    }
+    if (filters.q) {
+      query = query.or(`vendor_name.ilike.%${filters.q}%,email.ilike.%${filters.q}%,contact_name.ilike.%${filters.q}%`)
+    }
+
+    query = query.order('created_at', { ascending: false })
+
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit))
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// POST /api/v2/vendor-portal/invitations — Create invitation
+// ============================================================================
+
+export const POST = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const body = await req.json()
+    const parseResult = createInvitationSchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid invitation data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+    const supabase = await createClient()
+
+    // Generate a unique token
+    const token = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '').slice(0, 36)
+
+    // Calculate expiration
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + input.expires_in_days)
+
+    const { data, error } = await (supabase
+      .from('vendor_portal_invitations') as any)
+      .insert({
+        company_id: ctx.companyId!,
+        vendor_id: input.vendor_id ?? null,
+        vendor_name: input.vendor_name,
+        contact_name: input.contact_name ?? null,
+        email: input.email,
+        phone: input.phone ?? null,
+        message: input.message ?? null,
+        status: 'pending',
+        token,
+        expires_at: expiresAt.toISOString(),
+        invited_by: ctx.user!.id,
+      })
+      .select('*')
+      .single()
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)

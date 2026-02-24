@@ -1,5 +1,419 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Module 36: Lead Pipeline & CRM (V1 Foundation)
+
+### Database Tables
+- **leads**: Core lead/prospect records. Columns: company_id, first_name (VARCHAR 100), last_name (VARCHAR 100), email (VARCHAR 255), phone (VARCHAR 50), address (TEXT), lot_address (TEXT), source (TEXT default 'other'), source_detail (TEXT), utm_source/utm_medium/utm_campaign (VARCHAR 255), project_type (TEXT), budget_range_low/budget_range_high (NUMERIC 15,2), timeline (TEXT), lot_status (TEXT), financing_status (TEXT), preconstruction_type (design_build/plan_bid_build), status (new/contacted/qualified/proposal_sent/negotiating/won/lost/on_hold), priority (low/normal/high/hot), pipeline_id (FK pipelines), stage_id (FK pipeline_stages), score (INT default 0), assigned_to (UUID), expected_contract_value (NUMERIC 15,2 default 0), probability_pct (NUMERIC 5,2 default 0), lost_reason (TEXT), lost_competitor (TEXT), won_project_id (UUID), created_by (UUID). Soft delete via deleted_at. RLS enabled.
+- **lead_activities**: Activity log per lead. Columns: company_id, lead_id (FK leads CASCADE), activity_type (call/email/meeting/note/site_visit/proposal/follow_up), subject (VARCHAR 255), description (TEXT), performed_by (UUID), activity_date (TIMESTAMPTZ), duration_minutes (INT). RLS enabled.
+- **lead_sources**: Configurable lead source registry. Columns: company_id, name (VARCHAR 200), description (TEXT), source_type (referral/website/social_media/advertising/trade_show/cold_call/partner/other), is_active (BOOLEAN default true). RLS enabled.
+- **pipelines**: Customizable pipeline definitions. Columns: company_id, name (VARCHAR 200), description (TEXT), is_default (BOOLEAN default false), is_active (BOOLEAN default true), created_by (UUID). RLS enabled.
+- **pipeline_stages**: Individual stages within a pipeline. Columns: company_id, pipeline_id (FK pipelines CASCADE), name (VARCHAR 200), stage_type (lead/qualified/proposal/negotiation/closed), sequence_order (INT default 0), probability_default (NUMERIC 5,2 default 0), color (VARCHAR 20), is_active (BOOLEAN default true). RLS enabled.
+
+### API Endpoints
+- 25 endpoints under /api/v2/crm/ covering leads CRUD, activities CRUD, sources CRUD, pipelines CRUD, pipeline stages CRUD
+
+### Type System
+- 6 type unions: LeadStatus (8), LeadSource (8), ActivityType (7), LeadPriority (4), StageType (5), PreconstructionType (2)
+- 5 interfaces: Lead, LeadActivity, LeadSourceRecord, Pipeline, PipelineStage
+- 6 constant arrays with value/label pairs
+- 6 enum schemas + 15 CRUD schemas
+
+---
+
+## Module 39: Advanced Reporting & Custom Report Builder (V1 Foundation)
+
+### Database Tables
+- **custom_reports**: User-built report definitions. Columns: company_id, name (VARCHAR 255), description, report_type (standard/custom), data_sources/fields/filters/grouping/sorting/calculated_fields (JSONB), visualization_type (9 types), audience (4 types), status (draft/published/archived), refresh_frequency (4 types), is_template, shared_with, created_by. Soft delete. RLS. 8 indexes.
+- **custom_report_widgets**: Widgets within reports. report_id FK CASCADE, widget_type (9), data_source (10), configuration/filters JSONB, sort_order. RLS. 3 indexes.
+- **report_dashboards**: Dashboard layouts. layout (4 types), is_default, is_admin_pushed, target_roles, global_filters. Soft delete. RLS. 5 indexes.
+- **dashboard_widgets**: Widgets on dashboards. dashboard_id FK CASCADE, position_x/y, width/height, report_id FK SET NULL, refresh_interval_seconds. RLS. 3 indexes.
+- **saved_filters**: Reusable filters. context (11 values), filter_config JSONB, is_global. RLS. 4 indexes.
+
+### API Endpoints (23 routes under /api/v2/advanced-reports/)
+- Custom Reports: GET list, POST create, GET/PUT/DELETE :id
+- Report Widgets: GET/POST :id/widgets, PUT/DELETE :id/widgets/:widgetId
+- Dashboards: GET list, POST create, GET/PUT/DELETE :id
+- Dashboard Widgets: GET/POST :id/widgets, PUT/DELETE :id/widgets/:widgetId
+- Saved Filters: GET list, POST create, GET/PUT/DELETE :id
+
+### Type System
+- 8 type unions, 5 interfaces, 8 constant arrays, 8 enum schemas + 15 CRUD schemas
+
+---
+
+## Module 38: Contracts & E-Signature (V1 Foundation)
+
+### Database Tables
+- **contracts**: Core contract records with 9-status lifecycle, 8 contract types, soft delete, 12 indexes. RLS enabled.
+- **contract_versions**: Immutable version snapshots per contract. CASCADE from contracts. RLS enabled.
+- **contract_signers**: Signing parties with role/status tracking, sign order, signature metadata. CASCADE from contracts. RLS enabled.
+- **contract_templates**: Reusable contract templates with clause/variable JSONB arrays. Soft delete via is_active. RLS enabled.
+- **contract_clauses**: Clause library with category, required flag, sort order. Soft delete via is_active. RLS enabled.
+
+### API Endpoints (13 route files under /api/v2/contracts/)
+- Contracts: GET list, POST create, GET/PUT/DELETE by ID, POST send-for-signature
+- Versions: GET/POST per contract
+- Signers: GET/POST per contract, GET/PUT/DELETE by ID, POST sign, POST decline
+- Templates: GET/POST list, GET/PUT/DELETE by ID
+- Clauses: GET/POST list, GET/PUT/DELETE by ID
+
+### Type System
+- 4 type unions: ContractStatus (9), ContractType (8), SignerStatus (5), SignerRole (6)
+- 5 interfaces: Contract, ContractVersion, ContractSigner, ContractTemplate, ContractClause
+- 4 constant arrays, 4 enum schemas, 20 CRUD/workflow schemas
+
+---
+
+## Module 40: Mobile App (V1 Foundation)
+
+### Database Tables
+- **mobile_devices**: Registered device tracking. Columns: company_id, user_id, device_name (VARCHAR 200), platform (ios/android/web), status (active/inactive/revoked), device_model, os_version, app_version, device_token, last_active_at, last_ip_address, metadata (JSONB), created_by. Soft delete via deleted_at. RLS enabled. 8 indexes.
+- **push_notification_tokens**: FCM/APNs/WebPush tokens per device. Columns: company_id, user_id, device_id (FK CASCADE), token (TEXT), provider (fcm/apns/web_push), is_active, last_used_at. RLS enabled. 6 indexes.
+- **offline_sync_queue**: Pending offline changes. Columns: company_id, user_id, device_id, action (create/update/delete), entity_type, entity_id, payload (JSONB), status (pending/syncing/synced/conflict/failed), priority (1-10), retry_count, max_retries, error_message, synced_at. RLS enabled. 10 indexes.
+- **mobile_app_settings**: Per-user preferences. Columns: company_id, user_id (UNIQUE pair), data_saver_mode, auto_sync, sync_on_wifi_only, photo_quality (low/medium/high), location_tracking, gps_accuracy (low/balanced/high), biometric_enabled, quiet_hours_start/end, push_notifications, offline_storage_limit_mb, theme (light/dark/system), preferences (JSONB). RLS enabled.
+- **mobile_sessions**: Session tracking. Columns: company_id, user_id, device_id (FK CASCADE), session_token, status (active/expired/revoked), ip_address, user_agent, started_at, last_activity_at, expires_at, ended_at. RLS enabled. 9 indexes.
+
+### API Endpoints (23 routes under /api/v2/mobile/)
+- Devices: GET list, POST create, GET/PUT/DELETE by ID (soft delete + revoke)
+- Push Tokens: GET list, POST create, GET/PUT/DELETE by ID (hard delete)
+- Sync Queue: GET list, POST create, GET/PUT/DELETE by ID (hard delete)
+- Settings: GET (returns defaults if none), PUT (upsert)
+- Sessions: GET list, POST create, GET/PUT/DELETE by ID, POST :id/revoke
+
+### Type System
+- 9 type unions, 5 interfaces, 9 constant arrays, 9 enum schemas + 16 CRUD schemas
+
+---
+
+## Module 32: Permitting & Inspections (V1 Foundation)
+
+### Database Tables
+- **permits**: Core permit records per job. company_id, job_id, permit_number, permit_type (10 types), status (7 statuses), jurisdiction, dates, conditions, notes. Soft delete. RLS. updated_at trigger.
+- **permit_inspections**: Inspections per permit. company_id, permit_id (CASCADE), job_id, inspection_type (9 types), status (6 statuses), scheduling info, inspector info, reinspection tracking. RLS. updated_at trigger.
+- **inspection_results**: Results per inspection. company_id, inspection_id (CASCADE), result (pass/fail/conditional), deficiencies JSONB, photos JSONB, FTQ tracking, vendor attribution. RLS. updated_at trigger.
+- **permit_documents**: Documents per permit. company_id, permit_id (CASCADE), document_type, file_url, file_name, description. RLS.
+- **permit_fees**: Fee tracking per permit. company_id, permit_id (CASCADE), description, amount, status (4 statuses), dates, receipt_url. RLS. updated_at trigger.
+
+### API Endpoints (22 routes under /api/v2/permits/)
+- Permits: GET list, POST create, GET/PUT/DELETE :id
+- Inspections: GET/POST per permit, GET/PUT :inspectionId
+- Results: GET/POST per inspection, GET/PUT :resultId
+- Documents: GET/POST per permit, GET/DELETE :docId
+- Fees: GET/POST per permit, GET/PUT/DELETE :feeId
+
+### Type System
+- 6 type unions, 5 interfaces, 6 constant arrays, 6 enum schemas + 15 CRUD schemas
+
+---
+
+## Module 30: Vendor Portal (V1 Foundation)
+
+### Database Tables
+- **vendor_portal_settings**: Per-company portal config. UNIQUE(company_id). portal_enabled, allow_self_registration, require_approval, allowed_submission_types/required_compliance_docs (JSONB), auto_approve_submissions, portal_branding/notification_settings (JSONB). Soft delete. RLS.
+- **vendor_portal_invitations**: Invite vendors. vendor_name, email, status (pending/accepted/expired/revoked), token, expires_at. Soft delete. RLS.
+- **vendor_portal_access**: Per-vendor permissions. UNIQUE(company_id, vendor_id). access_level (full/limited/readonly), 7 boolean flags, allowed_job_ids. Soft delete. RLS.
+- **vendor_submissions**: Vendor documents. submission_type (6 types), status (5 statuses), title, amount, file_urls, metadata. Soft delete. RLS.
+- **vendor_messages**: Messaging with threading. direction (to_vendor/from_vendor), is_read, parent_message_id. Soft delete. RLS.
+
+### API Endpoints (27 routes)
+- Settings: GET/POST/PUT. Invitations: CRUD + revoke. Access: CRUD (409 duplicate). Submissions: CRUD + submit + review. Messages: CRUD + mark read.
+
+### Type System
+- 5 type unions, 5 interfaces, 5 constant arrays, 5 enum schemas + 19 CRUD schemas
+
+---
+
+## Module 37: Marketing & Portfolio (V1 Foundation)
+
+### Database Tables
+- **portfolio_projects**: Showcase projects for marketing portfolio. status (draft/published/featured/archived), soft delete, RLS.
+- **portfolio_photos**: Photos for portfolio projects. photo_type (exterior/interior/before/after/progress/detail), CASCADE from portfolio_projects, RLS.
+- **client_reviews**: Testimonials and reviews. source (google/houzz/facebook/yelp/bbb/angi/platform), status (pending/approved/published/rejected), rating 1-5, RLS.
+- **marketing_campaigns**: Campaign tracking. campaign_type (email/social/print/referral/event/other), status (draft/active/paused/completed/cancelled), ROI metrics, RLS.
+- **campaign_contacts**: Contacts in campaigns. status (pending/sent/opened/clicked/converted/unsubscribed), CASCADE from marketing_campaigns, RLS.
+
+### API Endpoints (21 routes under /api/v2/marketing/)
+- Portfolio: GET/POST list, GET/PUT/DELETE :id, GET/POST :id/photos
+- Reviews: GET/POST list, GET/PUT :id
+- Campaigns: GET/POST list, GET/PUT :id, GET/POST :id/contacts, GET/PUT/DELETE :id/contacts/:contactId
+
+### Type System
+- 7 type unions, 5 interfaces, 7 constant arrays, 7 enum schemas + 15 CRUD schemas
+
+---
+
+## Module 34: HR & Workforce Management (V1 Foundation)
+
+### Database Tables
+- **departments**: Organizational structure. Columns: company_id, name (VARCHAR 200), description (TEXT), parent_id (self-ref UUID nullable), head_user_id (UUID), is_active (BOOLEAN default true). RLS enabled. Indexes on company_id, parent_id, (company_id, is_active). updated_at trigger.
+- **positions**: Job titles/roles. Columns: company_id, title (VARCHAR 200), description (TEXT), department_id (FK departments), pay_grade (VARCHAR 50), is_active (BOOLEAN default true). RLS enabled. Indexes on company_id, department_id, (company_id, is_active). updated_at trigger.
+- **employees**: Employee records beyond basic users. Columns: company_id, user_id (UUID), employee_number (VARCHAR 50), first_name (VARCHAR 100), last_name (VARCHAR 100), email (VARCHAR 255), phone (VARCHAR 20), hire_date (DATE), termination_date (DATE), department_id (FK departments), position_id (FK positions), employment_status (active/inactive/terminated/on_leave/probation), employment_type (full_time/part_time/contract/seasonal/temp), base_wage (NUMERIC 12,2), pay_type (hourly/salary), workers_comp_class (VARCHAR 50), emergency_contact_name, emergency_contact_phone, address, notes, created_by. Soft delete via deleted_at. RLS enabled. 9 indexes including compound.
+- **employee_certifications**: Licenses, certs, training records. Columns: company_id, employee_id (FK employees CASCADE), certification_name (VARCHAR 255), certification_type (VARCHAR 100), certification_number (VARCHAR 100), issuing_authority (VARCHAR 200), issued_date (DATE), expiration_date (DATE), status (active/expired/pending_renewal/revoked), document_url (TEXT), notes, created_by. RLS enabled. 6 indexes.
+- **employee_documents**: HR documents. Columns: company_id, employee_id (FK employees CASCADE), document_type (resume/contract/tax_form/identification/certification/performance_review/disciplinary/other), title (VARCHAR 255), description (TEXT), file_url (TEXT), file_name (VARCHAR 255), file_size_bytes (BIGINT), uploaded_by. RLS enabled. 4 indexes.
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/hr/employees | List employees filtered by employment_status/employment_type/department_id/position_id/q. Paginated. Excludes soft-deleted. Searches first_name, last_name, employee_number, email via OR ilike. |
+| POST | /api/v2/hr/employees | Create employee. Requires employee_number, first_name, last_name, hire_date. Defaults: active, full_time, hourly, base_wage=0. Returns 201. |
+| GET | /api/v2/hr/employees/:id | Get employee with certifications_count and documents_count. |
+| PUT | /api/v2/hr/employees/:id | Partial update of employee fields. |
+| DELETE | /api/v2/hr/employees/:id | Soft delete: sets deleted_at. |
+| GET | /api/v2/hr/certifications | List certifications filtered by employee_id/status/q. Paginated. |
+| POST | /api/v2/hr/certifications | Create certification. Requires employee_id, certification_name. Verifies employee exists. Default status=active. Returns 201. |
+| GET | /api/v2/hr/certifications/:id | Get single certification. |
+| PUT | /api/v2/hr/certifications/:id | Partial update. |
+| DELETE | /api/v2/hr/certifications/:id | Hard delete. |
+| GET | /api/v2/hr/documents | List documents filtered by employee_id/document_type/q. Paginated. |
+| POST | /api/v2/hr/documents | Create document. Requires employee_id, title. Verifies employee exists. Default document_type=other. Returns 201. |
+| GET | /api/v2/hr/documents/:id | Get single document. |
+| PUT | /api/v2/hr/documents/:id | Partial update. |
+| DELETE | /api/v2/hr/documents/:id | Hard delete. |
+| GET | /api/v2/hr/departments | List departments filtered by is_active/q. Paginated. Ordered by name asc. |
+| POST | /api/v2/hr/departments | Create department. Requires name. Default is_active=true. Returns 201. |
+| GET | /api/v2/hr/departments/:id | Get department with employees_count and positions_count. |
+| PUT | /api/v2/hr/departments/:id | Partial update. |
+| DELETE | /api/v2/hr/departments/:id | Deactivate: sets is_active=false. |
+| GET | /api/v2/hr/positions | List positions filtered by department_id/is_active/q. Paginated. Ordered by title asc. |
+| POST | /api/v2/hr/positions | Create position. Requires title. Default is_active=true. Returns 201. |
+| GET | /api/v2/hr/positions/:id | Get position with employees_count. |
+| PUT | /api/v2/hr/positions/:id | Partial update. |
+| DELETE | /api/v2/hr/positions/:id | Deactivate: sets is_active=false. |
+
+### Type System
+- 5 type unions: EmploymentStatus (5), EmploymentType (5), PayType (2), CertificationStatus (4), DocumentType (8)
+- 5 interfaces: Employee, EmployeeCertification, EmployeeDocument, Department, Position
+- 5 constant arrays: EMPLOYMENT_STATUSES, EMPLOYMENT_TYPES, PAY_TYPES, CERTIFICATION_STATUSES, DOCUMENT_TYPES
+
+### Validation Schemas (Zod)
+- 5 enum schemas + 15 CRUD schemas covering employees, certifications, documents, departments, positions
+
+---
+
+## Module 33: Safety & Compliance (V1 Foundation)
+
+### Database Tables
+- **safety_incidents**: Incident/near-miss reports. Columns: company_id, job_id, incident_number (VARCHAR 30), title (VARCHAR 255), description (TEXT), incident_date (DATE), incident_time (TIME), location (VARCHAR 200), severity (near_miss/minor/moderate/serious/fatal), status (reported/investigating/resolved/closed), incident_type (fall/struck_by/caught_in/electrical/chemical/heat/vehicle/other), reported_by (UUID), assigned_to (UUID), injured_party (VARCHAR 255), injury_description (TEXT), witnesses (JSONB), root_cause (TEXT), corrective_actions (TEXT), preventive_actions (TEXT), osha_recordable (BOOLEAN), osha_report_number (VARCHAR 50), lost_work_days (INT), restricted_days (INT), medical_treatment (BOOLEAN), photos (JSONB), documents (JSONB), resolved_at, resolved_by, closed_at, closed_by, created_by. Soft delete via deleted_at. RLS enabled.
+- **safety_inspections**: Site safety inspections. Columns: company_id, job_id, inspection_number (VARCHAR 30), title (VARCHAR 255), description (TEXT), inspection_date (DATE), inspection_type (VARCHAR 100 default 'general'), status (scheduled/in_progress/completed/failed), result (pass/fail/conditional nullable), inspector_id (UUID), location (VARCHAR 200), total_items/passed_items/failed_items/na_items (INT), score (NUMERIC 5,2), notes (TEXT), follow_up_required (BOOLEAN), follow_up_date (DATE), follow_up_notes (TEXT), completed_at, completed_by, created_by. Soft delete via deleted_at. RLS enabled.
+- **safety_inspection_items**: Individual checklist items per inspection. Columns: inspection_id (FK safety_inspections CASCADE), company_id, description (TEXT), category (VARCHAR 100), result (pass/fail/na/not_inspected), notes (TEXT), photo_url (TEXT), sort_order (INT). RLS enabled.
+- **toolbox_talks**: Safety meeting records. Columns: company_id, job_id, title (VARCHAR 255), topic (VARCHAR 200), description (TEXT), talk_date (DATE), talk_time (TIME), duration_minutes (INT), status (scheduled/completed/cancelled), presenter_id (UUID), location (VARCHAR 200), materials (JSONB), notes (TEXT), completed_at, created_by. RLS enabled.
+- **toolbox_talk_attendees**: Attendance tracking. Columns: talk_id (FK toolbox_talks CASCADE), company_id, attendee_name (VARCHAR 200), attendee_id (UUID), trade (VARCHAR 100), company_name (VARCHAR 200), signed (BOOLEAN), signed_at, notes (TEXT). RLS enabled.
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/safety/incidents | List incidents filtered by job_id/status/severity/incident_type/q. Paginated. Excludes soft-deleted. Searches title and incident_number. |
+| POST | /api/v2/safety/incidents | Create incident. Requires job_id, incident_number, title, incident_date. Defaults: severity=near_miss, status=reported, incident_type=other. Returns 201. |
+| GET | /api/v2/safety/incidents/:id | Get single incident. |
+| PUT | /api/v2/safety/incidents/:id | Update incident. Closed incidents cannot be updated (403). Auto-sets resolved_at/resolved_by and closed_at/closed_by on status transitions. |
+| DELETE | /api/v2/safety/incidents/:id | Soft delete incident. |
+| GET | /api/v2/safety/inspections | List inspections filtered by job_id/status/result/inspector_id/q. Paginated. Excludes soft-deleted. |
+| POST | /api/v2/safety/inspections | Create inspection. Requires job_id, inspection_number, title, inspection_date. Defaults: status=scheduled, inspection_type=general. Returns 201. |
+| GET | /api/v2/safety/inspections/:id | Get inspection with items array and items_count. |
+| PUT | /api/v2/safety/inspections/:id | Update inspection fields. |
+| DELETE | /api/v2/safety/inspections/:id | Soft delete inspection. |
+| POST | /api/v2/safety/inspections/:id/complete | Complete inspection. Requires result (pass/fail/conditional). Only scheduled/in_progress inspections (409). Sets completed_at/completed_by. Fail result sets status=failed. |
+| GET | /api/v2/safety/inspections/:id/items | List inspection items. Paginated. Ordered by sort_order. |
+| POST | /api/v2/safety/inspections/:id/items | Add inspection item. Requires description. Returns 201. |
+| PUT | /api/v2/safety/inspections/:id/items/:itemId | Update inspection item. |
+| DELETE | /api/v2/safety/inspections/:id/items/:itemId | Delete inspection item. |
+| GET | /api/v2/safety/toolbox-talks | List talks filtered by job_id/status/q. Paginated. Searches title and topic. |
+| POST | /api/v2/safety/toolbox-talks | Create talk. Requires job_id, title, talk_date. Defaults: status=scheduled. Returns 201. |
+| GET | /api/v2/safety/toolbox-talks/:id | Get talk with attendees array and attendees_count. |
+| PUT | /api/v2/safety/toolbox-talks/:id | Update talk fields. |
+| POST | /api/v2/safety/toolbox-talks/:id/complete | Complete talk. Only scheduled talks (409). Sets completed_at. |
+| GET | /api/v2/safety/toolbox-talks/:id/attendees | List attendees. Paginated. |
+| POST | /api/v2/safety/toolbox-talks/:id/attendees | Add attendee. Requires attendee_name. Auto-sets signed_at when signed=true. Returns 201. |
+| PUT | /api/v2/safety/toolbox-talks/:id/attendees/:attendeeId | Update attendee. |
+| DELETE | /api/v2/safety/toolbox-talks/:id/attendees/:attendeeId | Delete attendee. |
+
+### Type System
+- 7 type unions: IncidentSeverity (5), IncidentStatus (4), IncidentType (8), InspectionStatus (4), InspectionResult (3), InspectionItemResult (4), TalkStatus (3)
+- 5 interfaces: SafetyIncident, SafetyInspection, SafetyInspectionItem, ToolboxTalk, ToolboxTalkAttendee
+- 7 constant arrays: INCIDENT_SEVERITIES, INCIDENT_STATUSES, INCIDENT_TYPES, INSPECTION_STATUSES, INSPECTION_RESULTS, INSPECTION_ITEM_RESULTS, TALK_STATUSES
+
+### Validation Schemas (Zod)
+- 7 enum schemas + 16 CRUD/workflow schemas covering incidents (list/create/update), inspections (list/create/update/complete), inspection items (list/create/update), toolbox talks (list/create/update/complete), and attendees (list/create/update)
+
+---
+
+## Module 35: Equipment & Asset Management (V1 Foundation)
+
+### Database Tables
+- **equipment**: Core equipment/asset records. Columns: company_id, name (VARCHAR 255), description (TEXT), equipment_type (heavy_machinery/vehicle/power_tool/hand_tool/scaffolding/safety_equipment/measuring/other), status (available/assigned/maintenance/out_of_service/retired), ownership_type (owned/leased/rented), make (VARCHAR 100), model (VARCHAR 100), serial_number (VARCHAR 100), year (INT), purchase_date (DATE), purchase_price (NUMERIC 15,2), current_value (NUMERIC 15,2), daily_rate (NUMERIC 10,2), location (VARCHAR 200), notes (TEXT), photo_urls (JSONB), created_by (UUID). Soft delete via deleted_at. RLS enabled. 8 indexes.
+- **equipment_assignments**: Job/crew assignment tracking. Columns: company_id, equipment_id (FK equipment CASCADE), job_id (UUID), assigned_to (UUID), assigned_by (UUID), start_date (DATE NOT NULL), end_date (DATE), status (active/completed/cancelled), hours_used (NUMERIC 10,2), notes (TEXT). RLS enabled. 7 indexes.
+- **equipment_maintenance**: Maintenance records and schedules. Columns: company_id, equipment_id (FK equipment CASCADE), maintenance_type (preventive/corrective/inspection/calibration), status (scheduled/in_progress/completed/overdue/cancelled), title (VARCHAR 255), description (TEXT), scheduled_date (DATE), completed_date (DATE), performed_by (UUID), service_provider (VARCHAR 200), parts_cost/labor_cost/total_cost (NUMERIC 10,2), notes (TEXT), created_by (UUID). RLS enabled. 7 indexes.
+- **equipment_inspections**: Pre-use and periodic inspections. Columns: company_id, equipment_id (FK equipment CASCADE), inspection_type (pre_use/post_use/periodic/safety), result (pass/fail/conditional), inspection_date (DATE default CURRENT_DATE), inspector_id (UUID), checklist (JSONB), deficiencies (TEXT), corrective_action (TEXT), notes (TEXT), created_by (UUID). RLS enabled. 6 indexes.
+- **equipment_costs**: Daily rate tracking, fuel, repairs. Columns: company_id, equipment_id (FK equipment CASCADE), job_id (UUID), cost_type (daily_rate/fuel/repair/insurance/transport/other), amount (NUMERIC 12,2), cost_date (DATE default CURRENT_DATE), description (TEXT), vendor_id (UUID), receipt_url (TEXT), notes (TEXT), created_by (UUID). RLS enabled. 7 indexes.
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/equipment | List equipment filtered by status/equipment_type/ownership_type/q. Paginated. Excludes soft-deleted. Searches name and serial_number. |
+| POST | /api/v2/equipment | Create equipment. Requires name. Defaults: equipment_type=other, status=available, ownership_type=owned. Returns 201. |
+| GET | /api/v2/equipment/:id | Get equipment with assignments_count, maintenance_count, costs_count. |
+| PUT | /api/v2/equipment/:id | Partial update of equipment fields. |
+| DELETE | /api/v2/equipment/:id | Soft delete: sets deleted_at. |
+| GET | /api/v2/equipment/:id/assignments | List assignments for equipment filtered by status. Paginated. |
+| POST | /api/v2/equipment/:id/assignments | Create assignment. Verifies equipment exists. Returns 201. |
+| GET | /api/v2/equipment/assignments/:assignmentId | Get single assignment. |
+| PUT | /api/v2/equipment/assignments/:assignmentId | Update assignment. |
+| DELETE | /api/v2/equipment/assignments/:assignmentId | Hard delete assignment. |
+| GET | /api/v2/equipment/:id/maintenance | List maintenance records filtered by maintenance_type/status. Paginated. |
+| POST | /api/v2/equipment/:id/maintenance | Create maintenance record. Verifies equipment exists. Returns 201. |
+| GET | /api/v2/equipment/maintenance/:maintenanceId | Get single maintenance record. |
+| PUT | /api/v2/equipment/maintenance/:maintenanceId | Update maintenance record. |
+| DELETE | /api/v2/equipment/maintenance/:maintenanceId | Hard delete maintenance record. |
+| GET | /api/v2/equipment/:id/inspections | List inspections filtered by inspection_type/result. Paginated. |
+| POST | /api/v2/equipment/:id/inspections | Create inspection. Verifies equipment exists. Returns 201. |
+| GET | /api/v2/equipment/inspections/:inspectionId | Get single inspection. |
+| PUT | /api/v2/equipment/inspections/:inspectionId | Update inspection. |
+| DELETE | /api/v2/equipment/inspections/:inspectionId | Hard delete inspection. |
+| GET | /api/v2/equipment/:id/costs | List costs filtered by cost_type/job_id. Paginated. |
+| POST | /api/v2/equipment/:id/costs | Create cost record. Verifies equipment exists. Returns 201. |
+| GET | /api/v2/equipment/costs/:costId | Get single cost record. |
+| PUT | /api/v2/equipment/costs/:costId | Update cost record. |
+| DELETE | /api/v2/equipment/costs/:costId | Hard delete cost record. |
+
+### Type System
+- 9 type unions: EquipmentStatus (5), EquipmentType (8), OwnershipType (3), MaintenanceType (4), MaintenanceStatus (5), AssignmentStatus (3), InspectionType (4), InspectionResult (3), CostType (6)
+- 5 interfaces: Equipment, EquipmentAssignment, EquipmentMaintenance, EquipmentInspection, EquipmentCost
+- 9 constant arrays: EQUIPMENT_STATUSES, EQUIPMENT_TYPES, OWNERSHIP_TYPES, MAINTENANCE_TYPES, MAINTENANCE_STATUSES, ASSIGNMENT_STATUSES, INSPECTION_TYPES, INSPECTION_RESULTS, COST_TYPES
+
+### Validation Schemas (Zod)
+- 9 enum schemas: equipmentStatusEnum, equipmentTypeEnum, ownershipTypeEnum, maintenanceTypeEnum, maintenanceStatusEnum, assignmentStatusEnum, inspectionTypeEnum, inspectionResultEnum, costTypeEnum
+- listEquipmentSchema (page/limit/status/equipment_type/ownership_type/q)
+- createEquipmentSchema (requires name; defaults: equipment_type=other, status=available, ownership_type=owned, purchase_price=0, current_value=0, daily_rate=0, photo_urls=[])
+- updateEquipmentSchema (all fields optional)
+- listAssignmentsSchema (page/limit/equipment_id/job_id/status)
+- createAssignmentSchema (requires equipment_id, start_date; defaults: status=active, hours_used=0)
+- updateAssignmentSchema (all fields optional)
+- listMaintenanceSchema (page/limit/equipment_id/maintenance_type/status)
+- createMaintenanceSchema (requires equipment_id, title; defaults: maintenance_type=preventive, status=scheduled, costs=0)
+- updateMaintenanceSchema (all fields optional)
+- listInspectionsSchema (page/limit/equipment_id/inspection_type/result)
+- createInspectionSchema (requires equipment_id; defaults: inspection_type=pre_use, result=pass, checklist=[])
+- updateInspectionSchema (all fields optional)
+- listCostsSchema (page/limit/equipment_id/job_id/cost_type)
+- createCostSchema (requires equipment_id, amount; defaults: cost_type=daily_rate)
+- updateCostSchema (all fields optional)
+
+---
+
+## Module 31: Warranty & Home Care (V1 Foundation)
+
+### Database Tables
+- **warranties**: Core warranty records per job/item. Columns: company_id, job_id, title (VARCHAR 255), description (TEXT), warranty_type (structural/mechanical/electrical/plumbing/hvac/roofing/appliance/general/workmanship), status (active/expired/voided/transferred), vendor_id (UUID), start_date (DATE), end_date (DATE), coverage_details (TEXT), exclusions (TEXT), document_id (UUID), contact_name (VARCHAR 200), contact_phone (VARCHAR 50), contact_email (VARCHAR 200), transferred_to (UUID), transferred_at (TIMESTAMPTZ), created_by (FK users). Soft delete via deleted_at. RLS enabled. Indexes on company_id, job_id, status, warranty_type, vendor_id, end_date, compound (company_id, status), (company_id, job_id), deleted_at partial.
+- **warranty_claims**: Claims filed against warranties. Columns: company_id, warranty_id (FK warranties CASCADE), claim_number (VARCHAR 30), title (VARCHAR 255), description (TEXT), status (submitted/acknowledged/in_progress/resolved/denied/escalated), priority (low/normal/high/urgent), reported_by (UUID), reported_date (DATE default CURRENT_DATE), assigned_to (UUID), assigned_vendor_id (UUID), resolution_notes (TEXT), resolution_cost (NUMERIC 15,2 default 0), resolved_at (TIMESTAMPTZ), resolved_by (UUID), due_date (DATE), photos (JSONB default []), created_by. Soft delete via deleted_at. RLS enabled. Indexes on company_id, warranty_id, status, priority, assigned_to, assigned_vendor_id, (company_id, claim_number), (company_id, status), deleted_at partial.
+- **warranty_claim_history**: Audit trail for claim state changes. Columns: claim_id (FK warranty_claims CASCADE), company_id, action (created/acknowledged/assigned/in_progress/resolved/denied/escalated/reopened/note_added), previous_status (TEXT), new_status (TEXT), details (JSONB default {}), performed_by (UUID). RLS enabled. Indexes on claim_id, company_id, action.
+- **maintenance_schedules**: Recurring maintenance items per job. Columns: company_id, job_id, title (VARCHAR 255), description (TEXT), frequency (weekly/monthly/quarterly/semi_annual/annual), category (VARCHAR 100), assigned_to (UUID), assigned_vendor_id (UUID), start_date (DATE), end_date (DATE nullable), next_due_date (DATE nullable), estimated_cost (NUMERIC 15,2 default 0), is_active (BOOLEAN default true), notes (TEXT), created_by. Soft delete via deleted_at. RLS enabled. Indexes on company_id, job_id, frequency, next_due_date, (company_id, job_id), is_active partial, deleted_at partial.
+- **maintenance_tasks**: Individual task instances generated from schedules. Columns: company_id, schedule_id (FK maintenance_schedules CASCADE), title (VARCHAR 255), description (TEXT), status (pending/scheduled/completed/overdue/skipped), due_date (DATE), completed_at (TIMESTAMPTZ), completed_by (UUID), actual_cost (NUMERIC 15,2 default 0), notes (TEXT). RLS enabled. Indexes on company_id, schedule_id, status, due_date, (company_id, status).
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/warranties | List warranties filtered by job_id/status/warranty_type/vendor_id/q. Paginated. Excludes soft-deleted. Searches title and contact_name via OR ilike. |
+| POST | /api/v2/warranties | Create warranty. Requires job_id, title, start_date, end_date. Defaults: warranty_type=general, status=active. Returns 201. |
+| GET | /api/v2/warranties/:id | Get warranty with claims_count. Verifies company ownership and not soft-deleted. |
+| PUT | /api/v2/warranties/:id | Partial update. Auto-sets transferred_at when status changes to transferred. |
+| DELETE | /api/v2/warranties/:id | Soft delete. |
+| GET | /api/v2/warranties/:id/claims | List claims for a warranty. Filtered by status/priority/assigned_to/q. Paginated. Verifies warranty ownership. |
+| POST | /api/v2/warranties/:id/claims | Create claim. Requires claim_number, title. Defaults: status=submitted, priority=normal, photos=[]. Records "created" history entry. Returns 201. |
+| GET | /api/v2/warranties/:id/claims/:claimId | Get claim with full history array. |
+| PUT | /api/v2/warranties/:id/claims/:claimId | Update claim. Records history entry on status change. |
+| DELETE | /api/v2/warranties/:id/claims/:claimId | Soft delete claim. |
+| POST | /api/v2/warranties/:id/claims/:claimId/resolve | Resolve claim. Validates not already resolved/denied (409). Sets resolved_at, resolved_by. Records history. |
+| GET | /api/v2/warranties/:id/claims/:claimId/history | List claim history. Paginated. |
+| GET | /api/v2/maintenance-schedules | List schedules filtered by job_id/frequency/is_active/q. Paginated. Ordered by next_due_date asc. |
+| POST | /api/v2/maintenance-schedules | Create schedule. Requires job_id, title, start_date. Defaults: frequency=annual, estimated_cost=0, is_active=true. Returns 201. |
+| GET | /api/v2/maintenance-schedules/:id | Get schedule with tasks_count. |
+| PUT | /api/v2/maintenance-schedules/:id | Partial update. |
+| DELETE | /api/v2/maintenance-schedules/:id | Soft delete. |
+| GET | /api/v2/maintenance-schedules/:id/tasks | List tasks for schedule. Filtered by status/q. Ordered by due_date asc. |
+| POST | /api/v2/maintenance-schedules/:id/tasks | Create task. Requires title, due_date. Defaults: status=pending, actual_cost=0. Returns 201. |
+| GET | /api/v2/maintenance-schedules/:id/tasks/:taskId | Get single task. |
+| PUT | /api/v2/maintenance-schedules/:id/tasks/:taskId | Update task. |
+| DELETE | /api/v2/maintenance-schedules/:id/tasks/:taskId | Hard delete task. |
+| POST | /api/v2/maintenance-schedules/:id/tasks/:taskId/complete | Complete task. Validates not already completed/skipped (409). Sets completed_at, completed_by. |
+
+### Type System
+- 7 type unions: WarrantyStatus (4), WarrantyType (9), ClaimStatus (6), ClaimPriority (4), ClaimHistoryAction (9), MaintenanceFrequency (5), TaskStatus (5)
+- 5 interfaces: Warranty, WarrantyClaim, WarrantyClaimHistory, MaintenanceSchedule, MaintenanceTask
+- 7 constant arrays: WARRANTY_STATUSES, WARRANTY_TYPES, CLAIM_STATUSES, CLAIM_PRIORITIES, CLAIM_HISTORY_ACTIONS, MAINTENANCE_FREQUENCIES, TASK_STATUSES
+
+### Validation Schemas (Zod)
+- 7 enum schemas: warrantyStatusEnum, warrantyTypeEnum, claimStatusEnum, claimPriorityEnum, claimHistoryActionEnum, maintenanceFrequencyEnum, taskStatusEnum
+- listWarrantiesSchema (page/limit/job_id/status/warranty_type/vendor_id/q)
+- createWarrantySchema (requires job_id, title, start_date, end_date; defaults: warranty_type=general, status=active)
+- updateWarrantySchema (all fields optional, includes transferred_to)
+- listWarrantyClaimsSchema (page/limit/warranty_id/status/priority/assigned_to/q)
+- createWarrantyClaimSchema (requires warranty_id, claim_number, title; defaults: status=submitted, priority=normal, photos=[])
+- updateWarrantyClaimSchema (all fields optional, includes resolution fields)
+- resolveWarrantyClaimSchema (optional resolution_notes, resolution_cost default 0)
+- listClaimHistorySchema (page/limit, limit defaults to 50)
+- listMaintenanceSchedulesSchema (page/limit/job_id/frequency/is_active/q with boolean preprocess)
+- createMaintenanceScheduleSchema (requires job_id, title, start_date; defaults: frequency=annual, estimated_cost=0, is_active=true)
+- updateMaintenanceScheduleSchema (all fields optional)
+- listMaintenanceTasksSchema (page/limit/schedule_id/status/q)
+- createMaintenanceTaskSchema (requires schedule_id, title, due_date; defaults: status=pending, actual_cost=0)
+- updateMaintenanceTaskSchema (all fields optional)
+- completeMaintenanceTaskSchema (optional actual_cost default 0, optional notes)
+
+---
+
+## Module 29: Full Client Portal (V1 Foundation)
+
+### Database Tables
+- **client_portal_settings**: Per-company portal configuration. Columns: company_id (UNIQUE), branding (JSONB), custom_domain (VARCHAR 200), feature_flags (JSONB), visibility_rules (JSONB), notification_rules (JSONB), approval_config (JSONB), email_templates (JSONB), footer_text (TEXT), privacy_policy_url (TEXT), terms_of_service_url (TEXT). RLS enabled. updated_at trigger.
+- **client_portal_invitations**: Invite clients to the portal. Columns: company_id, job_id, email (VARCHAR 255), client_name (VARCHAR 255), role (VARCHAR 50 default 'client'), status (pending/accepted/expired/revoked), token (VARCHAR 255), invited_by (FK users), accepted_at, accepted_by (FK users), expires_at (TIMESTAMPTZ NOT NULL), message (TEXT). Soft delete via deleted_at. RLS enabled. updated_at trigger. Indexes on company, job, email, status, token, deleted_at partial.
+- **client_approvals**: Client approval requests for selections/COs/draws/invoices/schedules. Columns: company_id, job_id, client_user_id (FK users), approval_type (selection/change_order/draw/invoice/schedule), reference_id (UUID), title (VARCHAR 255), description (TEXT), status (pending/approved/rejected/expired), requested_at, responded_at, expires_at, signature_data (TEXT), signature_ip (VARCHAR 45), signature_hash (VARCHAR 64), comments (TEXT), requested_by (FK users). Soft delete via deleted_at. RLS enabled. updated_at trigger. Indexes on company, job, client, status, type, reference, compound (company+job+status), deleted_at partial.
+- **client_messages**: Enhanced messaging between builder and client. Columns: company_id, job_id, sender_user_id (FK users), sender_type (client/builder_team), subject (VARCHAR 255), message_text (TEXT), thread_id (UUID), topic (VARCHAR 200), category (general/selections/change_orders/schedule/budget/warranty/other), attachments (JSONB default []), is_external_log (BOOLEAN), external_channel (phone/text/email nullable), read_at, status (sent/read/archived). Soft delete via deleted_at. RLS enabled. updated_at trigger. Indexes on company, job, sender, thread, category, status, created_at DESC, deleted_at partial.
+- **client_payments**: Payment records (no processing). Columns: company_id, job_id, client_user_id (FK users nullable), payment_number (VARCHAR 50), amount (NUMERIC 15,2), payment_method (credit_card/ach/check/wire/other), status (pending/processing/completed/failed/refunded), reference_number (VARCHAR 100), description (TEXT), draw_request_id (UUID), invoice_id (UUID), payment_date (DATE), received_at, received_by (FK users), notes (TEXT), created_by (FK users). Soft delete via deleted_at. RLS enabled. updated_at trigger. Indexes on company, job, client, status, method, date, draw, invoice, deleted_at partial.
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/client-portal/settings | Get portal settings for current company. Returns single record or null. |
+| PUT | /api/v2/client-portal/settings | Upsert portal settings. Validates branding, feature_flags, visibility_rules, etc. |
+| GET | /api/v2/client-portal/invitations | List invitations filtered by job_id/status/q. Paginated. Excludes soft-deleted. Searches email and client_name. |
+| POST | /api/v2/client-portal/invitations | Create invitation. Requires job_id, email. Auto-generates token and expiration. Returns 201. |
+| GET | /api/v2/client-portal/invitations/:id | Get single invitation. |
+| PUT | /api/v2/client-portal/invitations/:id | Update invitation (status, client_name, message). Accepting sets accepted_at/accepted_by. |
+| DELETE | /api/v2/client-portal/invitations/:id | Soft delete + revoke: sets deleted_at and status=revoked. |
+| GET | /api/v2/client-portal/approvals | List approvals filtered by job_id/status/approval_type/client_user_id/q. Paginated. Searches title and description. |
+| POST | /api/v2/client-portal/approvals | Create approval request. Requires job_id, client_user_id, approval_type, reference_id, title. Sets requested_by from auth. Returns 201. |
+| GET | /api/v2/client-portal/approvals/:id | Get single approval. |
+| PUT | /api/v2/client-portal/approvals/:id | Approve/reject. Only pending approvals can change status (409 otherwise). Sets responded_at on approve/reject. Accepts signature_data/ip/hash. |
+| GET | /api/v2/client-portal/messages | List messages filtered by job_id/category/status/sender_type/q. Paginated. Searches subject and message_text. |
+| POST | /api/v2/client-portal/messages | Create message. Requires job_id, sender_type, message_text. Supports external logging (is_external_log + external_channel). Returns 201. |
+| GET | /api/v2/client-portal/messages/:id | Get single message. |
+| PUT | /api/v2/client-portal/messages/:id | Update message status (mark read/archived). Sets read_at when status=read. |
+| GET | /api/v2/client-portal/payments | List payments filtered by job_id/status/payment_method/q. Paginated. Searches payment_number, description, reference_number. |
+| POST | /api/v2/client-portal/payments | Record payment. Requires job_id, amount (>=0). Defaults: payment_method=check, status=pending. Returns 201. |
+| GET | /api/v2/client-portal/payments/:id | Get single payment. |
+
+### Type System (extends Module 12)
+- 9 type unions: ApprovalStatus (4), ApprovalType (5), MessageStatus (3), MessageSenderType (2), MessageCategory (7), ExternalChannel (3), InvitationStatus (4), PaymentStatus (5), PaymentMethod (5)
+- 5 interfaces: ClientPortalSettings, ClientPortalInvitation, ClientApproval, ClientMessage, ClientPayment
+- 9 constant arrays: APPROVAL_STATUSES, APPROVAL_TYPES, MESSAGE_STATUSES, MESSAGE_SENDER_TYPES, MESSAGE_CATEGORIES, EXTERNAL_CHANNELS, INVITATION_STATUSES, PAYMENT_STATUSES, PAYMENT_METHODS
+
+### Validation Schemas (Zod, extends Module 12)
+- 9 enum schemas: approvalStatusEnum, approvalTypeEnum, messageStatusEnum, messageSenderTypeEnum, messageCategoryEnum, externalChannelEnum, invitationStatusEnum, paymentStatusEnum, paymentMethodEnum
+- updateClientPortalSettingsSchema (all JSONB fields optional, custom_domain max 200, URLs validated)
+- listClientInvitationsSchema (page/limit/job_id/status/q)
+- createClientInvitationSchema (requires job_id, email; defaults: role=client, expires_in_days=7, max 90 days)
+- updateClientInvitationSchema (status/client_name/message optional)
+- listClientApprovalsSchema (page/limit/job_id/status/approval_type/client_user_id/q)
+- createClientApprovalSchema (requires job_id, client_user_id, approval_type, reference_id, title; expires_at YYYY-MM-DD)
+- updateClientApprovalSchema (status/comments/signature_data/signature_ip/signature_hash optional)
+- listClientMessagesSchema (page/limit/job_id/category/status/sender_type/q)
+- createClientMessageSchema (requires job_id, sender_type, message_text; defaults: category=general, is_external_log=false, attachments=[])
+- updateClientMessageSchema (status/read_at optional)
+- listClientPaymentsSchema (page/limit/job_id/status/payment_method/q)
+- createClientPaymentSchema (requires job_id, amount>=0; defaults: payment_method=check, status=pending; payment_date YYYY-MM-DD)
+
+---
+
 ## Module 27: RFI Management (V1 Foundation)
 
 ### Database Tables

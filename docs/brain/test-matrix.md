@@ -1,5 +1,997 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Module 36: Lead Pipeline & CRM
+
+### Acceptance Tests (74 tests in `tests/acceptance/36-crm.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | LeadStatus has 8 values | PASS |
+| **Types** | LeadSource has 8 values | PASS |
+| **Types** | ActivityType has 7 values | PASS |
+| **Types** | LeadPriority has 4 values | PASS |
+| **Types** | StageType has 5 values | PASS |
+| **Types** | PreconstructionType has 2 values | PASS |
+| **Types** | Lead interface has all required fields | PASS |
+| **Types** | LeadActivity interface has all required fields | PASS |
+| **Types** | LeadSourceRecord interface has all required fields | PASS |
+| **Types** | Pipeline interface has all required fields | PASS |
+| **Types** | PipelineStage interface has all required fields | PASS |
+| **Constants** | LEAD_STATUSES has 8 entries with value and label | PASS |
+| **Constants** | LEAD_STATUSES includes all expected values | PASS |
+| **Constants** | LEAD_SOURCES has 8 entries with value and label | PASS |
+| **Constants** | ACTIVITY_TYPES has 7 entries with value and label | PASS |
+| **Constants** | LEAD_PRIORITIES has 4 entries with value and label | PASS |
+| **Constants** | STAGE_TYPES has 5 entries with value and label | PASS |
+| **Constants** | PRECONSTRUCTION_TYPES has 2 entries with value and label | PASS |
+| **Enums** | leadStatusEnum accepts all 8 statuses | PASS |
+| **Enums** | leadStatusEnum rejects invalid status | PASS |
+| **Enums** | leadSourceEnum accepts all 8 sources | PASS |
+| **Enums** | leadSourceEnum rejects invalid source | PASS |
+| **Enums** | activityTypeEnum accepts all 7 types | PASS |
+| **Enums** | activityTypeEnum rejects invalid type | PASS |
+| **Enums** | leadPriorityEnum accepts all 4 priorities | PASS |
+| **Enums** | leadPriorityEnum rejects invalid priority | PASS |
+| **Enums** | stageTypeEnum accepts all 5 types | PASS |
+| **Enums** | stageTypeEnum rejects invalid type | PASS |
+| **Enums** | preconstructionTypeEnum accepts both types | PASS |
+| **Enums** | preconstructionTypeEnum rejects invalid type | PASS |
+| **Lead Schemas** | listLeadsSchema accepts valid params | PASS |
+| **Lead Schemas** | listLeadsSchema rejects limit > 100 | PASS |
+| **Lead Schemas** | listLeadsSchema accepts all filters | PASS |
+| **Lead Schemas** | createLeadSchema accepts valid lead | PASS |
+| **Lead Schemas** | createLeadSchema requires first_name and last_name | PASS |
+| **Lead Schemas** | createLeadSchema rejects first_name > 100 chars | PASS |
+| **Lead Schemas** | createLeadSchema accepts full lead with all optional fields | PASS |
+| **Lead Schemas** | createLeadSchema rejects invalid email | PASS |
+| **Lead Schemas** | createLeadSchema rejects score > 100 | PASS |
+| **Lead Schemas** | updateLeadSchema accepts partial updates | PASS |
+| **Lead Schemas** | updateLeadSchema accepts lost_reason and lost_competitor | PASS |
+| **Activity Schemas** | listLeadActivitiesSchema accepts valid params with defaults | PASS |
+| **Activity Schemas** | listLeadActivitiesSchema accepts activity_type filter | PASS |
+| **Activity Schemas** | createLeadActivitySchema accepts valid activity | PASS |
+| **Activity Schemas** | createLeadActivitySchema has correct defaults | PASS |
+| **Activity Schemas** | createLeadActivitySchema validates activity_date format | PASS |
+| **Activity Schemas** | createLeadActivitySchema rejects invalid activity_date format | PASS |
+| **Activity Schemas** | createLeadActivitySchema rejects duration_minutes > 1440 | PASS |
+| **Activity Schemas** | updateLeadActivitySchema accepts partial updates | PASS |
+| **Source Schemas** | listLeadSourcesSchema accepts valid params | PASS |
+| **Source Schemas** | listLeadSourcesSchema accepts filters | PASS |
+| **Source Schemas** | createLeadSourceSchema accepts valid source | PASS |
+| **Source Schemas** | createLeadSourceSchema requires name | PASS |
+| **Source Schemas** | createLeadSourceSchema rejects name > 200 chars | PASS |
+| **Source Schemas** | createLeadSourceSchema has correct defaults | PASS |
+| **Source Schemas** | updateLeadSourceSchema accepts partial updates | PASS |
+| **Pipeline Schemas** | listPipelinesSchema accepts valid params | PASS |
+| **Pipeline Schemas** | listPipelinesSchema rejects limit > 100 | PASS |
+| **Pipeline Schemas** | listPipelinesSchema accepts filters | PASS |
+| **Pipeline Schemas** | createPipelineSchema accepts valid pipeline | PASS |
+| **Pipeline Schemas** | createPipelineSchema requires name | PASS |
+| **Pipeline Schemas** | createPipelineSchema rejects name > 200 chars | PASS |
+| **Pipeline Schemas** | createPipelineSchema accepts is_default flag | PASS |
+| **Pipeline Schemas** | updatePipelineSchema accepts partial updates | PASS |
+| **Stage Schemas** | listPipelineStagesSchema accepts valid params with defaults | PASS |
+| **Stage Schemas** | listPipelineStagesSchema accepts stage_type filter | PASS |
+| **Stage Schemas** | listPipelineStagesSchema accepts is_active filter | PASS |
+| **Stage Schemas** | createPipelineStageSchema accepts valid stage | PASS |
+| **Stage Schemas** | createPipelineStageSchema requires name | PASS |
+| **Stage Schemas** | createPipelineStageSchema rejects name > 200 chars | PASS |
+| **Stage Schemas** | createPipelineStageSchema accepts all optional fields | PASS |
+| **Stage Schemas** | createPipelineStageSchema rejects probability_default > 100 | PASS |
+| **Stage Schemas** | updatePipelineStageSchema accepts partial updates | PASS |
+| **Stage Schemas** | updatePipelineStageSchema rejects invalid stage_type | PASS |
+
+---
+
+## Module 32: Permitting & Inspections
+
+### Acceptance Tests (69 tests in `tests/acceptance/32-permitting.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | PermitStatus has 7 values | PASS |
+| **Types** | PermitType has 10 values | PASS |
+| **Types** | InspectionStatus has 6 values | PASS |
+| **Types** | InspectionType has 9 values | PASS |
+| **Types** | InspectionResultType has 3 values | PASS |
+| **Types** | FeeStatus has 4 values | PASS |
+| **Types** | Permit interface has all required fields | PASS |
+| **Types** | PermitInspection interface has all required fields | PASS |
+| **Types** | InspectionResult interface has all required fields | PASS |
+| **Types** | PermitDocument interface has all required fields | PASS |
+| **Types** | PermitFee interface has all required fields | PASS |
+| **Constants** | PERMIT_STATUSES has 7 entries with value and label | PASS |
+| **Constants** | PERMIT_STATUSES includes all expected values | PASS |
+| **Constants** | PERMIT_TYPES has 10 entries with value and label | PASS |
+| **Constants** | PERMIT_TYPES includes all expected values | PASS |
+| **Constants** | INSPECTION_STATUSES has 6 entries with value and label | PASS |
+| **Constants** | INSPECTION_TYPES has 9 entries with value and label | PASS |
+| **Constants** | INSPECTION_RESULT_TYPES has 3 entries with value and label | PASS |
+| **Constants** | FEE_STATUSES has 4 entries with value and label | PASS |
+| **Enums** | permitStatusEnum accepts all 7 statuses | PASS |
+| **Enums** | permitStatusEnum rejects invalid status | PASS |
+| **Enums** | permitTypeEnum accepts all 10 types | PASS |
+| **Enums** | permitTypeEnum rejects invalid type | PASS |
+| **Enums** | inspectionStatusEnum accepts all 6 statuses | PASS |
+| **Enums** | inspectionStatusEnum rejects invalid status | PASS |
+| **Enums** | inspectionTypeEnum accepts all 9 types | PASS |
+| **Enums** | inspectionTypeEnum rejects invalid type | PASS |
+| **Enums** | inspectionResultTypeEnum accepts all 3 results | PASS |
+| **Enums** | inspectionResultTypeEnum rejects invalid result | PASS |
+| **Enums** | feeStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | feeStatusEnum rejects invalid status | PASS |
+| **Permits** | listPermitsSchema accepts valid params | PASS |
+| **Permits** | listPermitsSchema rejects limit > 100 | PASS |
+| **Permits** | listPermitsSchema accepts all filters | PASS |
+| **Permits** | createPermitSchema accepts valid permit | PASS |
+| **Permits** | createPermitSchema requires job_id | PASS |
+| **Permits** | createPermitSchema accepts full permit with all fields | PASS |
+| **Permits** | createPermitSchema rejects permit_number > 50 chars | PASS |
+| **Permits** | createPermitSchema validates date format | PASS |
+| **Permits** | updatePermitSchema accepts partial updates | PASS |
+| **Permits** | updatePermitSchema validates date format | PASS |
+| **Inspections** | listInspectionsSchema accepts valid params | PASS |
+| **Inspections** | listInspectionsSchema accepts all filters | PASS |
+| **Inspections** | listInspectionsSchema rejects invalid date format | PASS |
+| **Inspections** | createInspectionSchema accepts valid inspection | PASS |
+| **Inspections** | createInspectionSchema requires permit_id and job_id | PASS |
+| **Inspections** | createInspectionSchema accepts full inspection with all fields | PASS |
+| **Inspections** | updateInspectionSchema accepts partial updates | PASS |
+| **Results** | listInspectionResultsSchema accepts valid params with defaults | PASS |
+| **Results** | createInspectionResultSchema accepts valid result | PASS |
+| **Results** | createInspectionResultSchema requires result | PASS |
+| **Results** | createInspectionResultSchema accepts fail with deficiencies | PASS |
+| **Results** | createInspectionResultSchema accepts conditional with conditions | PASS |
+| **Results** | updateInspectionResultSchema accepts partial updates | PASS |
+| **Documents** | listPermitDocumentsSchema accepts valid params with defaults | PASS |
+| **Documents** | createPermitDocumentSchema accepts valid document | PASS |
+| **Documents** | createPermitDocumentSchema requires document_type and file_url | PASS |
+| **Documents** | createPermitDocumentSchema rejects document_type > 100 chars | PASS |
+| **Fees** | listPermitFeesSchema accepts valid params with defaults | PASS |
+| **Fees** | listPermitFeesSchema accepts status filter | PASS |
+| **Fees** | listPermitFeesSchema rejects invalid status | PASS |
+| **Fees** | createPermitFeeSchema accepts valid fee | PASS |
+| **Fees** | createPermitFeeSchema requires description | PASS |
+| **Fees** | createPermitFeeSchema has correct defaults | PASS |
+| **Fees** | createPermitFeeSchema rejects negative amount | PASS |
+| **Fees** | createPermitFeeSchema validates date format | PASS |
+| **Fees** | createPermitFeeSchema accepts all fields | PASS |
+| **Fees** | updatePermitFeeSchema accepts partial updates | PASS |
+| **Fees** | updatePermitFeeSchema rejects invalid status | PASS |
+
+---
+
+## Module 38: Contracts & E-Signature
+
+### Acceptance Tests (69 tests in `tests/acceptance/38-contracts.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | ContractStatus has 9 values | PASS |
+| **Types** | ContractType has 8 values | PASS |
+| **Types** | SignerStatus has 5 values | PASS |
+| **Types** | SignerRole has 6 values | PASS |
+| **Types** | Contract interface has all required fields | PASS |
+| **Types** | ContractVersion interface has all required fields | PASS |
+| **Types** | ContractSigner interface has all required fields | PASS |
+| **Types** | ContractTemplate interface has all required fields | PASS |
+| **Types** | ContractClause interface has all required fields | PASS |
+| **Constants** | CONTRACT_STATUSES has 9 entries with value and label | PASS |
+| **Constants** | CONTRACT_STATUSES includes all expected status values | PASS |
+| **Constants** | CONTRACT_TYPES has 8 entries with value and label | PASS |
+| **Constants** | CONTRACT_TYPES includes all expected type values | PASS |
+| **Constants** | SIGNER_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | SIGNER_ROLES has 6 entries with value and label | PASS |
+| **Constants** | SIGNER_ROLES includes all expected role values | PASS |
+| **Enums** | contractStatusEnum accepts all 9 statuses | PASS |
+| **Enums** | contractStatusEnum rejects invalid status | PASS |
+| **Enums** | contractTypeEnum accepts all 8 types | PASS |
+| **Enums** | contractTypeEnum rejects invalid type | PASS |
+| **Enums** | signerStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | signerStatusEnum rejects invalid status | PASS |
+| **Enums** | signerRoleEnum accepts all 6 roles | PASS |
+| **Enums** | signerRoleEnum rejects invalid role | PASS |
+| **Contract Schemas** | listContractsSchema accepts valid params | PASS |
+| **Contract Schemas** | listContractsSchema rejects limit > 100 | PASS |
+| **Contract Schemas** | listContractsSchema accepts filters | PASS |
+| **Contract Schemas** | createContractSchema accepts valid contract | PASS |
+| **Contract Schemas** | createContractSchema requires contract_number and title | PASS |
+| **Contract Schemas** | createContractSchema rejects contract_number > 50 chars | PASS |
+| **Contract Schemas** | createContractSchema rejects title > 255 chars | PASS |
+| **Contract Schemas** | createContractSchema validates date formats | PASS |
+| **Contract Schemas** | createContractSchema rejects invalid date format | PASS |
+| **Contract Schemas** | createContractSchema accepts all optional fields | PASS |
+| **Contract Schemas** | updateContractSchema accepts partial updates | PASS |
+| **Contract Schemas** | sendForSignatureSchema accepts empty object | PASS |
+| **Contract Schemas** | sendForSignatureSchema accepts notes | PASS |
+| **Version Schemas** | listContractVersionsSchema accepts valid params with defaults | PASS |
+| **Version Schemas** | createContractVersionSchema accepts valid version | PASS |
+| **Version Schemas** | createContractVersionSchema requires version_number | PASS |
+| **Version Schemas** | createContractVersionSchema defaults snapshot_json to empty object | PASS |
+| **Signer Schemas** | listContractSignersSchema accepts valid params with defaults | PASS |
+| **Signer Schemas** | createContractSignerSchema accepts valid signer | PASS |
+| **Signer Schemas** | createContractSignerSchema requires name and email | PASS |
+| **Signer Schemas** | createContractSignerSchema rejects invalid email | PASS |
+| **Signer Schemas** | createContractSignerSchema has correct defaults | PASS |
+| **Signer Schemas** | createContractSignerSchema rejects name > 200 chars | PASS |
+| **Signer Schemas** | updateContractSignerSchema accepts partial updates | PASS |
+| **Signer Schemas** | signContractSchema accepts empty object | PASS |
+| **Signer Schemas** | signContractSchema accepts ip_address and user_agent | PASS |
+| **Signer Schemas** | declineContractSchema accepts empty object | PASS |
+| **Signer Schemas** | declineContractSchema accepts decline_reason | PASS |
+| **Template Schemas** | listContractTemplatesSchema accepts valid params | PASS |
+| **Template Schemas** | listContractTemplatesSchema accepts contract_type filter | PASS |
+| **Template Schemas** | createContractTemplateSchema accepts valid template | PASS |
+| **Template Schemas** | createContractTemplateSchema requires name | PASS |
+| **Template Schemas** | createContractTemplateSchema rejects name > 200 chars | PASS |
+| **Template Schemas** | createContractTemplateSchema has correct defaults | PASS |
+| **Template Schemas** | updateContractTemplateSchema accepts partial updates | PASS |
+| **Template Schemas** | updateContractTemplateSchema accepts is_active toggle | PASS |
+| **Clause Schemas** | listContractClausesSchema accepts valid params | PASS |
+| **Clause Schemas** | listContractClausesSchema accepts category filter | PASS |
+| **Clause Schemas** | listContractClausesSchema accepts is_required filter | PASS |
+| **Clause Schemas** | createContractClauseSchema accepts valid clause | PASS |
+| **Clause Schemas** | createContractClauseSchema requires name and content | PASS |
+| **Clause Schemas** | createContractClauseSchema rejects name > 200 chars | PASS |
+| **Clause Schemas** | createContractClauseSchema has correct defaults | PASS |
+| **Clause Schemas** | updateContractClauseSchema accepts partial updates | PASS |
+| **Clause Schemas** | updateContractClauseSchema accepts is_required toggle | PASS |
+
+---
+
+## Module 40: Mobile App
+
+### Acceptance Tests (80 tests in `tests/acceptance/40-mobile-app.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | DevicePlatform has 3 values | PASS |
+| **Types** | DeviceStatus has 3 values | PASS |
+| **Types** | SyncStatus has 5 values | PASS |
+| **Types** | SyncAction has 3 values | PASS |
+| **Types** | NotificationProvider has 3 values | PASS |
+| **Types** | PhotoQuality has 3 values | PASS |
+| **Types** | GpsAccuracy has 3 values | PASS |
+| **Types** | AppTheme has 3 values | PASS |
+| **Types** | SessionStatus has 3 values | PASS |
+| **Types** | MobileDevice interface has all required fields | PASS |
+| **Types** | PushNotificationToken interface has all required fields | PASS |
+| **Types** | OfflineSyncQueueItem interface has all required fields | PASS |
+| **Types** | MobileAppSettings interface has all required fields | PASS |
+| **Types** | MobileSession interface has all required fields | PASS |
+| **Constants** | DEVICE_PLATFORMS has 3 entries with value and label | PASS |
+| **Constants** | DEVICE_PLATFORMS includes all expected values | PASS |
+| **Constants** | DEVICE_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | SYNC_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | SYNC_ACTIONS has 3 entries with value and label | PASS |
+| **Constants** | NOTIFICATION_PROVIDERS has 3 entries with value and label | PASS |
+| **Constants** | PHOTO_QUALITIES has 3 entries with value and label | PASS |
+| **Constants** | GPS_ACCURACIES has 3 entries with value and label | PASS |
+| **Constants** | APP_THEMES has 3 entries with value and label | PASS |
+| **Constants** | SESSION_STATUSES has 3 entries with value and label | PASS |
+| **Enums** | devicePlatformEnum accepts all 3 platforms | PASS |
+| **Enums** | devicePlatformEnum rejects invalid platform | PASS |
+| **Enums** | deviceStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | deviceStatusEnum rejects invalid status | PASS |
+| **Enums** | syncStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | syncStatusEnum rejects invalid status | PASS |
+| **Enums** | syncActionEnum accepts all 3 actions | PASS |
+| **Enums** | syncActionEnum rejects invalid action | PASS |
+| **Enums** | notificationProviderEnum accepts all 3 providers | PASS |
+| **Enums** | notificationProviderEnum rejects invalid provider | PASS |
+| **Enums** | photoQualityEnum accepts all 3 qualities | PASS |
+| **Enums** | gpsAccuracyEnum accepts all 3 accuracies | PASS |
+| **Enums** | appThemeEnum accepts all 3 themes | PASS |
+| **Enums** | sessionStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | sessionStatusEnum rejects invalid status | PASS |
+| **Device Schemas** | listMobileDevicesSchema accepts valid params | PASS |
+| **Device Schemas** | listMobileDevicesSchema rejects limit > 100 | PASS |
+| **Device Schemas** | listMobileDevicesSchema accepts filters | PASS |
+| **Device Schemas** | createMobileDeviceSchema accepts valid device | PASS |
+| **Device Schemas** | createMobileDeviceSchema requires user_id and device_name | PASS |
+| **Device Schemas** | createMobileDeviceSchema rejects device_name > 200 chars | PASS |
+| **Device Schemas** | createMobileDeviceSchema accepts all optional fields | PASS |
+| **Device Schemas** | updateMobileDeviceSchema accepts partial updates | PASS |
+| **Push Token Schemas** | listPushTokensSchema accepts valid params with defaults | PASS |
+| **Push Token Schemas** | listPushTokensSchema accepts filters | PASS |
+| **Push Token Schemas** | createPushTokenSchema accepts valid token | PASS |
+| **Push Token Schemas** | createPushTokenSchema requires device_id and token | PASS |
+| **Push Token Schemas** | createPushTokenSchema accepts all providers | PASS |
+| **Push Token Schemas** | updatePushTokenSchema accepts partial updates | PASS |
+| **Sync Queue Schemas** | listSyncQueueSchema accepts valid params | PASS |
+| **Sync Queue Schemas** | listSyncQueueSchema accepts filters | PASS |
+| **Sync Queue Schemas** | createSyncQueueItemSchema accepts valid item | PASS |
+| **Sync Queue Schemas** | createSyncQueueItemSchema requires device_id and entity_type | PASS |
+| **Sync Queue Schemas** | createSyncQueueItemSchema rejects priority outside 1-10 | PASS |
+| **Sync Queue Schemas** | createSyncQueueItemSchema rejects max_retries > 20 | PASS |
+| **Sync Queue Schemas** | updateSyncQueueItemSchema accepts partial updates | PASS |
+| **Sync Queue Schemas** | updateSyncQueueItemSchema accepts error_message | PASS |
+| **Settings Schemas** | getMobileSettingsSchema accepts empty object | PASS |
+| **Settings Schemas** | getMobileSettingsSchema accepts user_id | PASS |
+| **Settings Schemas** | updateMobileSettingsSchema accepts valid settings | PASS |
+| **Settings Schemas** | updateMobileSettingsSchema validates quiet_hours format | PASS |
+| **Settings Schemas** | updateMobileSettingsSchema rejects invalid quiet_hours format | PASS |
+| **Settings Schemas** | updateMobileSettingsSchema validates offline_storage_limit_mb range | PASS |
+| **Settings Schemas** | updateMobileSettingsSchema accepts all boolean fields | PASS |
+| **Settings Schemas** | updateMobileSettingsSchema accepts preferences object | PASS |
+| **Session Schemas** | listMobileSessionsSchema accepts valid params | PASS |
+| **Session Schemas** | listMobileSessionsSchema accepts filters | PASS |
+| **Session Schemas** | listMobileSessionsSchema rejects limit > 100 | PASS |
+| **Session Schemas** | createMobileSessionSchema accepts valid session | PASS |
+| **Session Schemas** | createMobileSessionSchema requires device_id and session_token | PASS |
+| **Session Schemas** | createMobileSessionSchema accepts all optional fields | PASS |
+| **Session Schemas** | updateMobileSessionSchema accepts partial updates | PASS |
+| **Session Schemas** | updateMobileSessionSchema accepts last_activity_at | PASS |
+| **Session Schemas** | revokeMobileSessionSchema accepts empty object | PASS |
+| **Session Schemas** | revokeMobileSessionSchema accepts reason | PASS |
+| **Session Schemas** | revokeMobileSessionSchema rejects reason > 500 chars | PASS |
+
+---
+
+## Module 39: Advanced Reporting & Custom Report Builder
+
+### Acceptance Tests (77 tests in `tests/acceptance/39-advanced-reporting.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | WidgetType has 9 values | PASS |
+| **Types** | DataSourceType has 10 values | PASS |
+| **Types** | ReportStatus has 3 values | PASS |
+| **Types** | CustomReportType has 2 values | PASS |
+| **Types** | DashboardLayout has 4 values | PASS |
+| **Types** | RefreshFrequency has 4 values | PASS |
+| **Types** | ReportAudience has 4 values | PASS |
+| **Types** | FilterContext has 11 values | PASS |
+| **Types** | CustomReport interface has all required fields | PASS |
+| **Types** | CustomReportWidget interface has all required fields | PASS |
+| **Types** | ReportDashboard interface has all required fields | PASS |
+| **Types** | DashboardWidget interface has all required fields | PASS |
+| **Types** | SavedFilter interface has all required fields | PASS |
+| **Constants** | WIDGET_TYPES has 9 entries with value and label | PASS |
+| **Constants** | DATA_SOURCE_TYPES has 10 entries with value and label | PASS |
+| **Constants** | REPORT_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | CUSTOM_REPORT_TYPES has 2 entries with value and label | PASS |
+| **Constants** | DASHBOARD_LAYOUTS has 4 entries with value and label | PASS |
+| **Constants** | REFRESH_FREQUENCIES has 4 entries with value and label | PASS |
+| **Constants** | REPORT_AUDIENCES has 4 entries with value and label | PASS |
+| **Constants** | FILTER_CONTEXTS has 11 entries with value and label | PASS |
+| **Enums** | widgetTypeEnum accepts all 9 types | PASS |
+| **Enums** | widgetTypeEnum rejects invalid type | PASS |
+| **Enums** | dataSourceTypeEnum accepts all 10 types | PASS |
+| **Enums** | dataSourceTypeEnum rejects invalid type | PASS |
+| **Enums** | reportStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | reportStatusEnum rejects invalid status | PASS |
+| **Enums** | customReportTypeEnum accepts all 2 types | PASS |
+| **Enums** | customReportTypeEnum rejects invalid type | PASS |
+| **Enums** | dashboardLayoutEnum accepts all 4 layouts | PASS |
+| **Enums** | dashboardLayoutEnum rejects invalid layout | PASS |
+| **Enums** | refreshFrequencyEnum accepts all 4 frequencies | PASS |
+| **Enums** | refreshFrequencyEnum rejects invalid frequency | PASS |
+| **Enums** | reportAudienceEnum accepts all 4 audiences | PASS |
+| **Enums** | reportAudienceEnum rejects invalid audience | PASS |
+| **Enums** | filterContextEnum accepts all 11 contexts | PASS |
+| **Enums** | filterContextEnum rejects invalid context | PASS |
+| **Custom Report Schemas** | listCustomReportsSchema defaults page=1 and limit=20 | PASS |
+| **Custom Report Schemas** | listCustomReportsSchema accepts optional filters | PASS |
+| **Custom Report Schemas** | createCustomReportSchema requires name | PASS |
+| **Custom Report Schemas** | createCustomReportSchema applies defaults | PASS |
+| **Custom Report Schemas** | updateCustomReportSchema allows partial updates | PASS |
+| **Custom Report Schemas** | createCustomReportSchema rejects empty name | PASS |
+| **Custom Report Schemas** | createCustomReportSchema enforces max length | PASS |
+| **Report Widget Schemas** | listReportWidgetsSchema defaults page=1 and limit=50 | PASS |
+| **Report Widget Schemas** | createReportWidgetSchema applies defaults | PASS |
+| **Report Widget Schemas** | updateReportWidgetSchema allows partial updates | PASS |
+| **Report Widget Schemas** | createReportWidgetSchema validates sort_order min 0 | PASS |
+| **Dashboard Schemas** | listDashboardsSchema defaults page=1 and limit=20 | PASS |
+| **Dashboard Schemas** | listDashboardsSchema handles boolean preprocess for is_default | PASS |
+| **Dashboard Schemas** | createDashboardSchema requires name | PASS |
+| **Dashboard Schemas** | createDashboardSchema applies defaults | PASS |
+| **Dashboard Schemas** | updateDashboardSchema allows partial updates | PASS |
+| **Dashboard Schemas** | createDashboardSchema rejects empty name | PASS |
+| **Dashboard Schemas** | createDashboardSchema enforces max length | PASS |
+| **Dashboard Widget Schemas** | listDashboardWidgetsSchema defaults page=1 and limit=50 | PASS |
+| **Dashboard Widget Schemas** | createDashboardWidgetSchema applies defaults | PASS |
+| **Dashboard Widget Schemas** | updateDashboardWidgetSchema allows partial updates | PASS |
+| **Dashboard Widget Schemas** | createDashboardWidgetSchema validates width range 1-12 | PASS |
+| **Dashboard Widget Schemas** | createDashboardWidgetSchema validates height range 1-12 | PASS |
+| **Dashboard Widget Schemas** | createDashboardWidgetSchema validates refresh_interval max 86400 | PASS |
+| **Dashboard Widget Schemas** | createDashboardWidgetSchema accepts valid report_id UUID | PASS |
+| **Saved Filter Schemas** | listSavedFiltersSchema defaults page=1 and limit=20 | PASS |
+| **Saved Filter Schemas** | listSavedFiltersSchema handles boolean preprocess for is_global | PASS |
+| **Saved Filter Schemas** | createSavedFilterSchema requires name | PASS |
+| **Saved Filter Schemas** | createSavedFilterSchema applies defaults | PASS |
+| **Saved Filter Schemas** | updateSavedFilterSchema allows partial updates | PASS |
+| **Saved Filter Schemas** | createSavedFilterSchema rejects empty name | PASS |
+| **Saved Filter Schemas** | createSavedFilterSchema enforces max length | PASS |
+
+---
+
+## Module 34: HR & Workforce Management
+
+### Acceptance Tests (69 tests in `tests/acceptance/34-hr-workforce.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | EmploymentStatus has 5 values | PASS |
+| **Types** | EmploymentType has 5 values | PASS |
+| **Types** | PayType has 2 values | PASS |
+| **Types** | CertificationStatus has 4 values | PASS |
+| **Types** | DocumentType has 8 values | PASS |
+| **Types** | Employee interface has all required fields | PASS |
+| **Types** | EmployeeCertification interface has all required fields | PASS |
+| **Types** | EmployeeDocument interface has all required fields | PASS |
+| **Types** | Department interface has all required fields | PASS |
+| **Types** | Position interface has all required fields | PASS |
+| **Constants** | EMPLOYMENT_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | EMPLOYMENT_STATUSES includes all expected values | PASS |
+| **Constants** | EMPLOYMENT_TYPES has 5 entries with value and label | PASS |
+| **Constants** | EMPLOYMENT_TYPES includes all expected values | PASS |
+| **Constants** | PAY_TYPES has 2 entries with value and label | PASS |
+| **Constants** | CERTIFICATION_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | CERTIFICATION_STATUSES includes all expected values | PASS |
+| **Constants** | DOCUMENT_TYPES has 8 entries with value and label | PASS |
+| **Constants** | DOCUMENT_TYPES includes all expected values | PASS |
+| **Enums** | employmentStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | employmentStatusEnum rejects invalid status | PASS |
+| **Enums** | employmentTypeEnum accepts all 5 types | PASS |
+| **Enums** | employmentTypeEnum rejects invalid type | PASS |
+| **Enums** | certificationStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | certificationStatusEnum rejects invalid status | PASS |
+| **Enums** | documentTypeEnum accepts all 8 types | PASS |
+| **Enums** | documentTypeEnum rejects invalid type | PASS |
+| **Enums** | payTypeEnum accepts hourly and salary | PASS |
+| **Enums** | payTypeEnum rejects invalid pay type | PASS |
+| **Employee Schemas** | listEmployeesSchema accepts valid query params | PASS |
+| **Employee Schemas** | listEmployeesSchema applies default page and limit | PASS |
+| **Employee Schemas** | listEmployeesSchema accepts employment_status filter | PASS |
+| **Employee Schemas** | listEmployeesSchema accepts employment_type filter | PASS |
+| **Employee Schemas** | listEmployeesSchema accepts department_id filter | PASS |
+| **Employee Schemas** | listEmployeesSchema accepts position_id filter | PASS |
+| **Employee Schemas** | createEmployeeSchema requires employee_number, first_name, last_name, hire_date | PASS |
+| **Employee Schemas** | createEmployeeSchema rejects missing required fields | PASS |
+| **Employee Schemas** | createEmployeeSchema applies defaults for optional fields | PASS |
+| **Employee Schemas** | updateEmployeeSchema accepts partial updates | PASS |
+| **Certification Schemas** | listCertificationsSchema accepts valid query params | PASS |
+| **Certification Schemas** | listCertificationsSchema applies defaults | PASS |
+| **Certification Schemas** | listCertificationsSchema accepts employee_id filter | PASS |
+| **Certification Schemas** | listCertificationsSchema accepts status filter | PASS |
+| **Certification Schemas** | createCertificationSchema requires employee_id and certification_name | PASS |
+| **Certification Schemas** | createCertificationSchema rejects missing required fields | PASS |
+| **Certification Schemas** | createCertificationSchema applies default status | PASS |
+| **Certification Schemas** | updateCertificationSchema accepts partial updates | PASS |
+| **Document Schemas** | listEmployeeDocumentsSchema accepts valid query params | PASS |
+| **Document Schemas** | listEmployeeDocumentsSchema accepts employee_id and document_type filters | PASS |
+| **Document Schemas** | createEmployeeDocumentSchema requires employee_id and title | PASS |
+| **Document Schemas** | createEmployeeDocumentSchema rejects missing required fields | PASS |
+| **Document Schemas** | createEmployeeDocumentSchema applies default document_type | PASS |
+| **Document Schemas** | updateEmployeeDocumentSchema accepts partial updates | PASS |
+| **Department Schemas** | listDepartmentsSchema accepts valid query params | PASS |
+| **Department Schemas** | listDepartmentsSchema applies defaults | PASS |
+| **Department Schemas** | listDepartmentsSchema accepts is_active filter with boolean preprocess | PASS |
+| **Department Schemas** | createDepartmentSchema requires name | PASS |
+| **Department Schemas** | createDepartmentSchema rejects missing name | PASS |
+| **Department Schemas** | createDepartmentSchema applies default is_active | PASS |
+| **Department Schemas** | updateDepartmentSchema accepts partial updates | PASS |
+| **Position Schemas** | listPositionsSchema accepts valid query params | PASS |
+| **Position Schemas** | listPositionsSchema applies defaults | PASS |
+| **Position Schemas** | listPositionsSchema accepts department_id and is_active filters | PASS |
+| **Position Schemas** | createPositionSchema requires title | PASS |
+| **Position Schemas** | createPositionSchema rejects missing title | PASS |
+| **Position Schemas** | createPositionSchema applies default is_active | PASS |
+| **Position Schemas** | updatePositionSchema accepts partial updates | PASS |
+
+---
+
+## Module 37: Marketing & Portfolio
+
+### Acceptance Tests (78 tests in `tests/acceptance/37-marketing.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | ProjectShowcaseStatus has 4 values | PASS |
+| **Types** | PhotoType has 6 values | PASS |
+| **Types** | ReviewStatus has 4 values | PASS |
+| **Types** | ReviewSource has 7 values | PASS |
+| **Types** | CampaignStatus has 5 values | PASS |
+| **Types** | CampaignType has 6 values | PASS |
+| **Types** | ContactStatus has 6 values | PASS |
+| **Interfaces** | PortfolioProject interface has all required fields | PASS |
+| **Interfaces** | PortfolioPhoto interface has all required fields | PASS |
+| **Interfaces** | ClientReview interface has all required fields | PASS |
+| **Interfaces** | MarketingCampaign interface has all required fields | PASS |
+| **Interfaces** | CampaignContact interface has all required fields | PASS |
+| **Constants** | PROJECT_SHOWCASE_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | PHOTO_TYPES has 6 entries with value and label | PASS |
+| **Constants** | REVIEW_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | REVIEW_SOURCES has 7 entries with value and label | PASS |
+| **Constants** | CAMPAIGN_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | CAMPAIGN_TYPES has 6 entries with value and label | PASS |
+| **Constants** | CONTACT_STATUSES has 6 entries with value and label | PASS |
+| **Enums** | projectShowcaseStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | projectShowcaseStatusEnum rejects invalid status | PASS |
+| **Enums** | photoTypeEnum accepts all 6 types | PASS |
+| **Enums** | photoTypeEnum rejects invalid type | PASS |
+| **Enums** | reviewStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | reviewStatusEnum rejects invalid status | PASS |
+| **Enums** | reviewSourceEnum accepts all 7 sources | PASS |
+| **Enums** | reviewSourceEnum rejects invalid source | PASS |
+| **Enums** | campaignStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | campaignStatusEnum rejects invalid status | PASS |
+| **Enums** | campaignTypeEnum accepts all 6 types | PASS |
+| **Enums** | campaignTypeEnum rejects invalid type | PASS |
+| **Enums** | contactStatusEnum accepts all 6 statuses | PASS |
+| **Enums** | contactStatusEnum rejects invalid status | PASS |
+| **Portfolio Projects** | listPortfolioProjectsSchema accepts valid filters | PASS |
+| **Portfolio Projects** | listPortfolioProjectsSchema applies defaults | PASS |
+| **Portfolio Projects** | createPortfolioProjectSchema requires title | PASS |
+| **Portfolio Projects** | createPortfolioProjectSchema applies defaults | PASS |
+| **Portfolio Projects** | createPortfolioProjectSchema accepts full input | PASS |
+| **Portfolio Projects** | updatePortfolioProjectSchema makes all fields optional | PASS |
+| **Portfolio Projects** | updatePortfolioProjectSchema validates status enum | PASS |
+| **Portfolio Photos** | listPortfolioPhotosSchema accepts valid filters | PASS |
+| **Portfolio Photos** | createPortfolioPhotoSchema requires photo_url | PASS |
+| **Portfolio Photos** | createPortfolioPhotoSchema applies defaults | PASS |
+| **Portfolio Photos** | updatePortfolioPhotoSchema makes all fields optional | PASS |
+| **Client Reviews** | listClientReviewsSchema accepts valid filters | PASS |
+| **Client Reviews** | listClientReviewsSchema applies defaults | PASS |
+| **Client Reviews** | createClientReviewSchema requires client_name | PASS |
+| **Client Reviews** | createClientReviewSchema applies defaults | PASS |
+| **Client Reviews** | createClientReviewSchema validates rating range 1-5 | PASS |
+| **Client Reviews** | createClientReviewSchema validates email format | PASS |
+| **Client Reviews** | createClientReviewSchema accepts full input | PASS |
+| **Client Reviews** | updateClientReviewSchema makes all fields optional | PASS |
+| **Client Reviews** | updateClientReviewSchema validates status enum | PASS |
+| **Marketing Campaigns** | listMarketingCampaignsSchema accepts valid filters | PASS |
+| **Marketing Campaigns** | listMarketingCampaignsSchema applies defaults | PASS |
+| **Marketing Campaigns** | createMarketingCampaignSchema requires name | PASS |
+| **Marketing Campaigns** | createMarketingCampaignSchema applies defaults | PASS |
+| **Marketing Campaigns** | createMarketingCampaignSchema validates date format | PASS |
+| **Marketing Campaigns** | createMarketingCampaignSchema validates budget non-negative | PASS |
+| **Marketing Campaigns** | createMarketingCampaignSchema accepts full input | PASS |
+| **Marketing Campaigns** | updateMarketingCampaignSchema makes all fields optional | PASS |
+| **Marketing Campaigns** | updateMarketingCampaignSchema validates status enum | PASS |
+| **Campaign Contacts** | listCampaignContactsSchema accepts valid filters | PASS |
+| **Campaign Contacts** | listCampaignContactsSchema applies defaults | PASS |
+| **Campaign Contacts** | createCampaignContactSchema requires contact_name | PASS |
+| **Campaign Contacts** | createCampaignContactSchema applies defaults | PASS |
+| **Campaign Contacts** | createCampaignContactSchema validates email format | PASS |
+| **Campaign Contacts** | updateCampaignContactSchema makes all fields optional | PASS |
+| **Campaign Contacts** | updateCampaignContactSchema validates status enum | PASS |
+
+---
+
+## Module 33: Safety & Compliance
+
+### Acceptance Tests (76 tests in `tests/acceptance/33-safety.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | IncidentSeverity has 5 values | PASS |
+| **Types** | IncidentStatus has 4 values | PASS |
+| **Types** | IncidentType has 8 values | PASS |
+| **Types** | InspectionStatus has 4 values | PASS |
+| **Types** | InspectionResult has 3 values | PASS |
+| **Types** | InspectionItemResult has 4 values | PASS |
+| **Types** | TalkStatus has 3 values | PASS |
+| **Types** | SafetyIncident interface has all required fields | PASS |
+| **Types** | SafetyInspection interface has all required fields | PASS |
+| **Types** | SafetyInspectionItem interface has all required fields | PASS |
+| **Types** | ToolboxTalk interface has all required fields | PASS |
+| **Types** | ToolboxTalkAttendee interface has all required fields | PASS |
+| **Constants** | INCIDENT_SEVERITIES has 5 entries with value and label | PASS |
+| **Constants** | INCIDENT_SEVERITIES includes all expected values | PASS |
+| **Constants** | INCIDENT_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | INCIDENT_TYPES has 8 entries with value and label | PASS |
+| **Constants** | INSPECTION_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | INSPECTION_RESULTS has 3 entries with value and label | PASS |
+| **Constants** | INSPECTION_ITEM_RESULTS has 4 entries with value and label | PASS |
+| **Constants** | TALK_STATUSES has 3 entries with value and label | PASS |
+| **Enums** | incidentSeverityEnum accepts all 5 severities | PASS |
+| **Enums** | incidentSeverityEnum rejects invalid severity | PASS |
+| **Enums** | incidentStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | incidentStatusEnum rejects invalid status | PASS |
+| **Enums** | incidentTypeEnum accepts all 8 types | PASS |
+| **Enums** | incidentTypeEnum rejects invalid type | PASS |
+| **Enums** | inspectionStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | inspectionStatusEnum rejects invalid status | PASS |
+| **Enums** | inspectionResultEnum accepts all 3 results | PASS |
+| **Enums** | inspectionResultEnum rejects invalid result | PASS |
+| **Enums** | inspectionItemResultEnum accepts all 4 results | PASS |
+| **Enums** | inspectionItemResultEnum rejects invalid result | PASS |
+| **Enums** | talkStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | talkStatusEnum rejects invalid status | PASS |
+| **Incidents** | listIncidentsSchema accepts valid params | PASS |
+| **Incidents** | listIncidentsSchema rejects limit > 100 | PASS |
+| **Incidents** | listIncidentsSchema accepts all filters | PASS |
+| **Incidents** | createIncidentSchema accepts valid incident | PASS |
+| **Incidents** | createIncidentSchema requires job_id, incident_number, title, incident_date | PASS |
+| **Incidents** | createIncidentSchema rejects incident_number > 30 chars | PASS |
+| **Incidents** | createIncidentSchema rejects title > 255 chars | PASS |
+| **Incidents** | createIncidentSchema validates incident_date format | PASS |
+| **Incidents** | createIncidentSchema rejects lost_work_days > 365 | PASS |
+| **Incidents** | updateIncidentSchema accepts partial updates | PASS |
+| **Inspections** | listInspectionsSchema accepts valid params | PASS |
+| **Inspections** | listInspectionsSchema rejects limit > 100 | PASS |
+| **Inspections** | listInspectionsSchema accepts all filters | PASS |
+| **Inspections** | createInspectionSchema accepts valid inspection | PASS |
+| **Inspections** | createInspectionSchema requires job_id, inspection_number, title, inspection_date | PASS |
+| **Inspections** | createInspectionSchema rejects invalid inspection_date format | PASS |
+| **Inspections** | updateInspectionSchema accepts partial updates | PASS |
+| **Inspections** | completeInspectionSchema requires result | PASS |
+| **Inspections** | completeInspectionSchema accepts valid completion | PASS |
+| **Inspections** | completeInspectionSchema rejects invalid result | PASS |
+| **Inspection Items** | listInspectionItemsSchema accepts valid params with defaults | PASS |
+| **Inspection Items** | createInspectionItemSchema accepts valid item | PASS |
+| **Inspection Items** | createInspectionItemSchema requires description | PASS |
+| **Inspection Items** | createInspectionItemSchema has correct defaults | PASS |
+| **Inspection Items** | updateInspectionItemSchema accepts partial updates | PASS |
+| **Toolbox Talks** | listToolboxTalksSchema accepts valid params | PASS |
+| **Toolbox Talks** | listToolboxTalksSchema rejects limit > 100 | PASS |
+| **Toolbox Talks** | listToolboxTalksSchema accepts all filters | PASS |
+| **Toolbox Talks** | createToolboxTalkSchema accepts valid talk | PASS |
+| **Toolbox Talks** | createToolboxTalkSchema requires job_id, title, talk_date | PASS |
+| **Toolbox Talks** | createToolboxTalkSchema rejects title > 255 chars | PASS |
+| **Toolbox Talks** | createToolboxTalkSchema validates talk_date format | PASS |
+| **Toolbox Talks** | createToolboxTalkSchema rejects duration_minutes > 480 | PASS |
+| **Toolbox Talks** | updateToolboxTalkSchema accepts partial updates | PASS |
+| **Toolbox Talks** | completeToolboxTalkSchema accepts empty object | PASS |
+| **Toolbox Talks** | completeToolboxTalkSchema accepts notes and duration | PASS |
+| **Attendees** | listAttendeesSchema accepts valid params with defaults | PASS |
+| **Attendees** | createAttendeeSchema accepts valid attendee | PASS |
+| **Attendees** | createAttendeeSchema requires attendee_name | PASS |
+| **Attendees** | createAttendeeSchema rejects attendee_name > 200 chars | PASS |
+| **Attendees** | createAttendeeSchema has correct defaults | PASS |
+| **Attendees** | updateAttendeeSchema accepts partial updates | PASS |
+
+---
+
+## Module 30: Vendor Portal
+
+### Acceptance Tests (73 tests in `tests/acceptance/30-vendor-portal.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | PortalAccessLevel has 3 values | PASS |
+| **Types** | SubmissionType has 6 values | PASS |
+| **Types** | SubmissionStatus has 5 values | PASS |
+| **Types** | InvitationStatus has 4 values | PASS |
+| **Types** | MessageDirection has 2 values | PASS |
+| **Types** | VendorPortalSettings interface has all required fields | PASS |
+| **Types** | VendorPortalInvitation interface has all required fields | PASS |
+| **Types** | VendorPortalAccess interface has all required fields | PASS |
+| **Types** | VendorSubmission interface has all required fields | PASS |
+| **Types** | VendorMessage interface has all required fields | PASS |
+| **Constants** | PORTAL_ACCESS_LEVELS has 3 entries with value and label | PASS |
+| **Constants** | PORTAL_ACCESS_LEVELS includes all expected values | PASS |
+| **Constants** | SUBMISSION_TYPES has 6 entries with value and label | PASS |
+| **Constants** | SUBMISSION_TYPES includes all expected values | PASS |
+| **Constants** | SUBMISSION_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | INVITATION_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | INVITATION_STATUSES includes all expected values | PASS |
+| **Constants** | MESSAGE_DIRECTIONS has 2 entries with value and label | PASS |
+| **Enums** | portalAccessLevelEnum accepts all 3 levels | PASS |
+| **Enums** | portalAccessLevelEnum rejects invalid level | PASS |
+| **Enums** | submissionTypeEnum accepts all 6 types | PASS |
+| **Enums** | submissionTypeEnum rejects invalid type | PASS |
+| **Enums** | submissionStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | submissionStatusEnum rejects invalid status | PASS |
+| **Enums** | invitationStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | invitationStatusEnum rejects invalid status | PASS |
+| **Enums** | messageDirectionEnum accepts both directions | PASS |
+| **Enums** | messageDirectionEnum rejects invalid direction | PASS |
+| **Settings** | createSettingsSchema accepts empty object with defaults | PASS |
+| **Settings** | createSettingsSchema accepts all fields | PASS |
+| **Settings** | updateSettingsSchema accepts partial updates | PASS |
+| **Invitations** | listInvitationsSchema accepts valid params | PASS |
+| **Invitations** | listInvitationsSchema rejects limit > 100 | PASS |
+| **Invitations** | listInvitationsSchema accepts status filter | PASS |
+| **Invitations** | createInvitationSchema accepts valid invitation | PASS |
+| **Invitations** | createInvitationSchema requires vendor_name and email | PASS |
+| **Invitations** | createInvitationSchema rejects vendor_name > 200 chars | PASS |
+| **Invitations** | createInvitationSchema rejects invalid email | PASS |
+| **Invitations** | createInvitationSchema accepts expires_in_days | PASS |
+| **Invitations** | createInvitationSchema rejects expires_in_days > 90 | PASS |
+| **Invitations** | updateInvitationSchema accepts partial updates | PASS |
+| **Invitations** | revokeInvitationSchema accepts empty object | PASS |
+| **Invitations** | revokeInvitationSchema accepts notes | PASS |
+| **Access** | listAccessSchema accepts valid params | PASS |
+| **Access** | listAccessSchema accepts vendor_id and access_level filters | PASS |
+| **Access** | createAccessSchema requires vendor_id | PASS |
+| **Access** | createAccessSchema accepts valid access with defaults | PASS |
+| **Access** | createAccessSchema accepts full access configuration | PASS |
+| **Access** | updateAccessSchema accepts partial updates | PASS |
+| **Submissions** | listSubmissionsSchema accepts valid params | PASS |
+| **Submissions** | listSubmissionsSchema rejects limit > 100 | PASS |
+| **Submissions** | listSubmissionsSchema accepts all filters | PASS |
+| **Submissions** | createSubmissionSchema accepts valid submission | PASS |
+| **Submissions** | createSubmissionSchema requires vendor_id, submission_type, and title | PASS |
+| **Submissions** | createSubmissionSchema rejects title > 255 chars | PASS |
+| **Submissions** | createSubmissionSchema rejects negative amount | PASS |
+| **Submissions** | createSubmissionSchema accepts all optional fields | PASS |
+| **Submissions** | updateSubmissionSchema accepts partial updates | PASS |
+| **Submissions** | submitSubmissionSchema accepts empty object | PASS |
+| **Submissions** | submitSubmissionSchema accepts notes | PASS |
+| **Submissions** | reviewSubmissionSchema requires status | PASS |
+| **Submissions** | reviewSubmissionSchema accepts approved | PASS |
+| **Submissions** | reviewSubmissionSchema accepts rejected with reason | PASS |
+| **Submissions** | reviewSubmissionSchema rejects invalid status | PASS |
+| **Messages** | listMessagesSchema accepts valid params | PASS |
+| **Messages** | listMessagesSchema rejects limit > 100 | PASS |
+| **Messages** | listMessagesSchema accepts all filters | PASS |
+| **Messages** | createMessageSchema accepts valid message | PASS |
+| **Messages** | createMessageSchema requires vendor_id, subject, and body | PASS |
+| **Messages** | createMessageSchema rejects subject > 255 chars | PASS |
+| **Messages** | createMessageSchema accepts parent_message_id for threading | PASS |
+| **Messages** | updateMessageSchema accepts partial updates | PASS |
+| **Messages** | markReadSchema accepts empty object | PASS |
+
+---
+
+## Module 35: Equipment & Asset Management
+
+### Acceptance Tests (81 tests in `tests/acceptance/35-equipment.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | EquipmentStatus has 5 values | PASS |
+| **Types** | EquipmentType has 8 values | PASS |
+| **Types** | OwnershipType has 3 values | PASS |
+| **Types** | MaintenanceType has 4 values | PASS |
+| **Types** | MaintenanceStatus has 5 values | PASS |
+| **Types** | AssignmentStatus has 3 values | PASS |
+| **Types** | InspectionType has 4 values | PASS |
+| **Types** | InspectionResult has 3 values | PASS |
+| **Types** | CostType has 6 values | PASS |
+| **Types** | Equipment interface has all required fields | PASS |
+| **Types** | EquipmentAssignment interface has all required fields | PASS |
+| **Types** | EquipmentMaintenance interface has all required fields | PASS |
+| **Types** | EquipmentInspection interface has all required fields | PASS |
+| **Types** | EquipmentCost interface has all required fields | PASS |
+| **Constants** | EQUIPMENT_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | EQUIPMENT_STATUSES includes all expected values | PASS |
+| **Constants** | EQUIPMENT_TYPES has 8 entries with value and label | PASS |
+| **Constants** | OWNERSHIP_TYPES has 3 entries with value and label | PASS |
+| **Constants** | MAINTENANCE_TYPES has 4 entries with value and label | PASS |
+| **Constants** | MAINTENANCE_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | ASSIGNMENT_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | INSPECTION_TYPES has 4 entries with value and label | PASS |
+| **Constants** | INSPECTION_RESULTS has 3 entries with value and label | PASS |
+| **Constants** | COST_TYPES has 6 entries with value and label | PASS |
+| **Enum Schemas** | equipmentStatusEnum accepts all 5 statuses | PASS |
+| **Enum Schemas** | equipmentStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | equipmentTypeEnum accepts all 8 types | PASS |
+| **Enum Schemas** | equipmentTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | ownershipTypeEnum accepts all 3 types | PASS |
+| **Enum Schemas** | ownershipTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | maintenanceTypeEnum accepts all 4 types | PASS |
+| **Enum Schemas** | maintenanceTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | maintenanceStatusEnum accepts all 5 statuses | PASS |
+| **Enum Schemas** | maintenanceStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | assignmentStatusEnum accepts all 3 statuses | PASS |
+| **Enum Schemas** | assignmentStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | inspectionTypeEnum accepts all 4 types | PASS |
+| **Enum Schemas** | inspectionTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | inspectionResultEnum accepts all 3 results | PASS |
+| **Enum Schemas** | inspectionResultEnum rejects invalid result | PASS |
+| **Enum Schemas** | costTypeEnum accepts all 6 types | PASS |
+| **Enum Schemas** | costTypeEnum rejects invalid type | PASS |
+| **Equipment Schemas** | listEquipmentSchema accepts valid params | PASS |
+| **Equipment Schemas** | listEquipmentSchema rejects limit > 100 | PASS |
+| **Equipment Schemas** | listEquipmentSchema accepts all filters | PASS |
+| **Equipment Schemas** | createEquipmentSchema accepts valid equipment | PASS |
+| **Equipment Schemas** | createEquipmentSchema requires name | PASS |
+| **Equipment Schemas** | createEquipmentSchema rejects name > 255 chars | PASS |
+| **Equipment Schemas** | createEquipmentSchema validates purchase_date format | PASS |
+| **Equipment Schemas** | createEquipmentSchema rejects invalid purchase_date format | PASS |
+| **Equipment Schemas** | createEquipmentSchema rejects negative purchase_price | PASS |
+| **Equipment Schemas** | createEquipmentSchema accepts full equipment with all fields | PASS |
+| **Equipment Schemas** | updateEquipmentSchema accepts partial updates | PASS |
+| **Assignment Schemas** | listAssignmentsSchema accepts valid params | PASS |
+| **Assignment Schemas** | listAssignmentsSchema accepts filters | PASS |
+| **Assignment Schemas** | createAssignmentSchema accepts valid assignment | PASS |
+| **Assignment Schemas** | createAssignmentSchema requires equipment_id and start_date | PASS |
+| **Assignment Schemas** | createAssignmentSchema validates date format | PASS |
+| **Assignment Schemas** | updateAssignmentSchema accepts partial updates | PASS |
+| **Maintenance Schemas** | listMaintenanceSchema accepts valid params | PASS |
+| **Maintenance Schemas** | listMaintenanceSchema accepts filters | PASS |
+| **Maintenance Schemas** | createMaintenanceSchema accepts valid maintenance | PASS |
+| **Maintenance Schemas** | createMaintenanceSchema requires equipment_id and title | PASS |
+| **Maintenance Schemas** | createMaintenanceSchema rejects title > 255 chars | PASS |
+| **Maintenance Schemas** | createMaintenanceSchema validates scheduled_date format | PASS |
+| **Maintenance Schemas** | updateMaintenanceSchema accepts partial updates | PASS |
+| **Inspection Schemas** | listInspectionsSchema accepts valid params | PASS |
+| **Inspection Schemas** | listInspectionsSchema accepts filters | PASS |
+| **Inspection Schemas** | createInspectionSchema accepts valid inspection | PASS |
+| **Inspection Schemas** | createInspectionSchema requires equipment_id | PASS |
+| **Inspection Schemas** | createInspectionSchema validates inspection_date format | PASS |
+| **Inspection Schemas** | createInspectionSchema rejects invalid inspection_date format | PASS |
+| **Inspection Schemas** | updateInspectionSchema accepts partial updates | PASS |
+| **Cost Schemas** | listCostsSchema accepts valid params | PASS |
+| **Cost Schemas** | listCostsSchema accepts filters | PASS |
+| **Cost Schemas** | createCostSchema accepts valid cost | PASS |
+| **Cost Schemas** | createCostSchema requires equipment_id and amount | PASS |
+| **Cost Schemas** | createCostSchema rejects negative amount | PASS |
+| **Cost Schemas** | createCostSchema validates cost_date format | PASS |
+| **Cost Schemas** | createCostSchema rejects invalid cost_date format | PASS |
+| **Cost Schemas** | updateCostSchema accepts partial updates | PASS |
+
+---
+
+## Module 31: Warranty & Home Care
+
+### Acceptance Tests (76 tests in `tests/acceptance/31-warranty.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | WarrantyStatus has 4 values | PASS |
+| **Types** | WarrantyType has 9 values | PASS |
+| **Types** | ClaimStatus has 6 values | PASS |
+| **Types** | ClaimPriority has 4 values | PASS |
+| **Types** | ClaimHistoryAction has 9 values | PASS |
+| **Types** | MaintenanceFrequency has 5 values | PASS |
+| **Types** | TaskStatus has 5 values | PASS |
+| **Types** | Warranty interface has all required fields | PASS |
+| **Types** | WarrantyClaim interface has all required fields | PASS |
+| **Types** | WarrantyClaimHistory interface has all required fields | PASS |
+| **Types** | MaintenanceSchedule interface has all required fields | PASS |
+| **Types** | MaintenanceTask interface has all required fields | PASS |
+| **Constants** | WARRANTY_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | WARRANTY_STATUSES includes all expected values | PASS |
+| **Constants** | WARRANTY_TYPES has 9 entries with value and label | PASS |
+| **Constants** | CLAIM_STATUSES has 6 entries with value and label | PASS |
+| **Constants** | CLAIM_PRIORITIES has 4 entries with value and label | PASS |
+| **Constants** | CLAIM_HISTORY_ACTIONS has 9 entries with value and label | PASS |
+| **Constants** | MAINTENANCE_FREQUENCIES has 5 entries with value and label | PASS |
+| **Constants** | TASK_STATUSES has 5 entries with value and label | PASS |
+| **Enum Schemas** | warrantyStatusEnum accepts all 4 statuses | PASS |
+| **Enum Schemas** | warrantyStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | warrantyTypeEnum accepts all 9 types | PASS |
+| **Enum Schemas** | warrantyTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | claimStatusEnum accepts all 6 statuses | PASS |
+| **Enum Schemas** | claimStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | claimPriorityEnum accepts all 4 priorities | PASS |
+| **Enum Schemas** | claimPriorityEnum rejects invalid priority | PASS |
+| **Enum Schemas** | claimHistoryActionEnum accepts all 9 actions | PASS |
+| **Enum Schemas** | claimHistoryActionEnum rejects invalid action | PASS |
+| **Enum Schemas** | maintenanceFrequencyEnum accepts all 5 frequencies | PASS |
+| **Enum Schemas** | maintenanceFrequencyEnum rejects invalid frequency | PASS |
+| **Enum Schemas** | taskStatusEnum accepts all 5 statuses | PASS |
+| **Enum Schemas** | taskStatusEnum rejects invalid status | PASS |
+| **Warranty Schemas** | listWarrantiesSchema accepts valid params | PASS |
+| **Warranty Schemas** | listWarrantiesSchema rejects limit > 100 | PASS |
+| **Warranty Schemas** | listWarrantiesSchema accepts filters | PASS |
+| **Warranty Schemas** | createWarrantySchema accepts valid warranty | PASS |
+| **Warranty Schemas** | createWarrantySchema requires job_id, title, start_date, end_date | PASS |
+| **Warranty Schemas** | createWarrantySchema rejects title > 255 chars | PASS |
+| **Warranty Schemas** | createWarrantySchema validates date format | PASS |
+| **Warranty Schemas** | createWarrantySchema accepts optional contact fields | PASS |
+| **Warranty Schemas** | updateWarrantySchema accepts partial updates | PASS |
+| **Warranty Schemas** | updateWarrantySchema accepts transferred_to | PASS |
+| **Claim Schemas** | listWarrantyClaimsSchema accepts valid params | PASS |
+| **Claim Schemas** | listWarrantyClaimsSchema accepts filters | PASS |
+| **Claim Schemas** | createWarrantyClaimSchema accepts valid claim | PASS |
+| **Claim Schemas** | createWarrantyClaimSchema requires warranty_id, claim_number, title | PASS |
+| **Claim Schemas** | createWarrantyClaimSchema rejects claim_number > 30 chars | PASS |
+| **Claim Schemas** | createWarrantyClaimSchema validates date fields | PASS |
+| **Claim Schemas** | createWarrantyClaimSchema accepts optional fields | PASS |
+| **Claim Schemas** | updateWarrantyClaimSchema accepts partial updates | PASS |
+| **Claim Schemas** | updateWarrantyClaimSchema accepts resolution fields | PASS |
+| **Claim Schemas** | resolveWarrantyClaimSchema accepts empty object | PASS |
+| **Claim Schemas** | resolveWarrantyClaimSchema accepts resolution details | PASS |
+| **Claim Schemas** | resolveWarrantyClaimSchema rejects negative cost | PASS |
+| **History Schema** | listClaimHistorySchema accepts valid params with defaults | PASS |
+| **History Schema** | listClaimHistorySchema rejects limit > 100 | PASS |
+| **Schedule Schemas** | listMaintenanceSchedulesSchema accepts valid params | PASS |
+| **Schedule Schemas** | listMaintenanceSchedulesSchema accepts filters | PASS |
+| **Schedule Schemas** | listMaintenanceSchedulesSchema handles is_active boolean preprocess | PASS |
+| **Schedule Schemas** | createMaintenanceScheduleSchema accepts valid schedule | PASS |
+| **Schedule Schemas** | createMaintenanceScheduleSchema requires job_id, title, start_date | PASS |
+| **Schedule Schemas** | createMaintenanceScheduleSchema rejects title > 255 chars | PASS |
+| **Schedule Schemas** | createMaintenanceScheduleSchema validates date format | PASS |
+| **Schedule Schemas** | createMaintenanceScheduleSchema accepts all optional fields | PASS |
+| **Schedule Schemas** | updateMaintenanceScheduleSchema accepts partial updates | PASS |
+| **Task Schemas** | listMaintenanceTasksSchema accepts valid params | PASS |
+| **Task Schemas** | listMaintenanceTasksSchema accepts filters | PASS |
+| **Task Schemas** | createMaintenanceTaskSchema accepts valid task | PASS |
+| **Task Schemas** | createMaintenanceTaskSchema requires schedule_id, title, due_date | PASS |
+| **Task Schemas** | createMaintenanceTaskSchema validates due_date format | PASS |
+| **Task Schemas** | updateMaintenanceTaskSchema accepts partial updates | PASS |
+| **Task Schemas** | completeMaintenanceTaskSchema accepts empty object | PASS |
+| **Task Schemas** | completeMaintenanceTaskSchema accepts cost and notes | PASS |
+| **Task Schemas** | completeMaintenanceTaskSchema rejects negative cost | PASS |
+
+---
+
+## Module 29: Full Client Portal
+
+### Acceptance Tests (81 tests in `tests/acceptance/29-client-portal.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | ApprovalStatus has 4 values | PASS |
+| **Types** | ApprovalType has 5 values | PASS |
+| **Types** | MessageStatus has 3 values | PASS |
+| **Types** | MessageSenderType has 2 values | PASS |
+| **Types** | MessageCategory has 7 values | PASS |
+| **Types** | ExternalChannel has 3 values | PASS |
+| **Types** | InvitationStatus has 4 values | PASS |
+| **Types** | PaymentStatus has 5 values | PASS |
+| **Types** | PaymentMethod has 5 values | PASS |
+| **Types** | ClientPortalSettings interface has all required fields | PASS |
+| **Types** | ClientPortalInvitation interface has all required fields | PASS |
+| **Types** | ClientApproval interface has all required fields | PASS |
+| **Types** | ClientMessage interface has all required fields | PASS |
+| **Types** | ClientPayment interface has all required fields | PASS |
+| **Constants** | APPROVAL_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | APPROVAL_STATUSES includes all expected values | PASS |
+| **Constants** | APPROVAL_TYPES has 5 entries with value and label | PASS |
+| **Constants** | MESSAGE_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | MESSAGE_SENDER_TYPES has 2 entries | PASS |
+| **Constants** | MESSAGE_CATEGORIES has 7 entries | PASS |
+| **Constants** | EXTERNAL_CHANNELS has 3 entries | PASS |
+| **Constants** | INVITATION_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | PAYMENT_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | PAYMENT_METHODS has 5 entries with value and label | PASS |
+| **Enum Schemas** | approvalStatusEnum accepts all 4 statuses | PASS |
+| **Enum Schemas** | approvalStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | approvalTypeEnum accepts all 5 types | PASS |
+| **Enum Schemas** | approvalTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | messageStatusEnum accepts all 3 statuses | PASS |
+| **Enum Schemas** | messageStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | messageSenderTypeEnum accepts all 2 types | PASS |
+| **Enum Schemas** | messageCategoryEnum accepts all 7 categories | PASS |
+| **Enum Schemas** | messageCategoryEnum rejects invalid category | PASS |
+| **Enum Schemas** | externalChannelEnum accepts all 3 channels | PASS |
+| **Enum Schemas** | invitationStatusEnum accepts all 4 statuses | PASS |
+| **Enum Schemas** | invitationStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | paymentStatusEnum accepts all 5 statuses | PASS |
+| **Enum Schemas** | paymentStatusEnum rejects invalid status | PASS |
+| **Enum Schemas** | paymentMethodEnum accepts all 5 methods | PASS |
+| **Enum Schemas** | paymentMethodEnum rejects invalid method | PASS |
+| **Settings** | updateClientPortalSettingsSchema accepts valid settings | PASS |
+| **Settings** | updateClientPortalSettingsSchema accepts empty object | PASS |
+| **Settings** | updateClientPortalSettingsSchema accepts null custom_domain | PASS |
+| **Settings** | updateClientPortalSettingsSchema rejects custom_domain > 200 chars | PASS |
+| **Invitations** | listClientInvitationsSchema accepts valid params | PASS |
+| **Invitations** | listClientInvitationsSchema rejects limit > 100 | PASS |
+| **Invitations** | listClientInvitationsSchema accepts filters | PASS |
+| **Invitations** | createClientInvitationSchema accepts valid invitation | PASS |
+| **Invitations** | createClientInvitationSchema requires job_id and email | PASS |
+| **Invitations** | createClientInvitationSchema rejects invalid email | PASS |
+| **Invitations** | createClientInvitationSchema accepts expires_in_days 1-90 | PASS |
+| **Invitations** | createClientInvitationSchema rejects expires_in_days > 90 | PASS |
+| **Invitations** | updateClientInvitationSchema accepts partial updates | PASS |
+| **Approvals** | listClientApprovalsSchema accepts valid params | PASS |
+| **Approvals** | listClientApprovalsSchema rejects limit > 100 | PASS |
+| **Approvals** | listClientApprovalsSchema accepts all filters | PASS |
+| **Approvals** | createClientApprovalSchema accepts valid approval | PASS |
+| **Approvals** | createClientApprovalSchema requires all mandatory fields | PASS |
+| **Approvals** | createClientApprovalSchema rejects title > 255 chars | PASS |
+| **Approvals** | createClientApprovalSchema validates expires_at date format | PASS |
+| **Approvals** | createClientApprovalSchema rejects invalid expires_at format | PASS |
+| **Approvals** | updateClientApprovalSchema accepts approve with signature | PASS |
+| **Approvals** | updateClientApprovalSchema accepts reject with comments | PASS |
+| **Messages** | listClientMessagesSchema accepts valid params | PASS |
+| **Messages** | listClientMessagesSchema accepts all filters | PASS |
+| **Messages** | createClientMessageSchema accepts valid message | PASS |
+| **Messages** | createClientMessageSchema requires job_id, sender_type, message_text | PASS |
+| **Messages** | createClientMessageSchema accepts external log message | PASS |
+| **Messages** | createClientMessageSchema rejects message_text > 10000 chars | PASS |
+| **Messages** | updateClientMessageSchema accepts status update | PASS |
+| **Messages** | updateClientMessageSchema accepts archived status | PASS |
+| **Payments** | listClientPaymentsSchema accepts valid params | PASS |
+| **Payments** | listClientPaymentsSchema rejects limit > 100 | PASS |
+| **Payments** | listClientPaymentsSchema accepts all filters | PASS |
+| **Payments** | createClientPaymentSchema accepts valid payment | PASS |
+| **Payments** | createClientPaymentSchema requires job_id and amount | PASS |
+| **Payments** | createClientPaymentSchema rejects negative amount | PASS |
+| **Payments** | createClientPaymentSchema accepts all payment methods | PASS |
+| **Payments** | createClientPaymentSchema validates payment_date format | PASS |
+| **Payments** | createClientPaymentSchema rejects invalid payment_date format | PASS |
+| **Payments** | createClientPaymentSchema accepts full payment with all fields | PASS |
+
+---
+
 ## Module 27: RFI Management
 
 ### Acceptance Tests (52 tests in `tests/acceptance/27-rfi-management.acceptance.test.ts`)

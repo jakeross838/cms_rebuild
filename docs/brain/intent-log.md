@@ -1,5 +1,294 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-23: Module 38 — Contracts & E-Signature V1 Foundation
+
+### Why
+Module 38 is the contracts and e-signature system for Phase 5 (Full Platform). Construction projects live and die by contracts -- prime contracts define the builder-client relationship, subcontracts govern trade work, purchase orders authorize material procurement, and change orders modify scope. Every dollar flows through a contract. This V1 builds the core data model for contract lifecycle management: creation, versioning, signer tracking, templates, and a reusable clause library. The actual e-signature integration (DocuSign, HelloSign, Adobe Sign), PDF generation, clause auto-assembly, contract comparison/diff, and automated renewal workflows are V2+ features.
+
+### What was built
+- **Migration** (`20260224300010_contracts.sql`): 5 tables with RLS, 30+ indexes, CHECK constraints, updated_at triggers, and FK CASCADE on child tables. contracts stores the core record with 9-status lifecycle (draft/pending_review/sent_for_signature/partially_signed/fully_signed/active/expired/terminated/voided) and 8 contract types (prime/subcontract/purchase_order/service_agreement/change_order/amendment/nda/other). contract_versions stores immutable snapshots. contract_signers tracks signing parties with role/status/order/metadata. contract_templates provides reusable document scaffolding. contract_clauses offers a clause library with categories and required flags.
+- **Types** (`types/contracts.ts`): 4 type unions (ContractStatus 9, ContractType 8, SignerStatus 5, SignerRole 6), 5 interfaces, 4 constant arrays with value/label pairs.
+- **Validation** (`lib/validation/schemas/contracts.ts`): 4 enum schemas, 20 CRUD/workflow schemas. createContractSchema requires contract_number and title with defaults (draft/prime). Contract value max 9999999999999.99. Retention pct max 99.99.
+- **API Routes** (13 route files under `api/v2/contracts/`): Full CRUD for contracts (GET/POST list, GET/PUT/DELETE by ID), send-for-signature workflow, versions (GET/POST), signers (GET/POST list, GET/PUT/DELETE by ID), sign and decline workflows, templates (GET/POST list, GET/PUT/DELETE by ID), clauses (GET/POST list, GET/PUT/DELETE by ID).
+- **Tests** (`tests/acceptance/38-contracts.acceptance.test.ts`): 69 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core data model and CRUD only. No e-signature provider integration (DocuSign, HelloSign, Adobe Sign). No PDF generation. No clause auto-assembly from templates. No contract comparison/diff. No automated renewal or expiration alerts. No digital signature rendering or certificate verification. Those require external service integrations and complex document processing.
+2. **5 V1 tables, mapping to spec**: Built contracts, contract_versions, contract_signers, contract_templates, contract_clauses. Deferred: contract_negotiations (needs real-time collaboration), contract_approvals (needs approval chain engine), contract_amendments (handled by change_order type), signed_documents (needs file storage + e-sig provider).
+3. **9 contract statuses with signing lifecycle**: draft -> pending_review -> sent_for_signature -> partially_signed -> fully_signed -> active -> expired/terminated/voided. The signing flow auto-updates contract status when signers complete: if all signed -> fully_signed + executed_at, else partially_signed.
+4. **Signer metadata capture**: ip_address, user_agent, signed_at timestamps collected at signing time for legal defensibility, even without a real e-signature provider in V1.
+5. **Templates and clauses as separate entities**: Templates hold the document structure with clause/variable JSONB arrays. Clauses are a standalone library with categories, required flags, and sort ordering -- allowing clause reuse across templates.
+6. **Soft delete on contracts, deactivation on templates/clauses**: Contracts use deleted_at (legal records should never vanish). Templates and clauses use is_active=false for soft removal (they may be referenced by existing contracts).
+7. **company_id on all child tables**: Even contract_versions and contract_signers carry company_id for direct RLS isolation without requiring a join to the parent contract table.
+8. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 38 tables yet.
+
+---
+
+## 2026-02-23: Module 32 — Permitting & Inspections V1 Foundation
+
+### Why
+Module 32 is the permitting and inspection management system for Phase 5 (Full Platform). Construction projects require building permits, trade permits, and multiple inspections per jurisdiction. Builders need to track permit applications, schedule inspections, record results (pass/fail/conditional), track first-time quality (FTQ), manage permit documents, and monitor fee payments. This V1 builds the core data model for permits, inspections, inspection results, permit documents, and permit fees. The jurisdiction profile system, online permit API integration, CO tracking integration, daily log integration, and analytics dashboards are V2+ features.
+
+### What was built
+- **Migration** (`20260224300004_permitting.sql`): 5 tables with RLS, 25+ indexes, CHECK constraints, updated_at triggers, and FK CASCADE on child tables. permits stores core permit records with 10 permit types and 7 statuses. permit_inspections tracks scheduling with 9 inspection types and 6 statuses. inspection_results records pass/fail/conditional outcomes with deficiencies JSONB, photos JSONB, and FTQ/vendor attribution. permit_documents links files to permits. permit_fees tracks fee amounts and payment status.
+- **Types** (`types/permitting.ts`): 6 type unions (PermitStatus 7, PermitType 10, InspectionStatus 6, InspectionType 9, InspectionResultType 3, FeeStatus 4), 5 interfaces, 6 constant arrays.
+- **Validation** (`lib/validation/schemas/permitting.ts`): 6 enum schemas, 15 CRUD schemas. createPermitSchema requires job_id and permit_number with defaults (permit_type=building, status=draft). createInspectionResultSchema auto-maps result to inspection status update.
+- **API Routes** (9 route files under `api/v2/permits/`): Full CRUD for permits (GET/POST list, GET/PUT/DELETE by ID), inspections (GET/POST per permit, GET/PUT by ID), results (GET/POST per inspection, GET/PUT by ID), documents (GET/POST per permit, GET/DELETE by ID), and fees (GET/POST per permit, GET/PUT/DELETE by ID).
+- **Tests** (`tests/acceptance/32-permitting.acceptance.test.ts`): 69 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core data model and CRUD only. No jurisdiction profile system, no online permit API integration, no CO tracking integration, no daily log integration, no analytics/FTQ dashboards, no automated inspection scheduling, no permit timeline visualization. Those require cross-module data aggregation and external API integrations.
+2. **5 V1 tables, deferring spec tables**: Built permits, permit_inspections, inspection_results, permit_documents, permit_fees. Deferred: jurisdiction_profiles (needs external API config), permit_conditions (can be JSONB on permits for V1), inspection_checklists (V2 feature).
+3. **inspection_results as separate table**: Results are a separate table (not embedded in permit_inspections) to support multiple results per inspection for FTQ tracking -- an inspection can fail, get reinspected, and pass.
+4. **Auto-update inspection status on result recording**: When a result is posted, the API auto-updates the parent inspection's status (pass->passed, fail->failed, conditional->conditional) to avoid requiring a separate API call.
+5. **Soft delete on permits only**: Permits use soft delete (deleted_at). Child tables (inspections, results, documents, fees) use CASCADE delete from permits since they have no independent lifecycle.
+6. **Permit documents are hard-deletable**: Documents attached to permits are utility references. They can be cleanly removed without audit trail.
+7. **company_id on all tables**: Even child tables carry company_id for direct RLS isolation, matching the project-wide pattern.
+8. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 32 tables yet.
+
+---
+
+## 2026-02-23: Module 36 — Lead Pipeline & CRM V1 Foundation
+
+### Why
+Module 36 is the lead pipeline and CRM system for Phase 5 (Full Platform). It bridges sales and project management by tracking leads from initial inquiry through signed contract. Builders need a construction-specific CRM tightly integrated with estimating, scheduling, and project management rather than relying on generic CRMs like HubSpot or Salesforce. V1 builds the core data model, type system, validation schemas, CRUD API routes, and acceptance tests.
+
+### What was built
+- **Migration** (`20260224300008_crm.sql`): 5 tables (leads, lead_activities, lead_sources, pipelines, pipeline_stages) with RLS, 27 indexes, updated_at triggers, CHECK constraints, and FK relationships.
+- **Types** (`types/crm.ts`): 6 type unions, 5 interfaces, 6 constant arrays.
+- **Validation** (`lib/validation/schemas/crm.ts`): 6 enum schemas, 15 CRUD schemas.
+- **API Routes** (9 route files under `api/v2/crm/`): Full CRUD for leads, activities, sources, pipelines, and pipeline stages.
+- **Tests** (`tests/acceptance/36-crm.acceptance.test.ts`): 74 pure function tests -- all passing.
+
+### Design decisions
+1. V1 scope: Core CRUD only. No lead scoring, nurturing, kanban, email parsing, web forms, deduplication, auto-routing, conversion workflow, win/loss analytics, lot evaluation, preconstruction workflows, competitive tracking, dream boards, design team management, or public estimator integration.
+2. 5 V1 tables, deferring 20+ V2 tables from the spec.
+3. company_id (not builder_id) per RossOS convention.
+4. 8-status lead model with separate customizable pipeline stages overlay.
+5. Soft delete on leads only; sources/pipelines use is_active deactivation; activities CASCADE.
+6. API routes grouped under /api/v2/crm/ namespace.
+7. `as any` casts on Supabase queries for untyped Module 36 tables.
+
+---
+
+## 2026-02-23: Module 34 — HR & Workforce Management V1 Foundation
+
+### Why
+Module 34 is the HR & workforce management module for Phase 5 (Full Platform). Construction companies need to track employees beyond basic user accounts -- certifications, employment status, pay rates, emergency contacts, department structure, and position hierarchy. This V1 builds the core data model for employee management, certifications, HR documents, departments, and positions. No payroll processing, no benefits administration, no performance reviews, no training management, no time-off tracking -- those are V2 features. V1 provides the server-side data model that the HR management UI will consume.
+
+### What was built
+- **Migration** (`20260224300006_hr_workforce.sql`): 5 tables with RLS, indexes, CHECK constraints, updated_at triggers, FK CASCADE on child tables. departments supports hierarchy via parent_id with self-reference. positions links to departments. employees is the core table with soft delete via deleted_at, 9 indexes including compound. employee_certifications and employee_documents CASCADE from employees.
+- **Types** (`types/hr-workforce.ts`): 5 type unions (EmploymentStatus 5 values, EmploymentType 5, PayType 2, CertificationStatus 4, DocumentType 8), 5 interfaces, 5 constant arrays with value/label pairs.
+- **Validation** (`lib/validation/schemas/hr-workforce.ts`): 5 enum schemas, 15 CRUD schemas. createEmployeeSchema requires employee_number, first_name, last_name, hire_date. createCertificationSchema and createDocumentSchema verify employee exists before inserting. Boolean preprocess for is_active filters.
+- **API Routes** (10 route files under `api/v2/hr/`): Employees CRUD (GET/POST list, GET/PUT/DELETE by ID with soft delete), Certifications CRUD (GET/POST list, GET/PUT/DELETE by ID), Documents CRUD (GET/POST list, GET/PUT/DELETE by ID), Departments CRUD (GET/POST list, GET/PUT/DELETE by ID with deactivate), Positions CRUD (GET/POST list, GET/PUT/DELETE by ID with deactivate).
+- **Tests** (`tests/acceptance/34-hr-workforce.acceptance.test.ts`): 69 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core employee data model only. No payroll processing, no benefits administration, no performance reviews, no training management, no time-off requests, no org chart visualization, no onboarding workflows. Those are V2+ features requiring significant business logic.
+2. **5 V1 tables, mapping to spec**: Built departments (org structure with hierarchy), positions (job titles linked to departments), employees (extends user concept with HR-specific fields), employee_certifications (licenses/certs/training), employee_documents (HR files: resumes, contracts, tax forms, IDs, reviews, disciplinary). Deferred: training_records, time_off_requests, performance_reviews.
+3. **Employees vs Users**: employees table has user_id (nullable) linking to the auth users table, but employees can exist without user accounts (e.g., field workers who don't use the software). This separates HR records from system access.
+4. **Soft delete on employees only**: employees uses soft delete via deleted_at (preserves historical records for compliance). certifications and documents CASCADE from employees. departments and positions use is_active flag (deactivation, not deletion).
+5. **8 document types**: resume, contract, tax_form, identification, certification, performance_review, disciplinary, other. Covers standard HR document categories without over-specifying.
+6. **company_id on all tables**: Multi-tenant isolation. Every query filters by company_id. RLS policies enforce this at the database level.
+7. **`as any` casts on Supabase queries**: Required because the Supabase client types in database.ts don't include Module 34 tables yet.
+
+---
+
+## 2026-02-23: Module 39 — Advanced Reporting & Custom Report Builder V1 Foundation
+
+### Why
+Module 39 is the advanced reporting and custom report builder for Phase 5 (Full Platform). It transforms raw project data across all modules into actionable intelligence through configurable reports and executive dashboards. Builders need custom reports for their specific workflows, clients need curated financial summaries, banks need AIA-format draws, and PMs need schedule/budget variance analysis. This V1 builds the core data model for custom report definitions, widget-based report composition, configurable dashboards, and reusable saved filters. The actual report rendering engine, PDF/Excel export, AI narratives, scheduled delivery, cross-project benchmarking, and client-facing report variants are V2+ features.
+
+### What was built
+- **Migration** (`20260224300011_advanced_reporting.sql`): 5 tables with RLS, 24 indexes, CHECK constraints, updated_at triggers, and FK CASCADE on child tables. custom_reports stores report definitions with 9 visualization types, 10 data sources, 4 audiences, 3 statuses, and JSONB fields for data sources/fields/filters/grouping/sorting/calculated fields. custom_report_widgets stores individual widgets within reports. report_dashboards supports 4 layout types with admin-push capability. dashboard_widgets supports grid positioning with report linking and refresh intervals. saved_filters enables reusable filter configs across 11 contexts.
+- **Types** (`types/advanced-reporting.ts`): 8 type unions (WidgetType 9, DataSourceType 10, ReportStatus 3, CustomReportType 2, DashboardLayout 4, RefreshFrequency 4, ReportAudience 4, FilterContext 11), 5 interfaces, 8 constant arrays.
+- **Validation** (`lib/validation/schemas/advanced-reporting.ts`): 8 enum schemas, 15 CRUD schemas. createCustomReportSchema requires name with defaults (draft/custom/table/internal/manual). Dashboard widget schema enforces width/height 1-12 and refresh_interval max 86400.
+- **API Routes** (10 route files under `api/v2/advanced-reports/`): Full CRUD for custom reports (GET/POST list, GET/PUT/DELETE by ID), report widgets (GET/POST list, PUT/DELETE by ID), dashboards (GET/POST list, GET/PUT/DELETE by ID), dashboard widgets (GET/POST list, PUT/DELETE by ID), and saved filters (GET/POST list, GET/PUT/DELETE by ID).
+- **Tests** (`tests/acceptance/39-advanced-reporting.acceptance.test.ts`): 77 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core data model and CRUD only. No report rendering engine, no PDF/Excel/CSV/Word export, no scheduled delivery, no AI narrative generation, no cross-project benchmarking, no branding/logo, no client-facing report portal, no drag-and-drop builder UI, no custom SQL queries, no data freshness timestamps. Those require external services (PDF generation, email delivery, LLM API) and cross-module data aggregation queries.
+2. **5 V1 tables, deferring 5 spec tables**: Built custom_reports, custom_report_widgets, report_dashboards, dashboard_widgets, saved_filters. Deferred: report_branding (needs file upload/storage), report_schedules (needs cron/email), report_deliveries (needs email service), report_exports (needs PDF/Excel engine), benchmark_data (needs cross-tenant data).
+3. **Named custom_reports (not report_templates)**: The spec uses "report_templates" but Module 19 (Financial Reporting) already has report_definitions. V1 uses custom_reports to clearly distinguish between the standard report system (Module 19) and the custom builder (Module 39).
+4. **Widget-based composition**: Reports and dashboards both use a widget model. Report widgets define the data visualizations within a report. Dashboard widgets can optionally link to a custom_report via report_id (SET NULL on delete).
+5. **Soft delete on custom_reports and report_dashboards**: User-facing entities use soft delete (deleted_at). Child widget tables use CASCADE delete from parent since they have no independent lifecycle.
+6. **Saved filters are hard-deletable**: Filters are utility configurations without audit requirements. They can be cleanly removed.
+7. **company_id on all tables**: Even child tables (custom_report_widgets, dashboard_widgets) carry company_id for direct RLS isolation.
+8. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 39 tables yet.
+
+---
+
+## 2026-02-23: Module 40 — Mobile App V1 Foundation
+
+### Why
+Module 40 is the mobile app infrastructure for Phase 5 (Full Platform). Mobile is a primary interface for field personnel -- superintendents, foremen, and laborers use mobile devices daily for time tracking, daily logs, photo documentation, punch list inspections, and safety observations. This V1 builds the backend support tables for mobile features: device registration, push notification token management, offline sync queue, per-user mobile preferences, and session management. No React Native code, no offline-first client, no PWA service worker -- those are V2 features. V1 provides the server-side data model that the mobile client will consume.
+
+### What was built
+- **Migration** (`20260224300012_mobile_app.sql`): 5 tables with RLS, 36+ indexes, CHECK constraints, updated_at triggers, FK CASCADE on child tables, UNIQUE constraint on settings (company_id, user_id). mobile_devices is the core table with 3 platforms and soft delete. push_notification_tokens and mobile_sessions CASCADE from mobile_devices deletion. offline_sync_queue has priority-based ordering with partial index on pending items. mobile_app_settings stores per-user preferences with sensible defaults.
+- **Types** (`types/mobile-app.ts`): 9 type unions (DevicePlatform 3 values, DeviceStatus 3, SyncStatus 5, SyncAction 3, NotificationProvider 3, PhotoQuality 3, GpsAccuracy 3, AppTheme 3, SessionStatus 3), 5 interfaces, 9 constant arrays with value/label pairs.
+- **Validation** (`lib/validation/schemas/mobile-app.ts`): 9 enum schemas, 16 CRUD schemas. createMobileDeviceSchema requires user_id and device_name. createSyncQueueItemSchema enforces priority 1-10 and max_retries 1-20. updateMobileSettingsSchema validates quiet_hours with HH:MM regex and offline_storage_limit_mb 50-10000 range.
+- **API Routes** (10 route files under `api/v2/mobile/`): Devices CRUD (GET/POST list, GET/PUT/DELETE by ID), Push Tokens CRUD (GET/POST list, GET/PUT/DELETE by ID), Sync Queue CRUD (GET/POST list, GET/PUT/DELETE by ID), Settings (GET/PUT upsert), Sessions CRUD (GET/POST list, GET/PUT/DELETE by ID, POST revoke).
+- **Tests** (`tests/acceptance/40-mobile-app.acceptance.test.ts`): 80 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Backend support tables only. No React Native / Capacitor / PWA code. No offline-first IndexedDB architecture. No service worker. No camera/GPS/barcode integration. No voice-to-text. No deep linking. Those are V2+ features requiring client-side mobile development.
+2. **5 V1 tables, mapping to spec**: Built mobile_devices (maps to spec's device_registrations), push_notification_tokens (new, FCM/APNs token management), offline_sync_queue (maps to spec's offline_sync_queue), mobile_app_settings (new, per-user preferences), mobile_sessions (new, multi-device session tracking). Deferred: user_locations (GPS tracking), cached_project_data (offline bundles), sync_conflicts (conflict resolution UI), notification_preferences (handled by Module 5).
+3. **Soft delete on devices only**: mobile_devices uses soft delete + status=revoked (supports remote wipe scenario from spec Edge Case 2). push_notification_tokens and mobile_sessions CASCADE from device deletion. offline_sync_queue uses hard delete (transient processing records). mobile_app_settings has no delete (one per user, upsert only).
+4. **Settings upsert pattern**: GET returns defaults if no record exists (avoids requiring initialization). PUT creates-or-updates using existence check. UNIQUE(company_id, user_id) prevents duplicates.
+5. **Session revoke as separate endpoint**: POST /sessions/:id/revoke is distinct from DELETE (which expires). Revoke is a security action (lost/stolen device), expire is a normal session end. Both validate active-only (409 on inactive).
+6. **Priority-based sync queue**: Queue items have priority 1-10 (lower = higher priority). The spec requires time-critical items (clock in/out) to sync first. The queue is sorted by priority ASC, created_at ASC, with a partial index on pending items for efficient dequeuing.
+7. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 40 tables yet.
+
+---
+
+## 2026-02-23: Module 30 — Vendor Portal V1 Foundation
+
+### Why
+Module 30 is the vendor self-service portal for Phase 5 (Full Platform). This is a key platform differentiator that shifts data entry and document management to vendors while giving them real-time visibility into payment status and schedules. V1 builds the core data model for portal configuration, vendor invitations, granular access control, document submissions (invoices, lien waivers, insurance certs, W-9s, schedule updates, daily reports), and builder-vendor messaging with threading.
+
+### What was built
+- **Migration** (`20260224300002_vendor_portal.sql`): 5 tables (vendor_portal_settings, vendor_portal_invitations, vendor_portal_access, vendor_submissions, vendor_messages) with RLS, 35+ indexes, updated_at triggers, CHECK constraints, UNIQUE constraints, and soft delete.
+- **Types** (`types/vendor-portal.ts`): 5 type unions, 5 interfaces, 5 constant arrays.
+- **Validation** (`lib/validation/schemas/vendor-portal.ts`): 5 enum schemas, 19 CRUD/workflow schemas.
+- **API Routes** (13 route files under `api/v2/vendor-portal/`): Settings (GET/POST/PUT), Invitations (GET/POST list, GET/PUT/DELETE by ID, POST revoke), Access (GET/POST list, GET/PUT/DELETE by ID), Submissions (GET/POST list, GET/PUT/DELETE by ID, POST submit, POST review), Messages (GET/POST list, GET/PUT/DELETE by ID, POST mark-read).
+- **Tests** (`tests/acceptance/30-vendor-portal.acceptance.test.ts`): 73 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core data model, portal config, invitation system, access control, document submissions, and messaging only. No vendor self-registration flow, no bid response submission, no schedule calendar, no PO dashboard, no invoice-against-PO creation, no lien waiver e-signature, no daily log form, no compliance document manager, no punch item viewer, no onboarding wizard. Those require Modules 7 (Scheduling), 8 (Daily Logs), 10 (Vendors), 14 (Lien Waivers), 18 (POs), 20 (Estimating), 26 (Bids), 28 (Punch List).
+2. **5 V1 tables, skipping spec tables**: Built vendor_portal_settings, vendor_portal_invitations, vendor_portal_access, vendor_submissions, vendor_messages. Deferred from spec: vendor_portal_accounts, vendor_builder_relationships, vendor_portal_users, vendor_compliance_documents, vendor_invoices, vendor_lien_waivers, vendor_daily_logs, vendor_schedule_acknowledgments. Those complex tables require multiple dependent modules.
+3. **company_id on all tables**: Multi-tenant isolation via company_id + RLS. The spec uses builder_id but company_id is the RossOS convention.
+4. **Granular boolean permissions on vendor_portal_access**: 7 individual permission flags (can_submit_invoices, can_submit_lien_waivers, etc.) provide fine-grained control over what each vendor can do. The access_level (full/limited/readonly) serves as a quick preset.
+5. **Submission as generic document container**: vendor_submissions uses submission_type enum to handle invoices, lien waivers, insurance certs, W-9s, schedule updates, and daily reports through a single table with JSONB metadata. V2 will add dedicated tables for complex submission types.
+6. **Message threading via parent_message_id**: Self-referencing FK on vendor_messages enables conversation threads. The direction field distinguishes builder-to-vendor vs vendor-to-builder messages.
+7. **Invitation token generation**: Tokens are server-generated UUIDs for security. Configurable expiration (1-90 days, default 30). Only pending invitations can be revoked.
+8. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 30 tables yet.
+
+---
+
+## 2026-02-23: Module 37 — Marketing & Portfolio V1 Foundation
+
+### Why
+Module 37 is the marketing and portfolio system for Phase 5 (Full Platform). Builders need tools to transform their completed project data into marketing assets -- curated portfolio pages, photo galleries, client testimonials, and campaign tracking with ROI measurement. This module bridges internal project data with external-facing marketing. V1 builds the core data model for 5 tables, type system, validation schemas, CRUD API routes, and acceptance tests.
+
+### What was built
+- **Migration** (`20260224300009_marketing.sql`): 5 tables (portfolio_projects, portfolio_photos, client_reviews, marketing_campaigns, campaign_contacts) with RLS, 40+ indexes, updated_at triggers, CHECK constraints, and soft delete on portfolio_projects.
+- **Types** (`types/marketing.ts`): 7 type unions (ProjectShowcaseStatus 4 values, PhotoType 6 values, ReviewStatus 4 values, ReviewSource 7 values, CampaignStatus 5 values, CampaignType 6 values, ContactStatus 6 values), 5 interfaces, 7 constant arrays.
+- **Validation** (`lib/validation/schemas/marketing.ts`): 7 enum schemas, 15 CRUD schemas covering all operations.
+- **API Routes** (7 route files under `api/v2/marketing/`): Portfolio CRUD with photos, Reviews CRUD, Campaigns CRUD with contacts.
+- **Tests** (`tests/acceptance/37-marketing.acceptance.test.ts`): 78 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core data model and CRUD only. No case study generation, no referral tracking, no review monitoring aggregation, no social media scheduling, no SEO tracking, no content performance analytics, no public portfolio URL, no AI-assisted content generation, no photo editing/watermarking, no video/virtual tour embeds. Those require Modules 5 (Notifications), 6 (Documents), 36 (CRM), external API integrations (Google, Houzz), and AI services.
+2. **5 V1 tables, skipping 7 spec tables**: Built portfolio_projects, portfolio_photos, client_reviews, marketing_campaigns, campaign_contacts. Deferred: portfolio_settings (public portfolio config), case_studies (case study content), testimonials/review_requests (spec uses different names, V1 uses client_reviews for simplicity), referrals (referral tracking), social_posts (social media scheduling). These can be added independently.
+3. **client_reviews instead of spec's testimonials + review_requests**: The spec defines separate testimonials and review_requests tables. V1 consolidates into a single client_reviews table that covers the full lifecycle (requested -> submitted -> approved -> published). Splitting into separate tables would add complexity without V1 value.
+4. **7 review sources (Gap 916)**: Added yelp, bbb, angi to the spec's original google/houzz/facebook/platform to support the reputation monitoring requirement from Gap 916.
+5. **Portfolio project enrichment**: Added square_footage, bedrooms, bathrooms, build_duration_days, completion_date, location, custom_features beyond the spec's basic fields. These support the portfolio showcase display requirements without needing a linked job record.
+6. **Soft delete on portfolio_projects only**: Portfolio projects use soft delete since they represent published marketing content. Photos CASCADE from projects. Reviews and campaigns don't have soft delete -- they can be status-transitioned (rejected, cancelled) instead.
+7. **Campaign ROI tracking**: Added actual_spend alongside budget for real spend tracking, and leads_generated/proposals_sent/contracts_won/contract_value_won for funnel metrics per Gap 911/1062.
+8. **Contact status auto-timestamps**: PUT on campaign contacts auto-sets sent_at/opened_at/clicked_at/converted_at based on status transitions, avoiding manual timestamp management.
+9. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 37 tables yet.
+
+---
+
+## 2026-02-23: Module 33 — Safety & Compliance V1 Foundation
+
+### Why
+Module 33 is the safety and compliance system for Phase 5 (Full Platform). Construction is one of the most dangerous industries -- OSHA requires builders to track incidents, conduct regular safety inspections, and hold toolbox talks (safety meetings). This V1 builds the core data model for incident reporting, site safety inspections with checklist items, and toolbox talks with attendance tracking. No OSHA API integration, no compliance document management, no safety training tracking, no automated hazard detection, no EMR (Experience Modification Rate) calculations -- those are V2+ features.
+
+### What was built
+- **Migration** (`20260224300005_safety.sql`): 5 tables (safety_incidents, safety_inspections, safety_inspection_items, toolbox_talks, toolbox_talk_attendees) with RLS, 30+ indexes, updated_at triggers.
+- **Types** (`types/safety.ts`): 7 type unions, 5 interfaces, 7 constant arrays.
+- **Validation** (`lib/validation/schemas/safety.ts`): 7 enum schemas, 16 CRUD/workflow schemas.
+- **API Routes** (11 route files under `api/v2/safety/`): Full CRUD for incidents, inspections + items, toolbox talks + attendees. Workflow transitions: complete inspection, complete talk.
+- **Tests** (`tests/acceptance/33-safety.acceptance.test.ts`): 76 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core CRUD and simple workflow transitions only. No OSHA API integration (300/300A forms, electronic filing), no compliance document management, no safety training/certification tracking, no automated hazard detection from daily logs/photos, no EMR calculations, no safety analytics dashboards, no drug/alcohol testing records, no JSA/JHA (Job Safety Analysis/Job Hazard Analysis) forms, no confined space permits, no hot work permits.
+2. **5 V1 tables**: Built safety_incidents, safety_inspections, safety_inspection_items, toolbox_talks, toolbox_talk_attendees. Deferred: safety_certifications, safety_training_records, osha_logs, hazard_reports, safety_permits, safety_documents, corrective_action_plans.
+3. **8 incident types (OSHA "Focus Four" + 4 more)**: fall, struck_by, caught_in, electrical are the OSHA "Fatal Four" categories. Added chemical, heat, vehicle, other to cover the full spectrum of construction hazards.
+4. **5 incident severities**: near_miss through fatal, matching OSHA severity classification. Near-miss tracking is critical for preventing future incidents (Heinrich's Triangle).
+5. **OSHA recordability fields on incidents**: osha_recordable, osha_report_number, lost_work_days, restricted_days, medical_treatment fields enable OSHA 300 log compliance even without the automated form generation.
+6. **Inspection completion sets status based on result**: When completing an inspection, `result: 'fail'` automatically sets `status: 'failed'` while pass/conditional set `status: 'completed'`.
+7. **Toolbox talks have no soft delete**: Talks are lightweight meeting records that don't require archival. Attendees CASCADE delete from parent talk.
+8. **Soft delete on incidents and inspections**: Both are legal compliance documents that may be referenced in OSHA investigations or insurance claims.
+9. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 33 tables yet.
+
+---
+
+## 2026-02-23: Module 35 — Equipment & Asset Management V1 Foundation
+
+### Why
+Module 35 is the equipment and asset management system for Phase 5 (Full Platform). Construction companies need to track their equipment inventory (from heavy machinery to hand tools), manage maintenance schedules, record pre-use inspections, assign equipment to jobs/crews, and track all equipment-related costs. This V1 builds the core data model, type system, validation schemas, CRUD API routes, and acceptance tests. Advanced features (GPS tracking, geofencing, depreciation calculations, rent-vs-own analysis, QR codes, telematics integration, checkout/check-in workflow) are V2+.
+
+### What was built
+- **Migration** (`20260224300007_equipment.sql`): 5 tables (equipment, equipment_assignments, equipment_maintenance, equipment_inspections, equipment_costs) with RLS, 35 indexes, updated_at triggers, CHECK constraints, and soft delete on equipment.
+- **Types** (`types/equipment.ts`): 9 type unions (EquipmentStatus 5, EquipmentType 8, OwnershipType 3, MaintenanceType 4, MaintenanceStatus 5, AssignmentStatus 3, InspectionType 4, InspectionResult 3, CostType 6), 5 interfaces, 9 constant arrays.
+- **Validation** (`lib/validation/schemas/equipment.ts`): 9 enum schemas, 15 CRUD schemas covering all entities.
+- **API Routes** (10 route files under `api/v2/equipment/`): Full CRUD for equipment (GET/POST list, GET/PUT/DELETE by ID), assignments (GET/POST per equipment, GET/PUT/DELETE by ID), maintenance (GET/POST per equipment, GET/PUT/DELETE by ID), inspections (GET/POST per equipment, GET/PUT/DELETE by ID), and costs (GET/POST per equipment, GET/PUT/DELETE by ID).
+- **Tests** (`tests/acceptance/35-equipment.acceptance.test.ts`): 81 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core CRUD only. No GPS/geofencing, no depreciation calculations, no rent-vs-own analysis, no QR code generation, no telematics integration, no checkout/check-in workflow, no bulk import, no utilization analytics, no idle alerts. Those require external integrations (GPS providers, barcode libraries) and business logic engines.
+2. **5 V1 tables, skipping spec tables**: Built equipment, equipment_assignments, equipment_maintenance, equipment_inspections, equipment_costs. Deferred from spec: equipment_deployments (combined into assignments), equipment_maintenance_schedules (combined into maintenance table), equipment_hour_readings, equipment_rentals, equipment_gps_locations, equipment_geofences, equipment_checkouts, equipment_depreciation.
+3. **Simplified equipment_type values**: The spec uses generic categories. V1 uses 8 values covering the spec's asset categories: heavy_machinery, vehicle, power_tool, hand_tool, scaffolding, safety_equipment, measuring, other.
+4. **Soft delete on equipment only**: Equipment uses soft delete (deleted_at) since it has financial and audit implications. Child tables (assignments, maintenance, inspections, costs) CASCADE from equipment.
+5. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 35 tables yet.
+6. **company_id (not builder_id)**: The spec uses builder_id but the RossOS convention uses company_id for multi-tenancy.
+7. **Costs separate from assignments**: Equipment costs are tracked independently from assignments because costs can occur even when equipment is not assigned to a job (e.g., insurance, maintenance while idle).
+
+---
+
+## 2026-02-23: Module 31 — Warranty & Home Care V1 Foundation
+
+### Why
+Module 31 is the warranty and home care system for Phase 5 (Full Platform). Warranty management is a critical post-construction workflow -- builders need to track warranty coverage per job/item/vendor, manage claims from homeowners, assign repairs to vendors, track resolution costs, and maintain preventive maintenance schedules. This V1 builds the core data model (5 tables), type system, validation schemas, CRUD + workflow API routes (11 route files), and acceptance tests (76 tests). The full features (homeowner portal, IoT integrations, warranty transfer automation, maintenance reminders, vendor warranty scorecard, predictive maintenance, digital warranty books) will be added in V2+.
+
+### What was built
+- **Migration** (`20260224300003_warranty.sql`): 5 tables with RLS, 35+ indexes, CHECK constraints, updated_at triggers, and FK CASCADE on child tables. warranties stores coverage per job with 9 warranty types, 4 statuses, vendor/contact info, and transfer tracking. warranty_claims tracks claims with 6 statuses, 4 priorities, resolution tracking, and photo JSONB. warranty_claim_history provides immutable audit trail with 9 action types. maintenance_schedules defines recurring maintenance with 5 frequencies and is_active flag. maintenance_tasks stores individual task instances with completion tracking.
+- **Types** (`types/warranty.ts`): 7 type unions (WarrantyStatus 4, WarrantyType 9, ClaimStatus 6, ClaimPriority 4, ClaimHistoryAction 9, MaintenanceFrequency 5, TaskStatus 5), 5 interfaces, 7 constant arrays.
+- **Validation** (`lib/validation/schemas/warranty.ts`): 7 enum schemas, 16 CRUD/workflow schemas covering warranties, claims, claim history, maintenance schedules, maintenance tasks, resolve, and complete operations.
+- **API Routes** (11 route files under `api/v2/warranties/` and `api/v2/maintenance-schedules/`): Full CRUD for warranties (list, create, get, update, soft delete), claims (list, create, get, update, soft delete, resolve with history), claim history (list), maintenance schedules (list, create, get, update, soft delete), tasks (list, create, get, update, hard delete, complete with status validation).
+- **Tests** (`tests/acceptance/31-warranty.acceptance.test.ts`): 76 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core CRUD and simple workflows only. No homeowner self-service portal, no IoT sensor integration, no warranty transfer automation, no automated maintenance reminders/notifications, no vendor warranty performance scorecard, no predictive maintenance AI, no digital warranty book PDF generation, no warranty cost analytics. Those require Modules 5 (Notifications), 6 (Documents), 10 (Vendors), 12/29 (Client Portal), 22 (Vendor Performance), and external IoT/AI services.
+2. **5 V1 tables, skipping V2 tables**: Built warranties, warranty_claims, warranty_claim_history, maintenance_schedules, maintenance_tasks. Deferred: warranty_documents (needs Module 6), warranty_transfers (automated transfer workflow), warranty_inspections (pre-expiration inspections), maintenance_photos, maintenance_cost_history, homeowner_requests (needs Module 29 portal), warranty_templates (builder templates).
+3. **9 warranty types**: structural, mechanical, electrical, plumbing, hvac, roofing, appliance, general, workmanship. Covers all major construction warranty categories.
+4. **6 claim statuses**: submitted, acknowledged, in_progress, resolved, denied, escalated. Simplified from the spec's full workflow. V2 will add reopened as a status (currently tracked in history only).
+5. **9 claim history actions**: created, acknowledged, assigned, in_progress, resolved, denied, escalated, reopened, note_added. More granular than the claim statuses to capture all audit events.
+6. **Maintenance tasks use hard delete**: Tasks are transient scheduling records generated from schedules. They can be safely deleted without audit concerns. Schedules themselves use soft delete.
+7. **Resolve endpoint validates not already resolved/denied (409)**: Prevents double-resolution and maintains data integrity. Once resolved, claims can only be reopened via a direct status update.
+8. **Complete endpoint validates not already completed/skipped (409)**: Prevents duplicate completion entries and maintains the completed_at/completed_by audit trail.
+9. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 31 tables yet.
+
+---
+
+## 2026-02-23: Module 29 — Full Client Portal V1 Foundation
+
+### Why
+Module 29 is the full client portal for Phase 5 (Full Platform). It extends the basic client portal (Module 12) into a premium experience with approval workflows, enhanced messaging, client invitations, and payment tracking. The full client portal is a competitive differentiator for builders -- it provides clients with real-time project visibility, financial transparency, selection management, and a centralized communication hub. V1 builds the core data model and CRUD API routes; advanced features (e-signature, real-time budget/schedule dashboards, photo gallery, warranty requests, satisfaction surveys, AI client updates) are V2+.
+
+### What was built
+- **Migration** (`20260224300001_full_client_portal.sql`): 5 tables (client_portal_settings, client_portal_invitations, client_approvals, client_messages, client_payments) with RLS, 35+ indexes, updated_at triggers, CHECK constraints, and soft delete on invitations/approvals/messages/payments.
+- **Types** (extended `types/client-portal.ts`): 9 new type unions, 5 new interfaces, 9 new constant arrays -- all appended to existing Module 12 types without breaking changes.
+- **Validation** (extended `lib/validation/schemas/client-portal.ts`): 9 new enum schemas, 12 new CRUD schemas -- all appended to existing Module 12 schemas.
+- **API Routes** (9 route files under `api/v2/client-portal/`): Settings (GET/PUT), Invitations (GET/POST list, GET/PUT/DELETE by ID), Approvals (GET/POST list, GET/PUT by ID), Messages (GET/POST list, GET/PUT by ID), Payments (GET/POST list, GET by ID).
+- **Tests** (`tests/acceptance/29-client-portal.acceptance.test.ts`): 81 pure function tests -- all passing.
+
+### Design decisions
+1. **V1 scope**: Core data model and CRUD only. No e-signature integration (DocuSign/HelloSign), no real-time budget/schedule dashboards, no curated photo gallery, no warranty request submission, no satisfaction surveys, no AI client update generation, no engagement analytics, no custom domain routing, no payment processing. Those require Modules 6 (Documents), 7 (Scheduling), 9 (Budget), 15 (Draws), 21 (Selections), 27 (Warranty), 31 (Warranty & Home Care), and external service integrations.
+2. **5 V1 tables, extending Module 12**: Built client_portal_settings (company-level config), client_portal_invitations (client access management), client_approvals (multi-type approval engine), client_messages (enhanced messaging with topic/category/external logging), client_payments (payment records without processing). Deferred: client_gallery_photos, warranty_requests, client_engagement_analytics, client_message_threads, client_satisfaction_surveys.
+3. **company_id on all tables (not builder_id)**: The spec uses builder_id but the RossOS convention uses company_id for multi-tenancy. All RLS policies use `company_id = get_current_company_id()`.
+4. **Extended existing Module 12 files**: Types and validation schemas were appended to the existing `client-portal.ts` files rather than creating new files, preserving backward compatibility with Module 12 code.
+5. **Settings as upsert**: Portal settings use UNIQUE(company_id) and the PUT endpoint performs an upsert, creating the settings record on first save. This avoids requiring a separate initialization step.
+6. **Invitation token generation**: Tokens are generated server-side using `crypto.randomUUID()`. Expiration is calculated from configurable `expires_in_days` (default 7, max 90).
+7. **Approval status transitions**: Only pending approvals can be approved/rejected (409 for invalid transitions). The responded_at timestamp is auto-set on approve/reject. Signature data (data/IP/hash) is stored but not validated -- V2 will add e-signature verification.
+8. **Enhanced messaging**: Messages support thread_id for conversation grouping, category for topic organization, external logging for non-portal communication (phone/text/email), and read_at tracking. This is separate from Module 12's basic portal_messages table.
+9. **Payment records only**: client_payments stores payment records for audit and visibility. No payment processing, no Stripe/Square integration, no automated draw-to-payment linking. Payment status transitions are manual (V2 will add processing integration).
+10. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 29 tables yet.
+
+---
+
 ## 2026-02-23: Module 27 — RFI Management V1 Foundation
 
 ### Why
