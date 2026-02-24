@@ -1,5 +1,53 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Module 05: Notification Engine (2026-02-24)
+
+### API Routes (6 endpoints at /api/v2/notifications/)
+- `GET /` — List notifications with pagination, filter by category/urgency/read status
+- `POST /` — Emit notification (admin-only), creates records + in-app delivery
+- `PUT /[id]` — Mark single notification read/unread
+- `DELETE /[id]` — Archive notification (soft delete)
+- `GET /preferences` — User's category×channel preference matrix
+- `PUT /preferences` — Update preferences (upsert on user_id, company_id, category, channel)
+- `GET /settings` — Quiet hours, digest mode, timezone
+- `PUT /settings` — Update settings (upsert on user_id, company_id)
+- `GET /unread-count` — Unread count for bell badge
+- `PUT /read-all` — Bulk mark all as read
+
+### Notification Bell (`components/notifications/notification-bell.tsx`)
+- Bell icon with unread badge count
+- Dropdown panel: latest 20 notifications with infinite scroll
+- Category icons: DollarSign (financial), Calendar (schedule), FileText (documents), HardHat (field_ops), Shield (approvals), Settings (system)
+- Urgency color coding: low=muted, normal=blue, high=amber, critical=red
+- Time-ago formatter ("just now", "5m ago", "2h ago", "3d ago")
+- Click notification → navigate via url_path
+- Actions: mark read, mark all read, archive/dismiss
+
+### React Query Hook (`hooks/use-notifications.ts`)
+- Polling: 30s unread count, 60s notifications list
+- Mutations: markAsRead, markAllAsRead, archiveNotification
+- Query cache invalidation on mutation success
+
+### Service (`lib/notifications/service.ts`)
+- `emitNotification(options)` — creates notification + in-app delivery records
+- Idempotency: key = `${eventType}:${entityId}:${userId}:${minuteWindow}`
+- `NOTIFICATION_CATEGORIES` — 6 categories with labels and default channels
+- `NOTIFICATION_CHANNELS` — 4 channels (in_app, email, sms, push)
+
+### Zod Schemas (`lib/validation/schemas/notifications.ts`)
+- `listNotificationsSchema`, `updatePreferencesSchema`, `updateSettingsSchema`, `emitNotificationSchema`
+- Enum schemas: urgency (4), category (6), channel (4), digest frequency (3)
+
+### DB Tables (migration applied)
+- `notification_event_types` — 16 seeded event types
+- `company_notification_config` — per-company overrides
+- `user_notification_preferences` — category×channel matrix
+- `user_notification_settings` — quiet hours, digest, timezone
+- `notifications` — individual records with idempotency
+- `notification_deliveries` — per-channel delivery tracking
+
+---
+
 ## Phase 0D: Code Quality Hardening (2026-02-24)
 
 ### database.ts — Generated Types (Replaced Manual)

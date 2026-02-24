@@ -1,5 +1,26 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Module 05 — Notification Engine
+
+### Why
+Notification Engine is a cross-cutting concern — every module emits events through it. Queue position #5 (after Module 03, before Module 04). All dependencies met (Module 01 + 02 done).
+
+### What was built
+Module 05 was already fully scaffolded from previous Phase 4-6 bulk commits:
+- 6 API routes: GET/POST notifications, PUT/DELETE [id], preferences GET/PUT, settings GET/PUT, unread-count GET, read-all PUT
+- Notification service (`lib/notifications/service.ts`) with `emitNotification()`, idempotency keys, category/channel constants
+- Zod validation schemas for all endpoints
+- Notification bell component with dropdown UI
+- React Query hook with polling (30s unread count, 60s notifications)
+- All 27 acceptance tests already passing
+
+### Design decisions
+- Marked UI as `partial` — bell component exists but full notification center page and admin config UI not yet wired
+- External channels (email/SMS/push) scaffolded in types but delivery adapters not built — will be added when external providers (SendGrid, Twilio) are configured
+- Storm protection and digest batching logic not yet implemented — types and schemas ready
+
+---
+
 ## 2026-02-24: Module 03 — Core Data Model
 
 ### Why
