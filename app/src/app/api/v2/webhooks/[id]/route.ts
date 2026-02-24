@@ -1,0 +1,156 @@
+/**
+ * Webhook by ID — Get, Update, Delete (Soft)
+ *
+ * GET    /api/v2/webhooks/:id — Get webhook subscription
+ * PUT    /api/v2/webhooks/:id — Update webhook
+ * DELETE /api/v2/webhooks/:id — Soft delete webhook
+ */
+
+import { type NextRequest, NextResponse } from 'next/server'
+
+import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { updateWebhookSchema } from '@/lib/validation/schemas/api-marketplace'
+
+// ============================================================================
+// GET /api/v2/webhooks/:id
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req: NextRequest, ctx: ApiContext) => {
+    const segments = req.nextUrl.pathname.split('/')
+    const id = segments[segments.length - 1]
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing webhook ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const supabase = await createClient()
+
+    const { data, error } = await (supabase
+      .from('webhook_subscriptions') as any)
+      .select('*')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (error || !data) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Webhook not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// PUT /api/v2/webhooks/:id
+// ============================================================================
+
+export const PUT = createApiHandler(
+  async (req: NextRequest, ctx: ApiContext) => {
+    const segments = req.nextUrl.pathname.split('/')
+    const id = segments[segments.length - 1]
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing webhook ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const body = await req.json()
+    const parseResult = updateWebhookSchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid update data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+    const supabase = await createClient()
+
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
+    if (input.url !== undefined) updates.url = input.url
+    if (input.events !== undefined) updates.events = input.events
+    if (input.description !== undefined) updates.description = input.description
+    if (input.status !== undefined) updates.status = input.status
+    if (input.max_retries !== undefined) updates.max_retries = input.max_retries
+
+    const { data, error } = await (supabase
+      .from('webhook_subscriptions') as any)
+      .update(updates)
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .select('*')
+      .single()
+
+    if (error || !data) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Webhook not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// DELETE /api/v2/webhooks/:id — Soft delete
+// ============================================================================
+
+export const DELETE = createApiHandler(
+  async (req: NextRequest, ctx: ApiContext) => {
+    const segments = req.nextUrl.pathname.split('/')
+    const id = segments[segments.length - 1]
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing webhook ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const supabase = await createClient()
+
+    const { data: existing } = await (supabase
+      .from('webhook_subscriptions') as any)
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Webhook not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    const { error } = await (supabase
+      .from('webhook_subscriptions') as any)
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)

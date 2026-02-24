@@ -1,5 +1,327 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Module 47: Training & Certification Platform
+
+### Acceptance Tests (95 tests in `tests/acceptance/47-training.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | CourseType has 4 values | PASS |
+| **Types** | Difficulty has 3 values | PASS |
+| **Types** | TrainingStatus has 3 values | PASS |
+| **Types** | PathItemType has 3 values | PASS |
+| **Types** | CertificationLevel has 3 values | PASS |
+| **Types** | TrainingCourse interface has all required fields | PASS |
+| **Types** | TrainingPath interface has all required fields | PASS |
+| **Types** | TrainingPathItem interface has all required fields | PASS |
+| **Types** | UserTrainingProgress interface has all required fields | PASS |
+| **Types** | UserCertification interface has all required fields | PASS |
+| **Constants** | COURSE_TYPES has 4 entries with value and label | PASS |
+| **Constants** | COURSE_TYPES includes all expected values | PASS |
+| **Constants** | DIFFICULTIES has 3 entries with value and label | PASS |
+| **Constants** | DIFFICULTIES includes all expected values | PASS |
+| **Constants** | TRAINING_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | TRAINING_STATUSES includes all expected values | PASS |
+| **Constants** | PATH_ITEM_TYPES has 3 entries with value and label | PASS |
+| **Constants** | PATH_ITEM_TYPES includes all expected values | PASS |
+| **Constants** | CERTIFICATION_LEVELS has 3 entries with value and label | PASS |
+| **Constants** | CERTIFICATION_LEVELS includes all expected values | PASS |
+| **Enums** | courseTypeEnum accepts all 4 types | PASS |
+| **Enums** | courseTypeEnum rejects invalid type | PASS |
+| **Enums** | difficultyEnum accepts all 3 difficulties | PASS |
+| **Enums** | difficultyEnum rejects invalid difficulty | PASS |
+| **Enums** | trainingStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | trainingStatusEnum rejects invalid status | PASS |
+| **Enums** | pathItemTypeEnum accepts all 3 types | PASS |
+| **Enums** | pathItemTypeEnum rejects invalid type | PASS |
+| **Enums** | certificationLevelEnum accepts 1, 2, 3 | PASS |
+| **Enums** | certificationLevelEnum rejects invalid level | PASS |
+| **Course Schemas** | listCoursesSchema accepts valid params | PASS |
+| **Course Schemas** | listCoursesSchema rejects limit > 100 | PASS |
+| **Course Schemas** | listCoursesSchema accepts all filters | PASS |
+| **Course Schemas** | listCoursesSchema preprocesses is_published boolean | PASS |
+| **Course Schemas** | createCourseSchema accepts valid course | PASS |
+| **Course Schemas** | createCourseSchema requires title | PASS |
+| **Course Schemas** | createCourseSchema rejects title > 255 chars | PASS |
+| **Course Schemas** | createCourseSchema accepts full course with all fields | PASS |
+| **Course Schemas** | createCourseSchema validates content_url format | PASS |
+| **Course Schemas** | createCourseSchema rejects duration_minutes > 9999 | PASS |
+| **Course Schemas** | updateCourseSchema accepts partial updates | PASS |
+| **Course Schemas** | updateCourseSchema accepts view_count | PASS |
+| **Course Schemas** | updateCourseSchema rejects negative view_count | PASS |
+| **Path Schemas** | listPathsSchema accepts valid params | PASS |
+| **Path Schemas** | listPathsSchema rejects limit > 100 | PASS |
+| **Path Schemas** | listPathsSchema accepts all filters | PASS |
+| **Path Schemas** | listPathsSchema preprocesses is_active boolean | PASS |
+| **Path Schemas** | createPathSchema accepts valid path | PASS |
+| **Path Schemas** | createPathSchema requires name | PASS |
+| **Path Schemas** | createPathSchema rejects name > 200 chars | PASS |
+| **Path Schemas** | createPathSchema accepts all optional fields | PASS |
+| **Path Schemas** | createPathSchema rejects estimated_hours > 9999 | PASS |
+| **Path Schemas** | updatePathSchema accepts partial updates | PASS |
+| **Path Item Schemas** | listPathItemsSchema accepts valid params with defaults | PASS |
+| **Path Item Schemas** | listPathItemsSchema rejects limit > 100 | PASS |
+| **Path Item Schemas** | createPathItemSchema accepts valid item | PASS |
+| **Path Item Schemas** | createPathItemSchema requires item_id as UUID | PASS |
+| **Path Item Schemas** | createPathItemSchema rejects missing item_id | PASS |
+| **Path Item Schemas** | createPathItemSchema accepts all fields | PASS |
+| **Path Item Schemas** | updatePathItemSchema accepts partial updates | PASS |
+| **Path Item Schemas** | updatePathItemSchema accepts item_type change | PASS |
+| **Progress Schemas** | listProgressSchema accepts valid params | PASS |
+| **Progress Schemas** | listProgressSchema rejects limit > 100 | PASS |
+| **Progress Schemas** | listProgressSchema accepts all filters | PASS |
+| **Progress Schemas** | listProgressSchema rejects invalid user_id format | PASS |
+| **Progress Schemas** | createProgressSchema accepts valid progress | PASS |
+| **Progress Schemas** | createProgressSchema requires user_id and item_id | PASS |
+| **Progress Schemas** | createProgressSchema rejects progress_pct > 100 | PASS |
+| **Progress Schemas** | createProgressSchema rejects negative progress_pct | PASS |
+| **Progress Schemas** | createProgressSchema accepts all fields | PASS |
+| **Progress Schemas** | createProgressSchema rejects invalid datetime format | PASS |
+| **Progress Schemas** | updateProgressSchema accepts partial updates | PASS |
+| **Progress Schemas** | updateProgressSchema accepts empty object | PASS |
+| **Progress Schemas** | updateProgressSchema rejects invalid status | PASS |
+| **Certification Schemas** | listCertificationsSchema accepts valid params | PASS |
+| **Certification Schemas** | listCertificationsSchema rejects limit > 100 | PASS |
+| **Certification Schemas** | listCertificationsSchema accepts all filters | PASS |
+| **Certification Schemas** | listCertificationsSchema preprocesses passed boolean | PASS |
+| **Certification Schemas** | listCertificationsSchema rejects invalid certification_level | PASS |
+| **Certification Schemas** | createCertificationSchema accepts valid certification | PASS |
+| **Certification Schemas** | createCertificationSchema requires user_id and certification_name | PASS |
+| **Certification Schemas** | createCertificationSchema rejects certification_name > 255 chars | PASS |
+| **Certification Schemas** | createCertificationSchema rejects passing_score > 100 | PASS |
+| **Certification Schemas** | createCertificationSchema rejects assessment_score > 100 | PASS |
+| **Certification Schemas** | createCertificationSchema rejects certification_level > 3 | PASS |
+| **Certification Schemas** | createCertificationSchema rejects certification_level < 1 | PASS |
+| **Certification Schemas** | createCertificationSchema rejects attempt_count > 999 | PASS |
+| **Certification Schemas** | createCertificationSchema accepts full certification with all fields | PASS |
+| **Certification Schemas** | createCertificationSchema validates certified_at datetime format | PASS |
+| **Certification Schemas** | createCertificationSchema rejects time_limit_minutes > 9999 | PASS |
+| **Certification Schemas** | updateCertificationSchema accepts partial updates | PASS |
+| **Certification Schemas** | updateCertificationSchema accepts empty object | PASS |
+| **Certification Schemas** | updateCertificationSchema accepts certification_level change | PASS |
+| **Certification Schemas** | updateCertificationSchema rejects invalid certification_level | PASS |
+| **Certification Schemas** | updateCertificationSchema accepts notes and description | PASS |
+
+---
+
+## Module 50: Marketing Website & Sales Pipeline
+
+### Acceptance Tests (102 tests in `tests/acceptance/50-marketing-website.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | LeadSource has 4 values | PASS |
+| **Types** | PipelineStage has 8 values | PASS |
+| **Types** | ReferralStatus has 4 values | PASS |
+| **Types** | BlogCategory has 4 values | PASS |
+| **Types** | ClosedReason has 5 values | PASS |
+| **Types** | MarketingLead interface has all required fields | PASS |
+| **Types** | MarketingReferral interface has all required fields | PASS |
+| **Types** | Testimonial interface has all required fields | PASS |
+| **Types** | CaseStudy interface has all required fields | PASS |
+| **Types** | BlogPost interface has all required fields | PASS |
+| **Constants** | LEAD_SOURCES has 4 entries with value and label | PASS |
+| **Constants** | LEAD_SOURCES includes all expected values | PASS |
+| **Constants** | PIPELINE_STAGES has 8 entries with value and label | PASS |
+| **Constants** | PIPELINE_STAGES includes all expected values | PASS |
+| **Constants** | REFERRAL_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | REFERRAL_STATUSES includes all expected values | PASS |
+| **Constants** | BLOG_CATEGORIES has 4 entries with value and label | PASS |
+| **Constants** | BLOG_CATEGORIES includes all expected values | PASS |
+| **Constants** | CLOSED_REASONS has 5 entries with value and label | PASS |
+| **Constants** | CLOSED_REASONS includes all expected values | PASS |
+| **Enums** | leadSourceEnum accepts all 4 sources | PASS |
+| **Enums** | leadSourceEnum rejects invalid source | PASS |
+| **Enums** | pipelineStageEnum accepts all 8 stages | PASS |
+| **Enums** | pipelineStageEnum rejects invalid stage | PASS |
+| **Enums** | referralStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | referralStatusEnum rejects invalid status | PASS |
+| **Enums** | blogCategoryEnum accepts all 4 categories | PASS |
+| **Enums** | blogCategoryEnum rejects invalid category | PASS |
+| **Enums** | closedReasonEnum accepts all 5 reasons | PASS |
+| **Enums** | closedReasonEnum rejects invalid reason | PASS |
+| **Lead Schemas** | listMarketingLeadsSchema accepts valid params | PASS |
+| **Lead Schemas** | listMarketingLeadsSchema rejects limit > 100 | PASS |
+| **Lead Schemas** | listMarketingLeadsSchema accepts all filters | PASS |
+| **Lead Schemas** | createMarketingLeadSchema accepts valid lead | PASS |
+| **Lead Schemas** | createMarketingLeadSchema requires name and email | PASS |
+| **Lead Schemas** | createMarketingLeadSchema rejects invalid email | PASS |
+| **Lead Schemas** | createMarketingLeadSchema rejects name > 255 chars | PASS |
+| **Lead Schemas** | createMarketingLeadSchema rejects close_probability > 100 | PASS |
+| **Lead Schemas** | createMarketingLeadSchema rejects negative deal_value | PASS |
+| **Lead Schemas** | createMarketingLeadSchema accepts full lead with all optional fields | PASS |
+| **Lead Schemas** | updateMarketingLeadSchema accepts partial updates | PASS |
+| **Lead Schemas** | updateMarketingLeadSchema accepts closed_reason and closed_at | PASS |
+| **Lead Schemas** | updateMarketingLeadSchema rejects invalid closed_at format | PASS |
+| **Lead Schemas** | updateMarketingLeadSchema accepts null closed_reason | PASS |
+| **Referral Schemas** | listMarketingReferralsSchema accepts valid params | PASS |
+| **Referral Schemas** | listMarketingReferralsSchema rejects limit > 100 | PASS |
+| **Referral Schemas** | listMarketingReferralsSchema accepts filters | PASS |
+| **Referral Schemas** | listMarketingReferralsSchema handles boolean preprocess for credit_applied | PASS |
+| **Referral Schemas** | createMarketingReferralSchema accepts valid referral | PASS |
+| **Referral Schemas** | createMarketingReferralSchema requires referral_code and referred_email | PASS |
+| **Referral Schemas** | createMarketingReferralSchema rejects referral_code > 20 chars | PASS |
+| **Referral Schemas** | createMarketingReferralSchema rejects invalid email | PASS |
+| **Referral Schemas** | createMarketingReferralSchema rejects negative credit | PASS |
+| **Referral Schemas** | createMarketingReferralSchema accepts all optional fields | PASS |
+| **Referral Schemas** | updateMarketingReferralSchema accepts partial updates | PASS |
+| **Referral Schemas** | updateMarketingReferralSchema accepts referred_company_id | PASS |
+| **Testimonial Schemas** | listTestimonialsSchema accepts valid params | PASS |
+| **Testimonial Schemas** | listTestimonialsSchema rejects limit > 100 | PASS |
+| **Testimonial Schemas** | listTestimonialsSchema accepts all filters | PASS |
+| **Testimonial Schemas** | listTestimonialsSchema handles boolean preprocess | PASS |
+| **Testimonial Schemas** | createTestimonialSchema accepts valid testimonial | PASS |
+| **Testimonial Schemas** | createTestimonialSchema requires contact_name and quote_text | PASS |
+| **Testimonial Schemas** | createTestimonialSchema rejects contact_name > 200 chars | PASS |
+| **Testimonial Schemas** | createTestimonialSchema validates rating range 1-5 | PASS |
+| **Testimonial Schemas** | createTestimonialSchema validates video_url format | PASS |
+| **Testimonial Schemas** | createTestimonialSchema accepts full testimonial with all fields | PASS |
+| **Testimonial Schemas** | createTestimonialSchema validates collected_at date format | PASS |
+| **Testimonial Schemas** | updateTestimonialSchema accepts partial updates | PASS |
+| **Testimonial Schemas** | updateTestimonialSchema accepts rating update | PASS |
+| **Testimonial Schemas** | updateTestimonialSchema rejects rating > 5 | PASS |
+| **Case Study Schemas** | listCaseStudiesSchema accepts valid params | PASS |
+| **Case Study Schemas** | listCaseStudiesSchema rejects limit > 100 | PASS |
+| **Case Study Schemas** | listCaseStudiesSchema accepts is_published filter | PASS |
+| **Case Study Schemas** | createCaseStudySchema accepts valid case study | PASS |
+| **Case Study Schemas** | createCaseStudySchema requires title and slug | PASS |
+| **Case Study Schemas** | createCaseStudySchema rejects title > 255 chars | PASS |
+| **Case Study Schemas** | createCaseStudySchema validates slug format | PASS |
+| **Case Study Schemas** | createCaseStudySchema rejects slug with uppercase | PASS |
+| **Case Study Schemas** | createCaseStudySchema accepts full case study | PASS |
+| **Case Study Schemas** | updateCaseStudySchema accepts partial updates | PASS |
+| **Case Study Schemas** | updateCaseStudySchema validates slug format | PASS |
+| **Case Study Schemas** | updateCaseStudySchema accepts metrics update | PASS |
+| **Case Study Schemas** | updateCaseStudySchema accepts tags update | PASS |
+| **Blog Post Schemas** | listBlogPostsSchema accepts valid params | PASS |
+| **Blog Post Schemas** | listBlogPostsSchema rejects limit > 100 | PASS |
+| **Blog Post Schemas** | listBlogPostsSchema accepts all filters | PASS |
+| **Blog Post Schemas** | listBlogPostsSchema rejects invalid category | PASS |
+| **Blog Post Schemas** | createBlogPostSchema accepts valid blog post | PASS |
+| **Blog Post Schemas** | createBlogPostSchema requires title and slug | PASS |
+| **Blog Post Schemas** | createBlogPostSchema rejects title > 255 chars | PASS |
+| **Blog Post Schemas** | createBlogPostSchema validates slug format | PASS |
+| **Blog Post Schemas** | createBlogPostSchema rejects slug with uppercase | PASS |
+| **Blog Post Schemas** | createBlogPostSchema validates featured_image URL | PASS |
+| **Blog Post Schemas** | createBlogPostSchema rejects meta_title > 200 chars | PASS |
+| **Blog Post Schemas** | createBlogPostSchema rejects meta_description > 500 chars | PASS |
+| **Blog Post Schemas** | createBlogPostSchema accepts full blog post with all fields | PASS |
+| **Blog Post Schemas** | updateBlogPostSchema accepts partial updates | PASS |
+| **Blog Post Schemas** | updateBlogPostSchema validates slug format | PASS |
+| **Blog Post Schemas** | updateBlogPostSchema accepts category update | PASS |
+| **Blog Post Schemas** | updateBlogPostSchema rejects invalid category | PASS |
+| **Blog Post Schemas** | updateBlogPostSchema accepts tags update | PASS |
+| **Blog Post Schemas** | updateBlogPostSchema accepts null featured_image | PASS |
+
+---
+
+## Module 46: Customer Support
+
+### Acceptance Tests (98 tests in `tests/acceptance/46-customer-support.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | TicketStatus has 6 values | PASS |
+| **Types** | TicketPriority has 4 values | PASS |
+| **Types** | TicketCategory has 8 values | PASS |
+| **Types** | TicketChannel has 4 values | PASS |
+| **Types** | SenderType has 3 values | PASS |
+| **Types** | ArticleStatus has 3 values | PASS |
+| **Types** | FeatureRequestStatus has 6 values | PASS |
+| **Types** | SupportTicket interface has all required fields | PASS |
+| **Types** | TicketMessage interface has all required fields | PASS |
+| **Types** | KbArticle interface has all required fields | PASS |
+| **Types** | FeatureRequest interface has all required fields | PASS |
+| **Types** | FeatureRequestVote interface has all required fields | PASS |
+| **Constants** | TICKET_STATUSES has 6 entries with value and label | PASS |
+| **Constants** | TICKET_STATUSES includes all expected values | PASS |
+| **Constants** | TICKET_PRIORITIES has 4 entries with value and label | PASS |
+| **Constants** | TICKET_PRIORITIES includes all expected values | PASS |
+| **Constants** | TICKET_CATEGORIES has 8 entries with value and label | PASS |
+| **Constants** | TICKET_CATEGORIES includes all expected values | PASS |
+| **Constants** | TICKET_CHANNELS has 4 entries with value and label | PASS |
+| **Constants** | TICKET_CHANNELS includes all expected values | PASS |
+| **Constants** | SENDER_TYPES has 3 entries with value and label | PASS |
+| **Constants** | SENDER_TYPES includes all expected values | PASS |
+| **Constants** | ARTICLE_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | ARTICLE_STATUSES includes all expected values | PASS |
+| **Constants** | FEATURE_REQUEST_STATUSES has 6 entries with value and label | PASS |
+| **Constants** | FEATURE_REQUEST_STATUSES includes all expected values | PASS |
+| **Enums** | ticketStatusEnum accepts all 6 statuses | PASS |
+| **Enums** | ticketStatusEnum rejects invalid status | PASS |
+| **Enums** | ticketPriorityEnum accepts all 4 priorities | PASS |
+| **Enums** | ticketPriorityEnum rejects invalid priority | PASS |
+| **Enums** | ticketCategoryEnum accepts all 8 categories | PASS |
+| **Enums** | ticketCategoryEnum rejects invalid category | PASS |
+| **Enums** | ticketChannelEnum accepts all 4 channels | PASS |
+| **Enums** | ticketChannelEnum rejects invalid channel | PASS |
+| **Enums** | senderTypeEnum accepts all 3 types | PASS |
+| **Enums** | senderTypeEnum rejects invalid type | PASS |
+| **Enums** | articleStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | articleStatusEnum rejects invalid status | PASS |
+| **Enums** | featureRequestStatusEnum accepts all 6 statuses | PASS |
+| **Enums** | featureRequestStatusEnum rejects invalid status | PASS |
+| **Tickets** | listTicketsSchema accepts valid params | PASS |
+| **Tickets** | listTicketsSchema rejects limit > 100 | PASS |
+| **Tickets** | listTicketsSchema accepts all filters | PASS |
+| **Tickets** | createTicketSchema accepts valid ticket | PASS |
+| **Tickets** | createTicketSchema requires ticket_number and subject | PASS |
+| **Tickets** | createTicketSchema rejects ticket_number > 30 chars | PASS |
+| **Tickets** | createTicketSchema rejects subject > 255 chars | PASS |
+| **Tickets** | createTicketSchema accepts all optional fields | PASS |
+| **Tickets** | updateTicketSchema accepts partial updates | PASS |
+| **Tickets** | updateTicketSchema accepts satisfaction_rating 1-5 | PASS |
+| **Tickets** | updateTicketSchema rejects satisfaction_rating > 5 | PASS |
+| **Tickets** | updateTicketSchema rejects satisfaction_rating < 1 | PASS |
+| **Tickets** | updateTicketSchema accepts null satisfaction_rating | PASS |
+| **Tickets** | updateTicketSchema accepts tags array | PASS |
+| **Tickets** | updateTicketSchema accepts null assigned_agent_id | PASS |
+| **Messages** | listTicketMessagesSchema accepts valid params with defaults | PASS |
+| **Messages** | listTicketMessagesSchema accepts sender_type filter | PASS |
+| **Messages** | listTicketMessagesSchema accepts is_internal boolean preprocess | PASS |
+| **Messages** | createTicketMessageSchema accepts valid message | PASS |
+| **Messages** | createTicketMessageSchema requires message_text | PASS |
+| **Messages** | createTicketMessageSchema rejects empty message_text | PASS |
+| **Messages** | createTicketMessageSchema rejects message_text > 50000 chars | PASS |
+| **Messages** | createTicketMessageSchema accepts all sender types | PASS |
+| **Messages** | createTicketMessageSchema accepts is_internal flag | PASS |
+| **Messages** | updateTicketMessageSchema accepts partial updates | PASS |
+| **Messages** | updateTicketMessageSchema accepts is_internal toggle | PASS |
+| **KB Articles** | listKbArticlesSchema accepts valid params with defaults | PASS |
+| **KB Articles** | listKbArticlesSchema accepts all filters | PASS |
+| **KB Articles** | listKbArticlesSchema rejects limit > 100 | PASS |
+| **KB Articles** | createKbArticleSchema accepts valid article | PASS |
+| **KB Articles** | createKbArticleSchema requires title and slug | PASS |
+| **KB Articles** | createKbArticleSchema validates slug format | PASS |
+| **KB Articles** | createKbArticleSchema rejects invalid slug format | PASS |
+| **KB Articles** | createKbArticleSchema rejects title > 255 chars | PASS |
+| **KB Articles** | createKbArticleSchema rejects slug > 300 chars | PASS |
+| **KB Articles** | createKbArticleSchema accepts all optional fields | PASS |
+| **KB Articles** | updateKbArticleSchema accepts partial updates | PASS |
+| **KB Articles** | updateKbArticleSchema validates slug format on update | PASS |
+| **KB Articles** | updateKbArticleSchema accepts status change | PASS |
+| **KB Articles** | updateKbArticleSchema accepts null content | PASS |
+| **KB Articles** | updateKbArticleSchema accepts null category | PASS |
+| **Feature Requests** | listFeatureRequestsSchema accepts valid params with defaults | PASS |
+| **Feature Requests** | listFeatureRequestsSchema rejects limit > 100 | PASS |
+| **Feature Requests** | listFeatureRequestsSchema accepts all filters | PASS |
+| **Feature Requests** | createFeatureRequestSchema accepts valid feature request | PASS |
+| **Feature Requests** | createFeatureRequestSchema requires title | PASS |
+| **Feature Requests** | createFeatureRequestSchema rejects title > 255 chars | PASS |
+| **Feature Requests** | createFeatureRequestSchema accepts all optional fields | PASS |
+| **Feature Requests** | createFeatureRequestSchema rejects invalid status | PASS |
+| **Feature Requests** | updateFeatureRequestSchema accepts partial updates | PASS |
+| **Feature Requests** | updateFeatureRequestSchema accepts status change | PASS |
+| **Feature Requests** | updateFeatureRequestSchema accepts priority change | PASS |
+| **Feature Requests** | updateFeatureRequestSchema rejects invalid category | PASS |
+| **Votes** | listFeatureRequestVotesSchema accepts valid params with defaults | PASS |
+| **Votes** | listFeatureRequestVotesSchema rejects limit > 100 | PASS |
+| **Votes** | createFeatureRequestVoteSchema accepts valid vote | PASS |
+| **Votes** | createFeatureRequestVoteSchema requires user_id | PASS |
+| **Votes** | createFeatureRequestVoteSchema rejects invalid UUID | PASS |
+
+---
+
 ## Module 36: Lead Pipeline & CRM
 
 ### Acceptance Tests (74 tests in `tests/acceptance/36-crm.acceptance.test.ts`)
@@ -1727,3 +2049,732 @@
 | **Period Schemas** | updateFinancialPeriodSchema accepts partial updates | PASS |
 | **Period Schemas** | closeFinancialPeriodSchema accepts optional notes | PASS |
 | **Period Schemas** | closeFinancialPeriodSchema accepts empty body | PASS |
+
+---
+
+## Module 44: White-Label & Branding
+
+### Acceptance Tests (103 tests in `tests/acceptance/44-white-label.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | HeaderStyle has 4 values | PASS |
+| **Types** | DomainStatus has 5 values | PASS |
+| **Types** | SslStatus has 4 values | PASS |
+| **Types** | TerminologyContext has 5 values | PASS |
+| **Types** | ContentPageType has 7 values | PASS |
+| **Types** | BuilderBranding interface has all required fields | PASS |
+| **Types** | BuilderCustomDomain interface has all required fields | PASS |
+| **Types** | BuilderEmailConfig interface has all required fields | PASS |
+| **Types** | BuilderTerminology interface has all required fields | PASS |
+| **Types** | BuilderContentPage interface has all required fields | PASS |
+| **Constants** | HEADER_STYLES has 4 entries with value and label | PASS |
+| **Constants** | HEADER_STYLES includes all expected values | PASS |
+| **Constants** | DOMAIN_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | DOMAIN_STATUSES includes all expected values | PASS |
+| **Constants** | SSL_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | SSL_STATUSES includes all expected values | PASS |
+| **Constants** | TERMINOLOGY_CONTEXTS has 5 entries with value and label | PASS |
+| **Constants** | TERMINOLOGY_CONTEXTS includes all expected values | PASS |
+| **Constants** | CONTENT_PAGE_TYPES has 7 entries with value and label | PASS |
+| **Constants** | CONTENT_PAGE_TYPES includes all expected values | PASS |
+| **Enums** | headerStyleEnum accepts all 4 styles | PASS |
+| **Enums** | headerStyleEnum rejects invalid style | PASS |
+| **Enums** | domainStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | domainStatusEnum rejects invalid status | PASS |
+| **Enums** | sslStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | sslStatusEnum rejects invalid status | PASS |
+| **Enums** | terminologyContextEnum accepts all 5 contexts | PASS |
+| **Enums** | terminologyContextEnum rejects invalid context | PASS |
+| **Enums** | contentPageTypeEnum accepts all 7 types | PASS |
+| **Enums** | contentPageTypeEnum rejects invalid type | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts valid branding | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts empty object | PASS |
+| **Branding Schemas** | updateBrandingSchema validates hex color format | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts valid hex colors | PASS |
+| **Branding Schemas** | updateBrandingSchema rejects invalid hex color (no hash) | PASS |
+| **Branding Schemas** | updateBrandingSchema rejects invalid hex color (3 digits) | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts null logo_url | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts header_style enum | PASS |
+| **Branding Schemas** | updateBrandingSchema rejects invalid header_style | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts powered_by_visible boolean | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts metadata object | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts null custom_css | PASS |
+| **Branding Schemas** | updateBrandingSchema accepts all fields together | PASS |
+| **Domain Schemas** | listDomainsSchema accepts valid params | PASS |
+| **Domain Schemas** | listDomainsSchema rejects limit > 100 | PASS |
+| **Domain Schemas** | listDomainsSchema accepts status filter | PASS |
+| **Domain Schemas** | listDomainsSchema rejects invalid status | PASS |
+| **Domain Schemas** | createDomainSchema accepts valid domain | PASS |
+| **Domain Schemas** | createDomainSchema requires domain | PASS |
+| **Domain Schemas** | createDomainSchema rejects domain > 255 chars | PASS |
+| **Domain Schemas** | createDomainSchema accepts subdomain and is_primary | PASS |
+| **Domain Schemas** | updateDomainSchema accepts partial updates | PASS |
+| **Domain Schemas** | updateDomainSchema accepts ssl_status | PASS |
+| **Domain Schemas** | updateDomainSchema rejects invalid ssl_status | PASS |
+| **Domain Schemas** | updateDomainSchema accepts is_primary toggle | PASS |
+| **Email Config** | updateEmailConfigSchema accepts valid email config | PASS |
+| **Email Config** | updateEmailConfigSchema accepts empty object | PASS |
+| **Email Config** | updateEmailConfigSchema validates email format | PASS |
+| **Email Config** | updateEmailConfigSchema validates reply_to_email format | PASS |
+| **Email Config** | updateEmailConfigSchema accepts null from_name | PASS |
+| **Email Config** | updateEmailConfigSchema rejects from_name > 200 chars | PASS |
+| **Email Config** | updateEmailConfigSchema accepts smtp settings | PASS |
+| **Email Config** | updateEmailConfigSchema validates smtp_port range | PASS |
+| **Email Config** | updateEmailConfigSchema rejects smtp_port > 65535 | PASS |
+| **Email Config** | updateEmailConfigSchema accepts null smtp fields | PASS |
+| **Email Config** | updateEmailConfigSchema accepts email_header_html and email_footer_html | PASS |
+| **Terminology** | listTerminologySchema accepts valid params | PASS |
+| **Terminology** | listTerminologySchema rejects limit > 100 | PASS |
+| **Terminology** | listTerminologySchema accepts context filter | PASS |
+| **Terminology** | listTerminologySchema rejects invalid context | PASS |
+| **Terminology** | listTerminologySchema accepts is_active filter with boolean preprocess | PASS |
+| **Terminology** | createTerminologySchema accepts valid terminology | PASS |
+| **Terminology** | createTerminologySchema requires default_term and custom_term | PASS |
+| **Terminology** | createTerminologySchema rejects default_term > 100 chars | PASS |
+| **Terminology** | createTerminologySchema rejects custom_term > 100 chars | PASS |
+| **Terminology** | createTerminologySchema accepts context and is_active | PASS |
+| **Terminology** | updateTerminologySchema accepts partial updates | PASS |
+| **Terminology** | updateTerminologySchema accepts is_active toggle | PASS |
+| **Terminology** | updateTerminologySchema accepts context change | PASS |
+| **Terminology** | updateTerminologySchema rejects invalid context | PASS |
+| **Content Pages** | listContentPagesSchema accepts valid params | PASS |
+| **Content Pages** | listContentPagesSchema rejects limit > 100 | PASS |
+| **Content Pages** | listContentPagesSchema accepts page_type filter | PASS |
+| **Content Pages** | listContentPagesSchema rejects invalid page_type | PASS |
+| **Content Pages** | listContentPagesSchema accepts is_published filter with boolean preprocess | PASS |
+| **Content Pages** | createContentPageSchema accepts valid page | PASS |
+| **Content Pages** | createContentPageSchema requires title and slug | PASS |
+| **Content Pages** | createContentPageSchema rejects title > 255 chars | PASS |
+| **Content Pages** | createContentPageSchema rejects slug > 200 chars | PASS |
+| **Content Pages** | createContentPageSchema validates slug format (lowercase with hyphens) | PASS |
+| **Content Pages** | createContentPageSchema rejects slug with uppercase | PASS |
+| **Content Pages** | createContentPageSchema rejects slug with spaces | PASS |
+| **Content Pages** | createContentPageSchema rejects slug with special chars | PASS |
+| **Content Pages** | createContentPageSchema accepts all optional fields | PASS |
+| **Content Pages** | createContentPageSchema accepts null content_html | PASS |
+| **Content Pages** | updateContentPageSchema accepts partial updates | PASS |
+| **Content Pages** | updateContentPageSchema accepts is_published toggle | PASS |
+| **Content Pages** | updateContentPageSchema validates slug format | PASS |
+| **Content Pages** | updateContentPageSchema rejects invalid slug format | PASS |
+| **Content Pages** | updateContentPageSchema accepts sort_order | PASS |
+| **Content Pages** | updateContentPageSchema rejects negative sort_order | PASS |
+| **Content Pages** | updateContentPageSchema accepts page_type change | PASS |
+| **Content Pages** | updateContentPageSchema rejects invalid page_type | PASS |
+
+---
+
+## Module 42: Data Migration
+
+### Acceptance Tests (90 tests in `tests/acceptance/42-data-migration.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | SourcePlatform has 9 values | PASS |
+| **Types** | MigrationStatus has 8 values | PASS |
+| **Types** | TransformType has 9 values | PASS |
+| **Types** | ValidationType has 7 values | PASS |
+| **Types** | ValidationSeverity has 3 values | PASS |
+| **Types** | ReconciliationStatus has 4 values | PASS |
+| **Types** | MigrationEntityType has 6 values | PASS |
+| **Types** | MigrationJob interface has all required fields | PASS |
+| **Types** | MigrationFieldMapping interface has all required fields | PASS |
+| **Types** | MigrationMappingTemplate interface has all required fields | PASS |
+| **Types** | MigrationValidationResult interface has all required fields | PASS |
+| **Types** | MigrationReconciliation interface has all required fields | PASS |
+| **Constants** | SOURCE_PLATFORMS has 9 entries with value and label | PASS |
+| **Constants** | SOURCE_PLATFORMS includes all expected values | PASS |
+| **Constants** | MIGRATION_STATUSES has 8 entries with value and label | PASS |
+| **Constants** | MIGRATION_STATUSES includes all expected values | PASS |
+| **Constants** | TRANSFORM_TYPES has 9 entries with value and label | PASS |
+| **Constants** | VALIDATION_TYPES has 7 entries with value and label | PASS |
+| **Constants** | VALIDATION_SEVERITIES has 3 entries with value and label | PASS |
+| **Constants** | RECONCILIATION_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | MIGRATION_ENTITY_TYPES has 6 entries with value and label | PASS |
+| **Constants** | MIGRATION_ENTITY_TYPES includes all expected values | PASS |
+| **Enums** | sourcePlatformEnum accepts all 9 platforms | PASS |
+| **Enums** | sourcePlatformEnum rejects invalid platform | PASS |
+| **Enums** | migrationStatusEnum accepts all 8 statuses | PASS |
+| **Enums** | migrationStatusEnum rejects invalid status | PASS |
+| **Enums** | transformTypeEnum accepts all 9 types | PASS |
+| **Enums** | transformTypeEnum rejects invalid type | PASS |
+| **Enums** | validationTypeEnum accepts all 7 types | PASS |
+| **Enums** | validationTypeEnum rejects invalid type | PASS |
+| **Enums** | validationSeverityEnum accepts all 3 severities | PASS |
+| **Enums** | validationSeverityEnum rejects invalid severity | PASS |
+| **Enums** | reconciliationStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | reconciliationStatusEnum rejects invalid status | PASS |
+| **Enums** | migrationEntityTypeEnum accepts all 6 types | PASS |
+| **Enums** | migrationEntityTypeEnum rejects invalid type | PASS |
+| **Job Schemas** | listMigrationJobsSchema accepts valid params | PASS |
+| **Job Schemas** | listMigrationJobsSchema rejects limit > 100 | PASS |
+| **Job Schemas** | listMigrationJobsSchema accepts all filters | PASS |
+| **Job Schemas** | createMigrationJobSchema accepts valid job | PASS |
+| **Job Schemas** | createMigrationJobSchema requires name | PASS |
+| **Job Schemas** | createMigrationJobSchema rejects name > 255 chars | PASS |
+| **Job Schemas** | createMigrationJobSchema accepts full job with all optional fields | PASS |
+| **Job Schemas** | createMigrationJobSchema rejects negative total_records | PASS |
+| **Job Schemas** | updateMigrationJobSchema accepts partial updates | PASS |
+| **Job Schemas** | updateMigrationJobSchema accepts status and record counts | PASS |
+| **Job Schemas** | updateMigrationJobSchema accepts error_log array | PASS |
+| **Mapping Schemas** | listFieldMappingsSchema accepts valid params with defaults | PASS |
+| **Mapping Schemas** | listFieldMappingsSchema accepts filters | PASS |
+| **Mapping Schemas** | createFieldMappingSchema accepts valid mapping | PASS |
+| **Mapping Schemas** | createFieldMappingSchema requires source_field, target_table, target_field | PASS |
+| **Mapping Schemas** | createFieldMappingSchema rejects source_field > 200 chars | PASS |
+| **Mapping Schemas** | createFieldMappingSchema accepts all optional fields | PASS |
+| **Mapping Schemas** | updateFieldMappingSchema accepts partial updates | PASS |
+| **Mapping Schemas** | updateFieldMappingSchema accepts is_required toggle | PASS |
+| **Template Schemas** | listMappingTemplatesSchema accepts valid params | PASS |
+| **Template Schemas** | listMappingTemplatesSchema rejects limit > 100 | PASS |
+| **Template Schemas** | listMappingTemplatesSchema accepts all filters | PASS |
+| **Template Schemas** | listMappingTemplatesSchema handles boolean preprocess for is_active | PASS |
+| **Template Schemas** | createMappingTemplateSchema accepts valid template | PASS |
+| **Template Schemas** | createMappingTemplateSchema requires name and source_platform | PASS |
+| **Template Schemas** | createMappingTemplateSchema rejects name > 200 chars | PASS |
+| **Template Schemas** | createMappingTemplateSchema accepts all optional fields | PASS |
+| **Template Schemas** | updateMappingTemplateSchema accepts partial updates | PASS |
+| **Template Schemas** | updateMappingTemplateSchema accepts is_active toggle | PASS |
+| **Validation Schemas** | listValidationResultsSchema accepts valid params with defaults | PASS |
+| **Validation Schemas** | listValidationResultsSchema accepts all filters | PASS |
+| **Validation Schemas** | listValidationResultsSchema handles boolean preprocess for is_resolved | PASS |
+| **Validation Schemas** | createValidationResultSchema accepts valid result | PASS |
+| **Validation Schemas** | createValidationResultSchema requires message | PASS |
+| **Validation Schemas** | createValidationResultSchema rejects empty message | PASS |
+| **Validation Schemas** | createValidationResultSchema rejects message > 5000 chars | PASS |
+| **Validation Schemas** | createValidationResultSchema accepts all optional fields | PASS |
+| **Validation Schemas** | createValidationResultSchema rejects negative record_index | PASS |
+| **Validation Schemas** | updateValidationResultSchema accepts partial updates | PASS |
+| **Validation Schemas** | updateValidationResultSchema accepts severity change | PASS |
+| **Validation Schemas** | updateValidationResultSchema accepts message update | PASS |
+| **Reconciliation Schemas** | listReconciliationSchema accepts valid params with defaults | PASS |
+| **Reconciliation Schemas** | listReconciliationSchema accepts filters | PASS |
+| **Reconciliation Schemas** | listReconciliationSchema rejects limit > 100 | PASS |
+| **Reconciliation Schemas** | createReconciliationSchema accepts valid reconciliation | PASS |
+| **Reconciliation Schemas** | createReconciliationSchema requires entity_type | PASS |
+| **Reconciliation Schemas** | createReconciliationSchema rejects invalid entity_type | PASS |
+| **Reconciliation Schemas** | createReconciliationSchema accepts all optional fields | PASS |
+| **Reconciliation Schemas** | createReconciliationSchema rejects negative counts | PASS |
+| **Reconciliation Schemas** | updateReconciliationSchema accepts partial updates | PASS |
+| **Reconciliation Schemas** | updateReconciliationSchema accepts count updates | PASS |
+| **Reconciliation Schemas** | updateReconciliationSchema accepts discrepancies array | PASS |
+| **Reconciliation Schemas** | updateReconciliationSchema rejects invalid status | PASS |
+| **Reconciliation Schemas** | updateReconciliationSchema rejects notes > 10000 chars | PASS |
+
+---
+
+## Module 45: API & Marketplace
+
+### Acceptance Tests (93 tests in `tests/acceptance/45-api-marketplace.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | ApiKeyStatus has 3 values | PASS |
+| **Types** | WebhookStatus has 4 values | PASS |
+| **Types** | DeliveryStatus has 4 values | PASS |
+| **Types** | IntegrationCategory has 9 values | PASS |
+| **Types** | IntegrationStatus has 5 values | PASS |
+| **Types** | PricingType has 4 values | PASS |
+| **Types** | InstallStatus has 4 values | PASS |
+| **Types** | ApiKey interface has all required fields | PASS |
+| **Types** | WebhookSubscription interface has all required fields | PASS |
+| **Types** | WebhookDelivery interface has all required fields | PASS |
+| **Types** | IntegrationListing interface has all required fields | PASS |
+| **Types** | IntegrationInstall interface has all required fields | PASS |
+| **Constants** | API_KEY_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | API_KEY_STATUSES includes all expected values | PASS |
+| **Constants** | WEBHOOK_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | WEBHOOK_STATUSES includes all expected values | PASS |
+| **Constants** | DELIVERY_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | DELIVERY_STATUSES includes all expected values | PASS |
+| **Constants** | INTEGRATION_CATEGORIES has 9 entries with value and label | PASS |
+| **Constants** | INTEGRATION_CATEGORIES includes all expected values | PASS |
+| **Constants** | INTEGRATION_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | INTEGRATION_STATUSES includes all expected values | PASS |
+| **Constants** | PRICING_TYPES has 4 entries with value and label | PASS |
+| **Constants** | PRICING_TYPES includes all expected values | PASS |
+| **Constants** | INSTALL_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | INSTALL_STATUSES includes all expected values | PASS |
+| **Enums** | apiKeyStatusEnum accepts all 3 statuses | PASS |
+| **Enums** | apiKeyStatusEnum rejects invalid status | PASS |
+| **Enums** | webhookStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | webhookStatusEnum rejects invalid status | PASS |
+| **Enums** | deliveryStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | deliveryStatusEnum rejects invalid status | PASS |
+| **Enums** | integrationCategoryEnum accepts all 9 categories | PASS |
+| **Enums** | integrationCategoryEnum rejects invalid category | PASS |
+| **Enums** | integrationStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | integrationStatusEnum rejects invalid status | PASS |
+| **Enums** | pricingTypeEnum accepts all 4 types | PASS |
+| **Enums** | pricingTypeEnum rejects invalid type | PASS |
+| **Enums** | installStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | installStatusEnum rejects invalid status | PASS |
+| **API Key Schemas** | listApiKeysSchema accepts valid params | PASS |
+| **API Key Schemas** | listApiKeysSchema rejects limit > 100 | PASS |
+| **API Key Schemas** | listApiKeysSchema accepts filters | PASS |
+| **API Key Schemas** | createApiKeySchema accepts valid API key | PASS |
+| **API Key Schemas** | createApiKeySchema requires name | PASS |
+| **API Key Schemas** | createApiKeySchema rejects name > 200 chars | PASS |
+| **API Key Schemas** | createApiKeySchema accepts permissions array | PASS |
+| **API Key Schemas** | createApiKeySchema accepts rate_limit_per_minute | PASS |
+| **API Key Schemas** | createApiKeySchema rejects rate_limit_per_minute > 10000 | PASS |
+| **API Key Schemas** | createApiKeySchema validates expires_at date format | PASS |
+| **API Key Schemas** | createApiKeySchema rejects invalid expires_at format | PASS |
+| **API Key Schemas** | createApiKeySchema accepts null expires_at | PASS |
+| **API Key Schemas** | updateApiKeySchema accepts partial updates | PASS |
+| **API Key Schemas** | updateApiKeySchema accepts status change | PASS |
+| **API Key Schemas** | updateApiKeySchema rejects invalid status | PASS |
+| **Webhook Schemas** | listWebhooksSchema accepts valid params | PASS |
+| **Webhook Schemas** | listWebhooksSchema rejects limit > 100 | PASS |
+| **Webhook Schemas** | listWebhooksSchema accepts filters | PASS |
+| **Webhook Schemas** | createWebhookSchema accepts valid webhook | PASS |
+| **Webhook Schemas** | createWebhookSchema requires url and events | PASS |
+| **Webhook Schemas** | createWebhookSchema rejects invalid url | PASS |
+| **Webhook Schemas** | createWebhookSchema requires at least one event | PASS |
+| **Webhook Schemas** | createWebhookSchema accepts description | PASS |
+| **Webhook Schemas** | createWebhookSchema accepts max_retries | PASS |
+| **Webhook Schemas** | createWebhookSchema rejects max_retries > 20 | PASS |
+| **Webhook Schemas** | updateWebhookSchema accepts partial updates | PASS |
+| **Webhook Schemas** | updateWebhookSchema accepts url update | PASS |
+| **Webhook Schemas** | updateWebhookSchema rejects invalid url | PASS |
+| **Webhook Schemas** | updateWebhookSchema accepts events update | PASS |
+| **Delivery Schemas** | listWebhookDeliveriesSchema accepts valid params with defaults | PASS |
+| **Delivery Schemas** | listWebhookDeliveriesSchema accepts filters | PASS |
+| **Delivery Schemas** | listWebhookDeliveriesSchema rejects invalid status | PASS |
+| **Delivery Schemas** | listWebhookDeliveriesSchema rejects limit > 100 | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema accepts valid params | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema rejects limit > 100 | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema accepts category filter | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema rejects invalid category | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema accepts status filter | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema accepts is_featured filter with boolean preprocess | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema accepts is_featured false | PASS |
+| **Listing Schemas** | listIntegrationListingsSchema accepts q filter | PASS |
+| **Install Schemas** | listIntegrationInstallsSchema accepts valid params | PASS |
+| **Install Schemas** | listIntegrationInstallsSchema rejects limit > 100 | PASS |
+| **Install Schemas** | listIntegrationInstallsSchema accepts listing_id filter | PASS |
+| **Install Schemas** | listIntegrationInstallsSchema rejects invalid listing_id UUID | PASS |
+| **Install Schemas** | listIntegrationInstallsSchema accepts status filter | PASS |
+| **Install Schemas** | createIntegrationInstallSchema accepts valid install | PASS |
+| **Install Schemas** | createIntegrationInstallSchema requires listing_id | PASS |
+| **Install Schemas** | createIntegrationInstallSchema rejects invalid listing_id | PASS |
+| **Install Schemas** | createIntegrationInstallSchema accepts configuration | PASS |
+| **Install Schemas** | updateIntegrationInstallSchema accepts partial updates | PASS |
+| **Install Schemas** | updateIntegrationInstallSchema accepts configuration update | PASS |
+| **Install Schemas** | updateIntegrationInstallSchema rejects invalid status | PASS |
+
+---
+
+## Module 41: Onboarding Wizard
+
+### Acceptance Tests (92 tests in `tests/acceptance/41-onboarding.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | OnboardingStatus has 4 values | PASS |
+| **Types** | MilestoneStatus has 4 values | PASS |
+| **Types** | ReminderType has 3 values | PASS |
+| **Types** | ReminderStatus has 4 values | PASS |
+| **Types** | SampleDataType has 6 values | PASS |
+| **Types** | SampleDataStatus has 5 values | PASS |
+| **Types** | CompanyType has 5 values | PASS |
+| **Types** | CompanySize has 5 values | PASS |
+| **Types** | ChecklistCategory has 5 values | PASS |
+| **Types** | OnboardingSession interface has all required fields | PASS |
+| **Types** | OnboardingMilestone interface has all required fields | PASS |
+| **Types** | OnboardingReminder interface has all required fields | PASS |
+| **Types** | SampleDataSet interface has all required fields | PASS |
+| **Types** | OnboardingChecklist interface has all required fields | PASS |
+| **Constants** | ONBOARDING_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | ONBOARDING_STATUSES includes all expected values | PASS |
+| **Constants** | MILESTONE_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | REMINDER_TYPES has 3 entries with value and label | PASS |
+| **Constants** | REMINDER_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | SAMPLE_DATA_TYPES has 6 entries with value and label | PASS |
+| **Constants** | SAMPLE_DATA_STATUSES has 5 entries with value and label | PASS |
+| **Constants** | COMPANY_TYPES has 5 entries with value and label | PASS |
+| **Constants** | COMPANY_SIZES has 5 entries with value and label | PASS |
+| **Constants** | CHECKLIST_CATEGORIES has 5 entries with value and label | PASS |
+| **Enums** | onboardingStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | onboardingStatusEnum rejects invalid status | PASS |
+| **Enums** | milestoneStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | milestoneStatusEnum rejects invalid status | PASS |
+| **Enums** | reminderTypeEnum accepts all 3 types | PASS |
+| **Enums** | reminderTypeEnum rejects invalid type | PASS |
+| **Enums** | reminderStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | reminderStatusEnum rejects invalid status | PASS |
+| **Enums** | sampleDataTypeEnum accepts all 6 types | PASS |
+| **Enums** | sampleDataTypeEnum rejects invalid type | PASS |
+| **Enums** | sampleDataStatusEnum accepts all 5 statuses | PASS |
+| **Enums** | sampleDataStatusEnum rejects invalid status | PASS |
+| **Enums** | companyTypeEnum accepts all 5 types | PASS |
+| **Enums** | companyTypeEnum rejects invalid type | PASS |
+| **Enums** | companySizeEnum accepts all 5 sizes | PASS |
+| **Enums** | companySizeEnum rejects invalid size | PASS |
+| **Enums** | checklistCategoryEnum accepts all 5 categories | PASS |
+| **Enums** | checklistCategoryEnum rejects invalid category | PASS |
+| **Session Schemas** | listOnboardingSessionsSchema accepts valid params | PASS |
+| **Session Schemas** | listOnboardingSessionsSchema rejects limit > 100 | PASS |
+| **Session Schemas** | listOnboardingSessionsSchema accepts all filters | PASS |
+| **Session Schemas** | createOnboardingSessionSchema accepts valid session | PASS |
+| **Session Schemas** | createOnboardingSessionSchema requires user_id | PASS |
+| **Session Schemas** | createOnboardingSessionSchema rejects invalid user_id | PASS |
+| **Session Schemas** | createOnboardingSessionSchema accepts all optional fields | PASS |
+| **Session Schemas** | createOnboardingSessionSchema rejects current_step > 50 | PASS |
+| **Session Schemas** | updateOnboardingSessionSchema accepts partial updates | PASS |
+| **Session Schemas** | updateOnboardingSessionSchema accepts empty object | PASS |
+| **Milestone Schemas** | listMilestonesSchema accepts valid params with defaults | PASS |
+| **Milestone Schemas** | listMilestonesSchema accepts status filter | PASS |
+| **Milestone Schemas** | createMilestoneSchema accepts valid milestone | PASS |
+| **Milestone Schemas** | createMilestoneSchema requires session_id, milestone_key, and title | PASS |
+| **Milestone Schemas** | createMilestoneSchema rejects milestone_key > 100 chars | PASS |
+| **Milestone Schemas** | createMilestoneSchema rejects title > 255 chars | PASS |
+| **Milestone Schemas** | createMilestoneSchema accepts all optional fields | PASS |
+| **Milestone Schemas** | updateMilestoneSchema accepts partial updates | PASS |
+| **Milestone Schemas** | updateMilestoneSchema accepts empty object | PASS |
+| **Reminder Schemas** | listRemindersSchema accepts valid params with defaults | PASS |
+| **Reminder Schemas** | listRemindersSchema accepts all filters | PASS |
+| **Reminder Schemas** | createReminderSchema accepts valid reminder | PASS |
+| **Reminder Schemas** | createReminderSchema requires session_id and scheduled_at | PASS |
+| **Reminder Schemas** | createReminderSchema accepts all optional fields | PASS |
+| **Reminder Schemas** | createReminderSchema rejects subject > 255 chars | PASS |
+| **Reminder Schemas** | updateReminderSchema accepts partial updates | PASS |
+| **Reminder Schemas** | updateReminderSchema accepts empty object | PASS |
+| **Reminder Schemas** | updateReminderSchema rejects invalid reminder_type | PASS |
+| **Sample Data Schemas** | listSampleDataSetsSchema accepts valid params with defaults | PASS |
+| **Sample Data Schemas** | listSampleDataSetsSchema accepts all filters | PASS |
+| **Sample Data Schemas** | listSampleDataSetsSchema rejects limit > 100 | PASS |
+| **Sample Data Schemas** | createSampleDataSetSchema accepts valid data set | PASS |
+| **Sample Data Schemas** | createSampleDataSetSchema requires name | PASS |
+| **Sample Data Schemas** | createSampleDataSetSchema rejects name > 200 chars | PASS |
+| **Sample Data Schemas** | createSampleDataSetSchema rejects empty name | PASS |
+| **Sample Data Schemas** | createSampleDataSetSchema accepts all optional fields | PASS |
+| **Sample Data Schemas** | updateSampleDataSetSchema accepts partial updates | PASS |
+| **Sample Data Schemas** | updateSampleDataSetSchema accepts empty object | PASS |
+| **Sample Data Schemas** | updateSampleDataSetSchema rejects invalid data_type | PASS |
+| **Checklist Schemas** | listChecklistsSchema accepts valid params with defaults | PASS |
+| **Checklist Schemas** | listChecklistsSchema accepts category filter | PASS |
+| **Checklist Schemas** | listChecklistsSchema handles boolean preprocess for is_completed | PASS |
+| **Checklist Schemas** | listChecklistsSchema rejects limit > 100 | PASS |
+| **Checklist Schemas** | createChecklistSchema accepts valid checklist | PASS |
+| **Checklist Schemas** | createChecklistSchema requires session_id and title | PASS |
+| **Checklist Schemas** | createChecklistSchema rejects title > 255 chars | PASS |
+| **Checklist Schemas** | createChecklistSchema accepts all optional fields | PASS |
+| **Checklist Schemas** | updateChecklistSchema accepts partial updates | PASS |
+| **Checklist Schemas** | updateChecklistSchema accepts empty object | PASS |
+| **Checklist Schemas** | updateChecklistSchema rejects invalid category | PASS |
+
+---
+
+## Module 43: Subscription Billing
+
+### Acceptance Tests (83 tests in `tests/acceptance/43-subscription-billing.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | PlanTier has 5 values | PASS |
+| **Types** | AddonType has 7 values | PASS |
+| **Types** | SubscriptionStatus has 6 values | PASS |
+| **Types** | BillingCycle has 2 values | PASS |
+| **Types** | BillingEventType has 14 values | PASS |
+| **Types** | MeterType has 4 values | PASS |
+| **Types** | SubscriptionPlan interface has all required fields | PASS |
+| **Types** | PlanAddon interface has all required fields | PASS |
+| **Types** | CompanySubscription interface has all required fields | PASS |
+| **Types** | UsageMeter interface has all required fields | PASS |
+| **Types** | BillingEvent interface has all required fields | PASS |
+| **Constants** | PLAN_TIERS has 5 entries with value and label | PASS |
+| **Constants** | PLAN_TIERS includes all expected values | PASS |
+| **Constants** | ADDON_TYPES has 7 entries with value and label | PASS |
+| **Constants** | ADDON_TYPES includes all expected values | PASS |
+| **Constants** | SUBSCRIPTION_STATUSES has 6 entries with value and label | PASS |
+| **Constants** | SUBSCRIPTION_STATUSES includes all expected values | PASS |
+| **Constants** | BILLING_CYCLES has 2 entries with value and label | PASS |
+| **Constants** | BILLING_EVENT_TYPES has 14 entries with value and label | PASS |
+| **Constants** | BILLING_EVENT_TYPES includes all expected values | PASS |
+| **Constants** | METER_TYPES has 4 entries with value and label | PASS |
+| **Enums** | planTierEnum accepts all 5 tiers | PASS |
+| **Enums** | planTierEnum rejects invalid tier | PASS |
+| **Enums** | addonTypeEnum accepts all 7 types | PASS |
+| **Enums** | addonTypeEnum rejects invalid type | PASS |
+| **Enums** | subscriptionStatusEnum accepts all 6 statuses | PASS |
+| **Enums** | subscriptionStatusEnum rejects invalid status | PASS |
+| **Enums** | billingCycleEnum accepts both cycles | PASS |
+| **Enums** | billingCycleEnum rejects invalid cycle | PASS |
+| **Enums** | billingEventTypeEnum accepts all 14 types | PASS |
+| **Enums** | billingEventTypeEnum rejects invalid type | PASS |
+| **Enums** | meterTypeEnum accepts all 4 types | PASS |
+| **Enums** | meterTypeEnum rejects invalid type | PASS |
+| **Plan Schemas** | listPlansSchema accepts valid params | PASS |
+| **Plan Schemas** | listPlansSchema rejects limit > 100 | PASS |
+| **Plan Schemas** | listPlansSchema accepts filters | PASS |
+| **Plan Schemas** | createPlanSchema accepts valid plan | PASS |
+| **Plan Schemas** | createPlanSchema requires name and slug | PASS |
+| **Plan Schemas** | createPlanSchema rejects name > 100 chars | PASS |
+| **Plan Schemas** | createPlanSchema validates slug format | PASS |
+| **Plan Schemas** | createPlanSchema accepts valid slug with hyphens | PASS |
+| **Plan Schemas** | createPlanSchema accepts all optional fields | PASS |
+| **Plan Schemas** | updatePlanSchema accepts partial updates | PASS |
+| **Plan Schemas** | updatePlanSchema accepts is_active toggle | PASS |
+| **Addon Schemas** | listAddonsSchema accepts valid params | PASS |
+| **Addon Schemas** | listAddonsSchema rejects limit > 100 | PASS |
+| **Addon Schemas** | listAddonsSchema accepts filters | PASS |
+| **Addon Schemas** | createAddonSchema accepts valid addon | PASS |
+| **Addon Schemas** | createAddonSchema requires name and slug | PASS |
+| **Addon Schemas** | createAddonSchema rejects name > 200 chars | PASS |
+| **Addon Schemas** | createAddonSchema validates slug format | PASS |
+| **Addon Schemas** | createAddonSchema accepts metered addon with all fields | PASS |
+| **Addon Schemas** | updateAddonSchema accepts partial updates | PASS |
+| **Subscription Schemas** | listSubscriptionsSchema accepts valid params | PASS |
+| **Subscription Schemas** | listSubscriptionsSchema rejects limit > 100 | PASS |
+| **Subscription Schemas** | listSubscriptionsSchema accepts all filters | PASS |
+| **Subscription Schemas** | createSubscriptionSchema accepts valid subscription | PASS |
+| **Subscription Schemas** | createSubscriptionSchema requires plan_id | PASS |
+| **Subscription Schemas** | createSubscriptionSchema rejects invalid plan_id UUID | PASS |
+| **Subscription Schemas** | createSubscriptionSchema validates date format | PASS |
+| **Subscription Schemas** | createSubscriptionSchema rejects invalid date format | PASS |
+| **Subscription Schemas** | createSubscriptionSchema accepts all optional fields | PASS |
+| **Subscription Schemas** | updateSubscriptionSchema accepts partial updates | PASS |
+| **Subscription Schemas** | updateSubscriptionSchema accepts cancelled_at | PASS |
+| **Subscription Schemas** | updateSubscriptionSchema accepts null cancelled_at | PASS |
+| **Subscription Schemas** | updateSubscriptionSchema rejects cancel_reason > 5000 chars | PASS |
+| **Usage Meter Schemas** | listUsageMetersSchema accepts valid params | PASS |
+| **Usage Meter Schemas** | listUsageMetersSchema rejects limit > 100 | PASS |
+| **Usage Meter Schemas** | listUsageMetersSchema accepts all filters | PASS |
+| **Usage Meter Schemas** | listUsageMetersSchema rejects invalid date format | PASS |
+| **Usage Meter Schemas** | createUsageMeterSchema accepts valid meter | PASS |
+| **Usage Meter Schemas** | createUsageMeterSchema requires meter_type, period_start, period_end | PASS |
+| **Usage Meter Schemas** | createUsageMeterSchema rejects negative quantity | PASS |
+| **Usage Meter Schemas** | createUsageMeterSchema accepts all optional fields | PASS |
+| **Usage Meter Schemas** | createUsageMeterSchema validates period_start format | PASS |
+| **Usage Meter Schemas** | updateUsageMeterSchema accepts partial updates | PASS |
+| **Usage Meter Schemas** | updateUsageMeterSchema accepts null addon_id | PASS |
+| **Billing Event Schemas** | listBillingEventsSchema accepts valid params | PASS |
+| **Billing Event Schemas** | listBillingEventsSchema rejects limit > 100 | PASS |
+| **Billing Event Schemas** | listBillingEventsSchema accepts event_type filter | PASS |
+| **Billing Event Schemas** | listBillingEventsSchema rejects invalid event_type | PASS |
+| **Billing Event Schemas** | listBillingEventsSchema accepts date range filters | PASS |
+| **Billing Event Schemas** | listBillingEventsSchema rejects invalid date format | PASS |
+
+---
+
+## Module 48: Template Marketplace
+
+### Acceptance Tests (83 tests in `tests/acceptance/48-template-marketplace.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | PublisherType has 3 values | PASS |
+| **Types** | TemplateType has 9 values | PASS |
+| **Types** | ReviewStatus has 3 values | PASS |
+| **Types** | TemplateCategory is alias of TemplateType | PASS |
+| **Types** | MarketplacePublisher interface has all required fields | PASS |
+| **Types** | MarketplaceTemplate interface has all required fields | PASS |
+| **Types** | MarketplaceTemplateVersion interface has all required fields | PASS |
+| **Types** | MarketplaceInstall interface has all required fields | PASS |
+| **Types** | MarketplaceReview interface has all required fields | PASS |
+| **Types** | TemplateCategory is alias of TemplateType | PASS |
+| **Constants** | PUBLISHER_TYPES has 3 entries with value and label | PASS |
+| **Constants** | PUBLISHER_TYPES includes all expected values | PASS |
+| **Constants** | TEMPLATE_TYPES has 9 entries with value and label | PASS |
+| **Constants** | TEMPLATE_TYPES includes all expected values | PASS |
+| **Constants** | REVIEW_STATUSES has 3 entries with value and label | PASS |
+| **Constants** | REVIEW_STATUSES includes all expected values | PASS |
+| **Constants** | TEMPLATE_CATEGORIES is same reference as TEMPLATE_TYPES | PASS |
+| **Enum Schemas** | publisherTypeEnum accepts all 3 types | PASS |
+| **Enum Schemas** | publisherTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | templateTypeEnum accepts all 9 types | PASS |
+| **Enum Schemas** | templateTypeEnum rejects invalid type | PASS |
+| **Enum Schemas** | reviewStatusEnum accepts all 3 statuses | PASS |
+| **Enum Schemas** | reviewStatusEnum rejects invalid status | PASS |
+| **Publisher Schemas** | listPublishersSchema accepts valid params | PASS |
+| **Publisher Schemas** | listPublishersSchema rejects limit > 100 | PASS |
+| **Publisher Schemas** | listPublishersSchema accepts filters | PASS |
+| **Publisher Schemas** | createPublisherSchema accepts valid publisher | PASS |
+| **Publisher Schemas** | createPublisherSchema requires user_id and display_name | PASS |
+| **Publisher Schemas** | createPublisherSchema rejects display_name > 200 chars | PASS |
+| **Publisher Schemas** | createPublisherSchema accepts all optional fields | PASS |
+| **Publisher Schemas** | updatePublisherSchema accepts partial updates | PASS |
+| **Publisher Schemas** | updatePublisherSchema accepts revenue_share_pct | PASS |
+| **Publisher Schemas** | updatePublisherSchema rejects revenue_share_pct > 100 | PASS |
+| **Publisher Schemas** | updatePublisherSchema rejects revenue_share_pct < 0 | PASS |
+| **Template Schemas** | listTemplatesSchema accepts valid params | PASS |
+| **Template Schemas** | listTemplatesSchema rejects limit > 100 | PASS |
+| **Template Schemas** | listTemplatesSchema accepts all filters | PASS |
+| **Template Schemas** | createTemplateSchema accepts valid template | PASS |
+| **Template Schemas** | createTemplateSchema requires publisher_id, template_type, name, slug | PASS |
+| **Template Schemas** | createTemplateSchema rejects name > 255 chars | PASS |
+| **Template Schemas** | createTemplateSchema validates slug format | PASS |
+| **Template Schemas** | createTemplateSchema rejects negative price | PASS |
+| **Template Schemas** | createTemplateSchema accepts full template with all fields | PASS |
+| **Template Schemas** | updateTemplateSchema accepts partial updates | PASS |
+| **Template Schemas** | updateTemplateSchema accepts empty object | PASS |
+| **Template Schemas** | updateTemplateSchema validates slug format | PASS |
+| **Template Schemas** | updateTemplateSchema accepts review_status | PASS |
+| **Template Schemas** | updateTemplateSchema rejects invalid review_status | PASS |
+| **Template Schemas** | updateTemplateSchema accepts tags arrays | PASS |
+| **Template Version Schemas** | listTemplateVersionsSchema accepts valid params with defaults | PASS |
+| **Template Version Schemas** | listTemplateVersionsSchema rejects limit > 100 | PASS |
+| **Template Version Schemas** | createTemplateVersionSchema accepts valid version | PASS |
+| **Template Version Schemas** | createTemplateVersionSchema requires version | PASS |
+| **Template Version Schemas** | createTemplateVersionSchema defaults template_data to empty object | PASS |
+| **Template Version Schemas** | createTemplateVersionSchema rejects version > 20 chars | PASS |
+| **Template Version Schemas** | createTemplateVersionSchema accepts null changelog | PASS |
+| **Install Schemas** | listInstallsSchema accepts valid params | PASS |
+| **Install Schemas** | listInstallsSchema rejects limit > 100 | PASS |
+| **Install Schemas** | listInstallsSchema accepts filters | PASS |
+| **Install Schemas** | createInstallSchema accepts valid install | PASS |
+| **Install Schemas** | createInstallSchema requires template_id and template_version | PASS |
+| **Install Schemas** | createInstallSchema accepts payment fields | PASS |
+| **Install Schemas** | createInstallSchema rejects negative payment_amount | PASS |
+| **Install Schemas** | createInstallSchema accepts null payment fields | PASS |
+| **Review Schemas** | listReviewsSchema accepts valid params | PASS |
+| **Review Schemas** | listReviewsSchema rejects limit > 100 | PASS |
+| **Review Schemas** | listReviewsSchema accepts all filters | PASS |
+| **Review Schemas** | listReviewsSchema rejects rating > 5 | PASS |
+| **Review Schemas** | listReviewsSchema rejects rating < 1 | PASS |
+| **Review Schemas** | createReviewSchema accepts valid review | PASS |
+| **Review Schemas** | createReviewSchema requires template_id and rating | PASS |
+| **Review Schemas** | createReviewSchema rejects rating > 5 | PASS |
+| **Review Schemas** | createReviewSchema rejects rating < 1 | PASS |
+| **Review Schemas** | createReviewSchema rejects non-integer rating | PASS |
+| **Review Schemas** | createReviewSchema rejects title > 200 chars | PASS |
+| **Review Schemas** | createReviewSchema rejects review_text > 5000 chars | PASS |
+| **Review Schemas** | createReviewSchema accepts null title and review_text | PASS |
+| **Review Schemas** | createReviewSchema defaults is_verified_purchase to true | PASS |
+| **Review Schemas** | updateReviewSchema accepts partial updates | PASS |
+| **Review Schemas** | updateReviewSchema accepts empty object | PASS |
+| **Review Schemas** | updateReviewSchema accepts is_flagged | PASS |
+| **Review Schemas** | updateReviewSchema accepts publisher_response | PASS |
+| **Review Schemas** | updateReviewSchema rejects publisher_response > 5000 chars | PASS |
+| **Review Schemas** | updateReviewSchema rejects invalid rating | PASS |
+
+---
+
+## Module 49: Platform Analytics
+
+### Acceptance Tests (121 tests in `tests/acceptance/49-platform-analytics.acceptance.test.ts`)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Types** | MetricType has 9 values | PASS |
+| **Types** | MetricPeriod has 4 values | PASS |
+| **Types** | RiskLevel has 4 values | PASS |
+| **Types** | EventType has 3 values | PASS |
+| **Types** | ExperimentStatus has 4 values | PASS |
+| **Types** | ReleaseType has 4 values | PASS |
+| **Types** | ReleaseStatus has 4 values | PASS |
+| **Types** | PlatformMetricsSnapshot interface has all required fields | PASS |
+| **Types** | TenantHealthScore interface has all required fields | PASS |
+| **Types** | FeatureUsageEvent interface has all required fields | PASS |
+| **Types** | AbExperiment interface has all required fields | PASS |
+| **Types** | DeploymentRelease interface has all required fields | PASS |
+| **Constants** | METRIC_TYPES has 9 entries with value and label | PASS |
+| **Constants** | METRIC_TYPES includes all expected values | PASS |
+| **Constants** | METRIC_PERIODS has 4 entries with value and label | PASS |
+| **Constants** | METRIC_PERIODS includes all expected values | PASS |
+| **Constants** | RISK_LEVELS has 4 entries with value and label | PASS |
+| **Constants** | RISK_LEVELS includes all expected values | PASS |
+| **Constants** | EVENT_TYPES has 3 entries with value and label | PASS |
+| **Constants** | EVENT_TYPES includes all expected values | PASS |
+| **Constants** | EXPERIMENT_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | EXPERIMENT_STATUSES includes all expected values | PASS |
+| **Constants** | RELEASE_TYPES has 4 entries with value and label | PASS |
+| **Constants** | RELEASE_TYPES includes all expected values | PASS |
+| **Constants** | RELEASE_STATUSES has 4 entries with value and label | PASS |
+| **Constants** | RELEASE_STATUSES includes all expected values | PASS |
+| **Enums** | metricTypeEnum accepts all 9 metric types | PASS |
+| **Enums** | metricTypeEnum rejects invalid type | PASS |
+| **Enums** | metricPeriodEnum accepts all 4 periods | PASS |
+| **Enums** | metricPeriodEnum rejects invalid period | PASS |
+| **Enums** | riskLevelEnum accepts all 4 levels | PASS |
+| **Enums** | riskLevelEnum rejects invalid level | PASS |
+| **Enums** | eventTypeEnum accepts all 3 event types | PASS |
+| **Enums** | eventTypeEnum rejects invalid type | PASS |
+| **Enums** | experimentStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | experimentStatusEnum rejects invalid status | PASS |
+| **Enums** | releaseTypeEnum accepts all 4 types | PASS |
+| **Enums** | releaseTypeEnum rejects invalid type | PASS |
+| **Enums** | releaseStatusEnum accepts all 4 statuses | PASS |
+| **Enums** | releaseStatusEnum rejects invalid status | PASS |
+| **Metrics Snapshot Schemas** | listMetricsSnapshotsSchema defaults page=1 and limit=20 | PASS |
+| **Metrics Snapshot Schemas** | listMetricsSnapshotsSchema rejects limit > 100 | PASS |
+| **Metrics Snapshot Schemas** | listMetricsSnapshotsSchema accepts optional filters | PASS |
+| **Metrics Snapshot Schemas** | listMetricsSnapshotsSchema rejects invalid date format | PASS |
+| **Metrics Snapshot Schemas** | listMetricsSnapshotsSchema accepts company_id filter | PASS |
+| **Metrics Snapshot Schemas** | createMetricsSnapshotSchema requires metric_type | PASS |
+| **Metrics Snapshot Schemas** | createMetricsSnapshotSchema accepts valid snapshot | PASS |
+| **Metrics Snapshot Schemas** | createMetricsSnapshotSchema applies defaults | PASS |
+| **Metrics Snapshot Schemas** | createMetricsSnapshotSchema accepts full input | PASS |
+| **Metrics Snapshot Schemas** | createMetricsSnapshotSchema rejects invalid date format | PASS |
+| **Metrics Snapshot Schemas** | updateMetricsSnapshotSchema allows partial updates | PASS |
+| **Metrics Snapshot Schemas** | updateMetricsSnapshotSchema accepts all fields | PASS |
+| **Health Score Schemas** | listHealthScoresSchema defaults page=1 and limit=20 | PASS |
+| **Health Score Schemas** | listHealthScoresSchema rejects limit > 100 | PASS |
+| **Health Score Schemas** | listHealthScoresSchema accepts risk_level filter | PASS |
+| **Health Score Schemas** | listHealthScoresSchema accepts score range filters | PASS |
+| **Health Score Schemas** | listHealthScoresSchema accepts date range filters | PASS |
+| **Health Score Schemas** | listHealthScoresSchema rejects invalid date format | PASS |
+| **Health Score Schemas** | listHealthScoresSchema accepts q filter | PASS |
+| **Health Score Schemas** | createHealthScoreSchema applies defaults | PASS |
+| **Health Score Schemas** | createHealthScoreSchema accepts valid health score | PASS |
+| **Health Score Schemas** | createHealthScoreSchema rejects score > 100 | PASS |
+| **Health Score Schemas** | createHealthScoreSchema rejects score < 0 | PASS |
+| **Health Score Schemas** | createHealthScoreSchema rejects churn_probability > 100 | PASS |
+| **Health Score Schemas** | createHealthScoreSchema rejects churn_probability < 0 | PASS |
+| **Health Score Schemas** | createHealthScoreSchema accepts full input with all fields | PASS |
+| **Health Score Schemas** | createHealthScoreSchema validates score_date format | PASS |
+| **Health Score Schemas** | updateHealthScoreSchema allows partial updates | PASS |
+| **Health Score Schemas** | updateHealthScoreSchema accepts notes update | PASS |
+| **Health Score Schemas** | updateHealthScoreSchema accepts null notes | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema defaults page=1 and limit=50 | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema rejects limit > 100 | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema accepts feature_key filter | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema accepts event_type filter | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema accepts user_id filter | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema accepts session_id filter | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema accepts date range filters | PASS |
+| **Feature Event Schemas** | listFeatureEventsSchema rejects invalid date format | PASS |
+| **Feature Event Schemas** | createFeatureEventSchema requires feature_key | PASS |
+| **Feature Event Schemas** | createFeatureEventSchema accepts valid event | PASS |
+| **Feature Event Schemas** | createFeatureEventSchema rejects feature_key > 100 chars | PASS |
+| **Feature Event Schemas** | createFeatureEventSchema accepts all optional fields | PASS |
+| **Feature Event Schemas** | createFeatureEventSchema applies default event_type | PASS |
+| **Feature Event Schemas** | createFeatureEventSchema rejects invalid event_type | PASS |
+| **Experiment Schemas** | listExperimentsSchema defaults page=1 and limit=20 | PASS |
+| **Experiment Schemas** | listExperimentsSchema rejects limit > 100 | PASS |
+| **Experiment Schemas** | listExperimentsSchema accepts status filter | PASS |
+| **Experiment Schemas** | listExperimentsSchema accepts feature_key filter | PASS |
+| **Experiment Schemas** | listExperimentsSchema accepts q filter | PASS |
+| **Experiment Schemas** | createExperimentSchema requires name | PASS |
+| **Experiment Schemas** | createExperimentSchema accepts valid experiment | PASS |
+| **Experiment Schemas** | createExperimentSchema rejects name > 200 chars | PASS |
+| **Experiment Schemas** | createExperimentSchema rejects empty name | PASS |
+| **Experiment Schemas** | createExperimentSchema applies defaults | PASS |
+| **Experiment Schemas** | createExperimentSchema accepts full input | PASS |
+| **Experiment Schemas** | createExperimentSchema rejects sample_percentage < 1 | PASS |
+| **Experiment Schemas** | createExperimentSchema rejects sample_percentage > 100 | PASS |
+| **Experiment Schemas** | createExperimentSchema validates date format | PASS |
+| **Experiment Schemas** | createExperimentSchema accepts null dates | PASS |
+| **Experiment Schemas** | updateExperimentSchema allows partial updates | PASS |
+| **Experiment Schemas** | updateExperimentSchema accepts results update | PASS |
+| **Experiment Schemas** | updateExperimentSchema rejects invalid status | PASS |
+| **Experiment Schemas** | updateExperimentSchema accepts sample_percentage update | PASS |
+| **Release Schemas** | listReleasesSchema defaults page=1 and limit=20 | PASS |
+| **Release Schemas** | listReleasesSchema rejects limit > 100 | PASS |
+| **Release Schemas** | listReleasesSchema accepts release_type filter | PASS |
+| **Release Schemas** | listReleasesSchema accepts status filter | PASS |
+| **Release Schemas** | listReleasesSchema accepts q filter | PASS |
+| **Release Schemas** | createReleaseSchema requires version | PASS |
+| **Release Schemas** | createReleaseSchema accepts valid release | PASS |
+| **Release Schemas** | createReleaseSchema rejects version > 50 chars | PASS |
+| **Release Schemas** | createReleaseSchema rejects empty version | PASS |
+| **Release Schemas** | createReleaseSchema applies defaults | PASS |
+| **Release Schemas** | createReleaseSchema accepts full input | PASS |
+| **Release Schemas** | createReleaseSchema accepts rollback_reason | PASS |
+| **Release Schemas** | updateReleaseSchema allows partial updates | PASS |
+| **Release Schemas** | updateReleaseSchema accepts changelog update | PASS |
+| **Release Schemas** | updateReleaseSchema accepts null description | PASS |
+| **Release Schemas** | updateReleaseSchema rejects invalid release_type | PASS |
+| **Release Schemas** | updateReleaseSchema rejects invalid status | PASS |
+| **Release Schemas** | updateReleaseSchema accepts affected_services update | PASS |

@@ -1,5 +1,139 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Module 47: Training & Certification Platform (V1 Foundation)
+
+### Database Tables
+- **training_courses**: Content items for training. Columns: company_id (UUID nullable for platform content), title (VARCHAR 255), description (TEXT), content_url (TEXT), thumbnail_url (TEXT), duration_minutes (INT), course_type (video/article/walkthrough/assessment), category (VARCHAR 100), module_tag (VARCHAR 50), role_tags (TEXT[]), difficulty (beginner/intermediate/advanced), language (VARCHAR 10 default 'en'), transcript (TEXT), sort_order (INT default 0), is_published (BOOLEAN default false), view_count (INT default 0), created_by (UUID). Soft delete via deleted_at. RLS with platform content support (company_id IS NULL OR matches). 8 indexes.
+- **training_paths**: Structured learning paths. Columns: company_id (UUID nullable for platform paths), name (VARCHAR 200), description (TEXT), role_key (VARCHAR 50), estimated_hours (NUMERIC 6,1 default 0), sort_order (INT default 0), is_active (BOOLEAN default true), created_by (UUID). RLS with platform content support. 5 indexes.
+- **training_path_items**: Items within a learning path. Columns: company_id (UUID nullable), path_id (FK training_paths CASCADE), item_type (course/assessment/checkpoint), item_id (UUID NOT NULL), sort_order (INT default 0), is_required (BOOLEAN default true). RLS with platform content support. 4 indexes.
+- **user_training_progress**: Per-user progress tracking. Columns: company_id (UUID NOT NULL), user_id (UUID NOT NULL), item_type (course/assessment/checkpoint), item_id (UUID NOT NULL), status (not_started/in_progress/completed), progress_pct (INT 0-100 default 0), started_at (TIMESTAMPTZ), completed_at (TIMESTAMPTZ). UNIQUE(company_id, user_id, item_type, item_id). RLS enabled. 7 indexes.
+- **user_certifications**: Certification completions/attempts. Columns: company_id (UUID NOT NULL), user_id (UUID NOT NULL), certification_name (VARCHAR 255), certification_level (INT 1-3 default 1), description (TEXT), passing_score (INT 0-100 default 80), assessment_score (INT 0-100 nullable), passed (BOOLEAN default false), attempt_count (INT >= 1 default 1), certified_at (TIMESTAMPTZ), expires_at (TIMESTAMPTZ), time_limit_minutes (INT), issued_by (UUID), notes (TEXT). RLS enabled. 8 indexes.
+
+### API Endpoints (10 route files under /api/v2/training/)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/training/courses | List courses filtered by course_type/difficulty/category/is_published/q. Paginated. Excludes soft-deleted. Searches title and description via OR ilike. |
+| POST | /api/v2/training/courses | Create course. Requires title. Defaults: course_type=video, difficulty=beginner, language=en, sort_order=0, is_published=false, role_tags=[]. Returns 201. |
+| GET | /api/v2/training/courses/:id | Get single course. |
+| PUT | /api/v2/training/courses/:id | Update course fields including view_count. |
+| DELETE | /api/v2/training/courses/:id | Soft delete: sets deleted_at. |
+| GET | /api/v2/training/paths | List paths filtered by role_key/is_active/q. Paginated. Searches name and description. |
+| POST | /api/v2/training/paths | Create path. Requires name. Defaults: estimated_hours=0, sort_order=0, is_active=true. Returns 201. |
+| GET | /api/v2/training/paths/:id | Get path with items_count. |
+| PUT | /api/v2/training/paths/:id | Update path fields. |
+| DELETE | /api/v2/training/paths/:id | Deactivate: sets is_active=false. |
+| GET | /api/v2/training/paths/:id/items | List path items. Paginated. Ordered by sort_order. |
+| POST | /api/v2/training/paths/:id/items | Add item to path. Verifies path exists. Returns 201. |
+| PUT | /api/v2/training/paths/:id/items/:itemId | Update path item. |
+| DELETE | /api/v2/training/paths/:id/items/:itemId | Hard delete path item. |
+| GET | /api/v2/training/progress | List progress records filtered by user_id/item_type/status. Paginated. |
+| POST | /api/v2/training/progress | Create progress record. Requires user_id, item_id. Defaults: item_type=course, status=not_started, progress_pct=0. Returns 201. |
+| GET | /api/v2/training/progress/:id | Get single progress record. |
+| PUT | /api/v2/training/progress/:id | Update progress (status, progress_pct, started_at, completed_at). |
+| GET | /api/v2/training/certifications | List certifications filtered by user_id/passed/certification_level/q. Paginated. Searches certification_name and description. |
+| POST | /api/v2/training/certifications | Create certification. Requires user_id, certification_name. Defaults: certification_level=1, passing_score=80, passed=false, attempt_count=1. Sets issued_by from auth context. Returns 201. |
+| GET | /api/v2/training/certifications/:id | Get single certification. |
+| PUT | /api/v2/training/certifications/:id | Update certification fields. |
+
+### Type System
+- 5 type unions: CourseType (4 values), Difficulty (3), TrainingStatus (3), PathItemType (3), CertificationLevel (1|2|3 numeric)
+- 5 interfaces: TrainingCourse, TrainingPath, TrainingPathItem, UserTrainingProgress, UserCertification
+- 5 constant arrays: COURSE_TYPES, DIFFICULTIES, TRAINING_STATUSES, PATH_ITEM_TYPES, CERTIFICATION_LEVELS
+
+### Validation Schemas (Zod)
+- 5 enum schemas: courseTypeEnum, difficultyEnum, trainingStatusEnum, pathItemTypeEnum, certificationLevelEnum (uses z.union of z.literal for numeric values)
+- 15 CRUD schemas covering courses (list/create/update), paths (list/create/update), path items (list/create/update), progress (list/create/update), certifications (list/create/update)
+
+---
+
+## Module 50: Marketing Website & Sales Pipeline (V1 Foundation)
+
+### Database Tables
+- **marketing_leads**: Platform-level sales pipeline leads (no company_id). Columns: source (website_trial/demo_request/contact_form/referral default contact_form), utm_source/utm_medium/utm_campaign (VARCHAR 255), name (VARCHAR 255 NOT NULL), email (VARCHAR 255 NOT NULL), company_name (VARCHAR 255), phone (VARCHAR 50), company_size (VARCHAR 50), current_tools (TEXT), pipeline_stage (8 stages: captured/qualified/demo_scheduled/demo_completed/proposal_sent/negotiation/closed_won/closed_lost default captured), assigned_to (UUID), deal_value (DECIMAL 10,2 default 0), close_probability (INT 0-100 default 0), closed_at (TIMESTAMPTZ), closed_reason (won/lost_price/lost_features/lost_competitor/lost_timing nullable), competitor_name (VARCHAR 255), notes (TEXT), crm_id (VARCHAR 100). Soft delete via deleted_at. RLS USING (true) for platform admin access. 8 indexes.
+- **marketing_referrals**: Tenant-scoped referral tracking. Columns: referrer_company_id (FK companies NOT NULL), referral_code (VARCHAR 20 NOT NULL UNIQUE), referred_email (VARCHAR 255 NOT NULL), referred_company_name (VARCHAR 255), referred_company_id (UUID), status (link_created/clicked/signed_up/converted default link_created), referrer_credit (DECIMAL 10,2 default 0), credit_applied (BOOLEAN default false), clicked_at/signed_up_at/converted_at (TIMESTAMPTZ). No soft delete. RLS via referrer_company_id = get_current_company_id(). 6 indexes.
+- **testimonials**: Tenant-scoped customer testimonials. Columns: company_id (FK companies NOT NULL), contact_name (VARCHAR 200 NOT NULL), contact_title (VARCHAR 200), company_display_name (VARCHAR 255), quote_text (TEXT NOT NULL), rating (INT 1-5), video_url (TEXT), photo_url (TEXT), is_approved (BOOLEAN default false), is_featured (BOOLEAN default false), display_on (TEXT[] default {}), collected_at (TIMESTAMPTZ default now()), approved_by (UUID), approved_at (TIMESTAMPTZ). No soft delete. RLS via company_id. 6 indexes.
+- **case_studies**: Platform-level marketing case studies (no company_id). Columns: title (VARCHAR 255 NOT NULL), slug (VARCHAR 255 NOT NULL UNIQUE), company_name (VARCHAR 255), company_size (VARCHAR 50), challenge/solution/results (TEXT), metrics (JSONB default {}), quote_text (TEXT), quote_author (VARCHAR 200), photos/industry_tags/region_tags (TEXT[] default {}), is_published (BOOLEAN default false), published_at (TIMESTAMPTZ), created_by (UUID). Soft delete via deleted_at. RLS USING (true). 5 indexes.
+- **blog_posts**: Platform-level content marketing (no company_id). Columns: title (VARCHAR 255 NOT NULL), slug (VARCHAR 255 NOT NULL UNIQUE), excerpt (TEXT), body_html (TEXT), author_name (VARCHAR 200), category (industry/product/how_to/customer_spotlight default industry), tags (TEXT[] default {}), featured_image (TEXT), meta_title (VARCHAR 200), meta_description (VARCHAR 500), is_published (BOOLEAN default false), published_at (TIMESTAMPTZ), view_count (INT default 0), created_by (UUID). Soft delete via deleted_at. RLS USING (true). 7 indexes.
+
+### API Endpoints (10 routes under /api/v2/marketing-site/)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/marketing-site/leads | List leads filtered by source/pipeline_stage/assigned_to/closed_reason/q. Paginated. Excludes soft-deleted. Searches name, email, company_name via OR ilike. |
+| POST | /api/v2/marketing-site/leads | Create lead. Requires name, email. Defaults: source=contact_form, pipeline_stage=captured, deal_value=0, close_probability=0. Returns 201. |
+| GET | /api/v2/marketing-site/leads/:id | Get single lead. |
+| PUT | /api/v2/marketing-site/leads/:id | Update lead. Auto-sets closed_at when pipeline_stage changes to closed_won/closed_lost. |
+| DELETE | /api/v2/marketing-site/leads/:id | Soft delete lead. |
+| GET | /api/v2/marketing-site/referrals | List referrals filtered by status/credit_applied/q. Paginated. Tenant-scoped via referrer_company_id. |
+| POST | /api/v2/marketing-site/referrals | Create referral. Requires referral_code, referred_email. 409 on duplicate referral_code. Returns 201. |
+| GET | /api/v2/marketing-site/referrals/:id | Get single referral. Tenant-scoped. |
+| PUT | /api/v2/marketing-site/referrals/:id | Update referral. Auto-sets clicked_at/signed_up_at/converted_at on status transitions. |
+| GET | /api/v2/marketing-site/testimonials | List testimonials filtered by is_approved/is_featured/rating/q. Paginated. Tenant-scoped via company_id. |
+| POST | /api/v2/marketing-site/testimonials | Create testimonial. Requires contact_name, quote_text. Defaults: is_approved=false, is_featured=false, display_on=[]. Returns 201. |
+| GET | /api/v2/marketing-site/testimonials/:id | Get single testimonial. Tenant-scoped. |
+| PUT | /api/v2/marketing-site/testimonials/:id | Update testimonial. Auto-sets approved_by/approved_at when is_approved changes to true. |
+| GET | /api/v2/marketing-site/case-studies | List case studies filtered by is_published/q. Paginated. Excludes soft-deleted. Searches title, company_name, challenge. |
+| POST | /api/v2/marketing-site/case-studies | Create case study. Requires title, slug. Auto-sets published_at if is_published=true. Returns 201. |
+| GET | /api/v2/marketing-site/case-studies/:id | Get single case study. |
+| PUT | /api/v2/marketing-site/case-studies/:id | Update case study. Auto-sets published_at when is_published changes to true. |
+| DELETE | /api/v2/marketing-site/case-studies/:id | Soft delete case study. |
+| GET | /api/v2/marketing-site/blog-posts | List blog posts filtered by category/is_published/q. Paginated. Excludes soft-deleted. Searches title, excerpt, author_name. |
+| POST | /api/v2/marketing-site/blog-posts | Create blog post. Requires title, slug. Defaults: category=industry, is_published=false. Auto-sets published_at if is_published=true. Returns 201. |
+| GET | /api/v2/marketing-site/blog-posts/:id | Get single blog post. |
+| PUT | /api/v2/marketing-site/blog-posts/:id | Update blog post. Auto-sets published_at when is_published changes to true. |
+| DELETE | /api/v2/marketing-site/blog-posts/:id | Soft delete blog post. |
+
+### Type System
+- 5 type unions: LeadSource (4), PipelineStage (8), ReferralStatus (4), BlogCategory (4), ClosedReason (5)
+- 5 interfaces: MarketingLead, MarketingReferral, Testimonial, CaseStudy, BlogPost
+- 5 constant arrays: LEAD_SOURCES, PIPELINE_STAGES, REFERRAL_STATUSES, BLOG_CATEGORIES, CLOSED_REASONS
+
+### Validation Schemas (Zod)
+- 5 enum schemas: leadSourceEnum, pipelineStageEnum, referralStatusEnum, blogCategoryEnum, closedReasonEnum
+- listMarketingLeadsSchema (page/limit/source/pipeline_stage/assigned_to/closed_reason/q)
+- createMarketingLeadSchema (requires name, email; defaults: source=contact_form, pipeline_stage=captured, deal_value=0, close_probability=0)
+- updateMarketingLeadSchema (all fields optional; closed_at YYYY-MM-DD, closed_reason nullable)
+- listMarketingReferralsSchema (page/limit/status/credit_applied with boolean preprocess/q)
+- createMarketingReferralSchema (requires referral_code max 20, referred_email; defaults: status=link_created, referrer_credit=0)
+- updateMarketingReferralSchema (all fields optional; referred_company_id UUID)
+- listTestimonialsSchema (page/limit/is_approved/is_featured with boolean preprocess/rating 1-5/q)
+- createTestimonialSchema (requires contact_name max 200, quote_text; defaults: is_approved=false, is_featured=false, display_on=[]; rating 1-5 nullable; video_url/photo_url URL validated; collected_at YYYY-MM-DD)
+- updateTestimonialSchema (all fields optional)
+- listCaseStudiesSchema (page/limit/is_published with boolean preprocess/q)
+- createCaseStudySchema (requires title max 255, slug with regex /^[a-z0-9]+(?:-[a-z0-9]+)*$/; defaults: is_published=false, metrics={}, photos=[], industry_tags=[], region_tags=[])
+- updateCaseStudySchema (all fields optional; slug regex validated)
+- listBlogPostsSchema (page/limit/category enum/is_published with boolean preprocess/q)
+- createBlogPostSchema (requires title max 255, slug with regex; defaults: category=industry, is_published=false, tags=[]; featured_image URL validated; meta_title max 200; meta_description max 500)
+- updateBlogPostSchema (all fields optional; slug regex validated; featured_image nullable)
+
+---
+
+## Module 46: Customer Support (V1 Foundation)
+
+### Database Tables
+- **support_tickets**: Core ticket records. Columns: company_id, user_id (UUID nullable), ticket_number (VARCHAR 30), subject (VARCHAR 255), description (TEXT), status (open/in_progress/waiting_on_customer/waiting_on_agent/resolved/closed), priority (low/normal/high/urgent), category (general/billing/technical/feature_request/bug_report/onboarding/integration/other), channel (web/email/chat/phone), assigned_agent_id (UUID), tags (JSONB default []), first_response_at (TIMESTAMPTZ), resolved_at (TIMESTAMPTZ), closed_at (TIMESTAMPTZ), satisfaction_rating (INT 1-5 nullable), created_by (UUID). Soft delete via deleted_at. RLS enabled. 12 indexes.
+- **ticket_messages**: Messages within tickets. Columns: company_id, ticket_id (FK support_tickets CASCADE), sender_type (customer/agent/system), sender_id (UUID), message_text (TEXT), attachments (JSONB default []), is_internal (BOOLEAN default false). RLS enabled. 6 indexes.
+- **kb_articles**: Knowledge base articles. Columns: company_id (nullable for platform-level articles), title (VARCHAR 255), slug (VARCHAR 300 UNIQUE), content (TEXT), category (VARCHAR 100), tags (JSONB default []), status (draft/published/archived), view_count (INT default 0), helpful_count (INT default 0), not_helpful_count (INT default 0), author_id (UUID). Soft delete via deleted_at. RLS enabled (special policy: company_id IS NULL OR company_id = current). 7 indexes.
+- **feature_requests**: Feature request tracking. Columns: company_id, user_id (UUID), title (VARCHAR 255), description (TEXT), status (submitted/under_review/planned/in_progress/completed/declined), priority (low/normal/high/urgent), category (general/billing/technical/feature_request/bug_report/onboarding/integration/other), vote_count (INT default 0), created_by (UUID). Soft delete via deleted_at. RLS enabled. 9 indexes.
+- **feature_request_votes**: Vote tracking per feature request. Columns: company_id, feature_request_id (FK feature_requests CASCADE), user_id (UUID NOT NULL). UNIQUE(company_id, feature_request_id, user_id). RLS enabled. 4 indexes.
+
+### API Endpoints (9 route files, 22+ routes under /api/v2/support/)
+- Support Tickets: GET list (filter by status/priority/category/channel/assigned_agent_id/q), POST create, GET/PUT/DELETE by ID. PUT auto-sets resolved_at on status=resolved, closed_at on status=closed. Closed tickets cannot be updated (403).
+- Ticket Messages: GET list per ticket (ordered ascending), POST create. First agent reply auto-sets first_response_at on parent ticket. GET/PUT/DELETE individual messages (hard delete).
+- KB Articles: GET list (platform + company articles), POST create with duplicate slug check (409). GET/PUT/DELETE by ID (soft delete).
+- Feature Requests: GET list (ordered by vote_count DESC), POST create. GET by ID with votes_count. PUT/DELETE by ID (soft delete).
+- Feature Request Votes: GET list per request, POST add vote with duplicate check (409) + vote_count increment, DELETE remove vote by user_id query param + vote_count decrement.
+
+### Type System
+- 7 type unions: TicketStatus (6), TicketPriority (4), TicketCategory (8), TicketChannel (4), SenderType (3), ArticleStatus (3), FeatureRequestStatus (6)
+- 5 interfaces: SupportTicket, TicketMessage, KbArticle, FeatureRequest, FeatureRequestVote
+- 7 constant arrays: TICKET_STATUSES, TICKET_PRIORITIES, TICKET_CATEGORIES, TICKET_CHANNELS, SENDER_TYPES, ARTICLE_STATUSES, FEATURE_REQUEST_STATUSES
+
+### Validation Schemas (Zod)
+- 7 enum schemas: ticketStatusEnum, ticketPriorityEnum, ticketCategoryEnum, ticketChannelEnum, senderTypeEnum, articleStatusEnum, featureRequestStatusEnum
+- 15 CRUD schemas: listTicketsSchema, createTicketSchema (requires ticket_number + subject; defaults: open/normal/general/web/tags=[]), updateTicketSchema (satisfaction_rating 1-5 nullable), listTicketMessagesSchema (boolean preprocess for is_internal), createTicketMessageSchema (requires message_text; defaults: customer/attachments=[]/is_internal=false), updateTicketMessageSchema, listKbArticlesSchema, createKbArticleSchema (requires title + slug with regex validation; defaults: draft/tags=[]), updateKbArticleSchema, listFeatureRequestsSchema, createFeatureRequestSchema (requires title; defaults: submitted/normal/general), updateFeatureRequestSchema, listFeatureRequestVotesSchema, createFeatureRequestVoteSchema (requires user_id UUID)
+
+---
+
 ## Module 36: Lead Pipeline & CRM (V1 Foundation)
 
 ### Database Tables
@@ -941,3 +1075,379 @@
 - listReportSchedulesSchema, createReportScheduleSchema (min 1 recipient, email validation, day_of_week 0-6, day_of_month 1-31), updateReportScheduleSchema
 - listFinancialPeriodsSchema, createFinancialPeriodSchema (YYYY-MM-DD dates, fiscal_year 2000-2100, fiscal_quarter 1-4), updateFinancialPeriodSchema
 - closeFinancialPeriodSchema (optional notes)
+
+---
+
+## Module 44: White-Label & Branding (V1 Foundation)
+
+### Database Tables
+- **builder_branding**: Per-company visual branding config. UNIQUE(company_id). Columns: logo_url (TEXT), logo_dark_url (TEXT), favicon_url (TEXT), primary_color (VARCHAR 7 default '#2563eb'), secondary_color (VARCHAR 7 default '#1e40af'), accent_color (VARCHAR 7 default '#f59e0b'), font_family (VARCHAR 100 default 'Inter'), header_style (light/dark/gradient/custom default 'light'), login_background_url (TEXT), login_message (TEXT), powered_by_visible (BOOLEAN default true), custom_css (TEXT), metadata (JSONB default {}). RLS enabled. No soft delete (upsert pattern). Indexes on company_id.
+- **builder_custom_domains**: Custom domain registration per company. Columns: company_id, domain (VARCHAR 255 NOT NULL), subdomain (VARCHAR 100), status (pending/verifying/active/failed/expired default 'pending'), ssl_status (pending/issued/expired/failed default 'pending'), verification_token (VARCHAR 255), verified_at (TIMESTAMPTZ), ssl_issued_at (TIMESTAMPTZ), ssl_expires_at (TIMESTAMPTZ), is_primary (BOOLEAN default false). Soft delete via deleted_at. RLS enabled. UNIQUE(domain). Indexes on company_id, status, domain, (company_id, is_primary), deleted_at partial.
+- **builder_email_config**: Per-company email branding. UNIQUE(company_id). Columns: from_name (VARCHAR 200), from_email (VARCHAR 255), reply_to_email (VARCHAR 255), email_header_html (TEXT), email_footer_html (TEXT), email_signature (TEXT), use_custom_smtp (BOOLEAN default false), smtp_host (VARCHAR 255), smtp_port (INT), smtp_username (VARCHAR 255), smtp_encrypted_password (TEXT), is_verified (BOOLEAN default false), verified_at (TIMESTAMPTZ). RLS enabled. No soft delete (upsert pattern).
+- **builder_terminology**: Custom term overrides. Columns: company_id, default_term (VARCHAR 100), custom_term (VARCHAR 100), context (navigation/reports/forms/notifications/global default 'global'), is_active (BOOLEAN default true). UNIQUE(company_id, default_term, context). RLS enabled. No soft delete (hard delete). Indexes on company_id, context, (company_id, is_active).
+- **builder_content_pages**: Custom portal content pages. Columns: company_id, page_type (welcome/terms/privacy/help/faq/about/custom default 'custom'), title (VARCHAR 255), slug (VARCHAR 200), content_html (TEXT), is_published (BOOLEAN default false), published_at (TIMESTAMPTZ), sort_order (INT default 0), created_by (FK users). Soft delete via deleted_at. RLS enabled. UNIQUE(company_id, slug). Indexes on company_id, page_type, (company_id, is_published), deleted_at partial.
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/branding | Get branding for current company. Returns defaults if none exists. |
+| PUT | /api/v2/branding | Upsert branding. Validates hex colors (#RRGGBB format). |
+| GET | /api/v2/branding/domains | List custom domains filtered by status/q. Paginated. Excludes soft-deleted. Searches domain. |
+| POST | /api/v2/branding/domains | Create custom domain. Requires domain. Auto-generates verification_token. 409 on duplicate domain. Returns 201. |
+| GET | /api/v2/branding/domains/:id | Get single domain. |
+| PUT | /api/v2/branding/domains/:id | Update domain. Auto-sets verified_at when status=active. Auto-sets ssl_issued_at when ssl_status=issued. |
+| DELETE | /api/v2/branding/domains/:id | Soft delete domain. |
+| GET | /api/v2/branding/email | Get email config. Returns null if none exists. |
+| PUT | /api/v2/branding/email | Upsert email config. Validates email format. SMTP port range 1-65535. |
+| GET | /api/v2/branding/terminology | List terminology overrides filtered by context/is_active/q. Paginated. Searches default_term and custom_term. |
+| POST | /api/v2/branding/terminology | Create terminology override. Requires default_term and custom_term. Defaults: context=global, is_active=true. 409 on duplicate. Returns 201. |
+| GET | /api/v2/branding/terminology/:id | Get single terminology override. |
+| PUT | /api/v2/branding/terminology/:id | Update terminology override. |
+| DELETE | /api/v2/branding/terminology/:id | Hard delete terminology override. |
+| GET | /api/v2/branding/pages | List content pages filtered by page_type/is_published/q. Paginated. Excludes soft-deleted. Searches title and slug. Ordered by sort_order asc, created_at desc. |
+| POST | /api/v2/branding/pages | Create content page. Requires title and slug. Validates slug format (lowercase, hyphens only). Auto-sets published_at when is_published=true. 409 on duplicate slug. Returns 201. |
+| GET | /api/v2/branding/pages/:id | Get single content page. |
+| PUT | /api/v2/branding/pages/:id | Update content page. Auto-sets published_at when is_published=true. |
+| DELETE | /api/v2/branding/pages/:id | Soft delete content page. |
+
+### Type System
+- 5 type unions: HeaderStyle (4: light/dark/gradient/custom), DomainStatus (5: pending/verifying/active/failed/expired), SslStatus (4: pending/issued/expired/failed), TerminologyContext (5: navigation/reports/forms/notifications/global), ContentPageType (7: welcome/terms/privacy/help/faq/about/custom)
+- 5 interfaces: BuilderBranding, BuilderCustomDomain, BuilderEmailConfig, BuilderTerminology, BuilderContentPage
+- 5 constant arrays: HEADER_STYLES, DOMAIN_STATUSES, SSL_STATUSES, TERMINOLOGY_CONTEXTS, CONTENT_PAGE_TYPES
+
+### Validation Schemas (Zod)
+- 5 enum schemas: headerStyleEnum, domainStatusEnum, sslStatusEnum, terminologyContextEnum, contentPageTypeEnum
+- updateBrandingSchema (all fields optional, hex color regex validation #RRGGBB, null allowed for URLs)
+- listDomainsSchema (page/limit/status/q)
+- createDomainSchema (requires domain; defaults: is_primary=false)
+- updateDomainSchema (status/ssl_status/subdomain/is_primary optional)
+- updateEmailConfigSchema (all fields optional, email format validation, smtp_port 1-65535, null allowed for SMTP fields)
+- listTerminologySchema (page/limit defaults to 50, context/is_active with boolean preprocess/q)
+- createTerminologySchema (requires default_term and custom_term max 100; defaults: context=global, is_active=true)
+- updateTerminologySchema (all fields optional)
+- listContentPagesSchema (page/limit/page_type/is_published with boolean preprocess/q)
+- createContentPageSchema (requires title max 255 and slug max 200 with regex validation; defaults: page_type=custom, is_published=false, sort_order=0)
+- updateContentPageSchema (all fields optional, slug validated with regex, sort_order min 0)
+
+---
+
+## Module 42: Data Migration (V1 Foundation)
+
+### Database Tables
+- **migration_jobs**: Core migration job records. Columns: company_id, name (VARCHAR 255), description (TEXT), source_platform (9 platforms: buildertrend/coconstruct/procore/quickbooks/excel/csv/sage/xero/other), status (8 statuses: draft/mapping/validating/ready/running/completed/failed/rolled_back), source_file_url (TEXT), source_file_name (VARCHAR 255), total_records/processed_records/failed_records/skipped_records (INT default 0), error_log (JSONB default []), started_at/completed_at/rolled_back_at (TIMESTAMPTZ), rolled_back_by/created_by (UUID). Soft delete via deleted_at. RLS enabled. 7 indexes.
+- **migration_field_mappings**: Field mapping definitions per job. Columns: company_id, job_id (FK migration_jobs CASCADE), source_field (VARCHAR 200), target_table (VARCHAR 100), target_field (VARCHAR 100), transform_type (9 types: direct/lookup/formula/default/concatenate/split/date_format/currency/skip), transform_config (JSONB default {}), is_required (BOOLEAN default false), default_value (TEXT), sample_source_value/sample_target_value (TEXT), sort_order (INT default 0). RLS enabled. 5 indexes.
+- **migration_mapping_templates**: Reusable mapping templates. Columns: company_id, name (VARCHAR 200), description (TEXT), source_platform, mappings (JSONB default []), is_system (BOOLEAN default false), is_active (BOOLEAN default true), created_by (UUID). RLS enabled. 4 indexes.
+- **migration_validation_results**: Validation results per job. Columns: company_id, job_id (FK migration_jobs CASCADE), validation_type (7 types: schema/data_type/required_field/uniqueness/referential/business_rule/format), severity (error/warning/info), field_name (VARCHAR 200), record_index (INT), source_value (TEXT), message (TEXT), is_resolved (BOOLEAN default false), resolved_at (TIMESTAMPTZ), resolved_by (UUID). RLS enabled. 6 indexes.
+- **migration_reconciliation**: Reconciliation tracking per job per entity type. Columns: company_id, job_id (FK migration_jobs CASCADE), entity_type (6 types: vendor/client/job/invoice/cost_code/employee), source_count/imported_count/matched_count/unmatched_count (INT default 0), discrepancies (JSONB default []), status (4 statuses: pending/reconciling/reconciled/discrepant), reconciled_at (TIMESTAMPTZ), reconciled_by (UUID), notes (TEXT). RLS enabled. 5 indexes.
+
+### API Endpoints (10 route files under /api/v2/data-migration/)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/data-migration/jobs | List migration jobs filtered by status/source_platform/q. Paginated. Excludes soft-deleted. Searches name via ilike. |
+| POST | /api/v2/data-migration/jobs | Create migration job. Requires name. Defaults: source_platform=other, status=draft, all counts=0. Returns 201. |
+| GET | /api/v2/data-migration/jobs/:id | Get job with mappings_count, validations_count, reconciliation_count. |
+| PUT | /api/v2/data-migration/jobs/:id | Update job. Auto-sets started_at on running, completed_at on completed, rolled_back_at on rolled_back. |
+| DELETE | /api/v2/data-migration/jobs/:id | Soft delete: sets deleted_at. |
+| GET | /api/v2/data-migration/jobs/:id/mappings | List field mappings for a job. Filtered by target_table/transform_type. Ordered by sort_order asc. Verifies job exists. |
+| POST | /api/v2/data-migration/jobs/:id/mappings | Create field mapping. Verifies job exists. Returns 201. |
+| GET | /api/v2/data-migration/jobs/:id/mappings/:mappingId | Get single mapping. |
+| PUT | /api/v2/data-migration/jobs/:id/mappings/:mappingId | Update mapping. |
+| DELETE | /api/v2/data-migration/jobs/:id/mappings/:mappingId | Hard delete mapping. |
+| GET | /api/v2/data-migration/jobs/:id/validations | List validation results. Filtered by validation_type/severity/is_resolved. Verifies job exists. |
+| POST | /api/v2/data-migration/jobs/:id/validations | Create validation result. Verifies job exists. Returns 201. |
+| GET | /api/v2/data-migration/jobs/:id/validations/:validationId | Get single validation result. |
+| PUT | /api/v2/data-migration/jobs/:id/validations/:validationId | Update validation result. Auto-sets resolved_at/resolved_by when is_resolved=true, clears when false. |
+| GET | /api/v2/data-migration/jobs/:id/reconciliation | List reconciliation records. Filtered by entity_type/status. Verifies job exists. |
+| POST | /api/v2/data-migration/jobs/:id/reconciliation | Create reconciliation record. Verifies job exists. Returns 201. |
+| GET | /api/v2/data-migration/jobs/:id/reconciliation/:reconciliationId | Get single reconciliation record. |
+| PUT | /api/v2/data-migration/jobs/:id/reconciliation/:reconciliationId | Update reconciliation. Auto-sets reconciled_at when status='reconciled'. |
+| GET | /api/v2/data-migration/templates | List mapping templates. Filtered by source_platform/is_active/q. Searches name and description. |
+| POST | /api/v2/data-migration/templates | Create mapping template. Requires name and source_platform. Returns 201. |
+| GET | /api/v2/data-migration/templates/:id | Get single template. |
+| PUT | /api/v2/data-migration/templates/:id | Update template. |
+| DELETE | /api/v2/data-migration/templates/:id | Deactivate: sets is_active=false. |
+
+### Type System
+- 7 type unions: SourcePlatform (9), MigrationStatus (8), TransformType (9), ValidationType (7), ValidationSeverity (3), ReconciliationStatus (4), MigrationEntityType (6)
+- 5 interfaces: MigrationJob, MigrationFieldMapping, MigrationMappingTemplate, MigrationValidationResult, MigrationReconciliation
+- 7 constant arrays: SOURCE_PLATFORMS, MIGRATION_STATUSES, TRANSFORM_TYPES, VALIDATION_TYPES, VALIDATION_SEVERITIES, RECONCILIATION_STATUSES, MIGRATION_ENTITY_TYPES
+
+### Validation Schemas (Zod)
+- 7 enum schemas: sourcePlatformEnum, migrationStatusEnum, transformTypeEnum, validationTypeEnum, validationSeverityEnum, reconciliationStatusEnum, migrationEntityTypeEnum
+- listMigrationJobsSchema (page/limit/status/source_platform/q)
+- createMigrationJobSchema (requires name max 255; defaults: source_platform=other, status=draft, total_records=0)
+- updateMigrationJobSchema (all fields optional, includes error_log array and record counts)
+- listFieldMappingsSchema (page/limit defaults to 50, target_table/transform_type)
+- createFieldMappingSchema (requires source_field/target_table/target_field max 200/100/100; defaults: transform_type=direct, is_required=false, sort_order=0)
+- updateFieldMappingSchema (all fields optional)
+- listMappingTemplatesSchema (page/limit/source_platform/is_active with boolean preprocess/q)
+- createMappingTemplateSchema (requires name max 200 and source_platform; defaults: mappings=[], is_system=false, is_active=true)
+- updateMappingTemplateSchema (all fields optional)
+- listValidationResultsSchema (page/limit defaults to 50, validation_type/severity/is_resolved with boolean preprocess)
+- createValidationResultSchema (requires message min 1 max 5000; defaults: validation_type=schema, severity=warning, record_index non-negative)
+- updateValidationResultSchema (all fields optional, is_resolved boolean)
+- listReconciliationSchema (page/limit/entity_type/status)
+- createReconciliationSchema (requires entity_type; defaults: all counts=0, discrepancies=[], status=pending, counts non-negative)
+- updateReconciliationSchema (all fields optional, notes max 10000)
+
+---
+
+## Module 45: API & Marketplace (V1 Foundation)
+
+### Database Tables
+- **api_keys**: Per-company API key management. Columns: company_id, name (VARCHAR 200), key_prefix (VARCHAR 20), key_hash (VARCHAR 255), permissions (JSONB default []), status (active/revoked/expired), rate_limit_per_minute (INT default 60), last_used_at, expires_at, revoked_at, revoked_by (UUID), created_by (UUID). No soft delete -- uses status=revoked with revoked_at/revoked_by. RLS enabled. Indexes on company_id, status, key_prefix, key_hash, (company_id, status), expires_at.
+- **webhook_subscriptions**: Webhook endpoint registrations. Columns: company_id, url (TEXT), events (JSONB), status (active/paused/disabled/failing), secret (VARCHAR 255), description (TEXT), retry_count (INT default 0), max_retries (INT default 5), failure_count (INT default 0), last_triggered_at, last_success_at, last_failure_at, created_by (UUID). Soft delete via deleted_at. RLS enabled. Indexes on company_id, status, (company_id, status), deleted_at partial.
+- **webhook_deliveries**: Delivery attempt log per webhook. Columns: company_id, subscription_id (FK webhook_subscriptions CASCADE), event_type (VARCHAR 100), payload (JSONB), status (pending/delivered/failed/retrying), response_status_code (INT), response_body (TEXT), attempt_count (INT default 1), next_retry_at, delivered_at. Append-only log -- no updated_at trigger, no soft delete. RLS enabled. Indexes on company_id, subscription_id, status, event_type, (company_id, subscription_id), created_at DESC.
+- **integration_listings**: Global marketplace catalog (NO company_id, NO RLS). Columns: name (VARCHAR 255), slug (VARCHAR 100 UNIQUE), description (TEXT), long_description (TEXT), logo_url (TEXT), screenshots (JSONB default []), category (9 categories), developer_name (VARCHAR 200), developer_url/documentation_url/support_url (TEXT), pricing_type (free/paid/freemium/contact), price_monthly (NUMERIC 10,2), install_count (INT default 0), avg_rating (NUMERIC 3,2 default 0), review_count (INT default 0), status (5 statuses), is_featured (BOOLEAN default false), required_plan_tier (VARCHAR 50), created_by (UUID). Indexes on slug (unique), category, status, is_featured, (status, is_featured).
+- **integration_installs**: Per-company integration installs. Columns: company_id, listing_id (FK integration_listings), status (installed/active/paused/uninstalled), configuration (JSONB default {}), installed_by (UUID), installed_at (TIMESTAMPTZ default now()), uninstalled_at, uninstalled_by (UUID). UNIQUE(company_id, listing_id). RLS enabled. Indexes on company_id, listing_id, status, (company_id, status), (company_id, listing_id).
+
+### API Endpoints
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/api-keys | List API keys filtered by status/q. Paginated. Searches name via ilike. |
+| POST | /api/v2/api-keys | Create API key. Requires name. Defaults: permissions=[], rate_limit_per_minute=60, status=active. Returns 201. |
+| GET | /api/v2/api-keys/:id | Get single API key. |
+| PUT | /api/v2/api-keys/:id | Update API key (name, permissions, rate_limit, status, expires_at). |
+| DELETE | /api/v2/api-keys/:id | Revoke API key. Already revoked returns 409. Sets status=revoked, revoked_at, revoked_by. |
+| GET | /api/v2/webhooks | List webhooks filtered by status/q. Paginated. Excludes soft-deleted. |
+| POST | /api/v2/webhooks | Create webhook. Requires url and events (min 1). Defaults: status=active, max_retries=5. Returns 201. |
+| GET | /api/v2/webhooks/:id | Get single webhook. |
+| PUT | /api/v2/webhooks/:id | Update webhook (url, events, status, description, max_retries). |
+| DELETE | /api/v2/webhooks/:id | Soft delete webhook. |
+| GET | /api/v2/webhooks/:id/deliveries | List deliveries for webhook filtered by status/event_type. Paginated. |
+| GET | /api/v2/integrations/listings | List marketplace listings. Global (no company filter). Filterable by category/status/is_featured/q. Search matches name and description. |
+| GET | /api/v2/integrations/listings/:slug | Get listing by slug. Global (no company filter). |
+| GET | /api/v2/integrations/installs | List installs for company filtered by listing_id/status. Paginated. |
+| POST | /api/v2/integrations/installs | Install integration. Requires listing_id. Verifies listing exists. Checks for existing non-uninstalled install (409). Defaults: configuration={}. Returns 201. |
+| GET | /api/v2/integrations/installs/:id | Get install details. |
+| PUT | /api/v2/integrations/installs/:id | Update install (status, configuration). |
+| DELETE | /api/v2/integrations/installs/:id | Uninstall. Already uninstalled returns 409. Sets status=uninstalled, uninstalled_at, uninstalled_by. |
+
+### Type System
+- 7 type unions: ApiKeyStatus (3), WebhookStatus (4), DeliveryStatus (4), IntegrationCategory (9), IntegrationStatus (5), PricingType (4), InstallStatus (4)
+- 5 interfaces: ApiKey, WebhookSubscription, WebhookDelivery, IntegrationListing, IntegrationInstall
+- 7 constant arrays: API_KEY_STATUSES, WEBHOOK_STATUSES, DELIVERY_STATUSES, INTEGRATION_CATEGORIES, INTEGRATION_STATUSES, PRICING_TYPES, INSTALL_STATUSES
+
+### Validation Schemas (Zod)
+- 7 enum schemas: apiKeyStatusEnum, webhookStatusEnum, deliveryStatusEnum, integrationCategoryEnum, integrationStatusEnum, pricingTypeEnum, installStatusEnum
+- listApiKeysSchema (page/limit/status/q)
+- createApiKeySchema (requires name; defaults: permissions=[], rate_limit_per_minute=60; expires_at nullable YYYY-MM-DD)
+- updateApiKeySchema (all fields optional)
+- listWebhooksSchema (page/limit/status/q)
+- createWebhookSchema (requires url + events min 1; defaults: status=active, max_retries=5; url validated)
+- updateWebhookSchema (all fields optional, url validated)
+- listWebhookDeliveriesSchema (page/limit/status/event_type)
+- listIntegrationListingsSchema (page/limit/category/status/is_featured boolean preprocess/q)
+- listIntegrationInstallsSchema (page/limit/listing_id UUID/status)
+- createIntegrationInstallSchema (requires listing_id UUID; defaults: configuration={})
+- updateIntegrationInstallSchema (status/configuration optional)
+
+---
+
+## Module 41: Onboarding Wizard (V1 Foundation)
+
+### Database Tables
+- **onboarding_sessions**: Core wizard session tracking per company/user. Columns: company_id, user_id (FK users), status (not_started/in_progress/completed/skipped), current_step (INT default 1), total_steps (INT default 8), company_type (custom_home/production/remodel/commercial/specialty nullable), company_size (1-5/6-20/21-50/51-100/100+ nullable), started_at, completed_at, skipped_at, metadata (JSONB), created_by. Soft delete via deleted_at. RLS enabled. 5 indexes.
+- **onboarding_milestones**: Individual step completion tracking per session. Columns: company_id, session_id (FK sessions CASCADE), milestone_key (VARCHAR 100), title (VARCHAR 255), description (TEXT), status (pending/in_progress/completed/skipped), sort_order (INT default 0), started_at, completed_at, skipped_at, data (JSONB). RLS enabled. 4 indexes.
+- **onboarding_reminders**: Nudge/reminder scheduling for incomplete onboarding. Columns: company_id, session_id (FK sessions CASCADE), reminder_type (email/in_app/push), subject (VARCHAR 255), message (TEXT), scheduled_at (TIMESTAMPTZ NOT NULL), sent_at, status (scheduled/sent/cancelled/failed). RLS enabled. 4 indexes.
+- **sample_data_sets**: Pre-built demo data configurations. Columns: company_id, name (VARCHAR 200), description (TEXT), data_type (full_demo/minimal/custom_home/production/remodel/commercial), status (pending/generating/ready/applied/failed), content (JSONB), applied_at, applied_by, created_by. RLS enabled. 3 indexes.
+- **onboarding_checklists**: Setup checklist items per session. Columns: company_id, session_id (FK sessions CASCADE), category (setup/data/team/workflow/integration), title (VARCHAR 255), description (TEXT), is_completed (BOOLEAN default false), is_required (BOOLEAN default true), completed_at, completed_by, sort_order (INT default 0). RLS enabled. 4 indexes.
+
+### API Endpoints (10 route files under /api/v2/onboarding/)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/onboarding | List sessions filtered by status/q. Paginated. Excludes soft-deleted. |
+| POST | /api/v2/onboarding | Create session. Requires user_id. Defaults: status=not_started, current_step=1, total_steps=8. Returns 201. |
+| GET | /api/v2/onboarding/:id | Get session with milestones_count and checklists_count. |
+| PUT | /api/v2/onboarding/:id | Update session. Auto-sets started_at on in_progress, completed_at on completed, skipped_at on skipped. |
+| DELETE | /api/v2/onboarding/:id | Soft delete: sets deleted_at. |
+| GET | /api/v2/onboarding/:id/milestones | List milestones for session. Filtered by status. Ordered by sort_order asc. |
+| POST | /api/v2/onboarding/:id/milestones | Create milestone. Verifies session exists. Returns 201. |
+| GET | /api/v2/onboarding/:id/milestones/:milestoneId | Get single milestone. |
+| PUT | /api/v2/onboarding/:id/milestones/:milestoneId | Update milestone. Auto-sets started_at/completed_at/skipped_at on status transitions. |
+| GET | /api/v2/onboarding/:id/reminders | List reminders for session. Filtered by status/reminder_type. |
+| POST | /api/v2/onboarding/:id/reminders | Create reminder. Verifies session exists. Returns 201. |
+| GET | /api/v2/onboarding/:id/reminders/:reminderId | Get single reminder. |
+| PUT | /api/v2/onboarding/:id/reminders/:reminderId | Update reminder. Auto-sets sent_at when status=sent. |
+| GET | /api/v2/onboarding/sample-data | List sample data sets. Filtered by data_type/status. |
+| POST | /api/v2/onboarding/sample-data | Create sample data set. Requires name. Returns 201. |
+| GET | /api/v2/onboarding/sample-data/:id | Get single sample data set. |
+| PUT | /api/v2/onboarding/sample-data/:id | Update sample data set. Auto-sets generated_at on ready, applied_at on applied. |
+| GET | /api/v2/onboarding/:id/checklists | List checklists for session. Filtered by category/is_completed. Ordered by sort_order. |
+| POST | /api/v2/onboarding/:id/checklists | Create checklist item. Verifies session exists. Returns 201. |
+| GET | /api/v2/onboarding/:id/checklists/:checklistId | Get single checklist item. |
+| PUT | /api/v2/onboarding/:id/checklists/:checklistId | Update checklist. Auto-sets completed_at when is_completed=true (null when false). |
+
+### Type System
+- 9 type unions: OnboardingStatus (4), MilestoneStatus (4), ReminderType (3), ReminderStatus (4), SampleDataType (6), SampleDataStatus (5), CompanyType (5), CompanySize (5), ChecklistCategory (5)
+- 5 interfaces: OnboardingSession, OnboardingMilestone, OnboardingReminder, SampleDataSet, OnboardingChecklist
+- 9 constant arrays: ONBOARDING_STATUSES, MILESTONE_STATUSES, REMINDER_TYPES, REMINDER_STATUSES, SAMPLE_DATA_TYPES, SAMPLE_DATA_STATUSES, COMPANY_TYPES, COMPANY_SIZES, CHECKLIST_CATEGORIES
+
+### Validation Schemas (Zod)
+- 9 enum schemas: onboardingStatusEnum, milestoneStatusEnum, reminderTypeEnum, reminderStatusEnum, sampleDataTypeEnum, sampleDataStatusEnum, companyTypeEnum, companySizeEnum, checklistCategoryEnum
+- listOnboardingSessionsSchema (page/limit/status/q)
+- createOnboardingSessionSchema (requires user_id UUID; defaults: status=not_started, current_step=1, total_steps=8, metadata={})
+- updateOnboardingSessionSchema (all fields optional; current_step/total_steps 1-50)
+- listMilestonesSchema (page/limit defaults to 50, status filter)
+- createMilestoneSchema (requires session_id UUID, milestone_key, title; defaults: status=pending, sort_order=0, data={})
+- updateMilestoneSchema (all fields optional)
+- listRemindersSchema (page/limit, status/reminder_type filters)
+- createReminderSchema (requires session_id UUID, scheduled_at; defaults: reminder_type=email, status=scheduled)
+- updateReminderSchema (all fields optional)
+- listSampleDataSetsSchema (page/limit, data_type/status filters)
+- createSampleDataSetSchema (requires name; defaults: data_type=full_demo, status=pending, content={})
+- updateSampleDataSetSchema (all fields optional)
+- listChecklistsSchema (page/limit, session_id/category/is_completed boolean preprocess filters)
+- createChecklistSchema (requires session_id UUID, title; defaults: category=setup, is_completed=false, is_required=true, sort_order=0)
+- updateChecklistSchema (all fields optional)
+
+---
+
+## Module 43: Subscription Billing (V1 Foundation)
+
+### Database Tables
+- **subscription_plans**: Platform-level plan definitions (NO company_id). Columns: name (VARCHAR 100), slug (VARCHAR 100 UNIQUE), description (TEXT), tier (free/starter/professional/business/enterprise), price_monthly/price_annual (NUMERIC 10,2), max_users (INT nullable), max_projects (INT nullable), features (JSONB), is_active (BOOLEAN default true), sort_order (INT default 0). RLS with `USING (true)` for read access. 4 indexes. updated_at trigger.
+- **plan_addons**: Platform-level add-on products (NO company_id). Columns: name (VARCHAR 200), slug (VARCHAR 100 UNIQUE), description (TEXT), addon_type (module/storage/users/api_access/support/training/white_label), price_monthly/price_annual (NUMERIC 10,2), is_metered (BOOLEAN default false), meter_unit (VARCHAR 50), meter_price_per_unit (NUMERIC 10,4), is_active (BOOLEAN default true), sort_order (INT). RLS with `USING (true)`. 4 indexes. updated_at trigger.
+- **company_subscriptions**: Per-company subscription record. Columns: company_id (UNIQUE), plan_id (FK subscription_plans), status (trialing/active/past_due/cancelled/suspended/expired), billing_cycle (monthly/annual), current_period_start/current_period_end (DATE), trial_start/trial_end (DATE), cancelled_at (TIMESTAMPTZ), cancel_reason (TEXT), stripe_subscription_id/stripe_customer_id (VARCHAR 100), grandfathered_plan (VARCHAR 100), metadata (JSONB). RLS enabled. 9 indexes. updated_at trigger.
+- **usage_meters**: Usage tracking per company. Columns: company_id, addon_id (FK plan_addons nullable), meter_type (storage_gb/active_users/api_calls/ai_processing), period_start/period_end (DATE), quantity (NUMERIC 15,4 default 0), unit (VARCHAR 50), overage_quantity (NUMERIC 15,4 default 0), overage_cost (NUMERIC 15,2 default 0). RLS enabled. 7 indexes. updated_at trigger.
+- **billing_events**: Append-only billing audit log. Columns: company_id, event_type (14 types: subscription_created/subscription_updated/subscription_cancelled/payment_succeeded/payment_failed/invoice_created/invoice_paid/refund/credit_applied/trial_started/trial_ended/plan_changed/addon_added/addon_removed), description (TEXT), amount (NUMERIC 15,2 default 0), currency (VARCHAR 3 default 'USD'), metadata (JSONB), stripe_event_id (VARCHAR 200). NO updated_at (immutable). RLS enabled. 7 indexes.
+
+### API Endpoints (10 route files under /api/v2/billing/)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/billing/plans | List plans filtered by tier/is_active/q. Paginated. No company_id filter (platform-level). |
+| POST | /api/v2/billing/plans | Create plan. Requires name, slug. Duplicate slug check (409). Defaults: tier=starter, prices=0, is_active=true. Returns 201. |
+| GET | /api/v2/billing/plans/:id | Get single plan. No company_id filter. |
+| PUT | /api/v2/billing/plans/:id | Update plan. Partial. No company_id filter. |
+| DELETE | /api/v2/billing/plans/:id | Deactivate: sets is_active=false. No company_id filter. |
+| GET | /api/v2/billing/addons | List addons filtered by addon_type/is_active/q. Paginated. Platform-level. |
+| POST | /api/v2/billing/addons | Create addon. Requires name, slug. Duplicate slug check (409). Defaults: addon_type=module, is_metered=false. Returns 201. |
+| GET | /api/v2/billing/addons/:id | Get single addon. |
+| PUT | /api/v2/billing/addons/:id | Update addon. Partial. |
+| DELETE | /api/v2/billing/addons/:id | Deactivate: sets is_active=false. |
+| GET | /api/v2/billing/subscriptions | List subscriptions filtered by status/billing_cycle/plan_id/q. Paginated. Scoped to company_id. |
+| POST | /api/v2/billing/subscriptions | Create subscription. Requires plan_id. UNIQUE(company_id) check (409). Defaults: status=trialing, billing_cycle=monthly, metadata={}. Returns 201. |
+| GET | /api/v2/billing/subscriptions/:id | Get subscription. Scoped to company_id. |
+| PUT | /api/v2/billing/subscriptions/:id | Update subscription. Auto-sets cancelled_at when status changes to cancelled. Scoped to company_id. |
+| GET | /api/v2/billing/usage | List usage meters filtered by meter_type/addon_id/period_start/period_end. Paginated. Ordered by period_start DESC. |
+| POST | /api/v2/billing/usage | Create usage meter. Requires meter_type, period_start, period_end. Defaults: quantity=0, overage_quantity=0, overage_cost=0. Returns 201. |
+| GET | /api/v2/billing/usage/:id | Get usage meter. Scoped to company_id. |
+| PUT | /api/v2/billing/usage/:id | Update usage meter. Partial. |
+| GET | /api/v2/billing/events | List billing events (read-only). Filtered by event_type/date_from/date_to. Ordered by created_at DESC. |
+| GET | /api/v2/billing/events/:id | Get single billing event (read-only). |
+
+### Type System
+- 6 type unions: PlanTier (5), AddonType (7), SubscriptionStatus (6), BillingCycle (2), BillingEventType (14), MeterType (4)
+- 5 interfaces: SubscriptionPlan, PlanAddon, CompanySubscription, UsageMeter, BillingEvent
+- 6 constant arrays: PLAN_TIERS, ADDON_TYPES, SUBSCRIPTION_STATUSES, BILLING_CYCLES, BILLING_EVENT_TYPES, METER_TYPES
+
+### Validation Schemas (Zod)
+- 6 enum schemas: planTierEnum, addonTypeEnum, subscriptionStatusEnum, billingCycleEnum, billingEventTypeEnum, meterTypeEnum
+- listPlansSchema (page/limit/tier/is_active/q with boolean preprocess)
+- createPlanSchema (requires name, slug; slug regex validated; defaults: tier=starter, prices=0, features={}, is_active=true, sort_order=0)
+- updatePlanSchema (all fields optional)
+- listAddonsSchema (page/limit/addon_type/is_active/q with boolean preprocess)
+- createAddonSchema (requires name, slug; defaults: addon_type=module, prices=0, is_metered=false, meter_price_per_unit=0, is_active=true, sort_order=0)
+- updateAddonSchema (all fields optional)
+- listSubscriptionsSchema (page/limit/status/billing_cycle/plan_id UUID/q)
+- createSubscriptionSchema (requires plan_id UUID; defaults: status=trialing, billing_cycle=monthly, metadata={})
+- updateSubscriptionSchema (all fields optional; cancelled_at nullable string, cancel_reason max 5000)
+- listUsageMetersSchema (page/limit/meter_type/addon_id UUID/period_start/period_end YYYY-MM-DD)
+- createUsageMeterSchema (requires meter_type, period_start, period_end; addon_id UUID nullable; defaults: quantity=0, overage_quantity=0, overage_cost=0)
+- updateUsageMeterSchema (all fields optional)
+- listBillingEventsSchema (page/limit/event_type/date_from/date_to YYYY-MM-DD)
+
+---
+
+## Module 48: Template Marketplace (V1 Foundation)
+
+### Database Tables
+- **marketplace_publishers**: Publisher profiles for template creators. Columns: user_id (UUID UNIQUE NOT NULL), publisher_type (builder/consultant/platform), display_name (VARCHAR 200), bio (TEXT), credentials (TEXT), website_url (TEXT), profile_image (TEXT), is_verified (BOOLEAN default false), total_installs (INT default 0), avg_rating (NUMERIC 3,2 default 0 CHECK 0-5), total_templates (INT default 0), revenue_share_pct (NUMERIC 5,2 default 70 CHECK 0-100), stripe_connect_id (VARCHAR 100). Global read access (no company_id, `USING (true)` RLS). updated_at trigger.
+- **marketplace_templates**: Core template listings. Columns: publisher_id (FK marketplace_publishers CASCADE), publisher_type (builder/consultant/platform), template_type (estimate/schedule/checklist/contract/report/workflow/cost_code/selection/specification), name (VARCHAR 255), slug (VARCHAR 255 UNIQUE), description (TEXT), long_description (TEXT), screenshots/tags/region_tags/construction_tags (JSONB default []), price (NUMERIC 10,2 default 0 CHECK >= 0), currency (VARCHAR 10 default 'USD'), template_data (JSONB default {}), required_modules (JSONB default []), version (VARCHAR 20 default '1.0.0'), install_count/review_count (INT default 0), avg_rating (NUMERIC 3,2 default 0 CHECK 0-5), review_status (pending/approved/rejected), is_featured (BOOLEAN default false), is_active (BOOLEAN default true), created_by (UUID). Soft delete via deleted_at. Global read RLS. 12 indexes.
+- **marketplace_template_versions**: Version history per template. Columns: template_id (FK marketplace_templates CASCADE), version (VARCHAR 20), changelog (TEXT), template_data (JSONB default {}), published_at (TIMESTAMPTZ default now()). UNIQUE(template_id, version). Global read RLS.
+- **marketplace_installs**: Per-company install records. Columns: company_id, template_id (FK marketplace_templates), template_version (VARCHAR 20), installed_by (UUID), installed_at (TIMESTAMPTZ default now()), uninstalled_at (TIMESTAMPTZ), payment_id (UUID), payment_amount (NUMERIC 10,2). Tenant-scoped RLS. 7 indexes.
+- **marketplace_reviews**: User reviews per template. Columns: company_id, template_id (FK marketplace_templates), user_id (UUID), rating (INT CHECK 1-5), title (VARCHAR 200), review_text (TEXT), publisher_response (TEXT), publisher_responded_at (TIMESTAMPTZ), is_verified_purchase (BOOLEAN default true), is_flagged (BOOLEAN default false). UNIQUE(company_id, template_id, user_id). Global read + tenant write RLS. 7 indexes.
+
+### API Endpoints (9 route files under /api/v2/marketplace/)
+- Publishers: GET list (filtered by publisher_type/is_verified/q, ordered by total_installs DESC), POST create (409 on duplicate user_id), GET :id (with templates_count), PUT :id (partial update)
+- Templates: GET list (filtered by template_type/publisher_id/review_status/is_featured/is_free/min_rating/q, ordered by install_count DESC), POST create (slug validated, 409 on duplicate slug), GET :id (with versions_count/installs_count/reviews_count), PUT :id (partial update), DELETE :id (soft delete)
+- Template Versions: GET :id/versions (ordered by published_at DESC), POST :id/versions (409 on duplicate version, auto-updates template version)
+- Installs: GET list (tenant-scoped, filtered by template_id/template_type), POST create (validates template is active+approved, 403 if not), GET :id (tenant-scoped)
+- Reviews: GET list (filtered by template_id/rating/is_verified_purchase), POST create (409 on duplicate review per user/template), GET :id, PUT :id (publisher_response auto-sets publisher_responded_at), DELETE :id (hard delete)
+
+### Type System
+- 3 type unions: PublisherType (3), TemplateType (9), ReviewStatus (3)
+- 1 type alias: TemplateCategory = TemplateType
+- 5 interfaces: MarketplacePublisher, MarketplaceTemplate, MarketplaceTemplateVersion, MarketplaceInstall, MarketplaceReview
+- 4 constant arrays: PUBLISHER_TYPES, TEMPLATE_TYPES, REVIEW_STATUSES, TEMPLATE_CATEGORIES (same ref as TEMPLATE_TYPES)
+
+### Validation Schemas (Zod)
+- 3 enum schemas: publisherTypeEnum, templateTypeEnum, reviewStatusEnum
+- listPublishersSchema (page/limit/publisher_type/is_verified with boolean preprocess/q)
+- createPublisherSchema (requires user_id UUID, display_name; defaults: publisher_type=builder)
+- updatePublisherSchema (all fields optional; revenue_share_pct 0-100, is_verified boolean)
+- listTemplatesSchema (page/limit/template_type/publisher_id UUID/review_status/is_featured/is_free boolean preprocess/min_rating 0-5/q)
+- createTemplateSchema (requires publisher_id UUID, template_type, name, slug; slug regex /^[a-z0-9]+(?:-[a-z0-9]+)*$/; defaults: publisher_type=builder, price=0, currency=USD, version=1.0.0, review_status=pending, is_featured=false, is_active=true, arrays=[], template_data={})
+- updateTemplateSchema (all fields optional; slug regex validated when present)
+- listTemplateVersionsSchema (page/limit, limit defaults to 50)
+- createTemplateVersionSchema (requires version max 20; changelog nullable; defaults: template_data={})
+- listInstallsSchema (page/limit/template_id UUID/template_type)
+- createInstallSchema (requires template_id UUID, template_version; payment_id UUID nullable, payment_amount min 0 nullable)
+- listReviewsSchema (page/limit/template_id UUID/rating 1-5 int/is_verified_purchase boolean preprocess)
+- createReviewSchema (requires template_id UUID, rating 1-5 int; title max 200 nullable, review_text max 5000 nullable; defaults: is_verified_purchase=true)
+- updateReviewSchema (all fields optional; rating 1-5 int, is_flagged boolean, publisher_response max 5000 nullable)
+
+---
+
+## Module 49: Platform Analytics (V1 Foundation)
+
+### Database Tables
+- **platform_metrics_snapshots**: Point-in-time platform/tenant metrics. Columns: company_id (UUID nullable, FK companies -- null for platform-wide), snapshot_date (DATE default CURRENT_DATE), metric_type (9 values: active_users/revenue/churn/nps/feature_adoption/storage_usage/api_calls/support_tickets/onboarding_completion), metric_value (NUMERIC 15,2 default 0), breakdown (JSONB default {}), period (4 values: daily/weekly/monthly/quarterly default daily), created_by (UUID FK users). RLS: company_id IS NULL OR company_id = get_current_company_id(). 8 indexes. updated_at trigger.
+- **tenant_health_scores**: Per-company health and churn risk scoring. Columns: company_id (UUID NOT NULL FK companies), score_date (DATE default CURRENT_DATE), overall_score/adoption_score/engagement_score/satisfaction_score/growth_score (INT 0-100 default 0), risk_level (4 values: healthy/at_risk/churning/critical default healthy), churn_probability (NUMERIC 5,2 0-100 default 0), last_login_at (TIMESTAMPTZ nullable), active_users_count (INT default 0), feature_utilization (JSONB default {}), notes (TEXT nullable), created_by. RLS on company_id. 8 indexes. updated_at trigger.
+- **feature_usage_events**: High-volume feature usage tracking. Columns: company_id (UUID NOT NULL FK companies), user_id (UUID FK users nullable), feature_key (VARCHAR 100 NOT NULL), event_type (3 values: page_view/action/api_call default action), metadata (JSONB default {}), session_id (UUID nullable). Append-only (no updated_at). RLS on company_id. 8 indexes.
+- **ab_experiments**: A/B test definitions and results. Columns: company_id (UUID nullable FK companies -- null for platform-wide), name (VARCHAR 200), description (TEXT nullable), status (4 values: draft/active/paused/completed default draft), feature_key (VARCHAR 100 nullable), variants (JSONB default []), start_date/end_date (DATE nullable), sample_percentage (INT 1-100 default 100), results (JSONB default {}), created_by. RLS: company_id IS NULL OR company_id = get_current_company_id(). 7 indexes. updated_at trigger.
+- **deployment_releases**: Release/deployment tracking (platform-wide, no company_id). Columns: version (VARCHAR 50), release_type (4 values: major/minor/patch/hotfix default minor), status (4 values: planned/in_progress/deployed/rolled_back default planned), description (TEXT nullable), changelog (TEXT nullable), deployed_at (TIMESTAMPTZ nullable), deployed_by (UUID FK users nullable), rollback_reason (TEXT nullable), affected_services (JSONB default []). RLS: USING (true) for global read. 6 indexes. updated_at trigger.
+
+### API Endpoints (9 route files under /api/v2/analytics/)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v2/analytics/metrics | List snapshots filtered by metric_type/period/date_from/date_to/company_id. Paginated. Shows platform-wide (null) + own company. |
+| POST | /api/v2/analytics/metrics | Create metric snapshot. Requires metric_type. Defaults: metric_value=0, period=daily, breakdown={}. Returns 201. |
+| GET | /api/v2/analytics/metrics/:id | Get single metric snapshot. |
+| PUT | /api/v2/analytics/metrics/:id | Update metric snapshot. |
+| GET | /api/v2/analytics/health-scores | List health scores filtered by risk_level/min_score/max_score/date_from/date_to/q. Paginated. Searches notes. |
+| POST | /api/v2/analytics/health-scores | Create health score. All scores default 0, risk_level=healthy. Returns 201. |
+| GET | /api/v2/analytics/health-scores/:id | Get single health score. |
+| PUT | /api/v2/analytics/health-scores/:id | Update health score. |
+| GET | /api/v2/analytics/events | List events filtered by feature_key/event_type/user_id/session_id/date_from/date_to. Paginated (default limit=50). |
+| POST | /api/v2/analytics/events | Record event. Requires feature_key. Defaults: event_type=action, metadata={}. Returns 201. |
+| GET | /api/v2/analytics/experiments | List experiments filtered by status/feature_key/q. Shows platform-wide (null) + own company. Paginated. |
+| POST | /api/v2/analytics/experiments | Create experiment. Requires name. Defaults: status=draft, sample_percentage=100, variants=[], results={}. Returns 201. |
+| GET | /api/v2/analytics/experiments/:id | Get single experiment. |
+| PUT | /api/v2/analytics/experiments/:id | Update experiment. |
+| GET | /api/v2/analytics/releases | List releases filtered by release_type/status/q. Global read (no company filter). Paginated. |
+| POST | /api/v2/analytics/releases | Create release. Requires version. Defaults: release_type=minor, status=planned, affected_services=[]. Returns 201. |
+| GET | /api/v2/analytics/releases/:id | Get single release. |
+| PUT | /api/v2/analytics/releases/:id | Update release. |
+
+### Type System
+- 7 type unions: MetricType (9), MetricPeriod (4), RiskLevel (4), EventType (3), ExperimentStatus (4), ReleaseType (4), ReleaseStatus (4)
+- 5 interfaces: PlatformMetricsSnapshot, TenantHealthScore, FeatureUsageEvent, AbExperiment, DeploymentRelease
+- 7 constant arrays: METRIC_TYPES, METRIC_PERIODS, RISK_LEVELS, EVENT_TYPES, EXPERIMENT_STATUSES, RELEASE_TYPES, RELEASE_STATUSES
+
+### Validation Schemas (Zod)
+- 7 enum schemas: metricTypeEnum, metricPeriodEnum, riskLevelEnum, eventTypeEnum, experimentStatusEnum, releaseTypeEnum, releaseStatusEnum
+- listMetricsSnapshotsSchema (page/limit/metric_type/period/date_from/date_to YYYY-MM-DD/company_id UUID nullable)
+- createMetricsSnapshotSchema (requires metric_type; defaults: metric_value=0, period=daily, breakdown={})
+- updateMetricsSnapshotSchema (all fields optional)
+- listHealthScoresSchema (page/limit/risk_level/min_score/max_score 0-100/date_from/date_to YYYY-MM-DD/q)
+- createHealthScoreSchema (all optional with defaults: scores=0, risk_level=healthy, churn_probability=0, active_users_count=0, feature_utilization={})
+- updateHealthScoreSchema (all fields optional; notes nullable)
+- listFeatureEventsSchema (page/limit default 50/feature_key/event_type/user_id UUID/session_id UUID/date_from/date_to)
+- createFeatureEventSchema (requires feature_key max 100 chars; defaults: event_type=action, metadata={})
+- listExperimentsSchema (page/limit/status/feature_key/q)
+- createExperimentSchema (requires name max 200; defaults: status=draft, sample_percentage=100, variants=[], results={})
+- updateExperimentSchema (all fields optional; sample_percentage 1-100)
+- listReleasesSchema (page/limit/release_type/status/q)
+- createReleaseSchema (requires version max 50; defaults: release_type=minor, status=planned, affected_services=[])
+- updateReleaseSchema (all fields optional)
