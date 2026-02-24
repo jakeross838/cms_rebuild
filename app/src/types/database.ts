@@ -9,6 +9,13 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Forward-declare enums used in Database interface
+export type NotificationUrgency = 'low' | 'normal' | 'high' | 'critical'
+export type NotificationCategory = 'financial' | 'schedule' | 'documents' | 'field_operations' | 'approvals' | 'system'
+export type NotificationChannel = 'in_app' | 'email' | 'sms' | 'push'
+export type DeliveryStatus = 'queued' | 'processing' | 'sent' | 'delivered' | 'failed' | 'bounced'
+export type DigestFrequency = 'hourly' | 'twice_daily' | 'daily'
+
 export interface Database {
   public: {
     Tables: {
@@ -1223,6 +1230,259 @@ export interface Database {
           updated_at?: string
         }
       }
+      // ── Module 05: Notification Engine ──────────────────────────
+      notification_event_types: {
+        Row: {
+          id: string
+          event_type: string
+          module: string
+          description: string | null
+          default_channels: string[]
+          default_roles: string[]
+          variables: string[]
+          urgency: NotificationUrgency
+          category: NotificationCategory
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_type: string
+          module: string
+          description?: string | null
+          default_channels?: string[]
+          default_roles?: string[]
+          variables?: string[]
+          urgency?: NotificationUrgency
+          category: NotificationCategory
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_type?: string
+          module?: string
+          description?: string | null
+          default_channels?: string[]
+          default_roles?: string[]
+          variables?: string[]
+          urgency?: NotificationUrgency
+          category?: NotificationCategory
+          created_at?: string
+        }
+      }
+      company_notification_config: {
+        Row: {
+          id: string
+          company_id: string
+          event_type_id: string
+          enabled: boolean
+          channels: string[] | null
+          roles: string[] | null
+          urgency: NotificationUrgency | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          event_type_id: string
+          enabled?: boolean
+          channels?: string[] | null
+          roles?: string[] | null
+          urgency?: NotificationUrgency | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          event_type_id?: string
+          enabled?: boolean
+          channels?: string[] | null
+          roles?: string[] | null
+          urgency?: NotificationUrgency | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      user_notification_preferences: {
+        Row: {
+          id: string
+          user_id: string
+          company_id: string
+          category: NotificationCategory
+          channel: NotificationChannel
+          enabled: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          company_id: string
+          category: NotificationCategory
+          channel: NotificationChannel
+          enabled?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          company_id?: string
+          category?: NotificationCategory
+          channel?: NotificationChannel
+          enabled?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      user_notification_settings: {
+        Row: {
+          id: string
+          user_id: string
+          company_id: string
+          quiet_start: string | null
+          quiet_end: string | null
+          timezone: string
+          digest_mode: boolean
+          digest_frequency: DigestFrequency
+          digest_time: string
+          critical_bypass_quiet: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          company_id: string
+          quiet_start?: string | null
+          quiet_end?: string | null
+          timezone?: string
+          digest_mode?: boolean
+          digest_frequency?: DigestFrequency
+          digest_time?: string
+          critical_bypass_quiet?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          company_id?: string
+          quiet_start?: string | null
+          quiet_end?: string | null
+          timezone?: string
+          digest_mode?: boolean
+          digest_frequency?: DigestFrequency
+          digest_time?: string
+          critical_bypass_quiet?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      notifications: {
+        Row: {
+          id: string
+          company_id: string
+          user_id: string
+          event_type: string
+          category: NotificationCategory
+          title: string
+          body: string | null
+          entity_type: string | null
+          entity_id: string | null
+          url_path: string | null
+          urgency: NotificationUrgency
+          read: boolean
+          read_at: string | null
+          archived: boolean
+          snoozed_until: string | null
+          idempotency_key: string | null
+          triggered_by: string | null
+          job_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          user_id: string
+          event_type: string
+          category: NotificationCategory
+          title: string
+          body?: string | null
+          entity_type?: string | null
+          entity_id?: string | null
+          url_path?: string | null
+          urgency?: NotificationUrgency
+          read?: boolean
+          read_at?: string | null
+          archived?: boolean
+          snoozed_until?: string | null
+          idempotency_key?: string | null
+          triggered_by?: string | null
+          job_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          user_id?: string
+          event_type?: string
+          category?: NotificationCategory
+          title?: string
+          body?: string | null
+          entity_type?: string | null
+          entity_id?: string | null
+          url_path?: string | null
+          urgency?: NotificationUrgency
+          read?: boolean
+          read_at?: string | null
+          archived?: boolean
+          snoozed_until?: string | null
+          idempotency_key?: string | null
+          triggered_by?: string | null
+          job_id?: string | null
+          created_at?: string
+        }
+      }
+      notification_deliveries: {
+        Row: {
+          id: string
+          notification_id: string
+          channel: NotificationChannel
+          status: DeliveryStatus
+          provider_message_id: string | null
+          attempts: number
+          last_attempt_at: string | null
+          error_message: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          notification_id: string
+          channel: NotificationChannel
+          status?: DeliveryStatus
+          provider_message_id?: string | null
+          attempts?: number
+          last_attempt_at?: string | null
+          error_message?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          notification_id?: string
+          channel?: NotificationChannel
+          status?: DeliveryStatus
+          provider_message_id?: string | null
+          attempts?: number
+          last_attempt_at?: string | null
+          error_message?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -1254,6 +1514,11 @@ export interface Database {
       invoice_status: InvoiceStatus
       draw_status: DrawStatus
       account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
+      notification_urgency: NotificationUrgency
+      notification_category: NotificationCategory
+      notification_channel: NotificationChannel
+      delivery_status: DeliveryStatus
+      digest_frequency: DigestFrequency
     }
   }
 }
@@ -1297,3 +1562,9 @@ export type NumberingPattern = Tables<'numbering_patterns'>
 export type NumberingSequence = Tables<'numbering_sequences'>
 export type CustomFieldDefinition = Tables<'custom_field_definitions'>
 export type CustomFieldValue = Tables<'custom_field_values'>
+export type NotificationEventType = Tables<'notification_event_types'>
+export type CompanyNotificationConfig = Tables<'company_notification_config'>
+export type UserNotificationPreference = Tables<'user_notification_preferences'>
+export type UserNotificationSetting = Tables<'user_notification_settings'>
+export type Notification = Tables<'notifications'>
+export type NotificationDelivery = Tables<'notification_deliveries'>

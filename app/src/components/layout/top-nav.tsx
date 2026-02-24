@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
-  Bell,
   Search,
   LogOut,
   User,
@@ -15,7 +14,7 @@ import {
 
 import { CommandPalette } from '@/components/command-palette/command-palette'
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
-import { Button } from '@/components/ui/button'
+import { NotificationBell } from '@/components/notifications/notification-bell'
 import { createClient } from '@/lib/supabase/client'
 
 
@@ -65,10 +64,7 @@ export function TopNav({ user }: TopNavProps) {
       {/* Right side */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-muted-foreground" />
-          <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full" />
-        </Button>
+        <NotificationBell />
 
         {/* User menu */}
         <div className="relative">

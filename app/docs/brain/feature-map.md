@@ -20,6 +20,46 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 
 ---
 
+## Module 05 — Notification Engine (2026-02-23)
+
+### NotificationBell (`components/notifications/notification-bell.tsx`)
+- **Bell icon button** — 36×36 clickable button in TopNav. Shows bell icon (`lucide-react Bell`). When unread count > 0, displays red badge with count (max "99+"). Click toggles dropdown panel. Status: ✅ Working
+- **Unread badge** — Absolute-positioned `bg-destructive` pill. Polls `/api/v2/notifications/unread-count` every 30s via React Query. Status: ✅ Working
+- **Dropdown panel** — 384px wide, max 480px tall, positioned absolute right-0. Contains header, scrollable notification list, and footer. Closes on outside click (mousedown listener). Status: ✅ Working
+- **Mark all read button** — Shows when `unreadCount > 0`. Calls `PUT /api/v2/notifications/read-all`. Invalidates all notification queries. Status: ✅ Working
+- **Notification row** — Full-width button. Shows category icon (color-coded), title (truncated), body (2-line clamp), time-ago string. Unread items get `bg-primary/5` background + urgency-colored dot. Click marks read + navigates to `url_path` (if set) + closes dropdown. Status: ✅ Working
+- **Dismiss button** — X icon on each notification row. Calls `DELETE /api/v2/notifications/:id` (archives, soft delete). `e.stopPropagation()` prevents navigation. Status: ✅ Working
+- **View all link** — Footer link navigates to `/notifications` full page. Status: ✅ Working
+- **Category icons** — financial→DollarSign, schedule→Calendar, documents→FileText, field_operations→HardHat, approvals→Shield, system→Settings. Status: ✅ Working
+- **Urgency colors** — low→bg-muted, normal→bg-blue-500, high→bg-amber-500, critical→bg-destructive. Status: ✅ Working
+
+### Notification APIs (`app/api/v2/notifications/`)
+- **GET /api/v2/notifications** — Paginated list for current user. Filters: category, urgency, read. Excludes archived. Ordered by created_at desc. Auth required. Status: ✅ Working
+- **POST /api/v2/notifications** — Emit notification to recipients. Requires owner/admin/pm role. Creates records + in-app delivery records. Idempotency via `idempotency_key`. Status: ✅ Working
+- **GET /api/v2/notifications/unread-count** — Returns `{ count }` for bell badge. Uses `head: true` + `count: 'exact'` for efficiency. Status: ✅ Working
+- **PUT /api/v2/notifications/:id** — Mark read/unread. Sets `read_at` timestamp. Status: ✅ Working
+- **DELETE /api/v2/notifications/:id** — Archives notification (soft delete). Status: ✅ Working
+- **PUT /api/v2/notifications/read-all** — Marks all unread notifications as read. Status: ✅ Working
+- **GET /api/v2/notifications/settings** — Returns quiet hours, digest mode, timezone. Defaults if no row exists. Status: ✅ Working
+- **PUT /api/v2/notifications/settings** — Upserts quiet hours, digest mode, timezone, critical bypass settings. Status: ✅ Working
+- **GET /api/v2/notifications/preferences** — Returns per-category/channel toggle preferences. Status: ✅ Working
+- **PUT /api/v2/notifications/preferences** — Upserts array of `{ category, channel, enabled }` preferences. Status: ✅ Working
+
+### Notification Service (`lib/notifications/service.ts`)
+- **emitNotification()** — Creates notification records for each recipient in batch. Creates in-app delivery records. Uses idempotency key = `${eventType}:${entityId}:${userId}:${minuteBucket}`. Status: ✅ Working
+- **NOTIFICATION_CATEGORIES** — 6 categories with default channel configs. Status: ✅ Working
+- **NOTIFICATION_CHANNELS** — 4 channels: in_app, email, sms, push. Status: ✅ Working
+
+### Database Tables (Supabase migration `20260223200000`)
+- **notification_event_types** — 16 seed event types across 6 categories. Stores default channels, roles, variables, urgency per event type. Status: ✅ Applied
+- **company_notification_config** — Per-company overrides for event type enable/disable, channels, urgency. Status: ✅ Applied
+- **user_notification_preferences** — Per-user per-category per-channel toggle (enabled/disabled). Unique on user+company+category+channel. Status: ✅ Applied
+- **user_notification_settings** — Quiet hours (start/end/timezone), digest mode (frequency/time), critical bypass. Unique on user+company. Status: ✅ Applied
+- **notifications** — Main notification records. Columns: company_id, user_id, event_type, category, title, body, urgency, entity_type, entity_id, url_path, read, archived, snoozed_until, idempotency_key, triggered_by, job_id. RLS enabled. Status: ✅ Applied
+- **notification_deliveries** — Delivery tracking per notification per channel. Status: delivered/failed/pending. Status: ✅ Applied
+
+---
+
 ## Module 04 — Cmd+K Global Search / Command Palette (2026-02-23)
 
 ### TopNav Search Trigger (`components/layout/top-nav.tsx`)

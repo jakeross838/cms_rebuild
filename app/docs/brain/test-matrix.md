@@ -6,6 +6,39 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 05 — Notification Engine Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/05-notification-engine.acceptance.test.ts`) — 27 tests
+- [x] NotificationUrgency has 4 levels: low, normal, high, critical
+- [x] NotificationCategory has 6 values
+- [x] NotificationChannel has 4 values: in_app, email, sms, push
+- [x] DeliveryStatus has 3 values: pending, delivered, failed
+- [x] DigestFrequency has 3 values: hourly, twice_daily, daily
+- [x] Database types exist for all 6 notification tables
+- [x] Notification Row has all required fields
+- [x] NotificationEventType Row has all required fields
+- [x] listNotificationsSchema accepts valid params
+- [x] listNotificationsSchema rejects invalid category
+- [x] listNotificationsSchema coerces page/limit to numbers
+- [x] emitNotificationSchema accepts valid notification
+- [x] emitNotificationSchema requires title, event_type, category, recipient_user_ids
+- [x] emitNotificationSchema rejects empty recipient list
+- [x] updatePreferencesSchema accepts valid preferences array
+- [x] updatePreferencesSchema rejects invalid category
+- [x] updateSettingsSchema accepts valid quiet hours settings
+- [x] updateSettingsSchema accepts partial settings updates
+- [x] updateSettingsSchema rejects invalid digest frequency
+- [x] updateSettingsSchema validates quiet time format
+- [x] NOTIFICATION_CATEGORIES has 6 categories
+- [x] Each category has value, label, and defaultChannels
+- [x] All categories include in_app as default channel
+- [x] NOTIFICATION_CHANNELS has 4 channels
+- [x] emitNotification function exists and is async
+- [x] EmitOptions interface requires companyId, eventType, category, title, recipientUserIds
+- [x] categoryIcons maps all 6 categories to Lucide icons
+
+---
+
 ## Module 04 — Global Search Tests (2026-02-23)
 
 ### Acceptance Tests (`tests/acceptance/04-search.acceptance.test.ts`) — 21 tests

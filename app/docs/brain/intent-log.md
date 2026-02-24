@@ -14,6 +14,16 @@ Each entry captures:
 
 ---
 
+## Module 05 — Notification Engine (2026-02-23)
+
+- **Why** — Module 05 spec requires a real-time notification system for construction operations. Users need to be notified about financial events, schedule changes, document uploads, field operations, approvals, and system events. The TopNav had a static bell icon placeholder with no functionality.
+- **What** — 6 DB tables (migration applied to Supabase), 16 seed event types, notification types in database.ts, Zod validation schemas, notification service lib, 8 API routes (list, emit, unread-count, read-all, mark-read, archive, settings, preferences), NotificationBell dropdown component, useNotifications React Query hook, 27 acceptance tests. Wired bell into TopNav.
+- **How** — Other modules call `emitNotification()` with recipients → creates notification rows + in-app delivery records → bell polls `/api/v2/notifications/unread-count` every 30s → badge shows count → click opens dropdown → fetches paginated list → click notification marks read + navigates. Quiet hours, digest mode, and per-category/channel preferences configurable via settings/preferences APIs.
+- **Rules** — (1) Multi-tenant: all queries filter by company_id + user_id. (2) Soft delete only: archive flag, never hard delete. (3) Idempotency key prevents duplicate notifications within same minute window. (4) 6 categories × 4 channels = 24 possible preference combos per user. (5) Critical notifications can bypass quiet hours. (6) Bell badge caps at "99+". (7) Urgency levels: low/normal/high/critical with color-coded dots.
+- **Connected to** — Module 01 (auth required), Module 03 (entity references via entity_type/entity_id), TopNav (bell mounted in header), all future modules (emit notifications for their events)
+
+---
+
 ## Module 04 — Cmd+K Global Search / Command Palette (2026-02-23)
 
 - **Why** — Module 04 spec requires a keyboard-activated search overlay for fast navigation. Navigation config and dashboard were already done, but the Cmd+K command palette (the main UX differentiator for power users) was missing. The TopNav had a non-functional placeholder `<Input>` for search.
