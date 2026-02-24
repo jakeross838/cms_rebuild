@@ -23,7 +23,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   const companyId = ctx.companyId!
   const supabase = await createClient()
 
-  const { data: phasesData, error } = await (supabase as any)
+  const { data: phasesData, error } = await supabase
     .from('project_phases')
     .select('*')
     .eq('company_id', companyId)
@@ -81,7 +81,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   const supabase = await createClient()
 
   // Get max sort order
-  const { data: maxSortData } = await (supabase as any)
+  const { data: maxSortData } = await supabase
     .from('project_phases')
     .select('sort_order')
     .eq('company_id', companyId)
@@ -93,7 +93,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   const sortOrder = (maxSort?.sort_order ?? -1) + 1
 
   // Check for duplicate name
-  const { data: existing } = await (supabase as any)
+  const { data: existing } = await supabase
     .from('project_phases')
     .select('id')
     .eq('company_id', companyId)
@@ -109,7 +109,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: phaseData, error } = await (supabase as any)
+  const { data: phaseData, error } = await supabase
     .from('project_phases')
     .insert({
       company_id: companyId,

@@ -33,6 +33,57 @@
 - Added `(supabase as any)` for tables not in live DB: feature_flags, numbering_patterns, numbering_sequences, tenant_configs, terminology_overrides
 - Updated placeholder types to match config code expectations (added missing fields)
 
+## Module 02: Configuration Engine (2026-02-24)
+
+### Database Migration (12 tables applied to live DB)
+- **tenant_configs**: Company settings (section, key, value JSONB). RLS on company_id.
+- **feature_flags**: Feature toggles with plan gating (flag_key, enabled, plan_required, metadata). RLS.
+- **workflow_definitions**: State machine definitions (states, transitions, thresholds, notifications as JSONB). RLS.
+- **project_phases**: Customizable phase definitions (name, color, sort_order, milestone_type). RLS.
+- **terminology_overrides**: Custom display terms (term_key, display_value, plural_value, context). RLS.
+- **numbering_patterns**: Numbering schemas (pattern, scope, padding, reset_yearly). RLS.
+- **numbering_sequences**: Atomic sequence counters (entity_type, scope_key, current_value). RLS.
+- **custom_field_definitions**: EAV schema (entity_type, field_key, field_type, options, validation). RLS.
+- **custom_field_values**: EAV data (entity_type, entity_id, field_id, value JSONB). RLS.
+- **config_versions**: Config audit trail (section, key, old_value, new_value, changed_by). RLS.
+- **platform_defaults**: Seed table (21 defaults across 7 sections). RLS.
+- **default_terminology**: Seed table (50 default terms). RLS.
+
+### Config Library (app/src/lib/config/)
+- **resolve-config.ts**: 4-level config resolution (Platform → Company → Project → User). Caching with 5-minute TTL.
+- **feature-flags.ts**: 18 flag definitions, plan-gated (free/starter/pro/enterprise). get/set/check with cache.
+- **terminology.ts**: 42+ default terms. Overrides stored in DB. getTerm/getTermPlural with fallback.
+- **numbering.ts**: 8 entity types. Pattern validation ({YYYY}, {###}, {JOB}). Sequence generation with atomic increment.
+- **types.ts**: Full TypeScript interfaces for all config entities.
+- **index.ts**: Barrel export for all config functions.
+
+### API Routes (v1)
+| Method | Path | Behavior |
+|--------|------|----------|
+| GET | /api/v1/settings/company | Get company profile + all tenant configs |
+| PATCH | /api/v1/settings/company | Update company settings (section/key/value) |
+| GET | /api/v1/settings/feature-flags | Get all flags with plan gating |
+| PATCH | /api/v1/settings/feature-flags | Toggle multiple flags |
+| GET | /api/v1/settings/numbering | Get all numbering patterns |
+| PATCH | /api/v1/settings/numbering | Update numbering pattern |
+| POST | /api/v1/settings/numbering | Preview next number |
+| GET | /api/v1/settings/terminology | Get all terminology (defaults + overrides) |
+| PUT | /api/v1/settings/terminology | Batch update terminology overrides |
+| GET/POST | /api/v1/settings/phases | List/create project phases |
+| GET/PATCH/DELETE | /api/v1/settings/phases/:id | Get/update/delete project phase |
+| GET/POST | /api/v1/custom-fields | List/create custom field definitions (filter by entityType) |
+| GET/PATCH/DELETE | /api/v1/custom-fields/:id | Get/update/delete custom field definition |
+| GET | /api/v1/workflows | List workflow definitions |
+| GET/PUT | /api/v1/workflows/:entityType | Get/upsert workflow for entity type |
+| GET/POST/PATCH/DELETE | /api/v1/cost-codes[/:id] | Full CRUD for cost codes |
+
+### database.ts Regeneration
+- Regenerated from live Supabase DB (217 tables, 9 enums)
+- build-db-types.cjs script: auto-detects which tables exist, creates Tables<> aliases for live tables, placeholder types for future
+- 69 table aliases point to real generated types, 42 placeholder types for future modules
+- Removed `(supabase as any)` casts from all Module 02 config files (6 files)
+- Fixed nullable DB columns in config mapping code (feature-flags.ts, numbering.ts)
+
 ## Module 47: Training & Certification Platform (V1 Foundation)
 
 ### Database Tables

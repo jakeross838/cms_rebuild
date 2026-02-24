@@ -30,7 +30,7 @@
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
 | 01 | Auth & Access Control | done | applied | yes | yes | yes | 5e345c8 |
-| 02 | Configuration Engine | not_started | local_only | no | no | no | no |
+| 02 | Configuration Engine | done | applied | yes | no | yes | pending |
 | 03 | Core Data Model | not_started | applied | no | no | no | no |
 | 04 | Navigation, Search & Dashboard | not_started | n/a | no | no | no | no |
 | 05 | Notification Engine | not_started | applied | no | no | no | no |
@@ -123,9 +123,9 @@
 
 | Category | Count |
 |----------|-------|
-| Done | 3 (Module 01, Phase 0C, Phase 0D) |
+| Done | 4 (Module 01, Module 02, Phase 0C, Phase 0D) |
 | In Progress | 0 |
-| Not Started | 51 (Modules 02-52) |
+| Not Started | 50 (Modules 03-52) |
 | Blocked | 0 |
 
-**Next up:** Module 02 — Configuration Engine (see `docs/AGENT_QUEUE.md`)
+**Next up:** Module 03 — Core Data Model (see `docs/AGENT_QUEUE.md`)

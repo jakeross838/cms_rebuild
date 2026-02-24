@@ -1,5 +1,27 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Module 02 — Configuration Engine
+
+### Why
+Module 02 is the second foundation module. Nearly every downstream module reads configuration to determine tenant-specific behavior (terminology, numbering, workflow rules, feature flags). Without it, the platform can't customize per-tenant.
+
+### What was built
+- Applied 3-part DB migration to live Supabase: 12 tables, RLS policies, triggers, helper functions, 21 platform defaults, 50 terminology terms
+- Regenerated database.ts from live DB (217 tables, 9 enums) using build-db-types.cjs script
+- Config library: resolve-config, feature-flags, terminology, numbering engines (all existed, now wired to live DB)
+- API routes: custom-fields CRUD (GET/POST/PATCH/DELETE), workflows CRUD (GET/PUT per entity type)
+- Removed `(supabase as any)` casts from 8 config/phases files (tables now in generated types)
+- Fixed nullable column handling in feature-flags.ts and numbering.ts
+
+### Design decisions
+1. **build-db-types.cjs script**: Automates database.ts generation — reads generated-supabase.ts, checks which tables actually exist, creates Tables<> aliases for live tables and placeholder objects for future modules. Re-run after each migration.
+2. **3-part migration**: Split into (a) table creation + indexes, (b) RLS policies + triggers, (c) helper functions + seed data. This avoided hitting Supabase's single-statement timeout.
+3. **Custom fields as EAV**: Entity-Attribute-Value pattern via custom_field_definitions + custom_field_values tables. Supports any entity type (job, vendor, client, etc.) without schema changes.
+4. **Workflow validation**: PUT endpoint validates state machine (exactly 1 initial state, >=1 final state, all transitions reference valid states) before saving.
+5. **UI not wired yet**: Config library and API routes are complete but UI pages still use mock data. UI wiring deferred to after Module 03 (Core Data Model) provides the entity CRUD that config customizes.
+
+---
+
 ## 2026-02-24: Phase 0D — Code Quality Hardening
 
 ### Why

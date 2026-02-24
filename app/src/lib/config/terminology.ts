@@ -247,7 +247,7 @@ export async function setTerminology(
   // If setting back to default, delete the override
   const defaultTerm = DEFAULT_TERMINOLOGY[termKey]
   if (defaultTerm && singular === defaultTerm.singular && (!plural || plural === defaultTerm.plural) && !context) {
-    await (supabase as any)
+    await supabase
       .from('terminology_overrides')
       .delete()
       .eq('company_id', companyId)
@@ -259,7 +259,7 @@ export async function setTerminology(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('terminology_overrides')
     .upsert({
       company_id: companyId,
@@ -293,7 +293,7 @@ export async function setTerminologyBulk(
   const supabase = await createClient()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('terminology_overrides')
     .upsert(
       terms.map((t) => ({
@@ -323,14 +323,14 @@ export async function resetTerminology(
   const supabase = await createClient()
 
   if (termKey) {
-    await (supabase as any)
+    await supabase
       .from('terminology_overrides')
       .delete()
       .eq('company_id', companyId)
       .eq('term_key', termKey)
   } else {
     // Reset all
-    await (supabase as any)
+    await supabase
       .from('terminology_overrides')
       .delete()
       .eq('company_id', companyId)
@@ -346,7 +346,7 @@ export async function resetTerminology(
 async function loadTermsToCache(companyId: string): Promise<void> {
   const supabase = await createClient()
 
-  const { data: overridesData } = await (supabase as any)
+  const { data: overridesData } = await supabase
     .from('terminology_overrides')
     .select('*')
     .eq('company_id', companyId)

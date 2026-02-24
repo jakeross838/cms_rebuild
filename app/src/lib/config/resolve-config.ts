@@ -190,7 +190,7 @@ export async function resolveConfig<T = Json>(
   }
 
   // Level 2: Company Settings
-  const { data: configData } = await (supabase as any)
+  const { data: configData } = await supabase
     .from('tenant_configs')
     .select('value')
     .eq('company_id', companyId)
@@ -235,7 +235,7 @@ export async function resolveSectionConfig(
   const supabase = await createClient()
 
   // Override with company settings
-  const { data: configsData } = await (supabase as any)
+  const { data: configsData } = await supabase
     .from('tenant_configs')
     .select('key, value')
     .eq('company_id', companyId)
@@ -348,7 +348,7 @@ export async function updateCompanySetting(
   const supabase = await createClient()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('tenant_configs')
     .upsert({
       company_id: companyId,
@@ -377,7 +377,7 @@ export async function updateCompanySettings(
   const supabase = await createClient()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('tenant_configs')
     .upsert(
       settings.map((s) => ({

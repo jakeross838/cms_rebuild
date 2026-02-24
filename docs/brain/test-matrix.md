@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Module 02: Configuration Engine (2026-02-24)
+
+### Automated Tests (all passing)
+
+| Category | Test | Status |
+|----------|------|--------|
+| **TypeScript** | `npx tsc --noEmit` — zero errors, 217 table types | PASS |
+| **Vitest** | 56 test files, 3,309 tests — all passing | PASS |
+| **Config Engine** | 02-config-engine acceptance tests — 5 test groups (flags, terminology, numbering, defaults, exports) | PASS |
+
+### Key Validation Points
+
+| What | Verified |
+|------|----------|
+| 12 Module 02 tables in live DB | Yes — verified via execute_sql |
+| 21 platform defaults seeded | Yes — financial, regional, ai, portal, notifications, security, branding |
+| 50 terminology terms seeded | Yes — all default terms loaded |
+| Generated types include Module 02 tables | Yes — Tables<'tenant_configs'>, etc. resolve correctly |
+| Config library functions compile clean | Yes — removed all (supabase as any) casts |
+| Custom fields API compiles | Yes — GET/POST/PATCH/DELETE routes |
+| Workflows API compiles | Yes — GET/PUT per entity type |
+| Feature flag nullable handling | Yes — flag.enabled ?? false, flag.created_at ?? default |
+| Numbering nullable handling | Yes — p.current_sequence ?? 0, p.padding ?? 3, etc. |
+
+---
+
 ## Phase 0D: Code Quality Hardening (2026-02-24)
 
 ### Automated Tests (all passing)

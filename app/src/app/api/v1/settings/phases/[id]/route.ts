@@ -27,7 +27,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext, { params }: RoutePa
   const companyId = ctx.companyId!
   const supabase = await createClient()
 
-  const { data: phaseData, error } = await (supabase as any)
+  const { data: phaseData, error } = await supabase
     .from('project_phases')
     .select('*')
     .eq('id', id)
@@ -90,7 +90,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
   const supabase = await createClient()
 
   // Get existing phase
-  const { data: existingData, error: fetchError } = await (supabase as any)
+  const { data: existingData, error: fetchError } = await supabase
     .from('project_phases')
     .select('*')
     .eq('id', id)
@@ -136,7 +136,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
 
   // Check for duplicate name if changing
   if (body.name && body.name !== existing.name) {
-    const { data: duplicate } = await (supabase as any)
+    const { data: duplicate } = await supabase
       .from('project_phases')
       .select('id')
       .eq('company_id', companyId)
@@ -164,7 +164,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
   if (body.milestoneType !== undefined) update.milestone_type = body.milestoneType
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: phaseData, error } = await (supabase as any)
+  const { data: phaseData, error } = await supabase
     .from('project_phases')
     .update(update)
     .eq('id', id)
@@ -218,7 +218,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
   const supabase = await createClient()
 
   // Get existing phase
-  const { data: existingData, error: fetchError } = await (supabase as any)
+  const { data: existingData, error: fetchError } = await supabase
     .from('project_phases')
     .select('*')
     .eq('id', id)
@@ -245,7 +245,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
 
   // Soft delete
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('project_phases')
     .update({ deleted_at: new Date().toISOString() })
     .eq('id', id)
