@@ -7,8 +7,8 @@
  * Uses Vercel KV (Redis) in production, in-memory fallback for development.
  */
 
-// @ts-expect-error @vercel/kv not installed yet
-import { kv } from '@vercel/kv'
+// TODO: Add @vercel/kv when deploying to production
+// For now, uses in-memory cache (see memoryCache below)
 
 // Cache key prefixes for different data types
 const CACHE_PREFIXES = {
@@ -67,11 +67,7 @@ export function buildGlobalKey(prefix: string, ...segments: string[]): string {
  */
 export async function cacheGet<T>(key: string): Promise<T | null> {
   try {
-    if (isKVAvailable()) {
-      return await kv.get<T>(key)
-    }
-
-    // Fallback to memory cache
+    // TODO: Use @vercel/kv in production when isKVAvailable()
     const cached = memoryCache.get(key)
     if (cached && cached.expires > Date.now()) {
       return cached.value as T
@@ -95,15 +91,11 @@ export async function cacheSet<T>(
   const ttlSeconds = typeof ttl === 'number' ? ttl : DEFAULT_TTL[ttl]
 
   try {
-    if (isKVAvailable()) {
-      await kv.set(key, value, { ex: ttlSeconds })
-    } else {
-      // Fallback to memory cache
-      memoryCache.set(key, {
-        value,
-        expires: Date.now() + ttlSeconds * 1000,
-      })
-    }
+    // TODO: Use @vercel/kv in production when isKVAvailable()
+    memoryCache.set(key, {
+      value,
+      expires: Date.now() + ttlSeconds * 1000,
+    })
   } catch (error) {
     console.error('Cache set error:', error)
   }
@@ -114,11 +106,8 @@ export async function cacheSet<T>(
  */
 export async function cacheDelete(key: string): Promise<void> {
   try {
-    if (isKVAvailable()) {
-      await kv.del(key)
-    } else {
-      memoryCache.delete(key)
-    }
+    // TODO: Use @vercel/kv in production when isKVAvailable()
+    memoryCache.delete(key)
   } catch (error) {
     console.error('Cache delete error:', error)
   }
@@ -129,18 +118,10 @@ export async function cacheDelete(key: string): Promise<void> {
  */
 export async function cacheInvalidatePattern(pattern: string): Promise<void> {
   try {
-    if (isKVAvailable()) {
-      // Use SCAN to find matching keys
-      const keys = await kv.keys(pattern)
-      if (keys.length > 0) {
-        await kv.del(...keys)
-      }
-    } else {
-      // Fallback: iterate memory cache
-      for (const key of memoryCache.keys()) {
-        if (key.includes(pattern.replace('*', ''))) {
-          memoryCache.delete(key)
-        }
+    // TODO: Use @vercel/kv SCAN in production when isKVAvailable()
+    for (const key of memoryCache.keys()) {
+      if (key.includes(pattern.replace('*', ''))) {
+        memoryCache.delete(key)
       }
     }
   } catch (error) {

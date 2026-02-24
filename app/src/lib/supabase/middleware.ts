@@ -41,12 +41,14 @@ export async function updateSession(request: NextRequest) {
                       request.nextUrl.pathname.startsWith('/reset-password') ||
                       request.nextUrl.pathname.startsWith('/accept-invite')
 
+  const isApiRoute = request.nextUrl.pathname.startsWith('/api/')
+
   const isPublicRoute = request.nextUrl.pathname === '/' ||
                         request.nextUrl.pathname.startsWith('/portal') ||
                         request.nextUrl.pathname.startsWith('/skeleton') ||
                         request.nextUrl.pathname.startsWith('/api/docs')
 
-  if (!user && !isAuthRoute && !isPublicRoute) {
+  if (!user && !isAuthRoute && !isPublicRoute && !isApiRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

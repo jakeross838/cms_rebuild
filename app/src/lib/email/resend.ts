@@ -7,8 +7,13 @@
 
 import { Resend } from 'resend'
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy-init Resend client (only when API key is available)
+let _resend: Resend | null = null
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 // Default sender - update to your verified domain
 const DEFAULT_FROM = process.env.RESEND_FROM_EMAIL || 'RossOS <noreply@rossos.com>'
@@ -35,8 +40,10 @@ export interface SendEmailResult {
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
   const { to, subject, html, text, from = DEFAULT_FROM, replyTo, tags } = options
 
+  const client = getResendClient()
+
   // In development without API key, log instead of sending
-  if (!process.env.RESEND_API_KEY) {
+  if (!client) {
     console.warn('[Email] Would send email (no RESEND_API_KEY configured):')
     console.warn(`  To: ${Array.isArray(to) ? to.join(', ') : to}`)
     console.warn(`  Subject: ${subject}`)
@@ -45,7 +52,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
   }
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await client.emails.send({
       from,
       to: Array.isArray(to) ? to : [to],
       subject,
@@ -379,4 +386,4 @@ This link will expire in 24 hours. If you didn't create an account, you can safe
   })
 }
 
-export { resend }
+export { getResendClient as getResend }

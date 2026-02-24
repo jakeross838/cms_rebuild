@@ -247,19 +247,10 @@ export async function checkHealth(): Promise<HealthStatus> {
     services.database = 'down'
   }
 
-  // Check cache (Vercel KV)
-  try {
-    const start = Date.now()
-    // @ts-expect-error @vercel/kv not installed yet
-    const { kv } = await import('@vercel/kv')
-    await kv.ping()
-    latency.cache = Date.now() - start
-    services.cache = 'up'
-  } catch {
-    // Cache might not be configured
-    services.cache = process.env.KV_REST_API_URL ? 'down' : 'up'
-    latency.cache = 0
-  }
+  // Check cache (Vercel KV — not available in dev)
+  // TODO: Add @vercel/kv health check when deploying to production
+  services.cache = process.env.KV_REST_API_URL ? 'down' : 'up'
+  latency.cache = 0
 
   // Check queue (based on database)
   services.queue = services.database

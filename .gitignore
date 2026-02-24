@@ -25,6 +25,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Secrets
+docs/brain/secrets.local.md
+
 # Supabase
 app/supabase/.temp/
 

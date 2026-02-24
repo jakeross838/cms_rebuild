@@ -14,8 +14,8 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { timingSafeEqual } from 'crypto'
 
-// @ts-expect-error @vercel/kv not installed yet
-import { kv } from '@vercel/kv'
+// TODO: Add @vercel/kv when deploying to production
+// For now, uses in-memory store (see memoryStore below)
 
 // Rate limit configurations for different endpoints
 export const RATE_LIMITS = {
@@ -116,13 +116,11 @@ export async function checkRateLimit(
     let count: number
 
     if (isKVAvailable()) {
-      // Use Redis INCR with expiry
-      count = await kv.incr(key)
-      if (count === 1) {
-        // Set expiry on first request in window
-        await kv.expire(key, Math.ceil(config.windowMs / 1000))
-      }
-    } else {
+      // TODO: Use @vercel/kv Redis INCR with expiry in production
+      // For now, fall through to memory store
+    }
+
+    {
       // Fallback to memory store
       const stored = memoryStore.get(key)
       if (stored && stored.resetAt > now) {

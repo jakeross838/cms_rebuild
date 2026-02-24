@@ -84,8 +84,6 @@ export const POST = createApiHandler(
         .from('companies')
         .insert({
           name: finalCompanyName,
-          subscription_status: 'trial',
-          permissions_mode: 'open', // v1 default
           settings: {},
         } as never)
         .select()
@@ -133,31 +131,20 @@ export const POST = createApiHandler(
       }
 
       // Step 5: Seed default roles for the company
-      const rolesToInsert = SYSTEM_ROLES.map((role) => ({
-        company_id: companyId,
-        name: role.name,
-        base_role: role.base_role,
-        is_system: role.is_system,
-        description: role.description,
-        permissions: {}, // System roles use DEFAULT_PERMISSIONS from code
-      }))
-
-      const { error: rolesError } = await admin.from('roles').insert(rolesToInsert as never)
-
-      if (rolesError) {
-        console.error('[Signup] Failed to seed roles (non-fatal):', rolesError)
-        // Don't rollback for roles - user can still use the system
-      }
+      // TODO: Enable when 'roles' table is created
+      // const rolesToInsert = SYSTEM_ROLES.map((role) => ({
+      //   company_id: companyId,
+      //   name: role.name,
+      //   base_role: role.base_role,
+      //   is_system: role.is_system,
+      //   description: role.description,
+      //   permissions: {},
+      // }))
+      // await admin.from('roles').insert(rolesToInsert as never)
 
       // Step 6: Log the signup event
-      await admin.from('auth_audit_log').insert({
-        company_id: companyId,
-        user_id: authUserId,
-        event_type: 'signup',
-        ip_address: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
-        user_agent: req.headers.get('user-agent') ?? null,
-        metadata: { email, company_name: finalCompanyName },
-      } as never)
+      // TODO: Enable when 'auth_audit_log' table is created
+      console.log('[Signup] User signed up:', { email, company_name: finalCompanyName })
 
       // Step 7: Send verification email via Supabase (it handles this automatically on createUser with email_confirm: false)
       // Also send welcome email via Resend
