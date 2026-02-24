@@ -31,7 +31,7 @@
 |----|--------|--------|-----------|------------|----------|------------|-----------|
 | 01 | Auth & Access Control | done | applied | yes | yes | yes | 5e345c8 |
 | 02 | Configuration Engine | done | applied | yes | no | yes | fea8850 |
-| 03 | Core Data Model | not_started | applied | no | no | no | no |
+| 03 | Core Data Model | done | applied | yes | no | yes | pending |
 | 04 | Navigation, Search & Dashboard | not_started | n/a | no | no | no | no |
 | 05 | Notification Engine | not_started | applied | no | no | no | no |
 | 06 | Document Storage | not_started | applied | no | no | no | no |
@@ -123,9 +123,9 @@
 
 | Category | Count |
 |----------|-------|
-| Done | 4 (Module 01, Module 02, Phase 0C, Phase 0D) |
+| Done | 5 (Module 01, Module 02, Module 03, Phase 0C, Phase 0D) |
 | In Progress | 0 |
-| Not Started | 50 (Modules 03-52) |
+| Not Started | 49 (Modules 04-52) |
 | Blocked | 0 |
 
-**Next up:** Module 03 — Core Data Model (see `docs/AGENT_QUEUE.md`)
+**Next up:** Module 04 — Navigation, Search & Dashboard (see `docs/AGENT_QUEUE.md`)

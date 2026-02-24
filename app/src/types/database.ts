@@ -14367,4 +14367,63 @@ export type VendorUpdate = TablesUpdate<'vendors'>
 // Notification enum types (manual — not DB enums)
 export type NotificationCategory = 'financial' | 'schedule' | 'documents' | 'field_operations' | 'approvals' | 'system'
 export type NotificationUrgency = 'low' | 'normal' | 'high' | 'critical'
+export type NotificationChannel = 'in_app' | 'email' | 'sms' | 'push'
+export type DeliveryStatus = 'queued' | 'processing' | 'sent' | 'delivered' | 'failed' | 'bounced'
+export type DigestFrequency = 'hourly' | 'twice_daily' | 'daily'
+export type NotificationEventType = {
+  id: string
+  event_type: string
+  module: string
+  description: string
+  default_channels: string[]
+  default_roles: string[]
+  variables: string[]
+  urgency: string
+  category: string
+  created_at: string
+  [key: string]: unknown
+}
+export type NotificationDelivery = {
+  id: string
+  notification_id: string
+  channel: NotificationChannel
+  status: DeliveryStatus
+  provider_message_id: string | null
+  attempts: number
+  last_attempt_at: string | null
+  error_message: string | null
+  created_at: string
+  updated_at: string
+  [key: string]: unknown
+}
+export type UserNotificationPreference = {
+  id: string
+  user_id: string
+  company_id: string
+  category: string
+  channel: string
+  enabled: boolean
+  created_at: string
+  updated_at: string
+  [key: string]: unknown
+}
+export type UserNotificationSetting = {
+  id: string
+  user_id: string
+  company_id: string
+  quiet_start: string
+  quiet_end: string
+  timezone: string
+  digest_mode: boolean
+  digest_frequency: string
+  digest_time: string
+  critical_bypass_quiet: boolean
+  created_at: string
+  updated_at: string
+  [key: string]: unknown
+}
+
+// Project/entity enum types (manual — Zod enums in validation schemas)
+export type ProjectType = 'new_construction' | 'renovation' | 'addition' | 'remodel' | 'commercial' | 'other'
+export type CostCodeCategory = 'labor' | 'material' | 'subcontractor' | 'equipment' | 'other'
 

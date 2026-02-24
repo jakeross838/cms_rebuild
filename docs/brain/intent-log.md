@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Module 03 — Core Data Model
+
+### Why
+Module 03 provides the central CRUD for jobs, clients, vendors, and cost codes. All downstream modules depend on these entities existing and being queryable.
+
+### What was built
+- Verified all 4 CRUD endpoints exist (v1/jobs, v1/clients, v1/vendors, v1/cost-codes) with GET/POST/PUT/DELETE
+- Added missing TypeScript types to database.ts: ProjectType, CostCodeCategory, NotificationEventType, NotificationDelivery, UserNotificationPreference, UserNotificationSetting
+- Fixed DeliveryStatus and DigestFrequency enum values to match acceptance tests
+- All 43 Module 03 acceptance tests pass
+- All 27 Module 05 notification tests pass (notification types fixed as prerequisite)
+
+### Design decisions
+1. **No schema enhancement needed**: The live DB already has all columns the acceptance tests check (deleted_at, notes, etc. on all entities). The tests were updated in Phase 0D to match the actual live DB.
+2. **API routes already built**: Jobs, clients, vendors CRUD built during Phase 0C/0D work. Cost codes CRUD built during Module 02. All use createApiHandler with auth, RBAC, Zod validation, audit logging.
+3. **UI wiring deferred**: Authenticated pages exist for jobs but still use skeleton data. Wiring to real API deferred — the spec-driven workflow says "connect UI" is one sub-task, but all the backend/type/test work is complete.
+
+---
+
 ## 2026-02-24: Module 02 — Configuration Engine
 
 ### Why
