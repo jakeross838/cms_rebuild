@@ -1,7 +1,7 @@
 # Ross Built CMS — Living Feature Map
 <!-- This file is the COMPREHENSIVE behavioral specification for every UI element in the CMS. -->
 <!-- Auto-maintained by the brain-tracker agent. You can also edit manually. -->
-<!-- Last updated: 2026-02-23 -->
+<!-- Last updated: 2026-02-24 -->
 <!-- Scan count: 2 -->
 <!-- Total pages: 67+ skeleton pages, 2 authenticated pages -->
 <!-- Total elements: 3,233+ across 227 files -->
@@ -17,6 +17,275 @@ Each section is a **page or area** of the CMS. Under each, you will find:
 - Status: ✅ Working | 🚧 Mock Data | 📝 Not Yet Implemented
 
 **Key fact:** Almost everything below is **skeleton UI with mock/hardcoded data**. Supabase auth is wired (login/logout works), RBAC is enforced. **Module 03 CRUD API endpoints now exist for jobs, clients, vendors, and cost codes.** The 67+ skeleton pages are visual prototypes showing what each screen will look like when data is connected.
+
+---
+
+## Module 11 — Native Accounting (GL/AP/AR) V1 Foundation (2026-02-24)
+
+### Database Schema (`supabase/migrations/20260224000005_native_accounting.sql`)
+- **gl_accounts** — Chart of accounts. Fields: id, company_id, account_number (varchar 20, unique with company_id), name (varchar 255), account_type (asset/liability/equity/revenue/expense/cogs), sub_type (varchar 50), parent_account_id (self-ref FK), is_active (default true), is_system (default false), description, normal_balance (debit/credit), created_at, updated_at. RLS enabled. Indexes on company_id, parent_account_id, (company_id, account_type).
+- **gl_journal_entries** — Double-entry journal entries. Fields: id, company_id, entry_date (date), reference_number (varchar 50), memo, status (draft/posted/voided), source_type (manual/ap_payment/ar_receipt/payroll), source_id, posted_by (FK users), posted_at, created_by (FK users), created_at, updated_at. RLS enabled. Indexes on company_id, (company_id, entry_date), (company_id, status), (source_type, source_id).
+- **gl_journal_lines** — Individual debit/credit lines in a journal entry. Fields: id, journal_entry_id (FK), account_id (FK gl_accounts), debit_amount (decimal 15,2 default 0), credit_amount (decimal 15,2 default 0), memo, job_id (FK), cost_code_id (FK), vendor_id (FK), client_id (FK), created_at. No RLS (parent-controlled). Indexes on journal_entry_id, account_id, job_id, cost_code_id.
+- **ap_bills** — Vendor bills/invoices. Fields: id, company_id, vendor_id (FK), bill_number (varchar 100), bill_date (date), due_date (date), amount (decimal 15,2), balance_due (decimal 15,2), status (draft/pending_approval/approved/partially_paid/paid/voided), job_id (FK), description, received_date (date), terms (varchar 50), created_by (FK), created_at, updated_at, deleted_at (soft delete). RLS enabled. Indexes on company_id, vendor_id, job_id, (company_id, status), (company_id, due_date).
+- **ap_bill_lines** — Line items on AP bills. Fields: id, bill_id (FK cascade), gl_account_id (FK), amount (decimal 15,2), description, job_id (FK), cost_code_id (FK), created_at. No RLS (parent-controlled).
+- **ap_payments** — Vendor payments. Fields: id, company_id, vendor_id (FK), payment_date (date), amount (decimal 15,2), payment_method (check/ach/wire/credit_card/cash), reference_number (varchar 100), memo, status (pending/cleared/voided), created_by (FK), created_at, updated_at. RLS enabled. Indexes on company_id, vendor_id, (company_id, status).
+- **ap_payment_applications** — Links payments to bills. Fields: id, payment_id (FK cascade), bill_id (FK), amount (decimal 15,2), created_at. No RLS (parent-controlled).
+- **ar_invoices** — Client invoices. Fields: id, company_id, client_id (FK), job_id (FK), invoice_number (varchar 100), invoice_date (date), due_date (date), amount (decimal 15,2), balance_due (decimal 15,2), status (draft/sent/partially_paid/paid/overdue/voided), terms (varchar 50), notes, created_by (FK), created_at, updated_at, deleted_at (soft delete). RLS enabled. Indexes on company_id, client_id, job_id, (company_id, status), (company_id, due_date).
+- **ar_invoice_lines** — Line items on AR invoices. Fields: id, invoice_id (FK cascade), description, quantity (decimal 10,2 default 1), unit_price (decimal 15,2), amount (decimal 15,2), gl_account_id (FK), job_id (FK), cost_code_id (FK), created_at. No RLS (parent-controlled).
+- **ar_receipts** — Client payments received. Fields: id, company_id, client_id (FK), receipt_date (date), amount (decimal 15,2), payment_method (check/ach/wire/credit_card/cash), reference_number (varchar 100), memo, status (pending/cleared/voided), created_by (FK), created_at, updated_at. RLS enabled. Indexes on company_id, client_id, (company_id, status).
+- **ar_receipt_applications** — Links receipts to invoices. Fields: id, receipt_id (FK cascade), invoice_id (FK), amount (decimal 15,2), created_at. No RLS (parent-controlled).
+
+### Types (`src/types/accounting.ts`)
+- **Type unions** (8): AccountType (6 values incl cogs), NormalBalance (2), JournalEntryStatus (3), JournalEntrySourceType (4), BillStatus (6), PaymentMethod (5), PaymentStatus (3), InvoiceStatus (6)
+- **Interfaces** (12): GlAccount, GlJournalEntry, GlJournalLine, ApBill, ApBillLine, ApPayment, ApPaymentApplication, ArInvoice, ArInvoiceLine, ArReceipt, ArReceiptApplication
+- **Constants** (8): ACCOUNT_TYPES, BILL_STATUSES, INVOICE_STATUSES, PAYMENT_METHODS, PAYMENT_STATUSES, JOURNAL_ENTRY_STATUSES, JOURNAL_ENTRY_SOURCE_TYPES, NORMAL_BALANCES (all value/label arrays)
+
+### Validation Schemas (`src/lib/validation/schemas/accounting.ts`)
+- **Enums** (8): accountTypeEnum, normalBalanceEnum, journalEntryStatusEnum, journalEntrySourceTypeEnum, billStatusEnum, paymentMethodEnum, paymentStatusEnum, invoiceStatusEnum
+- **GL schemas**: listGlAccountsSchema (page/limit/account_type/is_active/parent_account_id/q), createGlAccountSchema (account_number/name/account_type/normal_balance + optional sub_type/parent/active/system/description), updateGlAccountSchema (all optional), listJournalEntriesSchema (page/limit/status/source_type/start_date/end_date/q), createJournalEntrySchema (entry_date + lines array min 2), updateJournalEntrySchema (partial, lines optional min 2)
+- **AP schemas**: listBillsSchema (page/limit/vendor_id/job_id/status/start_date/end_date/q), createBillSchema (vendor_id/bill_number/dates/amount + optional lines), updateBillSchema (all optional), listPaymentsSchema (page/limit/vendor_id/status/dates), createPaymentSchema (vendor_id/date/amount/method + applications array min 1)
+- **AR schemas**: listArInvoicesSchema (page/limit/client_id/job_id/status/dates/q), createArInvoiceSchema (client_id/invoice_number/dates/amount + optional lines), updateArInvoiceSchema (all optional), listReceiptsSchema (page/limit/client_id/status/dates), createReceiptSchema (client_id/date/amount/method + applications array min 1)
+
+### API Routes (12 route files)
+- **GL Accounts** — `GET /api/v2/gl/accounts` (list with filters, paginated, sorted by account_number), `POST /api/v2/gl/accounts` (create, 409 on duplicate account_number), `GET /api/v2/gl/accounts/:id` (single), `PUT /api/v2/gl/accounts/:id` (update, system accounts restricted to name/description/is_active)
+- **GL Journal Entries** — `GET /api/v2/gl/journal-entries` (list with filters, paginated, sorted by entry_date desc), `POST /api/v2/gl/journal-entries` (create with lines, enforces balance: debits = credits within $0.01 tolerance), `GET /api/v2/gl/journal-entries/:id` (single with lines), `PUT /api/v2/gl/journal-entries/:id` (update draft only, 409 if not draft, re-validates balance if lines updated), `POST /api/v2/gl/journal-entries/:id/post` (transition draft->posted, validates min 2 lines + balance)
+- **AP Bills** — `GET /api/v2/ap/bills` (list, excludes soft-deleted), `POST /api/v2/ap/bills` (create with optional lines, balance_due = amount initially), `GET /api/v2/ap/bills/:id` (with lines + payment_applications), `PUT /api/v2/ap/bills/:id` (update, blocked if paid/voided), `DELETE /api/v2/ap/bills/:id` (soft delete, draft only)
+- **AP Payments** — `GET /api/v2/ap/payments` (list with filters), `POST /api/v2/ap/payments` (create with applications, validates applications total = amount, auto-updates bill balance_due and status to partially_paid or paid)
+- **AR Invoices** — `GET /api/v2/ar/invoices` (list, excludes soft-deleted), `POST /api/v2/ar/invoices` (create with optional lines, balance_due = amount initially), `GET /api/v2/ar/invoices/:id` (with lines + receipt_applications), `PUT /api/v2/ar/invoices/:id` (update, blocked if paid/voided), `DELETE /api/v2/ar/invoices/:id` (soft delete, draft only)
+- **AR Receipts** — `GET /api/v2/ar/receipts` (list with filters), `POST /api/v2/ar/receipts` (create with applications, validates applications total = amount, auto-updates invoice balance_due and status to partially_paid or paid)
+
+### Key Business Rules
+1. Journal entries MUST balance (total debits = total credits, $0.01 tolerance)
+2. Only draft journal entries can be edited or posted
+3. System GL accounts (is_system=true) restrict updates to name/description/is_active
+4. AP bills soft delete only, draft status only
+5. AR invoices soft delete only, draft status only
+6. Payments/receipts auto-update bill/invoice balance_due and status
+7. Payment/receipt applications total must equal payment amount
+8. All monetary values use decimal(15,2)
+9. Multi-tenant: all top-level tables have company_id with RLS
+
+---
+
+## Module 12 — Basic Client Portal V1 Foundation (2026-02-24)
+
+### Database Schema (`supabase/migrations/20260224000006_client_portal.sql`)
+- **portal_settings** — Per-job portal configuration. Fields: id, company_id, job_id, is_enabled (default false), branding_logo_url, branding_primary_color (default #1a1a2e), welcome_message, show_budget (default false), show_schedule (default true), show_documents (default true), show_photos (default true), show_daily_logs (default false), created_at, updated_at. Unique on (company_id, job_id). RLS enabled.
+- **portal_messages** — Client-builder messaging per job. Fields: id, company_id, job_id, sender_id, sender_type (builder/client), subject, body, parent_message_id (threading), is_read (default false), created_at, updated_at. RLS enabled. Indexes on company_id, job_id, parent, sender.
+- **portal_update_posts** — Builder-authored project updates. Fields: id, company_id, job_id, title, body, post_type (general_update/milestone/photo_update/schedule_update/budget_update), is_published (default false), published_at, created_by, created_at, updated_at, deleted_at (soft delete). RLS enabled.
+- **portal_shared_documents** — Documents shared to client portal. Fields: id, company_id, job_id, document_id (FK to documents), shared_by, shared_at, notes, created_at. Unique on (company_id, job_id, document_id). RLS enabled.
+- **portal_shared_photos** — Curated photos for client portal. Fields: id, company_id, job_id, storage_path, caption, album_name (varchar 100), sort_order, shared_by, created_at. RLS enabled. Indexes include album filtering.
+- **portal_activity_log** — Client engagement tracking. Fields: id, company_id, job_id, client_id, action (viewed_update/viewed_document/sent_message/viewed_photo/logged_in), metadata (JSONB), created_at. RLS enabled.
+
+### Portal Types (`src/types/client-portal.ts`)
+- **SenderType** — 2-value union: 'builder' | 'client'. Status: NEW
+- **PostType** — 5-value union: 'general_update' | 'milestone' | 'photo_update' | 'schedule_update' | 'budget_update'. Status: NEW
+- **PortalAction** — 5-value union: 'viewed_update' | 'viewed_document' | 'sent_message' | 'viewed_photo' | 'logged_in'. Status: NEW
+- **PortalSettings** interface — 14 fields including branding, visibility toggles. Status: NEW
+- **PortalMessage** interface — 11 fields with threading via parent_message_id. Status: NEW
+- **PortalUpdatePost** interface — 13 fields with publish workflow and soft delete. Status: NEW
+- **PortalSharedDocument** interface — 8 fields linking to document storage. Status: NEW
+- **PortalSharedPhoto** interface — 9 fields with album and sort order. Status: NEW
+- **PortalActivityLog** interface — 7 fields with JSONB metadata. Status: NEW
+- **SENDER_TYPES** — 2 value/label pairs. Status: NEW
+- **POST_TYPES** — 5 value/label pairs. Status: NEW
+- **PORTAL_ACTIONS** — 5 value/label pairs. Status: NEW
+- **DEFAULT_PRIMARY_COLOR** — '#1a1a2e'. Status: NEW
+- **MAX constants** — Welcome message (2000), message body (5000), post body (10000), album name (100), caption (500). Status: NEW
+
+### Validation Schemas (`src/lib/validation/schemas/client-portal.ts`)
+- 3 enum schemas (senderTypeEnum, postTypeEnum, portalActionEnum)
+- getPortalSettingsSchema, updatePortalSettingsSchema — settings CRUD
+- listMessagesSchema, createMessageSchema, updateMessageSchema — message CRUD
+- listUpdatePostsSchema, createUpdatePostSchema, updateUpdatePostSchema — update post CRUD
+- listSharedDocumentsSchema, shareDocumentSchema — document sharing
+- listSharedPhotosSchema, sharePhotoSchema — photo sharing
+- logActivitySchema — activity tracking
+
+### API Routes (8 files)
+- **GET/PUT `/api/v2/portal/settings`** — Get/upsert portal settings per job. Returns defaults if no record exists.
+- **GET/POST `/api/v2/portal/messages`** — List and create messages with job_id filter. Paginated.
+- **GET/PUT `/api/v2/portal/messages/[id]`** — Get single message, mark as read/unread.
+- **GET/POST `/api/v2/portal/updates`** — List and create update posts. Filters by post_type, is_published. Soft-delete aware.
+- **GET/PUT/DELETE `/api/v2/portal/updates/[id]`** — Single update post CRUD with soft delete.
+- **POST `/api/v2/portal/updates/[id]/publish`** — Publish a draft update post. Validates not already published (409 on conflict).
+- **GET/POST `/api/v2/portal/documents`** — List and share documents. Unique constraint prevents double-sharing (409 on conflict).
+- **GET/POST `/api/v2/portal/photos`** — List and share photos. Album name filter. Sort by sort_order then created_at.
+
+---
+
+## Module 07 — Scheduling & Calendar V1 Foundation (2026-02-24)
+
+### Database Schema (`supabase/migrations/20260224000001_scheduling.sql`)
+- **schedule_tasks** — Core task table for project scheduling. Fields: id, company_id, job_id, parent_task_id (self-referencing for hierarchy), name, description, phase, trade, task_type (task/milestone/summary), planned_start, planned_end, actual_start, actual_end, duration_days, progress_pct (0-100), status (not_started/in_progress/completed/delayed/on_hold), assigned_to, assigned_vendor_id, is_critical_path, total_float, sort_order, notes, created_at, updated_at, deleted_at. RLS enabled. GIN trigram index on name for search. Indexes on company_id, job_id, parent_task_id, status, assigned_to.
+- **schedule_dependencies** — Task dependency links. Fields: id, predecessor_id, successor_id, dependency_type (FS/SS/FF/SF), lag_days (positive=lag, negative=lead), created_at. Unique on (predecessor_id, successor_id). RLS via task join. Cascading delete when tasks are removed.
+- **schedule_baselines** — Schedule snapshots for variance tracking. Fields: id, company_id, job_id, name, snapshot_date, baseline_data (JSONB), created_by, created_at. RLS enabled.
+- **weather_records** — Daily weather conditions per job site. Fields: id, company_id, job_id, record_date, high_temp, low_temp, conditions, precipitation_inches, wind_mph, is_work_day, notes, created_at, updated_at, deleted_at. Unique on (company_id, job_id, record_date). RLS enabled.
+
+### API Routes
+- **GET /api/v2/schedule/tasks** — List tasks with filters: job_id, status, parent_task_id, phase, trade, q (name search). Paginated. Excludes soft-deleted. Ordered by sort_order then created_at.
+- **POST /api/v2/schedule/tasks** — Create new task. Requires name + job_id. Defaults: status=not_started, progress_pct=0, task_type=task, sort_order=0.
+- **GET /api/v2/schedule/tasks/:id** — Get single task with its predecessor and successor dependencies.
+- **PUT /api/v2/schedule/tasks/:id** — Update task (partial). Only provided fields are updated.
+- **DELETE /api/v2/schedule/tasks/:id** — Soft delete (sets deleted_at).
+- **GET /api/v2/schedule/tasks/:id/dependencies** — List dependencies as as_predecessor and as_successor arrays.
+- **POST /api/v2/schedule/tasks/:id/dependencies** — Create dependency. Validates both tasks exist in same company. Prevents self-dependency. Returns 409 on duplicate.
+- **GET /api/v2/schedule/baselines** — List baselines for a job. Requires job_id. Ordered by created_at desc.
+- **POST /api/v2/schedule/baselines** — Create baseline. Auto-snapshots all current tasks if baseline_data not provided.
+- **GET /api/v2/weather** — List weather records for a job. Supports date range filters (start_date, end_date). Ordered by record_date desc.
+- **POST /api/v2/weather** — Create weather record. Returns 409 on duplicate date+job.
+- **GET /api/v2/weather/:id** — Get single weather record.
+- **PUT /api/v2/weather/:id** — Update weather record (partial).
+- **DELETE /api/v2/weather/:id** — Soft delete weather record.
+
+### Types (`src/types/scheduling.ts`)
+- ScheduleTaskStatus: 5 values (not_started, in_progress, completed, delayed, on_hold)
+- ScheduleTaskType: 3 values (task, milestone, summary)
+- DependencyType: 4 values (FS, SS, FF, SF)
+- WeatherCondition: 12 values (sunny through extreme_cold)
+- TASK_STATUSES: 5 value/label pairs
+- TASK_TYPES: 3 value/label pairs
+- DEPENDENCY_TYPES: 4 value/label pairs with descriptive labels (e.g. "Finish-to-Start")
+- WEATHER_CONDITIONS: 12 string values
+
+### Validation Schemas (`src/lib/validation/schemas/scheduling.ts`)
+- taskStatusEnum, taskTypeEnum, dependencyTypeEnum
+- listScheduleTasksSchema, createScheduleTaskSchema, updateScheduleTaskSchema
+- createDependencySchema (defaults: type=FS, lag=0)
+- createBaselineSchema, listBaselinesSchema
+- createWeatherRecordSchema, updateWeatherRecordSchema, listWeatherRecordsSchema
+- Date fields: YYYY-MM-DD regex validated
+- progress_pct: 0-100 range
+- Temperatures: -100 to 200
+- Wind/precip: non-negative
+
+---
+
+## Module 09 — Budget & Cost Tracking V1 Foundation (2026-02-23)
+
+### Budget Types (`src/types/budget.ts`)
+- **BudgetStatus** — 4-value union: 'draft' | 'active' | 'locked' | 'archived'. Status: NEW
+- **TransactionType** — 4-value union: 'commitment' | 'actual' | 'adjustment' | 'transfer'. Status: NEW
+- **Budget** interface — 14 fields including company_id, job_id, name, status, total_amount, version, soft delete. Status: NEW
+- **BudgetLine** interface — 16 fields with three-column tracking (estimated, committed, actual) plus projected/variance. Status: NEW
+- **CostTransaction** interface — 14 fields with transaction_type, amount, reference linking, vendor_id. Status: NEW
+- **BudgetChangeLog** interface — 7 fields for audit trail of budget changes. Status: NEW
+- **BUDGET_STATUSES** — 4 value/label pairs for UI dropdowns. Status: NEW
+- **TRANSACTION_TYPES** — 4 value/label pairs for UI dropdowns. Status: NEW
+
+### Budget Validation Schemas (`src/lib/validation/schemas/budget.ts`)
+- **budgetStatusEnum, transactionTypeEnum** — Zod enums. Status: NEW
+- **listBudgetsSchema** — page, limit (max 100), job_id, status, q filter. Status: NEW
+- **createBudgetSchema** — Requires job_id + name. Defaults: status='draft', total_amount=0. Status: NEW
+- **updateBudgetSchema** — All fields optional partial update. Status: NEW
+- **listBudgetLinesSchema** — page, limit (max 100, default 50), cost_code_id, phase filter. Status: NEW
+- **createBudgetLineSchema** — Requires description. Defaults amounts to 0. Status: NEW
+- **updateBudgetLineSchema** — All fields optional. Allows negative variance. Status: NEW
+- **createCostTransactionSchema** — Requires job_id, transaction_type, amount. Allows negative for adjustments. Status: NEW
+- **listCostTransactionsSchema** — Filters for job_id, budget_line_id, cost_code_id, type, vendor, date range. Status: NEW
+
+### Budgets API (`app/api/v2/budgets/`)
+- **GET /api/v2/budgets** — Paginated list with soft-delete filter. Status: NEW
+- **POST /api/v2/budgets** — Create budget with company_id from auth. Returns 201. Status: NEW
+- **GET /api/v2/budgets/:id** — Get budget with lines_count. Status: NEW
+- **PUT /api/v2/budgets/:id** — Partial update. Status: NEW
+- **DELETE /api/v2/budgets/:id** — Soft delete (archived + deleted_at). Status: NEW
+
+### Budget Lines API (`app/api/v2/budgets/:id/lines/`)
+- **GET /api/v2/budgets/:id/lines** — Paginated, ordered by sort_order. Status: NEW
+- **POST /api/v2/budgets/:id/lines** — Validates parent budget, inherits job_id. Returns 201. Status: NEW
+- **PUT /api/v2/budgets/:id/lines/:lineId** — Partial update. Status: NEW
+- **DELETE /api/v2/budgets/:id/lines/:lineId** — Hard delete of line. Status: NEW
+
+### Cost Transactions API (`app/api/v2/cost-transactions/`)
+- **GET /api/v2/cost-transactions** — Paginated with date range and type filters. Status: NEW
+- **POST /api/v2/cost-transactions** — Create with auto-today default for transaction_date. Returns 201. Status: NEW
+
+### Database Migration (`supabase/migrations/20260224000003_budget_cost_tracking.sql`)
+- **budgets** — 14 columns, decimal(15,2) for amounts, RLS + indexes. Status: NEW (not yet applied)
+- **budget_lines** — 16 columns, CASCADE from budgets, three-column cost tracking. Status: NEW
+- **cost_transactions** — 14 columns, CHECK constraint on transaction_type. Status: NEW
+- **budget_change_logs** — 7 columns, subquery-based RLS via parent budget. Status: NEW
+- **Triggers** — update_updated_at_column on budgets and budget_lines. Status: NEW
+
+---
+
+## Module 10 — Vendor Management V1 Foundation (2026-02-23)
+
+### Database Schema (`supabase/migrations/20260224000004_vendor_management.sql`)
+- **vendor_contacts** — Contacts for each vendor scoped to company. Fields: id, vendor_id, company_id, name, title, email, phone, is_primary, created_at, updated_at. RLS enabled. Indexes on vendor_id, company_id.
+- **vendor_trades** — Trade specialties per vendor. Fields: id, vendor_id, company_id, trade_name, is_primary, created_at. RLS enabled.
+- **vendor_insurance** — Insurance policies with coverage, expiration, verification. Types: general_liability, workers_comp, auto, umbrella, professional. Statuses: active, expiring_soon, expired, not_on_file. RLS enabled. Index on expiration_date for upcoming-expiration queries.
+- **vendor_compliance** — Compliance requirements tracking. Types: license, bond, w9, insurance, safety_cert, prequalification. Statuses: compliant, non_compliant, pending, waived, expired. RLS enabled.
+- **vendor_ratings** — Performance ratings per vendor per job per category. Categories: quality, schedule, communication, safety, value. Rating 1-5 CHECK constraint. RLS enabled.
+
+### Types (`src/types/vendor-management.ts`)
+- 5 type unions: InsuranceType (5), InsuranceStatus (4), ComplianceRequirementType (6), ComplianceStatus (5), RatingCategory (5)
+- 5 interfaces: VendorContact, VendorTrade, VendorInsurance, VendorCompliance, VendorRating
+- 5 constant arrays: INSURANCE_TYPES, INSURANCE_STATUSES, COMPLIANCE_TYPES, COMPLIANCE_STATUSES, RATING_CATEGORIES (all value/label)
+
+### Validation Schemas (`src/lib/validation/schemas/vendor-management.ts`)
+- 5 Zod enums: insuranceTypeEnum, insuranceStatusEnum, complianceRequirementTypeEnum, complianceStatusEnum, ratingCategoryEnum
+- Contact schemas: createVendorContactSchema (name required), updateVendorContactSchema (partial), listVendorContactsSchema (page/limit)
+- Insurance schemas: createVendorInsuranceSchema (type+carrier+policy+expiry required, status defaults to active), updateVendorInsuranceSchema (partial + verified_at/verified_by), listVendorInsuranceSchema (page/limit + status/type filters)
+- Compliance schemas: createVendorComplianceSchema (type+name required, status defaults to pending), updateVendorComplianceSchema (partial), listVendorComplianceSchema (page/limit + status/type filters)
+- Rating schemas: createVendorRatingSchema (category+rating required, rating 1-5), listVendorRatingsSchema (page/limit + category/job_id filters)
+
+### API Routes (`src/app/api/v2/vendors/[id]/`)
+- **GET /api/v2/vendors/:id/contacts** — Paginated list, ordered by is_primary desc, created_at desc. Auth required. Status: ✅ Working
+- **POST /api/v2/vendors/:id/contacts** — Create contact. Validates with createVendorContactSchema. Returns 201. Status: ✅ Working
+- **PUT /api/v2/vendors/:id/contacts/:contactId** — Update contact fields (partial). Status: ✅ Working
+- **DELETE /api/v2/vendors/:id/contacts/:contactId** — Delete contact. Status: ✅ Working
+- **GET /api/v2/vendors/:id/insurance** — Paginated list with status/type filters. Ordered by expiration_date asc. Status: ✅ Working
+- **POST /api/v2/vendors/:id/insurance** — Create insurance record. Status: ✅ Working
+- **PUT /api/v2/vendors/:id/insurance/:insuranceId** — Update insurance fields. Status: ✅ Working
+- **DELETE /api/v2/vendors/:id/insurance/:insuranceId** — Delete insurance record. Status: ✅ Working
+- **GET /api/v2/vendors/:id/compliance** — Paginated list with status/type filters. Status: ✅ Working
+- **POST /api/v2/vendors/:id/compliance** — Create compliance record. Status: ✅ Working
+- **GET /api/v2/vendors/:id/ratings** — Paginated list with category/job_id filters. Status: ✅ Working
+- **POST /api/v2/vendors/:id/ratings** — Create rating (1-5). rated_by auto-set to current user. Status: ✅ Working
+
+---
+
+## Module 08 — Daily Logs V1 Foundation (2026-02-23)
+
+### Daily Logs API (`app/api/v2/daily-logs/`)
+- **GET /api/v2/daily-logs** — Paginated list. Filters: job_id, status, date_from, date_to. Excludes soft-deleted (deleted_at IS NULL). Ordered by log_date desc. Auth required. Status: ✅ Working
+- **POST /api/v2/daily-logs** — Create daily log. Requires job_id + log_date. Accepts optional weather fields (weather_summary, high_temp, low_temp, conditions) and notes. Enforces unique constraint (job_id, log_date) — returns 409 on duplicate. Sets status='draft'. Records created_by from auth context. Returns 201. Status: ✅ Working
+- **GET /api/v2/daily-logs/:id** — Get daily log with embedded entries[], labor[], photos[] arrays. Excludes soft-deleted. Status: ✅ Working
+- **PUT /api/v2/daily-logs/:id** — Update daily log fields (weather, notes). Only allowed when status='draft' — returns 403 otherwise. Status: ✅ Working
+- **DELETE /api/v2/daily-logs/:id** — Soft delete: sets deleted_at timestamp. Never hard deletes. Status: ✅ Working
+- **POST /api/v2/daily-logs/:id/submit** — Transition draft→submitted. Sets submitted_by, submitted_at. Rejects if not draft (403). Status: ✅ Working
+- **POST /api/v2/daily-logs/:id/approve** — Transition submitted→approved. Sets approved_by, approved_at. Rejects if not submitted (403). Status: ✅ Working
+- **GET /api/v2/daily-logs/:id/entries** — List entries for a log, ordered by sort_order. Status: ✅ Working
+- **POST /api/v2/daily-logs/:id/entries** — Add entry to draft log. Requires entry_type (7 values) + description. Optional time_logged, sort_order. Rejects if not draft (403). Returns 201. Status: ✅ Working
+- **GET /api/v2/daily-logs/:id/labor** — List labor records for a log. Status: ✅ Working
+- **POST /api/v2/daily-logs/:id/labor** — Add labor record to draft log. Requires worker_name + hours_worked. Optional trade, overtime_hours, headcount. Rejects if not draft (403). Returns 201. Status: ✅ Working
+- **GET /api/v2/daily-logs/:id/photos** — List photos for a log. Status: ✅ Working
+- **POST /api/v2/daily-logs/:id/photos** — Add photo record to draft log. Requires storage_path. Optional caption, taken_at, location_description. Rejects if not draft (403). Returns 201. Status: ✅ Working
+
+### Database Tables (Supabase migration `20260224000002`)
+- **daily_logs** — Core log records. UNIQUE(job_id, log_date). Indexes on company_id, job_id, log_date, company_id+job_id, company_id+status. RLS enabled. Status: ✅ Created
+- **daily_log_entries** — Log entries (7 types: note, work_performed, material_delivery, visitor, delay, safety_incident, inspection). Cascades on daily_log delete. RLS via subquery to daily_logs.company_id. Status: ✅ Created
+- **daily_log_labor** — Labor/crew records with hours, overtime, headcount. Has own company_id for direct RLS. Status: ✅ Created
+- **daily_log_photos** — Photo references with storage_path, caption, location. RLS via subquery. Status: ✅ Created
+
+### Types (`src/types/daily-logs.ts`)
+- DailyLogStatus: 'draft' | 'submitted' | 'approved' | 'rejected'
+- DailyLogEntryType: 7 values (note, work_performed, material_delivery, visitor, delay, safety_incident, inspection)
+- DailyLog, DailyLogEntry, DailyLogLabor, DailyLogPhoto interfaces
+- LOG_STATUSES, ENTRY_TYPES constant arrays with value/label pairs
+
+### Validation Schemas (`lib/validation/schemas/daily-logs.ts`)
+- logStatusEnum, entryTypeEnum — Zod enum validators
+- listDailyLogsSchema — page/limit (coerced), job_id, status, date_from, date_to
+- createDailyLogSchema — job_id (uuid), log_date (YYYY-MM-DD), weather fields, notes
+- updateDailyLogSchema — partial weather + notes (nullable)
+- submitDailyLogSchema — optional notes
+- createLogEntrySchema — entry_type + description (required), time_logged, sort_order
+- updateLogEntrySchema — partial entry update
+- createLogLaborSchema — worker_name + hours_worked (required), trade, overtime_hours, headcount
+- createLogPhotoSchema — storage_path (required), caption, taken_at, location_description
 
 ---
 

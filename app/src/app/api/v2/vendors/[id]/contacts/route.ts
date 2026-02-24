@@ -1,0 +1,134 @@
+/**
+ * Vendor Contacts — List & Create
+ *
+ * GET  /api/v2/vendors/:id/contacts — List contacts for a vendor
+ * POST /api/v2/vendors/:id/contacts — Create a new contact
+ */
+
+import { NextResponse } from 'next/server'
+
+import {
+  createApiHandler,
+  getPaginationParams,
+  paginatedResponse,
+  type ApiContext,
+} from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import {
+  listVendorContactsSchema,
+  createVendorContactSchema,
+} from '@/lib/validation/schemas/vendor-management'
+
+/**
+ * Extract vendor ID from pathname like /api/v2/vendors/:id/contacts
+ */
+function getVendorId(pathname: string): string | null {
+  const segments = pathname.split('/')
+  const vendorsIdx = segments.indexOf('vendors')
+  if (vendorsIdx === -1 || vendorsIdx + 1 >= segments.length) return null
+  return segments[vendorsIdx + 1]
+}
+
+// ============================================================================
+// GET /api/v2/vendors/:id/contacts
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const vendorId = getVendorId(req.nextUrl.pathname)
+    if (!vendorId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing vendor ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const url = req.nextUrl
+    const parseResult = listVendorContactsSchema.safeParse({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+    })
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid query parameters', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const { page, limit, offset } = getPaginationParams(req)
+    const supabase = await createClient()
+
+    const { data, count, error } = await (supabase
+      .from('vendor_contacts') as any)
+      .select('*', { count: 'exact' })
+      .eq('vendor_id', vendorId)
+      .eq('company_id', ctx.companyId!)
+      .order('is_primary', { ascending: false })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit))
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)
+
+// ============================================================================
+// POST /api/v2/vendors/:id/contacts
+// ============================================================================
+
+export const POST = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const vendorId = getVendorId(req.nextUrl.pathname)
+    if (!vendorId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing vendor ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const body = await req.json()
+    const parseResult = createVendorContactSchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid contact data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+    const supabase = await createClient()
+
+    const { data, error } = await (supabase
+      .from('vendor_contacts') as any)
+      .insert({
+        vendor_id: vendorId,
+        company_id: ctx.companyId!,
+        name: input.name,
+        title: input.title ?? null,
+        email: input.email ?? null,
+        phone: input.phone ?? null,
+        is_primary: input.is_primary,
+      })
+      .select('*')
+      .single()
+
+    if (error) {
+      return NextResponse.json(
+        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
+  },
+  { requireAuth: true, rateLimit: 'api' }
+)

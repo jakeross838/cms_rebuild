@@ -6,6 +6,326 @@
 <!-- DB tables: jobs, invoices, draws, users, auth_audit_log, companies, roles, api_metrics, audit_log -->
 <!-- TODOs in codebase: 193 -->
 
+## Module 11 — Native Accounting (GL/AP/AR) Tests (2026-02-24)
+
+### Acceptance Tests (`tests/acceptance/11-accounting.acceptance.test.ts`) -- 57 tests
+- [x] AccountType has 6 values including cogs
+- [x] NormalBalance has 2 values
+- [x] JournalEntryStatus has 3 values
+- [x] JournalEntrySourceType has 4 values
+- [x] BillStatus has 6 values
+- [x] PaymentMethod has 5 values
+- [x] PaymentStatus has 3 values
+- [x] InvoiceStatus has 6 values
+- [x] GlAccount interface has all required fields
+- [x] GlJournalEntry interface has all required fields
+- [x] GlJournalLine interface has all required fields
+- [x] ApBill interface has all required fields including deleted_at for soft delete
+- [x] ArInvoice interface has all required fields including deleted_at
+- [x] ACCOUNT_TYPES has 6 entries with value and label
+- [x] ACCOUNT_TYPES includes cogs
+- [x] BILL_STATUSES has 6 entries
+- [x] INVOICE_STATUSES has 6 entries
+- [x] PAYMENT_METHODS has 5 entries
+- [x] PAYMENT_STATUSES has 3 entries
+- [x] JOURNAL_ENTRY_STATUSES has 3 entries
+- [x] JOURNAL_ENTRY_SOURCE_TYPES has 4 entries
+- [x] NORMAL_BALANCES has 2 entries
+- [x] accountTypeEnum accepts all 6 types
+- [x] accountTypeEnum rejects invalid type
+- [x] normalBalanceEnum accepts debit and credit
+- [x] billStatusEnum accepts all 6 statuses
+- [x] paymentMethodEnum accepts all 5 methods
+- [x] invoiceStatusEnum accepts all 6 statuses
+- [x] journalEntryStatusEnum rejects invalid
+- [x] paymentStatusEnum accepts pending/cleared/voided
+- [x] listGlAccountsSchema accepts valid params
+- [x] listGlAccountsSchema rejects limit > 100
+- [x] createGlAccountSchema accepts valid account
+- [x] createGlAccountSchema requires account_number, name, account_type, normal_balance
+- [x] updateGlAccountSchema accepts partial updates
+- [x] createJournalEntrySchema requires entry_date and at least 2 lines
+- [x] createJournalEntrySchema accepts valid entry with balanced lines
+- [x] listJournalEntriesSchema accepts date filters
+- [x] updateJournalEntrySchema accepts partial updates
+- [x] createBillSchema accepts valid bill
+- [x] createBillSchema requires vendor_id, bill_number, bill_date, due_date, amount
+- [x] createBillSchema rejects non-positive amount
+- [x] createBillSchema accepts bill with line items
+- [x] updateBillSchema accepts partial updates
+- [x] listBillsSchema accepts vendor and status filters
+- [x] createPaymentSchema requires vendor_id, date, amount, method, and applications
+- [x] createPaymentSchema accepts valid payment with applications
+- [x] createPaymentSchema rejects empty applications
+- [x] createArInvoiceSchema accepts valid invoice
+- [x] createArInvoiceSchema requires client_id, invoice_number, dates, amount
+- [x] createArInvoiceSchema accepts invoice with lines
+- [x] updateArInvoiceSchema accepts partial updates
+- [x] listArInvoicesSchema accepts client and job filters
+- [x] createReceiptSchema accepts valid receipt with applications
+- [x] createReceiptSchema rejects empty applications
+- [x] listReceiptsSchema accepts client and date filters
+- [x] date fields reject invalid formats
+
+---
+
+## Module 12 — Basic Client Portal Tests (2026-02-24)
+
+### Acceptance Tests (`tests/acceptance/12-client-portal.acceptance.test.ts`) -- 49 tests
+- [x] SenderType has 2 values
+- [x] PostType has 5 values
+- [x] PortalAction has 5 values
+- [x] PortalSettings interface has all required fields
+- [x] PortalMessage interface has all required fields
+- [x] PortalUpdatePost interface has all required fields including soft delete
+- [x] PortalSharedDocument interface has all required fields
+- [x] PortalSharedPhoto interface has all required fields
+- [x] PortalActivityLog interface has all required fields
+- [x] SENDER_TYPES has 2 entries with value and label
+- [x] POST_TYPES has 5 entries with value and label
+- [x] PORTAL_ACTIONS has 5 entries with value and label
+- [x] DEFAULT_PRIMARY_COLOR is #1a1a2e
+- [x] MAX_WELCOME_MESSAGE_LENGTH is 2000
+- [x] MAX_MESSAGE_BODY_LENGTH is 5000
+- [x] MAX_POST_BODY_LENGTH is 10000
+- [x] MAX_ALBUM_NAME_LENGTH is 100
+- [x] MAX_CAPTION_LENGTH is 500
+- [x] senderTypeEnum accepts builder and client
+- [x] senderTypeEnum rejects invalid values
+- [x] postTypeEnum accepts all 5 post types
+- [x] postTypeEnum rejects invalid type
+- [x] portalActionEnum accepts all 5 actions
+- [x] portalActionEnum rejects invalid action
+- [x] getPortalSettingsSchema requires job_id UUID
+- [x] getPortalSettingsSchema rejects missing job_id
+- [x] getPortalSettingsSchema rejects invalid UUID
+- [x] updatePortalSettingsSchema accepts valid settings
+- [x] updatePortalSettingsSchema rejects invalid hex color
+- [x] listMessagesSchema accepts valid params
+- [x] listMessagesSchema rejects limit > 100
+- [x] createMessageSchema accepts valid message
+- [x] createMessageSchema requires body
+- [x] createMessageSchema rejects empty body
+- [x] updateMessageSchema accepts is_read boolean
+- [x] updateMessageSchema requires is_read
+- [x] listUpdatePostsSchema accepts valid params with filters
+- [x] createUpdatePostSchema accepts valid post
+- [x] createUpdatePostSchema requires title, body, and post_type
+- [x] updateUpdatePostSchema accepts partial updates
+- [x] shareDocumentSchema accepts valid share
+- [x] shareDocumentSchema requires job_id and document_id
+- [x] sharePhotoSchema accepts valid photo
+- [x] sharePhotoSchema requires storage_path
+- [x] sharePhotoSchema defaults sort_order to 0
+- [x] listSharedPhotosSchema accepts album_name filter
+- [x] logActivitySchema accepts valid activity
+- [x] logActivitySchema requires job_id, client_id, and action
+- [x] logActivitySchema makes metadata optional
+
+---
+
+## Module 07 — Scheduling & Calendar Tests (2026-02-24)
+
+### Acceptance Tests (`tests/acceptance/07-scheduling.acceptance.test.ts`) -- 58 tests
+- [x] ScheduleTaskStatus has 5 values
+- [x] ScheduleTaskType has 3 values
+- [x] DependencyType has 4 values
+- [x] WeatherCondition has 12 values
+- [x] ScheduleTask interface has all required fields
+- [x] ScheduleDependency interface has all required fields
+- [x] ScheduleBaseline interface has all required fields
+- [x] WeatherRecord interface has all required fields
+- [x] TASK_STATUSES has 5 entries with value and label
+- [x] TASK_STATUSES contains all expected statuses
+- [x] TASK_TYPES has 3 entries
+- [x] DEPENDENCY_TYPES has 4 entries
+- [x] DEPENDENCY_TYPES have descriptive labels
+- [x] WEATHER_CONDITIONS has 12 conditions
+- [x] WEATHER_CONDITIONS contains key weather types
+- [x] taskStatusEnum accepts all 5 statuses
+- [x] taskStatusEnum rejects invalid status
+- [x] taskTypeEnum accepts all 3 types
+- [x] taskTypeEnum rejects invalid type
+- [x] dependencyTypeEnum accepts all 4 types
+- [x] dependencyTypeEnum rejects invalid type
+- [x] listScheduleTasksSchema accepts valid params
+- [x] listScheduleTasksSchema accepts job_id filter
+- [x] listScheduleTasksSchema rejects limit > 100
+- [x] listScheduleTasksSchema rejects invalid status filter
+- [x] createScheduleTaskSchema accepts valid task
+- [x] createScheduleTaskSchema requires name and job_id
+- [x] createScheduleTaskSchema rejects empty name
+- [x] createScheduleTaskSchema rejects invalid date format
+- [x] createScheduleTaskSchema rejects progress_pct > 100
+- [x] createScheduleTaskSchema rejects negative progress_pct
+- [x] createScheduleTaskSchema accepts all optional fields
+- [x] updateScheduleTaskSchema accepts partial updates
+- [x] updateScheduleTaskSchema accepts status-only update
+- [x] updateScheduleTaskSchema accepts empty object
+- [x] createDependencySchema accepts valid dependency
+- [x] createDependencySchema accepts custom type and lag
+- [x] createDependencySchema accepts negative lag (lead time)
+- [x] createDependencySchema requires predecessor_id and successor_id
+- [x] createDependencySchema rejects invalid UUIDs
+- [x] createBaselineSchema accepts valid baseline
+- [x] createBaselineSchema accepts optional snapshot_date and data
+- [x] createBaselineSchema requires job_id and name
+- [x] createBaselineSchema rejects empty name
+- [x] listBaselinesSchema requires job_id
+- [x] createWeatherRecordSchema accepts valid record
+- [x] createWeatherRecordSchema requires job_id and record_date
+- [x] createWeatherRecordSchema rejects invalid date format
+- [x] createWeatherRecordSchema rejects negative precipitation
+- [x] createWeatherRecordSchema rejects negative wind_mph
+- [x] createWeatherRecordSchema accepts non-work day
+- [x] updateWeatherRecordSchema accepts partial updates
+- [x] updateWeatherRecordSchema accepts empty object
+- [x] listWeatherRecordsSchema requires job_id
+- [x] listWeatherRecordsSchema accepts date range filters
+- [x] listWeatherRecordsSchema rejects invalid date format in filters
+- [x] types module exports all expected types
+- [x] schemas module exports all expected schemas
+
+---
+
+## Module 09 — Budget & Cost Tracking Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/09-budget-cost.acceptance.test.ts`) — 39 tests
+- [x] BudgetStatus has 4 values
+- [x] TransactionType has 4 values
+- [x] Budget interface has all required fields
+- [x] BudgetLine interface has all required fields
+- [x] CostTransaction interface has all required fields
+- [x] BudgetChangeLog interface has all required fields
+- [x] BUDGET_STATUSES has 4 entries with value and label
+- [x] BUDGET_STATUSES contains expected values (draft, active, locked, archived)
+- [x] TRANSACTION_TYPES has 4 entries with value and label
+- [x] TRANSACTION_TYPES contains expected values (commitment, actual, adjustment, transfer)
+- [x] budgetStatusEnum accepts all 4 statuses
+- [x] budgetStatusEnum rejects invalid status (pending, closed)
+- [x] transactionTypeEnum accepts all 4 types
+- [x] transactionTypeEnum rejects invalid type (payment, refund)
+- [x] listBudgetsSchema accepts valid params with defaults
+- [x] listBudgetsSchema accepts valid filter params
+- [x] listBudgetsSchema rejects limit > 100
+- [x] createBudgetSchema accepts valid budget
+- [x] createBudgetSchema requires job_id and name
+- [x] createBudgetSchema rejects empty name
+- [x] updateBudgetSchema accepts partial updates
+- [x] updateBudgetSchema accepts status change
+- [x] updateBudgetSchema rejects invalid status
+- [x] listBudgetLinesSchema accepts defaults (limit=50)
+- [x] createBudgetLineSchema accepts valid line
+- [x] createBudgetLineSchema requires description
+- [x] createBudgetLineSchema rejects empty description
+- [x] createBudgetLineSchema accepts optional cost_code_id and phase
+- [x] updateBudgetLineSchema accepts partial updates
+- [x] createBudgetLineSchema rejects negative estimated_amount
+- [x] updateBudgetLineSchema allows negative variance_amount
+- [x] createCostTransactionSchema accepts valid transaction
+- [x] createCostTransactionSchema requires job_id, transaction_type, amount
+- [x] createCostTransactionSchema allows negative amount for adjustments
+- [x] createCostTransactionSchema accepts transaction_date YYYY-MM-DD
+- [x] createCostTransactionSchema rejects invalid date format
+- [x] listCostTransactionsSchema accepts valid filter params
+- [x] listCostTransactionsSchema rejects invalid date_from
+- [x] createCostTransactionSchema rejects invalid transaction_type
+
+---
+
+## Module 10 — Vendor Management Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/10-vendor-management.acceptance.test.ts`) — 41 tests
+- [x] InsuranceType has 5 values
+- [x] InsuranceStatus has 4 values
+- [x] ComplianceRequirementType has 6 values
+- [x] ComplianceStatus has 5 values
+- [x] RatingCategory has 5 values
+- [x] VendorContact interface has all required fields
+- [x] VendorTrade interface has all required fields
+- [x] VendorInsurance interface has all required fields
+- [x] VendorCompliance interface has all required fields
+- [x] VendorRating interface has all required fields
+- [x] INSURANCE_TYPES has 5 entries with value and label
+- [x] INSURANCE_STATUSES has 4 entries with value and label
+- [x] COMPLIANCE_TYPES has 6 entries with value and label
+- [x] COMPLIANCE_STATUSES has 5 entries with value and label
+- [x] RATING_CATEGORIES has 5 entries with value and label
+- [x] insuranceTypeEnum accepts all 5 types
+- [x] insuranceTypeEnum rejects invalid type
+- [x] insuranceStatusEnum accepts all 4 statuses
+- [x] complianceRequirementTypeEnum accepts all 6 types
+- [x] complianceStatusEnum accepts all 5 statuses
+- [x] ratingCategoryEnum accepts all 5 categories
+- [x] ratingCategoryEnum rejects invalid category
+- [x] createVendorContactSchema accepts valid contact
+- [x] createVendorContactSchema requires name
+- [x] updateVendorContactSchema accepts partial updates
+- [x] listVendorContactsSchema applies defaults
+- [x] createVendorInsuranceSchema accepts valid insurance
+- [x] createVendorInsuranceSchema requires carrier_name, policy_number, expiration_date
+- [x] createVendorInsuranceSchema rejects invalid expiration_date format
+- [x] updateVendorInsuranceSchema accepts partial updates
+- [x] listVendorInsuranceSchema accepts filters
+- [x] listVendorInsuranceSchema rejects limit > 100
+- [x] createVendorComplianceSchema accepts valid compliance
+- [x] createVendorComplianceSchema requires requirement_type and requirement_name
+- [x] updateVendorComplianceSchema accepts partial updates
+- [x] listVendorComplianceSchema applies defaults and accepts filters
+- [x] createVendorRatingSchema accepts valid rating
+- [x] createVendorRatingSchema enforces rating 1-5 range
+- [x] createVendorRatingSchema requires category and rating
+- [x] listVendorRatingsSchema accepts category and job_id filters
+- [x] listVendorRatingsSchema rejects invalid job_id
+
+---
+
+## Module 08 — Daily Logs Tests (2026-02-23)
+
+### Acceptance Tests (`tests/acceptance/08-daily-logs.acceptance.test.ts`) — 40 tests
+- [x] DailyLogStatus has 4 values
+- [x] DailyLogEntryType has 7 values
+- [x] DailyLog interface has all required fields
+- [x] DailyLogEntry interface has all required fields
+- [x] DailyLogLabor interface has all required fields
+- [x] DailyLogPhoto interface has all required fields
+- [x] LOG_STATUSES has 4 entries with value and label
+- [x] LOG_STATUSES contains all 4 status values
+- [x] ENTRY_TYPES has 7 entries with value and label
+- [x] ENTRY_TYPES contains all 7 entry type values
+- [x] logStatusEnum accepts all 4 statuses
+- [x] logStatusEnum rejects invalid status
+- [x] entryTypeEnum accepts all 7 types
+- [x] entryTypeEnum rejects invalid type
+- [x] listDailyLogsSchema accepts valid params with defaults
+- [x] listDailyLogsSchema coerces string page/limit to numbers
+- [x] listDailyLogsSchema rejects limit > 100
+- [x] listDailyLogsSchema accepts date filters
+- [x] listDailyLogsSchema rejects invalid date format
+- [x] createDailyLogSchema accepts valid daily log
+- [x] createDailyLogSchema requires job_id and log_date
+- [x] createDailyLogSchema accepts optional weather fields
+- [x] createDailyLogSchema rejects invalid date format
+- [x] createDailyLogSchema rejects invalid UUID for job_id
+- [x] updateDailyLogSchema accepts partial updates
+- [x] updateDailyLogSchema accepts nullable fields
+- [x] submitDailyLogSchema accepts empty body
+- [x] submitDailyLogSchema accepts optional notes
+- [x] createLogEntrySchema accepts valid entry
+- [x] createLogEntrySchema requires entry_type and description
+- [x] createLogEntrySchema rejects empty description
+- [x] createLogEntrySchema rejects invalid entry type
+- [x] updateLogEntrySchema accepts partial updates
+- [x] createLogLaborSchema accepts valid labor record
+- [x] createLogLaborSchema requires worker_name and hours_worked
+- [x] createLogLaborSchema rejects negative hours
+- [x] createLogLaborSchema rejects hours > 24
+- [x] createLogPhotoSchema accepts valid photo record
+- [x] createLogPhotoSchema requires storage_path
+- [x] createLogPhotoSchema rejects empty storage_path
+
+---
+
 ## Module 06 — Document Storage Tests (2026-02-23)
 
 ### Acceptance Tests (`tests/acceptance/06-document-storage.acceptance.test.ts`) — 40 tests
