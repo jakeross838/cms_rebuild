@@ -2838,6 +2838,79 @@ export type Database = {
           },
         ]
       }
+      communications: {
+        Row: {
+          communication_type: string
+          company_id: string
+          created_at: string
+          created_by: string
+          deleted_at: string | null
+          id: string
+          job_id: string
+          message_body: string
+          notes: string | null
+          priority: string
+          recipient: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          communication_type?: string
+          company_id: string
+          created_at?: string
+          created_by: string
+          deleted_at?: string | null
+          id?: string
+          job_id: string
+          message_body: string
+          notes?: string | null
+          priority?: string
+          recipient?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          communication_type?: string
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          deleted_at?: string | null
+          id?: string
+          job_id?: string
+          message_body?: string
+          notes?: string | null
+          priority?: string
+          recipient?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           address: string | null
@@ -7449,6 +7522,89 @@ export type Database = {
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_photos: {
+        Row: {
+          category: string | null
+          company_id: string
+          created_at: string
+          created_by: string
+          deleted_at: string | null
+          description: string | null
+          id: string
+          job_id: string
+          location: string | null
+          notes: string | null
+          photo_url: string
+          taken_by: string | null
+          taken_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          company_id: string
+          created_at?: string
+          created_by: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          job_id: string
+          location?: string | null
+          notes?: string | null
+          photo_url: string
+          taken_by?: string | null
+          taken_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          job_id?: string
+          location?: string | null
+          notes?: string | null
+          photo_url?: string
+          taken_by?: string | null
+          taken_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_photos_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_photos_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_photos_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_photos_taken_by_fkey"
+            columns: ["taken_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -13969,6 +14125,98 @@ export type Database = {
           },
         ]
       }
+      submittals: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string
+          deleted_at: string | null
+          description: string | null
+          id: string
+          job_id: string
+          notes: string | null
+          priority: string
+          required_date: string | null
+          spec_section: string | null
+          status: string
+          submission_date: string | null
+          submittal_number: string
+          submitted_by: string | null
+          submitted_to: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          job_id: string
+          notes?: string | null
+          priority?: string
+          required_date?: string | null
+          spec_section?: string | null
+          status?: string
+          submission_date?: string | null
+          submittal_number: string
+          submitted_by?: string | null
+          submitted_to?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          job_id?: string
+          notes?: string | null
+          priority?: string
+          required_date?: string | null
+          spec_section?: string | null
+          status?: string
+          submission_date?: string | null
+          submittal_number?: string
+          submitted_by?: string | null
+          submitted_to?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submittals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submittals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submittals_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submittals_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -17010,6 +17258,7 @@ export type Database = {
           status: string
         }[]
       }
+      get_user_company_id: { Args: never; Returns: string }
       is_feature_enabled: {
         Args: { p_company_id: string; p_flag_key: string }
         Returns: boolean
@@ -17249,11 +17498,6 @@ export const Constants = {
     },
   },
 } as const
-
-
-// ============================================================================
-// Convenience Aliases (auto-generated by build-db-types.cjs)
-// ============================================================================
 
 export type Company = Tables<'companies'>
 export type User = Tables<'users'>
@@ -17510,6 +17754,11 @@ export type UserNotificationSetting = {
   updated_at: string
   [key: string]: unknown
 }
+
+// New table convenience types
+export type JobPhoto = Tables<'job_photos'>
+export type Communication = Tables<'communications'>
+export type Submittal = Tables<'submittals'>
 
 // Project/entity enum types (manual — not DB enums)
 export type ProjectType = 'new_construction' | 'renovation' | 'addition' | 'remodel' | 'commercial' | 'other'

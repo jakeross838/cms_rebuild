@@ -1,5 +1,70 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Job-Level Create Form Pages (2026-02-24, batch 9 -- photos, files, inventory, communications, submittals)
+
+### Test Cases -- All 5 create pages
+
+**Photo Create** (`/jobs/[id]/photos/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with Title, Photo URL, Description, Category, Date Taken, Location, Notes |
+| Back link | Navigates to `/jobs/[id]/photos` |
+| Submit with required fields (title, photo_url) | Inserts to `job_photos` with company_id, job_id, taken_by, created_by |
+| Submit without title | HTML required validation blocks submit |
+| Submit without photo_url | HTML required validation blocks submit |
+| Cancel button | Navigates to `/jobs/[id]/photos` |
+| Category options | general, progress, safety, issue, inspection, before, after, drone |
+| Date defaults to today | taken_date input pre-filled with current date |
+
+**Document Create** (`/jobs/[id]/files/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with Filename, Storage Path, MIME Type, File Size, Document Type, Status |
+| Back link | Navigates to `/jobs/[id]/files` |
+| Submit with required fields (filename, storage_path, file_size) | Inserts to `documents` with company_id, job_id, uploaded_by |
+| Submit without filename | HTML required validation blocks submit |
+| MIME type options | PDF, JPEG, PNG, Word, Excel, Text, ZIP, Other |
+| Document type options | contract, drawing, specification, permit, invoice, proposal, report, photo, correspondence, insurance, other |
+| Status options | active, archived (matches DB CHECK) |
+
+**Material Request Create** (`/jobs/[id]/inventory/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with Material Name, SKU, Description, Category, Quantity, UoM, Unit Cost, Priority, Needed By, Notes |
+| Back link | Navigates to `/jobs/[id]/inventory` |
+| Submit with required fields (name, quantity) | Creates inventory_items (or finds existing), then material_requests + material_request_items |
+| Duplicate item name | Uses existing inventory_items record (no duplicate) |
+| Estimated total display | Shows quantity x unit_cost calculation dynamically |
+| Unit of measure options | each, lf, sf, cy, ton, lb, gal, bag, box, roll, sheet, bundle, pallet |
+| Priority options | low, normal, high, urgent (matches DB enum) |
+
+**Communication Create** (`/jobs/[id]/communications/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with Type, Subject, Message, Priority, Recipient, Status, Notes |
+| Back link | Navigates to `/jobs/[id]/communications` |
+| Submit with required fields (subject, message_body) | Inserts to `communications` with company_id, job_id, created_by |
+| Submit without subject | HTML required validation blocks submit |
+| Message textarea required | HTML required validation blocks submit without message |
+| Type options | note, email, phone, meeting, letter, text (matches DB CHECK) |
+| Priority options | low, normal, high, urgent (matches DB CHECK) |
+| Status options | draft, sent, received, archived (matches DB CHECK) |
+
+**Submittal Create** (`/jobs/[id]/submittals/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with Submittal Number, Title, Spec Section, Description, Submitted To, Dates, Status, Priority, Notes |
+| Back link | Navigates to `/jobs/[id]/submittals` |
+| Submit with required fields (submittal_number, title) | Inserts to `submittals` with company_id, job_id, submitted_by, created_by |
+| Submit without submittal_number | HTML required validation blocks submit |
+| Submit without title | HTML required validation blocks submit |
+| Cancel button | Navigates to `/jobs/[id]/submittals` |
+| Status options | draft, submitted, under_review (matches DB CHECK for creation) |
+| Priority options | low, normal, high, urgent (matches DB CHECK) |
+| Submission date defaults to today | submission_date input pre-filled with current date |
+
+---
+
 ## Job-Level Create Form Pages (2026-02-24, batch 8)
 
 ### Test Cases — All 5 create pages

@@ -1,5 +1,36 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Job-Level Create Form Pages (batch 9 -- photos, files, inventory, communications, submittals)
+
+### Why
+The job-level list pages for photos, files, inventory, communications, and submittals all have "New" buttons linking to `/jobs/[id]/*/new` but those create pages did not exist. Users clicking would get 404s. Additionally, three of the five target tables (job_photos, communications, submittals) did not yet exist in the database.
+
+### What was done
+1. **Created 3 new database tables** via Supabase migrations:
+   - `job_photos` -- for job-scoped photo references (separate from document-level photos)
+   - `communications` -- for recording job-level communications (notes, emails, calls, meetings)
+   - `submittals` -- for construction submittal tracking (shop drawings, product data, samples)
+   All tables have company_id, job_id, RLS with tenant isolation policy, and indexes.
+
+2. **Created 5 job-level create pages** under `app/src/app/(authenticated)/jobs/[id]/`:
+   - `photos/new/page.tsx` -- title, URL (no actual file upload yet), category, taken_date, location. Inserts to `job_photos`
+   - `files/new/page.tsx` -- filename, storage_path (URL), MIME type, file_size, document_type. Inserts to `documents`
+   - `inventory/new/page.tsx` -- material request workflow: creates/finds `inventory_items`, creates `material_requests` + `material_request_items`. Multi-table insert.
+   - `communications/new/page.tsx` -- subject, message, type, priority, recipient, status. Inserts to `communications`
+   - `submittals/new/page.tsx` -- submittal_number, title, spec_section, dates, status, priority. Inserts to `submittals`
+
+3. **Regenerated TypeScript types** (`app/src/types/database.ts`) from Supabase to include the 3 new tables. Preserved all existing custom type aliases. Added JobPhoto, Communication, Submittal convenience types.
+
+### Key decisions
+- Photos form uses URL text input (not file upload) since Supabase Storage isn't wired for file uploads yet
+- Documents (files) form also uses URL text input for storage_path, with MIME type selector for common file types
+- Inventory form creates a material request workflow (3-step: find/create item -> create request -> create request line) rather than a simple inventory_items insert, because inventory_items is a company-wide catalog without job_id
+- Communications uses CHECK constraints (not enums) for flexibility, since communication types may need to be user-extensible later
+- Submittals has 8 status values to cover the full submittal lifecycle (draft through closed)
+- All 3 new tables follow multi-tenant rules: company_id NOT NULL, RLS enabled, tenant isolation policy
+
+---
+
 ## 2026-02-24: Job-Level Create Form Pages (batch 8)
 
 ### Why
