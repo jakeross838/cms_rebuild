@@ -1,5 +1,45 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## E2E Tests — Comprehensive Browser Coverage (2026-02-25)
+
+### E2E Test Files (66 tests total, all pass)
+
+**detail-pages.spec.ts** (8 tests)
+| Test | What it verifies |
+|------|------------------|
+| daily-logs detail | Navigate list → click item → "Back to Daily Logs" visible |
+| rfis detail | Navigate list → click item → "Back to RFIs" visible |
+| change-orders detail | Navigate list → click item → "Back to Change Orders" visible |
+| draws detail | Navigate list → click item → "Back to Draw Requests" visible |
+| permits detail | Navigate list → click item → "Back to Permits" visible |
+| warranties detail | Navigate list → click item → "Back to Warranties" visible |
+| time-clock detail | Navigate list → click item → "Back to Time" visible |
+| job edit | Navigate to /jobs/[id]/edit → "Edit Job" heading visible |
+
+**detail-pages-batch2.spec.ts** (11 tests) — schedule, budget, photo, PO, communication, lien-waiver, inspection, submittal, vendor, client, receivable
+
+**detail-pages-batch3.spec.ts** (12 tests) — contact, cost-code, equipment, estimate, lead, HR, contract, insurance, safety, payable, journal-entry, chart-of-accounts
+
+**create-forms.spec.ts** (31 tests)
+- 13 top-level forms: job, client, vendor, contact, cost-code, lead, estimate, invoice, contract, equipment, employee, inventory, warranty
+- 18 job-level forms: budget, schedule, daily-log, rfi, change-order, draw, communication, photo, PO, lien-waiver, permit, inspection, selection, warranty, submittal, punch-item, file, inventory
+- Each test: navigate to /path/new, verify no 404, verify input or button visible
+
+**crud-flow.spec.ts** (4 tests, serial execution)
+| Test | What it verifies |
+|------|------------------|
+| create daily log | Fill form (unique date per run), submit, redirect to list |
+| create RFI | Fill ALL required fields (rfi_number + subject + question), submit, redirect |
+| edit daily log | Navigate list → click item (not /new link) → Edit → modify weather → Save → success |
+| edit job | Navigate to /jobs/[id]/edit → verify pre-filled name → modify notes → Save → success |
+
+### Known Issues
+- **UNIQUE constraint on daily_logs**: `(job_id, log_date)` means test must use unique date per run
+- **RFI rfi_number required**: NOT NULL column with no default — test must fill it
+- **8 skeleton nav tests failing**: Tests target old header nav in `/skeleton/` prototype; authenticated app uses sidebar
+
+---
+
 ## Detail Pages + Clickable Rows (2026-02-25, batch 11)
 
 ### Test Cases -- 3 Detail Pages

@@ -1,5 +1,29 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Error Handling Fix + E2E Tests + Final List Wiring
+
+### Why
+1. **Error handling**: All 101 create/edit forms used `err instanceof Error ? err.message : 'generic fallback'` — but Supabase PostgrestError objects are NOT `instanceof Error`, so real error messages (UNIQUE constraint violations, RLS failures, missing columns) were swallowed and users only saw generic "Failed to create..." messages. Discovered when E2E test for daily log creation failed silently due to a UNIQUE constraint on (job_id, log_date).
+
+2. **E2E tests**: Zero E2E tests existed for detail pages, create forms, or CRUD flows. Added 66 tests across 5 files to validate that all pages load, forms submit, and edit flows work end-to-end.
+
+3. **Final list wiring**: 3 list pages (proposals, library/selections, time-clock) had unwired items (plain divs, not clickable links). Also missing detail pages for library/selections and time-clock top-level routes.
+
+### What was done
+- **Error handling**: Bulk-replaced `err instanceof Error ? err.message :` → `(err as Error)?.message ||` in 101 files (111 occurrences). Verified with `tsc --noEmit`.
+- **E2E tests**: Created 5 test files with 66 total tests. All pass. Tests cover: detail page loading with back links, create form rendering, full CRUD flows (create→view→edit→save).
+- **CRUD test fixes**: Daily log test uses unique date per run (avoids UNIQUE constraint), RFI test fills `rfi_number` (required NOT NULL field), edit test uses `:not([href$="/new"])` selector.
+- **List wiring**: Proposals → Link to `/estimates/[id]`, selections → Link to `/library/selections/[id]`, time-clock → Link to `/time-clock/[id]`.
+- **Detail pages**: Created `library/selections/[id]` (selection_categories table) and `time-clock/[id]` (time_entries table).
+
+### Key decisions
+- Used `(err as Error)?.message` instead of a utility function — simple, works for both Error and PostgrestError, no abstraction overhead
+- Daily log UNIQUE constraint: `(job_id, log_date)` means one log per job per day. Test generates unique date from `Date.now()` to avoid collisions.
+- Dashboards detail page NOT created — no `dashboards` table exists in DB (page uses mock data)
+- Skeleton navigation E2E tests (8 failures) not fixed — prototype UI uses old header nav, superseded by authenticated sidebar nav
+
+---
+
 ## 2026-02-25: Detail Pages + Clickable List Rows (batch 11 -- time entries, invoices, licenses)
 
 ### Why

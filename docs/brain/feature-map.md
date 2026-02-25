@@ -1919,3 +1919,26 @@ All list rows updated from `<div>` to `<Link>` for navigation to detail pages:
 | GET | /api/v1/roles/:id | Get single role. |
 | PATCH | /api/v1/roles/:id | Update custom role. System roles return 403. |
 | DELETE | /api/v1/roles/:id | Soft-delete custom role. System roles return 403. |
+
+## Error Handling Fix + E2E Tests + Detail Pages (2026-02-25)
+
+### Error Handling — 101 files fixed
+- Changed `err instanceof Error ? err.message :` → `(err as Error)?.message ||` across all create/edit forms
+- Supabase PostgrestError objects have `.message` but are NOT `instanceof Error`, so errors were silently swallowed
+- Affects: all `new/page.tsx` create forms, all `[id]/page.tsx` detail pages, all settings pages
+
+### Top-Level Detail Pages Added
+- **Selection Category Detail** (`/library/selections/[id]`) — View/edit `selection_categories` table. Fields: name, room, sort_order, pricing_model, allowance_amount, deadline, lead_time_buffer_days, status, designer_access, notes. Archive via deleted_at.
+- **Time Clock Detail** (`/time-clock/[id]`) — View/edit `time_entries` table. Fields: entry_date, clock_in/out, regular/overtime hours, status, break_minutes, notes. Delete (no soft delete).
+
+### List Pages Wired (final 3)
+- **Proposals** (`/proposals`) — Card items wrapped in `<Link href="/estimates/${est.id}">` with hover ring
+- **Library Selections** (`/library/selections`) — Category divs wrapped in `<Link href="/library/selections/${cat.id}">` with hover bg
+- **Time Clock** (`/time-clock`) — Entry divs wrapped in `<Link href="/time-clock/${entry.id}">` with hover bg
+
+### E2E Tests Added (5 files, 66 tests)
+- `tests/e2e/detail-pages.spec.ts` — 8 tests for new detail pages (daily-logs, rfis, change-orders, draws, permits, warranties, time-clock, job-edit)
+- `tests/e2e/detail-pages-batch2.spec.ts` — 11 tests for batch 7-10 detail pages
+- `tests/e2e/detail-pages-batch3.spec.ts` — 12 tests for top-level detail pages (contact, cost-code, equipment, etc.)
+- `tests/e2e/create-forms.spec.ts` — 31 tests for all create forms (13 top-level + 18 job-level)
+- `tests/e2e/crud-flow.spec.ts` — 4 CRUD flow tests (create daily log, create RFI, edit daily log, edit job)
