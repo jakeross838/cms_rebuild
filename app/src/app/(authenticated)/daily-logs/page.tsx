@@ -1,0 +1,102 @@
+import Link from 'next/link'
+
+import { ClipboardList, Building2 } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
+import { createClient } from '@/lib/supabase/server'
+import { formatDate, getStatusColor } from '@/lib/utils'
+
+interface DailyLogRow {
+  id: string
+  job_id: string
+  log_date: string
+  status: string | null
+  weather_summary: string | null
+  notes: string | null
+  created_at: string | null
+  jobs: { name: string; job_number: string | null } | null
+}
+
+export default async function DailyLogsPage() {
+  const supabase = await createClient()
+
+  const { data: logsData, error } = await supabase
+    .from('daily_logs')
+    .select('id, job_id, log_date, status, weather_summary, notes, created_at, jobs(name, job_number)')
+    .is('deleted_at', null)
+    .order('log_date', { ascending: false })
+    .limit(50)
+
+  const logs = error ? [] : ((logsData || []) as DailyLogRow[])
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Daily Logs</h1>
+        <p className="text-muted-foreground">Field reports across all jobs</p>
+      </div>
+
+      {/* Logs list */}
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
+        {logs.length > 0 ? (
+          <div className="divide-y divide-border">
+            {logs.map((log) => (
+              <Link
+                key={log.id}
+                href={`/jobs/${log.job_id}/daily-logs`}
+                className="block p-4 hover:bg-accent transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                        <ClipboardList className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-foreground">
+                            {formatDate(log.log_date)}
+                          </span>
+                          {log.status && (
+                            <Badge className={getStatusColor(log.status)}>
+                              {log.status.replace('_', ' ')}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-sm text-muted-foreground mt-0.5">
+                          {log.jobs?.job_number ? `${log.jobs.job_number} - ` : ''}
+                          {log.jobs?.name || 'Unknown job'}
+                          {log.weather_summary ? ` | ${log.weather_summary}` : ''}
+                        </div>
+                        {log.notes && (
+                          <div className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                            {log.notes}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <ClipboardList className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+            <h3 className="text-lg font-medium text-foreground mb-1">No daily logs yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Create daily logs from within a job
+            </p>
+            <Link
+              href="/jobs"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Go to Jobs
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
