@@ -10,6 +10,20 @@
 - All use `fetchJson<T>` pattern with error handling, TanStack React Query, cache invalidation on mutations
 
 ### Authenticated Pages (app/src/app/(authenticated)/)
+- **Dashboard** (`/dashboard`) — SSR, active job count, pending invoices/draws, recent jobs with client join
+- **Jobs** (`/jobs`) — SSR, queries `jobs` table joined with `clients(name)`, status filter, search
+- **Job Detail** (`/jobs/[id]`) — SSR, job + client join, parallel counts (change_orders, purchase_orders, daily_logs), stats cards, quick actions
+- **Job Layout** (`/jobs/[id]/layout.tsx`) — Tab nav (Overview, Budget, Schedule, Daily Logs, Change Orders, Purchase Orders, Documents)
+- **Budget** (`/jobs/[id]/budget`) — SSR, queries `budget_lines` joined with `cost_codes`, summary totals, variance coloring
+- **Schedule** (`/jobs/[id]/schedule`) — SSR, queries `schedule_tasks`, progress bars, critical path badges, task summary
+- **Daily Logs** (`/jobs/[id]/daily-logs`) — SSR, queries `daily_logs`, weather display, status badges
+- **Change Orders** (`/jobs/[id]/change-orders`) — SSR, queries `change_orders`, approved/pending totals, schedule impact
+- **Purchase Orders** (`/jobs/[id]/purchase-orders`) — SSR, queries `purchase_orders`, total value summary
+- **Documents** (`/jobs/[id]/files`) — SSR, queries `documents`, file icon by mime_type, file size formatting
+- **RFIs** (`/jobs/[id]/rfis`) — SSR, queries `rfis`, open/answered counts, priority badges
+- **Punch List** (`/jobs/[id]/punch-list`) — SSR, queries `punch_items`, open/completed counts, location/room display
+- **Draw Requests** (`/jobs/[id]/draws`) — SSR, queries `draw_requests`, earned/due totals
+- **Lien Waivers** (`/jobs/[id]/lien-waivers`) — SSR, queries `lien_waivers`, received/pending counts, waiver type badges
 - **Clients** (`/clients`) — SSR, queries `clients` table joined with `jobs(id)`, search by name/email, shows job count
 - **Vendors** (`/vendors`) — SSR, queries `vendors` table, search by name, filter by trade, shows active/inactive badge
 - **Cost Codes** (`/cost-codes`) — SSR, queries `cost_codes` table, search by code/name, filter by category, category color badges

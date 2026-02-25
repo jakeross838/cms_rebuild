@@ -1,5 +1,23 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## UI Wiring Validation (2026-02-24)
+
+### Authenticated Pages — Type Check
+All new SSR pages pass `npx tsc --noEmit`:
+- Job Detail (`/jobs/[id]`) — job + client join, parallel counts
+- Job Layout (`/jobs/[id]/layout.tsx`) — tab nav with breadcrumb
+- 10 Job Sub-pages — Budget, Schedule, Daily Logs, Change Orders, Purchase Orders, Documents, RFIs, Punch List, Draws, Lien Waivers
+- All interfaces match actual DB schema (verified against `database.ts`)
+
+### Key Schema Mismatches Found & Fixed
+- `jobs.description` → `jobs.notes` (DB field name differs)
+- `jobs.project_type`, `sqft_*`, `bedrooms`, `bathrooms`, `stories` → don't exist in DB yet
+- `purchase_orders` → no FK to `vendors` table (uses `vendor_id` but no join)
+- `documents.file_name` → `documents.filename`, `file_type` → `mime_type`, `category` → `document_type`
+- `draw_requests.draw_number` → `number` type, not `string`
+
+---
+
 ## Full Platform Validation (2026-02-24)
 
 ### All 52 Modules — Acceptance Tests

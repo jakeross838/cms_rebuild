@@ -5,17 +5,27 @@
 ### Why
 All 52 modules pass acceptance tests, all migrations applied. The remaining work is connecting skeleton pages (mock data) to real API endpoints. Started with the highest-impact pages.
 
-### What was done
+### What was done (batch 1)
 1. **Regenerated database types** — 267 tables, 154 type aliases (was 69), only 6 auth placeholders remain
 2. **Created 4 React Query hooks** — `useJobs`, `useClients`, `useVendors`, `useCostCodes` (CRUD + filters)
 3. **Created 3 new SSR pages** — `/clients`, `/vendors`, `/cost-codes` in `(authenticated)/` with real Supabase queries
 4. **Updated navigation config** — Dashboard, Jobs, Clients, Vendors, Cost Codes, Settings, Team now point to authenticated routes (not `/skeleton`)
 5. **Updated navigation tests** — Structural rule changed from "starts with /skeleton" to "starts with /"
 
+### What was done (batch 2)
+6. **Created hook factory** — `createApiHooks(queryKey, basePath)` for reusable CRUD hooks
+7. **Created 35 module hooks** — Via factory covering Phase 2-6 in `use-modules.ts`
+8. **Created 9 job-level hooks** — daily-logs, schedule, budgets, purchase-orders, change-orders, draws, lien-waivers, rfis, punch-list
+9. **Created job detail page** — SSR with client join, parallel counts, stats cards, quick actions
+10. **Created job layout** — Tab navigation for sub-pages (Overview, Budget, Schedule, etc.)
+11. **Created 10 job sub-pages** — Budget, Schedule, Daily Logs, Change Orders, Purchase Orders, Documents, RFIs, Punch List, Draws, Lien Waivers — all SSR with real Supabase queries
+
 ### Key decisions
 - Used SSR pattern (server component + direct Supabase) instead of client-side React Query for list pages. Matches existing `/jobs/page.tsx` pattern.
 - React Query hooks created for client-side mutations and future interactive features
 - Pages match actual DB schema (not the richer schema in validation — some fields like `lead_source`, `portal_enabled` don't exist in DB yet)
+- Job layout adds tab navigation so users can switch between sub-pages without going back
+- Interfaces simplified to match actual DB columns (e.g., jobs has `notes` not `description`, no `project_type`/`sqft` fields yet)
 
 ---
 
