@@ -121,7 +121,7 @@ export default function NewSafetyIncidentPage() {
       router.push('/compliance/safety')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create safety incident')
+      setError((err as Error)?.message || 'Failed to create safety incident')
     } finally {
       setLoading(false)
     }

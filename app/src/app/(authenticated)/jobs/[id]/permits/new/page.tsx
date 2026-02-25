@@ -77,7 +77,7 @@ export default function NewPermitPage() {
       router.push(`/jobs/${jobId}/permits`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create permit')
+      setError((err as Error)?.message || 'Failed to create permit')
     } finally {
       setLoading(false)
     }

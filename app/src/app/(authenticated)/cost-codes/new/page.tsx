@@ -69,7 +69,7 @@ export default function NewCostCodePage() {
       router.push('/cost-codes')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create cost code')
+      setError((err as Error)?.message || 'Failed to create cost code')
     } finally {
       setLoading(false)
     }

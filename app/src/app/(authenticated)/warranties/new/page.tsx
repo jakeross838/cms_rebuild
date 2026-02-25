@@ -115,7 +115,7 @@ export default function NewWarrantyPage() {
       router.push('/warranties')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add warranty')
+      setError((err as Error)?.message || 'Failed to add warranty')
     } finally {
       setLoading(false)
     }

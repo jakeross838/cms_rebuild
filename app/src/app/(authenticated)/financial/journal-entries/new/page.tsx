@@ -66,7 +66,7 @@ export default function NewJournalEntryPage() {
       router.push('/financial/journal-entries')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create journal entry')
+      setError((err as Error)?.message || 'Failed to create journal entry')
     } finally {
       setLoading(false)
     }

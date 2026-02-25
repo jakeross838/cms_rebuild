@@ -64,7 +64,7 @@ export default function NewAssemblyPage() {
       router.push('/library/assemblies')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create assembly')
+      setError((err as Error)?.message || 'Failed to create assembly')
     } finally {
       setLoading(false)
     }

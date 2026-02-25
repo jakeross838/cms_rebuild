@@ -71,7 +71,7 @@ export default function NewRfiPage() {
       router.push(`/jobs/${jobId}/rfis`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create RFI')
+      setError((err as Error)?.message || 'Failed to create RFI')
     } finally {
       setLoading(false)
     }

@@ -146,7 +146,7 @@ export default function GeneralSettingsPage() {
           digestFrequency: s.digestFrequency,
         })
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load settings')
+        setError((err as Error)?.message || 'Failed to load settings')
       } finally {
         setLoading(false)
       }
@@ -177,7 +177,7 @@ export default function GeneralSettingsPage() {
       setSettings(data.settings)
       showSuccess(tab)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
+      setError((err as Error)?.message || 'Failed to save')
     } finally {
       setSaving(null)
     }

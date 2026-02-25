@@ -36,7 +36,7 @@ export default function TerminologyPage() {
       setTerms(data.terms)
       setEdits(new Map())
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load')
+      setError((err as Error)?.message || 'Failed to load')
     } finally {
       setLoading(false)
     }
@@ -109,7 +109,7 @@ export default function TerminologyPage() {
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
+      setError((err as Error)?.message || 'Failed to save')
     } finally {
       setSaving(false)
     }
@@ -131,7 +131,7 @@ export default function TerminologyPage() {
         return next
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reset term')
+      setError((err as Error)?.message || 'Failed to reset term')
     }
   }
 
@@ -148,7 +148,7 @@ export default function TerminologyPage() {
       setTerms(data.terms)
       setEdits(new Map())
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reset')
+      setError((err as Error)?.message || 'Failed to reset')
     }
   }
 

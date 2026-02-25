@@ -71,7 +71,7 @@ export default function NewFilePage() {
       router.push(`/jobs/${jobId}/files`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add document')
+      setError((err as Error)?.message || 'Failed to add document')
     } finally {
       setLoading(false)
     }

@@ -49,7 +49,7 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
 
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError((err as Error)?.message || 'An error occurred')
     } finally {
       setLoading(false)
     }

@@ -83,7 +83,7 @@ export default function NewEmployeePage() {
       router.push('/hr')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create employee')
+      setError((err as Error)?.message || 'Failed to create employee')
     } finally {
       setLoading(false)
     }

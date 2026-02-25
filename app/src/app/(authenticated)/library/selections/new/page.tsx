@@ -103,7 +103,7 @@ export default function NewSelectionCategoryPage() {
       router.push('/library/selections')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create selection category')
+      setError((err as Error)?.message || 'Failed to create selection category')
     } finally {
       setLoading(false)
     }

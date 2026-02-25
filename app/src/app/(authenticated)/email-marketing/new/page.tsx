@@ -80,7 +80,7 @@ export default function NewCampaignPage() {
       router.push('/email-marketing')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create campaign')
+      setError((err as Error)?.message || 'Failed to create campaign')
     } finally {
       setLoading(false)
     }

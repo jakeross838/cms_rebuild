@@ -81,7 +81,7 @@ export default function NewEquipmentPage() {
       router.push('/equipment')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add equipment')
+      setError((err as Error)?.message || 'Failed to add equipment')
     } finally {
       setLoading(false)
     }

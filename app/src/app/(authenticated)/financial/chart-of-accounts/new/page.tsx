@@ -82,7 +82,7 @@ export default function NewAccountPage() {
       router.push('/financial/chart-of-accounts')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create account')
+      setError((err as Error)?.message || 'Failed to create account')
     } finally {
       setLoading(false)
     }

@@ -71,7 +71,7 @@ export default function NewChangeOrderPage() {
       router.push(`/jobs/${jobId}/change-orders`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create change order')
+      setError((err as Error)?.message || 'Failed to create change order')
     } finally {
       setLoading(false)
     }

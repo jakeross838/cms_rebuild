@@ -66,7 +66,7 @@ export default function NewTemplatePage() {
       router.push('/library/templates')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create template')
+      setError((err as Error)?.message || 'Failed to create template')
     } finally {
       setLoading(false)
     }

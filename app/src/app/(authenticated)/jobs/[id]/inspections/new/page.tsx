@@ -107,7 +107,7 @@ export default function NewInspectionPage() {
       router.push(`/jobs/${jobId}/inspections`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create inspection')
+      setError((err as Error)?.message || 'Failed to create inspection')
     } finally {
       setLoading(false)
     }

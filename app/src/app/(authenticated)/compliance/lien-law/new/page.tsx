@@ -78,7 +78,7 @@ export default function NewLienLawRecordPage() {
       router.push('/compliance/lien-law')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create record')
+      setError((err as Error)?.message || 'Failed to create record')
     } finally {
       setSaving(false)
     }

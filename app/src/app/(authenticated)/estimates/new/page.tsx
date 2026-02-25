@@ -73,7 +73,7 @@ export default function NewEstimatePage() {
       router.push('/estimates')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create estimate')
+      setError((err as Error)?.message || 'Failed to create estimate')
     } finally {
       setLoading(false)
     }

@@ -69,7 +69,7 @@ export default function RolesPage() {
       const data = await response.json()
       setRoles(data.data || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError((err as Error)?.message || 'An error occurred')
     } finally {
       setLoading(false)
     }
@@ -97,7 +97,7 @@ export default function RolesPage() {
 
       fetchRoles()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete role')
+      alert((err as Error)?.message || 'Failed to delete role')
     } finally {
       setDeletingId(null)
     }

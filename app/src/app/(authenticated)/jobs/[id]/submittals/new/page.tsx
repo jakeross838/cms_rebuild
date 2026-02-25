@@ -82,7 +82,7 @@ export default function NewSubmittalPage() {
       router.push(`/jobs/${jobId}/submittals`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create submittal')
+      setError((err as Error)?.message || 'Failed to create submittal')
     } finally {
       setLoading(false)
     }

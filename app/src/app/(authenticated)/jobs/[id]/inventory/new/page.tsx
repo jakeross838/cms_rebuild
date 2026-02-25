@@ -122,7 +122,7 @@ export default function NewInventoryItemPage() {
       router.push(`/jobs/${jobId}/inventory`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add inventory item')
+      setError((err as Error)?.message || 'Failed to add inventory item')
     } finally {
       setLoading(false)
     }

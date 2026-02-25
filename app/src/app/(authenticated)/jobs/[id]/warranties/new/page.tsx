@@ -81,7 +81,7 @@ export default function NewWarrantyPage() {
       router.push(`/jobs/${jobId}/warranties`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create warranty')
+      setError((err as Error)?.message || 'Failed to create warranty')
     } finally {
       setLoading(false)
     }

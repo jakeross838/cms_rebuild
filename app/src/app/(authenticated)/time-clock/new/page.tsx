@@ -112,7 +112,7 @@ export default function NewTimeEntryPage() {
       router.push('/time-clock')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create time entry')
+      setError((err as Error)?.message || 'Failed to create time entry')
     } finally {
       setLoading(false)
     }

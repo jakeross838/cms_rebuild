@@ -76,7 +76,7 @@ export default function NewPhotoPage() {
       router.push(`/jobs/${jobId}/photos`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add photo')
+      setError((err as Error)?.message || 'Failed to add photo')
     } finally {
       setLoading(false)
     }

@@ -93,7 +93,7 @@ export default function NewContactPage() {
       router.push('/contacts')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add contact')
+      setError((err as Error)?.message || 'Failed to add contact')
     } finally {
       setLoading(false)
     }

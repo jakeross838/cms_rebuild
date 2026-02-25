@@ -74,7 +74,7 @@ export default function NewVendorPage() {
       router.push('/vendors')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create vendor')
+      setError((err as Error)?.message || 'Failed to create vendor')
     } finally {
       setLoading(false)
     }

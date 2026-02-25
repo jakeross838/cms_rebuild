@@ -88,7 +88,7 @@ export function UserTable({
         setTotalPages(data.pagination?.totalPages || 1)
         setTotalCount(data.pagination?.total || 0)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
+        setError((err as Error)?.message || 'An error occurred')
       } finally {
         setLoading(false)
       }
@@ -119,7 +119,7 @@ export function UserTable({
       onStatusChange()
     } catch (err) {
       console.error('Deactivate error:', err)
-      alert(err instanceof Error ? err.message : 'Failed to deactivate user')
+      alert((err as Error)?.message || 'Failed to deactivate user')
     } finally {
       setActionLoading(null)
     }
@@ -142,7 +142,7 @@ export function UserTable({
       onStatusChange()
     } catch (err) {
       console.error('Reactivate error:', err)
-      alert(err instanceof Error ? err.message : 'Failed to reactivate user')
+      alert((err as Error)?.message || 'Failed to reactivate user')
     } finally {
       setActionLoading(null)
     }

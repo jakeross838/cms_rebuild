@@ -98,7 +98,7 @@ export default function NewInsurancePolicyPage() {
       router.push('/compliance/insurance')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create insurance policy')
+      setError((err as Error)?.message || 'Failed to create insurance policy')
     } finally {
       setLoading(false)
     }

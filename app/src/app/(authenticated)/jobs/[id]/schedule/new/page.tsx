@@ -78,7 +78,7 @@ export default function NewScheduleTaskPage() {
       router.push(`/jobs/${jobId}/schedule`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create schedule task')
+      setError((err as Error)?.message || 'Failed to create schedule task')
     } finally {
       setLoading(false)
     }

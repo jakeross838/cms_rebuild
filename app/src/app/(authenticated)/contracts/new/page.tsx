@@ -109,7 +109,7 @@ export default function NewContractPage() {
       router.push('/contracts')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create contract')
+      setError((err as Error)?.message || 'Failed to create contract')
     } finally {
       setLoading(false)
     }

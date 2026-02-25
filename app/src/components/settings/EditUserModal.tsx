@@ -53,7 +53,7 @@ export function EditUserModal({ userId, onClose, onSuccess }: EditUserModalProps
         setPhone(userData.phone || '')
         setRole(userData.role ?? 'field')
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load user')
+        setError((err as Error)?.message || 'Failed to load user')
       } finally {
         setLoading(false)
       }
@@ -87,7 +87,7 @@ export function EditUserModal({ userId, onClose, onSuccess }: EditUserModalProps
 
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError((err as Error)?.message || 'An error occurred')
     } finally {
       setSaving(false)
     }

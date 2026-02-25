@@ -72,7 +72,7 @@ export default function NewLeadPage() {
       router.push('/leads')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create lead')
+      setError((err as Error)?.message || 'Failed to create lead')
     } finally {
       setLoading(false)
     }

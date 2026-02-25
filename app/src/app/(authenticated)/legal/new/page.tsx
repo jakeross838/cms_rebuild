@@ -73,7 +73,7 @@ export default function NewContractTemplatePage() {
       router.push('/legal')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create contract template')
+      setError((err as Error)?.message || 'Failed to create contract template')
     } finally {
       setLoading(false)
     }

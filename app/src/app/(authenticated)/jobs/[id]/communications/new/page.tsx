@@ -73,7 +73,7 @@ export default function NewCommunicationPage() {
       router.push(`/jobs/${jobId}/communications`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create communication')
+      setError((err as Error)?.message || 'Failed to create communication')
     } finally {
       setLoading(false)
     }

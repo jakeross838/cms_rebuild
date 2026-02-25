@@ -114,7 +114,7 @@ export default function NewPurchaseOrderPage() {
       router.push(`/jobs/${jobId}/purchase-orders`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create purchase order')
+      setError((err as Error)?.message || 'Failed to create purchase order')
     } finally {
       setLoading(false)
     }

@@ -82,7 +82,7 @@ export default function NewJobPage() {
       router.push(`/jobs/${job.id}`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create job')
+      setError((err as Error)?.message || 'Failed to create job')
     } finally {
       setLoading(false)
     }

@@ -73,7 +73,7 @@ export default function NewDailyLogPage() {
       router.push(`/jobs/${jobId}/daily-logs`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create daily log')
+      setError((err as Error)?.message || 'Failed to create daily log')
     } finally {
       setLoading(false)
     }

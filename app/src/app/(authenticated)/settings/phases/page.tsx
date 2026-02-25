@@ -69,7 +69,7 @@ export default function PhasesPage() {
       const data = await res.json()
       setPhases(data.phases)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load')
+      setError((err as Error)?.message || 'Failed to load')
     } finally {
       setLoading(false)
     }
@@ -133,7 +133,7 @@ export default function PhasesPage() {
       setShowModal(false)
       fetchPhases()
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Failed to save')
+      setFormError((err as Error)?.message || 'Failed to save')
     } finally {
       setSaving(false)
     }
@@ -152,7 +152,7 @@ export default function PhasesPage() {
       }
       fetchPhases()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete')
+      alert((err as Error)?.message || 'Failed to delete')
     } finally {
       setDeletingId(null)
     }

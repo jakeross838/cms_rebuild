@@ -77,7 +77,7 @@ export default function NewDashboardPage() {
       router.push('/dashboards')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create dashboard')
+      setError((err as Error)?.message || 'Failed to create dashboard')
     } finally {
       setLoading(false)
     }

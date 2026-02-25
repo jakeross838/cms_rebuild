@@ -74,7 +74,7 @@ export default function NewLienWaiverPage() {
       router.push(`/jobs/${jobId}/lien-waivers`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create lien waiver')
+      setError((err as Error)?.message || 'Failed to create lien waiver')
     } finally {
       setLoading(false)
     }

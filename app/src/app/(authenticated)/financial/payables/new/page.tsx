@@ -106,7 +106,7 @@ export default function NewPayablePage() {
       router.push('/financial/payables')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create bill')
+      setError((err as Error)?.message || 'Failed to create bill')
     } finally {
       setLoading(false)
     }

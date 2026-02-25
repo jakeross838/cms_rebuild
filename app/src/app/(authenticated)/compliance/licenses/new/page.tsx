@@ -103,7 +103,7 @@ export default function NewCertificationPage() {
       router.push('/compliance/licenses')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create certification')
+      setError((err as Error)?.message || 'Failed to create certification')
     } finally {
       setLoading(false)
     }

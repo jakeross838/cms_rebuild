@@ -106,7 +106,7 @@ export default function NewReceivablePage() {
       router.push('/financial/receivables')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create invoice')
+      setError((err as Error)?.message || 'Failed to create invoice')
     } finally {
       setLoading(false)
     }

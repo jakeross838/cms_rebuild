@@ -60,7 +60,7 @@ export default function NumberingPage() {
         setPatterns(data.patterns)
         setTokens(data.patternTokens || [])
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load')
+        setError((err as Error)?.message || 'Failed to load')
       } finally {
         setLoading(false)
       }
@@ -125,7 +125,7 @@ export default function NumberingPage() {
       setTimeout(() => setSuccess(null), 3000)
       setEditingEntity(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
+      setError((err as Error)?.message || 'Failed to save')
     } finally {
       setSaving(false)
     }

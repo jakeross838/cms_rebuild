@@ -100,7 +100,7 @@ export default function NewBudgetLinePage() {
       router.push(`/jobs/${jobId}/budget`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create budget line')
+      setError((err as Error)?.message || 'Failed to create budget line')
     } finally {
       setLoading(false)
     }

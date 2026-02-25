@@ -86,7 +86,7 @@ export default function NewDrawRequestPage() {
       router.push(`/jobs/${jobId}/draws`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create draw request')
+      setError((err as Error)?.message || 'Failed to create draw request')
     } finally {
       setLoading(false)
     }

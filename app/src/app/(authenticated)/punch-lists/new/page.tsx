@@ -107,7 +107,7 @@ export default function NewPunchItemPage() {
       router.push('/punch-lists')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create punch item')
+      setError((err as Error)?.message || 'Failed to create punch item')
     } finally {
       setLoading(false)
     }

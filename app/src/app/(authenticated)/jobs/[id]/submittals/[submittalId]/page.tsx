@@ -156,7 +156,7 @@ export default function SubmittalDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
+      setError((err as Error)?.message || 'Failed to save')
     } finally {
       setSaving(false)
     }
