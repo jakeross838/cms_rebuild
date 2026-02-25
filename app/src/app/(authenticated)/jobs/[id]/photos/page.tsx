@@ -50,7 +50,8 @@ export default async function JobPhotosPage({
       {photos.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {photos.map((photo) => (
-            <Card key={photo.id} className="overflow-hidden">
+            <Link key={photo.id} href={`/jobs/${jobId}/photos/${photo.id}`}>
+            <Card className="overflow-hidden hover:ring-2 hover:ring-primary/20 transition-all cursor-pointer">
               <div className="aspect-square bg-muted flex items-center justify-center">
                 {photo.photo_url ? (
                   <img src={photo.photo_url} alt={photo.title} className="w-full h-full object-cover" />
@@ -67,6 +68,7 @@ export default async function JobPhotosPage({
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
       ) : (

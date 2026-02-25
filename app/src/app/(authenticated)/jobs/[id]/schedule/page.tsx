@@ -101,8 +101,9 @@ export default async function SchedulePage({
           {tasks.length > 0 ? (
             <div className="space-y-2">
               {tasks.map((task) => (
-                <div
+                <Link
                   key={task.id}
+                  href={`/jobs/${id}/schedule/${task.id}`}
                   className="flex items-center gap-4 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
@@ -138,7 +139,7 @@ export default async function SchedulePage({
                       {task.progress_pct ?? 0}%
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

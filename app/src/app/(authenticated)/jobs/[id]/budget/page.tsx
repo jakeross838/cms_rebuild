@@ -120,13 +120,16 @@ export default async function BudgetPage({
                     const variance = line.variance_amount ?? 0
                     return (
                       <tr key={line.id} className="hover:bg-accent/50">
+
                         <td className="py-2 pr-4">
                           <span className="font-mono text-xs">
                             {line.cost_codes?.code ?? '—'}
                           </span>
                         </td>
                         <td className="py-2 pr-4">
-                          <div className="font-medium">{line.description ?? line.cost_codes?.name ?? '—'}</div>
+                          <Link href={`/jobs/${id}/budget/${line.id}`} className="hover:underline">
+                            <div className="font-medium">{line.description ?? line.cost_codes?.name ?? '—'}</div>
+                          </Link>
                           {line.phase && (
                             <Badge variant="outline" className="mt-0.5 text-xs">{line.phase}</Badge>
                           )}

@@ -86,17 +86,27 @@ export default async function ChartOfAccountsPage({
                 </thead>
                 <tbody className="divide-y divide-border">
                   {accounts.map((account) => (
-                    <tr key={account.id} className="hover:bg-accent/50">
-                      <td className="py-2 pr-4 font-mono">{account.account_number}</td>
-                      <td className="py-2 pr-4 font-medium">{account.name}</td>
-                      <td className="py-2 pr-4">
-                        <Badge variant="outline" className="text-xs">{account.account_type ?? '—'}</Badge>
+                    <tr key={account.id} className="hover:bg-accent/50 transition-colors cursor-pointer">
+                      <td className="py-2 pr-4 font-mono">
+                        <Link href={`/financial/chart-of-accounts/${account.id}`} className="block">{account.account_number}</Link>
                       </td>
-                      <td className="py-2 pr-4 text-muted-foreground">{account.normal_balance ?? '—'}</td>
+                      <td className="py-2 pr-4 font-medium">
+                        <Link href={`/financial/chart-of-accounts/${account.id}`} className="block">{account.name}</Link>
+                      </td>
                       <td className="py-2 pr-4">
-                        <Badge variant="outline" className={account.is_active !== false ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'}>
-                          {account.is_active !== false ? 'Active' : 'Inactive'}
-                        </Badge>
+                        <Link href={`/financial/chart-of-accounts/${account.id}`} className="block">
+                          <Badge variant="outline" className="text-xs">{account.account_type ?? '—'}</Badge>
+                        </Link>
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
+                        <Link href={`/financial/chart-of-accounts/${account.id}`} className="block">{account.normal_balance ?? '—'}</Link>
+                      </td>
+                      <td className="py-2 pr-4">
+                        <Link href={`/financial/chart-of-accounts/${account.id}`} className="block">
+                          <Badge variant="outline" className={account.is_active !== false ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'}>
+                            {account.is_active !== false ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </Link>
                       </td>
                     </tr>
                   ))}

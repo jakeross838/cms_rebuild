@@ -85,22 +85,24 @@ export default async function PunchListsPage({
       {items.length > 0 ? (
         <div className="space-y-2">
           {items.map((item) => (
-            <Card key={item.id}>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2">
-                  <CheckSquare className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{item.title ?? 'Untitled'}</span>
-                  <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>
-                  {item.priority && <Badge variant="outline" className="text-xs">{item.priority}</Badge>}
-                </div>
-                <div className="flex items-center gap-3 ml-6 mt-1 text-xs text-muted-foreground">
-                  {item.location && <span>{item.location}</span>}
-                  {item.room && <span>{item.room}</span>}
-                  {item.category && <span>{item.category}</span>}
-                  {item.due_date && <span>Due: {formatDate(item.due_date)}</span>}
-                </div>
-              </CardContent>
-            </Card>
+            <Link key={item.id} href={`/punch-lists/${item.id}`} className="block hover:bg-accent/50 rounded-md transition-colors">
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2">
+                    <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{item.title ?? 'Untitled'}</span>
+                    <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>
+                    {item.priority && <Badge variant="outline" className="text-xs">{item.priority}</Badge>}
+                  </div>
+                  <div className="flex items-center gap-3 ml-6 mt-1 text-xs text-muted-foreground">
+                    {item.location && <span>{item.location}</span>}
+                    {item.room && <span>{item.room}</span>}
+                    {item.category && <span>{item.category}</span>}
+                    {item.due_date && <span>Due: {formatDate(item.due_date)}</span>}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       ) : (
