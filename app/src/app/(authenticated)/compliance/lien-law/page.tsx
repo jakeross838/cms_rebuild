@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Gavel } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -48,7 +50,7 @@ export default async function LienLawPage({
             {records.length} tracking records &bull; {compliant} compliant &bull; {nonCompliant} non-compliant
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Record</Button>
+        <Link href="/compliance/lien-law/new"><Button><Plus className="h-4 w-4 mr-2" />Add Record</Button></Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -83,7 +85,7 @@ export default async function LienLawPage({
           {records.length > 0 ? (
             <div className="divide-y divide-border">
               {records.map((record) => (
-                <div key={record.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={record.id} href={`/compliance/lien-law/${record.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -104,7 +106,7 @@ export default async function LienLawPage({
                       <span className="font-medium">{formatCurrency(record.expected_amount)}</span>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (
