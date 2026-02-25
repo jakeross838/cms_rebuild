@@ -3403,3 +3403,237 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 | **Release Schemas** | updateReleaseSchema rejects invalid release_type | PASS |
 | **Release Schemas** | updateReleaseSchema rejects invalid status | PASS |
 | **Release Schemas** | updateReleaseSchema accepts affected_services update | PASS |
+
+---
+
+## New Authenticated Pages — 46 Pages (2026-02-25)
+
+### SSR Data Pages — Test Coverage Needed
+
+**Notifications** (`/notifications`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No notifications" message |
+| Renders with data | Lists notifications from `notifications` table with type, message, timestamp |
+| Search/filter works | Filters notifications by search query |
+| Mark as read | Clicking notification marks `read_at` timestamp |
+
+**Bids** (`/bids`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No bid packages" message |
+| Renders with data | Lists bid packages from `bid_packages` table with title, status badge, due date |
+| Search/filter works | Filters bids by search query and status |
+| Status badges | Correct colors for draft, open, closed, awarded statuses |
+
+**RFIs (Top-Level)** (`/rfis`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No RFIs" message |
+| Renders with data | Lists RFIs from `rfis` table with rfi_number, subject, status badge, priority |
+| Search/filter works | Filters RFIs by search query, status, priority |
+| Links to job-level RFIs | Each row links to `/jobs/[id]/rfis/[rfiId]` |
+
+**Submittals (Top-Level)** (`/submittals`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No submittals" message |
+| Renders with data | Lists submittals from `submittals` table with submittal_number, title, status, priority |
+| Search/filter works | Filters submittals by search query, status |
+| Links to job-level submittals | Each row links to `/jobs/[id]/submittals/[submittalId]` |
+
+**Activity** (`/activity`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No recent activity" message |
+| Renders with data | Lists activity entries from `audit_log` table with action, entity, user, timestamp |
+| Search/filter works | Filters activity by search query, entity type, date range |
+| Links to audit log | Navigation link to `/activity/audit-log` works |
+
+**Audit Log** (`/activity/audit-log`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty table with "No audit entries" message |
+| Renders with data | Shows detailed audit table from `audit_log` with user, action, entity_type, entity_id, timestamp, ip_address |
+| Search/filter works | Filters audit log by search query, action type, entity type, date range |
+| Pagination works | Navigates between pages of audit entries |
+| Read-only | No edit/delete actions (audit log is immutable) |
+
+**Account Profile** (`/account/profile`)
+| Test | Expected |
+|------|----------|
+| Page loads | Client-side form renders with current user data |
+| Pre-fills user data | Name, email, phone fields populated from auth user |
+| Edit name | Updates `full_name` in user profile |
+| Edit phone | Updates phone number |
+| Save changes | Submits form, shows success message |
+| Cancel reverts | Cancel button reverts to original values |
+
+**Warranty Claims** (`/warranty-claims`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No warranty claims" message |
+| Renders with data | Lists claims from `warranty_claims` table with title, status badge, job, date |
+| Search/filter works | Filters claims by search query, status |
+| Status badges | Correct colors for open, in_progress, resolved, closed statuses |
+
+**Payments** (`/payments`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No payments" message |
+| Renders with data | Lists payments from `client_payments` table with amount ($), date, status badge, method |
+| Search/filter works | Filters payments by search query, status, date range |
+| Currency formatting | Dollar amounts display with $ prefix and 2 decimal places |
+
+**Certified Payroll** (`/certified-payroll`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No payroll exports" message |
+| Renders with data | Lists exports from `payroll_exports` table with period, status badge, export date |
+| Search/filter works | Filters payroll exports by search query, status, date range |
+| Status badges | Correct colors for draft, submitted, approved statuses |
+
+**Support** (`/support`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No support tickets" message |
+| Renders with data | Lists tickets from `support_tickets` table with ticket_number, subject, status, priority |
+| Search/filter works | Filters tickets by search query, status, priority |
+| Create ticket button | "New Ticket" button navigates to create form or opens modal |
+
+**Training** (`/training`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No training courses" message |
+| Renders with data | Lists courses from `training_courses` table with title, course_type, difficulty, duration |
+| Search/filter works | Filters courses by search query, type, difficulty |
+| Progress tracking | Shows user progress percentage for enrolled courses |
+
+**Onboarding** (`/onboarding`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No onboarding checklists" message |
+| Renders with data | Lists checklists from `onboarding_checklists` table with name, progress, status |
+| Search/filter works | Filters checklists by search query, status |
+| Progress display | Shows completion percentage or step count |
+
+**Billing** (`/billing`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No billing information" message |
+| Renders with data | Shows subscription info from `company_subscriptions` + billing events from `billing_events` |
+| Plan display | Shows current subscription tier, renewal date, amount |
+| Billing history | Lists past billing events with date, amount, status |
+| Search/filter works | Filters billing events by date range |
+
+**Data Migration** (`/data-migration`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No migration jobs" message |
+| Renders with data | Lists migration jobs from `migration_jobs` table with source, status badge, progress |
+| Search/filter works | Filters migrations by search query, source, status |
+| Status badges | Correct colors for pending, running, completed, failed statuses |
+| Progress display | Shows percentage or step completion for in-progress migrations |
+
+**API Marketplace** (`/api-marketplace`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No integrations" and "Third-party integrations coming soon" |
+| Renders with data | Lists integrations from `integration_listings` table with name, category, status |
+| Search/filter works | Filters integrations by search query, category |
+
+**Todos / Punch Items** (`/todos`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No to-do items" message |
+| Renders with data | Lists items from `punch_items` table with title, status badge, priority, location |
+| Search/filter works | Filters punch items by search query, status, priority |
+| Status badges | Correct colors for open, in_progress, completed, verified statuses |
+
+**Price Intelligence** (`/price-intelligence`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No price history" message |
+| Renders with data | Lists price data from `price_history` table with material, vendor, unit_price, date |
+| Search/filter works | Filters price records by search query, material, vendor |
+| Currency formatting | Prices display with $ prefix and 2 decimal places |
+
+**Marketing Hub** (`/marketing`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows hub with zero counts |
+| Renders with data | Shows counts from 4 tables: leads, campaigns, testimonials, case studies |
+| Hub cards link to sub-sections | Each card navigates to its detail page |
+| Stats display | Shows aggregate counts and key metrics |
+
+**Communications** (`/communications`)
+| Test | Expected |
+|------|----------|
+| Renders with empty data | Shows empty state with "No communications" message |
+| Renders with data | Lists communications from `communications` table with type, subject, date, status |
+| Search/filter works | Filters communications by search query, type, status |
+| Type badges | Correct styling for note, email, phone, meeting, letter, text types |
+
+**Job Property Details** (`/jobs/[id]/property`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid job | Displays property details from job record — address, lot info, square footage |
+| Back link | Navigates to `/jobs/[id]` |
+| Empty property data | Shows "No property details" or empty field placeholders |
+| Edit capability | Edit button enables form fields for property data |
+
+**Job Reports Hub** (`/jobs/[id]/reports`)
+| Test | Expected |
+|------|----------|
+| Page loads | Shows hub with links to report sub-pages |
+| Report cards | Displays available report types (budget, schedule, daily log summary, etc.) |
+| Links work | Each report card navigates to its sub-page |
+
+---
+
+### Redirect Pages — E2E Coverage via Navigation Tests
+
+| Page | Redirects To | Test Type |
+|------|-------------|-----------|
+| `/activity/feed` | `/activity` | Redirect — E2E coverage via navigation tests |
+| `/communications/inbox` | `/communications` | Redirect — E2E coverage via navigation tests |
+| `/communications/history` | `/communications` | Redirect — E2E coverage via navigation tests |
+| `/communications/templates` | `/communications` | Redirect — E2E coverage via navigation tests |
+| `/contracts/legal` | `/contracts` | Redirect — E2E coverage via navigation tests |
+| `/vendor-portal` | `/vendors` | Redirect — E2E coverage via navigation tests |
+| `/portal` | `/dashboards` | Redirect — E2E coverage via navigation tests |
+| `/overview` | `/dashboards` | Redirect — E2E coverage via navigation tests |
+| `/selections-catalog` | `/library/selections` | Redirect — E2E coverage via navigation tests |
+| `/subscription` | `/billing` | Redirect — E2E coverage via navigation tests |
+| `/templates` | `/library/templates` | Redirect — E2E coverage via navigation tests |
+| `/directory/vendors` | `/vendors` | Redirect — E2E coverage via navigation tests |
+| `/directory/team` | `/settings/users` | Redirect — E2E coverage via navigation tests |
+| `/directory/hr` | `/settings/users` | Redirect — E2E coverage via navigation tests |
+| `/directory/contacts` | `/contacts` | Redirect — E2E coverage via navigation tests |
+| `/directory/clients` | `/clients` | Redirect — E2E coverage via navigation tests |
+| `/library/cost-codes` | `/cost-codes` | Redirect — E2E coverage via navigation tests |
+| `/operations/equipment` | `/jobs` | Redirect — E2E coverage via navigation tests |
+| `/operations/time-clock` | `/time-clock` | Redirect — E2E coverage via navigation tests |
+| `/operations/inventory` | `/jobs` | Redirect — E2E coverage via navigation tests |
+| `/settings/quickbooks` | `/settings` | Redirect — E2E coverage via navigation tests |
+
+---
+
+### Placeholder Pages — Renders Coming Soon State
+
+| Page | Content | Test |
+|------|---------|------|
+| `/white-label` | "White-label features coming soon" | Renders coming soon state |
+| `/admin` | "Admin features coming soon" | Renders coming soon state |
+| `/compliance/sustainability` | "Sustainability features coming soon" | Renders coming soon state |
+
+---
+
+### Summary — 46 New Pages Coverage
+
+| Category | Count | Test Strategy |
+|----------|-------|---------------|
+| SSR data pages | 22 | Unit: renders empty + with data; E2E: search/filter, navigation |
+| Redirect pages | 21 | E2E: verify redirect target via navigation tests |
+| Placeholder pages | 3 | Unit: renders coming soon state |
+| **Total** | **46** | |

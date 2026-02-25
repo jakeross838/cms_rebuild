@@ -1173,3 +1173,28 @@ Module 49 is the platform analytics system for Phase 6 (Scale & Sell). As a mult
 7. **Feature events default limit=50**: The listFeatureEventsSchema defaults to limit=50 instead of the standard 20 because feature events are high-volume and analytics queries typically need larger result sets.
 8. **Experiments show platform-wide + own company**: The GET experiments endpoint filters with `company_id IS NULL OR company_id = :company_id`, showing both global experiments and company-specific experiments. This allows platform admins to run platform-wide experiments while companies can run their own.
 9. **`as any` casts on Supabase queries**: Required because the Supabase client types don't include Module 49 tables yet.
+
+---
+
+## 2026-02-25: Missing Page Gap Closure — 46 Authenticated Pages Added
+
+### Why
+The authenticated app had 177 pages but many nav items still routed to 404s because the corresponding authenticated pages had never been created. Skeleton UI prototypes existed for these routes, but the real `(authenticated)` versions -- with Supabase SSR queries and real data -- were missing. This meant users clicking on notifications, bids, RFIs, submittals, audit logs, warranties, payments, payroll, support, training, onboarding, subscriptions, migrations, integrations, punch lists, price history, or communications would hit a blank page or 404. The goal was to close this gap so every nav item in the sidebar routes to a real page with real DB queries.
+
+### What was built
+1. **32 authenticated pages with real Supabase data** (commit 23af269):
+   - SSR pages querying real DB tables: `notifications`, `bid_packages`, `rfis`, `submittals`, `audit_log`, `warranty_claims`, `client_payments`, `payroll_exports`, `support_tickets`, `training_courses`, `onboarding_checklists`, `company_subscriptions`, `migration_jobs`, `integration_listings`, `punch_items`, `price_history`, `communications`
+   - Each page uses `createClient()` server-side, queries the appropriate table with company_id filtering, and renders with the established layout patterns
+
+2. **14 redirect/placeholder pages** (commit 5f1a17b):
+   - Communications, operations, compliance, and admin section landing pages
+   - These redirect to their first child route or display a placeholder with links to sub-pages
+
+3. **TypeScript error fixes**: Fixed 16 TypeScript errors caused by DB column name mismatches between the page code and actual Supabase table schemas
+
+### Key decisions
+1. **Total authenticated pages: 223** (up from 177) — a 26% increase in real page coverage
+2. **All 78/78 E2E tests pass** with zero TypeScript errors after the changes
+3. **Every nav item now routes to a real page** — no more 404s when clicking sidebar links
+4. **SSR over client-side fetching**: All new pages use server-side Supabase queries for initial data load, consistent with the existing pattern. This ensures pages render with data on first paint.
+5. **Column name alignment**: When DB columns didn't match expected names (e.g., `created_at` vs `submitted_at`, `name` vs `title`), fixed the page queries to match the actual schema rather than adding migrations to rename columns. The DB schema is the source of truth.

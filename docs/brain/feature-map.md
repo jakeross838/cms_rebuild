@@ -1,5 +1,45 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Missing Page Gap Closure (2026-02-25)
+
+### New SSR Pages (querying real Supabase data)
+- **Notifications** (`/notifications`) — SSR, queries `notifications` table, unread filter, urgency badges, click-through via url_path
+- **Bids** (`/bids`) — SSR, queries `bid_packages`, status filter, search, bid due date display
+- **RFIs** (`/rfis`) — SSR, company-wide queries `rfis` table, status/search filter, rfi_number display
+- **Submittals** (`/submittals`) — SSR, company-wide queries `submittals`, status/search filter, spec_section display
+- **Activity Feed** (`/activity`) — SSR, queries `audit_log`, action badges, table_name context, IP logging
+- **Audit Log** (`/activity/audit-log`) — SSR, queries `audit_log` with table view (time, user, action, entity, IP)
+- **Account Profile** (`/account/profile`) — Client-side, queries `users` for current auth user, edit name/phone, role display
+- **Warranty Claims** (`/warranty-claims`) — SSR, queries `warranty_claims`, status filter, reported_date display
+- **Payments** (`/payments`) — SSR, queries `client_payments`, total amount, payment method badges
+- **Certified Payroll** (`/certified-payroll`) — SSR, queries `payroll_exports`, format/hours display
+- **Support** (`/support`) — SSR, queries `support_tickets`, open count, priority badges
+- **Training** (`/training`) — SSR, queries `training_courses` (published only), difficulty badges, duration
+- **Onboarding** (`/onboarding`) — SSR, queries `onboarding_checklists`, progress bar, checklist UI
+- **Billing** (`/billing`) — SSR, queries `company_subscriptions` + `billing_events`, plan display
+- **Data Migration** (`/data-migration`) — SSR, queries `migration_jobs`, progress tracking, error counts
+- **API Marketplace** (`/api-marketplace`) — SSR, queries `integration_listings` (published), featured badges
+- **Todos** (`/todos`) — SSR, queries `punch_items` (open/in_progress), due date, priority
+- **Price Intelligence** (`/price-intelligence`) — SSR, queries `price_history`, price changes, vendor tracking
+- **Marketing** (`/marketing`) — SSR hub, parallel counts from campaigns/leads/reviews/referrals
+- **Job Property** (`/jobs/[id]/property`) — SSR, queries `jobs` for address/contract details
+- **Job Reports** (`/jobs/[id]/reports`) — SSR hub, links to budget/schedule/daily-logs/photos/change-orders/invoices
+
+### Redirect Pages (route deduplication)
+- `/directory/clients` → `/clients`
+- `/directory/vendors` → `/vendors`
+- `/directory/contacts` → `/contacts`
+- `/directory/team` → `/settings/users`
+- `/directory/hr` → `/settings/users`
+- `/portal` → `/dashboards`
+- `/vendor-portal` → `/vendors`
+- `/overview` → `/dashboards`
+- `/subscription` → `/billing`
+- `/selections-catalog` → `/library/selections`
+- `/activity/feed` → `/activity`
+
+---
+
 ## UI Wiring — Core Authenticated Pages (2026-02-24)
 
 ### React Query Hooks (app/src/hooks/)
