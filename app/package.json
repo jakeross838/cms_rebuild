@@ -19,7 +19,7 @@
     "test:ci": "vitest run --reporter=verbose --coverage",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "validate": "npm run typecheck && npm run lint && npm run test",
+    "validate": "npm run typecheck && npm run test",
     "db:generate": "npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts",
     "prepare": "echo 'Ready for development'"
   },

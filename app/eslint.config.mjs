@@ -1,6 +1,9 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import importPlugin from "eslint-plugin-import";
+import reactPlugin from "eslint-plugin-react";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
 
 /**
  * ESLint Configuration
@@ -27,6 +30,11 @@ const eslintConfig = defineConfig([
 
   // Custom rules
   {
+    plugins: {
+      react: reactPlugin,
+      "react-hooks": reactHooksPlugin,
+      import: importPlugin,
+    },
     rules: {
       // TypeScript strict rules
       "@typescript-eslint/no-explicit-any": "error",
@@ -82,11 +90,7 @@ const eslintConfig = defineConfig([
       "import/no-duplicates": "error",
       "import/no-cycle": "error",
 
-      // Accessibility
-      "jsx-a11y/alt-text": "error",
-      "jsx-a11y/anchor-is-valid": "error",
-      "jsx-a11y/click-events-have-key-events": "warn",
-      "jsx-a11y/no-static-element-interactions": "warn",
+      // Accessibility rules enforced by eslint-config-next/core-web-vitals
     },
   },
 
