@@ -99,7 +99,7 @@ export const companyJobNav: NavItem[] = [
     label: 'Financial',
     icon: DollarSign,
     items: [
-      { name: 'Dashboard', href: '/skeleton/financial/dashboard', description: 'Financial overview' },
+      { name: 'Dashboard', href: '/financial/dashboard', description: 'Financial overview' },
       { name: 'Chart of Accounts', href: '/financial/chart-of-accounts', description: 'GL accounts & structure' },
       { name: 'Journal Entries', href: '/financial/journal-entries', description: 'Manual journal entries' },
       { name: 'Receivables', href: '/financial/receivables', description: 'Client balances' },
@@ -116,7 +116,7 @@ export const companyJobNav: NavItem[] = [
     label: 'Closeout',
     icon: CheckSquare,
     items: [
-      { name: 'Punch Lists', href: '/skeleton/punch-lists', description: 'Final punch tracking' },
+      { name: 'Punch Lists', href: '/punch-lists', description: 'Final punch tracking' },
       { name: 'Warranties', href: '/warranties', description: 'Warranty tracking and claims' },
       { name: 'Post-Build', href: '/skeleton/post-build', description: 'Warranty walkthroughs, maintenance, referrals' },
     ],
