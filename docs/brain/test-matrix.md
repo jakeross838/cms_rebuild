@@ -9,7 +9,24 @@ All new SSR pages pass `npx tsc --noEmit`:
 - 10 Job Sub-pages — Budget, Schedule, Daily Logs, Change Orders, Purchase Orders, Documents, RFIs, Punch List, Draws, Lien Waivers
 - All interfaces match actual DB schema (verified against `database.ts`)
 
-### Key Schema Mismatches Found & Fixed
+### Batch 4 — 25 Pages Type-Checked Clean
+- Financial: bank-reconciliation, cash-flow, profitability, reports, business-management, job-close
+- Operations: calendar, crew-schedule, deliveries
+- Sales: proposals, legal, pre-construction
+- Closeout: post-build
+- Directory: contacts, hr
+- Library: selections, assemblies, templates
+- Settings: integrations, insurance, licenses, safety, lien-law, dashboards, email-marketing
+
+### Key Schema Mismatches Found & Fixed (Batch 4)
+- `employee_certifications.issuing_body` → `issuing_authority`, `issue_date` → `issued_date`
+- `ap_bills.total_amount` → `amount`
+- `schedule_tasks.title` → `name`, `start_date` → `planned_start`, `end_date` → `planned_end`, `progress` → `progress_pct`
+- `maintenance_schedules.name` → `title`
+- `estimates` has no `estimate_number` field. Uses `name` + `total` (not `total_amount`)
+- Job status enum: `pre_construction | active | on_hold | completed | warranty | cancelled` — no `closed`, `closeout`, `lead`, `estimating`, `proposal`, `pending`
+
+### Key Schema Mismatches Found & Fixed (Earlier)
 - `jobs.description` → `jobs.notes` (DB field name differs)
 - `jobs.project_type`, `sqft_*`, `bedrooms`, `bathrooms`, `stories` → don't exist in DB yet
 - `purchase_orders` → no FK to `vendors` table (uses `vendor_id` but no join)

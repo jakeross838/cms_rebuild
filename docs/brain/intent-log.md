@@ -20,6 +20,23 @@ All 52 modules pass acceptance tests, all migrations applied. The remaining work
 10. **Created job layout** — Tab navigation for sub-pages (Overview, Budget, Schedule, etc.)
 11. **Created 10 job sub-pages** — Budget, Schedule, Daily Logs, Change Orders, Purchase Orders, Documents, RFIs, Punch List, Draws, Lien Waivers — all SSR with real Supabase queries
 
+### What was done (batch 3)
+12. **Created 6 company-wide pages** — Leads, Estimates, Contracts, Invoices, Warranties, Equipment
+13. **Created 3 financial pages** — Chart of Accounts, Receivables, Time Clock
+14. **Created 3 more financial pages** — Payables, Journal Entries, Inventory
+15. **Created 2 aggregate pages** — Punch Lists (company-wide), Financial Dashboard
+
+### What was done (batch 4 — final non-Intelligence pages)
+16. **Created 6 financial pages** — Bank Reconciliation, Cash Flow, Profitability, Reports, Business Mgmt, Job Close
+17. **Created 3 operations pages** — Company Calendar, Crew Schedule, Deliveries
+18. **Created 3 sales/pre-con pages** — Proposals (from estimates), Legal & Compliance, Pre-Construction Feasibility
+19. **Created 1 closeout page** — Post-Build (warranties + maintenance schedules)
+20. **Created 2 directory pages** — Contacts (vendor_contacts), HR & Workforce (employees + departments + positions)
+21. **Created 3 library pages** — Selections Catalog, Assemblies, Templates
+22. **Created 7 settings pages** — Integrations marketplace, Insurance, Licenses, Safety (incidents + inspections), Lien Law, Dashboards, Email Marketing
+23. **Updated 25 nav links** — All non-Intelligence skeleton links migrated to authenticated routes. Only 11 Intelligence items remain on skeleton.
+24. **Total authenticated pages: 63** — Every data-backed nav route now has a real SSR page
+
 ### Key decisions
 - Used SSR pattern (server component + direct Supabase) instead of client-side React Query for list pages. Matches existing `/jobs/page.tsx` pattern.
 - React Query hooks created for client-side mutations and future interactive features

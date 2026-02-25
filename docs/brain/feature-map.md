@@ -36,6 +36,36 @@
 - **Chart of Accounts** (`/financial/chart-of-accounts`) — SSR, queries `gl_accounts`, account table with type/balance
 - **Receivables** (`/financial/receivables`) — SSR, queries `ar_invoices`, outstanding + overdue totals
 - **Time Clock** (`/time-clock`) — SSR, queries `time_entries`, regular + overtime hours display
+- **Payables** (`/financial/payables`) — SSR, queries `ap_bills`, outstanding + overdue totals
+- **Journal Entries** (`/financial/journal-entries`) — SSR, queries `gl_journal_entries`, search by reference/memo
+- **Inventory** (`/inventory`) — SSR, queries `inventory_items`, search by name/SKU, category filter
+- **Punch Lists** (`/punch-lists`) — SSR, company-wide `punch_items`, status filter + search
+- **Financial Dashboard** (`/financial/dashboard`) — SSR, aggregate counts from gl_accounts, ar_invoices, ap_bills, gl_journal_entries
+- **Bank Reconciliation** (`/financial/bank-reconciliation`) — SSR, queries `financial_periods`, open/closed counts
+- **Cash Flow** (`/financial/cash-flow`) — SSR, aggregates from `ar_invoices` + `ap_bills`, net position, overdue counts
+- **Profitability** (`/financial/profitability`) — SSR, queries `jobs` with contract amounts, active/total job counts
+- **Financial Reports** (`/financial/reports`) — SSR, queries `report_definitions`, search, active/system badges
+- **Business Management** (`/financial/business-management`) — SSR, `financial_periods` + job/account counts
+- **Job Close** (`/financial/job-close`) — SSR, jobs filtered by completed/warranty status, active jobs pending closeout
+- **Company Calendar** (`/operations/calendar`) — SSR, queries `schedule_tasks` (upcoming), critical path badges
+- **Crew Schedule** (`/operations/crew-schedule`) — SSR, queries `employees`, search, active/field counts, wage display
+- **Deliveries** (`/operations/deliveries`) — SSR, queries `po_receipts`, today count, document tracking
+- **Proposals** (`/proposals`) — SSR, queries `estimates` joined with `jobs`, status filter, total value
+- **Legal & Compliance** (`/legal`) — SSR, queries `contract_templates` + `lien_waiver_tracking` count
+- **Pre-Construction** (`/pre-construction`) — SSR, queries `jobs` filtered to `pre_construction` status
+- **Post-Build** (`/post-build`) — SSR, queries `warranties` (active) + `maintenance_schedules` (active)
+- **Contacts** (`/contacts`) — SSR, queries `vendor_contacts`, search by name/email, primary badge
+- **HR & Workforce** (`/hr`) — SSR, queries `employees` + `departments` + `positions` count, search
+- **Selections Catalog** (`/library/selections`) — SSR, queries `selection_categories` + `selection_options` count
+- **Assemblies** (`/library/assemblies`) — SSR, queries `assemblies`, search, active/inactive, parameter units
+- **Templates** (`/library/templates`) — SSR, queries `contract_templates` + rfi/lien template counts
+- **Integrations** (`/integrations`) — SSR, queries `integration_listings`, grid layout, rating/install counts
+- **Insurance** (`/compliance/insurance`) — SSR, queries `vendor_insurance`, expiration tracking, verified badges
+- **Licenses** (`/compliance/licenses`) — SSR, queries `employee_certifications`, expiration tracking
+- **Safety** (`/compliance/safety`) — SSR, queries `safety_incidents` + `safety_inspections`, tab view, OSHA badges
+- **Lien Law** (`/compliance/lien-law`) — SSR, queries `lien_waiver_tracking`, compliant/non-compliant counts
+- **Dashboards** (`/dashboards`) — SSR, queries `custom_reports`, visualization type badges
+- **Email Marketing** (`/email-marketing`) — SSR, queries `marketing_campaigns`, spend/leads/revenue metrics, ROI
 
 ### Navigation Config Updates
 | Route | Old Path | New Path |
@@ -57,6 +87,36 @@
 | Time Clock | /skeleton/operations/time-clock | /time-clock |
 | Chart of Accounts | /skeleton/financial/chart-of-accounts | /financial/chart-of-accounts |
 | Receivables | /skeleton/financial/receivables | /financial/receivables |
+| Payables | /skeleton/financial/payables | /financial/payables |
+| Journal Entries | /skeleton/financial/journal-entries | /financial/journal-entries |
+| Inventory | /skeleton/operations/inventory | /inventory |
+| Punch Lists | /skeleton/punch-lists | /punch-lists |
+| Financial Dashboard | /skeleton/financial/dashboard | /financial/dashboard |
+| Bank Reconciliation | /skeleton/financial/bank-reconciliation | /financial/bank-reconciliation |
+| Cash Flow | /skeleton/financial/cash-flow | /financial/cash-flow |
+| Profitability | /skeleton/financial/profitability | /financial/profitability |
+| Reports | /skeleton/financial/reports | /financial/reports |
+| Business Mgmt | /skeleton/financial/business-management | /financial/business-management |
+| Job Close | /skeleton/financial/job-close | /financial/job-close |
+| Calendar | /skeleton/operations/calendar | /operations/calendar |
+| Crew Schedule | /skeleton/operations/crew-schedule | /operations/crew-schedule |
+| Deliveries | /skeleton/operations/deliveries | /operations/deliveries |
+| Proposals | /skeleton/proposals | /proposals |
+| Legal | /skeleton/contracts/legal | /legal |
+| Feasibility | /skeleton/pre-construction | /pre-construction |
+| Post-Build | /skeleton/post-build | /post-build |
+| Contacts | /skeleton/directory/contacts | /contacts |
+| HR & Workforce | /skeleton/directory/hr | /hr |
+| Selections Catalog | /skeleton/library/selections | /library/selections |
+| Assemblies | /skeleton/library/assemblies | /library/assemblies |
+| Templates | /skeleton/library/templates | /library/templates |
+| Integrations | /skeleton/company/integrations | /integrations |
+| Insurance | /skeleton/compliance/insurance | /compliance/insurance |
+| Licenses | /skeleton/compliance/licenses | /compliance/licenses |
+| Safety | /skeleton/compliance/safety | /compliance/safety |
+| Lien Law | /skeleton/compliance/lien-law | /compliance/lien-law |
+| Dashboards | /skeleton/company/dashboards | /dashboards |
+| Email Marketing | /skeleton/company/email-marketing | /email-marketing |
 
 ---
 
