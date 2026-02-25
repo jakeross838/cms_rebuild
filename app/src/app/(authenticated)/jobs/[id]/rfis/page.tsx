@@ -1,0 +1,113 @@
+import { notFound } from 'next/navigation'
+
+import { Plus, MessageSquare } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { createClient } from '@/lib/supabase/server'
+import { formatDate, getStatusColor } from '@/lib/utils'
+
+interface RFI {
+  id: string
+  rfi_number: string | null
+  subject: string | null
+  question: string | null
+  status: string | null
+  priority: string | null
+  category: string | null
+  due_date: string | null
+  created_at: string | null
+  answered_at: string | null
+}
+
+export default async function RFIsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: job, error: jobError } = await supabase
+    .from('jobs')
+    .select('id, name')
+    .eq('id', id)
+    .single()
+
+  if (jobError || !job) {
+    notFound()
+  }
+
+  const { data: rfiData } = await supabase
+    .from('rfis')
+    .select('*')
+    .eq('job_id', id)
+    .order('created_at', { ascending: false })
+
+  const rfis = (rfiData || []) as RFI[]
+
+  const open = rfis.filter((r) => r.status === 'open' || r.status === 'draft').length
+  const answered = rfis.filter((r) => r.status === 'answered' || r.status === 'closed').length
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-foreground">RFIs</h2>
+          <p className="text-sm text-muted-foreground">{rfis.length} requests for information</p>
+        </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          New RFI
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <Card><CardContent className="p-3"><p className="text-sm text-muted-foreground">Total</p><p className="text-lg font-bold">{rfis.length}</p></CardContent></Card>
+        <Card><CardContent className="p-3"><p className="text-sm text-muted-foreground">Open</p><p className="text-lg font-bold text-amber-600">{open}</p></CardContent></Card>
+        <Card><CardContent className="p-3"><p className="text-sm text-muted-foreground">Answered</p><p className="text-lg font-bold text-green-600">{answered}</p></CardContent></Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            All RFIs
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {rfis.length > 0 ? (
+            <div className="divide-y divide-border">
+              {rfis.map((rfi) => (
+                <div key={rfi.id} className="py-3 first:pt-0 last:pb-0">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        {rfi.rfi_number && <span className="text-sm font-mono text-muted-foreground">{rfi.rfi_number}</span>}
+                        <span className="font-medium">{rfi.subject ?? 'Untitled'}</span>
+                        <Badge className={getStatusColor(rfi.status ?? 'draft')}>{(rfi.status ?? 'draft').replace('_', ' ')}</Badge>
+                        {rfi.priority && <Badge variant="outline" className="text-xs">{rfi.priority}</Badge>}
+                      </div>
+                      {rfi.question && <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{rfi.question}</p>}
+                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                        {rfi.category && <span>{rfi.category}</span>}
+                        {rfi.due_date && <span>Due: {formatDate(rfi.due_date)}</span>}
+                        {rfi.created_at && <span>Created {formatDate(rfi.created_at)}</span>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <MessageSquare className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+              <p className="text-muted-foreground">No RFIs yet</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

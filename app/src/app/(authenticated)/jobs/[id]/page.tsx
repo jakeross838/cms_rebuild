@@ -7,7 +7,6 @@ import {
   DollarSign,
   Users,
   FileText,
-  ArrowLeft,
   MapPin,
   Phone,
   Mail,
@@ -75,12 +74,8 @@ export default async function JobDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Back + Header */}
+      {/* Header */}
       <div>
-        <Link href="/jobs" className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1 mb-4">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Jobs
-        </Link>
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3">
