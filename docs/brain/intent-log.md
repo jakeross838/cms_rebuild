@@ -1,5 +1,28 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Nav Completeness + Bug Fixes + Cost Codes CRUD
+
+### Why
+All sidebar links must resolve to real pages (zero 404s). Dashboard had a silent data bug. Cost codes needed full CRUD.
+
+### What was done
+1. **Created 10 missing nav pages** — schedule, daily-logs, photos, purchase-orders, draws, change-orders, reports, files, settings (redirect), accounting — all SSR with real Supabase queries
+2. **Created final-docs hub page** — links to Warranties + As-Built Documents — last missing sidebar link
+3. **Fixed dashboard draws bug** — `.from('draws')` changed to `.from('draw_requests')` (correct table name). Pending Draws stat was silently failing.
+4. **Created cost-codes/new page** — Create form with code*, name*, division*, category select, trade, description
+5. **Created cost-codes/[id] page** — Detail with view/edit/archive, category color badges
+6. **Fixed 56 broken RLS policies** — `get_user_company_id()` SECURITY DEFINER function replaces broken `current_setting('app.current_company_id')` pattern
+7. **Created 10 detail pages** — equipment, hr, contact, warranty, email-marketing, inventory, assembly, template, cost-code + more
+8. **Made list rows clickable** — All list pages now navigate to detail pages on row click
+
+### Key decisions
+- Nav pages use SSR (server component + direct Supabase) — consistent with all other list pages
+- Reports and Accounting are hub pages (card links to sub-sections) — not data-driven lists
+- Settings redirects to /settings/general via Next.js `redirect()`
+- Cost codes follow standard CRUD pattern with soft delete (deleted_at)
+
+---
+
 ## 2026-02-24: UI Wiring Phase — Core Pages Connected to Real Data
 
 ### Why

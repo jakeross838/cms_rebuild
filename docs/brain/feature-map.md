@@ -106,6 +106,33 @@ All detail pages follow the pattern: `'use client'`, useParams, useRouter, creat
 - **Estimate Detail** (`/estimates/[id]`) — View: name (heading), estimate_type, contract_type, subtotal, total, markup/overhead/profit %, valid_until, description, notes, version badge. Edit: name*, estimate_type (select: 6 options), contract_type, markup/overhead/profit %, valid_until, description, notes. Status as Badge (read-only). Archive (soft delete).
 - **Invoice Detail** (`/invoices/[id]`) — View: invoice_number (heading), amount ($), invoice_date, due_date, notes. Edit: invoice_number, amount, dates, notes. Status as Badge (read-only). NO archive button (no deleted_at column).
 - **Contract Detail** (`/contracts/[id]`) — View: title (heading), contract_number, contract_type, contract_value ($), retention_pct, start/end dates, description, content. Edit: title, contract_number, contract_type (select: 8 options), contract_value, retention_pct, dates, description. Status as Badge (read-only). Archive (soft delete).
+- **Equipment Detail** (`/equipment/[id]`) — View: name, type, ownership, make/model/year, serial, daily rate, purchase price, location, notes. Status badge. Archive (soft delete).
+- **HR Detail** (`/hr/[id]`) — View: employee_number, employment_status, employment_type, department, position, wage, pay_type, emergency contact. Archive (soft delete).
+- **Contact Detail** (`/contacts/[id]`) — View: name, title, email, phone, is_primary badge. NO archive (no deleted_at).
+- **Warranty Detail** (`/warranties/[id]`) — View: title, warranty_type, status, dates, coverage, exclusions, contact info. Archive (soft delete).
+- **Email Marketing Detail** (`/email-marketing/[id]`) — View: name, campaign_type, status, channel, budget/spend, performance metrics (leads/conversions/revenue). NO archive (no deleted_at).
+- **Inventory Detail** (`/inventory/[id]`) — View: name, SKU, category, unit, cost, reorder info. Archive (soft delete).
+- **Assembly Detail** (`/library/assemblies/[id]`) — View: name, category, parameter_unit, is_active, description. Archive (soft delete).
+- **Template Detail** (`/library/templates/[id]`) — View: name, contract_type, is_active/is_system badges, content in `<pre>` block. NO archive.
+- **Cost Code Detail** (`/cost-codes/[id]`) — View: code (mono), name, division, subdivision, category (color badge), trade, description. Edit: all fields. Archive (soft delete).
+
+### Top-Level Nav Pages (2026-02-24, batch 8)
+All sidebar links now resolve — zero 404s:
+- **Schedule** (`/schedule`) — SSR, queries jobs, links to `/jobs/[id]/schedule`
+- **Daily Logs** (`/daily-logs`) — SSR, queries `daily_logs` joined with `jobs`
+- **Photos** (`/photos`) — Static placeholder, links to jobs
+- **Purchase Orders** (`/purchase-orders`) — SSR, queries `purchase_orders`, search, links to job-level POs
+- **Draws** (`/draws`) — SSR, queries `draw_requests` joined with `jobs`, search
+- **Change Orders** (`/change-orders`) — SSR, queries `change_orders`, search
+- **Reports** (`/reports`) — Hub with 4 report type cards (Cash Flow, Profitability, Budget vs Actual, WIP)
+- **Files** (`/files`) — Placeholder, links to jobs
+- **Settings** (`/settings`) — Redirect to `/settings/general`
+- **Accounting** (`/accounting`) — Hub with 4 cards (GL, AP, AR, Bank Reconciliation)
+- **Final Docs** (`/final-docs`) — Hub with Warranties + As-Built Documents links
+
+### Bug Fixes (2026-02-24, batch 8)
+- **Dashboard** — Fixed `.from('draws')` → `.from('draw_requests')` (table didn't exist)
+- **RLS policies** — Fixed 56 tables using broken `current_setting('app.current_company_id')` pattern. Created `get_user_company_id()` SECURITY DEFINER function. All tables now use `company_id = get_user_company_id()` for SELECT/INSERT/UPDATE/DELETE policies.
 
 ### List Pages — Clickable Rows (2026-02-24, batch 7)
 All list rows updated from `<div>` to `<Link>` for navigation to detail pages:

@@ -1,5 +1,114 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Nav Completeness + Bug Fixes + Cost Codes CRUD (2026-02-24)
+
+### Browser-Verified Pages (75+ pages tested, zero errors)
+
+**Top-Level Nav Pages**
+| Page | Result |
+|------|--------|
+| /dashboard | Pending Draws stat works after `draw_requests` fix |
+| /schedule | Shows jobs with links to job schedule |
+| /daily-logs | Empty state with "Go to Jobs" link |
+| /photos | Placeholder with Camera icon |
+| /purchase-orders | Search + empty state |
+| /draws | Search + empty state |
+| /change-orders | Search + empty state |
+| /reports | Hub with 4 report cards |
+| /files | Placeholder with FolderOpen icon |
+| /settings | Redirects to /settings/general |
+| /accounting | Hub with 4 accounting cards |
+| /final-docs | Hub with Warranties + As-Built links |
+
+**Financial Module (all 9 pages)**
+| /financial/dashboard | Stats cards with real counts, quick nav links |
+| /financial/chart-of-accounts | Loads correctly |
+| /financial/receivables | $0.00 outstanding, search, "New Invoice" button |
+| /financial/payables | $0.00 outstanding, search, "New Bill" button |
+| /financial/journal-entries | 0 entries, search, "New Entry" button |
+| /financial/bank-reconciliation | 3 stat cards (total/open/closed periods) |
+| /financial/cash-flow | AR/AP/Net Position stats, forecast placeholder |
+| /financial/profitability | Shows Smith Residence $450k, margin analysis |
+| /financial/business-management | Jobs/GL/periods stats |
+| /financial/job-close | Shows Smith Residence pending closeout |
+
+**Settings Module (all 7 pages)**
+| /settings/general | Company profile, color picker, subscription info |
+| /settings/features | 19 feature toggles in 5 categories with plan gates |
+| /settings/terminology | 44 customizable terms with override fields |
+| /settings/numbering | 8 entity types with pattern + live preview |
+| /settings/phases | Project phase configuration (empty state) |
+| /settings/users | Shows Jake Ross as Owner, role/status filters |
+| /settings/roles | System roles + custom roles with "Create Custom Role" |
+
+**Operations Module (all 3 pages)**
+| /operations/calendar | Stats cards, upcoming tasks |
+| /operations/crew-schedule | Shows Mike Johnson, EMP-001, $28.50/hr |
+| /operations/deliveries | Stats cards, recent deliveries |
+
+**Compliance Module (all 4 pages)**
+| /compliance/safety | Incidents + Inspections tabs |
+| /compliance/insurance | Policy tracking, search |
+| /compliance/licenses | Certification tracking |
+| /compliance/lien-law | Lien waiver compliance tracking |
+
+**Library Module (all 3 pages)**
+| /library/selections | Category management |
+| /library/assemblies | List + "New Assembly" link wired |
+| /library/templates | Contract/RFI/lien waiver templates |
+
+**CRUD Pages (create + detail verified)**
+| /clients/new | Created "Johnson Family" successfully |
+| /clients/[id] | Shows contact info, edit/archive buttons |
+| /vendors/new | Created "ABC Plumbing Co" successfully |
+| /vendors (list) | Shows both vendors with clickable rows |
+| /cost-codes/new | Created "01-100 General Conditions" successfully |
+| /cost-codes/[id] | Detail view, category badge, edit/archive |
+
+**Other Top-Level Pages**
+| /leads | Status filter tabs (7), shows John Smith lead |
+| /punch-lists | Status filter tabs (5), company-wide view |
+| /proposals | Shows Smith Kitchen Remodel draft |
+| /time-clock | Clock In button, recent entries |
+| /hr | Shows Mike Johnson, departments section |
+| /equipment | Status tabs (5), shows CAT 320 Excavator |
+| /inventory | Search + "Add Item" link wired |
+| /contacts | Shows Bob Miller with detail link |
+| /warranties | Status tabs (5) |
+| /integrations | Search + empty state |
+| /dashboards | Custom dashboards, "New Dashboard" button |
+| /pre-construction | Shows Smith Residence in pre_construction |
+| /post-build | Warranty + maintenance sections |
+| /legal | Template management |
+| /email-marketing | Shows "Spring Remodel Special" campaign |
+
+**Job Sub-Pages (22 tabs, all verified)**
+| /jobs/[id]/budget | Summary cards ($0.00), "Add Line" not wired |
+| /jobs/[id]/schedule | Heading + empty state |
+| /jobs/[id]/daily-logs | Heading + empty state |
+| /jobs/[id]/change-orders | Heading + stats + empty state |
+| /jobs/[id]/team | Heading + empty state |
+| /jobs/[id]/punch-list | Heading + stats + empty state |
+| /jobs/[id]/invoices | Status tabs (4), stats |
+| /jobs/[id]/permits | Stats + "Add Permit" button |
+
+### Bugs Found & Fixed
+| Bug | Fix | Commit |
+|-----|-----|--------|
+| Dashboard `.from('draws')` — table doesn't exist | Changed to `.from('draw_requests')` | 12aa4a1 |
+| 56 RLS policies using broken `current_setting()` | Created `get_user_company_id()` SECURITY DEFINER | (earlier session) |
+| /final-docs page missing (404) | Created hub page | 1b3eff3 |
+| Cost codes missing /new and /[id] | Created both CRUD pages | 12aa4a1 |
+
+### Known Unwired Buttons (Placeholder Only)
+- Budget "Add Line" — server component, no onClick handler
+- Punch Lists "Add Item" — needs client component
+- Dashboards "New Dashboard" — needs implementation
+- Selections "Add Category" — needs implementation
+- Chart of Accounts "Add Account" — needs implementation
+
+---
+
 ## UI Wiring Validation (2026-02-24)
 
 ### Authenticated Pages — Type Check
