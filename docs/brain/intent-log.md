@@ -37,6 +37,17 @@ All 52 modules pass acceptance tests, all migrations applied. The remaining work
 23. **Updated 25 nav links** — All non-Intelligence skeleton links migrated to authenticated routes. Only 11 Intelligence items remain on skeleton.
 24. **Total authenticated pages: 63** — Every data-backed nav route now has a real SSR page
 
+### What was done (batch 5 — job sub-pages)
+25. **Created 11 job sub-pages** — Selections, Time Clock, Photos, Permits, Inspections, Inventory, Invoices, Submittals, Communications, Team, Warranties — all SSR with real Supabase queries
+26. **Expanded job layout** — From 7 tabs to 22 tabs covering every job-level feature
+27. **Fixed project_user_roles interface** — Fields are role_id/role_override/granted_by/created_at (not role_name/assigned_at/is_active)
+
+### What was done (batch 6 — CRUD create forms)
+28. **Created 14 create form pages** — clients, leads, vendors, estimates, invoices, contracts, employees, equipment, inventory items, assemblies, templates, contacts, warranties, marketing campaigns
+29. **Wired 13 list page Add buttons** — All list pages now link their Add buttons to `/new` routes via `<Link>` components
+30. **Entity selector pattern** — Invoices/contracts/contacts/warranties use useEffect to load related entities (jobs, vendors, clients) into `<select>` dropdowns
+31. **Total: 15 create form pages** (including pre-existing `/jobs/new`), **89 total authenticated pages**
+
 ### Key decisions
 - Used SSR pattern (server component + direct Supabase) instead of client-side React Query for list pages. Matches existing `/jobs/page.tsx` pattern.
 - React Query hooks created for client-side mutations and future interactive features

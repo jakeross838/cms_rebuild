@@ -67,6 +67,37 @@
 - **Dashboards** (`/dashboards`) — SSR, queries `custom_reports`, visualization type badges
 - **Email Marketing** (`/email-marketing`) — SSR, queries `marketing_campaigns`, spend/leads/revenue metrics, ROI
 
+### Job Sub-Pages (2026-02-24, batch 5)
+- **Job Layout** (`/jobs/[id]/layout.tsx`) — 22 tabs: Overview, Selections, Budget, Schedule, Daily Logs, Time, Photos, Permits, Inspections, Change Orders, POs, Inventory, Invoices, Draws, Liens, Docs, RFIs, Submittals, Comms, Team, Punch, Warranties
+- **Selections** (`/jobs/[id]/selections`) — SSR, queries `selections` by job_id
+- **Time Clock** (`/jobs/[id]/time-clock`) — SSR, queries `time_entries` by job_id
+- **Photos** (`/jobs/[id]/photos`) — SSR, queries `documents` filtered by job_id + `mime_type LIKE 'image/%'`, grid layout
+- **Permits** (`/jobs/[id]/permits`) — SSR, queries `permits` by job_id
+- **Inspections** (`/jobs/[id]/inspections`) — SSR, queries `permit_inspections` by job_id
+- **Inventory** (`/jobs/[id]/inventory`) — SSR, queries `inventory_transactions` by job_id, then `inventory_items` by collected item_ids
+- **Invoices** (`/jobs/[id]/invoices`) — SSR, queries `invoices` by job_id, status filter with enum cast
+- **Submittals** (`/jobs/[id]/submittals`) — SSR, queries `vendor_submissions` by job_id
+- **Communications** (`/jobs/[id]/communications`) — SSR, queries `client_messages` by job_id
+- **Team** (`/jobs/[id]/team`) — SSR, queries `project_user_roles` by job_id (role_id, role_override, granted_by, created_at)
+- **Warranties** (`/jobs/[id]/warranties`) — SSR, queries `warranties` by job_id
+
+### Create Form Pages (2026-02-24, batch 6)
+All create forms follow the pattern: `'use client'`, useState for form/loading/error, getUser → company_id → insert → router.push + refresh.
+- **New Client** (`/clients/new`) — name*, email, phone, address, city, state (US_STATES select), zip, notes
+- **New Lead** (`/leads/new`) — first_name*, last_name*, email, phone, company_name, project_type, estimated_value, notes. Status defaults to 'new'
+- **New Vendor** (`/vendors/new`) — name*, trade, email, phone, address, city, state (US_STATES select), zip, notes
+- **New Estimate** (`/estimates/new`) — name*, estimate_type (detailed/budget/conceptual/unit_price), description, markup/overhead/profit %, valid_until, notes. Status defaults to 'draft'
+- **New Invoice** (`/invoices/new`) — invoice_number, amount*, invoice_date, due_date, job selector, vendor selector, notes. Status defaults to 'draft'. Loads jobs/vendors via useEffect
+- **New Contract** (`/contracts/new`) — title*, contract_number*, contract_type (fixed_price/cost_plus/time_materials/unit_price/subcontract), contract_value, description, job selector, client selector, start/end dates. Status defaults to 'draft'. Loads jobs/clients via useEffect
+- **New Employee** (`/hr/new`) — first_name*, last_name*, employee_number*, hire_date*, employment_type, pay_type, base_wage, address, emergency contact, notes. Status defaults to 'active'
+- **New Equipment** (`/equipment/new`) — name*, equipment_type (tool/vehicle/heavy_equipment/trailer/generator/other), ownership_type (owned/leased/rented), make, model, year, serial_number, daily_rate, purchase_price, location, notes. Status defaults to 'available'
+- **New Inventory Item** (`/inventory/new`) — name*, sku, category, unit_of_measure (11 options), unit_cost, reorder_point, reorder_quantity, description. is_active defaults to true
+- **New Assembly** (`/library/assemblies/new`) — name*, category, parameter_unit, description. is_active defaults to true
+- **New Template** (`/library/templates/new`) — name*, contract_type (5 options), description, content (monospace textarea for template body with {{variables}}). is_active=true, is_system=false
+- **New Campaign** (`/email-marketing/new`) — name*, campaign_type (email/social/direct_mail/referral/event/digital_ad), channel, budget, start/end dates, target_audience, description, notes. Status defaults to 'draft', counters default to 0
+- **New Contact** (`/contacts/new`) — name*, title, email, phone, vendor selector (required), is_primary checkbox. Loads vendors via useEffect
+- **New Warranty** (`/warranties/new`) — title*, warranty_type (manufacturer/workmanship/structural/extended/home_warranty), job selector (required), vendor selector, start/end dates (required), coverage_details, exclusions, contact info. Status defaults to 'active'. Loads jobs/vendors via useEffect
+
 ### Navigation Config Updates
 | Route | Old Path | New Path |
 |-------|----------|----------|

@@ -26,6 +26,14 @@ All new SSR pages pass `npx tsc --noEmit`:
 - `estimates` has no `estimate_number` field. Uses `name` + `total` (not `total_amount`)
 - Job status enum: `pre_construction | active | on_hold | completed | warranty | cancelled` — no `closed`, `closeout`, `lead`, `estimating`, `proposal`, `pending`
 
+### Key Schema Mismatches Found & Fixed (Batch 5 — Job Sub-Pages)
+- `project_user_roles`: No `role_name`/`assigned_at`/`is_active`. Has `role_id`/`role_override`/`granted_by`/`created_at`
+
+### Batch 6 — Create Forms Type-Checked Clean
+All 14 new create form pages pass `npx tsc --noEmit`:
+- Simple forms: clients, leads, vendors, estimates, employees, equipment, inventory, assemblies, templates, campaigns
+- Entity selector forms: invoices (jobs/vendors), contracts (jobs/clients), contacts (vendors), warranties (jobs/vendors)
+
 ### Key Schema Mismatches Found & Fixed (Earlier)
 - `jobs.description` → `jobs.notes` (DB field name differs)
 - `jobs.project_type`, `sqft_*`, `bedrooms`, `bathrooms`, `stories` → don't exist in DB yet
