@@ -1,32 +1,123 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import { FolderOpen, FileText, FileImage, File } from 'lucide-react'
 
-import { FolderOpen } from 'lucide-react'
+interface Document {
+  id: string
+  filename: string
+  mime_type: string | null
+  file_size: number | null
+  document_type: string | null
+  status: string | null
+  created_at: string | null
+}
 
-export default async function FilesPage() {
+function formatFileSize(bytes: number | null): string {
+  if (!bytes) return '—'
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getFileIcon(mimeType: string | null) {
+  if (!mimeType) return File
+  if (mimeType.startsWith('image/')) return FileImage
+  return FileText
+}
+
+export default async function FilesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; type?: string }>
+}) {
+  const params = await searchParams
+  const supabase = await createClient()
+
+  let query = supabase
+    .from('documents')
+    .select('id, filename, mime_type, file_size, document_type, status, created_at')
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (params.search) {
+    query = query.ilike('filename', `%${params.search}%`)
+  }
+  if (params.type) {
+    query = query.eq('document_type', params.type)
+  }
+
+  const { data } = await query
+  const documents = (data ?? []) as unknown as Document[]
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Files & Documents</h1>
-        <p className="text-muted-foreground">Company-wide document storage</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Files &amp; Documents</h1>
+          <p className="text-muted-foreground">Company-wide document storage</p>
+        </div>
+        <span className="text-sm text-muted-foreground">{documents.length} file{documents.length !== 1 ? 's' : ''}</span>
       </div>
 
-      {/* Empty state */}
-      <div className="bg-card rounded-lg border border-border overflow-hidden">
-        <div className="text-center py-12">
-          <FolderOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No files uploaded yet</h3>
-          <p className="text-muted-foreground mb-4">
-            Upload files from within a job or use the document storage system
-          </p>
-          <Link
-            href="/jobs"
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            Go to Jobs
-          </Link>
+      {documents.length === 0 ? (
+        <div className="bg-card rounded-lg border border-border overflow-hidden">
+          <div className="text-center py-12">
+            <FolderOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+            <h3 className="text-lg font-medium text-foreground mb-1">No files uploaded yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Upload files from within a job or use the document storage system
+            </p>
+            <Link
+              href="/jobs"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Go to Jobs
+            </Link>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-card rounded-lg border border-border overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border bg-muted/50">
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Name</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Type</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Size</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
+                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Uploaded</th>
+              </tr>
+            </thead>
+            <tbody>
+              {documents.map((doc) => {
+                const Icon = getFileIcon(doc.mime_type)
+                return (
+                  <tr key={doc.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                    <td className="p-3">
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">{doc.filename}</span>
+                      </div>
+                    </td>
+                    <td className="p-3 text-sm text-muted-foreground">{doc.document_type ?? '—'}</td>
+                    <td className="p-3 text-sm text-muted-foreground">{formatFileSize(doc.file_size)}</td>
+                    <td className="p-3">
+                      {doc.status && (
+                        <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                          {doc.status}
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-3 text-sm text-muted-foreground">
+                      {doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '—'}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
