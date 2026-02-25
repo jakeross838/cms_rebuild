@@ -54,7 +54,7 @@ export const companyNav: NavItem[] = [
   {
     label: 'Dashboard',
     icon: LayoutDashboard,
-    href: '/skeleton',
+    href: '/dashboard',
   },
   {
     label: 'Sales',
@@ -77,7 +77,7 @@ export const companyNav: NavItem[] = [
   {
     label: 'Jobs',
     icon: Briefcase,
-    href: '/skeleton/jobs',
+    href: '/jobs',
   },
 ]
 
@@ -149,9 +149,9 @@ export const companyRightNav: NavItem[] = [
     label: 'Directory',
     icon: Users,
     items: [
-      { name: 'Clients', href: '/skeleton/directory/clients', description: 'Client profiles & intelligence' },
-      { name: 'Vendors', href: '/skeleton/directory/vendors', description: 'Subs & suppliers' },
-      { name: 'Team', href: '/skeleton/directory/team', description: 'Employees & roles' },
+      { name: 'Clients', href: '/clients', description: 'Client profiles & intelligence' },
+      { name: 'Vendors', href: '/vendors', description: 'Subs & suppliers' },
+      { name: 'Team', href: '/settings/users', description: 'Employees & roles' },
       { name: 'Contacts', href: '/skeleton/directory/contacts', description: 'Other contacts' },
       { name: 'HR & Workforce', href: '/skeleton/directory/hr', description: 'Org chart, hiring, training, reviews' },
     ],
@@ -162,7 +162,7 @@ export const companyRightNav: NavItem[] = [
     items: [
       { name: 'Selections Catalog', href: '/skeleton/library/selections', description: 'Products & materials' },
       { name: 'Assemblies', href: '/skeleton/library/assemblies', description: 'Estimate templates' },
-      { name: 'Cost Codes', href: '/skeleton/library/cost-codes', description: 'Budget categories' },
+      { name: 'Cost Codes', href: '/cost-codes', description: 'Budget categories' },
       { name: 'Templates', href: '/skeleton/library/templates', description: 'Standard forms' },
     ],
   },
@@ -170,8 +170,8 @@ export const companyRightNav: NavItem[] = [
     label: 'Settings',
     icon: Settings,
     items: [
-      { name: 'Settings', href: '/skeleton/company/settings', description: 'Configuration' },
-      { name: 'Features', href: '/skeleton/company/features', description: 'Toggle 467 capabilities' },
+      { name: 'Settings', href: '/settings/general', description: 'Configuration' },
+      { name: 'Features', href: '/settings/features', description: 'Toggle 467 capabilities' },
       { name: 'Integrations', href: '/skeleton/company/integrations', description: 'QuickBooks, Stripe' },
       { name: 'Insurance', href: '/skeleton/compliance/insurance', description: 'COIs & policies' },
       { name: 'Licenses', href: '/skeleton/compliance/licenses', description: 'Contractor licenses' },
@@ -190,12 +190,12 @@ export const jobNav: NavItem[] = [
   {
     label: '← Company',
     icon: ArrowLeft,
-    href: '/skeleton/jobs',
+    href: '/jobs',
   },
   {
     label: 'Overview',
     icon: LayoutDashboard,
-    href: '', // resolved to /skeleton/jobs/[id]
+    href: '', // resolved to /jobs/[id]
   },
 ]
 

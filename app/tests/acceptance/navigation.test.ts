@@ -28,9 +28,9 @@ describe('Navigation Plan Adherence', () => {
       ])
     })
 
-    test('Dashboard is a direct link to /skeleton', () => {
+    test('Dashboard is a direct link to /dashboard', () => {
       const dashboard = companyNav.find((i) => i.label === 'Dashboard')!
-      expect(dashboard.href).toBe('/skeleton')
+      expect(dashboard.href).toBe('/dashboard')
       expect(dashboard.items).toBeUndefined()
     })
 
@@ -56,9 +56,9 @@ describe('Navigation Plan Adherence', () => {
       ])
     })
 
-    test('Jobs is a direct link to /skeleton/jobs', () => {
+    test('Jobs is a direct link to /jobs', () => {
       const jobs = companyNav.find((i) => i.label === 'Jobs')!
-      expect(jobs.href).toBe('/skeleton/jobs')
+      expect(jobs.href).toBe('/jobs')
       expect(jobs.items).toBeUndefined()
     })
   })
@@ -164,9 +164,9 @@ describe('Navigation Plan Adherence', () => {
       expect(jobNav.map((i) => i.label)).toEqual(['← Company', 'Overview'])
     })
 
-    test('← Company links back to /skeleton/jobs', () => {
+    test('← Company links back to /jobs', () => {
       const back = jobNav.find((i) => i.label === '← Company')!
-      expect(back.href).toBe('/skeleton/jobs')
+      expect(back.href).toBe('/jobs')
     })
 
     test('Overview is a direct link (empty href, resolved to job base)', () => {
@@ -305,13 +305,13 @@ describe('Navigation Plan Adherence', () => {
       }
     })
 
-    test('company hrefs are absolute (start with /skeleton)', () => {
+    test('company hrefs are absolute (start with /)', () => {
       const companyItems = [...companyNav, ...companyJobNav, ...companyRightNav]
       for (const item of companyItems) {
         if (item.items) {
           for (const sub of item.items) {
-            expect(sub.href, `${item.label} > ${sub.name} should start with /skeleton`).toMatch(
-              /^\/skeleton/
+            expect(sub.href, `${item.label} > ${sub.name} should start with /`).toMatch(
+              /^\//
             )
           }
         }
