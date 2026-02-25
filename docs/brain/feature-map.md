@@ -27,6 +27,15 @@
 - **Clients** (`/clients`) — SSR, queries `clients` table joined with `jobs(id)`, search by name/email, shows job count
 - **Vendors** (`/vendors`) — SSR, queries `vendors` table, search by name, filter by trade, shows active/inactive badge
 - **Cost Codes** (`/cost-codes`) — SSR, queries `cost_codes` table, search by code/name, filter by category, category color badges
+- **Leads** (`/leads`) — SSR, queries `leads` table, status filter + search, pipeline scoring display
+- **Estimates** (`/estimates`) — SSR, queries `estimates` joined with `jobs`, status filter, version display
+- **Contracts** (`/contracts`) — SSR, queries `contracts` joined with `jobs`, status filter, contract value
+- **Invoices** (`/invoices`) — SSR, queries `invoices` joined with `jobs`, status filter, outstanding total
+- **Warranties** (`/warranties`) — SSR, queries `warranties`, status filter, date range display
+- **Equipment** (`/equipment`) — SSR, queries `equipment`, status filter, daily rate + value display
+- **Chart of Accounts** (`/financial/chart-of-accounts`) — SSR, queries `gl_accounts`, account table with type/balance
+- **Receivables** (`/financial/receivables`) — SSR, queries `ar_invoices`, outstanding + overdue totals
+- **Time Clock** (`/time-clock`) — SSR, queries `time_entries`, regular + overtime hours display
 
 ### Navigation Config Updates
 | Route | Old Path | New Path |
@@ -40,6 +49,14 @@
 | Features | /skeleton/company/features | /settings/features |
 | Team | /skeleton/directory/team | /settings/users |
 | Job Back Link | /skeleton/jobs | /jobs |
+| Leads | /skeleton/leads | /leads |
+| Estimates | /skeleton/estimates | /estimates |
+| Contracts | /skeleton/contracts | /contracts |
+| Equipment | /skeleton/operations/equipment | /equipment |
+| Warranties | /skeleton/warranties | /warranties |
+| Time Clock | /skeleton/operations/time-clock | /time-clock |
+| Chart of Accounts | /skeleton/financial/chart-of-accounts | /financial/chart-of-accounts |
+| Receivables | /skeleton/financial/receivables | /financial/receivables |
 
 ---
 
