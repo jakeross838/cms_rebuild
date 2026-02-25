@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Palette } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -44,7 +46,7 @@ export default async function JobSelectionsPage({
           <h1 className="text-2xl font-bold text-foreground">Selections</h1>
           <p className="text-muted-foreground">{selections.length} selections &bull; {confirmed} confirmed &bull; {pending} pending</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Selection</Button>
+        <Link href={`/jobs/${jobId}/selections/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Selection</Button></Link>
       </div>
 
       <Card>

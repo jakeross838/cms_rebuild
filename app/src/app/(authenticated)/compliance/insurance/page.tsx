@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Shield } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -56,7 +58,7 @@ export default async function InsurancePage({
             {insurance.length} policies &bull; {expired} expired &bull; {expiringSoon} expiring soon
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Policy</Button>
+        <Link href="/compliance/insurance/new"><Button><Plus className="h-4 w-4 mr-2" />Add Policy</Button></Link>
       </div>
 
       <div className="relative max-w-md">

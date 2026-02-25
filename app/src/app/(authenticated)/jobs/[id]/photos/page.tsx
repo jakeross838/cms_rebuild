@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Image } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -43,7 +45,7 @@ export default async function JobPhotosPage({
           <h1 className="text-2xl font-bold text-foreground">Photos</h1>
           <p className="text-muted-foreground">{photos.length} photos</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Upload Photo</Button>
+        <Link href={`/jobs/${jobId}/photos/new`}><Button><Plus className="h-4 w-4 mr-2" />Upload Photo</Button></Link>
       </div>
 
       {photos.length > 0 ? (

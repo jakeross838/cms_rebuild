@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, FileCheck, Scale } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -50,7 +52,7 @@ export default async function LegalCompliancePage({
           <h1 className="text-2xl font-bold text-foreground">Legal & Compliance</h1>
           <p className="text-muted-foreground">{templates.length} templates &bull; {trackingCount ?? 0} lien tracking records</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Template</Button>
+        <Link href="/legal/new"><Button><Plus className="h-4 w-4 mr-2" />New Template</Button></Link>
       </div>
 
       <div className="relative max-w-md">

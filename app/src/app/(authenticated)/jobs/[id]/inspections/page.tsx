@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, ClipboardCheck } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -50,7 +52,7 @@ export default async function JobInspectionsPage({
             {inspections.length} inspections &bull; {scheduled} scheduled &bull; {passed} passed &bull; {failed} failed
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Schedule Inspection</Button>
+        <Link href={`/jobs/${jobId}/inspections/new`}><Button><Plus className="h-4 w-4 mr-2" />Schedule Inspection</Button></Link>
       </div>
 
       <Card>

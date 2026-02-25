@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Shield } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -43,7 +45,7 @@ export default async function JobWarrantiesPage({
           <h1 className="text-2xl font-bold text-foreground">Warranties</h1>
           <p className="text-muted-foreground">{warranties.length} warranties &bull; {active} active &bull; {expired} expired</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Warranty</Button>
+        <Link href={`/jobs/${jobId}/warranties/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Warranty</Button></Link>
       </div>
 
       <Card>

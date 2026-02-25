@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, BarChart3 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -47,7 +49,7 @@ export default async function DashboardsPage({
           <h1 className="text-2xl font-bold text-foreground">Custom Dashboards</h1>
           <p className="text-muted-foreground">{reports.length} custom reports & dashboards</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Dashboard</Button>
+        <Link href="/dashboards/new"><Button><Plus className="h-4 w-4 mr-2" />New Dashboard</Button></Link>
       </div>
 
       <div className="relative max-w-md">

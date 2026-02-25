@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Package } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -51,7 +53,7 @@ export default async function JobInventoryPage({
           <h1 className="text-2xl font-bold text-foreground">Job Inventory</h1>
           <p className="text-muted-foreground">{items.length} items &bull; {transactions.length} transactions</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Material</Button>
+        <Link href={`/jobs/${jobId}/inventory/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Material</Button></Link>
       </div>
 
       <Card>

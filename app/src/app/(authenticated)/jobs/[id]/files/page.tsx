@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, FolderOpen, FileText, Image, File } from 'lucide-react'
@@ -64,10 +65,10 @@ export default async function FilesPage({
           <h2 className="text-xl font-bold text-foreground">Documents</h2>
           <p className="text-sm text-muted-foreground">{documents.length} files</p>
         </div>
-        <Button>
+        <Link href={`/jobs/${id}/files/new`}><Button>
           <Plus className="h-4 w-4 mr-2" />
           Upload
-        </Button>
+        </Button></Link>
       </div>
 
       {/* File list */}

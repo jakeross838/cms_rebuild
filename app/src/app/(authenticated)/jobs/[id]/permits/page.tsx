@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, FileCheck } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -47,7 +49,7 @@ export default async function JobPermitsPage({
           <h1 className="text-2xl font-bold text-foreground">Permits</h1>
           <p className="text-muted-foreground">{permits.length} permits &bull; {active} active &bull; {pending} pending</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Permit</Button>
+        <Link href={`/jobs/${jobId}/permits/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Permit</Button></Link>
       </div>
 
       <Card>

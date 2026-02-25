@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, Shield } from 'lucide-react'
@@ -55,10 +56,10 @@ export default async function LienWaiversPage({
           <h2 className="text-xl font-bold text-foreground">Lien Waivers</h2>
           <p className="text-sm text-muted-foreground">{waivers.length} waivers</p>
         </div>
-        <Button>
+        <Link href={`/jobs/${id}/lien-waivers/new`}><Button>
           <Plus className="h-4 w-4 mr-2" />
           Request Waiver
-        </Button>
+        </Button></Link>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

@@ -65,7 +65,7 @@ export default async function PunchListsPage({
           <h1 className="text-2xl font-bold text-foreground">Punch Lists</h1>
           <p className="text-muted-foreground">{items.length} items • {open} open • {completed} completed</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Item</Button>
+        <Link href="/punch-lists/new"><Button><Plus className="h-4 w-4 mr-2" />Add Item</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">

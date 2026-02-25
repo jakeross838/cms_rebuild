@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Send } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -48,7 +50,7 @@ export default async function JobSubmittalsPage({
           <h1 className="text-2xl font-bold text-foreground">Submittals</h1>
           <p className="text-muted-foreground">{submittals.length} submittals &bull; {pending} pending &bull; {approved} approved</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Submittal</Button>
+        <Link href={`/jobs/${jobId}/submittals/new`}><Button><Plus className="h-4 w-4 mr-2" />New Submittal</Button></Link>
       </div>
 
       <Card>

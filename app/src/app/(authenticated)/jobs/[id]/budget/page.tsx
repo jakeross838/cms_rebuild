@@ -69,10 +69,10 @@ export default async function BudgetPage({
           <h2 className="text-xl font-bold text-foreground">Budget</h2>
           <p className="text-sm text-muted-foreground">{lines.length} line items</p>
         </div>
-        <Button>
+        <Link href={`/jobs/${id}/budget/new`}><Button>
           <Plus className="h-4 w-4 mr-2" />
           Add Line
-        </Button>
+        </Button></Link>
       </div>
 
       {/* Summary cards */}

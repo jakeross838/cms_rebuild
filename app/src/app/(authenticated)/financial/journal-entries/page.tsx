@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, BookOpen } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -44,7 +46,7 @@ export default async function JournalEntriesPage({
           <h1 className="text-2xl font-bold text-foreground">Journal Entries</h1>
           <p className="text-muted-foreground">{entries.length} entries</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Entry</Button>
+        <Link href="/financial/journal-entries/new"><Button><Plus className="h-4 w-4 mr-2" />New Entry</Button></Link>
       </div>
 
       <div className="relative max-w-md">

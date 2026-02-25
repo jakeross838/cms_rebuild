@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, ArrowUpRight } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -49,7 +51,7 @@ export default async function PayablesPage({
           <h1 className="text-2xl font-bold text-foreground">Accounts Payable</h1>
           <p className="text-muted-foreground">{formatCurrency(totalOutstanding)} outstanding {overdue > 0 ? `• ${overdue} overdue` : ''}</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Bill</Button>
+        <Link href="/financial/payables/new"><Button><Plus className="h-4 w-4 mr-2" />New Bill</Button></Link>
       </div>
 
       <div className="relative max-w-md">

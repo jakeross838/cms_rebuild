@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Palette } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -55,7 +57,7 @@ export default async function SelectionsCatalogPage({
           <h1 className="text-2xl font-bold text-foreground">Selections Catalog</h1>
           <p className="text-muted-foreground">{categories.length} categories &bull; {optionCount ?? 0} options</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Category</Button>
+        <Link href="/library/selections/new"><Button><Plus className="h-4 w-4 mr-2" />Add Category</Button></Link>
       </div>
 
       <div className="relative max-w-md">

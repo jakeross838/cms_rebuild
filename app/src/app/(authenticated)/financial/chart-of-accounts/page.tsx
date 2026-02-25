@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Landmark } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -52,7 +54,7 @@ export default async function ChartOfAccountsPage({
           <h1 className="text-2xl font-bold text-foreground">Chart of Accounts</h1>
           <p className="text-muted-foreground">{accounts.length} accounts</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Account</Button>
+        <Link href="/financial/chart-of-accounts/new"><Button><Plus className="h-4 w-4 mr-2" />Add Account</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">

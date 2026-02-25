@@ -52,7 +52,7 @@ export default async function TimeClockPage({
           <h1 className="text-2xl font-bold text-foreground">Time Clock</h1>
           <p className="text-muted-foreground">{entries.length} entries • {totalHours.toFixed(1)} hours total</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Clock In</Button>
+        <Link href="/time-clock/new"><Button><Plus className="h-4 w-4 mr-2" />Clock In</Button></Link>
       </div>
 
       <Card>

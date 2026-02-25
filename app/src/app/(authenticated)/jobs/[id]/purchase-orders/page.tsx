@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, ShoppingCart } from 'lucide-react'
@@ -55,10 +56,10 @@ export default async function PurchaseOrdersPage({
           <h2 className="text-xl font-bold text-foreground">Purchase Orders</h2>
           <p className="text-sm text-muted-foreground">{purchaseOrders.length} purchase orders</p>
         </div>
-        <Button>
+        <Link href={`/jobs/${id}/purchase-orders/new`}><Button>
           <Plus className="h-4 w-4 mr-2" />
           New PO
-        </Button>
+        </Button></Link>
       </div>
 
       {/* Summary */}

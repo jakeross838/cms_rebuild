@@ -68,7 +68,7 @@ export default async function SafetyPage({
             {incidents.length} incidents &bull; {inspections.length} inspections &bull; {oshaRecordable} OSHA recordable
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Report Incident</Button>
+        <Link href="/compliance/safety/new"><Button><Plus className="h-4 w-4 mr-2" />Report Incident</Button></Link>
       </div>
 
       <div className="flex gap-2">

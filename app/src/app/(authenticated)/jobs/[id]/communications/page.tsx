@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, MessageSquare } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -45,7 +47,7 @@ export default async function JobCommunicationsPage({
           <h1 className="text-2xl font-bold text-foreground">Communications</h1>
           <p className="text-muted-foreground">{messages.length} messages &bull; {unread} unread</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Message</Button>
+        <Link href={`/jobs/${jobId}/communications/new`}><Button><Plus className="h-4 w-4 mr-2" />New Message</Button></Link>
       </div>
 
       <Card>

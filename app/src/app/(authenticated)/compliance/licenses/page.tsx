@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Award } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -51,7 +53,7 @@ export default async function LicensesPage({
           <h1 className="text-2xl font-bold text-foreground">Licenses & Certifications</h1>
           <p className="text-muted-foreground">{certs.length} certifications &bull; {active} active &bull; {expired} expired</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Certification</Button>
+        <Link href="/compliance/licenses/new"><Button><Plus className="h-4 w-4 mr-2" />Add Certification</Button></Link>
       </div>
 
       <div className="relative max-w-md">

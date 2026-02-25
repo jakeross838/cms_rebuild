@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, Calendar, CheckCircle2 } from 'lucide-react'
@@ -65,10 +66,10 @@ export default async function SchedulePage({
           <h2 className="text-xl font-bold text-foreground">Schedule</h2>
           <p className="text-sm text-muted-foreground">{tasks.length} tasks</p>
         </div>
-        <Button>
+        <Link href={`/jobs/${id}/schedule/new`}><Button>
           <Plus className="h-4 w-4 mr-2" />
           Add Task
-        </Button>
+        </Button></Link>
       </div>
 
       {/* Summary */}
