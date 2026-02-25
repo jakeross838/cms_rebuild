@@ -23,10 +23,10 @@ export default function NewLeadPage() {
     last_name: '',
     email: '',
     phone: '',
-    company_name: '',
+    source: 'other',
+    source_detail: '',
     project_type: '',
-    estimated_value: '',
-    notes: '',
+    expected_contract_value: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -60,11 +60,11 @@ export default function NewLeadPage() {
           last_name: formData.last_name,
           email: formData.email || null,
           phone: formData.phone || null,
-          company_name: formData.company_name || null,
+          source: formData.source,
+          source_detail: formData.source_detail || null,
           project_type: formData.project_type || null,
-          estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
-          notes: formData.notes || null,
-          status: 'new' as const,
+          expected_contract_value: formData.expected_contract_value ? parseFloat(formData.expected_contract_value) : null,
+          status: 'new',
         })
 
       if (insertError) throw insertError
@@ -117,9 +117,22 @@ export default function NewLeadPage() {
                 <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder="(512) 555-0100" />
               </div>
             </div>
-            <div className="space-y-2">
-              <label htmlFor="company_name" className="text-sm font-medium">Company</label>
-              <Input id="company_name" name="company_name" value={formData.company_name} onChange={handleChange} placeholder="Smith Holdings LLC" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="source" className="text-sm font-medium">Lead Source</label>
+                <select id="source" name="source" value={formData.source} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                  <option value="other">Other</option>
+                  <option value="referral">Referral</option>
+                  <option value="website">Website</option>
+                  <option value="social_media">Social Media</option>
+                  <option value="walk_in">Walk-In</option>
+                  <option value="phone">Phone</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="source_detail" className="text-sm font-medium">Source Detail</label>
+                <Input id="source_detail" name="source_detail" value={formData.source_detail} onChange={handleChange} placeholder="Referred by Jane Doe" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -136,20 +149,13 @@ export default function NewLeadPage() {
                 <Input id="project_type" name="project_type" value={formData.project_type} onChange={handleChange} placeholder="e.g., Custom Home, Remodel" />
               </div>
               <div className="space-y-2">
-                <label htmlFor="estimated_value" className="text-sm font-medium">Estimated Value</label>
+                <label htmlFor="expected_contract_value" className="text-sm font-medium">Expected Contract Value</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input id="estimated_value" name="estimated_value" type="number" step="0.01" value={formData.estimated_value} onChange={handleChange} placeholder="0.00" className="pl-7" />
+                  <Input id="expected_contract_value" name="expected_contract_value" type="number" step="0.01" value={formData.expected_contract_value} onChange={handleChange} placeholder="0.00" className="pl-7" />
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
-          <CardContent>
-            <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} placeholder="How did they hear about you? What are their needs?" className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
           </CardContent>
         </Card>
 

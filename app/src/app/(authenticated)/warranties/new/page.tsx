@@ -27,7 +27,7 @@ export default function NewWarrantyPage() {
 
   const [formData, setFormData] = useState({
     title: '',
-    warranty_type: 'manufacturer',
+    warranty_type: 'general',
     job_id: '',
     vendor_id: '',
     start_date: '',
@@ -148,11 +148,15 @@ export default function NewWarrantyPage() {
               <div className="space-y-2">
                 <label htmlFor="warranty_type" className="text-sm font-medium">Type <span className="text-red-500">*</span></label>
                 <select id="warranty_type" name="warranty_type" value={formData.warranty_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="manufacturer">Manufacturer</option>
-                  <option value="workmanship">Workmanship</option>
+                  <option value="general">General</option>
                   <option value="structural">Structural</option>
-                  <option value="extended">Extended</option>
-                  <option value="home_warranty">Home Warranty</option>
+                  <option value="mechanical">Mechanical</option>
+                  <option value="electrical">Electrical</option>
+                  <option value="plumbing">Plumbing</option>
+                  <option value="hvac">HVAC</option>
+                  <option value="roofing">Roofing</option>
+                  <option value="appliance">Appliance</option>
+                  <option value="workmanship">Workmanship</option>
                 </select>
               </div>
             </div>

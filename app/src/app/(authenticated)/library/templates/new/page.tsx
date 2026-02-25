@@ -20,7 +20,7 @@ export default function NewTemplatePage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    contract_type: 'fixed_price',
+    contract_type: 'prime',
     description: '',
     content: '',
   })
@@ -99,11 +99,14 @@ export default function NewTemplatePage() {
               <div className="space-y-2">
                 <label htmlFor="contract_type" className="text-sm font-medium">Contract Type <span className="text-red-500">*</span></label>
                 <select id="contract_type" name="contract_type" value={formData.contract_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="fixed_price">Fixed Price</option>
-                  <option value="cost_plus">Cost Plus</option>
-                  <option value="time_materials">Time & Materials</option>
-                  <option value="unit_price">Unit Price</option>
+                  <option value="prime">Prime</option>
                   <option value="subcontract">Subcontract</option>
+                  <option value="purchase_order">Purchase Order</option>
+                  <option value="service_agreement">Service Agreement</option>
+                  <option value="change_order">Change Order</option>
+                  <option value="amendment">Amendment</option>
+                  <option value="nda">NDA</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
             </div>

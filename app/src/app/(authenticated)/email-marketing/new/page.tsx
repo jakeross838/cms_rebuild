@@ -115,10 +115,10 @@ export default function NewCampaignPage() {
                 <select id="campaign_type" name="campaign_type" value={formData.campaign_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   <option value="email">Email</option>
                   <option value="social">Social Media</option>
-                  <option value="direct_mail">Direct Mail</option>
+                  <option value="print">Print</option>
                   <option value="referral">Referral</option>
                   <option value="event">Event</option>
-                  <option value="digital_ad">Digital Ad</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
             </div>

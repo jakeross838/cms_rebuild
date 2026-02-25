@@ -20,7 +20,7 @@ export default function NewEquipmentPage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    equipment_type: 'tool',
+    equipment_type: 'power_tool',
     ownership_type: 'owned',
     make: '',
     model: '',
@@ -114,11 +114,13 @@ export default function NewEquipmentPage() {
               <div className="space-y-2">
                 <label htmlFor="equipment_type" className="text-sm font-medium">Type <span className="text-red-500">*</span></label>
                 <select id="equipment_type" name="equipment_type" value={formData.equipment_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="tool">Tool</option>
+                  <option value="heavy_machinery">Heavy Machinery</option>
                   <option value="vehicle">Vehicle</option>
-                  <option value="heavy_equipment">Heavy Equipment</option>
-                  <option value="trailer">Trailer</option>
-                  <option value="generator">Generator</option>
+                  <option value="power_tool">Power Tool</option>
+                  <option value="hand_tool">Hand Tool</option>
+                  <option value="scaffolding">Scaffolding</option>
+                  <option value="safety_equipment">Safety Equipment</option>
+                  <option value="measuring">Measuring</option>
                   <option value="other">Other</option>
                 </select>
               </div>

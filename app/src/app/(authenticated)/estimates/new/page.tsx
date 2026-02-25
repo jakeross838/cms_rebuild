@@ -20,7 +20,7 @@ export default function NewEstimatePage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    estimate_type: 'detailed',
+    estimate_type: 'lump_sum',
     description: '',
     markup_pct: '',
     overhead_pct: '',
@@ -106,10 +106,12 @@ export default function NewEstimatePage() {
               <div className="space-y-2">
                 <label htmlFor="estimate_type" className="text-sm font-medium">Type <span className="text-red-500">*</span></label>
                 <select id="estimate_type" name="estimate_type" value={formData.estimate_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="detailed">Detailed</option>
-                  <option value="budget">Budget</option>
-                  <option value="conceptual">Conceptual</option>
+                  <option value="lump_sum">Lump Sum</option>
+                  <option value="cost_plus">Cost Plus</option>
+                  <option value="time_and_materials">Time & Materials</option>
                   <option value="unit_price">Unit Price</option>
+                  <option value="gmp">GMP</option>
+                  <option value="design_build">Design Build</option>
                 </select>
               </div>
             </div>
