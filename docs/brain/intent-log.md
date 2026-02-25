@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: UI Wiring Phase — Core Pages Connected to Real Data
+
+### Why
+All 52 modules pass acceptance tests, all migrations applied. The remaining work is connecting skeleton pages (mock data) to real API endpoints. Started with the highest-impact pages.
+
+### What was done
+1. **Regenerated database types** — 267 tables, 154 type aliases (was 69), only 6 auth placeholders remain
+2. **Created 4 React Query hooks** — `useJobs`, `useClients`, `useVendors`, `useCostCodes` (CRUD + filters)
+3. **Created 3 new SSR pages** — `/clients`, `/vendors`, `/cost-codes` in `(authenticated)/` with real Supabase queries
+4. **Updated navigation config** — Dashboard, Jobs, Clients, Vendors, Cost Codes, Settings, Team now point to authenticated routes (not `/skeleton`)
+5. **Updated navigation tests** — Structural rule changed from "starts with /skeleton" to "starts with /"
+
+### Key decisions
+- Used SSR pattern (server component + direct Supabase) instead of client-side React Query for list pages. Matches existing `/jobs/page.tsx` pattern.
+- React Query hooks created for client-side mutations and future interactive features
+- Pages match actual DB schema (not the richer schema in validation — some fields like `lead_source`, `portal_enabled` don't exist in DB yet)
+
+---
+
 ## 2026-02-24: All 52 Modules — Bulk Validation & Status Update
 
 ### Why

@@ -1,5 +1,34 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## UI Wiring — Core Authenticated Pages (2026-02-24)
+
+### React Query Hooks (app/src/hooks/)
+- **use-jobs.ts** — `useJobs(params)`, `useJob(id)`, `useCreateJob()`, `useUpdateJob(id)`, `useDeleteJob()` → `/api/v1/jobs`
+- **use-clients.ts** — `useClients(params)`, `useClient(id)`, `useCreateClient()`, `useUpdateClient(id)`, `useDeleteClient()` → `/api/v1/clients`
+- **use-vendors.ts** — `useVendors(params)`, `useVendor(id)`, `useCreateVendor()`, `useUpdateVendor(id)`, `useDeleteVendor()` → `/api/v1/vendors`
+- **use-cost-codes.ts** — `useCostCodes(params)`, `useCostCode(id)`, `useCreateCostCode()`, `useUpdateCostCode(id)`, `useDeleteCostCode()` → `/api/v1/cost-codes`
+- All use `fetchJson<T>` pattern with error handling, TanStack React Query, cache invalidation on mutations
+
+### Authenticated Pages (app/src/app/(authenticated)/)
+- **Clients** (`/clients`) — SSR, queries `clients` table joined with `jobs(id)`, search by name/email, shows job count
+- **Vendors** (`/vendors`) — SSR, queries `vendors` table, search by name, filter by trade, shows active/inactive badge
+- **Cost Codes** (`/cost-codes`) — SSR, queries `cost_codes` table, search by code/name, filter by category, category color badges
+
+### Navigation Config Updates
+| Route | Old Path | New Path |
+|-------|----------|----------|
+| Dashboard | /skeleton | /dashboard |
+| Jobs | /skeleton/jobs | /jobs |
+| Clients | /skeleton/directory/clients | /clients |
+| Vendors | /skeleton/directory/vendors | /vendors |
+| Cost Codes | /skeleton/library/cost-codes | /cost-codes |
+| Settings | /skeleton/company/settings | /settings/general |
+| Features | /skeleton/company/features | /settings/features |
+| Team | /skeleton/directory/team | /settings/users |
+| Job Back Link | /skeleton/jobs | /jobs |
+
+---
+
 ## Module 04: Navigation, Search & Dashboard (2026-02-24)
 
 ### Search API (`/api/v2/search`)
