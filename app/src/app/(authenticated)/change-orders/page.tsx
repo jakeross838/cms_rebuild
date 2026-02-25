@@ -1,8 +1,9 @@
 import Link from 'next/link'
 
-import { FileText, Search } from 'lucide-react'
+import { FileText, Plus, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
@@ -57,9 +58,17 @@ export default async function ChangeOrdersPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Change Orders</h1>
-        <p className="text-muted-foreground">Scope changes and budget adjustments across all jobs</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Change Orders</h1>
+          <p className="text-muted-foreground">Scope changes and budget adjustments across all jobs</p>
+        </div>
+        <Link href="/change-orders/new">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Change Order
+          </Button>
+        </Link>
       </div>
 
       {/* Search */}
@@ -87,7 +96,7 @@ export default async function ChangeOrdersPage({
               return (
                 <Link
                   key={co.id}
-                  href={`/jobs/${co.job_id}/change-orders`}
+                  href={`/change-orders/${co.id}`}
                   className="block p-4 hover:bg-accent transition-colors"
                 >
                   <div className="flex items-center justify-between">
@@ -141,13 +150,13 @@ export default async function ChangeOrdersPage({
             <p className="text-muted-foreground mb-4">
               {params.search
                 ? 'Try adjusting your search'
-                : 'Create change orders from within a job'}
+                : 'Create a change order to track scope changes'}
             </p>
             <Link
-              href="/jobs"
+              href="/change-orders/new"
               className="text-sm font-medium text-primary hover:underline"
             >
-              Go to Jobs
+              Create Change Order
             </Link>
           </div>
         )}

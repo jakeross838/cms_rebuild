@@ -1,5 +1,22 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Change Orders CRUD Pages
+
+### Why
+The change orders list page existed but had no way to create new change orders or view/edit individual records. Users could only see the list with links to job-level change orders. Needed full CRUD: create form, detail/edit page, and list page updates.
+
+### What was done
+1. **Created `/change-orders/new/page.tsx`** -- Client-side create form following the exact RFI `new` page pattern. Fields: co_number, title (required), description, change_type (select), amount, cost_impact, schedule_impact_days, job selector (required). Inserts with status='Draft', company_id from user profile, created_by from auth user.
+2. **Created `/change-orders/[id]/page.tsx`** -- Client-side detail/edit page following the exact RFI `[id]` page pattern. View mode shows all fields with status badge. Edit mode allows updating all fields plus status (Draft/Pending/Approved/Rejected). Archive via soft delete (deleted_at).
+3. **Updated `/change-orders/page.tsx`** -- Added "New Change Order" button, changed list row links from `/jobs/[id]/change-orders` to `/change-orders/[id]`, updated empty state to link to create page.
+
+### Key decisions
+- `co_number` is required NOT NULL in DB schema, so auto-generates `CO-{timestamp}` if user leaves it blank on create
+- Used `null` for nullable fields and `undefined` for non-nullable optional fields on update (matching Supabase generated types)
+- Followed RFI page patterns exactly: same imports, same Card/form layout, same error handling pattern `(err as Error)?.message`
+
+---
+
 ## 2026-02-25: Error Handling Fix + E2E Tests + Final List Wiring
 
 ### Why

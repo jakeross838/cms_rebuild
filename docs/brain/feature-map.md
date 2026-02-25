@@ -1,5 +1,27 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Change Orders CRUD Pages (2026-02-25)
+
+### Create Change Order (`/change-orders/new`)
+- **Form fields**: co_number (text), title (text, required), description (textarea), change_type (select: Addition/Deduction/Credit/Allowance), amount (number), cost_impact (number), schedule_impact_days (number)
+- **Job selector**: loads jobs from Supabase `jobs` table (non-deleted, ordered by name, limit 100)
+- **On submit**: validates title + job required, gets user profile for company_id, inserts into `change_orders` with status='Draft', redirects to `/change-orders`
+- **Error display**: inline red banner above form
+- **Cancel**: links back to `/change-orders`
+
+### Change Order Detail (`/change-orders/[id]`)
+- **View mode**: title with status badge (Draft=secondary, Pending=default, Approved=outline, Rejected=destructive), co_number, change_type, amount (currency), cost_impact (currency), schedule_impact_days, description, approval info (approved_at, client_approved)
+- **Edit mode**: same fields as create + status select (Draft/Pending/Approved/Rejected), save via `.update().eq('id', params.id)`
+- **Archive**: soft delete via `deleted_at = now()`, confirm dialog, redirects to `/change-orders`
+- **Back link**: `/change-orders`
+
+### Change Orders List (`/change-orders`) — Updated
+- Added "New Change Order" button linking to `/change-orders/new`
+- List rows now link to `/change-orders/[id]` (detail page) instead of `/jobs/[id]/change-orders`
+- Empty state links to `/change-orders/new`
+
+---
+
 ## Missing Page Gap Closure (2026-02-25)
 
 ### New SSR Pages (querying real Supabase data)

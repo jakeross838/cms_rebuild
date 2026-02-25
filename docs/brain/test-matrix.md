@@ -1,5 +1,37 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Change Orders CRUD Test Cases (2026-02-25)
+
+### Create Change Order (`/change-orders/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with all fields, job selector populated |
+| Submit without title | Error: "Title is required" |
+| Submit without job | Error: "Job is required" |
+| Submit valid form | Inserts into `change_orders` with status=Draft, redirects to `/change-orders` |
+| co_number left blank | Auto-generates `CO-{timestamp}` |
+| Cancel button | Navigates to `/change-orders` |
+
+### Change Order Detail (`/change-orders/[id]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid id | Fetches from `change_orders` where id AND deleted_at IS NULL, displays view mode |
+| Page loads with invalid id | Shows "Change order not found" with back link |
+| View mode | Shows title, status badge, co_number, change_type, amount, cost_impact, schedule_impact_days, description, approval info |
+| Edit button | Switches to edit mode with form fields pre-populated |
+| Save changes | Updates record via `.update().eq('id')`, shows success banner, returns to view mode |
+| Archive button | Confirms, sets `deleted_at`, redirects to `/change-orders` |
+| Back link | Navigates to `/change-orders` |
+
+### Change Orders List (`/change-orders`) — Updated
+| Test | Expected |
+|------|----------|
+| New Change Order button | Links to `/change-orders/new` |
+| Row click | Links to `/change-orders/[id]` (not job page) |
+| Empty state | Shows "Create Change Order" link to `/change-orders/new` |
+
+---
+
 ## E2E Tests — Comprehensive Browser Coverage (2026-02-25)
 
 ### E2E Test Files (66 tests total, all pass)
