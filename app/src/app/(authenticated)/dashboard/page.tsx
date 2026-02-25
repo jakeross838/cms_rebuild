@@ -31,7 +31,7 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'active'),
     supabase.from('invoices').select('*', { count: 'exact', head: true }).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
-    supabase.from('draws').select('*', { count: 'exact', head: true }).eq('status', 'pending_approval'),
+    supabase.from('draw_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending_approval'),
     supabase.from('jobs').select('*, clients(name)').order('updated_at', { ascending: false }).limit(5),
   ])
 
