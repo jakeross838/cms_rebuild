@@ -106,16 +106,16 @@
 
 | ID | Module | Status | Migration | API Routes | UI Wired | Tests Pass | Committed |
 |----|--------|--------|-----------|------------|----------|------------|-----------|
-| 41 | Onboarding Wizard | done | local_only | yes | partial | yes | pending |
-| 42 | Data Migration | done | local_only | yes | partial | yes | pending |
-| 43 | Subscription Billing | done | local_only | yes | partial | yes | pending |
-| 44 | White-Label & Branding | done | local_only | yes | partial | yes | pending |
-| 45 | API & Marketplace | done | local_only | yes | partial | yes | pending |
-| 46 | Customer Support | done | local_only | yes | partial | yes | pending |
-| 47 | Training Platform | done | local_only | yes | partial | yes | pending |
-| 48 | Template Marketplace | done | local_only | yes | partial | yes | pending |
-| 49 | Platform Analytics | done | local_only | yes | partial | yes | pending |
-| 50 | Marketing Website | done | local_only | yes | partial | yes | pending |
+| 41 | Onboarding Wizard | done | applied | yes | partial | yes | pending |
+| 42 | Data Migration | done | applied | yes | partial | yes | pending |
+| 43 | Subscription Billing | done | applied | yes | partial | yes | pending |
+| 44 | White-Label & Branding | done | applied | yes | partial | yes | pending |
+| 45 | API & Marketplace | done | applied | yes | partial | yes | pending |
+| 46 | Customer Support | done | applied | yes | partial | yes | pending |
+| 47 | Training Platform | done | applied | yes | partial | yes | pending |
+| 48 | Template Marketplace | done | applied | yes | partial | yes | pending |
+| 49 | Platform Analytics | done | applied | yes | partial | yes | pending |
+| 50 | Marketing Website | done | applied | yes | partial | yes | pending |
 
 ---
 
@@ -130,4 +130,4 @@
 
 **All 52 modules have: migrations (applied or local), API routes, validation schemas, service layer, types, and passing acceptance tests.**
 
-**Remaining work:** UI wiring — connect skeleton pages (mock data) to real API endpoints via React Query hooks. Phase 6 modules need migrations applied to live DB.
+**Remaining work:** UI wiring — connect skeleton pages (mock data) to real API endpoints via React Query hooks. All migrations now applied to live DB.
