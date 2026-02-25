@@ -89,7 +89,7 @@ export const companyJobNav: NavItem[] = [
     items: [
       { name: 'Calendar', href: '/skeleton/operations/calendar', description: 'Company-wide schedule' },
       { name: 'Crew Schedule', href: '/skeleton/operations/crew-schedule', description: 'Resource allocation' },
-      { name: 'Time Clock', href: '/skeleton/operations/time-clock', description: 'GPS clock in/out & timesheets' },
+      { name: 'Time Clock', href: '/time-clock', description: 'GPS clock in/out & timesheets' },
       { name: 'Equipment', href: '/equipment', description: 'Assets & tools' },
       { name: 'Inventory', href: '/skeleton/operations/inventory', description: 'Materials & stock tracking' },
       { name: 'Deliveries', href: '/skeleton/operations/deliveries', description: 'Incoming materials' },
@@ -100,9 +100,9 @@ export const companyJobNav: NavItem[] = [
     icon: DollarSign,
     items: [
       { name: 'Dashboard', href: '/skeleton/financial/dashboard', description: 'Financial overview' },
-      { name: 'Chart of Accounts', href: '/skeleton/financial/chart-of-accounts', description: 'GL accounts & structure' },
+      { name: 'Chart of Accounts', href: '/financial/chart-of-accounts', description: 'GL accounts & structure' },
       { name: 'Journal Entries', href: '/skeleton/financial/journal-entries', description: 'Manual journal entries' },
-      { name: 'Receivables', href: '/skeleton/financial/receivables', description: 'Client balances' },
+      { name: 'Receivables', href: '/financial/receivables', description: 'Client balances' },
       { name: 'Payables', href: '/skeleton/financial/payables', description: 'Vendor balances' },
       { name: 'Bank Reconciliation', href: '/skeleton/financial/bank-reconciliation', description: 'Bank account matching' },
       { name: 'Cash Flow', href: '/skeleton/financial/cash-flow', description: 'Forecasting' },
