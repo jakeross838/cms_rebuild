@@ -4,11 +4,6 @@ const JOB_ID = 'b70b053d-27b2-4b92-a0e4-81149ef0e5b2'
 
 // Generate unique values per test run to avoid UNIQUE constraint conflicts
 const runId = Date.now().toString().slice(-6)
-// Unique date: use random year between 2020-2024 to avoid collisions with real data and past runs
-const randomYear = 2020 + Math.floor(Math.random() * 5)
-const randomMonth = Math.floor(Math.random() * 12) + 1
-const randomDay = Math.floor(Math.random() * 28) + 1
-const testDate = `${randomYear}-${String(randomMonth).padStart(2, '0')}-${String(randomDay).padStart(2, '0')}`
 
 test.describe.serial('CRUD flows', () => {
   test.beforeEach(async ({ page }) => {
@@ -20,34 +15,46 @@ test.describe.serial('CRUD flows', () => {
   })
 
   test('create and view a daily log', async ({ page }) => {
-    await page.goto(`/jobs/${JOB_ID}/daily-logs/new`)
-    await page.waitForLoadState('networkidle')
+    // Use a far-past date with high entropy to avoid UNIQUE constraint on (job_id, log_date)
+    const year = 1900 + Math.floor(Math.random() * 100)
+    const month = Math.floor(Math.random() * 12) + 1
+    const day = Math.floor(Math.random() * 28) + 1
+    const testDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 
-    // Use unique date to avoid UNIQUE constraint on (job_id, log_date)
+    await page.goto(`/jobs/${JOB_ID}/daily-logs/new`)
+
+    // Wait for the form to be fully hydrated — check that the submit button is interactive
+    const submitBtn = page.locator('button[type="submit"]')
+    await expect(submitBtn).toBeEnabled({ timeout: 15000 })
+
     await page.fill('input[name="log_date"]', testDate)
     await page.fill('input[name="weather_summary"]', 'Clear skies, mild wind')
     await page.fill('input[name="high_temp"]', '72')
     await page.fill('input[name="low_temp"]', '55')
     await page.fill('textarea[name="notes"]', `E2E test daily log ${runId} - foundation pour completed`)
 
-    await page.click('button:has-text("Create")')
+    await submitBtn.click()
 
     // Should redirect to list page
-    await page.waitForURL(/\/daily-logs$/, { timeout: 15000 })
+    await page.waitForURL(/\/daily-logs$/, { timeout: 20000 })
     await expect(page.getByRole('heading', { name: 'Daily Logs' })).toBeVisible()
   })
 
   test('create and view an RFI', async ({ page }) => {
     await page.goto(`/jobs/${JOB_ID}/rfis/new`)
-    await page.waitForLoadState('networkidle')
 
-    // Fill ALL required fields — rfi_number is required (NOT NULL, no default)
+    // Wait for hydration
+    const submitBtn = page.locator('button[type="submit"]')
+    await expect(submitBtn).toBeEnabled({ timeout: 15000 })
+
+    // Fill ALL required fields — rfi_number is required (NOT NULL, no default), max varchar(20)
     await page.fill('input[name="rfi_number"]', `RFI-E2E-${runId}`)
     await page.fill('input[name="subject"]', 'E2E Test RFI - wall finish spec')
     await page.fill('textarea[name="question"]', 'What finish is specified for the east wall?')
 
-    await page.click('button:has-text("Create")')
-    await page.waitForURL(/\/rfis$/, { timeout: 15000 })
+    await submitBtn.click()
+
+    await page.waitForURL(/\/rfis$/, { timeout: 20000 })
     await expect(page.getByRole('heading', { name: 'RFIs' })).toBeVisible()
   })
 

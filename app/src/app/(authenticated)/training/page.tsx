@@ -1,8 +1,9 @@
 import Link from 'next/link'
 
-import { GraduationCap, BookOpen } from 'lucide-react'
+import { GraduationCap, BookOpen, Plus } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 
@@ -29,12 +30,15 @@ export default async function TrainingPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <GraduationCap className="h-6 w-6" />
-          Training
-        </h1>
-        <p className="text-muted-foreground">{courses.length} courses available</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <GraduationCap className="h-6 w-6" />
+            Training
+          </h1>
+          <p className="text-muted-foreground">{courses.length} courses available</p>
+        </div>
+        <Link href="/training/new"><Button><Plus className="h-4 w-4 mr-2" />New Course</Button></Link>
       </div>
 
       {courses.length > 0 ? (
