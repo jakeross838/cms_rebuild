@@ -1,5 +1,8 @@
-import { CheckSquare } from 'lucide-react'
+import Link from 'next/link'
 
+import { CheckSquare, Plus } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
@@ -29,12 +32,15 @@ export default async function TodosPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <CheckSquare className="h-6 w-6" />
-          To-Do Items
-        </h1>
-        <p className="text-muted-foreground">{items.length} open items</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <CheckSquare className="h-6 w-6" />
+            To-Do Items
+          </h1>
+          <p className="text-muted-foreground">{items.length} open items</p>
+        </div>
+        <Link href="/punch-lists/new"><Button><Plus className="h-4 w-4 mr-2" />New Item</Button></Link>
       </div>
 
       <Card>

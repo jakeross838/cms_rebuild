@@ -1215,3 +1215,25 @@ The authenticated app had 177 pages but many nav items still routed to 404s beca
 3. **Every nav item now routes to a real page** — no more 404s when clicking sidebar links
 4. **SSR over client-side fetching**: All new pages use server-side Supabase queries for initial data load, consistent with the existing pattern. This ensures pages render with data on first paint.
 5. **Column name alignment**: When DB columns didn't match expected names (e.g., `created_at` vs `submitted_at`, `name` vs `title`), fixed the page queries to match the actual schema rather than adding migrations to rename columns. The DB schema is the source of truth.
+
+---
+
+## 2026-02-25: Broken-Link Pages, Dashboard/Training CRUD, E2E Fixes
+
+### Why
+Fixed remaining CRUD gaps -- dashboards and training were missing create/detail pages, 7 broken-link pages (bids CRUD new + [id], support CRUD new + [id], warranty-claims CRUD new + [id], training detail [id]) were built. E2E test reliability improved by fixing date generation bug (bit-shift overflow on `Date.now()` produced invalid years like 47364) and RFI number length issue (timestamp-based values exceeded `varchar(20)` column limit).
+
+### What was done
+1. **Created 7 new pages**: `/bids/new`, `/bids/[id]`, `/support/new`, `/support/[id]`, `/warranty-claims/new`, `/warranty-claims/[id]`, `/training/[id]`
+2. **Created `/dashboards/[id]`** -- detail/edit/archive page for custom reports/dashboards
+3. **Updated `/dashboards`** list -- items now clickable Links to `/dashboards/[id]`
+4. **Created `/training/new`** -- create course form with title, description, content_url, course_type, difficulty, duration, category, publish toggle
+5. **Updated `/training`** list -- added "New Course" button
+6. **Fixed daily log E2E test** -- replaced `Date.now() >> 8` date generation (caused integer overflow) with `Math.random()` generating years 1900-1999. Added hydration wait.
+7. **Fixed RFI E2E test** -- shortened `rfi_number` generation to fit within `varchar(20)` column limit
+8. **Result**: All 78/78 E2E tests pass
+
+### Key decisions
+- Used same CRUD page pattern (view/edit toggle, archive via soft delete, back link) established across all other detail pages
+- Daily log date fix uses intentionally old dates (1900-1999) to avoid UNIQUE constraint collisions with real data
+- RFI number uses short random prefix (`RFI-` + 5-digit random) instead of timestamp to stay within DB column limit

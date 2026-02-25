@@ -1,8 +1,9 @@
 import Link from 'next/link'
 
-import { ShoppingCart, Search } from 'lucide-react'
+import { ShoppingCart, Search, Plus } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
@@ -70,9 +71,12 @@ export default async function PurchaseOrdersPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Purchase Orders</h1>
-        <p className="text-muted-foreground">Manage purchase orders across all jobs</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Purchase Orders</h1>
+          <p className="text-muted-foreground">Manage purchase orders across all jobs</p>
+        </div>
+        <Link href="/purchase-orders/new"><Button><Plus className="h-4 w-4 mr-2" />New PO</Button></Link>
       </div>
 
       {/* Search */}

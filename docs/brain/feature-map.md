@@ -2004,3 +2004,42 @@ All list rows updated from `<div>` to `<Link>` for navigation to detail pages:
 - `tests/e2e/detail-pages-batch3.spec.ts` — 12 tests for top-level detail pages (contact, cost-code, equipment, etc.)
 - `tests/e2e/create-forms.spec.ts` — 31 tests for all create forms (13 top-level + 18 job-level)
 - `tests/e2e/crud-flow.spec.ts` — 4 CRUD flow tests (create daily log, create RFI, edit daily log, edit job)
+
+---
+
+## Broken-Link Pages + Dashboard/Training CRUD + E2E Fixes (2026-02-25)
+
+### Dashboard Detail Page (`/dashboards/[id]`)
+- **View mode**: displays description, report type, visualization type, audience, refresh frequency, created/updated dates
+- **Edit mode**: inline form with all fields editable (title, description, report_type, visualization, audience, refresh_frequency)
+- **Archive**: confirmation dialog, soft delete via `deleted_at = now()`, redirects to `/dashboards`
+- **Back link**: `/dashboards`
+
+### Dashboards List (`/dashboards`) -- Updated
+- List items are now clickable `<Link>` elements pointing to `/dashboards/[id]`
+- Hover styling on rows
+
+### Training Create Page (`/training/new`)
+- **Form fields**: title (text, required), description (textarea), content_url (text), course_type (select: video/article/interactive/quiz), difficulty (select: beginner/intermediate/advanced), duration_minutes (number), category (text), is_published (checkbox toggle)
+- **On submit**: inserts into `training_courses`, redirects to `/training`
+- **Cancel**: links back to `/training`
+
+### Training List (`/training`) -- Updated
+- Added "New Course" button linking to `/training/new`
+
+### Bids CRUD Pages
+- **`/bids/new`** -- Create bid package form. Inserts into `bid_packages` table.
+- **`/bids/[id]`** -- Bid package detail/edit/archive page. View mode shows all fields with status badge. Edit mode has inline form. Archive via soft delete.
+
+### Support CRUD Pages
+- **`/support/new`** -- Create support ticket form. Inserts into `support_tickets` table.
+- **`/support/[id]`** -- Support ticket detail/edit/archive page. View mode shows all fields with priority badge. Edit mode has inline form. Archive via soft delete.
+
+### Warranty Claims CRUD Pages
+- **`/warranty-claims/new`** -- Create warranty claim form. Inserts into `warranty_claims` table.
+- **`/warranty-claims/[id]`** -- Warranty claim detail/edit/archive page. View mode shows all fields with status badge. Edit mode has inline form. Archive via soft delete.
+
+### E2E Test Fixes
+- **Daily log create test**: date generation changed from bit-shift on `Date.now()` (caused overflow producing invalid years like 47364) to `Math.random()` with year range 1900-1999. Adds hydration wait before form fill.
+- **RFI create test**: `rfi_number` field now generates values that fit within `varchar(20)` column limit (was exceeding it with timestamp-based values).
+- **Result**: 78/78 E2E tests now pass.

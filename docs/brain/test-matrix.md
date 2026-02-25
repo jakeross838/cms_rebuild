@@ -3669,3 +3669,80 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 | Redirect pages | 21 | E2E: verify redirect target via navigation tests |
 | Placeholder pages | 3 | Unit: renders coming soon state |
 | **Total** | **46** | |
+
+---
+
+## E2E CRUD Fixes + New CRUD Flows (2026-02-25)
+
+### E2E CRUD Test Fixes
+
+**Daily Log Create (crud-flow.spec.ts)**
+| Test | Previous Issue | Fix |
+|------|---------------|-----|
+| create daily log | `Date.now() >> 8` bit-shift overflow produced years like 47364, failing date parsing | Changed to `Math.random()` generating random dates in 1900-1999 range |
+| create daily log | Form filled before hydration complete | Added wait for hydration before form interaction |
+
+**RFI Create (crud-flow.spec.ts)**
+| Test | Previous Issue | Fix |
+|------|---------------|-----|
+| create RFI | `rfi_number` generated from timestamp exceeded `varchar(20)` column limit | Shortened to `RFI-` + 5-digit random number (fits within 20 chars) |
+
+### Result: 78/78 E2E tests pass (up from ~72 passing)
+
+---
+
+## Manual Test Cases -- New CRUD Pages (2026-02-25)
+
+### Dashboards CRUD Flow
+| Test | Expected |
+|------|----------|
+| Navigate to `/dashboards` | List renders with dashboard items |
+| Click dashboard item | Navigates to `/dashboards/[id]` detail page |
+| View mode | Shows description, report type, visualization, audience, refresh frequency |
+| Click Edit | Switches to edit mode with form fields pre-populated |
+| Modify fields and Save | Updates record, shows success, returns to view mode |
+| Click Archive | Confirmation dialog appears; confirm sets `deleted_at`, redirects to `/dashboards` |
+| Back link | Navigates to `/dashboards` |
+
+### Training Create Course
+| Test | Expected |
+|------|----------|
+| Navigate to `/training` | List renders with "New Course" button |
+| Click "New Course" | Navigates to `/training/new` |
+| Form renders | Fields: title, description, content_url, course_type, difficulty, duration, category, is_published |
+| Submit without title | Validation error |
+| Submit valid form | Inserts into `training_courses`, redirects to `/training` |
+| Cancel | Navigates back to `/training` |
+
+### Bids Full CRUD
+| Test | Expected |
+|------|----------|
+| Navigate to `/bids` | List renders |
+| Click "New Bid" (or similar) | Navigates to `/bids/new` |
+| Submit valid form | Inserts into `bid_packages`, redirects to `/bids` |
+| Click bid item | Navigates to `/bids/[id]` |
+| View mode | Shows all bid package fields with status badge |
+| Edit and Save | Updates record |
+| Archive | Soft delete, redirects to `/bids` |
+
+### Support Full CRUD
+| Test | Expected |
+|------|----------|
+| Navigate to `/support` | List renders |
+| Click "New Ticket" (or similar) | Navigates to `/support/new` |
+| Submit valid form | Inserts into `support_tickets`, redirects to `/support` |
+| Click support item | Navigates to `/support/[id]` |
+| View mode | Shows all fields with priority badge |
+| Edit and Save | Updates record |
+| Archive | Soft delete, redirects to `/support` |
+
+### Warranty Claims Full CRUD
+| Test | Expected |
+|------|----------|
+| Navigate to `/warranty-claims` | List renders |
+| Click "New Claim" (or similar) | Navigates to `/warranty-claims/new` |
+| Submit valid form | Inserts into `warranty_claims`, redirects to `/warranty-claims` |
+| Click claim item | Navigates to `/warranty-claims/[id]` |
+| View mode | Shows all fields with status badge |
+| Edit and Save | Updates record |
+| Archive | Soft delete, redirects to `/warranty-claims` |
