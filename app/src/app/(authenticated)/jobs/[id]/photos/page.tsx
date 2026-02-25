@@ -10,13 +10,13 @@ import { formatDate } from '@/lib/utils'
 
 interface Photo {
   id: string
-  filename: string
-  mime_type: string
-  file_size: number
-  document_type: string | null
-  storage_path: string
-  thumbnail_path: string | null
-  ai_classification: string | null
+  title: string
+  description: string | null
+  photo_url: string | null
+  category: string | null
+  taken_date: string | null
+  location: string | null
+  notes: string | null
   created_at: string | null
 }
 
@@ -29,10 +29,9 @@ export default async function JobPhotosPage({
   const supabase = await createClient()
 
   const { data: photosData } = await supabase
-    .from('documents')
+    .from('job_photos')
     .select('*')
     .eq('job_id', jobId)
-    .like('mime_type', 'image/%')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
@@ -53,13 +52,18 @@ export default async function JobPhotosPage({
           {photos.map((photo) => (
             <Card key={photo.id} className="overflow-hidden">
               <div className="aspect-square bg-muted flex items-center justify-center">
-                <Image className="h-8 w-8 text-muted-foreground/50" />
+                {photo.photo_url ? (
+                  <img src={photo.photo_url} alt={photo.title} className="w-full h-full object-cover" />
+                ) : (
+                  <Image className="h-8 w-8 text-muted-foreground/50" />
+                )}
               </div>
               <CardContent className="p-3">
-                <p className="text-sm font-medium truncate">{photo.filename}</p>
+                <p className="text-sm font-medium truncate">{photo.title}</p>
                 <div className="flex items-center gap-1 mt-1">
-                  {photo.ai_classification && <Badge variant="outline" className="text-xs">{photo.ai_classification}</Badge>}
-                  {photo.created_at && <span className="text-xs text-muted-foreground">{formatDate(photo.created_at)}</span>}
+                  {photo.category && <Badge variant="outline" className="text-xs">{photo.category}</Badge>}
+                  {photo.taken_date ? <span className="text-xs text-muted-foreground">{formatDate(photo.taken_date)}</span>
+                    : photo.created_at && <span className="text-xs text-muted-foreground">{formatDate(photo.created_at)}</span>}
                 </div>
               </CardContent>
             </Card>

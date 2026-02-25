@@ -7,19 +7,20 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor } from '@/lib/utils'
 
 interface Submittal {
   id: string
+  submittal_number: string | null
   title: string
-  reference_number: string | null
-  submission_type: string
-  status: string
-  amount: number | null
   description: string | null
-  submitted_at: string | null
-  reviewed_at: string | null
-  vendor_id: string
+  spec_section: string | null
+  submitted_to: string | null
+  submission_date: string | null
+  required_date: string | null
+  status: string
+  priority: string | null
+  notes: string | null
   created_at: string
 }
 
@@ -32,7 +33,7 @@ export default async function JobSubmittalsPage({
   const supabase = await createClient()
 
   const { data: submittalsData } = await supabase
-    .from('vendor_submissions')
+    .from('submittals')
     .select('*')
     .eq('job_id', jobId)
     .is('deleted_at', null)
@@ -68,18 +69,18 @@ export default async function JobSubmittalsPage({
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        {sub.reference_number && <span className="text-sm font-mono text-muted-foreground">{sub.reference_number}</span>}
+                        {sub.submittal_number && <span className="text-sm font-mono text-muted-foreground">{sub.submittal_number}</span>}
                         <span className="font-medium">{sub.title}</span>
                         <Badge className={getStatusColor(sub.status)}>{sub.status}</Badge>
-                        <Badge variant="outline" className="text-xs">{sub.submission_type}</Badge>
+                        {sub.priority && <Badge variant="outline" className="text-xs">{sub.priority}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
-                        {sub.submitted_at && `Submitted ${formatDate(sub.submitted_at)}`}
-                        {sub.reviewed_at && ` • Reviewed ${formatDate(sub.reviewed_at)}`}
-                        {sub.description && ` • ${sub.description}`}
+                        {sub.spec_section && <span>Spec {sub.spec_section}</span>}
+                        {sub.submitted_to && <span> &bull; To: {sub.submitted_to}</span>}
+                        {sub.submission_date && <span> &bull; Submitted {formatDate(sub.submission_date)}</span>}
+                        {sub.description && <span> &bull; {sub.description}</span>}
                       </div>
                     </div>
-                    {sub.amount != null && <span className="font-medium">{formatCurrency(sub.amount)}</span>}
                   </div>
                 </div>
               ))}

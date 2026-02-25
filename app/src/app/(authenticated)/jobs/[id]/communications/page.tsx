@@ -8,15 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
-interface Message {
+interface Communication {
   id: string
   subject: string | null
-  message_text: string
-  sender_type: string
+  message_body: string | null
+  communication_type: string
   status: string
-  category: string | null
-  topic: string | null
-  read_at: string | null
+  priority: string | null
+  recipient: string | null
+  notes: string | null
   created_at: string | null
 }
 
@@ -28,24 +28,22 @@ export default async function JobCommunicationsPage({
   const { id: jobId } = await params
   const supabase = await createClient()
 
-  const { data: messagesData } = await supabase
-    .from('client_messages')
+  const { data: commsData } = await supabase
+    .from('communications')
     .select('*')
     .eq('job_id', jobId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(100)
 
-  const messages = (messagesData || []) as Message[]
-
-  const unread = messages.filter((m) => !m.read_at).length
+  const comms = (commsData || []) as Communication[]
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Communications</h1>
-          <p className="text-muted-foreground">{messages.length} messages &bull; {unread} unread</p>
+          <p className="text-muted-foreground">{comms.length} communications</p>
         </div>
         <Link href={`/jobs/${jobId}/communications/new`}><Button><Plus className="h-4 w-4 mr-2" />New Message</Button></Link>
       </div>
@@ -58,21 +56,22 @@ export default async function JobCommunicationsPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {messages.length > 0 ? (
+          {comms.length > 0 ? (
             <div className="divide-y divide-border">
-              {messages.map((msg) => (
-                <div key={msg.id} className={`py-3 first:pt-0 last:pb-0 ${!msg.read_at ? 'bg-blue-50/50 -mx-2 px-2 rounded-lg' : ''}`}>
+              {comms.map((comm) => (
+                <div key={comm.id} className="py-3 first:pt-0 last:pb-0">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        {msg.subject && <span className="font-medium">{msg.subject}</span>}
-                        <Badge variant="outline" className="text-xs">{msg.sender_type}</Badge>
-                        {msg.category && <Badge variant="outline" className="text-xs">{msg.category}</Badge>}
-                        {!msg.read_at && <Badge className="text-blue-700 bg-blue-100">Unread</Badge>}
+                        {comm.subject && <span className="font-medium">{comm.subject}</span>}
+                        <Badge variant="outline" className="text-xs">{comm.communication_type}</Badge>
+                        <Badge className={getStatusColor(comm.status)}>{comm.status}</Badge>
+                        {comm.priority && <Badge variant="outline" className="text-xs">{comm.priority}</Badge>}
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{msg.message_text}</p>
+                      {comm.message_body && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{comm.message_body}</p>}
+                      {comm.recipient && <p className="text-xs text-muted-foreground mt-1">To: {comm.recipient}</p>}
                     </div>
-                    {msg.created_at && <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{formatDate(msg.created_at)}</span>}
+                    {comm.created_at && <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{formatDate(comm.created_at)}</span>}
                   </div>
                 </div>
               ))}
@@ -80,7 +79,7 @@ export default async function JobCommunicationsPage({
           ) : (
             <div className="text-center py-8">
               <MessageSquare className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
-              <p className="text-muted-foreground">No messages for this job</p>
+              <p className="text-muted-foreground">No communications for this job</p>
             </div>
           )}
         </CardContent>
