@@ -59,7 +59,7 @@ export default async function WarrantiesPage({
           <h1 className="text-2xl font-bold text-foreground">Warranties</h1>
           <p className="text-muted-foreground">Track warranties and coverage</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Warranty</Button>
+        <Link href="/warranties/new"><Button><Plus className="h-4 w-4 mr-2" />Add Warranty</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">

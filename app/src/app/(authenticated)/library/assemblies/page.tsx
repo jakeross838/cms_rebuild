@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Package } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -46,7 +48,7 @@ export default async function AssembliesPage({
           <h1 className="text-2xl font-bold text-foreground">Assemblies</h1>
           <p className="text-muted-foreground">{assemblies.length} assemblies &bull; {active} active</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Assembly</Button>
+        <Link href="/library/assemblies/new"><Button><Plus className="h-4 w-4 mr-2" />New Assembly</Button></Link>
       </div>
 
       <div className="relative max-w-md">

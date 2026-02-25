@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Mail } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -56,7 +58,7 @@ export default async function EmailMarketingPage({
           <h1 className="text-2xl font-bold text-foreground">Email Marketing</h1>
           <p className="text-muted-foreground">{campaigns.length} campaigns</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Campaign</Button>
+        <Link href="/email-marketing/new"><Button><Plus className="h-4 w-4 mr-2" />New Campaign</Button></Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

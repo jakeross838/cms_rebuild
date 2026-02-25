@@ -63,7 +63,7 @@ export default async function LeadsPage({
           <h1 className="text-2xl font-bold text-foreground">Leads</h1>
           <p className="text-muted-foreground">Track your sales pipeline</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Lead</Button>
+        <Link href="/leads/new"><Button><Plus className="h-4 w-4 mr-2" />New Lead</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
@@ -115,6 +115,11 @@ export default async function LeadsPage({
             <p className="text-muted-foreground mb-4">
               {params.search || params.status ? 'Try adjusting your filters' : 'Add your first lead to start tracking'}
             </p>
+            {!params.search && !params.status && (
+              <Link href="/leads/new">
+                <Button><Plus className="h-4 w-4 mr-2" />Add Lead</Button>
+              </Link>
+            )}
           </div>
         )}
       </div>

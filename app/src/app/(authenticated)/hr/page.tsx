@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Users, Building2 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -67,7 +69,7 @@ export default async function HRWorkforcePage({
             {employees.length} employees &bull; {active} active &bull; {departments.length} departments &bull; {posCount ?? 0} positions
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Employee</Button>
+        <Link href="/hr/new"><Button><Plus className="h-4 w-4 mr-2" />Add Employee</Button></Link>
       </div>
 
       <div className="relative max-w-md">

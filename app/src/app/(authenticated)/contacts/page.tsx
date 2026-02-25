@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, Users } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -43,7 +45,7 @@ export default async function ContactsPage({
           <h1 className="text-2xl font-bold text-foreground">Contacts</h1>
           <p className="text-muted-foreground">{contacts.length} contacts</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Contact</Button>
+        <Link href="/contacts/new"><Button><Plus className="h-4 w-4 mr-2" />Add Contact</Button></Link>
       </div>
 
       <div className="relative max-w-md">

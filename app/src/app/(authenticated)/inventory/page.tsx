@@ -51,7 +51,7 @@ export default async function InventoryPage({
           <h1 className="text-2xl font-bold text-foreground">Inventory</h1>
           <p className="text-muted-foreground">{items.length} items tracked</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Item</Button>
+        <Link href="/inventory/new"><Button><Plus className="h-4 w-4 mr-2" />Add Item</Button></Link>
       </div>
 
       <div className="relative max-w-md">

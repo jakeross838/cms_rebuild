@@ -62,7 +62,7 @@ export default async function EstimatesPage({
           <h1 className="text-2xl font-bold text-foreground">Estimates</h1>
           <p className="text-muted-foreground">Create and manage project estimates</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Estimate</Button>
+        <Link href="/estimates/new"><Button><Plus className="h-4 w-4 mr-2" />New Estimate</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">

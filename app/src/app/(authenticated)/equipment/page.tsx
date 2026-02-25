@@ -62,7 +62,7 @@ export default async function EquipmentPage({
           <h1 className="text-2xl font-bold text-foreground">Equipment</h1>
           <p className="text-muted-foreground">Track assets, tools, and equipment</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Equipment</Button>
+        <Link href="/equipment/new"><Button><Plus className="h-4 w-4 mr-2" />Add Equipment</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">

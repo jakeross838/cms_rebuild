@@ -62,7 +62,7 @@ export default async function ProposalsPage({
           <h1 className="text-2xl font-bold text-foreground">Proposals</h1>
           <p className="text-muted-foreground">{estimates.length} proposals &bull; {formatCurrency(totalValue)} total value</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Proposal</Button>
+        <Link href="/estimates/new"><Button><Plus className="h-4 w-4 mr-2" />New Proposal</Button></Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">

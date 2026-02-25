@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Search, FileText } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -54,7 +56,7 @@ export default async function TemplatesPage({
             {templates.length} contract templates &bull; {rfiTemplateCount ?? 0} RFI templates &bull; {lienTemplateCount ?? 0} lien waiver templates
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Template</Button>
+        <Link href="/library/templates/new"><Button><Plus className="h-4 w-4 mr-2" />New Template</Button></Link>
       </div>
 
       <div className="relative max-w-md">
