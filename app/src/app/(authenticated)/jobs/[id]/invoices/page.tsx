@@ -63,7 +63,7 @@ export default async function JobInvoicesPage({
             {invoices.length} invoices &bull; {formatCurrency(total)} total &bull; {formatCurrency(outstanding)} outstanding
           </p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />New Invoice</Button>
+        <Link href="/invoices/new"><Button><Plus className="h-4 w-4 mr-2" />New Invoice</Button></Link>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">

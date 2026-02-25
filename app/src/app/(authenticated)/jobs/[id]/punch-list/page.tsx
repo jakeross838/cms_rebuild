@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, CheckSquare } from 'lucide-react'
@@ -58,10 +59,12 @@ export default async function PunchListPage({
           <h2 className="text-xl font-bold text-foreground">Punch List</h2>
           <p className="text-sm text-muted-foreground">{items.length} items</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Item
-        </Button>
+        <Link href={`/jobs/${id}/punch-list/new`}>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Item
+          </Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, Receipt } from 'lucide-react'
@@ -58,10 +59,12 @@ export default async function DrawsPage({
           <h2 className="text-xl font-bold text-foreground">Draw Requests</h2>
           <p className="text-sm text-muted-foreground">{draws.length} draws</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Draw
-        </Button>
+        <Link href={`/jobs/${id}/draws/new`}>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Draw
+          </Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

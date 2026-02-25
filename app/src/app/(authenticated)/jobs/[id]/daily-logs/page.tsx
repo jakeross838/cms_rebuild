@@ -56,10 +56,12 @@ export default async function DailyLogsPage({
           <h2 className="text-xl font-bold text-foreground">Daily Logs</h2>
           <p className="text-sm text-muted-foreground">{logs.length} logs recorded</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Log
-        </Button>
+        <Link href={`/jobs/${id}/daily-logs/new`}>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Log
+          </Button>
+        </Link>
       </div>
 
       {/* Logs list */}

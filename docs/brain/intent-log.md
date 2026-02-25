@@ -1,5 +1,27 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-24: Job-Level Create Form Pages (batch 8)
+
+### Why
+The job-level list pages (change-orders, rfis, punch-list, daily-logs, draws) all have "New" buttons linking to `/jobs/[id]/*/new` but those create pages did not exist. Users clicking the buttons would get 404s. Need create forms that match the existing top-level create page pattern but scoped to a specific job.
+
+### What was done
+1. **Created 5 job-level create pages** under `app/src/app/(authenticated)/jobs/[id]/`:
+   - `change-orders/new/page.tsx` — co_number, title, amount, change_type, status, description. Inserts to `change_orders`
+   - `rfis/new/page.tsx` — rfi_number, subject, question, priority, category, status. Inserts to `rfis`
+   - `punch-list/new/page.tsx` — title, location, room, priority, category, description. Inserts to `punch_items` (table name, not punch_list_items)
+   - `daily-logs/new/page.tsx` — log_date (default today), weather_summary, high/low temp, conditions, notes. Inserts to `daily_logs`
+   - `draws/new/page.tsx` — draw_number, application/period dates, contract_amount, total_completed, retainage_pct, notes. Auto-calculates derived fields. Inserts to `draw_requests`
+
+### Key decisions
+- Used `useParams()` to get `job_id` from URL (all pages are 'use client')
+- DB schemas verified via SQL before building — punch_items (not punch_list_items), draw_requests (not draws)
+- All select options match actual DB CHECK constraints (e.g., change_orders status: draft/pending_approval/approved/rejected/voided)
+- Draw request auto-calculates retainage_amount, total_earned, current_due, balance_to_finish from user inputs
+- Daily logs use `created_by` (NOT NULL) from user.id; other tables also set `created_by` where nullable
+
+---
+
 ## 2026-02-24: Nav Completeness + Bug Fixes + Cost Codes CRUD
 
 ### Why

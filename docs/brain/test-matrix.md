@@ -1,5 +1,67 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Job-Level Create Form Pages (2026-02-24, batch 8)
+
+### Test Cases — All 5 create pages
+
+**Change Orders Create** (`/jobs/[id]/change-orders/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with CO Number, Title, Amount, Type, Status, Description |
+| Back link | Navigates to `/jobs/[id]/change-orders` |
+| Submit with required fields | Inserts to `change_orders` with company_id, job_id, created_by |
+| Submit without co_number | HTML required validation blocks submit |
+| Submit without title | HTML required validation blocks submit |
+| Cancel button | Navigates to `/jobs/[id]/change-orders` |
+| Status options | draft, pending_approval, approved, rejected (matches DB CHECK) |
+| Type options | owner_requested, field_condition, design_change, regulatory, allowance, credit (matches DB CHECK) |
+
+**RFIs Create** (`/jobs/[id]/rfis/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with RFI Number, Subject, Question, Priority, Category, Status |
+| Submit with required fields | Inserts to `rfis` with company_id, job_id, created_by |
+| Question textarea required | HTML required validation blocks submit without question |
+| Priority options | low, normal, high, urgent (matches DB CHECK) |
+| Category options | general, design, structural, mechanical, electrical, plumbing, site, finish |
+| Status options | draft, open (initial creation only) |
+
+**Punch Item Create** (`/jobs/[id]/punch-list/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form renders with Title, Location, Room, Priority, Category, Description |
+| Submit inserts to `punch_items` | NOT `punch_list_items` — correct table name |
+| Status always 'open' | Hardcoded, not user-selectable on create |
+| Priority options | low, normal, high, critical (matches DB CHECK) |
+| Category options | 14 options from structural to other (matches DB CHECK) |
+| Optional category | Empty default "Select category..." sends null |
+
+**Daily Log Create** (`/jobs/[id]/daily-logs/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Date field defaults to today |
+| created_by is NOT NULL | Uses user.id (required column in DB) |
+| Temperature fields accept decimals | type="number" inputs |
+| Conditions dropdown | 8 weather options + empty default |
+| Submit without date | HTML required validation blocks |
+
+**Draw Request Create** (`/jobs/[id]/draws/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Draw number, dates, amounts, retainage, notes |
+| draw_number is integer | `parseInt()` before insert |
+| Auto-calculates derived fields | retainage_amount, total_earned, current_due, balance_to_finish |
+| retainage_pct defaults to 10 | Matches DB column default |
+| Status hardcoded 'draft' | Not user-selectable on create |
+| All 3 required date/number fields | draw_number, application_date, period_to |
+
+### TypeScript Check
+| Check | Result |
+|-------|--------|
+| `npx tsc --noEmit` | Zero errors |
+
+---
+
 ## Nav Completeness + Bug Fixes + Cost Codes CRUD (2026-02-24)
 
 ### Browser-Verified Pages (75+ pages tested, zero errors)

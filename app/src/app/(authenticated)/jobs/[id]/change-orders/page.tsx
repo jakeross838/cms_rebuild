@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Plus, FileText } from 'lucide-react'
@@ -63,10 +64,12 @@ export default async function ChangeOrdersPage({
           <h2 className="text-xl font-bold text-foreground">Change Orders</h2>
           <p className="text-sm text-muted-foreground">{changeOrders.length} change orders</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Change Order
-        </Button>
+        <Link href={`/jobs/${id}/change-orders/new`}>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Change Order
+          </Button>
+        </Link>
       </div>
 
       {/* Summary */}
