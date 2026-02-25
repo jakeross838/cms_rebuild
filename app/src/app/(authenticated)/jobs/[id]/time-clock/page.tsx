@@ -1,8 +1,9 @@
 import Link from 'next/link'
 
-import { Clock, Search } from 'lucide-react'
+import { Clock, Plus, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
@@ -33,6 +34,7 @@ export default async function JobTimeClockPage({
     .from('time_entries')
     .select('*')
     .eq('job_id', jobId)
+    .is('deleted_at', null)
     .order('entry_date', { ascending: false })
     .limit(100)
 
@@ -43,11 +45,16 @@ export default async function JobTimeClockPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Time Clock</h1>
-        <p className="text-muted-foreground">
-          {entries.length} entries &bull; {totalRegular.toFixed(1)}h regular &bull; {totalOvertime.toFixed(1)}h overtime
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Time Clock</h1>
+          <p className="text-muted-foreground">
+            {entries.length} entries &bull; {totalRegular.toFixed(1)}h regular &bull; {totalOvertime.toFixed(1)}h overtime
+          </p>
+        </div>
+        <Link href={`/jobs/${jobId}/time-clock/new`}>
+          <Button><Plus className="h-4 w-4 mr-2" />New Entry</Button>
+        </Link>
       </div>
 
       <Card>

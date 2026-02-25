@@ -23,6 +23,7 @@ interface TimeEntryData {
   clock_out: string | null
   regular_hours: number
   overtime_hours: number
+  break_minutes: number
   status: string
   entry_method: string
   notes: string | null
@@ -36,6 +37,7 @@ interface TimeEntryFormData {
   clock_out: string
   regular_hours: string
   overtime_hours: string
+  break_minutes: string
   status: string
   notes: string
 }
@@ -64,6 +66,7 @@ export default function TimeEntryDetailPage() {
     clock_out: '',
     regular_hours: '',
     overtime_hours: '',
+    break_minutes: '',
     status: '',
     notes: '',
   })
@@ -75,6 +78,7 @@ export default function TimeEntryDetailPage() {
         .select('*')
         .eq('id', entryId)
         .eq('job_id', jobId)
+        .is('deleted_at', null)
         .single()
 
       if (fetchError || !data) {
@@ -91,6 +95,7 @@ export default function TimeEntryDetailPage() {
         clock_out: e.clock_out || '',
         regular_hours: String(e.regular_hours),
         overtime_hours: String(e.overtime_hours),
+        break_minutes: String(e.break_minutes ?? 0),
         status: e.status,
         notes: e.notes || '',
       })
@@ -112,6 +117,7 @@ export default function TimeEntryDetailPage() {
     try {
       const regular = Number(formData.regular_hours) || 0
       const overtime = Number(formData.overtime_hours) || 0
+      const breakMins = parseInt(formData.break_minutes, 10) || 0
 
       const { error: updateError } = await supabase
         .from('time_entries')
@@ -121,10 +127,12 @@ export default function TimeEntryDetailPage() {
           clock_out: formData.clock_out || null,
           regular_hours: regular,
           overtime_hours: overtime,
+          break_minutes: breakMins,
           status: formData.status,
           notes: formData.notes || null,
         })
         .eq('id', entryId)
+        .eq('job_id', jobId)
 
       if (updateError) throw updateError
 
@@ -137,6 +145,7 @@ export default function TimeEntryDetailPage() {
               clock_out: formData.clock_out || null,
               regular_hours: regular,
               overtime_hours: overtime,
+              break_minutes: breakMins,
               status: formData.status,
               notes: formData.notes || null,
             }
@@ -153,7 +162,7 @@ export default function TimeEntryDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Delete this time entry? This action cannot be undone.')) return
+    if (!confirm('Archive this time entry? It can be restored later.')) return
 
     const { error: deleteError } = await supabase
       .from('time_entries')
@@ -161,16 +170,8 @@ export default function TimeEntryDetailPage() {
       .eq('id', entryId)
 
     if (deleteError) {
-      // Fallback to hard delete if deleted_at column does not exist
-      const { error: hardDeleteError } = await supabase
-        .from('time_entries')
-        .delete()
-        .eq('id', entryId)
-
-      if (hardDeleteError) {
-        setError('Failed to delete time entry')
-        return
-      }
+      setError('Failed to archive time entry')
+      return
     }
 
     router.push(`/jobs/${jobId}/time-clock`)
@@ -273,16 +274,16 @@ export default function TimeEntryDetailPage() {
                     </p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Entry Method</span>
-                    <p className="font-medium">{entry.entry_method}</p>
+                    <span className="text-muted-foreground">Break</span>
+                    <p className="font-medium">{entry.break_minutes > 0 ? `${entry.break_minutes} min` : 'None'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Total Hours</span>
                     <p className="font-medium">{(entry.regular_hours + entry.overtime_hours).toFixed(1)}h</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">User ID</span>
-                    <p className="font-medium font-mono text-xs">{entry.user_id || 'N/A'}</p>
+                    <span className="text-muted-foreground">Entry Method</span>
+                    <p className="font-medium">{entry.entry_method}</p>
                   </div>
                 </div>
               </CardContent>
@@ -299,7 +300,7 @@ export default function TimeEntryDetailPage() {
 
             <div className="flex justify-end">
               <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
-                Delete Entry
+                Archive Entry
               </Button>
             </div>
           </>
@@ -341,7 +342,7 @@ export default function TimeEntryDetailPage() {
             <Card>
               <CardHeader><CardTitle>Hours</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="regular_hours" className="text-sm font-medium">Regular Hours</label>
                     <Input id="regular_hours" name="regular_hours" type="number" step="0.1" min="0" value={formData.regular_hours} onChange={handleChange} />
@@ -349,6 +350,10 @@ export default function TimeEntryDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="overtime_hours" className="text-sm font-medium">Overtime Hours</label>
                     <Input id="overtime_hours" name="overtime_hours" type="number" step="0.1" min="0" value={formData.overtime_hours} onChange={handleChange} />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="break_minutes" className="text-sm font-medium">Break (minutes)</label>
+                    <Input id="break_minutes" name="break_minutes" type="number" step="1" min="0" max="480" value={formData.break_minutes} onChange={handleChange} />
                   </div>
                 </div>
               </CardContent>
@@ -362,12 +367,8 @@ export default function TimeEntryDetailPage() {
                   <p className="text-sm text-muted-foreground">{entry.entry_method}</p>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">User ID</label>
-                  <p className="text-sm text-muted-foreground font-mono">{entry.user_id || 'N/A'}</p>
-                </div>
-                <div className="space-y-2">
                   <label htmlFor="notes" className="text-sm font-medium">Notes</label>
-                  <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="Work performed, tasks completed, any issues..." />
                 </div>
               </CardContent>
             </Card>

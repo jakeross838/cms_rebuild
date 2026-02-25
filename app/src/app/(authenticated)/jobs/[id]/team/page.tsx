@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Plus, Users } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -37,7 +39,7 @@ export default async function JobTeamPage({
           <h1 className="text-2xl font-bold text-foreground">Job Team</h1>
           <p className="text-muted-foreground">{roles.length} team members assigned</p>
         </div>
-        <Button><Plus className="h-4 w-4 mr-2" />Add Member</Button>
+        <Link href={`/jobs/${jobId}/team/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Member</Button></Link>
       </div>
 
       <Card>
