@@ -8,18 +8,44 @@ import {
   ShoppingCart,
   FolderOpen,
   ArrowLeft,
+  Palette,
+  Clock,
+  Image,
+  FileCheck,
+  ClipboardCheck,
+  Package,
+  Send,
+  MessageSquare,
+  Users,
+  Shield,
+  CheckSquare,
 } from 'lucide-react'
 
 import { createClient } from '@/lib/supabase/server'
 
 const getJobTabs = (id: string) => [
   { name: 'Overview', href: `/jobs/${id}`, icon: FileText },
+  { name: 'Selections', href: `/jobs/${id}/selections`, icon: Palette },
   { name: 'Budget', href: `/jobs/${id}/budget`, icon: DollarSign },
   { name: 'Schedule', href: `/jobs/${id}/schedule`, icon: Calendar },
   { name: 'Daily Logs', href: `/jobs/${id}/daily-logs`, icon: ClipboardList },
+  { name: 'Time', href: `/jobs/${id}/time-clock`, icon: Clock },
+  { name: 'Photos', href: `/jobs/${id}/photos`, icon: Image },
+  { name: 'Permits', href: `/jobs/${id}/permits`, icon: FileCheck },
+  { name: 'Inspections', href: `/jobs/${id}/inspections`, icon: ClipboardCheck },
   { name: 'Change Orders', href: `/jobs/${id}/change-orders`, icon: FileText },
-  { name: 'Purchase Orders', href: `/jobs/${id}/purchase-orders`, icon: ShoppingCart },
-  { name: 'Documents', href: `/jobs/${id}/files`, icon: FolderOpen },
+  { name: 'POs', href: `/jobs/${id}/purchase-orders`, icon: ShoppingCart },
+  { name: 'Inventory', href: `/jobs/${id}/inventory`, icon: Package },
+  { name: 'Invoices', href: `/jobs/${id}/invoices`, icon: DollarSign },
+  { name: 'Draws', href: `/jobs/${id}/draws`, icon: DollarSign },
+  { name: 'Liens', href: `/jobs/${id}/lien-waivers`, icon: FileCheck },
+  { name: 'Docs', href: `/jobs/${id}/files`, icon: FolderOpen },
+  { name: 'RFIs', href: `/jobs/${id}/rfis`, icon: MessageSquare },
+  { name: 'Submittals', href: `/jobs/${id}/submittals`, icon: Send },
+  { name: 'Comms', href: `/jobs/${id}/communications`, icon: MessageSquare },
+  { name: 'Team', href: `/jobs/${id}/team`, icon: Users },
+  { name: 'Punch', href: `/jobs/${id}/punch-list`, icon: CheckSquare },
+  { name: 'Warranties', href: `/jobs/${id}/warranties`, icon: Shield },
 ]
 
 export default async function JobLayout({
