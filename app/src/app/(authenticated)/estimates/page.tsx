@@ -83,7 +83,7 @@ export default async function EstimatesPage({
         {estimates.length > 0 ? (
           <div className="divide-y divide-border">
             {estimates.map((est) => (
-              <div key={est.id} className="p-4 hover:bg-accent transition-colors">
+              <Link key={est.id} href={`/estimates/${est.id}`} className="block p-4 hover:bg-accent transition-colors">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default async function EstimatesPage({
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

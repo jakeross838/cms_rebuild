@@ -82,7 +82,7 @@ export default async function ContractsPage({
         {contracts.length > 0 ? (
           <div className="divide-y divide-border">
             {contracts.map((contract) => (
-              <div key={contract.id} className="p-4 hover:bg-accent transition-colors">
+              <Link key={contract.id} href={`/contracts/${contract.id}`} className="block p-4 hover:bg-accent transition-colors">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export default async function ContractsPage({
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

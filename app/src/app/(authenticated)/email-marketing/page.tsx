@@ -104,7 +104,7 @@ export default async function EmailMarketingPage({
           {campaigns.length > 0 ? (
             <div className="divide-y divide-border">
               {campaigns.map((campaign) => (
-                <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={campaign.id} href={`/email-marketing/${campaign.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent transition-colors -mx-6 px-6">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export default async function EmailMarketingPage({
                       <p className="text-xs text-muted-foreground">of {formatCurrency(campaign.budget)} budget</p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

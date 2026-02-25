@@ -48,6 +48,14 @@ All 52 modules pass acceptance tests, all migrations applied. The remaining work
 30. **Entity selector pattern** — Invoices/contracts/contacts/warranties use useEffect to load related entities (jobs, vendors, clients) into `<select>` dropdowns
 31. **Total: 15 create form pages** (including pre-existing `/jobs/new`), **89 total authenticated pages**
 
+### What was done (batch 7 — detail pages + clickable rows)
+32. **Created 4 detail pages** — leads/[id], estimates/[id], invoices/[id], contracts/[id] with view/edit/archive
+33. **Made 4 list pages clickable** — leads, estimates, invoices, contracts rows wrapped in `<Link>` for navigation to detail pages
+34. **Pattern**: `'use client'`, useParams, useRouter, createClient (browser), useState for view/edit toggle, useEffect to load, handleSave/handleDelete
+35. **TypeScript fix**: NOT NULL DB columns (first_name, last_name, source, priority, estimate_type, amount, title, contract_number, contract_type) use `|| undefined` in update calls (not `|| null`) to match Supabase Update types
+36. **Invoice exception**: No archive button (invoices table has no deleted_at column)
+37. **Total: 93 authenticated pages** (89 + 4 detail pages)
+
 ### Key decisions
 - Used SSR pattern (server component + direct Supabase) instead of client-side React Query for list pages. Matches existing `/jobs/page.tsx` pattern.
 - React Query hooks created for client-side mutations and future interactive features

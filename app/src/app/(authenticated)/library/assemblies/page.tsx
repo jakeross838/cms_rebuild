@@ -67,7 +67,7 @@ export default async function AssembliesPage({
           {assemblies.length > 0 ? (
             <div className="divide-y divide-border">
               {assemblies.map((asm) => (
-                <div key={asm.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={asm.id} href={`/library/assemblies/${asm.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent transition-colors -mx-6 px-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export default async function AssembliesPage({
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

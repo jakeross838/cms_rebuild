@@ -98,6 +98,24 @@ All create forms follow the pattern: `'use client'`, useState for form/loading/e
 - **New Contact** (`/contacts/new`) — name*, title, email, phone, vendor selector (required), is_primary checkbox. Loads vendors via useEffect
 - **New Warranty** (`/warranties/new`) — title*, warranty_type (manufacturer/workmanship/structural/extended/home_warranty), job selector (required), vendor selector, start/end dates (required), coverage_details, exclusions, contact info. Status defaults to 'active'. Loads jobs/vendors via useEffect
 
+### Detail Pages (2026-02-24, batch 7)
+All detail pages follow the pattern: `'use client'`, useParams, useRouter, createClient (browser), useState for view/edit toggle, useEffect to load, handleSave/handleDelete, Cards with CardHeader/CardTitle/CardContent.
+- **Client Detail** (`/clients/[id]`) — View: name, email, phone, address. Edit: name*, email, phone, address, city, state, zip, notes. Archive (soft delete). Badge for inactive.
+- **Vendor Detail** (`/vendors/[id]`) — View: name, trade, email, phone, address, tax_id. Edit: all fields. Archive (soft delete). Badge for inactive.
+- **Lead Detail** (`/leads/[id]`) — View: first_name + last_name (heading), email, phone, address, lot_address, source, source_detail, project_type, timeline, expected_contract_value, budget_range_low/high. Edit: all fields, source (select: other/referral/website/social_media/walk_in/phone), priority (select: low/medium/high/urgent). Status as Badge (read-only). Archive (soft delete).
+- **Estimate Detail** (`/estimates/[id]`) — View: name (heading), estimate_type, contract_type, subtotal, total, markup/overhead/profit %, valid_until, description, notes, version badge. Edit: name*, estimate_type (select: 6 options), contract_type, markup/overhead/profit %, valid_until, description, notes. Status as Badge (read-only). Archive (soft delete).
+- **Invoice Detail** (`/invoices/[id]`) — View: invoice_number (heading), amount ($), invoice_date, due_date, notes. Edit: invoice_number, amount, dates, notes. Status as Badge (read-only). NO archive button (no deleted_at column).
+- **Contract Detail** (`/contracts/[id]`) — View: title (heading), contract_number, contract_type, contract_value ($), retention_pct, start/end dates, description, content. Edit: title, contract_number, contract_type (select: 8 options), contract_value, retention_pct, dates, description. Status as Badge (read-only). Archive (soft delete).
+
+### List Pages — Clickable Rows (2026-02-24, batch 7)
+All list rows updated from `<div>` to `<Link>` for navigation to detail pages:
+- **Leads** (`/leads`) — rows link to `/leads/[id]`
+- **Estimates** (`/estimates`) — rows link to `/estimates/[id]`
+- **Invoices** (`/invoices`) — rows link to `/invoices/[id]`
+- **Contracts** (`/contracts`) — rows link to `/contracts/[id]`
+- **Clients** (`/clients`) — already had clickable rows (pre-existing)
+- **Vendors** (`/vendors`) — already had clickable rows (pre-existing)
+
 ### Navigation Config Updates
 | Route | Old Path | New Path |
 |-------|----------|----------|

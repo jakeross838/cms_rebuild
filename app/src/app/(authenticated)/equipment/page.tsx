@@ -83,7 +83,7 @@ export default async function EquipmentPage({
         {equipment.length > 0 ? (
           <div className="divide-y divide-border">
             {equipment.map((item) => (
-              <div key={item.id} className="p-4 hover:bg-accent transition-colors">
+              <Link key={item.id} href={`/equipment/${item.id}`} className="block p-4 hover:bg-accent transition-colors">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export default async function EquipmentPage({
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

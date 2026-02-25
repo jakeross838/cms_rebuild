@@ -83,7 +83,7 @@ export default async function InvoicesPage({
         {invoices.length > 0 ? (
           <div className="divide-y divide-border">
             {invoices.map((inv) => (
-              <div key={inv.id} className="p-4 hover:bg-accent transition-colors">
+              <Link key={inv.id} href={`/invoices/${inv.id}`} className="block p-4 hover:bg-accent transition-colors">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export default async function InvoicesPage({
                     <div className="text-xs text-muted-foreground">{inv.invoice_date ? formatDate(inv.invoice_date) : ''}</div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

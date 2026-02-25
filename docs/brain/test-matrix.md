@@ -34,6 +34,23 @@ All 14 new create form pages pass `npx tsc --noEmit`:
 - Simple forms: clients, leads, vendors, estimates, employees, equipment, inventory, assemblies, templates, campaigns
 - Entity selector forms: invoices (jobs/vendors), contracts (jobs/clients), contacts (vendors), warranties (jobs/vendors)
 
+### Batch 7 — Detail Pages + Clickable Rows Type-Checked Clean
+All 4 new detail pages pass `npx tsc --noEmit`:
+- leads/[id] — view/edit/archive, source/priority selects, budget range, currency formatting
+- estimates/[id] — view/edit/archive, estimate_type select (6 options), percentage fields, financial summary
+- invoices/[id] — view/edit (no archive), amount/dates, currency formatting
+- contracts/[id] — view/edit/archive, contract_type select (8 options), retention_pct, date range
+
+All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
+- leads, estimates, invoices, contracts rows now wrapped in `<Link>`
+
+### Key Schema Mismatches Found & Fixed (Batch 7)
+- `leads.first_name`, `last_name`, `source`, `priority` are NOT NULL in DB — Update type is `string | undefined` not `string | null`
+- `estimates.estimate_type` is NOT NULL — same pattern
+- `invoices.amount` is NOT NULL — `number | undefined` not `number | null`
+- `contracts.title`, `contract_number`, `contract_type` are NOT NULL — same pattern
+- Fix: use `|| undefined` for NOT NULL columns in `.update()` calls, keep `|| null` for nullable columns
+
 ### Key Schema Mismatches Found & Fixed (Earlier)
 - `jobs.description` → `jobs.notes` (DB field name differs)
 - `jobs.project_type`, `sqft_*`, `bedrooms`, `bathrooms`, `stories` → don't exist in DB yet

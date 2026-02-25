@@ -56,24 +56,26 @@ export default async function ContactsPage({
       {contacts.length > 0 ? (
         <div className="space-y-2">
           {contacts.map((contact) => (
-            <Card key={contact.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{contact.name}</span>
-                      {contact.is_primary && <Badge className="text-blue-700 bg-blue-100">Primary</Badge>}
-                      {contact.title && <Badge variant="outline" className="text-xs">{contact.title}</Badge>}
-                    </div>
-                    <div className="text-sm text-muted-foreground mt-1 ml-6">
-                      {contact.email && <span>{contact.email}</span>}
-                      {contact.phone && <span> &bull; {contact.phone}</span>}
+            <Link key={contact.id} href={`/contacts/${contact.id}`} className="block">
+              <Card className="hover:bg-accent transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{contact.name}</span>
+                        {contact.is_primary && <Badge className="text-blue-700 bg-blue-100">Primary</Badge>}
+                        {contact.title && <Badge variant="outline" className="text-xs">{contact.title}</Badge>}
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1 ml-6">
+                        {contact.email && <span>{contact.email}</span>}
+                        {contact.phone && <span> &bull; {contact.phone}</span>}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       ) : (

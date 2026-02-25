@@ -90,7 +90,7 @@ export default async function HRWorkforcePage({
               {employees.length > 0 ? (
                 <div className="divide-y divide-border">
                   {employees.map((emp) => (
-                    <div key={emp.id} className="py-3 first:pt-0 last:pb-0">
+                    <Link key={emp.id} href={`/hr/${emp.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent transition-colors rounded-md -mx-2 px-2">
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-2">
@@ -108,7 +108,7 @@ export default async function HRWorkforcePage({
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               ) : (
