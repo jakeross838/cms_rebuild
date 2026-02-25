@@ -74,7 +74,7 @@ const tableAliases = [
 
   // Scheduling (Module 07)
   ['ScheduleTask', 'schedule_tasks'],
-  ['TaskDependency', 'task_dependencies'],
+  ['TaskDependency', 'schedule_dependencies'],
 
   // Daily Logs (Module 08)
   ['DailyLog', 'daily_logs'],
@@ -82,7 +82,7 @@ const tableAliases = [
 
   // Budget & Cost (Module 09)
   ['BudgetLine', 'budget_lines'],
-  ['CostEntry', 'cost_entries'],
+  ['CostEntry', 'cost_transactions'],
 
   // Vendor Management (Module 10)
   ['VendorInsurance', 'vendor_insurance'],
@@ -90,23 +90,20 @@ const tableAliases = [
 
   // Accounting (Module 11)
   ['GlAccount', 'gl_accounts'],
-  ['JournalEntry', 'journal_entries'],
-  ['JournalEntryLine', 'journal_entry_lines'],
+  ['JournalEntry', 'gl_journal_entries'],
+  ['JournalEntryLine', 'gl_journal_lines'],
   ['Invoice', 'invoices'],
-  ['InvoiceLine', 'invoice_lines'],
-  ['Payment', 'payments'],
-  ['PaymentApplication', 'payment_applications'],
-  ['BankAccount', 'bank_accounts'],
-  ['BankTransaction', 'bank_transactions'],
-  ['BankReconciliation', 'bank_reconciliations'],
+  ['InvoiceLine', 'ar_invoice_lines'],
+  ['Payment', 'ap_payments'],
+  ['PaymentApplication', 'ap_payment_applications'],
 
   // Client Portal (Module 12)
-  ['ClientPortalConfig', 'client_portal_configs'],
-  ['ClientPortalMessage', 'client_portal_messages'],
+  ['ClientPortalConfig', 'client_portal_settings'],
+  ['ClientPortalMessage', 'client_messages'],
   ['ClientApproval', 'client_approvals'],
 
   // AI Invoice Processing (Module 13)
-  ['AiInvoice', 'ai_invoices'],
+  ['AiInvoice', 'invoice_extractions'],
 
   // Lien Waivers (Module 14)
   ['LienWaiver', 'lien_waivers'],
@@ -117,45 +114,44 @@ const tableAliases = [
 
   // QuickBooks Integration (Module 16)
   ['AccountingConnection', 'accounting_connections'],
-  ['AccountingSyncLog', 'accounting_sync_logs'],
+  ['AccountingSyncLog', 'sync_logs'],
 
   // Change Orders (Module 17)
   ['ChangeOrder', 'change_orders'],
-  ['ChangeOrderLine', 'change_order_lines'],
+  ['ChangeOrderLine', 'change_order_items'],
 
   // Purchase Orders (Module 18)
   ['PurchaseOrder', 'purchase_orders'],
   ['PurchaseOrderLine', 'purchase_order_lines'],
 
   // Financial Reporting (Module 19)
-  ['FinancialReport', 'financial_reports'],
-  ['SavedReport', 'saved_reports'],
+  ['FinancialReport', 'custom_reports'],
+  ['SavedReport', 'report_snapshots'],
 
   // Estimating (Module 20)
   ['Estimate', 'estimates'],
-  ['EstimateLine', 'estimate_lines'],
-  ['AssemblyTemplate', 'assembly_templates'],
+  ['EstimateLine', 'estimate_line_items'],
+  ['AssemblyTemplate', 'assemblies'],
 
   // Selections (Module 21)
   ['Selection', 'selections'],
   ['SelectionOption', 'selection_options'],
-  ['SelectionChoice', 'selection_choices'],
+  ['SelectionChoice', 'selection_options'],
 
   // Vendor Performance (Module 22)
-  ['VendorScorecard', 'vendor_scorecards'],
-  ['VendorReview', 'vendor_reviews'],
+  ['VendorScorecard', 'vendor_scores'],
+  ['VendorReview', 'vendor_score_history'],
 
   // Price Intelligence (Module 23)
-  ['PriceEntry', 'price_entries'],
-  ['PriceAlert', 'price_alerts'],
+  ['PriceEntry', 'price_history'],
 
   // AI Document Processing (Module 24)
-  ['ProcessedDocument', 'processed_documents'],
-  ['DocumentExtractionRule', 'document_extraction_rules'],
+  ['ProcessedDocument', 'document_extractions'],
+  ['DocumentExtractionRule', 'extraction_rules'],
 
   // Schedule Intelligence (Module 25)
-  ['WeatherForecast', 'weather_forecasts'],
-  ['ScheduleOptimization', 'schedule_optimizations'],
+  ['WeatherForecast', 'schedule_weather_events'],
+  ['ScheduleOptimization', 'schedule_scenarios'],
 
   // Bid Management (Module 26)
   ['BidPackage', 'bid_packages'],
@@ -170,21 +166,21 @@ const tableAliases = [
   ['PunchItem', 'punch_items'],
 
   // Full Client Portal (Module 29)
-  ['ClientPortalPayment', 'client_portal_payments'],
-  ['ClientSelectionApproval', 'client_selection_approvals'],
+  ['ClientPortalPayment', 'client_payments'],
+  ['ClientSelectionApproval', 'client_approvals'],
 
   // Vendor Portal (Module 30)
-  ['VendorPortalConfig', 'vendor_portal_configs'],
+  ['VendorPortalConfig', 'vendor_portal_settings'],
 
   // Warranty (Module 31)
   ['WarrantyClaim', 'warranty_claims'],
-  ['WarrantyItem', 'warranty_items'],
+  ['WarrantyItem', 'warranties'],
   ['MaintenanceSchedule', 'maintenance_schedules'],
   ['MaintenanceTask', 'maintenance_tasks'],
 
   // Permitting (Module 32)
   ['Permit', 'permits'],
-  ['Inspection', 'inspections'],
+  ['Inspection', 'inspection_results'],
 
   // Safety (Module 33)
   ['SafetyIncident', 'safety_incidents'],
@@ -192,7 +188,7 @@ const tableAliases = [
 
   // HR & Workforce (Module 34)
   ['Employee', 'employees'],
-  ['Certification', 'certifications'],
+  ['Certification', 'employee_certifications'],
 
   // Equipment (Module 35)
   ['Equipment', 'equipment'],
@@ -209,7 +205,7 @@ const tableAliases = [
   // Contracts (Module 38)
   ['Contract', 'contracts'],
   ['ContractTemplate', 'contract_templates'],
-  ['SignatureRequest', 'signature_requests'],
+  ['SignatureRequest', 'contract_signers'],
 
   // Advanced Reporting (Module 39)
   ['ReportDefinition', 'report_definitions'],
@@ -229,7 +225,80 @@ const tableAliases = [
 
   // Notifications
   ['Notification', 'notifications'],
-  ['NotificationPreference', 'notification_preferences'],
+  ['NotificationPreference', 'user_notification_preferences'],
+
+  // Onboarding Wizard (Module 41)
+  ['OnboardingSession', 'onboarding_sessions'],
+  ['OnboardingMilestone', 'onboarding_milestones'],
+  ['OnboardingReminder', 'onboarding_reminders'],
+  ['OnboardingChecklist', 'onboarding_checklists'],
+  ['SampleDataSet', 'sample_data_sets'],
+
+  // Data Migration (Module 42)
+  ['MigrationJob', 'migration_jobs'],
+  ['MigrationFieldMapping', 'migration_field_mappings'],
+  ['MigrationMappingTemplate', 'migration_mapping_templates'],
+  ['MigrationValidationResult', 'migration_validation_results'],
+  ['MigrationReconciliation', 'migration_reconciliation'],
+
+  // Subscription Billing (Module 43)
+  ['SubscriptionPlan', 'subscription_plans'],
+  ['PlanAddon', 'plan_addons'],
+  ['CompanySubscription', 'company_subscriptions'],
+  ['UsageMeter', 'usage_meters'],
+  ['BillingEvent', 'billing_events'],
+
+  // White Label & Branding (Module 44)
+  ['BuilderBranding', 'builder_branding'],
+  ['BuilderCustomDomain', 'builder_custom_domains'],
+  ['BuilderEmailConfig', 'builder_email_config'],
+  ['BuilderTerminology', 'builder_terminology'],
+  ['BuilderContentPage', 'builder_content_pages'],
+
+  // API & Marketplace (Module 45)
+  ['ApiKey', 'api_keys'],
+  ['ApiMetric', 'api_metrics'],
+  ['WebhookSubscription', 'webhook_subscriptions'],
+  ['WebhookDelivery', 'webhook_deliveries'],
+  ['IntegrationListing', 'integration_listings'],
+  ['IntegrationInstall', 'integration_installs'],
+
+  // Customer Support (Module 46)
+  ['SupportTicket', 'support_tickets'],
+  ['TicketMessage', 'ticket_messages'],
+  ['KbArticle', 'kb_articles'],
+  ['FeatureRequest', 'feature_requests'],
+  ['FeatureRequestVote', 'feature_request_votes'],
+
+  // Training Platform (Module 47)
+  ['TrainingCourse', 'training_courses'],
+  ['TrainingPath', 'training_paths'],
+  ['TrainingPathItem', 'training_path_items'],
+  ['UserTrainingProgress', 'user_training_progress'],
+  ['UserCertification', 'user_certifications'],
+
+  // Template Marketplace (Module 48)
+  ['MarketplacePublisher', 'marketplace_publishers'],
+  ['MarketplaceTemplate', 'marketplace_templates'],
+  ['MarketplaceTemplateVersion', 'marketplace_template_versions'],
+  ['MarketplaceInstall', 'marketplace_installs'],
+  ['MarketplaceReview', 'marketplace_reviews'],
+
+  // Platform Analytics (Module 49)
+  ['PlatformMetricsSnapshot', 'platform_metrics_snapshots'],
+  ['TenantHealthScore', 'tenant_health_scores'],
+  ['FeatureUsageEvent', 'feature_usage_events'],
+  ['AbExperiment', 'ab_experiments'],
+  ['DeploymentRelease', 'deployment_releases'],
+
+  // Marketing Website (Module 50)
+  ['MarketingLead', 'marketing_leads'],
+  ['MarketingCampaign', 'marketing_campaigns'],
+  ['MarketingReferral', 'marketing_referrals'],
+  ['CampaignContact', 'campaign_contacts'],
+  ['Testimonial', 'testimonials'],
+  ['CaseStudy', 'case_studies'],
+  ['BlogPost', 'blog_posts'],
 ];
 
 // Insert/Update aliases
@@ -311,6 +380,39 @@ for (const [typeName, tableName] of updateAliases) {
 aliases += `\n// Notification enum types (manual — not DB enums)\n`;
 aliases += `export type NotificationCategory = 'financial' | 'schedule' | 'documents' | 'field_operations' | 'approvals' | 'system'\n`;
 aliases += `export type NotificationUrgency = 'low' | 'normal' | 'high' | 'critical'\n`;
+aliases += `export type NotificationChannel = 'in_app' | 'email' | 'sms' | 'push'\n`;
+aliases += `export type DeliveryStatus = 'queued' | 'processing' | 'sent' | 'delivered' | 'failed' | 'bounced'\n`;
+aliases += `export type DigestFrequency = 'hourly' | 'twice_daily' | 'daily'\n`;
+
+// Notification complex types (manual — not DB tables)
+aliases += `\n// Notification complex types (manual — not DB tables)\n`;
+aliases += `export type NotificationEventType = {\n`;
+aliases += `  id: string\n  event_type: string\n  module: string\n  description: string\n`;
+aliases += `  default_channels: string[]\n  default_roles: string[]\n  variables: string[]\n`;
+aliases += `  urgency: string\n  category: string\n  created_at: string\n  [key: string]: unknown\n}\n`;
+
+aliases += `export type NotificationDelivery = {\n`;
+aliases += `  id: string\n  notification_id: string\n  channel: NotificationChannel\n`;
+aliases += `  status: DeliveryStatus\n  provider_message_id: string | null\n  attempts: number\n`;
+aliases += `  last_attempt_at: string | null\n  error_message: string | null\n`;
+aliases += `  created_at: string\n  updated_at: string\n  [key: string]: unknown\n}\n`;
+
+aliases += `export type UserNotificationPreference = {\n`;
+aliases += `  id: string\n  user_id: string\n  company_id: string\n  category: string\n`;
+aliases += `  channel: string\n  enabled: boolean\n  created_at: string\n  updated_at: string\n`;
+aliases += `  [key: string]: unknown\n}\n`;
+
+aliases += `export type UserNotificationSetting = {\n`;
+aliases += `  id: string\n  user_id: string\n  company_id: string\n`;
+aliases += `  quiet_start: string\n  quiet_end: string\n  timezone: string\n`;
+aliases += `  digest_mode: boolean\n  digest_frequency: string\n  digest_time: string\n`;
+aliases += `  critical_bypass_quiet: boolean\n  created_at: string\n  updated_at: string\n`;
+aliases += `  [key: string]: unknown\n}\n`;
+
+// Project/entity enum types (manual — Zod enums in validation schemas)
+aliases += `\n// Project/entity enum types (manual — not DB enums)\n`;
+aliases += `export type ProjectType = 'new_construction' | 'renovation' | 'addition' | 'remodel' | 'commercial' | 'other'\n`;
+aliases += `export type CostCodeCategory = 'labor' | 'material' | 'subcontractor' | 'equipment' | 'other'\n`;
 
 const final = generated + '\n' + aliases + '\n';
 fs.writeFileSync(outputPath, final);
