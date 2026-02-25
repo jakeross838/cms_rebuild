@@ -82,27 +82,29 @@ export default async function ProposalsPage({
       {estimates.length > 0 ? (
         <div className="space-y-2">
           {estimates.map((est) => (
-            <Card key={est.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{est.name}</span>
-                      <Badge className={getStatusColor(est.status)}>{est.status}</Badge>
-                      <Badge variant="outline" className="text-xs">v{est.version}</Badge>
+            <Link key={est.id} href={`/estimates/${est.id}`} className="block hover:ring-1 hover:ring-ring rounded-lg transition-all">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{est.name}</span>
+                        <Badge className={getStatusColor(est.status)}>{est.status}</Badge>
+                        <Badge variant="outline" className="text-xs">v{est.version}</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1 ml-6">
+                        {est.jobs?.name && <span>{est.jobs.name} &bull; </span>}
+                        {formatDate(est.created_at)}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground mt-1 ml-6">
-                      {est.jobs?.name && <span>{est.jobs.name} &bull; </span>}
-                      {formatDate(est.created_at)}
-                    </div>
+                    {est.total != null && (
+                      <span className="font-bold text-lg">{formatCurrency(est.total)}</span>
+                    )}
                   </div>
-                  {est.total != null && (
-                    <span className="font-bold text-lg">{formatCurrency(est.total)}</span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       ) : (
