@@ -1,5 +1,54 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Detail Pages + Clickable List Rows (batch 11 -- time entries, invoices, licenses)
+
+### Why
+Three list pages (time-clock, invoices, licenses) had no detail page navigation. Users could see items in the list but couldn't click through to view/edit individual records. The detail pages needed to support both view and edit modes, following the established pattern from batch 7/10.
+
+### What was done
+1. **Created 3 detail pages**:
+   - `jobs/[id]/time-clock/[entryId]/page.tsx` -- View/edit time entry (entry_date, clock_in/out, regular/overtime hours, status, entry_method, notes). No archive since time entries shouldn't be archived.
+   - `jobs/[id]/invoices/[invoiceId]/page.tsx` -- View/edit invoice (invoice_number, amount, status, dates, vendor_id, notes). Archive sets status to 'denied' since the invoices table has no `deleted_at` column.
+   - `compliance/licenses/[id]/page.tsx` -- View/edit certification (name, type, authority, number, dates, status, employee_id). Archive sets status to 'revoked' since the employee_certifications table has no `deleted_at` column.
+
+2. **Updated 3 list pages** to wrap items in `<Link>` tags:
+   - `jobs/[id]/time-clock/page.tsx` -- Added `Link` import, changed `<div>` to `<Link>` with hover style
+   - `jobs/[id]/invoices/page.tsx` -- Wrapped `<Card>` in `<Link>` with hover style on Card
+   - `compliance/licenses/page.tsx` -- Changed `<div>` to `<Link>` with hover style
+
+### Key decisions
+- **No deleted_at on invoices/certifications** -- Both tables lack a `deleted_at` column in the DB schema. Instead of a true soft delete, archive changes the status to a terminal state ('denied' for invoices, 'revoked' for certifications).
+- **Time entries: no archive** -- Time entries represent factual records; they can be edited (e.g., corrected hours) or status-changed (approved/rejected) but not archived.
+- **Status cast on invoice update** -- The invoices table has a typed enum for status. The update call casts formData.status to the proper union type to satisfy TypeScript.
+- **Browser Supabase client** -- All detail pages use `createClient` from `@/lib/supabase/client` (not server) since they're `'use client'` components.
+
+---
+
+## 2026-02-25: Job-Level Detail Pages + Clickable List Rows (batch 10 -- permits, warranties, files, selections)
+
+### Why
+The job-level list pages for permits, warranties, files, and selections displayed records but had no way to navigate to a detail view. Users could not view full record details, edit fields, or archive individual records. The list items were plain `<div>` elements with no click interaction.
+
+### What was done
+1. **Created 4 job-level detail pages** under `app/src/app/(authenticated)/jobs/[id]/`:
+   - `permits/[permitId]/page.tsx` -- View/edit permit with 9 fields, 6 status options, archive via deleted_at
+   - `warranties/[warrantyId]/page.tsx` -- View/edit warranty with 6 fields, 4 status options, archive via deleted_at
+   - `files/[fileId]/page.tsx` -- View-only file detail (no edit mode, since file metadata is mostly immutable), archive via deleted_at, includes formatFileSize helper
+   - `selections/[selectionId]/page.tsx` -- View/edit selection with 6 fields, 4 status options, archive via deleted_at
+
+2. **Updated 4 list pages** to wrap list items in `<Link>` tags:
+   - `permits/page.tsx` -- `<div key>` changed to `<Link key href>` with hover styling
+   - `warranties/page.tsx` -- `<div key>` changed to `<Link key href>` with hover styling
+   - `files/page.tsx` -- `<div key>` changed to `<Link key href>` with hover styling
+   - `selections/page.tsx` -- `<div key>` changed to `<Link key href>` with hover styling
+
+### Key decisions
+- File detail page has NO edit mode because file metadata (filename, mime_type, file_size) is immutable once uploaded. Only archive is available.
+- All other 3 detail pages follow the standard view/edit toggle pattern from existing pages (inspections, lien-waivers).
+- Used browser Supabase client (`@/lib/supabase/client`) for all detail pages since they are `'use client'` components.
+- Warranties table uses `undefined` instead of `null` for optional update fields due to Supabase generated type constraints.
+- All pages use `useParams()` with typed casts (e.g., `params.permitId as string`).
+
 ## 2026-02-24: Job-Level Create Form Pages (batch 9 -- photos, files, inventory, communications, submittals)
 
 ### Why

@@ -138,6 +138,31 @@ All detail pages follow the pattern: `'use client'`, useParams, useRouter, creat
 - **Template Detail** (`/library/templates/[id]`) — View: name, contract_type, is_active/is_system badges, content in `<pre>` block. NO archive.
 - **Cost Code Detail** (`/cost-codes/[id]`) — View: code (mono), name, division, subdivision, category (color badge), trade, description. Edit: all fields. Archive (soft delete).
 
+### Job-Level Detail Pages (2026-02-25, batch 10)
+All job-level detail pages follow the pattern: `'use client'`, useParams (id + itemId), useRouter, createClient (browser), useState for view/edit toggle, useEffect to load from Supabase, handleSave/handleDelete, Cards with view/edit modes. Archive = soft delete (deleted_at).
+- **Permit Detail** (`/jobs/[id]/permits/[permitId]`) — View: permit_number (mono), permit_type (heading), status badge, jurisdiction, applied/issued/expiration dates, conditions, notes. Edit: permit_type*, status (6 options: pending/applied/issued/active/expired/revoked), permit_number, jurisdiction, 3 date fields, conditions (textarea), notes (textarea). Archive (deleted_at).
+- **Warranty Detail** (`/jobs/[id]/warranties/[warrantyId]`) — View: title (heading), status badge, warranty_type badge, start/end dates, description. Edit: title*, status (4 options: active/expired/claimed/void), warranty_type, start/end dates, description (textarea). Archive (deleted_at).
+- **File Detail** (`/jobs/[id]/files/[fileId]`) — View-only (no edit mode): filename (heading), file icon by mime_type, MIME type, file size (formatted with B/KB/MB), document_type, upload date. Archive (deleted_at). Includes formatFileSize helper.
+- **Selection Detail** (`/jobs/[id]/selections/[selectionId]`) — View: status badge, room badge, category_id (mono), option_id (mono), selected_at, confirmed_at, created_at. Edit: status (4 options: pending/selected/confirmed/rejected), room, category_id*, option_id*, selected_at, confirmed_at. Archive (deleted_at).
+
+### List Pages — Job-Level Clickable Rows (2026-02-25, batch 10)
+Updated list item wrappers from `<div>` to `<Link>` for navigation to detail pages:
+- **Permits** (`/jobs/[id]/permits`) — rows link to `/jobs/[id]/permits/[permitId]`
+- **Warranties** (`/jobs/[id]/warranties`) — rows link to `/jobs/[id]/warranties/[warrantyId]`
+- **Files** (`/jobs/[id]/files`) — rows link to `/jobs/[id]/files/[fileId]`
+- **Selections** (`/jobs/[id]/selections`) — rows link to `/jobs/[id]/selections/[selectionId]`
+
+### Detail Pages (2026-02-25, batch 11)
+All detail pages follow the pattern: `'use client'`, useParams, useRouter, createClient (browser), useState for view/edit toggle, useEffect to load, handleSave, Cards with CardHeader/CardTitle/CardContent.
+- **Time Entry Detail** (`/jobs/[id]/time-clock/[entryId]`) -- View: entry_date, clock_in/out times, regular_hours, overtime_hours, total hours, status (badge), entry_method. Edit: entry_date (date), clock_in/out (datetime-local), regular/overtime hours (number), status (select: pending/approved/rejected), entry_method, notes. No archive -- view/edit only. Back to `/jobs/[id]/time-clock`.
+- **Invoice Detail** (`/jobs/[id]/invoices/[invoiceId]`) -- View: invoice_number, amount ($), status (badge with getStatusColor), vendor_id, invoice_date, due_date, notes. Edit: invoice_number, amount (number), status (select: 8 options), invoice_date (date), due_date (date), vendor_id, notes. Archive = set status to 'denied' (no deleted_at column). Back to `/jobs/[id]/invoices`.
+- **License/Certification Detail** (`/compliance/licenses/[id]`) -- View: certification_name, status (badge), certification_type, issuing_authority, certification_number, employee_id, issued_date, expiration_date. Edit: all fields, status (select: active/expired/revoked/pending). Archive = set status to 'revoked' (no deleted_at column). Back to `/compliance/licenses`. No job context.
+
+### List Pages -- Clickable Rows (2026-02-25, batch 11)
+- **Time Clock** (`/jobs/[id]/time-clock`) -- rows wrapped in `<Link>` to `/jobs/[id]/time-clock/[entryId]` with hover style. Added `Link` import.
+- **Invoices** (`/jobs/[id]/invoices`) -- Card items wrapped in `<Link>` to `/jobs/[id]/invoices/[invoiceId]` with hover style on Card.
+- **Licenses** (`/compliance/licenses`) -- rows wrapped in `<Link>` to `/compliance/licenses/[id]` with hover style.
+
 ### Top-Level Nav Pages (2026-02-24, batch 8)
 All sidebar links now resolve — zero 404s:
 - **Schedule** (`/schedule`) — SSR, queries jobs, links to `/jobs/[id]/schedule`

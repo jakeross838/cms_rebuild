@@ -1,5 +1,132 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Detail Pages + Clickable Rows (2026-02-25, batch 11)
+
+### Test Cases -- 3 Detail Pages
+
+**Time Entry Detail** (`/jobs/[id]/time-clock/[entryId]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid entryId | Fetches from `time_entries` where id=entryId AND job_id=jobId, displays view mode |
+| Invalid entryId | Shows "Time entry not found" error with back link |
+| Back link | Navigates to `/jobs/[id]/time-clock` |
+| View mode fields | entry_date, clock_in/out times, regular_hours, overtime_hours, total hours, status (badge), entry_method |
+| Edit button | Switches to edit mode with form fields |
+| Edit mode fields | entry_date (date), clock_in/out (datetime-local), regular/overtime hours (number), status (select), notes (textarea) |
+| Status options | pending, approved, rejected |
+| Cancel in edit mode | Reverts to view mode without saving |
+| Save in edit mode | Updates `time_entries` row, shows success message, returns to view mode |
+| No archive button | Time entries are view/edit only |
+
+**Invoice Detail** (`/jobs/[id]/invoices/[invoiceId]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid invoiceId | Fetches from `invoices` where id=invoiceId AND job_id=jobId, displays view mode |
+| Invalid invoiceId | Shows "Invoice not found" error with back link |
+| Back link | Navigates to `/jobs/[id]/invoices` |
+| View mode fields | invoice_number, amount ($), status (badge with getStatusColor), vendor_id, invoice_date, due_date, notes |
+| Edit button | Switches to edit mode |
+| Edit mode fields | invoice_number, amount (number), status (select), invoice_date (date), due_date (date), vendor_id, notes (textarea) |
+| Status options | draft, pm_pending, accountant_pending, owner_pending, approved, in_draw, paid, denied |
+| Save | Updates `invoices` row with typed status cast |
+| Archive button | Sets status to 'denied', redirects to list |
+
+**License/Certification Detail** (`/compliance/licenses/[id]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid id | Fetches from `employee_certifications` where id=certId, displays view mode |
+| Invalid id | Shows "Certification not found" error with back link |
+| Back link | Navigates to `/compliance/licenses` |
+| View mode fields | certification_name, status (badge), certification_type, issuing_authority, certification_number, employee_id, issued_date, expiration_date |
+| Edit button | Switches to edit mode |
+| Edit mode fields | certification_name (required), status (select), certification_type, issuing_authority, certification_number, employee_id, issued_date (date), expiration_date (date) |
+| Status options | active, expired, revoked, pending |
+| Save | Updates `employee_certifications` row |
+| Archive button | Sets status to 'revoked', redirects to list |
+
+### Test Cases -- 3 List Page Updates
+
+**Time Clock List** (`/jobs/[id]/time-clock`)
+| Test | Expected |
+|------|----------|
+| Row click | Navigates to `/jobs/[id]/time-clock/[entryId]` |
+| Hover style | Row highlights with `hover:bg-accent/50` |
+
+**Invoices List** (`/jobs/[id]/invoices`)
+| Test | Expected |
+|------|----------|
+| Card click | Navigates to `/jobs/[id]/invoices/[invoiceId]` |
+| Hover style | Card highlights with `hover:bg-accent/50` |
+
+**Licenses List** (`/compliance/licenses`)
+| Test | Expected |
+|------|----------|
+| Row click | Navigates to `/compliance/licenses/[id]` |
+| Hover style | Row highlights with `hover:bg-accent/50` |
+
+---
+
+## Job-Level Detail Pages + Clickable Rows (2026-02-25, batch 10)
+
+### Test Cases -- 4 Detail Pages
+
+**Permit Detail** (`/jobs/[id]/permits/[permitId]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid permit | Displays permit_type heading, permit_number (mono), status badge, jurisdiction, dates, conditions, notes |
+| Back link | Navigates to `/jobs/[id]/permits` |
+| Edit button | Switches to edit mode with form inputs |
+| Cancel in edit mode | Returns to view mode without saving |
+| Save changes | Updates permit in DB, shows success message, returns to view mode |
+| Status select options | pending, applied, issued, active, expired, revoked |
+| Archive button | Confirms, sets deleted_at, redirects to list |
+| Invalid permit ID | Shows "Permit not found" error |
+
+**Warranty Detail** (`/jobs/[id]/warranties/[warrantyId]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid warranty | Displays title heading, status badge, warranty_type badge, date range, description |
+| Edit button | Switches to edit mode with form inputs |
+| Save changes | Updates warranty in DB, shows success message |
+| Status select options | active, expired, claimed, void |
+| Archive button | Confirms, sets deleted_at, redirects to list |
+| Invalid warranty ID | Shows "Warranty not found" error |
+
+**File Detail** (`/jobs/[id]/files/[fileId]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid file | Displays filename heading, file icon, MIME type, formatted file size, document_type, upload date |
+| No edit button | View-only page, no edit toggle |
+| File size formatting | < 1024 shows bytes, < 1MB shows KB, >= 1MB shows MB |
+| File icon | Image MIME types show Image icon, others show FileText icon |
+| Archive button | Confirms, sets deleted_at, redirects to list |
+| Invalid file ID | Shows "File not found" error |
+
+**Selection Detail** (`/jobs/[id]/selections/[selectionId]`)
+| Test | Expected |
+|------|----------|
+| Page loads with valid selection | Displays status badge, room badge, category_id (mono), option_id (mono), dates |
+| Edit button | Switches to edit mode with form inputs |
+| Save changes | Updates selection in DB, shows success message |
+| Status select options | pending, selected, confirmed, rejected |
+| Archive button | Confirms, sets deleted_at, redirects to list |
+| Invalid selection ID | Shows "Selection not found" error |
+
+### Test Cases -- 4 List Page Link Updates
+
+| List Page | Test | Expected |
+|-----------|------|----------|
+| Permits | Click permit row | Navigates to `/jobs/[id]/permits/[permitId]` |
+| Permits | Hover permit row | Shows hover:bg-accent/50 styling |
+| Warranties | Click warranty row | Navigates to `/jobs/[id]/warranties/[warrantyId]` |
+| Warranties | Hover warranty row | Shows hover:bg-accent/50 styling |
+| Files | Click file row | Navigates to `/jobs/[id]/files/[fileId]` |
+| Files | Hover file row | Shows hover:bg-accent/50 styling |
+| Selections | Click selection row | Navigates to `/jobs/[id]/selections/[selectionId]` |
+| Selections | Hover selection row | Shows hover:bg-accent/50 styling |
+
+---
+
 ## Job-Level Create Form Pages (2026-02-24, batch 9 -- photos, files, inventory, communications, submittals)
 
 ### Test Cases -- All 5 create pages

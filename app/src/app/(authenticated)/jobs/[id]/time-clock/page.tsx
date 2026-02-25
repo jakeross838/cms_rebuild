@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Clock, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -59,7 +61,7 @@ export default async function JobTimeClockPage({
           {entries.length > 0 ? (
             <div className="divide-y divide-border">
               {entries.map((entry) => (
-                <div key={entry.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={entry.id} href={`/jobs/${jobId}/time-clock/${entry.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -78,7 +80,7 @@ export default async function JobTimeClockPage({
                       {entry.overtime_hours > 0 && <p className="text-amber-600">+{entry.overtime_hours.toFixed(1)}h OT</p>}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

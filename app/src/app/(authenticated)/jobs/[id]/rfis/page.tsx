@@ -83,7 +83,7 @@ export default async function RFIsPage({
           {rfis.length > 0 ? (
             <div className="divide-y divide-border">
               {rfis.map((rfi) => (
-                <div key={rfi.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={rfi.id} href={`/jobs/${id}/rfis/${rfi.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export default async function RFIsPage({
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

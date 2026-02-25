@@ -85,7 +85,7 @@ export default async function FilesPage({
               {documents.map((doc) => {
                 const Icon = getFileIcon(doc.mime_type)
                 return (
-                  <div key={doc.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <Link key={doc.id} href={`/jobs/${id}/files/${doc.id}`} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                     <div className="p-2 rounded-lg bg-muted">
                       <Icon className="h-5 w-5 text-muted-foreground" />
                     </div>
@@ -97,7 +97,7 @@ export default async function FilesPage({
                         {doc.created_at && <span>{formatDate(doc.created_at)}</span>}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
             </div>

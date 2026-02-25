@@ -77,25 +77,27 @@ export default async function JobInvoicesPage({
       {invoices.length > 0 ? (
         <div className="space-y-2">
           {invoices.map((inv) => (
-            <Card key={inv.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      {inv.invoice_number && <span className="text-sm font-mono text-muted-foreground">#{inv.invoice_number}</span>}
-                      {inv.status && <Badge className={getStatusColor(inv.status)}>{inv.status.replace('_', ' ')}</Badge>}
+            <Link key={inv.id} href={`/jobs/${jobId}/invoices/${inv.id}`}>
+              <Card className="hover:bg-accent/50 transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        {inv.invoice_number && <span className="text-sm font-mono text-muted-foreground">#{inv.invoice_number}</span>}
+                        {inv.status && <Badge className={getStatusColor(inv.status)}>{inv.status.replace('_', ' ')}</Badge>}
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1 ml-6">
+                        {inv.invoice_date && formatDate(inv.invoice_date)}
+                        {inv.due_date && ` • Due ${formatDate(inv.due_date)}`}
+                        {inv.notes && ` • ${inv.notes}`}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground mt-1 ml-6">
-                      {inv.invoice_date && formatDate(inv.invoice_date)}
-                      {inv.due_date && ` • Due ${formatDate(inv.due_date)}`}
-                      {inv.notes && ` • ${inv.notes}`}
-                    </div>
+                    <span className="font-bold text-lg">{formatCurrency(inv.amount)}</span>
                   </div>
-                  <span className="font-bold text-lg">{formatCurrency(inv.amount)}</span>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       ) : (

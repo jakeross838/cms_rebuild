@@ -84,7 +84,7 @@ export default async function PunchListPage({
           {items.length > 0 ? (
             <div className="divide-y divide-border">
               {items.map((item) => (
-                <div key={item.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={item.id} href={`/punch-lists/${item.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{item.title ?? 'Untitled'}</span>
                     <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>
@@ -97,7 +97,7 @@ export default async function PunchListPage({
                     {item.category && <span>{item.category}</span>}
                     {item.due_date && <span>Due: {formatDate(item.due_date)}</span>}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

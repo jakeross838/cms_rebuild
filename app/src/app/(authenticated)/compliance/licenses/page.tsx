@@ -72,7 +72,7 @@ export default async function LicensesPage({
           {certs.length > 0 ? (
             <div className="divide-y divide-border">
               {certs.map((cert) => (
-                <div key={cert.id} className="py-3 first:pt-0 last:pb-0">
+                <Link key={cert.id} href={`/compliance/licenses/${cert.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export default async function LicensesPage({
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

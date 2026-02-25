@@ -68,38 +68,40 @@ export default async function DailyLogsPage({
       {logs.length > 0 ? (
         <div className="space-y-3">
           {logs.map((log) => (
-            <Card key={log.id}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">{log.log_date ? formatDate(log.log_date) : 'No date'}</span>
+            <Link key={log.id} href={`/jobs/${id}/daily-logs/${log.id}`} className="block hover:bg-accent/50 rounded-md transition-colors">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">{log.log_date ? formatDate(log.log_date) : 'No date'}</span>
+                        </div>
+                        <Badge className={getStatusColor(log.status ?? 'draft')}>
+                          {(log.status ?? 'draft').replace('_', ' ')}
+                        </Badge>
                       </div>
-                      <Badge className={getStatusColor(log.status ?? 'draft')}>
-                        {(log.status ?? 'draft').replace('_', ' ')}
-                      </Badge>
+                      {(log.weather_summary || log.conditions) && (
+                        <div className="flex items-center gap-1.5 mt-1.5 text-sm text-muted-foreground">
+                          <CloudSun className="h-3.5 w-3.5" />
+                          {log.weather_summary || log.conditions}
+                          {log.high_temp != null && (
+                            <span className="ml-1">
+                              {log.high_temp}°F
+                              {log.low_temp != null && ` / ${log.low_temp}°F`}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {log.notes && (
+                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{log.notes}</p>
+                      )}
                     </div>
-                    {(log.weather_summary || log.conditions) && (
-                      <div className="flex items-center gap-1.5 mt-1.5 text-sm text-muted-foreground">
-                        <CloudSun className="h-3.5 w-3.5" />
-                        {log.weather_summary || log.conditions}
-                        {log.high_temp != null && (
-                          <span className="ml-1">
-                            {log.high_temp}°F
-                            {log.low_temp != null && ` / ${log.low_temp}°F`}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    {log.notes && (
-                      <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{log.notes}</p>
-                    )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       ) : (
