@@ -4,10 +4,11 @@ const JOB_ID = 'b70b053d-27b2-4b92-a0e4-81149ef0e5b2'
 
 // Generate unique values per test run to avoid UNIQUE constraint conflicts
 const runId = Date.now().toString().slice(-6)
-// Unique date: use a day in 2025 derived from timestamp to avoid (job_id, log_date) clash
-const dayOfMonth = (parseInt(runId) % 27) + 1
-const monthOfYear = (parseInt(runId.slice(0, 3)) % 11) + 1
-const testDate = `2025-${String(monthOfYear).padStart(2, '0')}-${String(dayOfMonth).padStart(2, '0')}`
+// Unique date: use random year between 2020-2024 to avoid collisions with real data and past runs
+const randomYear = 2020 + Math.floor(Math.random() * 5)
+const randomMonth = Math.floor(Math.random() * 12) + 1
+const randomDay = Math.floor(Math.random() * 28) + 1
+const testDate = `${randomYear}-${String(randomMonth).padStart(2, '0')}-${String(randomDay).padStart(2, '0')}`
 
 test.describe.serial('CRUD flows', () => {
   test.beforeEach(async ({ page }) => {
