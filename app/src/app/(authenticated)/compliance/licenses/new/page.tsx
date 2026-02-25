@@ -47,13 +47,14 @@ export default function NewCertificationPage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
-      const { data: usersData } = await supabase
-        .from('users')
-        .select('id, name')
+      const { data: empsData } = await supabase
+        .from('employees')
+        .select('id, first_name, last_name')
         .eq('company_id', companyId)
-        .order('name')
+        .is('deleted_at', null)
+        .order('last_name')
 
-      if (usersData) setEmployees(usersData)
+      if (empsData) setEmployees(empsData.map((e) => ({ id: e.id, name: `${e.first_name} ${e.last_name}` })))
     }
     loadDropdowns()
   }, [])
