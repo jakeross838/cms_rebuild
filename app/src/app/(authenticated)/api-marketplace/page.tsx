@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 
 import { Store, Puzzle } from 'lucide-react'
 
@@ -20,6 +21,9 @@ export const metadata: Metadata = { title: 'API Marketplace' }
 
 export default async function ApiMarketplacePage() {
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
 
   const { data: listingsData } = await supabase
     .from('integration_listings')

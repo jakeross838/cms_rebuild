@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import {
   DollarSign,
@@ -11,17 +13,17 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Financial Dashboard' }
 
 export default async function FinancialDashboardPage() {
   const supabase = await createClient()
 
-  // Resolve current user's company_id for defense-in-depth tenant filtering
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   const [
     { count: accountCount },
@@ -29,10 +31,10 @@ export default async function FinancialDashboardPage() {
     { count: apCount },
     { count: jeCount },
   ] = await Promise.all([
-    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!),
-    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).neq('status', 'paid'),
-    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).neq('status', 'paid'),
-    supabase.from('gl_journal_entries').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!),
+    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId),
+    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).neq('status', 'paid'),
+    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).neq('status', 'paid'),
+    supabase.from('gl_journal_entries').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId),
   ])
 
   const quickLinks = [

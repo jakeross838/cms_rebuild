@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 
 import { Building2, Calendar } from 'lucide-react'
 
@@ -24,10 +25,11 @@ export const metadata: Metadata = { title: 'Business Management' }
 export default async function BusinessManagementPage() {
   const supabase = await createClient()
 
-  // Resolve current user's company_id for defense-in-depth tenant filtering
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   const [
     { data: periodsData },
@@ -35,10 +37,10 @@ export default async function BusinessManagementPage() {
     { count: activeJobCount },
     { count: accountCount },
   ] = await Promise.all([
-    supabase.from('financial_periods').select('*').order('period_start', { ascending: false }).limit(12),
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!),
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).eq('status', 'active'),
-    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!),
+    supabase.from('financial_periods').select('*').eq('company_id', companyId).order('period_start', { ascending: false }).limit(12),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).eq('status', 'active'),
+    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId),
   ])
 
   const periods = (periodsData || []) as FinancialPeriod[]

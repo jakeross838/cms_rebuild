@@ -1,10 +1,12 @@
+import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+
 import { Landmark } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Bank Reconciliation' }
 
@@ -24,10 +26,18 @@ interface FinancialPeriod {
 export default async function BankReconciliationPage() {
   const supabase = await createClient()
 
-  const { data: periodsData } = await supabase
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
+  const { data: periodsData, error } = await supabase
     .from('financial_periods')
     .select('*')
+    .eq('company_id', companyId)
     .order('period_start', { ascending: false })
+  if (error) throw error
 
   const periods = (periodsData || []) as FinancialPeriod[]
 

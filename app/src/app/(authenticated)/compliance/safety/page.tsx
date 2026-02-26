@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, Search, AlertTriangle, ClipboardCheck } from 'lucide-react'
 
@@ -52,21 +53,22 @@ export default async function SafetyPage({
   const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
-  // Resolve current user's company_id for defense-in-depth tenant filtering
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   const [
     { data: incidentsData, count: incidentsCount },
     { data: inspectionsData, count: inspectionsCount },
   ] = await Promise.all([
     tab === 'incidents'
-      ? supabase.from('safety_incidents').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('incident_date', { ascending: false }).range(offset, offset + pageSize - 1)
-      : supabase.from('safety_incidents').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('incident_date', { ascending: false }).limit(0),
+      ? supabase.from('safety_incidents').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId).order('incident_date', { ascending: false }).range(offset, offset + pageSize - 1)
+      : supabase.from('safety_incidents').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId).order('incident_date', { ascending: false }).limit(0),
     tab === 'inspections'
-      ? supabase.from('safety_inspections').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('inspection_date', { ascending: false }).range(offset, offset + pageSize - 1)
-      : supabase.from('safety_inspections').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('inspection_date', { ascending: false }).limit(0),
+      ? supabase.from('safety_inspections').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId).order('inspection_date', { ascending: false }).range(offset, offset + pageSize - 1)
+      : supabase.from('safety_inspections').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId).order('inspection_date', { ascending: false }).limit(0),
   ])
 
   const incidents = (incidentsData || []) as SafetyIncident[]

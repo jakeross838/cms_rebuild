@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, Search, Users, Building2 } from 'lucide-react'
 
@@ -43,10 +44,11 @@ export default async function HRWorkforcePage({
   const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
-  // Resolve current user's company_id for defense-in-depth tenant filtering
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   const sortMap: Record<string, { column: string; ascending: boolean }> = {
     last_name: { column: 'last_name', ascending: true },
@@ -59,7 +61,7 @@ export default async function HRWorkforcePage({
     .from('employees')
     .select('id, first_name, last_name, employee_number, employment_status, employment_type, email, phone, hire_date', { count: 'exact' })
     .is('deleted_at', null)
-    .eq('company_id', companyId!)
+    .eq('company_id', companyId)
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
@@ -74,8 +76,8 @@ export default async function HRWorkforcePage({
     { count: posCount },
   ] = await Promise.all([
     empQuery,
-    supabase.from('departments').select('*').eq('is_active', true).eq('company_id', companyId!).order('name', { ascending: true }),
-    supabase.from('positions').select('*', { count: 'exact', head: true }).eq('is_active', true).eq('company_id', companyId!),
+    supabase.from('departments').select('*').eq('is_active', true).eq('company_id', companyId).order('name', { ascending: true }),
+    supabase.from('positions').select('*', { count: 'exact', head: true }).eq('is_active', true).eq('company_id', companyId),
   ])
 
   const employees = (employeesData || []) as Employee[]

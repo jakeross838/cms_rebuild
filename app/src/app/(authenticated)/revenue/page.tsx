@@ -1,4 +1,7 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import {
   DollarSign,
   TrendingUp,
@@ -14,21 +17,17 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Revenue' }
 
 export default async function RevenuePage() {
   const supabase = await createClient()
 
-  // ── Resolve tenant ──────────────────────────────────────────────
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase
-    .from('users')
-    .select('company_id')
-    .eq('id', user!.id)
-    .single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   // ── Query revenue data in parallel ──────────────────────────────
   const [
@@ -41,21 +40,21 @@ export default async function RevenuePage() {
       .from('ar_invoices')
       .select('amount')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .eq('status', 'paid'),
     // Pipeline value: accepted estimates
     supabase
       .from('estimates')
       .select('total')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .eq('status', 'accepted'),
     // Total invoice count
     supabase
       .from('ar_invoices')
       .select('*', { count: 'exact', head: true })
       .is('deleted_at', null)
-      .eq('company_id', companyId!),
+      .eq('company_id', companyId),
   ])
 
   // ── Compute KPIs ────────────────────────────────────────────────

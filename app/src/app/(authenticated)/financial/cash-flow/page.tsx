@@ -1,24 +1,23 @@
+import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+
 import { TrendingUp, TrendingDown, DollarSign, ArrowRightLeft, Clock } from 'lucide-react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatRelativeDate } from '@/lib/utils'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Cash Flow' }
 
 export default async function CashFlowPage() {
   const supabase = await createClient()
 
-  // ── Resolve tenant ──────────────────────────────────────────────
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase
-    .from('users')
-    .select('company_id')
-    .eq('id', user!.id)
-    .single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   // ── Query receivables (AR) and payables (AP) in parallel ────────
   const [
@@ -35,35 +34,35 @@ export default async function CashFlowPage() {
       .from('ar_invoices')
       .select('amount')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .eq('status', 'paid'),
     // AR pending (everything not paid)
     supabase
       .from('ar_invoices')
       .select('amount')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .neq('status', 'paid'),
     // AP paid
     supabase
       .from('ap_bills')
       .select('balance_due')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .eq('status', 'paid'),
     // AP pending (everything not paid)
     supabase
       .from('ap_bills')
       .select('balance_due')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .neq('status', 'paid'),
     // Overdue AR count
     supabase
       .from('ar_invoices')
       .select('*', { count: 'exact', head: true })
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .neq('status', 'paid')
       .lt('due_date', new Date().toISOString().split('T')[0]),
     // Overdue AP count
@@ -71,7 +70,7 @@ export default async function CashFlowPage() {
       .from('ap_bills')
       .select('*', { count: 'exact', head: true })
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .neq('status', 'paid')
       .lt('due_date', new Date().toISOString().split('T')[0]),
     // Recent cash movements: last 10 invoices marked paid
@@ -79,7 +78,7 @@ export default async function CashFlowPage() {
       .from('ar_invoices')
       .select('id, invoice_number, amount, updated_at, status')
       .is('deleted_at', null)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
       .eq('status', 'paid')
       .order('updated_at', { ascending: false })
       .limit(10),

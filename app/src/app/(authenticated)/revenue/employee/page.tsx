@@ -1,23 +1,22 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import { Users, Clock, Briefcase, ArrowRight } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Employee Productivity' }
 
 export default async function EmployeeRevenuePage() {
   const supabase = await createClient()
 
-  // ── Resolve tenant ──────────────────────────────────────────────
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase
-    .from('users')
-    .select('company_id')
-    .eq('id', user!.id)
-    .single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   // ── Query employee and time data in parallel ────────────────────
   const [
@@ -28,12 +27,12 @@ export default async function EmployeeRevenuePage() {
       .from('employees')
       .select('*', { count: 'exact', head: true })
       .is('deleted_at', null)
-      .eq('company_id', companyId!),
+      .eq('company_id', companyId),
     supabase
       .from('time_entries')
       .select('regular_hours, overtime_hours')
       .is('deleted_at', null)
-      .eq('company_id', companyId!),
+      .eq('company_id', companyId),
   ])
 
   // ── Compute totals ─────────────────────────────────────────────

@@ -1,31 +1,30 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import { PieChart, Briefcase, FileText, ArrowRight } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Revenue Attribution' }
 
 export default async function RevenueAttributionPage() {
   const supabase = await createClient()
 
-  // ── Resolve tenant ──────────────────────────────────────────────
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase
-    .from('users')
-    .select('company_id')
-    .eq('id', user!.id)
-    .single()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
 
   // ── Query paid invoices with job info ───────────────────────────
   const { data: paidInvoices } = await supabase
     .from('ar_invoices')
     .select('amount, job_id, jobs(name, job_number)')
     .is('deleted_at', null)
-    .eq('company_id', companyId!)
+    .eq('company_id', companyId)
     .eq('status', 'paid')
 
   // ── Aggregate revenue by job ────────────────────────────────────
