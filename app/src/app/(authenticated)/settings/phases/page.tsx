@@ -161,7 +161,6 @@ export default function PhasesPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Failed to delete'
       toast.error(msg)
-      alert(msg)
     } finally {
       setDeletingId(null)
     }

@@ -102,7 +102,6 @@ export default function RolesPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Failed to delete role'
       toast.error(msg)
-      alert(msg)
     } finally {
       setDeletingId(null)
     }
