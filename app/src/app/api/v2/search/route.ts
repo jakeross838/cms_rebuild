@@ -159,5 +159,5 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: response, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'search' }
+  { requireAuth: true, rateLimit: 'search', requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'] }
 )
