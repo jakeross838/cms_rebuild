@@ -220,11 +220,15 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
       // 6. Permission check (reuses the same supabase client from step 2)
       if (permission && ctx.user) {
         // Get company permissions_mode from settings
-        const { data: company } = await supabase
+        const { data: company, error: companyError } = await supabase
           .from('companies')
           .select('settings')
           .eq('id', ctx.companyId!)
-          .single() as { data: { settings: Record<string, unknown> | null } | null; error: unknown }
+          .single() as { data: { settings: Record<string, unknown> | null } | null; error: { message: string } | null }
+
+        if (companyError) {
+          logger.error('Failed to fetch company settings', { error: companyError.message, companyId: ctx.companyId ?? undefined })
+        }
 
         const permissionsMode = (company?.settings?.permissions_mode as PermissionsMode) || 'open'
         const userPermissions = resolvePermissions(ctx.user.role as UserRole)
@@ -252,7 +256,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
 
       // 9. Audit logging (if configured)
       if (auditAction && ctx.user) {
-        const body = req.method !== 'GET' ? await req.clone().json().catch(() => null) : null
+        const body = req.method !== 'GET' ? (ctx.validatedBody ?? await req.clone().json().catch(() => null)) : null
 
         recordAudit({
           companyId: ctx.companyId!,
