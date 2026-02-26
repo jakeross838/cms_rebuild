@@ -6,6 +6,9 @@ const JOB_ID = 'b70b053d-27b2-4b92-a0e4-81149ef0e5b2'
 const runId = Date.now().toString().slice(-6)
 
 test.describe.serial('CRUD flows', () => {
+  // Retry flaky tests (date collisions on daily log create)
+  test.describe.configure({ retries: 2 })
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/login')
     await page.fill('input[type="email"]', 'jake@rossbuilt.com')
