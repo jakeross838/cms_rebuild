@@ -1,6 +1,44 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 12 — Soft-Delete & Response Format Hardening (2026-02-26)
+
+### Soft-Delete Consistency Fixes (14 issues across 8 files)
+**HIGH severity (5 fixes — SELECT queries leaking archived records):**
+- `v1/users/route.ts`: Default status now excludes soft-deleted users (was returning deleted users when no status filter)
+- `v1/cost-codes/route.ts`: Added `.is('deleted_at', null)` to base query
+- `v1/auth/me/route.ts`: Added filter to both users and companies queries
+- `v1/settings/company/route.ts`: Added filter to both GET and PATCH refetch queries
+- `v1/auth/switch-company/route.ts`: Added filter to companies and users lookups
+
+**MEDIUM severity (7 fixes — TOCTOU race conditions on UPDATE):**
+- `v1/cost-codes/[id]/route.ts`: PATCH existence check now excludes deleted
+- `v2/daily-logs/[id]/route.ts`: PUT final UPDATE now filters deleted
+- `v2/lien-waivers/[id]/route.ts`: PUT final UPDATE now filters deleted
+- `v2/draw-requests/[id]/route.ts`: PUT and DELETE final UPDATEs now filter deleted
+- `v2/documents/[id]/route.ts`: PUT now checks `.neq('status', 'deleted').is('deleted_at', null)`
+- `v2/documents/[id]/versions/route.ts`: GET and POST ownership checks now exclude deleted docs
+
+### API Response Format Standardization (10 files, ~20 response shapes)
+All v1 settings routes now wrap responses in standard `{ data: {...}, requestId }` envelope:
+- `v1/roles/[id]/route.ts`: DELETE response wrapped in `data`
+- `v1/settings/company/route.ts`: GET and PATCH responses wrapped in `data`
+- `v1/settings/feature-flags/route.ts`: GET and PATCH responses wrapped in `data`
+- `v1/settings/numbering/route.ts`: GET, PATCH, POST responses wrapped in `data`
+- `v1/settings/terminology/route.ts`: GET, PATCH, POST responses wrapped in `data`
+- `v1/settings/phases/route.ts`: GET (list) and POST responses wrapped in `data`
+- `v1/settings/phases/[id]/route.ts`: GET, PATCH, DELETE responses wrapped in `data`
+Note: Auth routes intentionally keep domain-specific format (user, session, company at top level)
+
 ## Session 11 — Full RBAC & Audit Action Coverage (2026-02-26)
+
+### GET Endpoint RBAC — 57 Files
+- 34 financial GET endpoints: `['owner', 'admin', 'pm', 'office']` (AP, AR, GL, budgets, POs, payroll)
+- 3 admin GET endpoints: `['owner', 'admin']` (api-keys, branding)
+- 12 PM+ GET endpoints: `['owner', 'admin', 'pm']` (price-history, vendor-scores, integrations)
+- 3 PM+office GET endpoints: report snapshots, inventory stock
+- 3 all-internal + 1 PM+: search, notifications, document download, client-portal payment
+- 1 search endpoint fixed separately (used 'search' rate limit tier missed by batch sed)
+- 2 v1 workflow GET endpoints: all internal roles
 
 ### RBAC Role Restrictions — 335 Operational V2 Write Endpoints
 All v2 write endpoints (POST, PUT, DELETE) now enforce role-based access:

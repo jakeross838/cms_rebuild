@@ -29,11 +29,12 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    // Fetch full user profile
+    // Fetch full user profile (exclude soft-deleted)
     const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('*')
       .eq('id', ctx.user.id)
+      .is('deleted_at', null)
       .single() as { data: User | null; error: unknown }
 
     if (profileError || !profile) {
@@ -47,11 +48,12 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch company settings for permissions_mode
+    // Fetch company settings for permissions_mode (exclude soft-deleted)
     const { data: company } = await supabase
       .from('companies')
       .select('id, name, settings, permissions_mode')
       .eq('id', profile.company_id)
+      .is('deleted_at', null)
       .single() as { data: (Pick<Company, 'id' | 'name' | 'settings'> & { permissions_mode?: string }) | null; error: unknown }
 
     const permissionsMode: PermissionsMode =

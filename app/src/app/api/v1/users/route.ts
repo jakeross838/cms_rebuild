@@ -70,13 +70,17 @@ export const GET = createApiHandler(
         range: (from: number, to: number) => Promise<{ data: User[] | null; count: number | null; error: { message: string } | null }>
       }
 
-    // Status filter
+    // Status filter — default excludes soft-deleted users
     if (filters.status === 'active') {
       query = query.eq('is_active', true).is('deleted_at', null) as typeof query
     } else if (filters.status === 'inactive') {
       query = query.or('is_active.eq.false,deleted_at.not.is.null') as typeof query
+    } else if (filters.status === 'all') {
+      // 'all' = no status filter (includes soft-deleted)
+    } else {
+      // Default: exclude soft-deleted users
+      query = query.is('deleted_at', null) as typeof query
     }
-    // 'all' = no status filter
 
     // Role filter
     if (filters.role) {

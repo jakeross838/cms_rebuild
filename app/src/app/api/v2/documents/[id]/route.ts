@@ -100,6 +100,8 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .neq('status', 'deleted')
+      .is('deleted_at', null)
       .select('*')
       .single()
 

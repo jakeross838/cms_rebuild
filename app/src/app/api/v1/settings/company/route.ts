@@ -23,11 +23,12 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   const companyId = ctx.companyId!
   const supabase = await createClient()
 
-  // Get company profile
+  // Get company profile (exclude soft-deleted)
   const { data: companyData, error } = await supabase
     .from('companies')
     .select('*')
     .eq('id', companyId)
+    .is('deleted_at', null)
     .single()
 
   const company = companyData as Company | null
@@ -43,26 +44,28 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   const settings = await getCompanySettings(companyId)
 
   return NextResponse.json({
-    company: {
-      id: company.id,
-      name: company.name,
-      legalName: company.legal_name,
-      email: company.email,
-      phone: company.phone,
-      website: company.website,
-      address: company.address,
-      city: company.city,
-      state: company.state,
-      zip: company.zip,
-      logoUrl: company.logo_url,
-      primaryColor: company.primary_color,
-      subscriptionTier: company.subscription_tier,
-      subscriptionStatus: company.subscription_status,
-      trialEndsAt: company.trial_ends_at,
-      createdAt: company.created_at,
-      updatedAt: company.updated_at,
+    data: {
+      company: {
+        id: company.id,
+        name: company.name,
+        legalName: company.legal_name,
+        email: company.email,
+        phone: company.phone,
+        website: company.website,
+        address: company.address,
+        city: company.city,
+        state: company.state,
+        zip: company.zip,
+        logoUrl: company.logo_url,
+        primaryColor: company.primary_color,
+        subscriptionTier: company.subscription_tier,
+        subscriptionStatus: company.subscription_status,
+        trialEndsAt: company.trial_ends_at,
+        createdAt: company.created_at,
+        updatedAt: company.updated_at,
+      },
+      settings,
     },
-    settings,
     requestId: ctx.requestId,
   })
 }
@@ -205,11 +208,12 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
   // Clear cache and return updated data
   clearConfigCache(companyId)
 
-  // Fetch updated company and settings
+  // Fetch updated company and settings (exclude soft-deleted)
   const { data: updatedCompanyData } = await supabase
     .from('companies')
     .select('*')
     .eq('id', companyId)
+    .is('deleted_at', null)
     .single()
 
   const updatedCompany = updatedCompanyData as unknown as Company
@@ -217,26 +221,28 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
   const settings = await getCompanySettings(companyId)
 
   return NextResponse.json({
-    company: {
-      id: updatedCompany.id,
-      name: updatedCompany.name,
-      legalName: updatedCompany.legal_name,
-      email: updatedCompany.email,
-      phone: updatedCompany.phone,
-      website: updatedCompany.website,
-      address: updatedCompany.address,
-      city: updatedCompany.city,
-      state: updatedCompany.state,
-      zip: updatedCompany.zip,
-      logoUrl: updatedCompany.logo_url,
-      primaryColor: updatedCompany.primary_color,
-      subscriptionTier: updatedCompany.subscription_tier,
-      subscriptionStatus: updatedCompany.subscription_status,
-      trialEndsAt: updatedCompany.trial_ends_at,
-      createdAt: updatedCompany.created_at,
-      updatedAt: updatedCompany.updated_at,
+    data: {
+      company: {
+        id: updatedCompany.id,
+        name: updatedCompany.name,
+        legalName: updatedCompany.legal_name,
+        email: updatedCompany.email,
+        phone: updatedCompany.phone,
+        website: updatedCompany.website,
+        address: updatedCompany.address,
+        city: updatedCompany.city,
+        state: updatedCompany.state,
+        zip: updatedCompany.zip,
+        logoUrl: updatedCompany.logo_url,
+        primaryColor: updatedCompany.primary_color,
+        subscriptionTier: updatedCompany.subscription_tier,
+        subscriptionStatus: updatedCompany.subscription_status,
+        trialEndsAt: updatedCompany.trial_ends_at,
+        createdAt: updatedCompany.created_at,
+        updatedAt: updatedCompany.updated_at,
+      },
+      settings,
     },
-    settings,
     requestId: ctx.requestId,
   })
 }

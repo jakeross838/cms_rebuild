@@ -46,11 +46,12 @@ export const POST = createApiHandler(
       )
     }
 
-    // Get the company details
+    // Get the company details (exclude soft-deleted)
     const { data: company, error: companyError } = await admin
       .from('companies')
       .select('id, name')
       .eq('id', targetCompanyId)
+      .is('deleted_at', null)
       .single()
 
     if (companyError || !company) {
@@ -64,12 +65,13 @@ export const POST = createApiHandler(
       )
     }
 
-    // Get the user's profile in the target company
+    // Get the user's profile in the target company (exclude soft-deleted)
     const { data: userProfile } = await admin
       .from('users')
       .select('id, name, email, role')
       .eq('id', ctx.user!.id)
       .eq('company_id', targetCompanyId)
+      .is('deleted_at', null)
       .single()
 
     // Log the company switch

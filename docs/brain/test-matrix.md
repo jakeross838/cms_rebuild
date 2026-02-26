@@ -1,5 +1,37 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 12 — Soft-Delete & Response Format Hardening (2026-02-26)
+
+### Soft-Delete Consistency (14 fixes)
+- [ ] GET /api/v1/users (no status filter) — should NOT return users with deleted_at set
+- [ ] GET /api/v1/users?status=active — should NOT return deleted users
+- [ ] GET /api/v1/users?status=inactive — SHOULD return deleted users (intentional)
+- [ ] GET /api/v1/users?status=all — SHOULD return deleted users (intentional)
+- [ ] GET /api/v1/cost-codes — should NOT return cost codes with deleted_at set
+- [ ] GET /api/v1/auth/me — if user is soft-deleted, should return 404 not profile
+- [ ] GET /api/v1/settings/company — if company is soft-deleted, should return 404
+- [ ] POST /api/v1/auth/switch-company — cannot switch to soft-deleted company
+- [ ] PATCH /api/v1/cost-codes/:id — cannot update soft-deleted cost code
+- [ ] PUT /api/v2/daily-logs/:id — cannot update soft-deleted daily log
+- [ ] PUT /api/v2/lien-waivers/:id — cannot update soft-deleted lien waiver
+- [ ] PUT /api/v2/draw-requests/:id — cannot update soft-deleted draw request
+- [ ] DELETE /api/v2/draw-requests/:id — cannot re-delete already-deleted draw request
+- [ ] PUT /api/v2/documents/:id — cannot update deleted document (status='deleted' or deleted_at set)
+- [ ] GET /api/v2/documents/:id/versions — cannot list versions of deleted document
+- [ ] POST /api/v2/documents/:id/versions — cannot add version to deleted document
+
+### API Response Format Standardization
+- [ ] GET /api/v1/settings/company — response has `data.company` and `data.settings` keys
+- [ ] PATCH /api/v1/settings/company — response has `data.company` and `data.settings` keys
+- [ ] GET /api/v1/settings/feature-flags — response has `data.flags` key
+- [ ] PATCH /api/v1/settings/feature-flags — response has `data.flags` key
+- [ ] GET /api/v1/settings/numbering — response has `data.patterns` key
+- [ ] GET /api/v1/settings/terminology — response has `data.terms` key
+- [ ] GET /api/v1/settings/phases — response has `data` array of phases
+- [ ] POST /api/v1/settings/phases — response has `data` object with phase details
+- [ ] DELETE /api/v1/roles/:id — response has `data.success` key (not bare `success`)
+- [ ] DELETE /api/v1/settings/phases/:id — response has `data.success` key
+
 ## Session 11 — Full RBAC & Audit Action Coverage (2026-02-26)
 
 ### RBAC Role Restrictions (335 files)

@@ -41,7 +41,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   const phases = (phasesData || []) as ProjectPhase[]
 
   return NextResponse.json({
-    phases: phases.map((p) => ({
+    data: phases.map((p) => ({
       id: p.id,
       name: p.name,
       description: p.description,
@@ -137,7 +137,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   const phase = phaseData as ProjectPhase
 
   return NextResponse.json({
-    phase: {
+    data: {
       id: phase.id,
       name: phase.name,
       description: phase.description,

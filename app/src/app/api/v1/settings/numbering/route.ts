@@ -31,24 +31,26 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   const defaults = getDefaultPatterns()
 
   return NextResponse.json({
-    patterns,
-    defaults,
+    data: {
+      patterns,
+      defaults,
+      patternTokens: [
+        { token: '{YYYY}', description: 'Full year (e.g., 2026)' },
+        { token: '{YY}', description: 'Two-digit year (e.g., 26)' },
+        { token: '{MM}', description: 'Two-digit month (01-12)' },
+        { token: '{###}', description: 'Sequence with 3-digit padding' },
+        { token: '{##}', description: 'Sequence with 2-digit padding' },
+        { token: '{#}', description: 'Sequence without padding' },
+        { token: '{####}', description: 'Sequence with 4-digit padding' },
+        { token: '{JOB}', description: 'Job number (for per-job sequences)' },
+      ],
+      scopes: [
+        { value: 'global', description: 'Single sequence across all entities' },
+        { value: 'per_job', description: 'Separate sequence per job/project' },
+        { value: 'per_year', description: 'Sequence resets each year' },
+      ],
+    },
     requestId: ctx.requestId,
-    patternTokens: [
-      { token: '{YYYY}', description: 'Full year (e.g., 2026)' },
-      { token: '{YY}', description: 'Two-digit year (e.g., 26)' },
-      { token: '{MM}', description: 'Two-digit month (01-12)' },
-      { token: '{###}', description: 'Sequence with 3-digit padding' },
-      { token: '{##}', description: 'Sequence with 2-digit padding' },
-      { token: '{#}', description: 'Sequence without padding' },
-      { token: '{####}', description: 'Sequence with 4-digit padding' },
-      { token: '{JOB}', description: 'Job number (for per-job sequences)' },
-    ],
-    scopes: [
-      { value: 'global', description: 'Single sequence across all entities' },
-      { value: 'per_job', description: 'Separate sequence per job/project' },
-      { value: 'per_year', description: 'Sequence resets each year' },
-    ],
   })
 }
 
@@ -117,8 +119,10 @@ async function handlePatch(_req: NextRequest, ctx: ApiContext) {
   const { patterns } = await getNumberingPatterns(companyId)
 
   return NextResponse.json({
-    patterns,
-    updated: body.entityType,
+    data: {
+      patterns,
+      updated: body.entityType,
+    },
     requestId: ctx.requestId,
   })
 }
@@ -152,9 +156,11 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   )
 
   return NextResponse.json({
-    preview,
-    entityType: body.entityType,
-    jobId: body.jobId,
+    data: {
+      preview,
+      entityType: body.entityType,
+      jobId: body.jobId,
+    },
     requestId: ctx.requestId,
   })
 }

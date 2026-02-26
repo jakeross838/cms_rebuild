@@ -30,10 +30,12 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   const defaults = getDefaultTerminology()
 
   return NextResponse.json({
-    terms,
-    defaults,
-    totalTerms: Object.keys(defaults).length,
-    overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+    data: {
+      terms,
+      defaults,
+      totalTerms: Object.keys(defaults).length,
+      overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+    },
     requestId: ctx.requestId,
   })
 }
@@ -78,8 +80,10 @@ async function handlePatch(_req: NextRequest, ctx: ApiContext) {
   const { terms } = await getAllTerminology(companyId)
 
   return NextResponse.json({
-    terms,
-    overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+    data: {
+      terms,
+      overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+    },
     requestId: ctx.requestId,
   })
 }
@@ -111,11 +115,13 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   const { terms } = await getAllTerminology(companyId)
 
   return NextResponse.json({
-    terms,
-    overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
-    message: body.termKey
-      ? `Terminology for "${body.termKey}" reset to default`
-      : 'All terminology reset to defaults',
+    data: {
+      terms,
+      overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+      message: body.termKey
+        ? `Terminology for "${body.termKey}" reset to default`
+        : 'All terminology reset to defaults',
+    },
     requestId: ctx.requestId,
   })
 }

@@ -189,7 +189,7 @@ export const DELETE = createApiHandler(
       metadata: { role_id: id, role_name: existing.name },
     } as never)
 
-    return NextResponse.json({ success: true, requestId: ctx.requestId })
+    return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
   {
     requireAuth: true,

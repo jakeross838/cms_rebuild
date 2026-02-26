@@ -83,12 +83,13 @@ export const PATCH = createApiHandler(
     const body = ctx.validatedBody as UpdateCostCodeInput
     const supabase = await createClient()
 
-    // Verify exists
+    // Verify exists (exclude soft-deleted)
     const { data: existing, error: fetchError } = await supabase
       .from('cost_codes')
       .select('id')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single() as { data: { id: string } | null; error: { message: string } | null }
 
     if (fetchError || !existing) {

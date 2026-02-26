@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 12 — Soft-Delete & Response Format Hardening
+
+### Why
+1. **5 HIGH severity soft-delete gaps** — v1/users, v1/cost-codes, v1/auth/me, v1/settings/company, and v1/auth/switch-company were returning soft-deleted records to API callers. A soft-deleted user could still see their profile, switch to a deleted company, and list archived cost codes.
+2. **7 MEDIUM severity TOCTOU race conditions** — Multiple v2 UPDATE/DELETE operations had existence checks with deleted_at filters but the final UPDATE didn't include the filter, allowing a record deleted between the check and the update to be modified.
+3. **~20 response format deviations in v1 settings routes** — Settings endpoints returned domain-specific keys (company, flags, terms, patterns, phases) at the top level instead of wrapping in the standard `{ data: {...}, requestId }` envelope, making frontend parsing inconsistent.
+
+### What was done
+- Fixed 5 HIGH severity soft-delete gaps in v1 API routes (users, cost-codes, auth/me, settings/company, switch-company)
+- Fixed 7 MEDIUM severity TOCTOU gaps in v1/v2 routes (cost-codes/[id], daily-logs/[id], lien-waivers/[id], draw-requests/[id], documents/[id], documents/[id]/versions)
+- Standardized response format in 10 v1 settings files (~20 response shapes wrapped in `data`)
+- Attempted Supabase type regeneration — reverted because new types are too strict for current `Record<string, unknown>` patterns in v2 routes (would require fixing hundreds of files)
+
+### Commits
+- (pending commit)
+
 ## 2026-02-26: Session 11 — Full RBAC & Audit Action Coverage
 
 ### Why

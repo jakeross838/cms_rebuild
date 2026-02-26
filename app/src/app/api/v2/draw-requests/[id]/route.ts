@@ -124,6 +124,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -181,6 +182,7 @@ export const DELETE = createApiHandler(
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

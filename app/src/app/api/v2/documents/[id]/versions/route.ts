@@ -26,12 +26,14 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    // Verify document belongs to company
+    // Verify document belongs to company and is not deleted
     const { error: docError } = await supabase
       .from('documents')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .neq('status', 'deleted')
+      .is('deleted_at', null)
       .single()
 
     if (docError) {
@@ -98,12 +100,14 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    // Get current document and latest version number
+    // Get current document and latest version number (exclude deleted)
     const { data: doc, error: docError } = await supabase
       .from('documents')
       .select('id, job_id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .neq('status', 'deleted')
+      .is('deleted_at', null)
       .single()
 
     if (docError || !doc) {

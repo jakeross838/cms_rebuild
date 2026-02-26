@@ -45,7 +45,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext, { params }: RoutePa
   const phase = phaseData as ProjectPhase
 
   return NextResponse.json({
-    phase: {
+    data: {
       id: phase.id,
       name: phase.name,
       description: phase.description,
@@ -182,7 +182,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
   const phase = phaseData as ProjectPhase
 
   return NextResponse.json({
-    phase: {
+    data: {
       id: phase.id,
       name: phase.name,
       description: phase.description,
@@ -259,7 +259,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
     )
   }
 
-  return NextResponse.json({ success: true, id, requestId: ctx.requestId })
+  return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
 }
 
 export function DELETE(req: NextRequest, routeParams: RouteParams) {
