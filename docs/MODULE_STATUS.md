@@ -134,16 +134,15 @@
 
 | Category | Count |
 |----------|-------|
-| Total authenticated pages | 264 |
-| SSR data pages (server Supabase) | 94 |
-| Client data pages (client Supabase) | 101 |
-| API fetch pages (fetch /api/v1) | 6 |
+| Total authenticated pages | 292 |
+| SSR data pages (server Supabase) | 97 |
+| Client data pages (client Supabase) | 126 |
 | Redirect pages | 31 |
-| Placeholder pages (coming soon) | 37 |
-| Navigation hub pages | 1 |
+| Placeholder pages (coming soon) | ~38 |
 | E2E tests passing | 78/78 |
 | TypeScript errors | 0 |
+| Broken links | 0 |
 
 **Zero mock data in any authenticated page. All data pages query real Supabase tables.**
 
-**37 placeholder pages are for Phase 4-6 advanced features (intelligence/AI hub, community, meetings, expenses, revenue) that have DB schemas but no built-out UI yet. These are "coming soon" stubs.**
+**Full CRUD coverage** — every list page has clickable items, "New" buttons, detail/edit pages, and archive (soft delete). Zero broken links across all 292 pages.

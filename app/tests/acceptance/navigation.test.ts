@@ -48,11 +48,11 @@ describe('Navigation Plan Adherence', () => {
     test('Sales routes are correct', () => {
       const sales = companyNav.find((i) => i.label === 'Sales')!
       expect(sales.items?.map((i) => i.href)).toEqual([
-        '/skeleton/leads',
-        '/skeleton/estimates',
-        '/skeleton/proposals',
-        '/skeleton/contracts',
-        '/skeleton/contracts/legal',
+        '/leads',
+        '/estimates',
+        '/proposals',
+        '/contracts',
+        '/legal',
       ])
     })
 
