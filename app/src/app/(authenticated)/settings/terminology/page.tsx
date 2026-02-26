@@ -237,12 +237,12 @@ export default function TerminologyPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b text-left">
-                  <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Term</th>
-                  <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Default Singular</th>
-                  <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Default Plural</th>
-                  <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Override Singular</th>
-                  <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Override Plural</th>
-                  <th className="pb-2 text-xs font-medium text-muted-foreground w-16"></th>
+                  <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Term</th>
+                  <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Default Singular</th>
+                  <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Default Plural</th>
+                  <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Override Singular</th>
+                  <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Override Plural</th>
+                  <th scope="col" className="pb-2 text-xs font-medium text-muted-foreground w-16"></th>
                 </tr>
               </thead>
               <tbody className="divide-y">

@@ -262,11 +262,11 @@ export default function NewJournalEntryPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left">
-                    <th className="pb-2 pr-2 font-medium text-muted-foreground">Account <span className="text-red-500">*</span></th>
-                    <th className="pb-2 pr-2 font-medium text-muted-foreground text-right w-32">Debit</th>
-                    <th className="pb-2 pr-2 font-medium text-muted-foreground text-right w-32">Credit</th>
-                    <th className="pb-2 pr-2 font-medium text-muted-foreground w-40">Memo</th>
-                    <th className="pb-2 w-10"></th>
+                    <th scope="col" className="pb-2 pr-2 font-medium text-muted-foreground">Account <span className="text-red-500">*</span></th>
+                    <th scope="col" className="pb-2 pr-2 font-medium text-muted-foreground text-right w-32">Debit</th>
+                    <th scope="col" className="pb-2 pr-2 font-medium text-muted-foreground text-right w-32">Credit</th>
+                    <th scope="col" className="pb-2 pr-2 font-medium text-muted-foreground w-40">Memo</th>
+                    <th scope="col" className="pb-2 w-10"></th>
                   </tr>
                 </thead>
                 <tbody>

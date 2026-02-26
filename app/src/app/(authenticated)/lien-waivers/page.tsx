@@ -146,12 +146,12 @@ export default async function LienWaiversPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Claimant</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Type</th>
-                  <th className="text-right px-4 py-3 font-medium text-muted-foreground">Amount</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Through Date</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Check #</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Claimant</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Type</th>
+                  <th scope="col" className="text-right px-4 py-3 font-medium text-muted-foreground">Amount</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Status</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Through Date</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Check #</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

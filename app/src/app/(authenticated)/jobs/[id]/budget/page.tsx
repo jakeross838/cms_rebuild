@@ -141,12 +141,12 @@ export default async function BudgetPage({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left">
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Cost Code</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Description</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground text-right">Estimated</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground text-right">Committed</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground text-right">Actual</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground text-right">Variance</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Cost Code</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Description</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground text-right">Estimated</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground text-right">Committed</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground text-right">Actual</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground text-right">Variance</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

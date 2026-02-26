@@ -88,11 +88,11 @@ export default async function AuditLogPage({
               <table className="w-full">
                 <thead>
                   <tr className="border-b text-left">
-                    <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Time</th>
-                    <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">User</th>
-                    <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Action</th>
-                    <th className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Entity</th>
-                    <th className="pb-2 text-xs font-medium text-muted-foreground">IP</th>
+                    <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Time</th>
+                    <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">User</th>
+                    <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Action</th>
+                    <th scope="col" className="pb-2 pr-4 text-xs font-medium text-muted-foreground">Entity</th>
+                    <th scope="col" className="pb-2 text-xs font-medium text-muted-foreground">IP</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">

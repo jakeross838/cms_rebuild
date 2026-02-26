@@ -90,11 +90,11 @@ export default async function ChartOfAccountsPage({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left">
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Number</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Name</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Type</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Normal Balance</th>
-                    <th className="py-2 pr-4 font-medium text-muted-foreground">Status</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Number</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Name</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Type</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Normal Balance</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-muted-foreground">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

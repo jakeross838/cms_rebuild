@@ -167,25 +167,25 @@ export default async function DrawRequestsPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-left p-3 font-medium text-muted-foreground">
                     Draw #
                   </th>
-                  <th className="text-left p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-left p-3 font-medium text-muted-foreground">
                     Application Date
                   </th>
-                  <th className="text-left p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-left p-3 font-medium text-muted-foreground">
                     Period To
                   </th>
-                  <th className="text-left p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-left p-3 font-medium text-muted-foreground">
                     Status
                   </th>
-                  <th className="text-right p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-right p-3 font-medium text-muted-foreground">
                     Current Due
                   </th>
-                  <th className="text-right p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-right p-3 font-medium text-muted-foreground">
                     Balance to Finish
                   </th>
-                  <th className="text-left p-3 font-medium text-muted-foreground">
+                  <th scope="col" className="text-left p-3 font-medium text-muted-foreground">
                     Lender Ref
                   </th>
                 </tr>

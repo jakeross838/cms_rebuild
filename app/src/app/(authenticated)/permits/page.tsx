@@ -126,13 +126,13 @@ export default async function PermitsPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Permit #</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Type</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Jurisdiction</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Applied</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Issued</th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Expires</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Permit #</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Type</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Jurisdiction</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Status</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Applied</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Issued</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Expires</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

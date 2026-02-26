@@ -313,10 +313,10 @@ export default function JournalEntryDetailPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b text-left">
-                          <th className="pb-2 font-medium text-muted-foreground">Account</th>
-                          <th className="pb-2 font-medium text-muted-foreground text-right">Debit</th>
-                          <th className="pb-2 font-medium text-muted-foreground text-right">Credit</th>
-                          <th className="pb-2 font-medium text-muted-foreground">Memo</th>
+                          <th scope="col" className="pb-2 font-medium text-muted-foreground">Account</th>
+                          <th scope="col" className="pb-2 font-medium text-muted-foreground text-right">Debit</th>
+                          <th scope="col" className="pb-2 font-medium text-muted-foreground text-right">Credit</th>
+                          <th scope="col" className="pb-2 font-medium text-muted-foreground">Memo</th>
                         </tr>
                       </thead>
                       <tbody>

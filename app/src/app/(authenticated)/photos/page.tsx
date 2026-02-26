@@ -87,10 +87,10 @@ export default async function PhotosPage({
           <table className="w-full">
             <thead>
               <tr className="border-b border-border bg-muted/50">
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Filename</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Size</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">Uploaded</th>
+                <th scope="col" className="text-left p-3 text-sm font-medium text-muted-foreground">Filename</th>
+                <th scope="col" className="text-left p-3 text-sm font-medium text-muted-foreground">Size</th>
+                <th scope="col" className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
+                <th scope="col" className="text-left p-3 text-sm font-medium text-muted-foreground">Uploaded</th>
               </tr>
             </thead>
             <tbody>
