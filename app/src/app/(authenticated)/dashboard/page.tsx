@@ -68,7 +68,7 @@ export default async function DashboardPage() {
       name: 'This Month Revenue',
       value: formatCurrency(0), // TODO: Calculate from draws
       icon: DollarSign,
-      href: '/reports/cash-flow',
+      href: '/financial/cash-flow',
       color: 'text-green-600 bg-green-100',
     },
   ]

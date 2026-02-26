@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+
 import { CreditCard, Package, Receipt } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -8,15 +10,23 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 export default async function BillingPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   const { data: subscription } = await supabase
     .from('company_subscriptions')
     .select('*')
+    .eq('company_id', companyId)
     .limit(1)
     .single()
 
   const { data: events } = await supabase
     .from('billing_events')
     .select('*')
+    .eq('company_id', companyId)
     .order('created_at', { ascending: false })
     .limit(20)
 
