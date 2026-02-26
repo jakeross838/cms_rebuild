@@ -326,7 +326,8 @@ export function paginatedResponse<T>(
   data: T[],
   total: number,
   page: number,
-  limit: number
+  limit: number,
+  requestId?: string
 ) {
   return {
     data,
@@ -337,5 +338,6 @@ export function paginatedResponse<T>(
       totalPages: Math.ceil(total / limit),
       hasMore: page * limit < total,
     },
+    ...(requestId ? { requestId } : {}),
   }
 }

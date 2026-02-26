@@ -9,6 +9,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { markNotificationReadSchema } from '@/lib/validation/schemas/notifications'
 
 // ============================================================================
 // PUT /api/v2/notifications/:id — Mark read/unread
@@ -22,7 +23,14 @@ export const PUT = createApiHandler(
     }
 
     const body = await req.json().catch(() => ({}))
-    const read = body.read !== false // default to marking as read
+    const parseResult = markNotificationReadSchema.safeParse(body)
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid request body', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+    const { read } = parseResult.data
 
     const supabase = await createClient()
 

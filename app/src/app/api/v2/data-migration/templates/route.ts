@@ -69,7 +69,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit))
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit, ctx.requestId))
   },
   { requireAuth: true, rateLimit: 'api' }
 )
