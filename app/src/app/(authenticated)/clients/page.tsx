@@ -27,7 +27,7 @@ export const metadata: Metadata = { title: 'Clients' }
 export default async function ClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -41,13 +41,19 @@ export default async function ClientsPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    name: { column: 'name', ascending: true },
+    created_at: { column: 'created_at', ascending: false },
+    city: { column: 'city', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'created_at', ascending: false }
 
   let query = supabase
     .from('clients')
     .select('*, jobs(id)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
-    .order('name', { ascending: true })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,email.ilike.%${escapeLike(params.search)}%`)
@@ -93,6 +99,29 @@ export default async function ClientsPage({
             />
           </form>
         </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Newest' },
+          { value: 'name', label: 'Name' },
+          { value: 'city', label: 'City' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/clients${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       {/* Clients list */}

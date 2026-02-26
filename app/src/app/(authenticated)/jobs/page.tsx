@@ -30,7 +30,7 @@ export const metadata: Metadata = { title: 'Jobs' }
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string; page?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -44,13 +44,20 @@ export default async function JobsPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    name: { column: 'name', ascending: true },
+    created_at: { column: 'created_at', ascending: false },
+    contract_amount: { column: 'contract_amount', ascending: false },
+    status: { column: 'status', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'created_at', ascending: false }
 
   let query = supabase
     .from('jobs')
     .select('*, clients(name)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
-    .order('updated_at', { ascending: false })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.status) {
     query = query.eq('status', params.status as JobStatus)
@@ -108,21 +115,49 @@ export default async function JobsPage({
           </form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link
-              key={filter.value}
-              href={filter.value ? `/jobs?status=${filter.value}` : '/jobs'}
-            >
-              <Button
-                variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
-                size="sm"
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            if (params.sort) sp.set('sort', params.sort)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/jobs${qs ? `?${qs}` : ''}`}>
+                <Button
+                  variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
+                  size="sm"
+                >
+                  {filter.label}
+                </Button>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
 
-              >
-                {filter.label}
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Newest' },
+          { value: 'name', label: 'Name' },
+          { value: 'contract_amount', label: 'Contract Amount' },
+          { value: 'status', label: 'Status' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (params.status) sp.set('status', params.status)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/jobs${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
               </Button>
             </Link>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
       {/* Jobs list */}
