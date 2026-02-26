@@ -6,6 +6,7 @@ import { Plus, Search, FileCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -26,9 +27,12 @@ interface Contract {
 export default async function ContractsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,7 +44,7 @@ export default async function ContractsPage({
 
   let query = supabase
     .from('contracts')
-    .select('*, jobs(name)')
+    .select('*, jobs(name)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
@@ -53,8 +57,11 @@ export default async function ContractsPage({
     query = query.or(`title.ilike.%${params.search}%,contract_number.ilike.%${params.search}%`)
   }
 
-  const { data: contractsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: contractsData, count } = await query
   const contracts = (contractsData || []) as Contract[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -69,7 +76,7 @@ export default async function ContractsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Contracts</h1>
-          <p className="text-muted-foreground">Manage project contracts and agreements</p>
+          <p className="text-muted-foreground">{count || 0} total contracts</p>
         </div>
         <Link href="/contracts/new"><Button><Plus className="h-4 w-4 mr-2" />New Contract</Button></Link>
       </div>
@@ -124,6 +131,7 @@ export default async function ContractsPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/contracts" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

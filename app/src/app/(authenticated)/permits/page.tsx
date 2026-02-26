@@ -6,6 +6,7 @@ import { Plus, Search, FileCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ interface PermitRow {
 export default async function PermitsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,7 +41,7 @@ export default async function PermitsPage({
 
   let query = supabase
     .from('permits')
-    .select('id, permit_number, permit_type, jurisdiction, status, applied_date, issued_date, expiration_date, created_at')
+    .select('id, permit_number, permit_type, jurisdiction, status, applied_date, issued_date, expiration_date, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -46,8 +50,11 @@ export default async function PermitsPage({
     query = query.ilike('permit_number', `%${params.search}%`)
   }
 
-  const { data: permitsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: permitsData, count } = await query
   const permits = (permitsData || []) as PermitRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -55,7 +62,7 @@ export default async function PermitsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Permits</h1>
-          <p className="text-muted-foreground">Track building permits and approvals</p>
+          <p className="text-muted-foreground">{count || 0} total permits</p>
         </div>
         <Link href="/permits/new">
           <Button>
@@ -138,6 +145,8 @@ export default async function PermitsPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/permits" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

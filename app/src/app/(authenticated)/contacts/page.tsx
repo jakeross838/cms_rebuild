@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 
 interface VendorContact {
@@ -22,9 +23,12 @@ interface VendorContact {
 export default async function ContactsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -36,7 +40,7 @@ export default async function ContactsPage({
 
   let query = supabase
     .from('vendor_contacts')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('name', { ascending: true })
@@ -45,15 +49,18 @@ export default async function ContactsPage({
     query = query.or(`name.ilike.%${params.search}%,email.ilike.%${params.search}%`)
   }
 
-  const { data: contactsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: contactsData, count } = await query
   const contacts = (contactsData || []) as VendorContact[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Contacts</h1>
-          <p className="text-muted-foreground">{contacts.length} contacts</p>
+          <p className="text-muted-foreground">{count || 0} total contacts</p>
         </div>
         <Link href="/contacts/new"><Button><Plus className="h-4 w-4 mr-2" />Add Contact</Button></Link>
       </div>
@@ -95,6 +102,7 @@ export default async function ContactsPage({
           <p className="text-muted-foreground">{params.search ? 'Try adjusting your search' : 'Add vendor contacts and team members'}</p>
         </div>
       )}
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/contacts" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

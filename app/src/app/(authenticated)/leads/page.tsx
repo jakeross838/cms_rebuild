@@ -6,6 +6,7 @@ import { Plus, Search, Target } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -26,9 +27,12 @@ interface Lead {
 export default async function LeadsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,7 +44,7 @@ export default async function LeadsPage({
 
   let query = supabase
     .from('leads')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
@@ -53,8 +57,11 @@ export default async function LeadsPage({
     query = query.or(`first_name.ilike.%${params.search}%,last_name.ilike.%${params.search}%,email.ilike.%${params.search}%`)
   }
 
-  const { data: leadsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: leadsData, count } = await query
   const leads = (leadsData || []) as Lead[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -71,7 +78,7 @@ export default async function LeadsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Leads</h1>
-          <p className="text-muted-foreground">Track your sales pipeline</p>
+          <p className="text-muted-foreground">{count || 0} total leads</p>
         </div>
         <Link href="/leads/new"><Button><Plus className="h-4 w-4 mr-2" />New Lead</Button></Link>
       </div>
@@ -133,6 +140,7 @@ export default async function LeadsPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/leads" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { Plus, Search, Receipt } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -23,9 +24,12 @@ interface Invoice {
 export default async function InvoicesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,7 +41,7 @@ export default async function InvoicesPage({
 
   let query = supabase
     .from('invoices')
-    .select('*, jobs(name)')
+    .select('*, jobs(name)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
@@ -50,8 +54,11 @@ export default async function InvoicesPage({
     query = query.ilike('invoice_number', `%${params.search}%`)
   }
 
-  const { data: invoicesData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: invoicesData, count } = await query
   const invoices = (invoicesData || []) as Invoice[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const totalPending = invoices
     .filter((inv) => inv.status !== 'paid' && inv.status !== 'void')
@@ -70,7 +77,7 @@ export default async function InvoicesPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Invoices</h1>
-          <p className="text-muted-foreground">{invoices.length} invoices • {formatCurrency(totalPending)} outstanding</p>
+          <p className="text-muted-foreground">{count || 0} total invoices • {formatCurrency(totalPending)} outstanding</p>
         </div>
         <Link href="/invoices/new"><Button><Plus className="h-4 w-4 mr-2" />New Invoice</Button></Link>
       </div>
@@ -124,6 +131,7 @@ export default async function InvoicesPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/invoices" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

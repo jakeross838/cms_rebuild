@@ -6,6 +6,7 @@ import { Plus, FileCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ interface SubmittalRow {
 export default async function SubmittalsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; status?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,11 +41,10 @@ export default async function SubmittalsPage({
 
   let query = supabase
     .from('submittals')
-    .select('*, jobs(name)')
+    .select('*, jobs(name)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
 
   if (params.search) {
     query = query.or(`title.ilike.%${params.search}%,submittal_number.ilike.%${params.search}%`)
@@ -51,19 +54,18 @@ export default async function SubmittalsPage({
     query = query.eq('status', params.status)
   }
 
-  const { data: submittalsData } = await query
-  const submittals = (submittalsData || []) as SubmittalRow[]
+  query = query.range(offset, offset + pageSize - 1)
 
-  const pendingCount = submittals.filter((s) => s.status === 'pending' || s.status === 'submitted').length
+  const { data: submittalsData, count } = await query
+  const submittals = (submittalsData || []) as SubmittalRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Submittals</h1>
-          <p className="text-muted-foreground">
-            {submittals.length} submittals &middot; {pendingCount} pending review
-          </p>
+          <p className="text-muted-foreground">{count || 0} total submittals</p>
         </div>
         <Link href="/submittals/new">
           <Button>
@@ -118,6 +120,8 @@ export default async function SubmittalsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/submittals" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

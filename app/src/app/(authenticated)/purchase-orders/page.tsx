@@ -6,6 +6,7 @@ import { ShoppingCart, Search, Plus } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ interface PurchaseOrderRow {
 export default async function PurchaseOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,7 +41,7 @@ export default async function PurchaseOrdersPage({
 
   let query = supabase
     .from('purchase_orders')
-    .select('id, po_number, title, status, total_amount, delivery_date, job_id, vendor_id, created_at')
+    .select('id, po_number, title, status, total_amount, delivery_date, job_id, vendor_id, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -46,8 +50,11 @@ export default async function PurchaseOrdersPage({
     query = query.or(`po_number.ilike.%${params.search}%,title.ilike.%${params.search}%`)
   }
 
-  const { data: posData, error } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: posData, count, error } = await query
   const purchaseOrders = error ? [] : ((posData || []) as PurchaseOrderRow[])
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   // Fetch related jobs and vendors for display
   const jobIds = [...new Set(purchaseOrders.map((po) => po.job_id).filter(Boolean))] as string[]
@@ -84,7 +91,7 @@ export default async function PurchaseOrdersPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Purchase Orders</h1>
-          <p className="text-muted-foreground">Manage purchase orders across all jobs</p>
+          <p className="text-muted-foreground">{count || 0} total purchase orders</p>
         </div>
         <Link href="/purchase-orders/new"><Button><Plus className="h-4 w-4 mr-2" />New PO</Button></Link>
       </div>
@@ -180,6 +187,8 @@ export default async function PurchaseOrdersPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/purchase-orders" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

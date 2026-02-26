@@ -6,6 +6,7 @@ import { Plus, Search, Building2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { JobStatus } from '@/types/database'
@@ -26,9 +27,12 @@ interface JobWithClient {
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,7 +44,7 @@ export default async function JobsPage({
 
   let query = supabase
     .from('jobs')
-    .select('*, clients(name)')
+    .select('*, clients(name)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('updated_at', { ascending: false })
@@ -53,8 +57,11 @@ export default async function JobsPage({
     query = query.or(`name.ilike.%${params.search}%,job_number.ilike.%${params.search}%`)
   }
 
-  const { data: jobsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: jobsData, count } = await query
   const jobs = (jobsData || []) as JobWithClient[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All Jobs' },
@@ -71,7 +78,7 @@ export default async function JobsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Jobs</h1>
-          <p className="text-muted-foreground">Manage your construction projects</p>
+          <p className="text-muted-foreground">{count || 0} total jobs</p>
         </div>
         <Link href="/jobs/new">
           <Button>
@@ -177,6 +184,7 @@ export default async function JobsPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/jobs" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

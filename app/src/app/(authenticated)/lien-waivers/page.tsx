@@ -5,6 +5,7 @@ import { FileText, Plus, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
@@ -39,9 +40,12 @@ function statusBadge(status: string | null) {
 export default async function LienWaiversPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -52,18 +56,20 @@ export default async function LienWaiversPage({
 
   let query = supabase
     .from('lien_waivers')
-    .select('id, waiver_type, status, amount, claimant_name, through_date, check_number, created_at')
+    .select('id, waiver_type, status, amount, claimant_name, through_date, check_number, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
 
   if (params.search) {
     query = query.ilike('claimant_name', `%${params.search}%`)
   }
 
-  const { data: waiversData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: waiversData, count } = await query
   const waivers = (waiversData || []) as LienWaiver[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -71,7 +77,7 @@ export default async function LienWaiversPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Lien Waivers</h1>
-          <p className="text-muted-foreground">Track conditional and unconditional lien waivers</p>
+          <p className="text-muted-foreground">{count || 0} total lien waivers</p>
         </div>
         <Link href="/lien-waivers/new">
           <Button>
@@ -161,6 +167,8 @@ export default async function LienWaiversPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/lien-waivers" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

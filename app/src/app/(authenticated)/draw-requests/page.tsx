@@ -6,6 +6,7 @@ import { FileText, Plus, Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -57,9 +58,12 @@ function statusVariant(
 export default async function DrawRequestsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -71,19 +75,22 @@ export default async function DrawRequestsPage({
   let query = supabase
     .from('draw_requests')
     .select(
-      'id, draw_number, application_date, period_to, status, contract_amount, current_due, balance_to_finish, lender_reference, created_at'
+      'id, draw_number, application_date, period_to, status, contract_amount, current_due, balance_to_finish, lender_reference, created_at',
+      { count: 'exact' }
     )
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('draw_number', { ascending: false })
-    .limit(50)
 
   if (params.search) {
     query = query.ilike('lender_reference', `%${params.search}%`)
   }
 
-  const { data: drawsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: drawsData, count } = await query
   const draws = (drawsData || []) as DrawRequest[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -91,9 +98,7 @@ export default async function DrawRequestsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Draw Requests</h1>
-          <p className="text-muted-foreground">
-            Manage AIA-format draw requests and lender submissions
-          </p>
+          <p className="text-muted-foreground">{count || 0} total draw requests</p>
         </div>
         <Link href="/draw-requests/new">
           <Button>
@@ -208,6 +213,8 @@ export default async function DrawRequestsPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/draw-requests" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

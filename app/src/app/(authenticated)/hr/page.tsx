@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -31,9 +32,12 @@ interface Department {
 export default async function HRWorkforcePage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   // Resolve current user's company_id for defense-in-depth tenant filtering
@@ -43,7 +47,7 @@ export default async function HRWorkforcePage({
 
   let empQuery = supabase
     .from('employees')
-    .select('id, first_name, last_name, employee_number, employment_status, employment_type, email, phone, hire_date')
+    .select('id, first_name, last_name, employee_number, employment_status, employment_type, email, phone, hire_date', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId!)
     .order('last_name', { ascending: true })
@@ -52,8 +56,10 @@ export default async function HRWorkforcePage({
     empQuery = empQuery.or(`first_name.ilike.%${params.search}%,last_name.ilike.%${params.search}%,employee_number.ilike.%${params.search}%`)
   }
 
+  empQuery = empQuery.range(offset, offset + pageSize - 1)
+
   const [
-    { data: employeesData },
+    { data: employeesData, count },
     { data: deptsData },
     { count: posCount },
   ] = await Promise.all([
@@ -64,6 +70,7 @@ export default async function HRWorkforcePage({
 
   const employees = (employeesData || []) as Employee[]
   const departments = (deptsData || []) as Department[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
   const active = employees.filter((e) => e.employment_status === 'active').length
 
   return (
@@ -72,7 +79,7 @@ export default async function HRWorkforcePage({
         <div>
           <h1 className="text-2xl font-bold text-foreground">HR & Workforce</h1>
           <p className="text-muted-foreground">
-            {employees.length} employees &bull; {active} active &bull; {departments.length} departments &bull; {posCount ?? 0} positions
+            {count || 0} total employees &bull; {active} active &bull; {departments.length} departments &bull; {posCount ?? 0} positions
           </p>
         </div>
         <Link href="/hr/new"><Button><Plus className="h-4 w-4 mr-2" />Add Employee</Button></Link>
@@ -152,6 +159,7 @@ export default async function HRWorkforcePage({
           </Card>
         </div>
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/hr" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

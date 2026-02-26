@@ -6,6 +6,7 @@ import { Plus, Search, Calculator } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -27,9 +28,12 @@ interface Estimate {
 export default async function EstimatesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -41,7 +45,7 @@ export default async function EstimatesPage({
 
   let query = supabase
     .from('estimates')
-    .select('*, jobs(name)')
+    .select('*, jobs(name)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
@@ -54,8 +58,11 @@ export default async function EstimatesPage({
     query = query.ilike('name', `%${params.search}%`)
   }
 
-  const { data: estimatesData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: estimatesData, count } = await query
   const estimates = (estimatesData || []) as Estimate[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -70,7 +77,7 @@ export default async function EstimatesPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Estimates</h1>
-          <p className="text-muted-foreground">Create and manage project estimates</p>
+          <p className="text-muted-foreground">{count || 0} total estimates</p>
         </div>
         <Link href="/estimates/new"><Button><Plus className="h-4 w-4 mr-2" />New Estimate</Button></Link>
       </div>
@@ -127,6 +134,7 @@ export default async function EstimatesPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/estimates" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

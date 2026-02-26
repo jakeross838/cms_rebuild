@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -25,9 +26,12 @@ interface RfiRow {
 export default async function RfisPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; status?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -38,11 +42,10 @@ export default async function RfisPage({
 
   let query = supabase
     .from('rfis')
-    .select('*, jobs(name)')
+    .select('*, jobs(name)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
 
   if (params.search) {
     query = query.or(`subject.ilike.%${params.search}%,rfi_number.ilike.%${params.search}%`)
@@ -52,19 +55,18 @@ export default async function RfisPage({
     query = query.eq('status', params.status)
   }
 
-  const { data: rfisData } = await query
-  const rfis = (rfisData || []) as RfiRow[]
+  query = query.range(offset, offset + pageSize - 1)
 
-  const openCount = rfis.filter((r) => r.status === 'open' || r.status === 'draft').length
+  const { data: rfisData, count } = await query
+  const rfis = (rfisData || []) as RfiRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">RFIs</h1>
-          <p className="text-muted-foreground">
-            {rfis.length} requests &middot; {openCount} open
-          </p>
+          <p className="text-muted-foreground">{count || 0} total RFIs</p>
         </div>
         <Link href="/rfis/new">
           <Button>
@@ -127,6 +129,8 @@ export default async function RfisPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/rfis" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

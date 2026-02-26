@@ -6,6 +6,7 @@ import { Plus, Search, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -23,9 +24,12 @@ interface ClientRow {
 export default async function ClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,7 +41,7 @@ export default async function ClientsPage({
 
   let query = supabase
     .from('clients')
-    .select('*, jobs(id)')
+    .select('*, jobs(id)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('name', { ascending: true })
@@ -48,8 +52,11 @@ export default async function ClientsPage({
 
   // lead_source filter deferred until column added to clients table
 
-  const { data: clientsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: clientsData, count } = await query
   const clients = (clientsData || []) as ClientRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -57,7 +64,7 @@ export default async function ClientsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Clients</h1>
-          <p className="text-muted-foreground">Manage your client directory</p>
+          <p className="text-muted-foreground">{count || 0} total clients</p>
         </div>
         <Link href="/clients/new">
           <Button>
@@ -141,6 +148,7 @@ export default async function ClientsPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/clients" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

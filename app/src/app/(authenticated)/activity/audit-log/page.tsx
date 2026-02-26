@@ -5,6 +5,7 @@ import { ShieldCheck, Clock } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -21,9 +22,12 @@ interface AuditLogRow {
 export default async function AuditLogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ entity_type?: string; action?: string }>
+  searchParams: Promise<{ entity_type?: string; action?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -34,10 +38,9 @@ export default async function AuditLogPage({
 
   let query = supabase
     .from('audit_log')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
-    .limit(200)
 
   if (params.entity_type) {
     query = query.eq('table_name', params.entity_type)
@@ -47,14 +50,17 @@ export default async function AuditLogPage({
     query = query.eq('action', params.action)
   }
 
-  const { data: logsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: logsData, count } = await query
   const logs = (logsData || []) as AuditLogRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Audit Log</h1>
-        <p className="text-muted-foreground">{logs.length} entries &middot; Last 24 hours</p>
+        <p className="text-muted-foreground">{count || 0} total entries</p>
       </div>
 
       <div className="flex items-center gap-2">
@@ -118,6 +124,8 @@ export default async function AuditLogPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/activity/audit-log" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

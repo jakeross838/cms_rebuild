@@ -6,6 +6,7 @@ import { FileText, Plus, Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ interface ChangeOrderRow {
 export default async function ChangeOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,7 +41,7 @@ export default async function ChangeOrdersPage({
 
   let query = supabase
     .from('change_orders')
-    .select('id, job_id, co_number, title, status, amount, change_type, schedule_impact_days, created_at')
+    .select('id, job_id, co_number, title, status, amount, change_type, schedule_impact_days, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -46,8 +50,11 @@ export default async function ChangeOrdersPage({
     query = query.or(`co_number.ilike.%${params.search}%,title.ilike.%${params.search}%`)
   }
 
-  const { data: cosData, error } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: cosData, count, error } = await query
   const changeOrders = error ? [] : ((cosData || []) as ChangeOrderRow[])
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   // Fetch related jobs for display
   const jobIds = [...new Set(changeOrders.map((co) => co.job_id))]
@@ -70,7 +77,7 @@ export default async function ChangeOrdersPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Change Orders</h1>
-          <p className="text-muted-foreground">Scope changes and budget adjustments across all jobs</p>
+          <p className="text-muted-foreground">{count || 0} total change orders</p>
         </div>
         <Link href="/change-orders/new">
           <Button>
@@ -170,6 +177,8 @@ export default async function ChangeOrdersPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/change-orders" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

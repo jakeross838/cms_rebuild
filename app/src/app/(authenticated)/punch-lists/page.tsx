@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -26,9 +27,12 @@ interface PunchItem {
 export default async function PunchListsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -39,11 +43,10 @@ export default async function PunchListsPage({
 
   let query = supabase
     .from('punch_items')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
-    .limit(100)
 
   if (params.status) {
     query = query.eq('status', params.status)
@@ -53,11 +56,11 @@ export default async function PunchListsPage({
     query = query.ilike('title', `%${params.search}%`)
   }
 
-  const { data: itemsData } = await query
-  const items = (itemsData || []) as PunchItem[]
+  query = query.range(offset, offset + pageSize - 1)
 
-  const open = items.filter((i) => i.status === 'open' || i.status === 'in_progress').length
-  const completed = items.filter((i) => i.status === 'completed' || i.status === 'verified').length
+  const { data: itemsData, count } = await query
+  const items = (itemsData || []) as PunchItem[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -72,7 +75,7 @@ export default async function PunchListsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Punch Lists</h1>
-          <p className="text-muted-foreground">{items.length} items • {open} open • {completed} completed</p>
+          <p className="text-muted-foreground">{count || 0} total punch items</p>
         </div>
         <Link href="/punch-lists/new"><Button><Plus className="h-4 w-4 mr-2" />Add Item</Button></Link>
       </div>
@@ -121,6 +124,8 @@ export default async function PunchListsPage({
           <p className="text-muted-foreground">{params.search || params.status ? 'Try adjusting your filters' : 'All punch items across jobs will appear here'}</p>
         </div>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/punch-lists" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

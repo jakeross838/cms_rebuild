@@ -6,6 +6,7 @@ import { Plus, Search, Hash } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 
 interface CostCodeRow {
@@ -30,9 +31,12 @@ const categoryColors: Record<string, string> = {
 export default async function CostCodesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; division?: string; category?: string }>
+  searchParams: Promise<{ search?: string; division?: string; category?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -44,7 +48,7 @@ export default async function CostCodesPage({
 
   let query = supabase
     .from('cost_codes')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('code', { ascending: true })
@@ -61,8 +65,11 @@ export default async function CostCodesPage({
     query = query.eq('category', params.category)
   }
 
-  const { data: codesData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: codesData, count } = await query
   const codes = (codesData || []) as CostCodeRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const categoryFilters = [
     { value: '', label: 'All Categories' },
@@ -79,7 +86,7 @@ export default async function CostCodesPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Cost Codes</h1>
-          <p className="text-muted-foreground">Manage your cost code library</p>
+          <p className="text-muted-foreground">{count || 0} total cost codes</p>
         </div>
         <Link href="/cost-codes/new">
           <Button>
@@ -181,6 +188,7 @@ export default async function CostCodesPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/cost-codes" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }
