@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { ArrowLeft, Loader2 } from 'lucide-react'
 
@@ -20,6 +20,7 @@ interface SelectOption {
 
 export default function NewInvoicePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +32,7 @@ export default function NewInvoicePage() {
     amount: '',
     invoice_date: new Date().toISOString().split('T')[0],
     due_date: '',
-    job_id: '',
+    job_id: searchParams.get('job_id') || '',
     vendor_id: '',
     notes: '',
   })
