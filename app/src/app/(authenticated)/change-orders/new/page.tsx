@@ -70,12 +70,19 @@ export default function NewChangeOrderPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (!formData.title) {
+      setError('Title is required')
+      return
+    }
+    if (!formData.job_id) {
+      setError('Job is required')
+      return
+    }
+
     setLoading(true)
 
     try {
-      if (!formData.title) throw new Error('Title is required')
-      if (!formData.job_id) throw new Error('Job is required')
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 

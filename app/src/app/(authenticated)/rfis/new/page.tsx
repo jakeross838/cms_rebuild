@@ -71,14 +71,27 @@ export default function NewRfiPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (!formData.subject) {
+      setError('Subject is required')
+      return
+    }
+    if (!formData.rfi_number) {
+      setError('RFI number is required')
+      return
+    }
+    if (!formData.question) {
+      setError('Question is required')
+      return
+    }
+    if (!formData.job_id) {
+      setError('Job is required')
+      return
+    }
+
     setLoading(true)
 
     try {
-      if (!formData.subject) throw new Error('Subject is required')
-      if (!formData.rfi_number) throw new Error('RFI number is required')
-      if (!formData.question) throw new Error('Question is required')
-      if (!formData.job_id) throw new Error('Job is required')
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 

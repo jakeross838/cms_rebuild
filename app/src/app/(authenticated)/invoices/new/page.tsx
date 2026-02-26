@@ -85,6 +85,13 @@ export default function NewInvoicePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    const amount = parseFloat(formData.amount)
+    if (isNaN(amount)) {
+      setError('Amount is required')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -99,9 +106,6 @@ export default function NewInvoicePage() {
 
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
-
-      const amount = parseFloat(formData.amount)
-      if (isNaN(amount)) throw new Error('Amount is required')
 
       const { error: insertError } = await supabase
         .from('invoices')

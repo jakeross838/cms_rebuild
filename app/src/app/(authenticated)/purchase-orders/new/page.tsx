@@ -100,6 +100,16 @@ export default function NewPurchaseOrderPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (!formData.job_id) {
+      setError('Job is required')
+      return
+    }
+    if (!formData.vendor_id) {
+      setError('Vendor is required')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -119,9 +129,6 @@ export default function NewPurchaseOrderPage() {
       const taxAmount = formData.tax_amount ? parseFloat(formData.tax_amount) : 0
       const shippingAmount = formData.shipping_amount ? parseFloat(formData.shipping_amount) : 0
       const totalAmount = subtotal + taxAmount + shippingAmount
-
-      if (!formData.job_id) throw new Error('Job is required')
-      if (!formData.vendor_id) throw new Error('Vendor is required')
 
       const { error: insertError } = await supabase
         .from('purchase_orders')
