@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -18,6 +18,8 @@ export default function NewLienLawRecordPage() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [jobs, setJobs] = useState<{id: string, name: string}[]>([])
+  const [vendors, setVendors] = useState<{id: string, name: string}[]>([])
 
   const [formData, setFormData] = useState({
     job_id: '',
@@ -29,6 +31,45 @@ export default function NewLienLawRecordPage() {
     notes: '',
   })
 
+  // Load jobs and vendors for dropdowns
+  useEffect(() => {
+    async function loadDropdownData() {
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) return
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', userData.user.id)
+        .single()
+
+      if (!profile?.company_id) return
+
+      const companyId = profile.company_id
+
+      const [jobsResult, vendorsResult] = await Promise.all([
+        supabase
+          .from('jobs')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name'),
+        supabase
+          .from('vendors')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name'),
+      ])
+
+      if (jobsResult.data) setJobs(jobsResult.data)
+      if (vendorsResult.data) setVendors(vendorsResult.data)
+    }
+
+    loadDropdownData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     setFormData((prev) => ({
@@ -37,13 +78,14 @@ export default function NewLienLawRecordPage() {
     }))
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     setSaving(true)
     setError(null)
 
     try {
       if (!formData.job_id.trim()) {
-        setError('Job ID is required')
+        setError('Job is required')
         setSaving(false)
         return
       }
@@ -93,7 +135,8 @@ export default function NewLienLawRecordPage() {
 
       {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
 
-      <Card>
+      <form onSubmit={handleSubmit}>
+        <Card>
         <CardHeader>
           <CardTitle>Record Details</CardTitle>
           <CardDescription>Track lien waiver compliance</CardDescription>
@@ -101,12 +144,36 @@ export default function NewLienLawRecordPage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label htmlFor="job_id" className="text-sm font-medium">Job ID</label>
-              <Input id="job_id" name="job_id" value={formData.job_id} onChange={handleChange} placeholder="Job UUID" />
+              <label htmlFor="job_id" className="text-sm font-medium">Job</label>
+              <select
+                id="job_id"
+                name="job_id"
+                required
+                value={formData.job_id}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                <option value="">Select a job...</option>
+                {jobs.map((j) => (
+                  <option key={j.id} value={j.id}>{j.name}</option>
+                ))}
+              </select>
             </div>
             <div className="space-y-2">
-              <label htmlFor="vendor_id" className="text-sm font-medium">Vendor ID</label>
-              <Input id="vendor_id" name="vendor_id" value={formData.vendor_id} onChange={handleChange} placeholder="Vendor UUID" />
+              <label htmlFor="vendor_id" className="text-sm font-medium">Vendor</label>
+              <select
+                id="vendor_id"
+                name="vendor_id"
+                required
+                value={formData.vendor_id}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                <option value="">Select a vendor...</option>
+                {vendors.map((v) => (
+                  <option key={v.id} value={v.id}>{v.name}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="space-y-2">
@@ -132,15 +199,16 @@ export default function NewLienLawRecordPage() {
             <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
           </div>
         </CardContent>
-      </Card>
+        </Card>
 
-      <div className="flex justify-end gap-2 mt-6">
-        <Link href="/compliance/lien-law"><Button variant="outline">Cancel</Button></Link>
-        <Button onClick={handleSubmit} disabled={saving}>
-          {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-          Create Record
-        </Button>
-      </div>
+        <div className="flex justify-end gap-2 mt-6">
+          <Link href="/compliance/lien-law"><Button type="button" variant="outline">Cancel</Button></Link>
+          <Button type="submit" disabled={saving}>
+            {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+            Create Record
+          </Button>
+        </div>
+      </form>
     </div>
   )
 }

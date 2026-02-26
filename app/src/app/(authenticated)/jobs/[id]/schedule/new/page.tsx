@@ -71,6 +71,7 @@ export default function NewScheduleTaskPage() {
           duration_days: formData.duration_days ? parseInt(formData.duration_days) : null,
           status: formData.status,
           notes: formData.notes || null,
+          created_by: user.id,
         })
 
       if (insertError) throw insertError

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -18,13 +18,20 @@ import {
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 
+interface JobOption {
+  id: string
+  name: string
+}
+
 export default function NewDrawRequestPage() {
   const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [jobs, setJobs] = useState<JobOption[]>([])
 
   const [formData, setFormData] = useState({
+    job_id: '',
     draw_number: '',
     application_date: new Date().toISOString().split('T')[0],
     period_to: '',
@@ -36,8 +43,21 @@ export default function NewDrawRequestPage() {
     notes: '',
   })
 
+  useEffect(() => {
+    async function loadJobs() {
+      const { data } = await supabase
+        .from('jobs')
+        .select('id, name')
+        .is('deleted_at', null)
+        .order('name')
+        .limit(100)
+      if (data) setJobs(data as JobOption[])
+    }
+    loadJobs()
+  }, [supabase])
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -67,22 +87,13 @@ export default function NewDrawRequestPage() {
         throw new Error('Draw number, application date, and period to are required')
       }
 
-      // Fetch the first job for this company as default job_id
-      const { data: jobData } = await supabase
-        .from('jobs')
-        .select('id')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .limit(1)
-        .single()
-
-      if (!jobData) throw new Error('No job found. Create a job first.')
+      if (!formData.job_id) throw new Error('Job is required')
 
       const { error: insertError } = await supabase
         .from('draw_requests')
         .insert({
           company_id: companyId,
-          job_id: jobData.id,
+          job_id: formData.job_id,
           draw_number: parseInt(formData.draw_number, 10),
           application_date: formData.application_date,
           period_to: formData.period_to,
@@ -149,6 +160,26 @@ export default function NewDrawRequestPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="job_id" className="text-sm font-medium">
+                Job <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="job_id"
+                name="job_id"
+                value={formData.job_id}
+                onChange={handleChange}
+                required
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option value="">Select a job...</option>
+                {jobs.map((j) => (
+                  <option key={j.id} value={j.id}>
+                    {j.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label htmlFor="draw_number" className="text-sm font-medium">

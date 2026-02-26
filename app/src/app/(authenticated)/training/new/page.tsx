@@ -57,11 +57,12 @@ export default function NewTrainingCoursePage() {
         .single()
 
       const companyId = (profile as { company_id: string } | null)?.company_id
+      if (!companyId) throw new Error('No company found')
 
       const { error: insertError } = await supabase
         .from('training_courses')
         .insert({
-          company_id: companyId || null,
+          company_id: companyId,
           title: formData.title,
           description: formData.description || null,
           content_url: formData.content_url || null,

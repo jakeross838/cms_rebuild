@@ -28,6 +28,7 @@ export default function NewInventoryTransactionPage() {
   const [loadingItems, setLoadingItems] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<InventoryItem[]>([])
+  const [companyId, setCompanyId] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     item_id: '',
@@ -39,9 +40,32 @@ export default function NewInventoryTransactionPage() {
 
   useEffect(() => {
     async function loadItems() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        setError('Not authenticated')
+        setLoadingItems(false)
+        return
+      }
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', user.id)
+        .single()
+
+      const resolvedCompanyId = (profile as { company_id: string } | null)?.company_id
+      if (!resolvedCompanyId) {
+        setError('No company found')
+        setLoadingItems(false)
+        return
+      }
+
+      setCompanyId(resolvedCompanyId)
+
       const { data, error: fetchError } = await supabase
         .from('inventory_items')
         .select('id, name, sku, unit_of_measure')
+        .eq('company_id', resolvedCompanyId)
         .is('deleted_at', null)
         .eq('is_active', true)
         .order('name', { ascending: true })
@@ -70,13 +94,6 @@ export default function NewInventoryTransactionPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
       if (!formData.item_id) throw new Error('Please select an inventory item')
