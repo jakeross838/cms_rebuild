@@ -25,12 +25,13 @@ export default async function SchedulePage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: jobsData } = await supabase
+  const { data: jobsData, error } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, start_date, target_completion')
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('start_date', { ascending: true, nullsFirst: false })
+  if (error) throw error
 
   const jobs = (jobsData || []) as JobScheduleRow[]
 

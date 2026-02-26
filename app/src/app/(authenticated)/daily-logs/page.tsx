@@ -6,6 +6,7 @@ import { ClipboardList, Building2, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -25,9 +26,12 @@ export const metadata: Metadata = { title: 'Daily Logs' }
 export default async function DailyLogsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -38,19 +42,21 @@ export default async function DailyLogsPage({
 
   let query = supabase
     .from('daily_logs')
-    .select('id, job_id, log_date, status, weather_summary, notes, created_at, jobs(name, job_number)')
+    .select('id, job_id, log_date, status, weather_summary, notes, created_at, jobs(name, job_number)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('log_date', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
   if (sp.search) {
     query = query.or(`weather_summary.ilike.%${sp.search}%,notes.ilike.%${sp.search}%`)
   }
 
-  const { data: logsData, error } = await query
+  const { data: logsData, error, count } = await query
+  if (error) throw error
 
-  const logs = error ? [] : ((logsData || []) as DailyLogRow[])
+  const logs = (logsData || []) as DailyLogRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -126,6 +132,8 @@ export default async function DailyLogsPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/daily-logs" searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

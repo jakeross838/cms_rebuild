@@ -53,7 +53,8 @@ export default async function WarrantiesPage({
     query = query.ilike('title', `%${escapeLike(params.search)}%`)
   }
 
-  const { data: warrantiesData } = await query
+  const { data: warrantiesData, error } = await query
+  if (error) throw error
   const warranties = (warrantiesData || []) as Warranty[]
 
   const statusFilters = [

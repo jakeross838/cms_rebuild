@@ -61,7 +61,8 @@ export default async function PunchListsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: itemsData, count } = await query
+  const { data: itemsData, count, error } = await query
+  if (error) throw error
   const items = (itemsData || []) as PunchItem[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

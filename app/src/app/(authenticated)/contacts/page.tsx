@@ -55,7 +55,8 @@ export default async function ContactsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: contactsData, count } = await query
+  const { data: contactsData, count, error } = await query
+  if (error) throw error
   const contacts = (contactsData || []) as VendorContact[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

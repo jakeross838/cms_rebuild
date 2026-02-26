@@ -59,7 +59,8 @@ export default async function InvoicesPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: invoicesData, count } = await query
+  const { data: invoicesData, count, error } = await query
+  if (error) throw error
   const invoices = (invoicesData || []) as Invoice[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

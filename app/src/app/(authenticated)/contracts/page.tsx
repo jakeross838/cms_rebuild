@@ -62,7 +62,8 @@ export default async function ContractsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: contractsData, count } = await query
+  const { data: contractsData, count, error } = await query
+  if (error) throw error
   const contracts = (contractsData || []) as Contract[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

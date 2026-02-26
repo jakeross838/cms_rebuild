@@ -57,7 +57,8 @@ export default async function EquipmentPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,serial_number.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: equipmentData } = await query
+  const { data: equipmentData, error } = await query
+  if (error) throw error
   const equipment = (equipmentData || []) as Equipment[]
 
   const statusFilters = [

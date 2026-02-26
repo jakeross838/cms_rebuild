@@ -60,7 +60,8 @@ export default async function RfisPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: rfisData, count } = await query
+  const { data: rfisData, count, error } = await query
+  if (error) throw error
   const rfis = (rfisData || []) as RfiRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

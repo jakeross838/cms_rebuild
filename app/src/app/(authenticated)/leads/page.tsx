@@ -62,7 +62,8 @@ export default async function LeadsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: leadsData, count } = await query
+  const { data: leadsData, count, error } = await query
+  if (error) throw error
   const leads = (leadsData || []) as Lead[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

@@ -57,7 +57,8 @@ export default async function ClientsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: clientsData, count } = await query
+  const { data: clientsData, count, error } = await query
+  if (error) throw error
   const clients = (clientsData || []) as ClientRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

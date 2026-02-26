@@ -50,7 +50,8 @@ export default async function ProposalsPage({
     query = query.ilike('name', `%${escapeLike(params.search)}%`)
   }
 
-  const { data: estimatesData } = await query
+  const { data: estimatesData, error } = await query
+  if (error) throw error
   const estimates = (estimatesData || []) as Estimate[]
 
   const sent = estimates.filter((e) => e.status === 'sent' || e.status === 'presented').length

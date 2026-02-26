@@ -62,7 +62,8 @@ export default async function JobsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: jobsData, count } = await query
+  const { data: jobsData, count, error } = await query
+  if (error) throw error
   const jobs = (jobsData || []) as JobWithClient[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

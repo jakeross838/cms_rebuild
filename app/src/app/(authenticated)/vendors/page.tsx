@@ -57,7 +57,8 @@ export default async function VendorsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: vendorsData, count } = await query
+  const { data: vendorsData, count, error } = await query
+  if (error) throw error
   const vendors = (vendorsData || []) as VendorRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

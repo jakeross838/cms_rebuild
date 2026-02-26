@@ -71,7 +71,8 @@ export default async function CostCodesPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: codesData, count } = await query
+  const { data: codesData, count, error } = await query
+  if (error) throw error
   const codes = (codesData || []) as CostCodeRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

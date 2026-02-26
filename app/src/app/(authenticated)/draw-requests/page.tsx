@@ -91,7 +91,8 @@ export default async function DrawRequestsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: drawsData, count } = await query
+  const { data: drawsData, count, error } = await query
+  if (error) throw error
   const draws = (drawsData || []) as DrawRequest[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

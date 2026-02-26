@@ -70,7 +70,8 @@ export default async function LienWaiversPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: waiversData, count } = await query
+  const { data: waiversData, count, error } = await query
+  if (error) throw error
   const waivers = (waiversData || []) as LienWaiver[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

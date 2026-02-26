@@ -59,7 +59,8 @@ export default async function BidsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: bidsData, count } = await query
+  const { data: bidsData, count, error } = await query
+  if (error) throw error
   const bids = (bidsData || []) as BidPackageRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

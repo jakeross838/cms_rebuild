@@ -59,7 +59,8 @@ export default async function PermitsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: permitsData, count } = await query
+  const { data: permitsData, count, error } = await query
+  if (error) throw error
   const permits = (permitsData || []) as PermitRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

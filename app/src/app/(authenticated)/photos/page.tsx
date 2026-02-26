@@ -40,7 +40,8 @@ export default async function PhotosPage({
     query = query.ilike('filename', `%${escapeLike(params.search)}%`)
   }
 
-  const { data } = await query
+  const { data, error } = await query
+  if (error) throw error
   const photos = (data ?? []) as unknown as PhotoDocument[]
 
   return (

@@ -60,7 +60,8 @@ export default async function ChangeOrdersPage({
   query = query.range(offset, offset + pageSize - 1)
 
   const { data: cosData, count, error } = await query
-  const changeOrders = error ? [] : ((cosData || []) as ChangeOrderRow[])
+  if (error) throw error
+  const changeOrders = (cosData || []) as ChangeOrderRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [

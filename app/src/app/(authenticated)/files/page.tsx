@@ -62,7 +62,8 @@ export default async function FilesPage({
     query = query.eq('document_type', params.type)
   }
 
-  const { data } = await query
+  const { data, error } = await query
+  if (error) throw error
   const documents = (data ?? []) as unknown as Document[]
 
   return (

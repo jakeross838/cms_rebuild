@@ -51,7 +51,8 @@ export default async function InventoryPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,sku.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: itemsData } = await query
+  const { data: itemsData, error } = await query
+  if (error) throw error
   const items = (itemsData || []) as InventoryItem[]
 
   return (

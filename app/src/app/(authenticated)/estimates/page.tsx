@@ -63,7 +63,8 @@ export default async function EstimatesPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: estimatesData, count } = await query
+  const { data: estimatesData, count, error } = await query
+  if (error) throw error
   const estimates = (estimatesData || []) as Estimate[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

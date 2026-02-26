@@ -60,7 +60,8 @@ export default async function PurchaseOrdersPage({
   query = query.range(offset, offset + pageSize - 1)
 
   const { data: posData, count, error } = await query
-  const purchaseOrders = error ? [] : ((posData || []) as PurchaseOrderRow[])
+  if (error) throw error
+  const purchaseOrders = (posData || []) as PurchaseOrderRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
