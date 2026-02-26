@@ -12,6 +12,9 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import { createLogger } from '@/lib/monitoring'
+
+const logger = createLogger({ service: 'queue' })
 import type { Json } from '@/types/database'
 
 // Job status enum
@@ -109,7 +112,7 @@ export async function enqueueJob(
     .single()
 
   if (error) {
-    console.error('Failed to enqueue job:', error)
+    logger.error('Failed to enqueue job', { error: error instanceof Error ? error.message : String(error) })
     throw new Error(`Failed to enqueue job: ${error.message}`)
   }
 
@@ -149,7 +152,7 @@ export async function enqueueJobs(
     .select('id')
 
   if (error) {
-    console.error('Failed to enqueue jobs:', error)
+    logger.error('Failed to enqueue jobs', { error: error instanceof Error ? error.message : String(error) })
     throw new Error(`Failed to enqueue jobs: ${error.message}`)
   }
 
@@ -172,7 +175,7 @@ export async function getNextJobs(limit: number = 10): Promise<Job[]> {
     .limit(limit)
 
   if (error) {
-    console.error('Failed to get next jobs:', error)
+    logger.error('Failed to get next jobs', { error: error instanceof Error ? error.message : String(error) })
     return []
   }
 

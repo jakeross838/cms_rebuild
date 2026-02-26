@@ -328,8 +328,8 @@ export function AIAssistantPanel({
           { title: 'Inspection Log', type: 'daily_log', excerpt: 'Pending inspections', date: 'Yesterday' },
         ]
         actions = [
-          { label: 'Create mitigation tasks', type: 'create', execute: () => console.warn('Creating tasks') },
-          { label: 'Notify team', type: 'create', execute: () => console.warn('Notifying') },
+          { label: 'Create mitigation tasks', type: 'create', execute: () => {/* TODO: implement */} },
+          { label: 'Notify team', type: 'create', execute: () => {/* TODO: implement */} },
         ]
       } else if (inputLower.includes('budget') || inputLower.includes('cost')) {
         response = `**Budget Status for ${projectName}:**\n\nContract: $485,000\nSpent to Date: $312,400 (64.4%)\nRemaining: $172,600\n\n**Variances:**\n- Framing: +$847 (weather delays)\n- Electrical: -$1,200 (favorable)\n- Plumbing: On track\n\nProjected Final: $482,153 (**$2,847 under budget**)`
@@ -339,7 +339,7 @@ export function AIAssistantPanel({
       } else if (inputLower.includes('schedule') || inputLower.includes('timeline')) {
         response = `**Schedule Status:**\n\nBaseline Completion: March 15\nCurrent Projection: March 20 (+5 days)\n\n**Critical Path:**\n1. Roofing (weather dependent)\n2. HVAC rough-in\n3. Drywall\n\n**This Week:**\n- Mon-Wed: Complete framing punch list\n- Thu-Fri: Weather contingency\n- Sat: Roofing start (if weather permits)`
         actions = [
-          { label: 'View Gantt chart', type: 'navigate', execute: () => console.warn('Navigate to schedule') },
+          { label: 'View Gantt chart', type: 'navigate', execute: () => {/* TODO: implement */} },
         ]
       } else {
         response = `Based on the project data for ${projectName}:\n\n**Summary:** Project is 64% complete, currently 5 days behind baseline due to weather delays. Budget is tracking well at $2,847 under projection.\n\n**Key Items:**\n- Framing 100% complete, inspection passed\n- Roofing scheduled pending weather\n- Draw #4 awaiting client approval\n\nWhat specific aspect would you like me to dive into?`

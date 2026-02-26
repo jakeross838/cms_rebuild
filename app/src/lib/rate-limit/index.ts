@@ -11,6 +11,9 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server'
+import { createLogger } from '@/lib/monitoring'
+
+const logger = createLogger({ service: 'rate-limit' })
 
 import { timingSafeEqual } from 'crypto'
 
@@ -158,7 +161,7 @@ export async function checkRateLimit(
       reset,
     }
   } catch (error) {
-    console.error('Rate limit check error:', error)
+    logger.error('Rate limit check error', { error: error instanceof Error ? error.message : String(error) })
 
     // Fail-closed for security-sensitive endpoints (auth, financial)
     if (config.failClosed) {

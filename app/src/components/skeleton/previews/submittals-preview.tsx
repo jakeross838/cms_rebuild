@@ -916,23 +916,19 @@ export function SubmittalsPreview() {
 
   // Bulk action handlers
   const handleBulkApprove = () => {
-    console.log('Approving:', Array.from(selectedIds))
-    // Implementation would go here
+    // TODO: implement bulk approve
   }
 
   const handleRequestRevision = () => {
-    console.log('Requesting revision:', Array.from(selectedIds))
-    // Implementation would go here
+    // TODO: implement request revision
   }
 
   const handleExport = () => {
-    console.log('Exporting:', Array.from(selectedIds))
-    // Implementation would go here
+    // TODO: implement export
   }
 
   const handleBulkAssign = () => {
-    console.log('Assigning:', Array.from(selectedIds))
-    // Implementation would go here
+    // TODO: implement bulk assign
   }
 
   // Derived selection state for "select all" checkbox in header
@@ -984,7 +980,7 @@ export function SubmittalsPreview() {
       confidence: 92,
       action: {
         label: 'View Schedule',
-        onClick: () => console.log('View schedule'),
+        onClick: () => {/* TODO: implement */},
       },
     },
     {
@@ -995,7 +991,7 @@ export function SubmittalsPreview() {
       confidence: 78,
       action: {
         label: 'Contact Vendor',
-        onClick: () => console.log('Contact vendor'),
+        onClick: () => {/* TODO: implement */},
       },
     },
     {
@@ -1006,7 +1002,7 @@ export function SubmittalsPreview() {
       confidence: 88,
       action: {
         label: 'Send Reminder',
-        onClick: () => console.log('Send reminder'),
+        onClick: () => {/* TODO: implement */},
       },
     },
     {

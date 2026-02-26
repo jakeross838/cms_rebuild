@@ -505,7 +505,7 @@ function WriteOffModal({ isOpen, onClose, receivable }: WriteOffModalProps) {
             },
           ]}
           onSubmit={() => {
-            console.log('Write-off submitted:', { amount, reason, approvalRequired })
+            // TODO: implement write-off submission
             onClose()
           }}
           submitLabel="Submit Write-off"
@@ -562,7 +562,7 @@ function EmailLogModal({ isOpen, onClose, receivable }: EmailLogModalProps) {
             },
           ]}
           onSubmit={() => {
-            console.log('Email logged:', { subject, recipient, date })
+            // TODO: implement email logging
             onClose()
           }}
           submitLabel="Log Email"

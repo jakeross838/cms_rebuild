@@ -329,7 +329,7 @@ export default function ActivityPreview() {
             <ActivityCard
               key={item.id}
               item={item}
-              onUndo={() => console.warn('Undo', item.id)}
+              onUndo={() => {/* TODO: implement */}}
             />
           ))}
         </div>

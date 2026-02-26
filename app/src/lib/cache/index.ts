@@ -7,6 +7,10 @@
  * Uses Vercel KV (Redis) in production, in-memory fallback for development.
  */
 
+import { createLogger } from '@/lib/monitoring'
+
+const logger = createLogger({ service: 'cache' })
+
 // TODO: Add @vercel/kv when deploying to production
 // For now, uses in-memory cache (see memoryCache below)
 
@@ -88,7 +92,7 @@ export async function cacheGet<T>(key: string): Promise<T | null> {
     memoryCache.delete(key)
     return null
   } catch (error) {
-    console.error('Cache get error:', error)
+    logger.error('Cache get error', { error: error instanceof Error ? error.message : String(error) })
     return null
   }
 }
@@ -110,7 +114,7 @@ export async function cacheSet<T>(
       expires: Date.now() + ttlSeconds * 1000,
     })
   } catch (error) {
-    console.error('Cache set error:', error)
+    logger.error('Cache set error', { error: error instanceof Error ? error.message : String(error) })
   }
 }
 
@@ -122,7 +126,7 @@ export async function cacheDelete(key: string): Promise<void> {
     // TODO: Use @vercel/kv in production when isKVAvailable()
     memoryCache.delete(key)
   } catch (error) {
-    console.error('Cache delete error:', error)
+    logger.error('Cache delete error', { error: error instanceof Error ? error.message : String(error) })
   }
 }
 
@@ -140,7 +144,7 @@ export async function cacheInvalidatePattern(pattern: string): Promise<void> {
       }
     }
   } catch (error) {
-    console.error('Cache invalidate error:', error)
+    logger.error('Cache invalidate error', { error: error instanceof Error ? error.message : String(error) })
   }
 }
 

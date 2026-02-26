@@ -870,7 +870,7 @@ function LicenseCard({ license }: { license: License }) {
   const [showRenewalModal, setShowRenewalModal] = useState(false)
 
   const handleCEUSubmit = (data: Record<string, string | File>) => {
-    console.log('CEU logged:', data)
+    // TODO: implement CEU logging
     setShowCEUModal(false)
   }
 
@@ -1212,7 +1212,7 @@ const licenseAIFeatures = [
     severity: 'warning' as const,
     action: {
       label: 'View Renewal Queue',
-      onClick: () => console.log('Opening renewal queue'),
+      onClick: () => {/* TODO: implement */},
     },
   },
   {
@@ -1222,7 +1222,7 @@ const licenseAIFeatures = [
     severity: 'info' as const,
     action: {
       label: 'View Requirements',
-      onClick: () => console.log('Opening job requirements'),
+      onClick: () => {/* TODO: implement */},
     },
   },
   {
@@ -1232,7 +1232,7 @@ const licenseAIFeatures = [
     severity: 'success' as const,
     action: {
       label: 'View Details',
-      onClick: () => console.log('Opening vendor details'),
+      onClick: () => {/* TODO: implement */},
     },
   },
   {
@@ -1242,7 +1242,7 @@ const licenseAIFeatures = [
     severity: 'info' as const,
     action: {
       label: 'Schedule Training',
-      onClick: () => console.log('Opening training scheduler'),
+      onClick: () => {/* TODO: implement */},
     },
   },
   {
@@ -1252,7 +1252,7 @@ const licenseAIFeatures = [
     severity: 'critical' as const,
     action: {
       label: 'Review Blocks',
-      onClick: () => console.log('Opening block review'),
+      onClick: () => {/* TODO: implement */},
     },
   },
 ]

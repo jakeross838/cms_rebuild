@@ -6,6 +6,9 @@
  */
 
 import { Resend } from 'resend'
+import { createLogger } from '@/lib/monitoring'
+
+const logger = createLogger({ service: 'email' })
 
 // Lazy-init Resend client (only when API key is available)
 let _resend: Resend | null = null
@@ -44,10 +47,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
 
   // In development without API key, log instead of sending
   if (!client) {
-    console.warn('[Email] Would send email (no RESEND_API_KEY configured):')
-    console.warn(`  To: ${Array.isArray(to) ? to.join(', ') : to}`)
-    console.warn(`  Subject: ${subject}`)
-    console.warn(`  From: ${from}`)
+    logger.warn('[Email] Would send email (no RESEND_API_KEY configured)', { to: Array.isArray(to) ? to.join(', ') : to, subject, from })
     return { success: true, messageId: 'dev-mode-no-send' }
   }
 
@@ -63,14 +63,14 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
     })
 
     if (error) {
-      console.error('[Email] Resend error:', error)
+      logger.error('[Email] Resend error', { error: error instanceof Error ? error.message : String(error) })
       return { success: false, error: error.message }
     }
 
     return { success: true, messageId: data?.id }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown email error'
-    console.error('[Email] Exception:', message)
+    logger.error('[Email] Exception', { error: message })
     return { success: false, error: message }
   }
 }

@@ -838,14 +838,12 @@ export function PermitsPreview() {
   const utilitiesComplete = utilities.filter(u => u.status === 'completed' || u.status === 'transferred').length
   const coReadiness = calculateCOReadiness(mockCOPrerequisites)
 
-  const handleResolveHold = (permitId: string) => {
-    console.log('Resolving hold for permit:', permitId)
-    // In a real app, this would open a modal or navigate to resolution workflow
+  const handleResolveHold = (_permitId: string) => {
+    // TODO: open a modal or navigate to resolution workflow
   }
 
-  const handleApplyRenewal = (permitId: string) => {
-    console.log('Applying for renewal for permit:', permitId)
-    // In a real app, this would open the renewal application form
+  const handleApplyRenewal = (_permitId: string) => {
+    // TODO: open the renewal application form
   }
 
   const handleUtilityTransfer = (utilityId: string) => {
@@ -948,7 +946,7 @@ export function PermitsPreview() {
             confidence={87}
             action={{
               label: 'View Timeline Impact',
-              onClick: () => console.log('View timeline impact'),
+              onClick: () => {/* TODO: implement */},
             }}
           />
           <AIFeatureCard
@@ -959,7 +957,7 @@ export function PermitsPreview() {
             confidence={92}
             action={{
               label: 'View All Blockers',
-              onClick: () => console.log('View CO blockers'),
+              onClick: () => {/* TODO: implement */},
             }}
           />
         </div>

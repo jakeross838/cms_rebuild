@@ -569,7 +569,7 @@ export default function ExpensesPreview() {
             <ExpenseRow
               key={expense.id}
               expense={expense}
-              onView={() => console.log('View expense', expense.id)}
+              onView={() => {/* TODO: implement */}}
             />
           ))}
 

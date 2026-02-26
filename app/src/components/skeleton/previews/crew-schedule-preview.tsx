@@ -800,7 +800,7 @@ export function CrewSchedulePreview() {
         confidence: 87,
         action: {
           label: 'Apply',
-          onClick: () => console.log('Auto-schedule applied'),
+          onClick: () => {/* TODO: implement */},
         },
       })
     }
@@ -819,7 +819,7 @@ export function CrewSchedulePreview() {
           confidence: 95,
           action: {
             label: 'Resolve',
-            onClick: () => console.log('Conflict resolved'),
+            onClick: () => {/* TODO: implement */},
           },
         })
       }
@@ -838,7 +838,7 @@ export function CrewSchedulePreview() {
         confidence: 82,
         action: {
           label: 'Plan',
-          onClick: () => console.log('Capacity planning'),
+          onClick: () => {/* TODO: implement */},
         },
       })
     }
@@ -853,7 +853,7 @@ export function CrewSchedulePreview() {
         confidence: 78,
         action: {
           label: 'View Fallbacks',
-          onClick: () => console.log('View fallback options'),
+          onClick: () => {/* TODO: implement */},
         },
       })
     }

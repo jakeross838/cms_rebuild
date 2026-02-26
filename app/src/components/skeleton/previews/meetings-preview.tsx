@@ -684,7 +684,7 @@ export default function MeetingsPreview() {
               <TemplateCard
                 key={template.id}
                 template={template}
-                onUse={() => console.log('Use template', template.id)}
+                onUse={() => {/* TODO: implement */}}
               />
             ))}
           </div>
