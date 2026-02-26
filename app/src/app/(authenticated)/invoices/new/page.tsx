@@ -99,12 +99,15 @@ export default function NewInvoicePage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
+      const amount = parseFloat(formData.amount)
+      if (isNaN(amount)) throw new Error('Amount is required')
+
       const { error: insertError } = await supabase
         .from('invoices')
         .insert({
           company_id: companyId,
           invoice_number: formData.invoice_number || null,
-          amount: parseFloat(formData.amount),
+          amount,
           invoice_date: formData.invoice_date || null,
           due_date: formData.due_date || null,
           job_id: formData.job_id || null,
@@ -152,7 +155,7 @@ export default function NewInvoicePage() {
                 <label htmlFor="amount" className="text-sm font-medium">Amount <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input id="amount" name="amount" type="number" step="0.01" value={formData.amount} onChange={handleChange} placeholder="0.00" className="pl-7" required />
+                  <Input id="amount" name="amount" type="number" step="0.01" min="0" value={formData.amount} onChange={handleChange} placeholder="0.00" className="pl-7" required />
                 </div>
               </div>
             </div>

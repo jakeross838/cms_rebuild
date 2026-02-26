@@ -39,9 +39,22 @@ export default function NewContractPage() {
 
   useEffect(() => {
     async function loadOptions() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', user.id)
+        .single()
+
+      const companyId = (profile as { company_id: string } | null)?.company_id
+      if (!companyId) return
+
       const { data: jobsData } = await supabase
         .from('jobs')
         .select('id, name, job_number')
+        .eq('company_id', companyId)
         .is('deleted_at', null)
         .order('name')
 
@@ -53,6 +66,7 @@ export default function NewContractPage() {
       const { data: clientsData } = await supabase
         .from('clients')
         .select('id, name')
+        .eq('company_id', companyId)
         .is('deleted_at', null)
         .order('name')
 
@@ -161,7 +175,7 @@ export default function NewContractPage() {
               <label htmlFor="contract_value" className="text-sm font-medium">Contract Value</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                <Input id="contract_value" name="contract_value" type="number" step="0.01" value={formData.contract_value} onChange={handleChange} placeholder="0.00" className="pl-7" />
+                <Input id="contract_value" name="contract_value" type="number" step="0.01" min="0" value={formData.contract_value} onChange={handleChange} placeholder="0.00" className="pl-7" />
               </div>
             </div>
           </CardContent>

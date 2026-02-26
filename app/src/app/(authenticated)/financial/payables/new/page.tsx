@@ -186,7 +186,7 @@ export default function NewPayablePage() {
                 <label htmlFor="amount" className="text-sm font-medium">Amount <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input id="amount" name="amount" type="number" step="0.01" value={formData.amount} onChange={handleChange} placeholder="0.00" className="pl-7" required />
+                  <Input id="amount" name="amount" type="number" step="0.01" min="0" value={formData.amount} onChange={handleChange} placeholder="0.00" className="pl-7" required />
                 </div>
               </div>
             </div>
