@@ -39,7 +39,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: data ?? null, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'] }
 )
 
 // ============================================================================
@@ -81,5 +81,5 @@ export const PUT = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'] }
 )

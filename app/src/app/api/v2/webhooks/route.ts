@@ -70,7 +70,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit, ctx.requestId))
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin'] }
 )
 
 // ============================================================================
@@ -121,5 +121,5 @@ export const POST = createApiHandler(
     // Return secret ONCE on creation so user can store it — never returned on GET/list
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin'] }
 )
