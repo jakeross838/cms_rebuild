@@ -24,7 +24,10 @@ export const listVendorScoresSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
   vendor_id: z.string().uuid().optional(),
-  sort_by: z.string().max(50).optional(),
+  sort_by: z.enum([
+    'overall_score', 'quality_score', 'timeliness_score', 'communication_score',
+    'budget_adherence_score', 'safety_score', 'data_point_count', 'created_at', 'updated_at',
+  ]).optional(),
   sort_order: z.enum(['asc', 'desc']).optional().default('desc'),
 })
 
@@ -71,7 +74,12 @@ export const listJobRatingsSchema = z.object({
   vendor_id: z.string().uuid().optional(),
   job_id: z.string().uuid().optional(),
   trade: z.string().trim().max(100).optional(),
-  sort_by: z.string().max(50).optional(),
+  sort_by: z.enum([
+    'created_at', 'overall_rating', 'quality_rating', 'timeliness_rating',
+    'communication_rating', 'budget_adherence_rating', 'safety_rating',
+    'tasks_on_time', 'punch_items_count', 'inspection_pass_rate',
+    'bid_amount', 'final_amount', 'updated_at',
+  ]).optional(),
   sort_order: z.enum(['asc', 'desc']).optional().default('desc'),
 })
 
@@ -124,7 +132,10 @@ export const listCallbacksSchema = z.object({
   job_id: z.string().uuid().optional(),
   status: callbackStatusEnum.optional(),
   severity: callbackSeverityEnum.optional(),
-  sort_by: z.string().max(50).optional(),
+  sort_by: z.enum([
+    'created_at', 'reported_date', 'resolved_date', 'severity', 'status',
+    'resolution_cost', 'resolution_days', 'title', 'updated_at',
+  ]).optional(),
   sort_order: z.enum(['asc', 'desc']).optional().default('desc'),
 })
 

@@ -79,12 +79,20 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is in draft status
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('gl_journal_entries')
       .select('status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!existing) {
       return NextResponse.json(

@@ -1,5 +1,22 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 15 — Sort Injection Fix + Error Handling Hardening
+
+### Why (Sort Column Injection)
+- 3 vendor-performance Zod schemas accepted arbitrary `sort_by` strings via `z.string().max(50)`
+- The value passed directly to Supabase `.order(sortCol)` — user input controlling column names
+- While PostgREST validates column existence (won't SQL inject), it still leaks table structure (error reveals valid/invalid columns) and could cause confusing errors
+- Fix: whitelist valid sortable columns via `z.enum([...])`. Invalid values now fail Zod validation with a clear error before reaching the DB.
+
+### Why (Unchecked .single() Errors)
+- PostgREST `.single()` returns `{ data: null, error: { code: 'PGRST116' } }` when no rows match
+- 51 instances only destructured `data`, treating null as "no record found"
+- Problem: if the query fails for a REAL reason (network, permission, timeout), data is ALSO null — code can't distinguish "no record" from "query failed"
+- For duplicate checks: query failure → null → no duplicate detected → duplicate created
+- For deletion safety checks: query failure → null → no children detected → unsafe deletion proceeds
+- For pre-update checks: query failure → null → 404 returned instead of 500 (misleading)
+- Fix: check error first. Only PGRST116 (no rows) is expected. Any other error code returns the real error to the client.
+
 ## 2026-02-26: Session 14 — Rate Limit Fix + RLS Hardening
 
 ### Why (RLS SELECT Soft-Delete Filter)

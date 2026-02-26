@@ -1,5 +1,28 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 15 — Sort Injection Fix + Error Handling Hardening (2026-02-26)
+
+### Sort Column Injection Fix
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| sort_by=overall_score on vendor scores endpoint | Valid, returns sorted results | verify |
+| sort_by=nonexistent_column on vendor scores | 400 Validation Error (Zod rejects) | verify |
+| sort_by='; DROP TABLE--' on vendor scores | 400 Validation Error (Zod rejects) | verify |
+| All 5 price-intelligence schemas already use z.enum | No changes needed | pass (audit) |
+| TypeScript compiles after schema changes | `tsc --noEmit` = 0 errors | pass |
+
+### Unchecked .single() Error Handling (51 fixes)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Duplicate slug check with DB error → returns 500 not 201 | mapDbError response, not silent creation | verify |
+| Folder deletion with children query failure → returns 500 not deletion | Error surfaced, deletion prevented | verify |
+| Clock-in with open-entry query failure → returns 500 not double clock-in | Error surfaced, no duplicate entry | verify |
+| Pre-update check with DB error → returns 500 not 404 | Real error code, not misleading 404 | verify |
+| Normal PGRST116 (no rows) still returns 404 | Unchanged behavior for "not found" | verify |
+| Normal existing record still returns 409 | Unchanged behavior for conflicts | verify |
+| TypeScript compiles after all 51 fixes | `tsc --noEmit` = 0 errors | pass |
+| All 3309 tests still pass | No regressions | pass |
+
 ## Session 14 — Rate Limit Fix + RLS Hardening (2026-02-26)
 
 ### RLS SELECT Soft-Delete Filter (34 policies)

@@ -72,12 +72,20 @@ export const POST = createApiHandler(
     // Determine path
     let parentPath = ''
     if (input.parent_folder_id) {
-      const { data: parent } = await supabase
+      const { data: parent, error: parentError } = await supabase
         .from('document_folders')
         .select('path')
         .eq('id', input.parent_folder_id)
         .eq('company_id', ctx.companyId!)
         .single()
+
+      if (parentError && parentError.code !== 'PGRST116') {
+        const mapped = mapDbError(parentError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
 
       if (parent) {
         parentPath = parent.path

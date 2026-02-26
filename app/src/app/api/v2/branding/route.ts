@@ -78,11 +78,19 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing branding record
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('builder_branding')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existing) {
       // Update existing

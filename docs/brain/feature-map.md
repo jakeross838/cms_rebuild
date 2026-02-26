@@ -1,5 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 15 — Sort Injection Fix + Error Handling Hardening (2026-02-26)
+
+### Sort Column Injection Fix (3 schemas)
+- **File:** `src/lib/validation/schemas/vendor-performance.ts`
+- **What:** 3 Zod schemas used `sort_by: z.string().max(50)` — allowing arbitrary column names in `.order()` calls
+- **Fix:** Replaced with `z.enum([...valid columns...])` for each table:
+  - `listVendorScoresSchema`: 9 allowed columns (overall_score, quality_score, etc.)
+  - `listJobRatingsSchema`: 13 allowed columns (created_at, overall_rating, etc.)
+  - `listCallbacksSchema`: 9 allowed columns (created_at, reported_date, severity, etc.)
+- **All other sort_by schemas** (price-intelligence) already used `z.enum()` — safe
+
+### Unchecked .single() Error Handling (51 fixes across 42 files)
+- **What:** 51 Supabase `.single()` calls across the API only destructured `data`, not `error`. If DB query failed for a real reason (network, permission), code silently proceeded as if no record existed — allowing duplicate creation, unsafe deletions, or misleading 404s.
+- **Fix pattern:** Added `error` destructuring + PGRST116 guard:
+  ```typescript
+  const { data: existing, error: existingError } = await supabase...single()
+  if (existingError && existingError.code !== 'PGRST116') {
+    const mapped = mapDbError(existingError)
+    return NextResponse.json(...)
+  }
+  ```
+- **Priority categories fixed:**
+  - CRITICAL (10 files): Duplicate/conflict prevention checks (billing slugs, subscriptions, integrations), deletion safety checks (folders), open-entry checks (time-entries)
+  - HIGH (7 files): Pre-update/pre-delete status checks in financial routes (AP bills, AR invoices, draw requests, GL journal entries)
+  - REMAINING (34 files): All other pre-update, pre-delete, and existence checks across API routes
+
 ## Session 14 — Rate Limit Fix + RLS Hardening (2026-02-26)
 
 ### RLS SELECT Policy Soft-Delete Filter (34 policies fixed)

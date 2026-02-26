@@ -95,12 +95,20 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify template exists
-    const { data: template } = await supabase
+    const { data: template, error: templateError } = await supabase
       .from('marketplace_templates')
       .select('id')
       .eq('id', input.template_id)
       .is('deleted_at', null)
       .single()
+
+    if (templateError && templateError.code !== 'PGRST116') {
+      const mapped = mapDbError(templateError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!template) {
       return NextResponse.json(

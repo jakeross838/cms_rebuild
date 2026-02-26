@@ -68,12 +68,20 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check if account is a system account — system accounts have restricted updates
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('gl_accounts')
       .select('is_system')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!existing) {
       return NextResponse.json(

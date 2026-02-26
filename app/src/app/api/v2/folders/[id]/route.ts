@@ -100,13 +100,21 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Check for child folders
-    const { data: children } = await supabase
+    const { data: children, error: childrenError } = await supabase
       .from('document_folders')
       .select('id')
       .eq('parent_folder_id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .limit(1)
+
+    if (childrenError) {
+      const mapped = mapDbError(childrenError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (children && children.length > 0) {
       return NextResponse.json(
@@ -116,13 +124,21 @@ export const DELETE = createApiHandler(
     }
 
     // Check for documents in this folder
-    const { data: docs } = await supabase
+    const { data: docs, error: docsError } = await supabase
       .from('documents')
       .select('id')
       .eq('folder_id', id)
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
       .limit(1)
+
+    if (docsError) {
+      const mapped = mapDbError(docsError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (docs && docs.length > 0) {
       return NextResponse.json(

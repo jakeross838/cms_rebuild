@@ -96,11 +96,19 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing subscription (UNIQUE constraint on company_id)
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('company_subscriptions')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existing) {
       return NextResponse.json(

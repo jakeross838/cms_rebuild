@@ -42,13 +42,21 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify connection exists and is connected
-    const { data: connection } = await supabase
+    const { data: connection, error: connectionError } = await supabase
       .from('accounting_connections')
       .select('id, status, provider')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (connectionError && connectionError.code !== 'PGRST116') {
+      const mapped = mapDbError(connectionError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!connection) {
       return NextResponse.json(

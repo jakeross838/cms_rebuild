@@ -94,11 +94,19 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify listing exists
-    const { data: listing } = await supabase
+    const { data: listing, error: listingError } = await supabase
       .from('integration_listings')
       .select('id')
       .eq('id', input.listing_id)
       .single()
+
+    if (listingError && listingError.code !== 'PGRST116') {
+      const mapped = mapDbError(listingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!listing) {
       return NextResponse.json(
@@ -108,12 +116,20 @@ export const POST = createApiHandler(
     }
 
     // Check for existing install
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('integration_installs')
       .select('id, status')
       .eq('company_id', ctx.companyId!)
       .eq('listing_id', input.listing_id)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existing && existing.status !== 'uninstalled') {
       return NextResponse.json(

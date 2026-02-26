@@ -95,13 +95,21 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify connection belongs to this company
-    const { data: connection } = await supabase
+    const { data: connection, error: connectionError } = await supabase
       .from('accounting_connections')
       .select('id')
       .eq('id', input.connection_id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (connectionError && connectionError.code !== 'PGRST116') {
+      const mapped = mapDbError(connectionError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!connection) {
       return NextResponse.json(
@@ -111,13 +119,21 @@ export const POST = createApiHandler(
     }
 
     // Check for duplicate mapping
-    const { data: existingMapping } = await supabase
+    const { data: existingMapping, error: duplicateCheckError } = await supabase
       .from('sync_mappings')
       .select('id')
       .eq('connection_id', input.connection_id)
       .eq('entity_type', input.entity_type)
       .eq('internal_id', input.internal_id)
       .single()
+
+    if (duplicateCheckError && duplicateCheckError.code !== 'PGRST116') {
+      const mapped = mapDbError(duplicateCheckError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existingMapping) {
       return NextResponse.json(

@@ -30,13 +30,21 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists and belongs to this company
-    const { data: draw } = await supabase
+    const { data: draw, error: drawCheckError } = await supabase
       .from('draw_requests')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (drawCheckError && drawCheckError.code !== 'PGRST116') {
+      const mapped = mapDbError(drawCheckError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!draw) {
       return NextResponse.json(
@@ -91,13 +99,21 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists, belongs to company, and is editable
-    const { data: draw } = await supabase
+    const { data: draw, error: drawFetchError } = await supabase
       .from('draw_requests')
       .select('id, status, retainage_pct')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (drawFetchError && drawFetchError.code !== 'PGRST116') {
+      const mapped = mapDbError(drawFetchError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!draw) {
       return NextResponse.json(

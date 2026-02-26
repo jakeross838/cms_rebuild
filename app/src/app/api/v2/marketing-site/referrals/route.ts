@@ -96,11 +96,19 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for duplicate referral_code
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('marketing_referrals')
       .select('id')
       .eq('referral_code', input.referral_code)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existing) {
       return NextResponse.json(

@@ -117,13 +117,21 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: latestVersion } = await supabase
+    const { data: latestVersion, error: latestVersionError } = await supabase
       .from('document_versions')
       .select('version_number')
       .eq('document_id', id)
       .order('version_number', { ascending: false })
       .limit(1)
       .single()
+
+    if (latestVersionError && latestVersionError.code !== 'PGRST116') {
+      const mapped = mapDbError(latestVersionError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     const nextVersion = (latestVersion?.version_number ?? 0) + 1
     const versionId = crypto.randomUUID()

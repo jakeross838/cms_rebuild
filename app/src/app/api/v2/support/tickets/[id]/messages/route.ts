@@ -53,13 +53,21 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify ticket ownership
-    const { data: ticket } = await supabase
+    const { data: ticket, error: ticketError } = await supabase
       .from('support_tickets')
       .select('id')
       .eq('id', ticketId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (ticketError && ticketError.code !== 'PGRST116') {
+      const mapped = mapDbError(ticketError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!ticket) {
       return NextResponse.json(
@@ -128,13 +136,21 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify ticket ownership
-    const { data: ticket } = await supabase
+    const { data: ticket, error: ticketCheckError } = await supabase
       .from('support_tickets')
       .select('id, first_response_at')
       .eq('id', ticketId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (ticketCheckError && ticketCheckError.code !== 'PGRST116') {
+      const mapped = mapDbError(ticketCheckError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!ticket) {
       return NextResponse.json(

@@ -97,11 +97,19 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for duplicate slug
-    const { data: existingSlug } = await supabase
+    const { data: existingSlug, error: slugError } = await supabase
       .from('kb_articles')
       .select('id')
       .eq('slug', input.slug)
       .single()
+
+    if (slugError && slugError.code !== 'PGRST116') {
+      const mapped = mapDbError(slugError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existingSlug) {
       return NextResponse.json(

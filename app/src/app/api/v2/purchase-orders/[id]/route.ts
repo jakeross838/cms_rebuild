@@ -111,13 +111,21 @@ export const PUT = createApiHandler(
 
     // Validate status transition — only draft or pending POs can be updated
     if (input.status !== undefined) {
-      const { data: existing } = await supabase
+      const { data: existing, error: existingError } = await supabase
         .from('purchase_orders')
         .select('status')
         .eq('id', id)
         .eq('company_id', ctx.companyId!)
         .is('deleted_at', null)
         .single()
+
+      if (existingError && existingError.code !== 'PGRST116') {
+        const mapped = mapDbError(existingError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
 
       if (!existing) {
         return NextResponse.json(

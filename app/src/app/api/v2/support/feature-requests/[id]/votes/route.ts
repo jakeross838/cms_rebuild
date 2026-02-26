@@ -50,13 +50,21 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify feature request ownership
-    const { data: featureRequest } = await supabase
+    const { data: featureRequest, error: featureRequestError } = await supabase
       .from('feature_requests')
       .select('id')
       .eq('id', requestId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (featureRequestError && featureRequestError.code !== 'PGRST116') {
+      const mapped = mapDbError(featureRequestError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!featureRequest) {
       return NextResponse.json(
@@ -115,13 +123,21 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify feature request ownership
-    const { data: featureRequest } = await supabase
+    const { data: featureRequest, error: featureReqError } = await supabase
       .from('feature_requests')
       .select('id, vote_count')
       .eq('id', featureRequestId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (featureReqError && featureReqError.code !== 'PGRST116') {
+      const mapped = mapDbError(featureReqError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!featureRequest) {
       return NextResponse.json(
@@ -131,13 +147,21 @@ export const POST = createApiHandler(
     }
 
     // Check for existing vote (unique constraint)
-    const { data: existingVote } = await supabase
+    const { data: existingVote, error: existingVoteError } = await supabase
       .from('feature_request_votes')
       .select('id')
       .eq('feature_request_id', featureRequestId)
       .eq('company_id', ctx.companyId!)
       .eq('user_id', input.user_id)
       .single()
+
+    if (existingVoteError && existingVoteError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingVoteError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existingVote) {
       return NextResponse.json(
@@ -211,13 +235,21 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify feature request ownership
-    const { data: featureRequest } = await supabase
+    const { data: featureRequest, error: featureCheckError } = await supabase
       .from('feature_requests')
       .select('id, vote_count')
       .eq('id', featureRequestId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (featureCheckError && featureCheckError.code !== 'PGRST116') {
+      const mapped = mapDbError(featureCheckError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!featureRequest) {
       return NextResponse.json(
@@ -226,13 +258,21 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { data: existingVote } = await supabase
+    const { data: existingVote, error: voteCheckError } = await supabase
       .from('feature_request_votes')
       .select('id')
       .eq('feature_request_id', featureRequestId)
       .eq('company_id', ctx.companyId!)
       .eq('user_id', userId)
       .single()
+
+    if (voteCheckError && voteCheckError.code !== 'PGRST116') {
+      const mapped = mapDbError(voteCheckError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!existingVote) {
       return NextResponse.json(

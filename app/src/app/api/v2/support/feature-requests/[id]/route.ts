@@ -88,13 +88,21 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('feature_requests')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (existingError && existingError.code !== 'PGRST116') {
+      const mapped = mapDbError(existingError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!existing) {
       return NextResponse.json(
@@ -149,13 +157,21 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await supabase
+    const { data: existing, error: checkError } = await supabase
       .from('feature_requests')
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (checkError && checkError.code !== 'PGRST116') {
+      const mapped = mapDbError(checkError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!existing) {
       return NextResponse.json(

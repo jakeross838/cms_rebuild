@@ -53,13 +53,21 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify webhook belongs to company
-    const { data: webhook } = await supabase
+    const { data: webhook, error: webhookError } = await supabase
       .from('webhook_subscriptions')
       .select('id')
       .eq('id', subscriptionId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
+
+    if (webhookError && webhookError.code !== 'PGRST116') {
+      const mapped = mapDbError(webhookError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (!webhook) {
       return NextResponse.json(
