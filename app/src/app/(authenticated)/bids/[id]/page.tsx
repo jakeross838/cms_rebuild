@@ -100,6 +100,7 @@ export default function BidPackageDetailPage() {
           .from('jobs')
           .select('id, name')
           .eq('id', b.job_id)
+          .eq('company_id', companyId)
           .single()
 
         if (jobData) setJobInfo(jobData as JobInfo)

@@ -130,12 +130,13 @@ export default function PurchaseOrderDetailPage() {
         notes: poData.notes || '',
       })
 
-      // Fetch related job and vendor for display
+      // Fetch related job and vendor for display (scoped by company_id for defense-in-depth)
       if (poData.job_id) {
         const { data: jobData } = await supabase
           .from('jobs')
           .select('id, name, job_number')
           .eq('id', poData.job_id)
+          .eq('company_id', cid)
           .single()
         if (jobData) setJob(jobData as JobInfo)
       }
@@ -145,6 +146,7 @@ export default function PurchaseOrderDetailPage() {
           .from('vendors')
           .select('id, name')
           .eq('id', poData.vendor_id)
+          .eq('company_id', cid)
           .single()
         if (vendorData) setVendor(vendorData as VendorInfo)
       }

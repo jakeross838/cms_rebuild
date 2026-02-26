@@ -114,6 +114,7 @@ export default function PurchaseOrderDetailPage() {
           .from('vendors')
           .select('name')
           .eq('id', data.vendor_id)
+          .eq('company_id', cid)
           .single()
         vendorName = vendorData?.name ?? null
       }

@@ -87,6 +87,7 @@ export default function ARInvoiceDetailPage() {
           .from('ar_invoices')
           .select('*')
           .eq('id', params.id as string)
+          .eq('company_id', companyId)
           .is('deleted_at', null)
           .single(),
         supabase.from('clients').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
