@@ -90,10 +90,17 @@ export default function PurchaseOrderDetailPage() {
 
   useEffect(() => {
     async function loadPurchaseOrder() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const cid = (profile as { company_id: string } | null)?.company_id
+      if (!cid) { setError('No company found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('purchase_orders')
         .select('*')
         .eq('id', params.id as string)
+        .eq('company_id', cid)
         .is('deleted_at', null)
         .single()
 

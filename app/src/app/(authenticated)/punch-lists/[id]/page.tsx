@@ -93,6 +93,7 @@ export default function PunchItemDetailPage() {
           .from('punch_items')
           .select('*')
           .eq('id', params.id as string)
+          .eq('company_id', companyId)
           .is('deleted_at', null)
           .single(),
         supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
