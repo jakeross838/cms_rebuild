@@ -123,8 +123,15 @@ export default async function PunchListsPage({
       ) : (
         <div className="text-center py-12">
           <CheckSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No punch items found</h3>
-          <p className="text-muted-foreground">{params.search || params.status ? 'Try adjusting your filters' : 'All punch items across jobs will appear here'}</p>
+          <p className="text-lg font-medium text-foreground mb-1">No punch items found</p>
+          <p className="text-muted-foreground mb-4">{params.search || params.status ? 'Try adjusting your filters' : 'All punch items across jobs will appear here'}</p>
+          {!params.search && !params.status && (
+            <Link href="/jobs">
+              <Button>
+                Go to Jobs
+              </Button>
+            </Link>
+          )}
         </div>
       )}
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike } from '@/lib/utils'
 import { FolderOpen, FileText, FileImage, File } from 'lucide-react'
@@ -77,15 +78,14 @@ export default async function FilesPage({
         <div className="bg-card rounded-lg border border-border overflow-hidden">
           <div className="text-center py-12">
             <FolderOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No files uploaded yet</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No files uploaded yet</p>
             <p className="text-muted-foreground mb-4">
               Upload files from within a job or use the document storage system
             </p>
-            <Link
-              href="/jobs"
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Go to Jobs
+            <Link href="/jobs">
+              <Button>
+                Go to Jobs
+              </Button>
             </Link>
           </div>
         </div>

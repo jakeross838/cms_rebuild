@@ -102,8 +102,16 @@ export default async function ContactsPage({
       ) : (
         <div className="text-center py-12">
           <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No contacts found</h3>
-          <p className="text-muted-foreground">{params.search ? 'Try adjusting your search' : 'Add vendor contacts and team members'}</p>
+          <p className="text-lg font-medium text-foreground mb-1">No contacts found</p>
+          <p className="text-muted-foreground mb-4">{params.search ? 'Try adjusting your search' : 'Add vendor contacts and team members'}</p>
+          {!params.search && (
+            <Link href="/contacts/new">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Contact
+              </Button>
+            </Link>
+          )}
         </div>
       )}
       <ListPagination currentPage={page} totalPages={totalPages} basePath="/contacts" searchParams={params as Record<string, string | undefined>} />
