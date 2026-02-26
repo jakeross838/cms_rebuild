@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { Store, Puzzle } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -13,6 +15,8 @@ interface IntegrationRow {
   is_featured: boolean
   status: string
 }
+
+export const metadata: Metadata = { title: 'API Marketplace' }
 
 export default async function ApiMarketplacePage() {
   const supabase = await createClient()

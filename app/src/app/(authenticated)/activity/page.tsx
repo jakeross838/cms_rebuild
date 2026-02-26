@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -17,6 +18,8 @@ interface AuditLogRow {
   created_at: string | null
   user_id: string | null
 }
+
+export const metadata: Metadata = { title: 'Activity' }
 
 export default async function ActivityPage({
   searchParams,

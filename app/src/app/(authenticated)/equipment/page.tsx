@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -23,6 +24,8 @@ interface Equipment {
   daily_rate: number | null
   current_value: number | null
 }
+
+export const metadata: Metadata = { title: 'Equipment' }
 
 export default async function EquipmentPage({
   searchParams,

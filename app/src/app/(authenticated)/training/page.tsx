@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -17,6 +18,8 @@ interface CourseRow {
   duration_minutes: number | null
   is_published: boolean
 }
+
+export const metadata: Metadata = { title: 'Training' }
 
 export default async function TrainingPage() {
   const supabase = await createClient()
