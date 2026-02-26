@@ -91,7 +91,7 @@ export const GET = createApiHandler(
             title: row.name,
             subtitle: row.company_name || row.email || null,
             status: null,
-            url: `/directory/clients/${row.id}`,
+            url: `/clients/${row.id}`,
           }))
 
           return { entity_type: 'clients', label: 'Clients', results, total: count ?? 0 }
@@ -117,7 +117,7 @@ export const GET = createApiHandler(
             title: row.name,
             subtitle: row.trade || row.company_name || null,
             status: null,
-            url: `/directory/vendors/${row.id}`,
+            url: `/vendors/${row.id}`,
           }))
 
           return { entity_type: 'vendors', label: 'Vendors', results, total: count ?? 0 }
@@ -132,6 +132,7 @@ export const GET = createApiHandler(
             .from('invoices')
             .select('id, invoice_number, amount, status', { count: 'exact' })
             .eq('company_id', companyId)
+            .is('deleted_at', null)
             .or(`invoice_number.ilike.${term}`)
             .order('updated_at', { ascending: false })
             .limit(limit) as unknown as { data: InvoiceRow[] | null; count: number | null }
@@ -142,7 +143,7 @@ export const GET = createApiHandler(
             title: row.invoice_number || `Invoice #${row.id.slice(0, 8)}`,
             subtitle: `$${Number(row.amount).toLocaleString()}`,
             status: row.status,
-            url: `/financial/payables/${row.id}`,
+            url: `/invoices/${row.id}`,
           }))
 
           return { entity_type: 'invoices', label: 'Invoices', results, total: count ?? 0 }
