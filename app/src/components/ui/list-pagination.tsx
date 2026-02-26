@@ -11,8 +11,11 @@ interface ListPaginationProps {
   searchParams?: Record<string, string | undefined>
 }
 
-export function ListPagination({ currentPage, totalPages, basePath, searchParams = {} }: ListPaginationProps) {
+export function ListPagination({ currentPage: rawPage, totalPages, basePath, searchParams = {} }: ListPaginationProps) {
   if (totalPages <= 1) return null
+
+  // Clamp currentPage to valid bounds
+  const currentPage = Math.max(1, Math.min(rawPage, totalPages))
 
   const buildHref = (page: number) => {
     const params = new URLSearchParams()

@@ -104,6 +104,7 @@ export function UserTable({
   }, [search, roleFilter, statusFilter])
 
   const handleDeactivate = async (userId: string) => {
+    if (actionLoading) return
     setActionLoading(userId)
     setOpenDropdown(null)
 
@@ -127,6 +128,7 @@ export function UserTable({
   }
 
   const handleReactivate = async (userId: string) => {
+    if (actionLoading) return
     setActionLoading(userId)
     setOpenDropdown(null)
 
