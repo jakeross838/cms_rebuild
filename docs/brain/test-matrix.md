@@ -1,6 +1,28 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
-## Session 16 — Data Leakage Prevention + Soft-Delete Defense (2026-02-26)
+## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
+
+### PostgREST .or() Filter Injection Fix
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Search term with comma (e.g. "test,status.eq.draft") | Comma treated as literal, no extra filter injected | verify |
+| Search term with dots (e.g. "file.name.txt") | Dots treated as literal in ILIKE pattern | verify |
+| Search term with double quotes | Quotes escaped, no quoting breakout | verify |
+| Normal search term (e.g. "budget report") | Substring match works as before | verify |
+| safeOrIlike('hello') returns correctly quoted pattern | `"%hello%"` | verify |
+| TypeScript compiles after 80 file changes | `tsc --noEmit` = 0 errors | pass |
+
+### Sensitive select('*') on 8 Tables (31 fixes)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET marketplace publishers list | No `credentials` or `stripe_connect_id` in response | verify |
+| GET mobile devices list | No `device_token` in response | verify |
+| GET mobile sessions list | No `session_token` in response | verify |
+| GET vendor portal invitations | No `token` in response | verify |
+| GET client portal invitations | No `token` in response | verify |
+| GET client approvals list | No `signature_hash` in response | verify |
+| GET branding domains list | No `verification_token` in response | verify |
+| GET billing events detail | No `stripe_event_id` in response | verify |
 
 ### SMTP Password Leakage Fix
 | Test Case | Expected | Status |

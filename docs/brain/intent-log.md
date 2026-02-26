@@ -1,6 +1,19 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
-## 2026-02-26: Session 16 — Data Leakage Prevention + Soft-Delete Defense
+## 2026-02-26: Session 16 — Data Leakage Prevention + Filter Injection Fix
+
+### Why (PostgREST .or() Filter Injection)
+- `escapeLike()` escapes `%`, `_`, `\` (LIKE wildcards) but NOT `,` and `.` (PostgREST filter syntax delimiters)
+- In `.or()` strings, commas separate conditions and dots separate `column.operator.value`
+- A search for `test,status.eq.draft` would inject `status.eq.draft` as an extra OR condition
+- Practical impact: low (RLS + company_id enforce tenant isolation, only widens within user's own data)
+- But defense-in-depth: user input should never modify query structure
+- Fix: `safeOrIlike()` wraps values in PostgREST double quotes which neutralize delimiter characters
+
+### Why (Sensitive select('*') on 8 Tables)
+- 8 tables had sensitive columns (tokens, credentials, hashes, Stripe IDs) being returned to clients via `select('*')`
+- Each table got explicit column lists excluding the sensitive fields
+- Defense against: offline credential attacks, social engineering with billing IDs, token reuse
 
 ### Why (SMTP Password Leakage)
 - `builder_email_config` table has `smtp_encrypted_password` column — an encrypted credential

@@ -1,6 +1,23 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
-## Session 16 — Data Leakage Prevention + Soft-Delete Defense (2026-02-26)
+## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
+
+### PostgREST .or() Filter Injection Fix (80 routes)
+- **Files:** 80 route files across `src/app/api/v2/` + `src/lib/utils.ts`
+- **What:** `.or()` filter strings used `escapeLike()` which only escapes LIKE wildcards (`%`, `_`, `\`), but not PostgREST delimiters (`,`, `.`). A search term containing commas could inject extra filter conditions.
+- **Fix:** Added `safeOrIlike()` utility that wraps ILIKE patterns in PostgREST-safe double quotes, preventing delimiter injection. All 80 `.or()` search endpoints updated to use it.
+- **safeOrIlike() behavior:** escapes LIKE wildcards → wraps in `%...%` → escapes double quotes → wraps in `"..."` for PostgREST quoting
+
+### Sensitive select('*') Replacement (18 files, 8 tables)
+- **Tables fixed:** marketplace_publishers, mobile_devices, mobile_sessions, vendor_portal_invitations, client_portal_invitations, client_approvals, builder_custom_domains, billing_events
+- **Columns excluded per table:**
+  - marketplace_publishers: `credentials`, `stripe_connect_id`
+  - mobile_devices: `device_token`
+  - mobile_sessions: `session_token`
+  - vendor/client portal invitations: `token`
+  - client_approvals: `signature_hash`
+  - builder_custom_domains: `verification_token`
+  - billing_events: `stripe_event_id`
 
 ### SMTP Password Leakage Fix (branding/email)
 - **File:** `src/app/api/v2/branding/email/route.ts`
