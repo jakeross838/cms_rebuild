@@ -1,5 +1,28 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Security Headers, Error Mapping, RLS, Image Optimization (2026-02-26)
+
+### Content-Security-Policy (middleware.ts)
+- Added CSP header: default-src 'self', script/style self+unsafe-inline, img self+data+blob+Supabase, connect self+Supabase+Vercel, frame-ancestors 'none'
+- Added X-XSS-Protection: 1; mode=block (legacy browser defense-in-depth)
+- All 7 recommended security headers now configured (was 5/7)
+
+### mapDbError Helper (lib/api/middleware.ts)
+- New function maps Supabase/Postgres error codes to correct HTTP statuses
+- PGRST116→404, 23505→409, 23503/23502→400, 42501→403, default→500
+- Applied to PUT/DELETE handlers in 122 v2 API detail routes
+- Previously all DB errors returned 404 regardless of cause
+
+### RLS Policy Tightening (3 platform tables)
+- deployment_releases: ALL→separate SELECT/INSERT/UPDATE/DELETE policies, writes restricted to deployed_by
+- marketplace_templates: ALL write→per-command, restricted to created_by
+- marketplace_template_versions: ALL write→per-command, restricted to parent template creator via JOIN
+
+### Image Optimization (1 page)
+- jobs/[id]/photos: Raw `<img>` replaced with `next/image` (NextImage) with fill+sizes for responsive loading
+
+---
+
 ## API Response Consistency, Form Validation, Error Handling (2026-02-26)
 
 ### API Response Consistency (215 routes)

@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Security Headers, Error Mapping, RLS, Image Optimization
+
+### Why
+1. Missing Content-Security-Policy header — any XSS vulnerability could execute arbitrary scripts, exfiltrate data
+2. 122 v2 API PUT/DELETE handlers returned 404 for ALL DB errors — constraint violations, permission errors, server errors all looked like "not found"
+3. 3 platform tables (deployment_releases, marketplace_templates, marketplace_template_versions) had ALL+true RLS policies — any authenticated user could write/delete any record
+4. Job photos page used raw `<img>` bypassing Next.js image optimization
+
+### What was done
+- Added CSP header to middleware.ts with strict directives (self + Supabase + Vercel only)
+- Added X-XSS-Protection header for legacy browser defense
+- Created mapDbError() helper in lib/api/middleware.ts mapping Postgres error codes to HTTP statuses
+- Updated 122 API route files to use mapDbError in PUT/DELETE error handlers
+- Applied Supabase migration tightening RLS on 3 platform tables (ownership-based write restrictions)
+- Replaced `<img>` with `next/image` on photos page with proper fill+sizes
+
+---
+
 ## 2026-02-26: API Consistency, Form Validation, Error Handling
 
 ### Why

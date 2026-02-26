@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Security Headers, Error Mapping, RLS (2026-02-26)
+
+### Security Headers
+| Test | Expected |
+|------|----------|
+| Check response headers on any page | Content-Security-Policy present with frame-ancestors 'none' |
+| Check X-XSS-Protection header | `1; mode=block` |
+| Inline script injection attempt | Blocked by CSP (unless 'unsafe-inline' for own scripts) |
+
+### mapDbError — API Error Codes
+| Route | Test | Expected |
+|-------|------|----------|
+| PUT /api/v2/gl/accounts/:id (duplicate account_number) | Unique constraint | 409 Conflict |
+| PUT /api/v2/jobs/:id (invalid FK) | Foreign key violation | 400 Bad Request |
+| PUT /api/v2/budgets/:id (non-existent ID) | Not found | 404 Not Found |
+| DELETE /api/v2/documents/:id (DB error) | Server error | 500 Database Error |
+
+### RLS Policy Changes
+| Table | Test | Expected |
+|-------|------|----------|
+| marketplace_templates | INSERT as non-creator | RLS blocks (no rows returned) |
+| marketplace_template_versions | UPDATE as non-template-owner | RLS blocks |
+| deployment_releases | DELETE as non-deployer | RLS blocks |
+
+---
+
 ## API Consistency, Form Validation, Error Handling (2026-02-26)
 
 ### API Response Consistency
