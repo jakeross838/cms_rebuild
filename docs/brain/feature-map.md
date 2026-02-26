@@ -1,5 +1,25 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 10 — V1 Error Handling, Import Cleanup, DB Indexes (2026-02-26)
+
+### V1 Route Error Handling Fix (9 files)
+- 8 files switched from generic `{ error: 'Database Error', status: 500 }` to `mapDbError()` for proper Postgres error code mapping
+- Files: custom-fields (route + [id]), audit-log, settings/company, settings/phases (route + [id]), workflows (route + [entityType])
+- `mapDbError` import added to all 8 files (cost-codes/[id] already had it)
+
+### Missing Soft-Delete Filters (2 fixes)
+- `cost-codes/[id]` GET: Added `.is('deleted_at', null)` — was returning archived cost codes
+- `workflows/[entityType]` PUT: Added `.is('deleted_at', null)` on is_default update — could accidentally unset default on archived workflows
+
+### Duplicate Import Consolidation (204 files)
+- All v2 API routes had `import { mapDbError } from '@/lib/api/middleware'` on a separate line
+- Merged into the existing destructured import block — pure cleanup, no behavior change
+
+### Database Performance Indexes (72 indexes applied to live DB)
+- 70 partial indexes: `CREATE INDEX idx_*_active ON table (company_id) WHERE deleted_at IS NULL` for tables missing this pattern
+- 2 FK indexes on `lien_waiver_tracking`: `job_id` and `vendor_id`
+- Migration files: `20260226000001_add_active_record_indexes.sql`, `20260226000002_add_lien_waiver_tracking_fk_indexes.sql`
+
 ## Session 9 — Rate Limits, Audit Actions, Pagination, Cross-Tenant (2026-02-26)
 
 ### Financial Rate Limit Tier Hardening (35 files total)

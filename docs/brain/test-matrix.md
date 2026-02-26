@@ -1,5 +1,35 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 10 — V1 Error Handling, Import Cleanup, DB Indexes (2026-02-26)
+
+### V1 Error Handling
+- [ ] GET /api/v1/custom-fields — DB error returns mapDbError response (not generic 500)
+- [ ] POST /api/v1/custom-fields — DB error returns mapDbError response
+- [ ] PATCH /api/v1/custom-fields/:id — DB error returns mapDbError response
+- [ ] GET /api/v1/audit-log — DB error returns mapDbError response
+- [ ] PATCH /api/v1/settings/company — DB error returns mapDbError response
+- [ ] GET /api/v1/settings/phases — DB error returns mapDbError response
+- [ ] POST /api/v1/settings/phases — DB error returns mapDbError response
+- [ ] PATCH /api/v1/settings/phases/:id — DB error returns mapDbError response
+- [ ] DELETE /api/v1/settings/phases/:id — DB error returns mapDbError response
+- [ ] GET /api/v1/workflows — DB error returns mapDbError response
+- [ ] GET /api/v1/workflows/:entityType — DB error returns mapDbError response
+- [ ] PUT /api/v1/workflows/:entityType — DB error returns mapDbError response
+
+### Soft-Delete Filters
+- [ ] GET /api/v1/cost-codes/:id — returns 404 for archived cost codes (deleted_at IS NOT NULL)
+- [ ] PUT /api/v1/workflows/:entityType — is_default unset only applies to non-archived workflows
+
+### Import Consolidation
+- [ ] All 430 API route files compile with zero TypeScript errors
+- [ ] No file has duplicate imports from '@/lib/api/middleware'
+- [ ] 3309 Vitest tests pass after consolidation
+
+### Database Indexes
+- [ ] 107 tables have idx_*_active partial index (37 existing + 70 new)
+- [ ] lien_waiver_tracking.job_id has supporting index
+- [ ] lien_waiver_tracking.vendor_id has supporting index
+
 ## Session 9 — Rate Limits, Audit Actions, Pagination (2026-02-26)
 
 ### Financial Rate Limit Tier

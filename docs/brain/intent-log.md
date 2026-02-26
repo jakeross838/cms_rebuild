@@ -1,5 +1,26 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 10 — V1 Error Handling, Import Cleanup, DB Indexes
+
+### Why
+1. **8 v1 routes used generic 500 errors** — returned `{ error: 'Database Error', status: 500 }` for all DB errors instead of using `mapDbError()` for proper error code mapping (23505→409 Conflict, 23503→400 Bad Request, PGRST116→404 Not Found). This masked the real error from API consumers.
+2. **2 queries missing soft-delete filter** — `cost-codes/[id]` GET could return archived cost codes; `workflows/[entityType]` is_default update could modify archived workflows.
+3. **204 files had duplicate import lines** — `mapDbError` was imported on a separate line from the same module, adding visual noise. Pure cleanup.
+4. **70 tables missing performance-critical partial index** — Only 37 of 107 tables with `company_id + deleted_at` had the `idx_*_active` partial index pattern used by every list query. These tables would scan all rows (including archived) on every list request.
+5. **2 FK columns on lien_waiver_tracking unindexed** — Flagged by Supabase performance advisor; JOIN queries on job_id and vendor_id would do sequential scans.
+
+### What was done
+- Added `mapDbError` import + usage to 8 v1 route files, added `.is('deleted_at', null)` to 2 queries
+- Consolidated 204 duplicate `import { mapDbError }` lines into main import block
+- Applied 72 database indexes via Supabase MCP (70 active-record + 2 FK indexes)
+- Created local migration files for reproducibility
+
+### Commits
+- `a929e7b` — Fix v1 route error handling — use mapDbError instead of generic 500s (9 files)
+- `7177928` — Consolidate duplicate middleware imports across 204 API route files
+- `10774e7` — Add active-record partial indexes to 70 tables (DB performance)
+- `7c613b5` — Add missing FK indexes on lien_waiver_tracking
+
 ## 2026-02-26: Session 9 — Rate Limits, Audit Actions, Pagination Hardening
 
 ### Why
