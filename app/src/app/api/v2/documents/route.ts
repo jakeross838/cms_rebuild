@@ -180,5 +180,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: doc, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'heavy' }
 )
