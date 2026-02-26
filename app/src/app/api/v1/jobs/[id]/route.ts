@@ -45,6 +45,7 @@ export const GET = createApiHandler(
       .select('*, clients!left(id, name)')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single() as { data: Job | null; error: { message: string } | null }
 
     if (error || !job) {
@@ -82,12 +83,13 @@ export const PATCH = createApiHandler(
     const body = ctx.validatedBody as UpdateJobInput
     const supabase = await createClient()
 
-    // Verify exists
+    // Verify exists (exclude soft-deleted)
     const { data: existing, error: fetchError } = await supabase
       .from('jobs')
       .select('id')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single() as { data: { id: string } | null; error: { message: string } | null }
 
     if (fetchError || !existing) {

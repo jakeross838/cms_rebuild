@@ -48,6 +48,8 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
+      .eq('is_active', true)
+      .is('deleted_at', null)
       .single() as { data: User | null; error: { message: string } | null }
 
     if (error || !user) {
@@ -112,12 +114,14 @@ export const PATCH = createApiHandler(
 
     const supabase = await createClient()
 
-    // Verify the target user exists in the same company
+    // Verify the target user exists in the same company (exclude deactivated)
     const { data: existingUser, error: fetchError } = await supabase
       .from('users')
       .select('*')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
+      .eq('is_active', true)
+      .is('deleted_at', null)
       .single() as { data: User | null; error: { message: string } | null }
 
     if (fetchError || !existingUser) {
