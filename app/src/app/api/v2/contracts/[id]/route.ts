@@ -48,12 +48,14 @@ export const GET = createApiHandler(
       .from('contract_signers')
       .select('id')
       .eq('contract_id', id)
+      .eq('company_id', ctx.companyId!)
 
     // Fetch versions
     const { data: versions } = await supabase
       .from('contract_versions')
       .select('*')
       .eq('contract_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('version_number', { ascending: false })
 
     return NextResponse.json({

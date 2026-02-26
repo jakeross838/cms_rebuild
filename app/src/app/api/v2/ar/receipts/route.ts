@@ -159,6 +159,7 @@ export const POST = createApiHandler(
         .from('ar_invoices')
         .select('balance_due, amount')
         .eq('id', app.invoice_id)
+        .eq('company_id', ctx.companyId!)
         .single()
 
       if (invoice) {
@@ -173,6 +174,7 @@ export const POST = createApiHandler(
             updated_at: new Date().toISOString(),
           })
           .eq('id', app.invoice_id)
+          .eq('company_id', ctx.companyId!)
       }
     }
 

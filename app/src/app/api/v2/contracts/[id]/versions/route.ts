@@ -77,6 +77,7 @@ export const GET = createApiHandler(
       .from('contract_versions')
       .select('*', { count: 'exact' })
       .eq('contract_id', contractId)
+      .eq('company_id', ctx.companyId!)
       .order('version_number', { ascending: false })
       .range(offset, offset + limit - 1)
 

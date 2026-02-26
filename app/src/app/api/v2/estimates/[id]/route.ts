@@ -48,18 +48,21 @@ export const GET = createApiHandler(
       .from('estimate_line_items')
       .select('id')
       .eq('estimate_id', id)
+      .eq('company_id', ctx.companyId!)
 
     // Fetch sections count
     const { data: sections } = await supabase
       .from('estimate_sections')
       .select('id')
       .eq('estimate_id', id)
+      .eq('company_id', ctx.companyId!)
 
     // Fetch versions
     const { data: versions } = await supabase
       .from('estimate_versions')
       .select('*')
       .eq('estimate_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('version_number', { ascending: false })
 
     return NextResponse.json({

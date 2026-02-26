@@ -77,6 +77,7 @@ export const GET = createApiHandler(
       .from('estimate_sections')
       .select('*', { count: 'exact' })
       .eq('estimate_id', estimateId)
+      .eq('company_id', ctx.companyId!)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
 

@@ -48,16 +48,19 @@ export const GET = createApiHandler(
       .from('bid_invitations')
       .select('id')
       .eq('bid_package_id', id)
+      .eq('company_id', ctx.companyId!)
 
     const { data: responses } = await supabase
       .from('bid_responses')
       .select('id')
       .eq('bid_package_id', id)
+      .eq('company_id', ctx.companyId!)
 
     const { data: awards } = await supabase
       .from('bid_awards')
       .select('id')
       .eq('bid_package_id', id)
+      .eq('company_id', ctx.companyId!)
 
     return NextResponse.json({
       data: {
