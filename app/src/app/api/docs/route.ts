@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { readdir, readFile } from 'fs/promises'
 import path from 'path'
 
+import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+
 const DOCS_ROOT = path.resolve(process.cwd(), '..', 'docs')
 
 interface DocFile {
@@ -31,56 +33,59 @@ function extractFrontmatter(content: string): Frontmatter {
   }
 }
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const slug = searchParams.get('slug')
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const { searchParams } = new URL(req.url)
+    const slug = searchParams.get('slug')
 
-  if (slug) {
-    // Prevent path traversal — resolve and verify the path stays inside DOCS_ROOT
-    const filePath = path.resolve(DOCS_ROOT, ...slug.split('/'))
-    if (!filePath.startsWith(DOCS_ROOT + path.sep) && filePath !== DOCS_ROOT) {
-      return NextResponse.json({ error: 'Invalid path', requestId: crypto.randomUUID() }, { status: 400 })
-    }
-    try {
-      const content = await readFile(filePath, 'utf-8')
-      return NextResponse.json({ content, slug })
-    } catch {
-      return NextResponse.json({ error: 'File not found', requestId: crypto.randomUUID() }, { status: 404 })
-    }
-  }
-
-  // Return file listing
-  const docs: DocFile[] = []
-
-  const categories = ['modules', 'architecture']
-  for (const category of categories) {
-    const dir = path.join(DOCS_ROOT, category)
-    try {
-      const files = await readdir(dir)
-      for (const file of files) {
-        if (!file.endsWith('.md')) continue
-        const filePath = path.join(dir, file)
-        const content = await readFile(filePath, 'utf-8')
-        const { title, phase, status } = extractFrontmatter(content)
-        docs.push({
-          slug: `${category}/${file}`,
-          title,
-          category,
-          phase,
-          status,
-          path: `${category}/${file}`,
-        })
+    if (slug) {
+      // Prevent path traversal — resolve and verify the path stays inside DOCS_ROOT
+      const filePath = path.resolve(DOCS_ROOT, ...slug.split('/'))
+      if (!filePath.startsWith(DOCS_ROOT + path.sep) && filePath !== DOCS_ROOT) {
+        return NextResponse.json({ error: 'Invalid path', requestId: ctx.requestId }, { status: 400 })
       }
-    } catch {
-      // directory doesn't exist, skip
+      try {
+        const content = await readFile(filePath, 'utf-8')
+        return NextResponse.json({ content, slug, requestId: ctx.requestId })
+      } catch {
+        return NextResponse.json({ error: 'File not found', requestId: ctx.requestId }, { status: 404 })
+      }
     }
-  }
 
-  // Sort modules by number, architecture alphabetically
-  docs.sort((a, b) => {
-    if (a.category !== b.category) return a.category === 'architecture' ? -1 : 1
-    return a.slug.localeCompare(b.slug, undefined, { numeric: true })
-  })
+    // Return file listing
+    const docs: DocFile[] = []
 
-  return NextResponse.json({ docs })
-}
+    const categories = ['modules', 'architecture']
+    for (const category of categories) {
+      const dir = path.join(DOCS_ROOT, category)
+      try {
+        const files = await readdir(dir)
+        for (const file of files) {
+          if (!file.endsWith('.md')) continue
+          const fp = path.join(dir, file)
+          const content = await readFile(fp, 'utf-8')
+          const { title, phase, status } = extractFrontmatter(content)
+          docs.push({
+            slug: `${category}/${file}`,
+            title,
+            category,
+            phase,
+            status,
+            path: `${category}/${file}`,
+          })
+        }
+      } catch {
+        // directory doesn't exist, skip
+      }
+    }
+
+    // Sort modules by number, architecture alphabetically
+    docs.sort((a, b) => {
+      if (a.category !== b.category) return a.category === 'architecture' ? -1 : 1
+      return a.slug.localeCompare(b.slug, undefined, { numeric: true })
+    })
+
+    return NextResponse.json({ docs, requestId: ctx.requestId })
+  },
+  { requireAuth: true, requiredRoles: ['owner', 'admin'] }
+)
