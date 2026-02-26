@@ -23,6 +23,7 @@ interface AccountOption {
 }
 
 interface JournalLine {
+  _key: string
   account_id: string
   debit_amount: string
   credit_amount: string
@@ -47,8 +48,8 @@ export default function NewJournalEntryPage() {
   })
 
   const [lines, setLines] = useState<JournalLine[]>([
-    { account_id: '', debit_amount: '', credit_amount: '', memo: '' },
-    { account_id: '', debit_amount: '', credit_amount: '', memo: '' },
+    { _key: crypto.randomUUID(), account_id: '', debit_amount: '', credit_amount: '', memo: '' },
+    { _key: crypto.randomUUID(), account_id: '', debit_amount: '', credit_amount: '', memo: '' },
   ])
 
   useEffect(() => {
@@ -91,7 +92,7 @@ export default function NewJournalEntryPage() {
   }
 
   const addLine = () => {
-    setLines((prev) => [...prev, { account_id: '', debit_amount: '', credit_amount: '', memo: '' }])
+    setLines((prev) => [...prev, { _key: crypto.randomUUID(), account_id: '', debit_amount: '', credit_amount: '', memo: '' }])
   }
 
   const removeLine = (index: number) => {
@@ -271,7 +272,7 @@ export default function NewJournalEntryPage() {
                 </thead>
                 <tbody>
                   {lines.map((line, index) => (
-                    <tr key={index} className="border-b last:border-0">
+                    <tr key={line._key} className="border-b last:border-0">
                       <td className="py-2 pr-2">
                         <select
                           aria-label="Account"
