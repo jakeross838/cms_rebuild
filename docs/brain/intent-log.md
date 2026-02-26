@@ -1,8 +1,14 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
-## 2026-02-26: Session 13 — N+1 Query Performance Fixes
+## 2026-02-26: Session 13 — N+1 Fixes + Structured Logging
 
-### Why
+### Why (Structured Logging)
+- 14 API route files used raw `console.error()` for non-blocking side-effect failures (audit logs, history records, status updates)
+- These bypass the `logger` from `@/lib/monitoring` which provides structured JSON output, context fields, and integration with monitoring tools
+- Production error investigation requires structured logs, not unstructured console output
+- Zero `console.error` now remains in any API route — 100% structured logging coverage
+
+### Why (N+1 Fixes)
 - Audit found 5 N+1 query patterns: 3 HIGH severity (frequent endpoints with sequential DB round-trips), 2 MEDIUM severity
 - PO receipts GET was making N+1 queries (1 list + N line fetches) on every page load — replaced with batch `.in()` query
 - AR receipts, AP payments, and PO receipts POST were making sequential RPC calls in for-loops — parallelized with Promise.all since each call targets a different record

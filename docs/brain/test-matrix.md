@@ -1,6 +1,13 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
-## Session 13 — N+1 Query Performance Fixes (2026-02-26)
+## Session 13 — N+1 Fixes + Structured Logging (2026-02-26)
+
+### Structured Logging (14 fixes across 12 files)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `console.error` in API route files | `grep console.error app/src/app/api/` returns 0 results | pass |
+| All non-blocking error logs use `logger.error()` | Structured JSON output with context | verify |
+| Side-effect failures (audit, history) don't crash the main request | Response still returns 201 even if audit log fails | verify |
 
 ### PO Receipts GET — Batch Line Fetch
 | Test Case | Expected | Status |

@@ -7,6 +7,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
+import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import { resolveWarrantyClaimSchema } from '@/lib/validation/schemas/warranty'
 
@@ -114,7 +115,7 @@ export const POST = createApiHandler(
         },
         performed_by: ctx.user!.id,
       })
-    if (historyErr) console.error('Failed to record warranty claim history:', historyErr.message)
+    if (historyErr) logger.error('Failed to record warranty claim history', { error: historyErr.message })
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },

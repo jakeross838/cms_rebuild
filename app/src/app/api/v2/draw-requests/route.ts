@@ -15,6 +15,7 @@ import {
   mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
+import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import { listDrawRequestsSchema, createDrawRequestSchema } from '@/lib/validation/schemas/draw-requests'
 
@@ -140,7 +141,7 @@ export const POST = createApiHandler(
         details: { draw_number: input.draw_number, contract_amount: input.contract_amount },
         performed_by: ctx.user!.id,
       })
-    if (historyErr) console.error('Failed to record draw request history:', historyErr.message)
+    if (historyErr) logger.error('Failed to record draw request history', { error: historyErr.message })
 
     return NextResponse.json({ data: draw, requestId: ctx.requestId }, { status: 201 })
   },

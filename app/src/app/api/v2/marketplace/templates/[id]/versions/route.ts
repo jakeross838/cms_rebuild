@@ -7,6 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { logger } from '@/lib/monitoring'
 import {
   createApiHandler,
   getPaginationParams,
@@ -156,7 +157,7 @@ export const POST = createApiHandler(
       .from('marketplace_templates')
       .update({ version: input.version })
       .eq('id', templateId)
-    if (versionErr) console.error('Failed to update template version:', versionErr.message)
+    if (versionErr) logger.error('Failed to update template version', { error: versionErr.message })
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

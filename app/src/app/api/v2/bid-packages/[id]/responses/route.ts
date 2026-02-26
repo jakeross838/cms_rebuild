@@ -7,6 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { logger } from '@/lib/monitoring'
 import {
   createApiHandler,
   getPaginationParams,
@@ -177,7 +178,7 @@ export const POST = createApiHandler(
           responded_at: new Date().toISOString(),
         })
         .eq('id', input.invitation_id)
-      if (invErr) console.error('Failed to update bid invitation status:', invErr.message)
+      if (invErr) logger.error('Failed to update bid invitation status', { error: invErr.message })
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })

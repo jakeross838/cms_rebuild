@@ -7,6 +7,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
+import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import { approveDrawRequestSchema } from '@/lib/validation/schemas/draw-requests'
 
@@ -90,7 +91,7 @@ export const POST = createApiHandler(
         details: { notes: input.notes ?? null },
         performed_by: ctx.user!.id,
       })
-    if (historyErr) console.error('Failed to record draw request history:', historyErr.message)
+    if (historyErr) logger.error('Failed to record draw request history', { error: historyErr.message })
 
     return NextResponse.json({ data: draw, requestId: ctx.requestId })
   },

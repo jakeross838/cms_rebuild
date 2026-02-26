@@ -8,6 +8,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { escapeLike } from '@/lib/utils'
 
+import { logger } from '@/lib/monitoring'
 import {
   createApiHandler,
   getPaginationParams,
@@ -204,7 +205,7 @@ export const POST = createApiHandler(
         details: {},
         performed_by: ctx.user!.id,
       })
-    if (historyErr) console.error('Failed to record warranty claim history:', historyErr.message)
+    if (historyErr) logger.error('Failed to record warranty claim history', { error: historyErr.message })
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

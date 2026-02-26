@@ -9,6 +9,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
+import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import { updateSelectionSchema } from '@/lib/validation/schemas/selections'
 
@@ -146,7 +147,7 @@ export const PUT = createApiHandler(
           actor_role: ctx.user!.role,
           notes: input.change_reason ?? null,
         })
-      if (historyErr) console.error('Failed to record selection history:', historyErr.message)
+      if (historyErr) logger.error('Failed to record selection history', { error: historyErr.message })
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId })

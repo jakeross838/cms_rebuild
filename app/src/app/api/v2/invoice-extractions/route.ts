@@ -14,6 +14,7 @@ import {
   mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
+import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import {
   listExtractionsSchema,
@@ -132,7 +133,7 @@ export const POST = createApiHandler(
         details: { document_id: input.document_id, extraction_model: input.extraction_model ?? null },
         performed_by: ctx.user!.id,
       })
-    if (auditErr) console.error('Failed to record extraction audit log:', auditErr.message)
+    if (auditErr) logger.error('Failed to record extraction audit log', { error: auditErr.message })
 
     return NextResponse.json({ data: extraction, requestId: ctx.requestId }, { status: 201 })
   },

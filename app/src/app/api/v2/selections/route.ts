@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server'
 import { escapeLike } from '@/lib/utils'
 
+import { logger } from '@/lib/monitoring'
 import {
   createApiHandler,
   getPaginationParams,
@@ -173,7 +174,7 @@ export const POST = createApiHandler(
         actor_role: ctx.user!.role,
         notes: null,
       })
-    if (historyErr) console.error('Failed to record selection history:', historyErr.message)
+    if (historyErr) logger.error('Failed to record selection history', { error: historyErr.message })
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

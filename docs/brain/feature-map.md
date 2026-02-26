@@ -13,6 +13,18 @@
 - `v2/purchase-orders/[id]/receipts/route.ts` POST: Parallelized sequential `increment_po_line_received` RPC calls using `Promise.all`. Each targets a different PO line, safe to run concurrently.
 - `v2/draw-requests/[id]/lines/route.ts` POST: Eliminated redundant `retainage_pct` query by including it in the initial draw existence check (`select('id, status, retainage_pct')` instead of `select('id, status')`). Reduces 4 sequential queries to 3.
 
+### Structured Logging — console.error → logger (14 fixes across 12 files)
+Replaced all `console.error()` in API routes with `logger.error()` from `@/lib/monitoring`:
+- `v2/invoice-extractions/route.ts`, `v2/invoice-extractions/[id]/review/route.ts`, `v2/invoice-extractions/[id]/create-bill/route.ts`: extraction audit log failures
+- `v2/draw-requests/route.ts`, `v2/draw-requests/[id]/submit/route.ts`, `v2/draw-requests/[id]/approve/route.ts`: draw request history failures
+- `v2/warranties/[id]/claims/route.ts`, `v2/warranties/[id]/claims/[claimId]/route.ts`, `v2/warranties/[id]/claims/[claimId]/resolve/route.ts`: warranty claim history failures
+- `v2/support/tickets/[id]/messages/route.ts`: ticket first_response_at update failure
+- `v2/marketplace/templates/[id]/versions/route.ts`: template version update failure
+- `v2/bid-packages/[id]/responses/route.ts`: bid invitation status update failure
+- `v2/selections/route.ts`, `v2/selections/[id]/route.ts`: selection history failures
+
+**Result: Zero `console.error` calls in API routes. All error logging uses structured `logger`.**
+
 ### Pagination Audit Results (no fixes needed)
 - 141/155 v2 list endpoints use `paginatedResponse()` with proper `.range()` — 91% compliance
 - 14 endpoints intentionally unpaginated (singleton settings, user preferences, aggregates)

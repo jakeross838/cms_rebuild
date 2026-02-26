@@ -7,6 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { logger } from '@/lib/monitoring'
 import {
   createApiHandler,
   getPaginationParams,
@@ -171,7 +172,7 @@ export const POST = createApiHandler(
         .update({ first_response_at: new Date().toISOString() })
         .eq('id', ticketId)
         .eq('company_id', ctx.companyId!)
-      if (ticketErr) console.error('Failed to update ticket first_response_at:', ticketErr.message)
+      if (ticketErr) logger.error('Failed to update ticket first_response_at', { error: ticketErr.message })
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
