@@ -164,7 +164,6 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
   if (body.isActive !== undefined) update.is_active = body.isActive
   if (body.milestoneType !== undefined) update.milestone_type = body.milestoneType
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: phaseData, error } = await supabase
     .from('project_phases')
     .update(update)
@@ -247,7 +246,6 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
   }
 
   // Soft delete
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await supabase
     .from('project_phases')
     .update({ deleted_at: new Date().toISOString() })

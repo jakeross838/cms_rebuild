@@ -126,7 +126,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('employee_documents')
-      .update({ deleted_at: new Date().toISOString() } as any)
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

@@ -155,7 +155,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('marketplace_reviews')
-      .update({ deleted_at: new Date().toISOString() } as any)
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id)
 
     if (error) {

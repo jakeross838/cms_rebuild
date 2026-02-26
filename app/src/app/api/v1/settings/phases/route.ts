@@ -110,7 +110,6 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: phaseData, error } = await supabase
     .from('project_phases')
     .insert({
