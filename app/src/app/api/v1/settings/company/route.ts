@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { z } from 'zod'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { getCompanySettings, updateCompanySettings, clearConfigCache } from '@/lib/config'
 import type { ConfigSection } from '@/lib/config/types'
 import { createClient } from '@/lib/supabase/server'
@@ -154,9 +154,10 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
       .eq('id', companyId)
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
   }

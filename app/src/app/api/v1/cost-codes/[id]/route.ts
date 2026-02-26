@@ -45,6 +45,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single() as { data: CostCode | null; error: { message: string } | null }
 
     if (error || !costCode) {

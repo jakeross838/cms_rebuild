@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { z } from 'zod'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 
 const entityTypes = ['invoice', 'purchase_order', 'change_order', 'draw', 'selection', 'estimate', 'contract'] as const
@@ -45,9 +45,10 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
     .order('is_default', { ascending: false })
 
   if (error) {
+    const mapped = mapDbError(error)
     return NextResponse.json(
-      { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
-      { status: 500 }
+      { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+      { status: mapped.status }
     )
   }
 
@@ -158,6 +159,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
       .eq('company_id', ctx.companyId!)
       .eq('entity_type', entityType)
       .eq('is_default', true)
+      .is('deleted_at', null)
   }
 
   // Check for existing default workflow to upsert
@@ -206,9 +208,10 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
   }
 
   if (error) {
+    const mapped = mapDbError(error)
     return NextResponse.json(
-      { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
-      { status: 500 }
+      { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+      { status: mapped.status }
     )
   }
 
