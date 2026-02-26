@@ -168,7 +168,7 @@ export const POST = createApiHandler(
     // If this is an official response, update RFI status to answered
     if (input.is_official) {
       const now = new Date().toISOString()
-      await supabase
+      const { error: rfiErr } = await supabase
         .from('rfis')
         .update({
           status: 'answered',
@@ -177,6 +177,14 @@ export const POST = createApiHandler(
         })
         .eq('id', rfiId)
         .eq('company_id', ctx.companyId!)
+
+      if (rfiErr) {
+        const mapped = mapDbError(rfiErr)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })

@@ -150,7 +150,7 @@ export const POST = createApiHandler(
     }
 
     // Mark the entries as exported
-    await supabase
+    const { error: entriesErr } = await supabase
       .from('time_entries')
       .update({ status: 'exported', updated_at: new Date().toISOString() })
       .eq('company_id', ctx.companyId!)
@@ -159,8 +159,16 @@ export const POST = createApiHandler(
       .gte('entry_date', period.period_start)
       .lte('entry_date', period.period_end)
 
+    if (entriesErr) {
+      const mapped = mapDbError(entriesErr)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
     // Mark the payroll period as exported
-    await supabase
+    const { error: periodErr } = await supabase
       .from('payroll_periods')
       .update({
         status: 'exported',
@@ -170,6 +178,14 @@ export const POST = createApiHandler(
       })
       .eq('id', input.payroll_period_id)
       .eq('company_id', ctx.companyId!)
+
+    if (periodErr) {
+      const mapped = mapDbError(periodErr)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

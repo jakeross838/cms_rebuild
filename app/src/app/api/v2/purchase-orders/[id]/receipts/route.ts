@@ -236,10 +236,19 @@ export const POST = createApiHandler(
     }
 
     if (newStatus !== po.status) {
-      await supabase
+      const { error: statusErr } = await supabase
         .from('purchase_orders')
         .update({ status: newStatus, updated_at: new Date().toISOString() })
         .eq('id', poId)
+        .eq('company_id', ctx.companyId!)
+
+      if (statusErr) {
+        const mapped = mapDbError(statusErr)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     return NextResponse.json({

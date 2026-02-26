@@ -147,7 +147,7 @@ export const POST = createApiHandler(
     }
 
     // Update document's current version and metadata
-    await supabase
+    const { error: docErr } = await supabase
       .from('documents')
       .update({
         current_version_id: versionId,
@@ -158,6 +158,14 @@ export const POST = createApiHandler(
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
+
+    if (docErr) {
+      const mapped = mapDbError(docErr)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     return NextResponse.json({ data: version, requestId: ctx.requestId }, { status: 201 })
   },

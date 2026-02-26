@@ -124,7 +124,7 @@ export const POST = createApiHandler(
 
     // Link extraction to the bill
     const now = new Date().toISOString()
-    await supabase
+    const { error: linkErr } = await supabase
       .from('invoice_extractions')
       .update({
         matched_bill_id: bill.id,
@@ -133,8 +133,16 @@ export const POST = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
-    // Log audit entry
-    await supabase
+    if (linkErr) {
+      const mapped = mapDbError(linkErr)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    // Log audit entry (non-blocking)
+    const { error: auditErr } = await supabase
       .from('extraction_audit_log')
       .insert({
         extraction_id: id,
@@ -147,6 +155,7 @@ export const POST = createApiHandler(
         },
         performed_by: ctx.user!.id,
       })
+    if (auditErr) console.error('Failed to record extraction audit log:', auditErr.message)
 
     return NextResponse.json({ data: bill, requestId: ctx.requestId }, { status: 201 })
   },

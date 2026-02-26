@@ -106,17 +106,31 @@ export const POST = createApiHandler(
     const someSigned = (allSigners ?? []).some((s: { status: string }) => s.status === 'signed')
 
     if (allSigned) {
-      await supabase
+      const { error: statusErr } = await supabase
         .from('contracts')
         .update({ status: 'fully_signed', executed_at: now, updated_at: now })
         .eq('id', contractId)
         .eq('company_id', ctx.companyId!)
+      if (statusErr) {
+        const mapped = mapDbError(statusErr)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     } else if (someSigned) {
-      await supabase
+      const { error: statusErr } = await supabase
         .from('contracts')
         .update({ status: 'partially_signed', updated_at: now })
         .eq('id', contractId)
         .eq('company_id', ctx.companyId!)
+      if (statusErr) {
+        const mapped = mapDbError(statusErr)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId })

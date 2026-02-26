@@ -151,9 +151,9 @@ export const PUT = createApiHandler(
       )
     }
 
-    // Record history if status changed
+    // Record history if status changed (non-blocking)
     if (input.status && input.status !== existing.status) {
-      await supabase
+      const { error: historyErr } = await supabase
         .from('warranty_claim_history')
         .insert({
           claim_id: claimId,
@@ -164,6 +164,7 @@ export const PUT = createApiHandler(
           details: { updated_fields: Object.keys(input) },
           performed_by: ctx.user!.id,
         })
+      if (historyErr) console.error('Failed to record warranty claim history:', historyErr.message)
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId })

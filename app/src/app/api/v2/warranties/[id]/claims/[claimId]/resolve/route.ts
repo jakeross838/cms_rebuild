@@ -99,8 +99,8 @@ export const POST = createApiHandler(
       )
     }
 
-    // Record history
-    await supabase
+    // Record history (non-blocking)
+    const { error: historyErr } = await supabase
       .from('warranty_claim_history')
       .insert({
         claim_id: claimId,
@@ -114,6 +114,7 @@ export const POST = createApiHandler(
         },
         performed_by: ctx.user!.id,
       })
+    if (historyErr) console.error('Failed to record warranty claim history:', historyErr.message)
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },

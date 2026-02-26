@@ -170,13 +170,14 @@ export const POST = createApiHandler(
 
     // Update invitation status to 'submitted' if invitation_id was provided
     if (input.invitation_id) {
-      await supabase
+      const { error: invErr } = await supabase
         .from('bid_invitations')
         .update({
           status: 'submitted',
           responded_at: new Date().toISOString(),
         })
         .eq('id', input.invitation_id)
+      if (invErr) console.error('Failed to update bid invitation status:', invErr.message)
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })

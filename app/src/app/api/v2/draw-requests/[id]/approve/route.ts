@@ -81,8 +81,8 @@ export const POST = createApiHandler(
       )
     }
 
-    // Record in history
-    await supabase
+    // Record in history (non-blocking)
+    const { error: historyErr } = await supabase
       .from('draw_request_history')
       .insert({
         draw_request_id: id,
@@ -90,6 +90,7 @@ export const POST = createApiHandler(
         details: { notes: input.notes ?? null },
         performed_by: ctx.user!.id,
       })
+    if (historyErr) console.error('Failed to record draw request history:', historyErr.message)
 
     return NextResponse.json({ data: draw, requestId: ctx.requestId })
   },

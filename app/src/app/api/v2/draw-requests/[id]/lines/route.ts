@@ -175,7 +175,7 @@ export const POST = createApiHandler(
       const totalEarned = totalCompleted - retainageAmount
       const currentDue = totalEarned - totalPrevious
 
-      await supabase
+      const { error: totalsErr } = await supabase
         .from('draw_requests')
         .update({
           contract_amount: totalScheduled,
@@ -188,6 +188,14 @@ export const POST = createApiHandler(
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
+
+      if (totalsErr) {
+        const mapped = mapDbError(totalsErr)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     return NextResponse.json({ data: lines ?? [], requestId: ctx.requestId }, { status: 201 })

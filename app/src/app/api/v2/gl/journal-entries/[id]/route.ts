@@ -139,10 +139,18 @@ export const PUT = createApiHandler(
     // Replace lines if provided
     if (input.lines) {
       // Delete existing lines
-      await supabase
+      const { error: deleteError } = await supabase
         .from('gl_journal_lines')
         .delete()
         .eq('journal_entry_id', id)
+
+      if (deleteError) {
+        const mapped = mapDbError(deleteError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
 
       // Insert new lines
       const lineRecords = input.lines.map((line) => ({
@@ -157,9 +165,17 @@ export const PUT = createApiHandler(
         client_id: line.client_id ?? null,
       }))
 
-      await supabase
+      const { error: insertError } = await supabase
         .from('gl_journal_lines')
         .insert(lineRecords)
+
+      if (insertError) {
+        const mapped = mapDbError(insertError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     // Fetch updated lines

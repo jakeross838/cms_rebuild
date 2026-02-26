@@ -147,11 +147,19 @@ export const POST = createApiHandler(
     }
 
     // Update bid package status to awarded
-    await supabase
+    const { error: statusErr } = await supabase
       .from('bid_packages')
       .update({ status: 'awarded' })
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
+
+    if (statusErr) {
+      const mapped = mapDbError(statusErr)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

@@ -161,8 +161,8 @@ export const POST = createApiHandler(
       )
     }
 
-    // Record history entry
-    await supabase
+    // Record history entry (non-blocking)
+    const { error: historyErr } = await supabase
       .from('selection_history')
       .insert({
         company_id: ctx.companyId!,
@@ -173,6 +173,7 @@ export const POST = createApiHandler(
         actor_role: ctx.user!.role,
         notes: null,
       })
+    if (historyErr) console.error('Failed to record selection history:', historyErr.message)
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

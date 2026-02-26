@@ -132,10 +132,10 @@ export const PUT = createApiHandler(
       )
     }
 
-    // Record history if status or option changed
+    // Record history if status or option changed (non-blocking)
     if (input.status !== undefined || input.option_id !== undefined) {
       const action = input.option_id !== undefined ? 'changed' : 'selected'
-      await supabase
+      const { error: historyErr } = await supabase
         .from('selection_history')
         .insert({
           company_id: ctx.companyId!,
@@ -146,6 +146,7 @@ export const PUT = createApiHandler(
           actor_role: ctx.user!.role,
           notes: input.change_reason ?? null,
         })
+      if (historyErr) console.error('Failed to record selection history:', historyErr.message)
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId })

@@ -166,11 +166,12 @@ export const POST = createApiHandler(
 
     // Set first_response_at on ticket if this is the first agent response
     if (input.sender_type === 'agent' && !ticket.first_response_at) {
-      await supabase
+      const { error: ticketErr } = await supabase
         .from('support_tickets')
         .update({ first_response_at: new Date().toISOString() })
         .eq('id', ticketId)
         .eq('company_id', ctx.companyId!)
+      if (ticketErr) console.error('Failed to update ticket first_response_at:', ticketErr.message)
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })

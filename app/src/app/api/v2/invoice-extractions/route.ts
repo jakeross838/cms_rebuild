@@ -123,8 +123,8 @@ export const POST = createApiHandler(
       )
     }
 
-    // Log audit entry
-    await supabase
+    // Log audit entry (non-blocking)
+    const { error: auditErr } = await supabase
       .from('extraction_audit_log')
       .insert({
         extraction_id: extraction.id,
@@ -132,6 +132,7 @@ export const POST = createApiHandler(
         details: { document_id: input.document_id, extraction_model: input.extraction_model ?? null },
         performed_by: ctx.user!.id,
       })
+    if (auditErr) console.error('Failed to record extraction audit log:', auditErr.message)
 
     return NextResponse.json({ data: extraction, requestId: ctx.requestId }, { status: 201 })
   },
