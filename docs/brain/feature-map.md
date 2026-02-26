@@ -2089,3 +2089,51 @@ All list pages now filter out archived records with `.is('deleted_at', null)` in
 
 ### E2E Test Fix
 - **create-forms.spec.ts** — Added `waitForFunction(() => document.readyState === 'complete')` before visibility checks to prevent hydration race conditions.
+
+---
+
+## Multi-Tenancy Security Fixes (2026-02-25)
+
+### 7 Detail Page Dropdown Tenant Isolation Fixes
+These detail pages loaded dropdown/select data (jobs, vendors, clients, etc.) WITHOUT filtering by `company_id`, meaning users could see other tenants' data in dropdown menus:
+
+- **`/financial/receivables/[id]`** — Dropdown queries now filter by `company_id`
+- **`/financial/payables/[id]`** — Dropdown queries now filter by `company_id`
+- **`/purchase-orders/[id]`** — Dropdown queries now filter by `company_id`
+- **`/compliance/safety/[id]`** — Dropdown queries now filter by `company_id`
+- **`/compliance/insurance/[id]`** — Dropdown queries now filter by `company_id`
+- **`/punch-lists/[id]`** — Dropdown queries now filter by `company_id`
+- **`/financial/journal-entries/[id]`** — Dropdown queries now filter by `company_id`
+
+### 11 SSR Pages — Defense-in-Depth company_id Filtering
+These pages relied solely on RLS for tenant isolation. Added explicit `company_id` filtering at the application layer (28 queries total):
+
+- **`/dashboard`** — All dashboard aggregate queries now filter by `company_id`
+- **`/financial/dashboard`** — Financial summary queries filter by `company_id`
+- **`/cash-flow`** — Cash flow queries filter by `company_id`
+- **`/business-management`** — Management queries filter by `company_id`
+- **`/compliance/safety`** — Safety records filter by `company_id`
+- **`/hr`** — HR/employee queries filter by `company_id`
+- **`/legal`** — Legal document queries filter by `company_id`
+- **`/library/templates`** — Template queries filter by `company_id`
+- **`/library/selections`** — Selection queries filter by `company_id`
+- **`/marketing`** — Marketing data queries filter by `company_id`
+- **`/post-build`** — Post-build queries filter by `company_id`
+
+### 5 Create Form Data Integrity Fixes
+- **`/draw-requests/new`** — Job selector now filters by `company_id` (was loading all jobs)
+- **`/lien-law/new`** — Form wrapper and dropdowns now filter by `company_id`
+- **`/training/new`** — Added `company_id` guard (prevents insert without tenant context)
+- **`/inventory/new`** — Tenant filter added to all dropdown/reference queries
+- **`/schedule/new`** — `created_by` field now properly set from auth user
+
+### 7 Empty State CTAs Added
+These list pages previously showed a blank/generic empty state. Now display a call-to-action button linking to the create page:
+
+- **`/invoices`** — Empty state CTA links to `/invoices/new`
+- **`/rfis`** — Empty state CTA links to `/rfis/new`
+- **`/bids`** — Empty state CTA links to `/bids/new`
+- **`/submittals`** — Empty state CTA links to `/submittals/new`
+- **`/financial/journal-entries`** — Empty state CTA links to `/financial/journal-entries/new`
+- **`/financial/payables`** — Empty state CTA links to `/financial/payables/new`
+- **`/financial/receivables`** — Empty state CTA links to `/financial/receivables/new`

@@ -3819,3 +3819,59 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 | Test | Previous Issue | Fix |
 |------|---------------|-----|
 | create-forms visibility checks | Checked element visibility before React hydration complete | Added `waitForFunction(() => document.readyState === 'complete')` before assertions |
+
+---
+
+## Multi-Tenancy Security — Dropdown Tenant Isolation (2026-02-25)
+
+### Detail Page Dropdown company_id Filtering (7 pages)
+
+**Pattern: All dropdown/select queries on detail pages MUST include `.eq('company_id', companyId)`**
+| Page | Dropdown Data | Test | Expected |
+|------|--------------|------|----------|
+| `/financial/receivables/[id]` | Jobs, clients, accounts | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+| `/financial/payables/[id]` | Vendors, jobs, accounts | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+| `/purchase-orders/[id]` | Vendors, jobs, cost codes | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+| `/compliance/safety/[id]` | Jobs, employees | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+| `/compliance/insurance/[id]` | Vendors, policy types | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+| `/punch-lists/[id]` | Jobs, assignees | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+| `/financial/journal-entries/[id]` | Accounts, cost codes | Query includes `company_id` filter | Only current tenant's items appear in dropdowns |
+
+### SSR Page Defense-in-Depth company_id Filtering (11 pages, 28 queries)
+
+**Pattern: All SSR data queries MUST filter by `company_id` at application layer (alongside RLS)**
+| Page | Queries | Test | Expected |
+|------|---------|------|----------|
+| `/dashboard` | Aggregate stats, recent activity | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/financial/dashboard` | Financial summaries | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/cash-flow` | Cash flow data | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/business-management` | Management metrics | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/compliance/safety` | Safety records | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/hr` | Employee data | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/legal` | Legal documents | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/library/templates` | Estimate templates | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/library/selections` | Selections | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/marketing` | Marketing data | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+| `/post-build` | Post-build records | All queries include `.eq('company_id', companyId)` | Data scoped to current tenant |
+
+### Create Form Data Integrity (5 pages)
+
+| Page | Fix | Test | Expected |
+|------|-----|------|----------|
+| `/draw-requests/new` | Job selector filtered | Job dropdown query includes `company_id` | Only current tenant's jobs in selector |
+| `/lien-law/new` | Form wrapper + dropdowns | All reference data queries include `company_id` | Only current tenant's vendors/jobs in dropdowns |
+| `/training/new` | company_id guard | Submit without company context | Insert rejected or company_id auto-set from user profile |
+| `/inventory/new` | Tenant filter on references | All dropdown queries include `company_id` | Only current tenant's warehouses/items in dropdowns |
+| `/schedule/new` | created_by from auth user | Submit form | `created_by` field set to authenticated user's ID |
+
+### Empty State CTA Test Cases (7 pages)
+
+| Page | Test | Expected |
+|------|------|----------|
+| `/invoices` (empty) | Page loads with no records | Shows CTA button linking to `/invoices/new` |
+| `/rfis` (empty) | Page loads with no records | Shows CTA button linking to `/rfis/new` |
+| `/bids` (empty) | Page loads with no records | Shows CTA button linking to `/bids/new` |
+| `/submittals` (empty) | Page loads with no records | Shows CTA button linking to `/submittals/new` |
+| `/financial/journal-entries` (empty) | Page loads with no records | Shows CTA button linking to `/financial/journal-entries/new` |
+| `/financial/payables` (empty) | Page loads with no records | Shows CTA button linking to `/financial/payables/new` |
+| `/financial/receivables` (empty) | Page loads with no records | Shows CTA button linking to `/financial/receivables/new` |

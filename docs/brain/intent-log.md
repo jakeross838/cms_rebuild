@@ -1265,3 +1265,27 @@ The platform's architecture mandates "soft delete only — nothing is permanentl
 - All archive operations redirect back to the parent list page after completion
 - List pages use `.is('deleted_at', null)` Supabase filter (not `.eq('deleted_at', null)` which doesn't work for NULL comparisons)
 - ArchiveJobButton is a separate client component because the job detail page is a server component
+
+---
+
+## 2026-02-25: Multi-Tenancy Security Fixes & Defense-in-Depth
+
+### Why
+A security audit of detail pages and SSR pages found three categories of multi-tenancy vulnerabilities:
+
+1. **Critical tenant data leaks in dropdowns (7 pages)**: Detail pages for receivables, payables, purchase orders, safety, insurance, punch lists, and journal entries loaded dropdown/select options (jobs, vendors, clients, accounts) from Supabase WITHOUT a `company_id` filter. Even though RLS should block cross-tenant reads, dropdowns that fetch reference data for selects often use service-role or relaxed queries. This meant a user editing a receivable could potentially see another company's jobs in the job picker. This is the most dangerous class of multi-tenancy bug because it silently leaks data in UI controls users interact with every day.
+
+2. **Missing defense-in-depth on 11 SSR pages (28 queries)**: Pages like dashboard, financial dashboard, cash-flow, business-management, safety, HR, legal, library/templates, library/selections, marketing, and post-build relied solely on Supabase RLS for tenant isolation without any application-layer `company_id` filter. While RLS is the primary guard, defense-in-depth requires filtering at both layers. If an RLS policy is misconfigured, disabled during migration, or bypassed by a service-role query, the application layer filter is the last line of defense. For a platform targeting 10,000+ companies, this is non-negotiable.
+
+3. **Create form data integrity gaps (5 pages)**: Draw request and lien law create forms loaded job/vendor selectors without tenant filtering. Training create form could insert records without verifying `company_id` context. Inventory create form reference data was unfiltered. Schedule create form didn't set `created_by` from the authenticated user. These could result in records being created with references to other tenants' data or missing audit fields.
+
+### What was done
+1. **Fixed 7 detail page dropdowns** — added `.eq('company_id', companyId)` to all dropdown/reference queries in: `financial/receivables/[id]`, `financial/payables/[id]`, `purchase-orders/[id]`, `compliance/safety/[id]`, `compliance/insurance/[id]`, `punch-lists/[id]`, `financial/journal-entries/[id]`
+2. **Added defense-in-depth filtering to 11 SSR pages** — 28 queries across dashboard, financial/dashboard, cash-flow, business-management, safety, hr, legal, library/templates, library/selections, marketing, post-build now include explicit `company_id` filter alongside RLS
+3. **Fixed 5 create forms** — draw-requests/new (job selector filtered), lien-law/new (form wrapper + dropdowns filtered), training/new (company_id guard), inventory/new (tenant filter on reference data), schedule/new (created_by set from auth user)
+4. **Added 7 empty state CTAs** — invoices, rfis, bids, submittals, journal-entries, payables, receivables list pages now show actionable "Create" buttons instead of blank empty states
+
+### Key decisions
+1. **Defense-in-depth is mandatory, not optional**: Even though Supabase RLS should prevent cross-tenant access, every query should also filter by `company_id` at the application layer. This protects against RLS misconfiguration, service-role bypass, and future schema changes that might inadvertently relax policies.
+2. **Dropdowns are the highest-risk UI element**: A cross-tenant data leak in a dropdown is worse than in a list page because (a) users actively interact with dropdowns when creating/editing records, (b) selecting a cross-tenant item creates a foreign key reference to another tenant's data, and (c) dropdown data is often cached or prefetched, widening the exposure window.
+3. **Empty state CTAs improve discoverability**: When a list page shows zero results, showing a "Create your first X" button teaches users the workflow and reduces support tickets. This is a UX improvement bundled with the security fixes.
