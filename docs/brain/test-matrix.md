@@ -1,5 +1,33 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Error Handling, Pagination, Metadata, Soft-Delete (2026-02-26)
+
+### Error Handling (31 queries)
+| Test | Expected |
+|------|----------|
+| SSR page with DB failure (e.g., /billing) | Error boundary shows "Something went wrong" with Retry |
+| SSR page with healthy DB | Page renders normally |
+
+### Pagination
+| Page | Test | Expected |
+|------|------|----------|
+| /billing?page=1 | First page | Shows 25 billing events, pagination controls |
+| /post-build?page=2 | Second page | Shows next 25 warranties + maintenance |
+
+### Metadata
+| Test | Expected |
+|------|----------|
+| Navigate to /activity/feed | Browser tab shows "Activity Feed" |
+| Navigate to /directory/clients | Browser tab shows "Client Directory" |
+| Navigate to / (authenticated root) | Browser tab shows "Dashboard" |
+
+### Soft-Delete
+| Route | Test | Expected |
+|-------|------|----------|
+| DELETE /api/v2/hr/certifications/:id | Delete certification | Status set to 'revoked', row preserved |
+
+---
+
 ## IDOR Fixes + WCAG Accessibility (2026-02-26)
 
 ### IDOR Prevention — Detail Pages

@@ -1,5 +1,23 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Error Handling, Pagination, Metadata, Soft-Delete Fixes (2026-02-26)
+
+### Error Handling (27 SSR pages, 31 queries)
+- Added `error` destructuring + `if (error) throw error` to all SSR pages with unchecked Supabase queries
+- Errors now trigger the Next.js error boundary with retry button instead of silent blank pages
+
+### Pagination Fixes (2 pages)
+- billing: `.limit(20)` → `.range()` + ListPagination (25/page)
+- post-build: `.limit(50)` on warranties/maintenance → `.range()` + count + ListPagination
+
+### Metadata (36 SSR pages)
+- Added `export const metadata` to 36 pages missing browser tab titles
+
+### Soft-Delete Fix (1 API route)
+- employee_certifications DELETE: hard `.delete()` → `.update({ status: 'revoked' })`
+
+---
+
 ## IDOR Fixes + WCAG Accessibility Hardening (2026-02-26)
 
 ### IDOR Fixes — Detail Pages (4 pages)
