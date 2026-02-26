@@ -76,6 +76,7 @@ export const GET = createApiHandler(
       .from('contract_signers')
       .select('*', { count: 'exact' })
       .eq('contract_id', contractId)
+      .is('deleted_at', null)
       .order('sign_order', { ascending: true })
       .range(offset, offset + limit - 1)
 

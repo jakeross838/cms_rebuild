@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('ar_receipts')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.client_id) {
       query = query.eq('client_id', filters.client_id)
@@ -178,5 +179,5 @@ export const POST = createApiHandler(
       requestId: ctx.requestId,
     }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'receipt.create' }
 )

@@ -62,6 +62,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('report_id', reportId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
 

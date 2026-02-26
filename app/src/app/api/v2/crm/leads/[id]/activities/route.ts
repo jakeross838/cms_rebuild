@@ -72,6 +72,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('lead_id', leadId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.activity_type) {
       query = query.eq('activity_type', filters.activity_type)

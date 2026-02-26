@@ -62,6 +62,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('dashboard_id', dashboardId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('position_y', { ascending: true })
       .order('position_x', { ascending: true })
       .range(offset, offset + limit - 1)

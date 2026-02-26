@@ -76,6 +76,7 @@ export const GET = createApiHandler(
       .from('bid_comparisons')
       .select('*', { count: 'exact' })
       .eq('bid_package_id', bidPackageId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
 

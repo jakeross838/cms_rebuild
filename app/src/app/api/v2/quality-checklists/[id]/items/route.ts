@@ -74,6 +74,7 @@ export const GET = createApiHandler(
       .from('quality_checklist_items')
       .select('*', { count: 'exact' })
       .eq('checklist_id', checklistId)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
 

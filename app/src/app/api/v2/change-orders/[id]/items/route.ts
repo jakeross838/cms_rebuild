@@ -76,6 +76,7 @@ export const GET = createApiHandler(
       .from('change_order_items')
       .select('*', { count: 'exact' })
       .eq('change_order_id', changeOrderId)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
 

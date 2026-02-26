@@ -64,6 +64,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('is_primary', { ascending: false })
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)

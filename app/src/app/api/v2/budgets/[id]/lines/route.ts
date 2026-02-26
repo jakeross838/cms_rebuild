@@ -65,6 +65,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('budget_id', budgetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.cost_code_id) {
       query = query.eq('cost_code_id', filters.cost_code_id)

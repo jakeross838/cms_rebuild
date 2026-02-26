@@ -71,6 +71,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('ticket_id', ticketId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.sender_type) {
       query = query.eq('sender_type', filters.sender_type)

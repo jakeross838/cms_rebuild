@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('equipment_id', equipmentId)
+      .is('deleted_at', null)
 
     if (filters.inspection_type) {
       query = query.eq('inspection_type', filters.inspection_type)

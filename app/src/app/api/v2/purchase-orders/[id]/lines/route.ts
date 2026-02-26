@@ -76,6 +76,7 @@ export const GET = createApiHandler(
       .from('purchase_order_lines')
       .select('*', { count: 'exact' })
       .eq('po_id', poId)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
 

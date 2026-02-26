@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('saved_filters')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.context) {
       query = query.eq('context', filters.context)
