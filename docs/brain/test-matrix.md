@@ -1,5 +1,34 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Extended Sort, Pagination, Metadata, Draws Redirect (2026-02-25)
+
+### Sort Controls (10 pages)
+| Test | Expected |
+|------|----------|
+| Sort change-orders by Amount | Orders by amount desc, ?sort=amount in URL |
+| Sort RFIs by Due Date | Orders by due_date asc |
+| Sort equipment by Daily Rate | Orders by daily_rate desc |
+| Default sort on equipment (no param) | Sorted by name ascending |
+
+### Pagination (10 pages)
+| Test | Expected |
+|------|----------|
+| Inventory with 30+ items | Shows pagination, 25 per page |
+| Support tickets page 2 | Navigates to page 2 with correct offset |
+| Photos page count display | Shows total count from DB |
+
+### Draws Redirect
+| Test | Expected |
+|------|----------|
+| Navigate to /draws | Redirects to /draw-requests |
+
+### Status Filter Param Preservation
+| Test | Expected |
+|------|----------|
+| Search punch-lists then click status filter | Search param preserved in URL |
+
+---
+
 ## Sort Controls, Missing CTAs, Invoice Job Context (2026-02-25)
 
 ### Sort Controls

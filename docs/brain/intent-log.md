@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Sort Controls (10 more), Pagination (10), Metadata (52), Draws Redirect
+
+### Why
+1. 10 more list pages had no user-facing sort options — inconsistent with the 5 already done
+2. 10 list pages used .limit(50) or unbounded queries — no way to see beyond first page
+3. /draws duplicated /draw-requests (same table, weaker implementation) — confusing
+4. 3 status filter tabs lost search/sort params when clicked
+5. 52 pages had no metadata export — browser tabs all said generic "RossOS"
+
+### What was done
+- Added sortMap + sort pill UI to 10 list pages
+- Added server-side pagination to 10 pages
+- Replaced /draws with redirect to /draw-requests
+- Fixed status filter param preservation on 3 pages
+- Added metadata exports to 52 server component pages
+
+---
+
 ## 2026-02-25: Sort Controls, Missing CTAs, Invoice Job Context
 
 ### Why

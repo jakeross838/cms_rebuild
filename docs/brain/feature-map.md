@@ -1,5 +1,40 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Quality Hardening: Sort Controls (10 more), Pagination (10), Metadata (52), Draws Redirect (2026-02-25)
+
+### Sort Controls (10 Additional List Pages)
+- Change Orders: Sort by Newest, Amount, Status, Title
+- Purchase Orders: Sort by Newest, Amount, Status, Delivery Date
+- RFIs: Sort by Newest, Subject, Status, Due Date
+- Estimates: Sort by Newest, Name, Total, Status
+- Draw Requests: Sort by Draw #, Newest, Status, Current Due
+- Equipment: Sort by Name, Status, Type, Daily Rate
+- Contracts: Sort by Newest, Value, Status, Title
+- Lien Waivers: Sort by Newest, Amount, Status, Claimant
+- HR: Sort by Name, Hire Date, Status
+- Bids: Sort by Newest, Title, Status, Due Date
+
+### Pagination Completion (10 Pages)
+- Upgraded from unbounded queries or .limit(50) to proper server-side pagination
+- Pages: inventory, warranties, warranty-claims, proposals, time-clock, payments, support, todos, files, photos
+- Equipment page also got pagination in the sort controls commit
+- All use { count: 'exact' }, .range(), and ListPagination component
+
+### Draws/Draw-Requests Deduplication
+- /draws page replaced with `redirect('/draw-requests')` — was a duplicate querying the same table
+- /draw-requests is the canonical page with full CRUD, sort controls, and pagination
+
+### Status Filter Param Preservation
+- Fixed punch-lists, proposals, warranties to use URLSearchParams pattern
+- Clicking status filters now preserves search/sort query params
+
+### Page Metadata Completion (52 Pages)
+- Added `export const metadata: Metadata = { title: 'XXX' }` to 52 pages missing it
+- Covers: inventory, payments, photos, proposals, support, todos, warranty-claims, legal, schedule, submittals, communications, compliance/*, financial/*, operations/*, settings/*, marketing, meetings, reports, dashboards, and more
+- 8 client component pages skipped (metadata requires server components)
+
+---
+
 ## Quality Hardening: Sort Controls, Missing CTAs, Invoice Job Context (2026-02-25)
 
 ### Sort Controls (5 Major List Pages)
