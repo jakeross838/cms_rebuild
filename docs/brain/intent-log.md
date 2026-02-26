@@ -1,5 +1,47 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: IDOR, Deleted_at, Accessibility, Error Handling Hardening
+
+### Why
+1. purchase-orders/[id] update and archive had NO company_id filter — cross-tenant modification of POs
+2. 6 lookup queries (change-orders, PO list, dashboards/operations, intelligence/procurement, intelligence/production) missing `.is('deleted_at', null)` — showing soft-deleted records
+3. 3 of those lookups also missing company_id — cross-tenant data in display names
+4. PO list page ran 2 independent queries sequentially — unnecessary latency
+5. 370 `<th>` elements across 35 skeleton preview components missing `scope="col"`
+6. 19 form elements on settings pages (inputs + selects) had no aria-label or linked label
+7. 1 select on journal-entries form missing aria-label
+8. 42 SSR pages had Supabase queries with no error handling — silent failures showed blank pages
+
+### What was done
+- Added `.eq('company_id', companyId!)` to PO detail update and archive handlers + stored companyId in state
+- Added `.is('deleted_at', null)` to 6 lookup queries across 5 pages
+- Added `.eq('company_id', companyId)` to 3 unscoped lookups
+- Parallelized PO list page job+vendor lookups with `Promise.all()`
+- Added `scope="col"` to 370 `<th>` in 35 skeleton previews
+- Added aria-label to 19 settings form elements + 1 journal entries select
+- Added error destructuring + `if (error) throw error` to ~30 SSR page queries
+
+---
+
+## 2026-02-26: IDOR Fixes + WCAG Accessibility Hardening
+
+### Why
+1. 4 detail pages fetched related records (jobs, vendors) by UUID without company_id — attacker from Company B could read Company A's data by guessing UUIDs
+2. financial/receivables/[id] had NO company_id on the main AR invoice query — fully unscoped detail page
+3. 3 analytics API routes (experiments, metrics, releases) allowed GET/PUT without company_id scoping
+4. 146 textarea elements across 106 pages had no `aria-label` — screen readers couldn't identify purpose
+5. 66+ table header cells across 13 pages/components had no `scope="col"` — screen readers couldn't associate headers with columns
+6. Color input on settings page had no label for assistive technology
+
+### What was done
+- Added `.eq('company_id', companyId)` to 4 detail page related lookups + 1 main query
+- Added `.eq('company_id', ctx.companyId!)` to GET and PUT handlers in 3 v2 analytics routes
+- Added `aria-label` to 146 textareas across 106 authenticated pages
+- Added `scope="col"` to all `<th>` elements in 11 pages + 2 components
+- Added `aria-label="Primary Color"` to settings color input
+
+---
+
 ## 2026-02-26: Filter Injection Fix + Auth Guard + Pagination Hardening
 
 ### Why

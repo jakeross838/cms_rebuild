@@ -48,7 +48,8 @@ export default async function AssembliesPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: assembliesData } = await query
+  const { data: assembliesData, error } = await query
+  if (error) throw error
   const assemblies = (assembliesData || []) as Assembly[]
 
   const active = assemblies.filter((a) => a.is_active).length

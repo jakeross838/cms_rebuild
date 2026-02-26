@@ -31,7 +31,7 @@ export default async function FeasibilityPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: jobsData } = await supabase
+  const { data: jobsData, error } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, address, city, state, created_at')
     .eq('company_id', companyId)
@@ -39,6 +39,7 @@ export default async function FeasibilityPage() {
     .eq('status', 'pre_construction')
     .order('created_at', { ascending: false })
 
+  if (error) throw error
   const jobs = (jobsData || []) as Job[]
 
   return (

@@ -48,7 +48,8 @@ export default async function JournalEntriesPage({
     query = query.or(`reference_number.ilike.%${escapeLike(params.search)}%,memo.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: entriesData } = await query
+  const { data: entriesData, error } = await query
+  if (error) throw error
   const entries = (entriesData || []) as JournalEntry[]
 
   return (

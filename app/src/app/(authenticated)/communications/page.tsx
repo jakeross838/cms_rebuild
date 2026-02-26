@@ -39,13 +39,14 @@ export default async function CommunicationsPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: communications, count } = await supabase
+  const { data: communications, count, error } = await supabase
     .from('communications')
     .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const items = (communications ?? []) as Communication[]
   const totalPages = Math.ceil((count || 0) / pageSize)

@@ -69,10 +69,11 @@ export default async function DrawsPage({
     drawQuery = drawQuery.or(`draw_number::text.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
   }
 
-  const { data: drawData, count } = await drawQuery
+  const { data: drawData, count, error: drawError } = await drawQuery
     .order('application_date', { ascending: false })
     .range(offset, offset + pageSize - 1)
 
+  if (drawError) throw drawError
   const draws = (drawData || []) as DrawRequest[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

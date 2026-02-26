@@ -55,7 +55,8 @@ export default async function ChartOfAccountsPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,account_number.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: accountsData } = await query
+  const { data: accountsData, error } = await query
+  if (error) throw error
   const accounts = (accountsData || []) as GLAccount[]
 
   const typeGroups = ['asset', 'liability', 'equity', 'revenue', 'expense']

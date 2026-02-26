@@ -50,7 +50,8 @@ export default async function ActivityPage({
     query = query.eq('table_name', params.entity_type)
   }
 
-  const { data: logsData, count } = await query
+  const { data: logsData, count, error } = await query
+  if (error) throw error
   const logs = (logsData || []) as AuditLogRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

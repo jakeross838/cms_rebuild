@@ -39,13 +39,14 @@ export default async function JobPropertyPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: job } = await supabase
+  const { data: job, error: jobError } = await supabase
     .from('jobs')
     .select('*')
     .eq('id', id)
     .eq('company_id', companyId)
     .single()
 
+  if (jobError) throw jobError
   if (!job) notFound()
 
   const j = job as JobPropertyData

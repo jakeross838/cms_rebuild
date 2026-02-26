@@ -58,10 +58,11 @@ export default async function JobWarrantiesPage({
     warrantiesQuery = warrantiesQuery.ilike('title', `%${escapeLike(sp.search)}%`)
   }
 
-  const { data: warrantiesData, count } = await warrantiesQuery
+  const { data: warrantiesData, count, error: warError } = await warrantiesQuery
     .order('end_date', { ascending: true })
     .range(offset, offset + pageSize - 1)
 
+  if (warError) throw warError
   const warranties = (warrantiesData || []) as Warranty[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

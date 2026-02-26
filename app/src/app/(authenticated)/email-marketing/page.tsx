@@ -56,7 +56,8 @@ export default async function EmailMarketingPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: campaignsData } = await query
+  const { data: campaignsData, error } = await query
+  if (error) throw error
   const campaigns = (campaignsData || []) as MarketingCampaign[]
 
   const totalSpend = campaigns.reduce((s, c) => s + c.actual_spend, 0)

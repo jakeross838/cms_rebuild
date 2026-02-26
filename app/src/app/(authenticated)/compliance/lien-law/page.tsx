@@ -44,7 +44,7 @@ export default async function LienLawPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: trackingData, count } = await supabase
+  const { data: trackingData, count, error } = await supabase
     .from('lien_waiver_tracking')
     .select('*', { count: 'exact' })
     .eq('company_id', companyId)
@@ -52,6 +52,7 @@ export default async function LienLawPage({
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
 
+  if (error) throw error
   const records = (trackingData || []) as LienWaiverTracking[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

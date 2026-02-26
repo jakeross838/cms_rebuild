@@ -30,7 +30,7 @@ export default async function TrainingPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: coursesData } = await supabase
+  const { data: coursesData, error } = await supabase
     .from('training_courses')
     .select('*')
     .is('deleted_at', null)
@@ -38,6 +38,7 @@ export default async function TrainingPage() {
     .eq('is_published', true)
     .order('title', { ascending: true })
 
+  if (error) throw error
   const courses = (coursesData || []) as CourseRow[]
 
   return (

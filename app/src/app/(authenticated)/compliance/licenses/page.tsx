@@ -51,7 +51,8 @@ export default async function LicensesPage({
     query = query.or(`certification_name.ilike.%${escapeLike(params.search)}%,issuing_authority.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: certsData } = await query
+  const { data: certsData, error } = await query
+  if (error) throw error
   const certs = (certsData || []) as EmployeeCertification[]
 
   const today = new Date().toISOString().split('T')[0]

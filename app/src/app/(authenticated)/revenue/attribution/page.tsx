@@ -20,12 +20,14 @@ export default async function RevenueAttributionPage() {
   if (!companyId) { redirect('/login') }
 
   // ── Query paid invoices with job info ───────────────────────────
-  const { data: paidInvoices } = await supabase
+  const { data: paidInvoices, error } = await supabase
     .from('ar_invoices')
     .select('amount, job_id, jobs(name, job_number)')
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .eq('status', 'paid')
+
+  if (error) throw error
 
   // ── Aggregate revenue by job ────────────────────────────────────
   const jobRevenueMap = new Map<string, { name: string; jobNumber: string; total: number }>()

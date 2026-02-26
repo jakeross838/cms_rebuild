@@ -19,19 +19,21 @@ export default async function BillingPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: subscription } = await supabase
+  const { data: subscription, error: subError } = await supabase
     .from('company_subscriptions')
     .select('*')
     .eq('company_id', companyId)
     .limit(1)
     .single()
+  if (subError) throw subError
 
-  const { data: events } = await supabase
+  const { data: events, error: eventsError } = await supabase
     .from('billing_events')
     .select('*')
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
     .limit(20)
+  if (eventsError) throw eventsError
 
   const billingEvents = (events || []) as Array<{
     id: string

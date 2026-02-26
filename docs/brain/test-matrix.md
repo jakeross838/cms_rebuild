@@ -1,5 +1,37 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## IDOR Fixes + WCAG Accessibility (2026-02-26)
+
+### IDOR Prevention — Detail Pages
+| Page | Test | Expected |
+|------|------|----------|
+| /purchase-orders/[id] | Fetch PO from Company A as Company B user | Job/vendor lookups return null (company_id mismatch) |
+| /jobs/[id]/purchase-orders/[poId] | Fetch PO vendor as wrong company | Vendor lookup returns null |
+| /bids/[id] | Fetch bid's job as wrong company | Job lookup returns null |
+| /financial/receivables/[id] | Fetch AR invoice as wrong company | Main query returns null, redirects/errors |
+
+### IDOR Prevention — API Routes
+| Route | Test | Expected |
+|-------|------|----------|
+| GET /api/v2/analytics/experiments/[id] | Request with wrong company_id | 404 not found |
+| PUT /api/v2/analytics/experiments/[id] | Update with wrong company_id | 404 not found |
+| GET /api/v2/analytics/metrics/[id] | Request with wrong company_id | 404 not found |
+| GET /api/v2/analytics/releases/[id] | Request with wrong company_id | 404 not found |
+
+### WCAG Accessibility — Textareas
+| Test | Expected |
+|------|----------|
+| Screen reader on any textarea | Announces aria-label (e.g., "Notes", "Description") |
+| Lighthouse accessibility audit | No "form elements without labels" warnings for textareas |
+
+### WCAG Accessibility — Table Headers
+| Test | Expected |
+|------|----------|
+| Screen reader on data table | Announces column header when reading cell |
+| Lighthouse accessibility audit | No "th elements without scope" warnings |
+
+---
+
 ## Filter Injection + Auth Guard + Pagination Hardening (2026-02-26)
 
 ### Filter Injection Prevention (79 v2 routes)

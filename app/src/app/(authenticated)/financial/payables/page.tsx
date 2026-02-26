@@ -50,7 +50,8 @@ export default async function PayablesPage({
     query = query.ilike('bill_number', `%${escapeLike(params.search)}%`)
   }
 
-  const { data: billsData } = await query
+  const { data: billsData, error } = await query
+  if (error) throw error
   const bills = (billsData || []) as APBill[]
 
   const totalOutstanding = bills.reduce((sum, b) => sum + (b.balance_due ?? 0), 0)

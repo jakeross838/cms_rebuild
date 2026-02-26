@@ -52,7 +52,8 @@ export default async function CrewSchedulePage({
     query = query.or(`first_name.ilike.%${escapeLike(params.search)}%,last_name.ilike.%${escapeLike(params.search)}%,employee_number.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: employeesData } = await query
+  const { data: employeesData, error } = await query
+  if (error) throw error
   const employees = (employeesData || []) as Employee[]
 
   const active = employees.filter((e) => e.employment_status === 'active').length

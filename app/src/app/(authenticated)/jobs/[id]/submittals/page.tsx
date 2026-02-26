@@ -62,10 +62,11 @@ export default async function JobSubmittalsPage({
     submittalsQuery = submittalsQuery.or(`submittal_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
   }
 
-  const { data: submittalsData, count } = await submittalsQuery
+  const { data: submittalsData, count, error: submError } = await submittalsQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
 
+  if (submError) throw submError
   const submittals = (submittalsData || []) as Submittal[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

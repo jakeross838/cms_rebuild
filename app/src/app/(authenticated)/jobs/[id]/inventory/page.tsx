@@ -49,12 +49,13 @@ export default async function JobInventoryPage({
   if (!jobCheck) { notFound() }
 
   // Get inventory transactions for this job to find which items are used
-  const { data: transactionsData } = await supabase
+  const { data: transactionsData, error: txError } = await supabase
     .from('inventory_transactions')
     .select('item_id, quantity, transaction_type')
     .eq('job_id', jobId)
     .is('deleted_at', null)
 
+  if (txError) throw txError
   const transactions = transactionsData || []
   const itemIds = [...new Set(transactions.map((t) => t.item_id))]
 
@@ -71,9 +72,10 @@ export default async function JobInventoryPage({
       itemsQuery = itemsQuery.or(`name.ilike.%${sp.search}%,sku.ilike.%${sp.search}%`)
     }
 
-    const { data: itemsData, count } = await itemsQuery
+    const { data: itemsData, count, error: itemsError } = await itemsQuery
       .order('name', { ascending: true })
       .range(offset, offset + pageSize - 1)
+    if (itemsError) throw itemsError
     items = (itemsData || []) as InventoryItem[]
     totalPages = Math.ceil((count || 0) / pageSize)
   }

@@ -50,7 +50,8 @@ export default async function ReceivablesPage({
     query = query.ilike('invoice_number', `%${escapeLike(params.search)}%`)
   }
 
-  const { data: invoicesData } = await query
+  const { data: invoicesData, error } = await query
+  if (error) throw error
   const invoices = (invoicesData || []) as ARInvoice[]
 
   const totalOutstanding = invoices.reduce((sum, inv) => sum + (inv.balance_due ?? 0), 0)

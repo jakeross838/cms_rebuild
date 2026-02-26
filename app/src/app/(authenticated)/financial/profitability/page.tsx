@@ -27,13 +27,14 @@ export default async function ProfitabilityPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: jobsData } = await supabase
+  const { data: jobsData, error } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, contract_amount')
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('name', { ascending: true })
 
+  if (error) throw error
   const jobs = (jobsData || []) as JobSummary[]
 
   const totalContract = jobs.reduce((sum, j) => sum + (j.contract_amount || 0), 0)

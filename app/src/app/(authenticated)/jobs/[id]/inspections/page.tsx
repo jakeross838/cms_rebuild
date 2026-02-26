@@ -63,10 +63,11 @@ export default async function JobInspectionsPage({
     query = query.or(`inspection_type.ilike.%${sp.search}%,inspector_name.ilike.%${sp.search}%`)
   }
 
-  const { data: inspectionsData, count } = await query
+  const { data: inspectionsData, count, error: inspError } = await query
     .order('scheduled_date', { ascending: true })
     .range(offset, offset + pageSize - 1)
 
+  if (inspError) throw inspError
   const inspections = (inspectionsData || []) as PermitInspection[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

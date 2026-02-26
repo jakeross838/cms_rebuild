@@ -50,7 +50,8 @@ export default async function DashboardsPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: reportsData } = await query
+  const { data: reportsData, error } = await query
+  if (error) throw error
   const reports = (reportsData || []) as CustomReport[]
 
   return (

@@ -50,7 +50,8 @@ export default async function InsurancePage({
     query = query.or(`carrier_name.ilike.%${escapeLike(params.search)}%,policy_number.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: insuranceData } = await query
+  const { data: insuranceData, error } = await query
+  if (error) throw error
   const insurance = (insuranceData || []) as VendorInsurance[]
 
   const today = new Date().toISOString().split('T')[0]

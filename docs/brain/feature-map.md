@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## IDOR Fixes + WCAG Accessibility Hardening (2026-02-26)
+
+### IDOR Fixes — Detail Pages (4 pages)
+- purchase-orders/[id]: Added company_id to job and vendor lookups (was fetchable by any tenant via UUID)
+- jobs/[id]/purchase-orders/[poId]: Added company_id to vendor lookup
+- bids/[id]: Added company_id to job lookup
+- financial/receivables/[id]: Added company_id to main AR invoice query (was completely unscoped!)
+
+### IDOR Fixes — API Routes (3 analytics routes)
+- /api/v2/analytics/experiments/[id]: Added company_id to GET and PUT
+- /api/v2/analytics/metrics/[id]: Added company_id to GET and PUT
+- /api/v2/analytics/releases/[id]: Added company_id to GET and PUT
+
+### WCAG Accessibility — Textarea Labels (106 pages, 146 elements)
+- Added `aria-label` to every `<textarea>` across all authenticated pages
+- Labels describe the purpose (e.g., "Notes", "Description", "Instructions")
+- Covers create forms, edit forms, detail pages
+
+### WCAG Accessibility — Table Header Scope (13 pages, 66+ elements)
+- Added `scope="col"` to all `<th>` in column header rows
+- Pages: safety-incidents, certified-payroll, daily-logs, rfis, time-entries, permit-tracking, equipment, employees, bids, change-orders, submittals
+- Components: UserTable, PermissionGrid
+
+### WCAG Accessibility — Color Input Label
+- settings/general: Added `aria-label="Primary Color"` to color picker input
+
+---
+
 ## Security Hardening: Filter Injection, Auth Guards, Pagination (2026-02-26)
 
 ### Filter Injection Fix (79 v2 API routes)

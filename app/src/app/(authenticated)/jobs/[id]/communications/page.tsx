@@ -59,10 +59,11 @@ export default async function JobCommunicationsPage({
     query = query.or(`subject.ilike.%${sp.search}%,message_body.ilike.%${sp.search}%`)
   }
 
-  const { data: commsData, count } = await query
+  const { data: commsData, count, error: commsError } = await query
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
 
+  if (commsError) throw commsError
   const comms = (commsData || []) as Communication[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 
