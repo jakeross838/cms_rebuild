@@ -2,6 +2,19 @@
 
 ## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
 
+### RLS Policy Hardening
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `DELETE FROM jobs WHERE id = 'x'` via authenticated client | Permission denied (no DELETE policy) | verify |
+| `UPDATE jobs SET company_id = 'other'` via authenticated client | Blocked by WITH CHECK | verify |
+| Normal SELECT on tenant data still works | Returns rows matching company_id | verify |
+| Normal INSERT with correct company_id | Succeeds | verify |
+| Normal UPDATE within same tenant | Succeeds | verify |
+| INSERT with wrong company_id | Blocked by WITH CHECK | verify |
+| 0 FOR ALL policies remain | `pg_policies WHERE cmd='ALL'` returns 0 | pass |
+| 0 DELETE policies remain | `pg_policies WHERE cmd='DELETE'` returns 0 | pass |
+| 0 UPDATE without WITH CHECK | query returns 0 | pass |
+
 ### Error Handling Consistency
 | Test Case | Expected | Status |
 |-----------|----------|--------|

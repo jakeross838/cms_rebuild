@@ -2,6 +2,14 @@
 
 ## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
 
+### RLS Policy Hardening (2 migrations, 172 tables)
+- **Migration 1:** Replaced ALL 172 `FOR ALL` RLS policies with granular `SELECT` + `INSERT` + `UPDATE` policies (no `DELETE`)
+- **Migration 2:** Added `WITH CHECK` clause to 70 pre-existing `UPDATE` policies that were missing it
+- **Result:** 0 FOR ALL, 0 DELETE, 0 UPDATE-without-WITH-CHECK, 0 INSERT-without-WITH-CHECK
+- **Final policy counts:** 270 SELECT, 261 INSERT, 260 UPDATE, 0 DELETE
+- **Also added:** 2 missing FK indexes on `lien_waiver_tracking` (job_id, vendor_id)
+- **Impact:** Hard DELETE now blocked at DB level across all 243 tables. Cross-tenant data transfer via UPDATE blocked.
+
 ### Error Handling Consistency (12 files)
 - **File:** `src/lib/api/middleware.ts` — added missing `message` field to profile error response (line 131)
 - **11 write handlers** — split `if (error || !data)` into separate `if (error)` + `if (!data)` checks with `mapDbError`

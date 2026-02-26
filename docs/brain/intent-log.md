@@ -2,6 +2,14 @@
 
 ## 2026-02-26: Session 16 — Data Leakage Prevention + Filter Injection Fix
 
+### Why (RLS Policy Hardening — Block DELETE, Add WITH CHECK)
+- Project architecture mandates soft-delete only — but 172 tables had `FOR ALL` policies which implicitly grant DELETE
+- Any authenticated user could `DELETE FROM table` and permanently destroy rows
+- Fix: replace each FOR ALL with separate SELECT/INSERT/UPDATE — no DELETE policy = RLS blocks all deletes
+- Also: 70 UPDATE policies lacked WITH CHECK, allowing `UPDATE t SET company_id = 'other-tenant'` to transfer data cross-tenant
+- Fix: drop and recreate all 70 with explicit `WITH CHECK (same condition as USING)`
+- Both migrations use PL/pgSQL DO blocks for safety — loops through pg_policies catalog, no hardcoded table names
+
 ### Why (Error Handling in Write Handlers)
 - 11 PUT handlers merged `error` and `!data` into `if (error || !data)` returning 404 for ALL failures
 - Unique constraint violations (23505) returned 404 instead of 409, FK violations returned 404 instead of 400
