@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -18,6 +19,8 @@ interface ScheduleTask {
   is_critical_path: boolean | null
   job_id: string
 }
+
+export const metadata: Metadata = { title: 'Calendar' }
 
 export default async function CompanyCalendarPage() {
   const supabase = await createClient()

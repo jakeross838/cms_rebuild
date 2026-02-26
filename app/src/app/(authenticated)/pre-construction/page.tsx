@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -18,6 +19,8 @@ interface Job {
   state: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Pre-Construction' }
 
 export default async function FeasibilityPage() {
   const supabase = await createClient()

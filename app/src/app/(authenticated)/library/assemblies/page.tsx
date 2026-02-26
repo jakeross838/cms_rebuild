@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -19,6 +20,8 @@ interface Assembly {
   parameter_unit: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Assemblies' }
 
 export default async function AssembliesPage({
   searchParams,

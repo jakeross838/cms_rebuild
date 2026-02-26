@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import {
@@ -36,6 +37,8 @@ const accountingSections = [
     icon: Landmark,
   },
 ]
+
+export const metadata: Metadata = { title: 'Accounting' }
 
 export default async function AccountingPage() {
   return (

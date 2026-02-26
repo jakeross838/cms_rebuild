@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -17,6 +18,8 @@ interface Job {
   actual_completion: string | null
   target_completion: string | null
 }
+
+export const metadata: Metadata = { title: 'Job Close' }
 
 export default async function JobClosePage() {
   const supabase = await createClient()

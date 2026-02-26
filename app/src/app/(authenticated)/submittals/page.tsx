@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface SubmittalRow {
   created_at: string
   jobs: { name: string } | null
 }
+
+export const metadata: Metadata = { title: 'Submittals' }
 
 export default async function SubmittalsPage({
   searchParams,

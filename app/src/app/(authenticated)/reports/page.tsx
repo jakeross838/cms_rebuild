@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import {
@@ -36,6 +37,8 @@ const reportTypes = [
     icon: PieChart,
   },
 ]
+
+export const metadata: Metadata = { title: 'Reports' }
 
 export default async function ReportsPage() {
   return (

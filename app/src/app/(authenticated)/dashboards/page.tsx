@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface CustomReport {
   is_template: boolean
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Dashboards' }
 
 export default async function DashboardsPage({
   searchParams,

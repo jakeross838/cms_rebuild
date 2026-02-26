@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -70,6 +71,8 @@ const meetingLinks = [
 interface PageProps {
   searchParams: Promise<{ page?: string }>
 }
+
+export const metadata: Metadata = { title: 'Meetings' }
 
 export default async function MeetingsPage({ searchParams }: PageProps) {
   const supabase = await createClient()

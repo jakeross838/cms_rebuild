@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -14,6 +15,8 @@ interface PhotoDocument {
   status: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Photos' }
 
 export default async function PhotosPage({
   searchParams,

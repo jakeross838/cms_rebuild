@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+
 import { Package, Truck } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,6 +16,8 @@ interface POReceipt {
   document_id: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Deliveries' }
 
 export default async function DeliveriesPage() {
   const supabase = await createClient()

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -20,6 +21,8 @@ interface PayrollExportRow {
   exported_by: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Certified Payroll' }
 
 export default async function CertifiedPayrollPage({
   searchParams,

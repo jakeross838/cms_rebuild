@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Plus, Search, AlertTriangle, ClipboardCheck } from 'lucide-react'
@@ -36,6 +37,8 @@ interface SafetyInspection {
   failed_items: number
   total_items: number
 }
+
+export const metadata: Metadata = { title: 'Safety Compliance' }
 
 export default async function SafetyPage({
   searchParams,

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface InventoryItem {
   reorder_point: number | null
   is_active: boolean
 }
+
+export const metadata: Metadata = { title: 'Inventory' }
 
 export default async function InventoryPage({
   searchParams,

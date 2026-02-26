@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -23,6 +24,8 @@ interface LienWaiverTracking {
   notes: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Lien Law Compliance' }
 
 export default async function LienLawPage({
   searchParams,

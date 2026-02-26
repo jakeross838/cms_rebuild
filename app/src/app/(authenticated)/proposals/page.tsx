@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface Estimate {
   created_at: string
   jobs: { name: string } | null
 }
+
+export const metadata: Metadata = { title: 'Proposals' }
 
 export default async function ProposalsPage({
   searchParams,
@@ -87,11 +90,17 @@ export default async function ProposalsPage({
           <form><Input type="search" name="search" placeholder="Search proposals..." aria-label="Search proposals" defaultValue={params.search} className="pl-10" /></form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link key={filter.value} href={filter.value ? `/proposals?status=${filter.value}` : '/proposals'}>
-              <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
-            </Link>
-          ))}
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/proposals${qs ? `?${qs}` : ''}`}>
+                <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
+              </Link>
+            )
+          })}
         </div>
       </div>
 

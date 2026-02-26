@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { Building2, Calendar } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -16,6 +18,8 @@ interface FinancialPeriod {
   closed_at: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Business Management' }
 
 export default async function BusinessManagementPage() {
   const supabase = await createClient()

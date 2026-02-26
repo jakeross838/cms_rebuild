@@ -90,11 +90,17 @@ export default async function PunchListsPage({
           <form><Input type="search" name="search" placeholder="Search punch items..." aria-label="Search punch items" defaultValue={params.search} className="pl-10" /></form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link key={filter.value} href={filter.value ? `/punch-lists?status=${filter.value}` : '/punch-lists'}>
-              <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
-            </Link>
-          ))}
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/punch-lists${qs ? `?${qs}` : ''}`}>
+                <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
+              </Link>
+            )
+          })}
         </div>
       </div>
 

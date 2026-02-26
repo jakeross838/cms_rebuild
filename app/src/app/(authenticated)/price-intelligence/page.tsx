@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { TrendingUp, DollarSign } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,6 +15,8 @@ interface PriceHistoryRow {
   change_pct: number | null
   recorded_at: string
 }
+
+export const metadata: Metadata = { title: 'Price Intelligence' }
 
 export default async function PriceIntelligencePage() {
   const supabase = await createClient()

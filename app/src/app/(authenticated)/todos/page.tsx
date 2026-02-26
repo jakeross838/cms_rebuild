@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -19,6 +20,8 @@ interface PunchItemRow {
   job_id: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'To-Do Items' }
 
 export default async function TodosPage({
   searchParams,

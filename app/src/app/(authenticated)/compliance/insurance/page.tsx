@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface VendorInsurance {
   status: string
   verified_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Insurance Compliance' }
 
 export default async function InsurancePage({
   searchParams,

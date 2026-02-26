@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -5,6 +6,8 @@ import { Bot, Brain, FileSearch, ShoppingCart, Sparkles } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = { title: 'AI Assistant' }
 
 export default async function AIAssistantPage() {
   const supabase = await createClient()

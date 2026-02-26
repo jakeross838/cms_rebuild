@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { CheckCircle, Circle, Loader2, Rocket } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +13,8 @@ interface ChecklistItem {
   sort_order: number | null
   category: string
 }
+
+export const metadata: Metadata = { title: 'Onboarding' }
 
 export default async function OnboardingPage() {
   const supabase = await createClient()

@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+
 import { TrendingUp, Briefcase } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -13,6 +15,8 @@ interface JobSummary {
   status: string | null
   contract_amount: number | null
 }
+
+export const metadata: Metadata = { title: 'Profitability' }
 
 export default async function ProfitabilityPage() {
   const supabase = await createClient()

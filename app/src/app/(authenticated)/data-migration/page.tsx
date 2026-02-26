@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Database, Upload } from 'lucide-react'
@@ -16,6 +17,8 @@ interface MigrationJobRow {
   failed_records: number
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Data Migration' }
 
 export default async function DataMigrationPage() {
   const supabase = await createClient()

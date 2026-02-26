@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+
 import { Users, Search, Plus } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +24,8 @@ interface Employee {
   base_wage: number | null
   hire_date: string
 }
+
+export const metadata: Metadata = { title: 'Crew Schedule' }
 
 export default async function CrewSchedulePage({
   searchParams,

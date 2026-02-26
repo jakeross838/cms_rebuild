@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -27,6 +28,8 @@ interface MarketingCampaign {
   contract_value_won: number
   roi_pct: number | null
 }
+
+export const metadata: Metadata = { title: 'Email Marketing' }
 
 export default async function EmailMarketingPage({
   searchParams,

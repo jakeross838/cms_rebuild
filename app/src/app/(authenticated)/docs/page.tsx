@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -5,6 +6,8 @@ import { BookOpen, GraduationCap, HeadphonesIcon, Lightbulb } from 'lucide-react
 
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = { title: 'Documentation' }
 
 export default async function DocsPage() {
   const supabase = await createClient()

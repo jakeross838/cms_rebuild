@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -19,6 +20,8 @@ interface ContractTemplate {
   is_system: boolean
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Legal' }
 
 export default async function LegalCompliancePage({
   searchParams,

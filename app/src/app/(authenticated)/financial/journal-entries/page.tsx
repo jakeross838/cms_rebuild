@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -19,6 +20,8 @@ interface JournalEntry {
   source_type: string
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Journal Entries' }
 
 export default async function JournalEntriesPage({
   searchParams,

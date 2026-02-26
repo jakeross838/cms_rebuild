@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -16,6 +17,8 @@ interface JobScheduleRow {
   start_date: string | null
   target_completion: string | null
 }
+
+export const metadata: Metadata = { title: 'Schedule' }
 
 export default async function SchedulePage() {
   const supabase = await createClient()

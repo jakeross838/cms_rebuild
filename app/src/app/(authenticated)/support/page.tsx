@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -18,6 +19,8 @@ interface TicketRow {
   category: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Support' }
 
 export default async function SupportPage({
   searchParams,

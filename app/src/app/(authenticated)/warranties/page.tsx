@@ -87,11 +87,17 @@ export default async function WarrantiesPage({
           <form><Input type="search" name="search" placeholder="Search warranties..." aria-label="Search warranties" defaultValue={params.search} className="pl-10" /></form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link key={filter.value} href={filter.value ? `/warranties?status=${filter.value}` : '/warranties'}>
-              <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
-            </Link>
-          ))}
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/warranties${qs ? `?${qs}` : ''}`}>
+                <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
+              </Link>
+            )
+          })}
         </div>
       </div>
 

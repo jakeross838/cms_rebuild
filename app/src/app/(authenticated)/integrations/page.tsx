@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { Search, Puzzle } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +24,8 @@ interface Integration {
   review_count: number
   developer_name: string | null
 }
+
+export const metadata: Metadata = { title: 'Integrations' }
 
 export default async function IntegrationsPage({
   searchParams,

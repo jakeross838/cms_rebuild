@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { Home, Shield, Wrench } from 'lucide-react'
@@ -27,6 +28,8 @@ interface MaintenanceSchedule {
   category: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Post-Build' }
 
 export default async function PostBuildPage() {
   const supabase = await createClient()

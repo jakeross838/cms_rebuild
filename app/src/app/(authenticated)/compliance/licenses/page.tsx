@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -22,6 +23,8 @@ interface EmployeeCertification {
   status: string
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Licenses' }
 
 export default async function LicensesPage({
   searchParams,
