@@ -75,3 +75,10 @@ export function getStatusColor(status: string): string {
 export function escapeLike(input: string): string {
   return input.replace(/[%_\\]/g, '\\$&')
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/** Validate that a string is a valid UUID v4 format */
+export function isValidUuid(value: string): boolean {
+  return UUID_RE.test(value)
+}

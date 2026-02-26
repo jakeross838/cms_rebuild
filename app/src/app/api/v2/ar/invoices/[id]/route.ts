@@ -154,10 +154,18 @@ export const PUT = createApiHandler(
 
     // Replace lines if provided
     if (input.lines) {
-      await supabase
+      const { error: deleteLineError } = await supabase
         .from('ar_invoice_lines')
         .delete()
         .eq('invoice_id', id)
+
+      if (deleteLineError) {
+        const mapped = mapDbError(deleteLineError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
 
       if (input.lines.length > 0) {
         const lineRecords = input.lines.map((line) => ({
@@ -171,9 +179,17 @@ export const PUT = createApiHandler(
           cost_code_id: line.cost_code_id ?? null,
         }))
 
-        await supabase
+        const { error: insertLineError } = await supabase
           .from('ar_invoice_lines')
           .insert(lineRecords)
+
+        if (insertLineError) {
+          const mapped = mapDbError(insertLineError)
+          return NextResponse.json(
+            { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+            { status: mapped.status }
+          )
+        }
       }
     }
 

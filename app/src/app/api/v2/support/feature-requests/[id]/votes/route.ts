@@ -165,11 +165,19 @@ export const POST = createApiHandler(
     }
 
     // Increment vote_count on feature request
-    await supabase
+    const { error: voteCountError } = await supabase
       .from('feature_requests')
       .update({ vote_count: (featureRequest.vote_count ?? 0) + 1 })
       .eq('id', featureRequestId)
       .eq('company_id', ctx.companyId!)
+
+    if (voteCountError) {
+      const mapped = mapDbError(voteCountError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
@@ -248,11 +256,19 @@ export const DELETE = createApiHandler(
     }
 
     // Decrement vote_count on feature request
-    await supabase
+    const { error: voteCountError } = await supabase
       .from('feature_requests')
       .update({ vote_count: Math.max(0, (featureRequest.vote_count ?? 0) - 1) })
       .eq('id', featureRequestId)
       .eq('company_id', ctx.companyId!)
+
+    if (voteCountError) {
+      const mapped = mapDbError(voteCountError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },

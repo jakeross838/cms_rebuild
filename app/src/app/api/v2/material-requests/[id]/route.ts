@@ -130,10 +130,18 @@ export const PUT = createApiHandler(
     // Update items if provided (replace all)
     if (input.items !== undefined) {
       // Delete existing items
-      await supabase
+      const { error: deleteItemError } = await supabase
         .from('material_request_items')
         .delete()
         .eq('request_id', id)
+
+      if (deleteItemError) {
+        const mapped = mapDbError(deleteItemError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
 
       // Insert new items
       const lineItems = input.items.map((item) => ({
@@ -145,9 +153,17 @@ export const PUT = createApiHandler(
         notes: item.notes ?? null,
       }))
 
-      await supabase
+      const { error: insertItemError } = await supabase
         .from('material_request_items')
         .insert(lineItems)
+
+      if (insertItemError) {
+        const mapped = mapDbError(insertItemError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     // Fetch updated items
