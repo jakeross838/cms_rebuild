@@ -1,10 +1,13 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { Star, TrendingUp, Users } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = { title: 'Trade Intuition' }
 
 export default async function TradeIntuitionPage() {
   const supabase = await createClient()

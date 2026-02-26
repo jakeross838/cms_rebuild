@@ -1,10 +1,13 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { BarChart3, FileText, LayoutDashboard, TrendingUp } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = { title: 'Intelligence Reports' }
 
 export default async function IntelligenceReportsPage() {
   const supabase = await createClient()

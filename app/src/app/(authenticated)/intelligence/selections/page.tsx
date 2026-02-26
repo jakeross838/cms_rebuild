@@ -1,10 +1,13 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { FolderOpen, Palette, Tag } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = { title: 'Selection Intelligence' }
 
 export default async function SelectionIntelligencePage() {
   const supabase = await createClient()
