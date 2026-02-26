@@ -385,10 +385,10 @@ function StoredMaterialsBreakdown({ items }: { items: StoredMaterialItem[] }) {
         <table className="w-full text-xs">
           <thead className="bg-warm-50">
             <tr>
-              <th className="text-left py-1.5 px-2 text-warm-500">Description</th>
-              <th className="text-right py-1.5 px-2 text-warm-500">Amount</th>
-              <th className="text-left py-1.5 px-2 text-warm-500">Location</th>
-              <th className="text-center py-1.5 px-2 text-warm-500">Verified</th>
+              <th scope="col" className="text-left py-1.5 px-2 text-warm-500">Description</th>
+              <th scope="col" className="text-right py-1.5 px-2 text-warm-500">Amount</th>
+              <th scope="col" className="text-left py-1.5 px-2 text-warm-500">Location</th>
+              <th scope="col" className="text-center py-1.5 px-2 text-warm-500">Verified</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-100">
@@ -509,11 +509,11 @@ function DrawRow({ draw, expanded, onToggle }: { draw: Draw; expanded: boolean; 
                     <table className="w-full text-xs">
                       <thead className="bg-warm-50">
                         <tr>
-                          <th className="text-left py-1.5 px-2 text-warm-500">Line</th>
-                          <th className="text-left py-1.5 px-2 text-warm-500">Description</th>
-                          <th className="text-right py-1.5 px-2 text-warm-500">Scheduled</th>
-                          <th className="text-right py-1.5 px-2 text-warm-500">This Period</th>
-                          <th className="text-center py-1.5 px-2 text-warm-500">%</th>
+                          <th scope="col" className="text-left py-1.5 px-2 text-warm-500">Line</th>
+                          <th scope="col" className="text-left py-1.5 px-2 text-warm-500">Description</th>
+                          <th scope="col" className="text-right py-1.5 px-2 text-warm-500">Scheduled</th>
+                          <th scope="col" className="text-right py-1.5 px-2 text-warm-500">This Period</th>
+                          <th scope="col" className="text-center py-1.5 px-2 text-warm-500">%</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-warm-100">
@@ -839,13 +839,13 @@ export function JobDrawsPreview() {
         <table className="w-full text-sm">
           <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-warm-600">Draw / Milestone</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Amount</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Retainage</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Net</th>
-              <th className="text-center py-3 px-3 font-medium text-warm-600">% Complete</th>
-              <th className="text-left py-3 px-3 font-medium text-warm-600">Status</th>
-              <th className="text-left py-3 px-3 font-medium text-warm-600">Period</th>
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Draw / Milestone</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Amount</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Retainage</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Net</th>
+              <th scope="col" className="text-center py-3 px-3 font-medium text-warm-600">% Complete</th>
+              <th scope="col" className="text-left py-3 px-3 font-medium text-warm-600">Status</th>
+              <th scope="col" className="text-left py-3 px-3 font-medium text-warm-600">Period</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-warm-100">

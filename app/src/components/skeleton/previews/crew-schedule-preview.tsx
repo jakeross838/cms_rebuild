@@ -533,27 +533,27 @@ function MonthlyCalendarView({ members }: { members: TeamMember[] }) {
       <table className="w-full">
         <thead className="bg-warm-100 border-b border-warm-200">
           <tr>
-            <th className="text-left py-2 px-3 font-medium text-warm-600 text-sm sticky left-0 bg-warm-100 z-10 w-48">
+            <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600 text-sm sticky left-0 bg-warm-100 z-10 w-48">
               Team Member
             </th>
             {monthWeeks.map(week => (
-              <th key={week.weekNum} colSpan={5} className="text-center py-2 px-1 font-medium text-warm-600 text-xs border-l border-warm-200">
+              <th scope="col" key={week.weekNum} colSpan={5} className="text-center py-2 px-1 font-medium text-warm-600 text-xs border-l border-warm-200">
                 <div>Week {week.weekNum}</div>
                 <div className="text-[10px] text-warm-400 font-normal">{week.dates[0]} - {week.dates[4]}</div>
               </th>
             ))}
-            <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Total</th>
+            <th scope="col" className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Total</th>
           </tr>
           <tr className="bg-warm-50">
-            <th className="sticky left-0 bg-warm-50 z-10" />
+            <th scope="col" className="sticky left-0 bg-warm-50 z-10" />
             {monthWeeks.map(week => (
               weekDays.map((day, idx) => (
-                <th key={`${week.weekNum}-${day}`} className="text-center py-1 px-1 text-[10px] text-warm-400 font-normal">
+                <th scope="col" key={`${week.weekNum}-${day}`} className="text-center py-1 px-1 text-[10px] text-warm-400 font-normal">
                   {day}
                 </th>
               ))
             ))}
-            <th />
+            <th scope="col" />
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -1086,13 +1086,13 @@ export function CrewSchedulePreview() {
           <table className="w-full">
             <thead className="bg-warm-100 border-b border-warm-200">
               <tr>
-                <th className="text-left py-2 px-3 font-medium text-warm-600 text-sm sticky left-0 bg-warm-100 z-10 w-56 border-r border-warm-200">
+                <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600 text-sm sticky left-0 bg-warm-100 z-10 w-56 border-r border-warm-200">
                   Team Member
                 </th>
                 {weekDays.map((day, idx) => {
                   const weather = mockWeather[idx]
                   return (
-                    <th
+                    <th scope="col"
                       key={day}
                       className={cn(
                         "text-center py-2 px-3 font-medium text-sm min-w-[120px]",
@@ -1108,11 +1108,11 @@ export function CrewSchedulePreview() {
                     </th>
                   )
                 })}
-                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Hours</th>
-                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-12">OT</th>
-                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-14">Util</th>
-                <th className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Cost</th>
-                <th className="w-10" />
+                <th scope="col" className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Hours</th>
+                <th scope="col" className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-12">OT</th>
+                <th scope="col" className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-14">Util</th>
+                <th scope="col" className="text-center py-2 px-2 font-medium text-warm-600 text-xs w-16">Cost</th>
+                <th scope="col" className="w-10" />
               </tr>
             </thead>
             <tbody className="bg-white">

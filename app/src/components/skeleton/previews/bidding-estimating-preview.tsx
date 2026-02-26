@@ -178,11 +178,11 @@ export function BiddingEstimatingPreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-warm-50 border-b border-warm-200">
-                <th className="text-left px-4 py-2.5 font-medium text-warm-600">Trade</th>
-                <th className="text-center px-4 py-2.5 font-medium text-warm-600">Bidders Invited</th>
-                <th className="text-center px-4 py-2.5 font-medium text-warm-600">Bids Received</th>
-                <th className="text-center px-4 py-2.5 font-medium text-warm-600">Due Date</th>
-                <th className="text-center px-4 py-2.5 font-medium text-warm-600">Status</th>
+                <th scope="col" className="text-left px-4 py-2.5 font-medium text-warm-600">Trade</th>
+                <th scope="col" className="text-center px-4 py-2.5 font-medium text-warm-600">Bidders Invited</th>
+                <th scope="col" className="text-center px-4 py-2.5 font-medium text-warm-600">Bids Received</th>
+                <th scope="col" className="text-center px-4 py-2.5 font-medium text-warm-600">Due Date</th>
+                <th scope="col" className="text-center px-4 py-2.5 font-medium text-warm-600">Status</th>
               </tr>
             </thead>
             <tbody>

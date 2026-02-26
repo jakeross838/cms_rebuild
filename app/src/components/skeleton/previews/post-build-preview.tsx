@@ -537,11 +537,11 @@ export function PostBuildPreview(): React.ReactElement {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-stone-200">
-                <th className="text-left py-2 px-3 font-semibold text-stone-700">Referrer</th>
-                <th className="text-left py-2 px-3 font-semibold text-stone-700">Referred Client</th>
-                <th className="text-right py-2 px-3 font-semibold text-stone-700">Project Value</th>
-                <th className="text-center py-2 px-3 font-semibold text-stone-700">Status</th>
-                <th className="text-center py-2 px-3 font-semibold text-stone-700">Bonus</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-700">Referrer</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-700">Referred Client</th>
+                <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-700">Project Value</th>
+                <th scope="col" className="text-center py-2 px-3 font-semibold text-stone-700">Status</th>
+                <th scope="col" className="text-center py-2 px-3 font-semibold text-stone-700">Bonus</th>
               </tr>
             </thead>
             <tbody>

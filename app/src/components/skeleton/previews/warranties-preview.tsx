@@ -616,13 +616,13 @@ function VendorWarrantyPerformancePanel({ vendors }: { vendors: VendorWarrantyCa
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-warm-200">
-              <th className="text-left py-2 text-xs font-medium text-warm-500">Vendor</th>
-              <th className="text-center py-2 text-xs font-medium text-warm-500">Claims</th>
-              <th className="text-center py-2 text-xs font-medium text-warm-500">Callback Rate</th>
-              <th className="text-center py-2 text-xs font-medium text-warm-500">Warranty FTQ</th>
-              <th className="text-center py-2 text-xs font-medium text-warm-500">Cost</th>
-              <th className="text-center py-2 text-xs font-medium text-warm-500">Rank</th>
-              <th className="text-center py-2 text-xs font-medium text-warm-500">Trend</th>
+              <th scope="col" className="text-left py-2 text-xs font-medium text-warm-500">Vendor</th>
+              <th scope="col" className="text-center py-2 text-xs font-medium text-warm-500">Claims</th>
+              <th scope="col" className="text-center py-2 text-xs font-medium text-warm-500">Callback Rate</th>
+              <th scope="col" className="text-center py-2 text-xs font-medium text-warm-500">Warranty FTQ</th>
+              <th scope="col" className="text-center py-2 text-xs font-medium text-warm-500">Cost</th>
+              <th scope="col" className="text-center py-2 text-xs font-medium text-warm-500">Rank</th>
+              <th scope="col" className="text-center py-2 text-xs font-medium text-warm-500">Trend</th>
             </tr>
           </thead>
           <tbody>

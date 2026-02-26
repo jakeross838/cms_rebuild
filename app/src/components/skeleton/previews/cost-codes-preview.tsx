@@ -539,16 +539,16 @@ export function CostCodesPreview() {
         <table className="w-full text-sm">
           <thead className="bg-warm-100 border-b border-warm-200 sticky top-0">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-warm-600 w-32">Code</th>
-              <th className="text-left py-3 px-4 font-medium text-warm-600">Name</th>
-              <th className="text-center py-3 px-3 font-medium text-warm-600 w-16">Unit</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600 w-20">Unit Cost</th>
-              <th className="text-left py-3 px-4 font-medium text-warm-600">QuickBooks Account</th>
-              <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Markup</th>
-              <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Labor</th>
-              <th className="text-left py-3 px-3 font-medium text-warm-600 w-24">Links</th>
-              <th className="text-center py-3 px-3 font-medium text-warm-600 w-20">Usage</th>
-              <th className="w-28" />
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600 w-32">Code</th>
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Name</th>
+              <th scope="col" className="text-center py-3 px-3 font-medium text-warm-600 w-16">Unit</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600 w-20">Unit Cost</th>
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">QuickBooks Account</th>
+              <th scope="col" className="text-center py-3 px-3 font-medium text-warm-600 w-20">Markup</th>
+              <th scope="col" className="text-center py-3 px-3 font-medium text-warm-600 w-20">Labor</th>
+              <th scope="col" className="text-left py-3 px-3 font-medium text-warm-600 w-24">Links</th>
+              <th scope="col" className="text-center py-3 px-3 font-medium text-warm-600 w-20">Usage</th>
+              <th scope="col" className="w-28" />
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-warm-100">

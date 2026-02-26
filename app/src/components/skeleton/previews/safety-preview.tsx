@@ -1493,12 +1493,12 @@ export function SafetyPreview() {
               <table className="w-full">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Employee</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Required Training</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Job Assignment</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Due</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Status</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Action</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Employee</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Required Training</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Job Assignment</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Due</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Status</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-warm-200">
@@ -1612,12 +1612,12 @@ export function SafetyPreview() {
               <table className="w-full">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Project</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Observations</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Incidents</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Training</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Certifications</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Composite</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Project</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Observations</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Incidents</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Training</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Certifications</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Composite</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1681,12 +1681,12 @@ export function SafetyPreview() {
               <table className="w-full">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Vendor</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">EMR Rating</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Incidents (12mo)</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Cert Status</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Last Incident</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Active Projects</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Vendor</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">EMR Rating</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Incidents (12mo)</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Cert Status</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Last Incident</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Active Projects</th>
                   </tr>
                 </thead>
                 <tbody>

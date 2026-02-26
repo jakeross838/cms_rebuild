@@ -839,14 +839,14 @@ export function SelectionsPreview() {
           <table className="w-full text-sm">
             <thead className="bg-warm-100 border-b border-warm-200 sticky top-0">
               <tr>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Category</th>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Room</th>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Item</th>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Selected Product</th>
-                <th className="text-right py-3 px-4 font-medium text-warm-600">Price</th>
-                <th className="text-right py-3 px-4 font-medium text-warm-600">Variance</th>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Status</th>
-                <th className="text-right py-3 px-4 font-medium text-warm-600">Deadline</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Category</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Room</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Item</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Selected Product</th>
+                <th scope="col" className="text-right py-3 px-4 font-medium text-warm-600">Price</th>
+                <th scope="col" className="text-right py-3 px-4 font-medium text-warm-600">Variance</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Status</th>
+                <th scope="col" className="text-right py-3 px-4 font-medium text-warm-600">Deadline</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-warm-100">

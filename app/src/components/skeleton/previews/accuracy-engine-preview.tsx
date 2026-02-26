@@ -631,18 +631,18 @@ export function AccuracyEnginePreview(): React.ReactElement {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-warm-50 text-xs text-warm-500 border-b border-warm-200">
-                  <th className="text-left px-4 py-2.5 font-medium">Item Type</th>
-                  <th className="text-left px-4 py-2.5 font-medium">Unit</th>
-                  <th className="text-center px-4 py-2.5 font-medium">
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Item Type</th>
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Unit</th>
+                  <th scope="col" className="text-center px-4 py-2.5 font-medium">
                     <span className="text-emerald-600">Low</span>
                   </th>
-                  <th className="text-center px-4 py-2.5 font-medium">
+                  <th scope="col" className="text-center px-4 py-2.5 font-medium">
                     <span className="text-blue-600">Typical</span>
                   </th>
-                  <th className="text-center px-4 py-2.5 font-medium">
+                  <th scope="col" className="text-center px-4 py-2.5 font-medium">
                     <span className="text-amber-600">High</span>
                   </th>
-                  <th className="text-center px-4 py-2.5 font-medium">
+                  <th scope="col" className="text-center px-4 py-2.5 font-medium">
                     <span className="text-red-600">Extreme</span>
                   </th>
                 </tr>

@@ -669,13 +669,13 @@ function MaterialsTab() {
                   <table className="w-full text-sm">
                     <thead className="bg-muted/50">
                       <tr>
-                        <th className="text-left py-2 px-4 font-medium text-muted-foreground sticky left-0 bg-muted/50 min-w-[200px]">Material</th>
-                        <th className="text-center py-2 px-4 font-medium text-muted-foreground w-16">Unit</th>
+                        <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground sticky left-0 bg-muted/50 min-w-[200px]">Material</th>
+                        <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground w-16">Unit</th>
                         {catVendors.map(v => (
-                          <th key={v.id} className="text-center py-2 px-4 font-medium text-muted-foreground min-w-[100px]">{v.short}</th>
+                          <th scope="col" key={v.id} className="text-center py-2 px-4 font-medium text-muted-foreground min-w-[100px]">{v.short}</th>
                         ))}
-                        <th className="text-center py-2 px-4 font-medium text-muted-foreground w-20">Best</th>
-                        <th className="text-center py-2 px-4 font-medium text-muted-foreground w-28">Confidence</th>
+                        <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground w-20">Best</th>
+                        <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground w-28">Confidence</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
@@ -784,15 +784,15 @@ function LaborTab() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left py-2 px-4 font-medium text-muted-foreground">#</th>
-                <th className="text-left py-2 px-4 font-medium text-muted-foreground">Subcontractor</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">$/SF</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Quality</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Schedule</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Callbacks</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Jobs</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Value</th>
-                <th className="text-left py-2 px-4 font-medium text-muted-foreground">Availability</th>
+                <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">#</th>
+                <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Subcontractor</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">$/SF</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Quality</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Schedule</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Callbacks</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Jobs</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Value</th>
+                <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Availability</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -942,10 +942,10 @@ function SavingsTab() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left py-2 px-4 font-medium text-muted-foreground">Job</th>
-                <th className="text-right py-2 px-4 font-medium text-muted-foreground">Spend</th>
-                <th className="text-right py-2 px-4 font-medium text-muted-foreground">Optimal</th>
-                <th className="text-right py-2 px-4 font-medium text-muted-foreground">Savings</th>
+                <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Job</th>
+                <th scope="col" className="text-right py-2 px-4 font-medium text-muted-foreground">Spend</th>
+                <th scope="col" className="text-right py-2 px-4 font-medium text-muted-foreground">Optimal</th>
+                <th scope="col" className="text-right py-2 px-4 font-medium text-muted-foreground">Savings</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -1032,13 +1032,13 @@ function AnalyticsTab() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left py-2 px-4 font-medium text-muted-foreground">Vendor</th>
-                <th className="text-right py-2 px-4 font-medium text-muted-foreground">Total Spend</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">% of Total</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Jobs</th>
-                <th className="text-left py-2 px-4 font-medium text-muted-foreground">Top Category</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Avg Savings</th>
-                <th className="text-center py-2 px-4 font-medium text-muted-foreground">Trend</th>
+                <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Vendor</th>
+                <th scope="col" className="text-right py-2 px-4 font-medium text-muted-foreground">Total Spend</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">% of Total</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Jobs</th>
+                <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Top Category</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Avg Savings</th>
+                <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Trend</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -1311,11 +1311,11 @@ function QuotesTab() {
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left py-2 px-4 font-medium text-muted-foreground">Vendor Description</th>
-              <th className="text-left py-2 px-4 font-medium text-muted-foreground">AI Suggestion</th>
-              <th className="text-center py-2 px-4 font-medium text-muted-foreground">Confidence</th>
-              <th className="text-left py-2 px-4 font-medium text-muted-foreground">Source</th>
-              <th className="text-center py-2 px-4 font-medium text-muted-foreground">Action</th>
+              <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Vendor Description</th>
+              <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">AI Suggestion</th>
+              <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Confidence</th>
+              <th scope="col" className="text-left py-2 px-4 font-medium text-muted-foreground">Source</th>
+              <th scope="col" className="text-center py-2 px-4 font-medium text-muted-foreground">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y">

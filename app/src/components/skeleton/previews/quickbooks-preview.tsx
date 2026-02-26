@@ -435,11 +435,11 @@ function AccountMappingTable() {
       <table className="w-full">
         <thead className="bg-warm-50">
           <tr>
-            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Code</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Name</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">Type</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500">QuickBooks Account</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-warm-500" />
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-warm-500">Code</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-warm-500">Name</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-warm-500">Type</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-warm-500">QuickBooks Account</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-warm-500" />
           </tr>
         </thead>
         <tbody className="divide-y divide-warm-200">

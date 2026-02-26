@@ -467,33 +467,33 @@ function ProjectFTQTable({ projects }: { projects: ProjectFTQScore[] }) {
         <table className="w-full text-sm">
           <thead className="bg-warm-50 border-b border-warm-200">
             <tr>
-              <th
+              <th scope="col"
                 className="text-left py-2 px-4 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('project')}
               >
                 Project
               </th>
-              <th
+              <th scope="col"
                 className="text-left py-2 px-3 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('phase')}
               >
                 Phase
               </th>
-              <th
+              <th scope="col"
                 className="text-right py-2 px-3 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('ftqScore')}
               >
                 FTQ Score
               </th>
-              <th className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
-              <th
+              <th scope="col" className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
+              <th scope="col"
                 className="text-right py-2 px-3 font-medium text-warm-600 cursor-pointer hover:bg-warm-100"
                 onClick={() => handleSort('inspections')}
               >
                 Inspections
               </th>
-              <th className="text-left py-2 px-3 font-medium text-warm-600">Last Updated</th>
-              <th className="py-2 px-3" />
+              <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600">Last Updated</th>
+              <th scope="col" className="py-2 px-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-100">
@@ -617,13 +617,13 @@ function VendorRankingsTable({ vendors, type }: { vendors: VendorRanking[]; type
         <table className="w-full text-sm">
           <thead className="bg-warm-50 border-b border-warm-200">
             <tr>
-              <th className="text-left py-2 px-3 font-medium text-warm-600 w-12">Rank</th>
-              <th className="text-left py-2 px-3 font-medium text-warm-600">Vendor</th>
-              <th className="text-left py-2 px-3 font-medium text-warm-600">Trade</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">FTQ</th>
-              <th className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">Inspections</th>
-              <th className="py-2 px-3" />
+              <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600 w-12">Rank</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600">Vendor</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600">Trade</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">FTQ</th>
+              <th scope="col" className="text-center py-2 px-3 font-medium text-warm-600">Trend</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Inspections</th>
+              <th scope="col" className="py-2 px-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-100">

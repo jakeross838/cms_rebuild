@@ -586,11 +586,11 @@ export function ContractLegalPreview(): React.ReactElement {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-stone-200">
-                  <th className="text-left py-2 px-3 font-semibold text-stone-500">Job</th>
-                  <th className="text-left py-2 px-3 font-semibold text-stone-500">NTO Deadline</th>
-                  <th className="text-left py-2 px-3 font-semibold text-stone-500">Claim Deadline</th>
-                  <th className="text-left py-2 px-3 font-semibold text-stone-500">Days Left</th>
-                  <th className="text-left py-2 px-3 font-semibold text-stone-500">Status</th>
+                  <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Job</th>
+                  <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">NTO Deadline</th>
+                  <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Claim Deadline</th>
+                  <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Days Left</th>
+                  <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
@@ -667,10 +667,10 @@ export function ContractLegalPreview(): React.ReactElement {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-stone-200">
-                <th className="text-left py-2 px-3 font-semibold text-stone-500">Milestone</th>
-                <th className="text-left py-2 px-3 font-semibold text-stone-500">Date</th>
-                <th className="text-left py-2 px-3 font-semibold text-stone-500">Status</th>
-                <th className="text-left py-2 px-3 font-semibold text-stone-500">Notes</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Milestone</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Date</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Notes</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">

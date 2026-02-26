@@ -365,8 +365,8 @@ export function LienLawPreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-100">
-                <th className="text-left px-4 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Rule</th>
-                <th className="text-left px-4 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Requirement</th>
+                <th scope="col" className="text-left px-4 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Rule</th>
+                <th scope="col" className="text-left px-4 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Requirement</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-200">
@@ -469,12 +469,12 @@ export function LienLawPreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-50">
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Project</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Sub/Supplier</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">First Work</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">NTO Deadline</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">NTO Sent?</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Receipt Confirmed?</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Project</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Sub/Supplier</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">First Work</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">NTO Deadline</th>
+                <th scope="col" className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">NTO Sent?</th>
+                <th scope="col" className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Receipt Confirmed?</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
@@ -536,10 +536,10 @@ export function LienLawPreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-50">
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Subcontractor</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Conditional</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Unconditional</th>
-                <th className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Status</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Subcontractor</th>
+                <th scope="col" className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Conditional</th>
+                <th scope="col" className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Unconditional</th>
+                <th scope="col" className="text-center px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">

@@ -891,15 +891,15 @@ function JobProfitabilityTable({ jobs }: { jobs: JobProfitability[] }) {
         <table className="w-full text-sm">
           <thead className="bg-warm-50 border-b border-warm-200">
             <tr>
-              <th className="text-left py-2 px-4 font-medium text-warm-600">Job</th>
-              <th className="text-left py-2 px-3 font-medium text-warm-600">PM</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">Contract</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">Cost to Date</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">Committed</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">Projected</th>
-              <th className="text-right py-2 px-3 font-medium text-warm-600">Margin</th>
-              <th className="py-2 px-3 font-medium text-warm-600 w-24">Progress</th>
-              <th className="py-2 px-3 font-medium text-warm-600">Status</th>
+              <th scope="col" className="text-left py-2 px-4 font-medium text-warm-600">Job</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600">PM</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Contract</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Cost to Date</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Committed</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Projected</th>
+              <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Margin</th>
+              <th scope="col" className="py-2 px-3 font-medium text-warm-600 w-24">Progress</th>
+              <th scope="col" className="py-2 px-3 font-medium text-warm-600">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-100">

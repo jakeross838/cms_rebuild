@@ -342,10 +342,10 @@ export function BusinessManagementPreview(): React.ReactElement {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-stone-200">
-                    <th className="text-left py-2 px-3 font-semibold text-stone-500">Category</th>
-                    <th className="text-right py-2 px-3 font-semibold text-stone-500">Monthly</th>
-                    <th className="text-right py-2 px-3 font-semibold text-stone-500">Annual</th>
-                    <th className="text-right py-2 px-3 font-semibold text-stone-500">% of Revenue</th>
+                    <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Category</th>
+                    <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-500">Monthly</th>
+                    <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-500">Annual</th>
+                    <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-500">% of Revenue</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
@@ -605,11 +605,11 @@ export function BusinessManagementPreview(): React.ReactElement {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-stone-200">
-                <th className="text-left py-2 px-3 font-semibold text-stone-500">Week</th>
-                <th className="text-right py-2 px-3 font-semibold text-emerald-600">Money In</th>
-                <th className="text-right py-2 px-3 font-semibold text-red-600">Money Out</th>
-                <th className="text-right py-2 px-3 font-semibold text-stone-500">Net</th>
-                <th className="text-left py-2 px-3 font-semibold text-stone-500">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Week</th>
+                <th scope="col" className="text-right py-2 px-3 font-semibold text-emerald-600">Money In</th>
+                <th scope="col" className="text-right py-2 px-3 font-semibold text-red-600">Money Out</th>
+                <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-500">Net</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-500">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">

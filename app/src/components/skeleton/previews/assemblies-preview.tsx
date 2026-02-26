@@ -738,10 +738,10 @@ function AssemblyCard({ assembly }: { assembly: Assembly }) {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="text-warm-500 border-b border-warm-200">
-                      <th className="text-left py-1 px-1">Name</th>
-                      <th className="text-right py-1 px-1">Qty</th>
-                      <th className="text-right py-1 px-1">Unit Cost</th>
-                      <th className="text-right py-1 px-1">Total</th>
+                      <th scope="col" className="text-left py-1 px-1">Name</th>
+                      <th scope="col" className="text-right py-1 px-1">Qty</th>
+                      <th scope="col" className="text-right py-1 px-1">Unit Cost</th>
+                      <th scope="col" className="text-right py-1 px-1">Total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1114,14 +1114,14 @@ export function AssembliesPreview() {
           <table className="w-full text-sm">
             <thead className="bg-warm-100 border-b border-warm-200 sticky top-0">
               <tr>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Assembly</th>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Category</th>
-                <th className="text-center py-3 px-4 font-medium text-warm-600">Items</th>
-                <th className="text-left py-3 px-4 font-medium text-warm-600">Default Tier</th>
-                <th className="text-right py-3 px-4 font-medium text-warm-600">Total Cost</th>
-                <th className="text-center py-3 px-4 font-medium text-warm-600">Usage</th>
-                <th className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th>
-                <th className="w-10" />
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Assembly</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Category</th>
+                <th scope="col" className="text-center py-3 px-4 font-medium text-warm-600">Items</th>
+                <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Default Tier</th>
+                <th scope="col" className="text-right py-3 px-4 font-medium text-warm-600">Total Cost</th>
+                <th scope="col" className="text-center py-3 px-4 font-medium text-warm-600">Usage</th>
+                <th scope="col" className="text-right py-3 px-4 font-medium text-warm-600">Last Used</th>
+                <th scope="col" className="w-10" />
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-warm-100">

@@ -449,10 +449,10 @@ export function ProductionQualityPreview(): React.ReactElement {
               <table className="w-full">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Crew / Trade</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Smith Residence</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Johnson Beach</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Harbor View</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Crew / Trade</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Smith Residence</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Johnson Beach</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Harbor View</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-warm-100">

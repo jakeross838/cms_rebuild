@@ -1061,12 +1061,12 @@ export function SustainabilityPreview() {
             <table className="w-full">
               <thead className="bg-warm-50">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Material</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Manufacturer</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-warm-500">Carbon Impact</th>
-                  <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">EPD</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Certifications</th>
-                  <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Green Alt</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Material</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Manufacturer</th>
+                  <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-warm-500">Carbon Impact</th>
+                  <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">EPD</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Certifications</th>
+                  <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Green Alt</th>
                 </tr>
               </thead>
               <tbody>
@@ -1136,12 +1136,12 @@ export function SustainabilityPreview() {
                     <table className="w-full">
                       <thead className="bg-warm-50">
                         <tr>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-warm-500 w-20">Code</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Credit</th>
-                          <th className="px-3 py-2 text-center text-xs font-medium text-warm-500 w-24">Points</th>
-                          <th className="px-3 py-2 text-center text-xs font-medium text-warm-500 w-28">Status</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-warm-500 w-24">Owner</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-warm-500 w-20">Due</th>
+                          <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500 w-20">Code</th>
+                          <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Credit</th>
+                          <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500 w-24">Points</th>
+                          <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500 w-28">Status</th>
+                          <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500 w-24">Owner</th>
+                          <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500 w-20">Due</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1187,13 +1187,13 @@ export function SustainabilityPreview() {
               <table className="w-full">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Project</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Waste Type</th>
-                    <th className="px-3 py-2 text-right text-xs font-medium text-warm-500">Quantity</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-warm-500">Disposition</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Hauler</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-warm-500">Date</th>
-                    <th className="px-3 py-2 text-right text-xs font-medium text-warm-500">Cost/Rebate</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Project</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Waste Type</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-warm-500">Quantity</th>
+                    <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-warm-500">Disposition</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Hauler</th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-warm-500">Date</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-warm-500">Cost/Rebate</th>
                   </tr>
                 </thead>
                 <tbody>

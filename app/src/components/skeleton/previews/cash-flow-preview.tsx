@@ -601,13 +601,13 @@ export function CashFlowPreview() {
         <table className="w-full text-sm">
           <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-warm-600">Period</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Opening</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Inflows</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Outflows</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Closing</th>
-              <th className="text-center py-3 px-3 font-medium text-warm-600">Confidence</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Range</th>
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Period</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Opening</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Inflows</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Outflows</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Closing</th>
+              <th scope="col" className="text-center py-3 px-3 font-medium text-warm-600">Confidence</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Range</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-warm-100">

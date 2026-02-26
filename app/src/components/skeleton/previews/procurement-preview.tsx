@@ -254,12 +254,12 @@ export function ProcurementPreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead className="bg-warm-50">
               <tr>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">PO #</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Vendor</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Job</th>
-                <th className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Amount</th>
-                <th className="text-center py-2.5 px-3 text-xs font-medium text-warm-500">Status</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">ETA</th>
+                <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">PO #</th>
+                <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Vendor</th>
+                <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Job</th>
+                <th scope="col" className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Amount</th>
+                <th scope="col" className="text-center py-2.5 px-3 text-xs font-medium text-warm-500">Status</th>
+                <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">ETA</th>
               </tr>
             </thead>
             <tbody>

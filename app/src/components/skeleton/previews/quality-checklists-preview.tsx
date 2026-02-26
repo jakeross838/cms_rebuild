@@ -827,10 +827,10 @@ function FTQDashboardContent() {
           <table className="w-full">
             <thead>
               <tr className="text-xs text-warm-500 border-b border-warm-100">
-                <th className="text-left pb-2 font-medium">Project</th>
-                <th className="text-center pb-2 font-medium">FTQ</th>
-                <th className="text-center pb-2 font-medium">Pass Rate</th>
-                <th className="text-center pb-2 font-medium">Count</th>
+                <th scope="col" className="text-left pb-2 font-medium">Project</th>
+                <th scope="col" className="text-center pb-2 font-medium">FTQ</th>
+                <th scope="col" className="text-center pb-2 font-medium">Pass Rate</th>
+                <th scope="col" className="text-center pb-2 font-medium">Count</th>
               </tr>
             </thead>
             <tbody>

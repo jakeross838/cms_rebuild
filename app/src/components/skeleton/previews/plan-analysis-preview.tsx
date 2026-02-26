@@ -181,11 +181,11 @@ export function PlanAnalysisPreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-warm-100">
-                <th className="text-left px-4 py-2 text-xs font-medium text-warm-500 uppercase">Plan Set</th>
-                <th className="text-center px-4 py-2 text-xs font-medium text-warm-500 uppercase">Pages</th>
-                <th className="text-center px-4 py-2 text-xs font-medium text-warm-500 uppercase">Rooms Detected</th>
-                <th className="text-center px-4 py-2 text-xs font-medium text-warm-500 uppercase">Status</th>
-                <th className="text-right px-4 py-2 text-xs font-medium text-warm-500 uppercase">Date</th>
+                <th scope="col" className="text-left px-4 py-2 text-xs font-medium text-warm-500 uppercase">Plan Set</th>
+                <th scope="col" className="text-center px-4 py-2 text-xs font-medium text-warm-500 uppercase">Pages</th>
+                <th scope="col" className="text-center px-4 py-2 text-xs font-medium text-warm-500 uppercase">Rooms Detected</th>
+                <th scope="col" className="text-center px-4 py-2 text-xs font-medium text-warm-500 uppercase">Status</th>
+                <th scope="col" className="text-right px-4 py-2 text-xs font-medium text-warm-500 uppercase">Date</th>
               </tr>
             </thead>
             <tbody>

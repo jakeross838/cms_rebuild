@@ -463,17 +463,17 @@ export function InventoryPreview() {
         <table className="w-full text-sm">
           <thead className="bg-warm-50 sticky top-0 z-10">
             <tr>
-              <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Item Name</th>
-              <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">SKU</th>
-              <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Category</th>
-              <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Location</th>
-              <th className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Qty</th>
-              <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">UOM</th>
-              <th className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Unit Cost</th>
-              <th className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Total Value</th>
-              <th className="text-center py-2.5 px-3 text-xs font-medium text-warm-500">Status</th>
-              <th className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Last Activity</th>
-              <th className="text-center py-2.5 px-3 text-xs font-medium text-warm-500" />
+              <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Item Name</th>
+              <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">SKU</th>
+              <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Category</th>
+              <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Location</th>
+              <th scope="col" className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Qty</th>
+              <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">UOM</th>
+              <th scope="col" className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Unit Cost</th>
+              <th scope="col" className="text-right py-2.5 px-3 text-xs font-medium text-warm-500">Total Value</th>
+              <th scope="col" className="text-center py-2.5 px-3 text-xs font-medium text-warm-500">Status</th>
+              <th scope="col" className="text-left py-2.5 px-3 text-xs font-medium text-warm-500">Last Activity</th>
+              <th scope="col" className="text-center py-2.5 px-3 text-xs font-medium text-warm-500" />
             </tr>
           </thead>
           <tbody>

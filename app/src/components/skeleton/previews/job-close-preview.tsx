@@ -241,12 +241,12 @@ export function JobClosePreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-50">
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Code</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Description</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Estimated</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Actual</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Variance</th>
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Note</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Code</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Description</th>
+                <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Estimated</th>
+                <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Actual</th>
+                <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Variance</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Note</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
@@ -321,10 +321,10 @@ export function JobClosePreview(): React.ReactElement {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-50">
-                <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Period</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Revenue Recognized</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Cumulative</th>
-                <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">% of Contract</th>
+                <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Period</th>
+                <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Revenue Recognized</th>
+                <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">Cumulative</th>
+                <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600 uppercase tracking-wider">% of Contract</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
@@ -397,10 +397,10 @@ export function JobClosePreview(): React.ReactElement {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-stone-200 bg-stone-50">
-                  <th className="text-left px-3 py-2 text-xs font-semibold text-stone-600">Job</th>
-                  <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600">Contract</th>
-                  <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600">Warranty Cost</th>
-                  <th className="text-right px-3 py-2 text-xs font-semibold text-stone-600">%</th>
+                  <th scope="col" className="text-left px-3 py-2 text-xs font-semibold text-stone-600">Job</th>
+                  <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600">Contract</th>
+                  <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600">Warranty Cost</th>
+                  <th scope="col" className="text-right px-3 py-2 text-xs font-semibold text-stone-600">%</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">

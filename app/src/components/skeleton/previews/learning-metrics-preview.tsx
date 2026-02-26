@@ -456,11 +456,11 @@ export function LearningMetricsPreview(): React.ReactElement {
                       <table className="w-full text-xs">
                         <thead>
                           <tr className="bg-warm-50 text-warm-600">
-                            <th className="px-3 py-2 text-left font-medium w-8">#</th>
-                            <th className="px-3 py-2 text-left font-medium">Metric</th>
-                            <th className="px-3 py-2 text-left font-medium">What It Tracks</th>
-                            <th className="px-3 py-2 text-right font-medium">Current</th>
-                            <th className="px-3 py-2 text-right font-medium w-24">Trend</th>
+                            <th scope="col" className="px-3 py-2 text-left font-medium w-8">#</th>
+                            <th scope="col" className="px-3 py-2 text-left font-medium">Metric</th>
+                            <th scope="col" className="px-3 py-2 text-left font-medium">What It Tracks</th>
+                            <th scope="col" className="px-3 py-2 text-right font-medium">Current</th>
+                            <th scope="col" className="px-3 py-2 text-right font-medium w-24">Trend</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-warm-50">
@@ -547,10 +547,10 @@ export function LearningMetricsPreview(): React.ReactElement {
             <table className="w-full text-xs">
               <thead>
                 <tr className="bg-warm-50 text-warm-600">
-                  <th className="px-3 py-2 text-left font-medium w-8">#</th>
-                  <th className="px-3 py-2 text-left font-medium">Metric</th>
-                  <th className="px-3 py-2 text-left font-medium">Example</th>
-                  <th className="px-3 py-2 text-right font-medium w-24">Datapoints</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium w-8">#</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Metric</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Example</th>
+                  <th scope="col" className="px-3 py-2 text-right font-medium w-24">Datapoints</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-warm-50">

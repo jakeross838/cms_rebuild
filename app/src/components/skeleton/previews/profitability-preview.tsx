@@ -360,12 +360,12 @@ function JobRow({ job, expanded, onToggle }: { job: JobProfitability; expanded: 
                   <table className="w-full text-sm">
                     <thead className="bg-warm-50">
                       <tr>
-                        <th className="text-left py-2 px-3 font-medium text-warm-600">Cost Code</th>
-                        <th className="text-right py-2 px-3 font-medium text-warm-600">Budget</th>
-                        <th className="text-right py-2 px-3 font-medium text-warm-600">Committed</th>
-                        <th className="text-right py-2 px-3 font-medium text-warm-600">Actual</th>
-                        <th className="text-right py-2 px-3 font-medium text-warm-600">Projected</th>
-                        <th className="text-right py-2 px-3 font-medium text-warm-600">Variance</th>
+                        <th scope="col" className="text-left py-2 px-3 font-medium text-warm-600">Cost Code</th>
+                        <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Budget</th>
+                        <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Committed</th>
+                        <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Actual</th>
+                        <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Projected</th>
+                        <th scope="col" className="text-right py-2 px-3 font-medium text-warm-600">Variance</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-warm-100">
@@ -562,15 +562,15 @@ export function ProfitabilityPreview() {
         <table className="w-full text-sm">
           <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-warm-600">Job / PM</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Contract</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Est. Cost</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Actual</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Committed</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Projected</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Variance</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Margin</th>
-              <th className="py-3 px-3 font-medium text-warm-600 w-24">Complete</th>
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Job / PM</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Contract</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Est. Cost</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Actual</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Committed</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Projected</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Variance</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Margin</th>
+              <th scope="col" className="py-3 px-3 font-medium text-warm-600 w-24">Complete</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-warm-100">

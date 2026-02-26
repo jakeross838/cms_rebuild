@@ -732,15 +732,15 @@ export function TimeClockPreview() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-warm-200 bg-warm-50">
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">Employee</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">Job Site</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">In / Out</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">Hours</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">OT</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">Cost Code</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">GPS</th>
-                    <th className="text-left py-3 px-4 font-medium text-warm-700">Status</th>
-                    <th className="text-center py-3 px-4 font-medium text-warm-700">Actions</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">Employee</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">Job Site</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">In / Out</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">Hours</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">OT</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">Cost Code</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">GPS</th>
+                    <th scope="col" className="text-left py-3 px-4 font-medium text-warm-700">Status</th>
+                    <th scope="col" className="text-center py-3 px-4 font-medium text-warm-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>

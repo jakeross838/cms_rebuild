@@ -449,11 +449,11 @@ export function PreConstructionPreview(): React.ReactElement {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-warm-50 text-xs text-warm-500 border-b border-warm-200">
-                  <th className="text-left px-4 py-2.5 font-medium">Permit Type</th>
-                  <th className="text-left px-4 py-2.5 font-medium">Status</th>
-                  <th className="text-left px-4 py-2.5 font-medium">Timeline</th>
-                  <th className="text-right px-4 py-2.5 font-medium">Fee</th>
-                  <th className="text-left px-4 py-2.5 font-medium">Notes</th>
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Permit Type</th>
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Status</th>
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Timeline</th>
+                  <th scope="col" className="text-right px-4 py-2.5 font-medium">Fee</th>
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-warm-100">
@@ -710,11 +710,11 @@ export function PreConstructionPreview(): React.ReactElement {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-warm-50 text-xs text-warm-500 border-b border-warm-200">
-                  <th className="text-left px-4 py-2.5 font-medium">Category</th>
-                  <th className="text-right px-4 py-2.5 font-medium">Budgeted</th>
-                  <th className="text-right px-4 py-2.5 font-medium">Paid</th>
-                  <th className="text-right px-4 py-2.5 font-medium">Remaining</th>
-                  <th className="text-center px-4 py-2.5 font-medium">Status</th>
+                  <th scope="col" className="text-left px-4 py-2.5 font-medium">Category</th>
+                  <th scope="col" className="text-right px-4 py-2.5 font-medium">Budgeted</th>
+                  <th scope="col" className="text-right px-4 py-2.5 font-medium">Paid</th>
+                  <th scope="col" className="text-right px-4 py-2.5 font-medium">Remaining</th>
+                  <th scope="col" className="text-center px-4 py-2.5 font-medium">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-warm-100">

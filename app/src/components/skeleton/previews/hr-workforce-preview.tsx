@@ -476,14 +476,14 @@ export function HrWorkforcePreview(): React.ReactElement {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-stone-200">
-                <th className="text-left py-2 px-2 font-semibold text-stone-700">Employee</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">OSHA 10</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">OSHA 30</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">First Aid</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">Forklift</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">Fall Prot.</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">Lead-Safe</th>
-                <th className="text-center py-2 px-2 font-semibold text-stone-700">State Lic.</th>
+                <th scope="col" className="text-left py-2 px-2 font-semibold text-stone-700">Employee</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">OSHA 10</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">OSHA 30</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">First Aid</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">Forklift</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">Fall Prot.</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">Lead-Safe</th>
+                <th scope="col" className="text-center py-2 px-2 font-semibold text-stone-700">State Lic.</th>
               </tr>
             </thead>
             <tbody>
@@ -661,11 +661,11 @@ export function HrWorkforcePreview(): React.ReactElement {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-stone-200">
-                <th className="text-left py-2 px-3 font-semibold text-stone-700">Role</th>
-                <th className="text-right py-2 px-3 font-semibold text-stone-700">Your Salary</th>
-                <th className="text-right py-2 px-3 font-semibold text-stone-700">Market Avg</th>
-                <th className="text-center py-2 px-3 font-semibold text-stone-700">Variance</th>
-                <th className="text-left py-2 px-3 font-semibold text-stone-700">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-700">Role</th>
+                <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-700">Your Salary</th>
+                <th scope="col" className="text-right py-2 px-3 font-semibold text-stone-700">Market Avg</th>
+                <th scope="col" className="text-center py-2 px-3 font-semibold text-stone-700">Variance</th>
+                <th scope="col" className="text-left py-2 px-3 font-semibold text-stone-700">Status</th>
               </tr>
             </thead>
             <tbody>

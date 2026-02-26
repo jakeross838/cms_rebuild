@@ -673,15 +673,15 @@ export function BudgetPreview() {
         <table className="w-full text-sm">
           <thead className="bg-warm-100 border-b border-warm-200">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-warm-600">Cost Code</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Original</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Changes</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Revised</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Committed</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Actual</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Projected</th>
-              <th className="text-right py-3 px-3 font-medium text-warm-600">Variance</th>
-              <th className="py-3 px-3 font-medium text-warm-600 w-32">Progress</th>
+              <th scope="col" className="text-left py-3 px-4 font-medium text-warm-600">Cost Code</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Original</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Changes</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Revised</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Committed</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Actual</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Projected</th>
+              <th scope="col" className="text-right py-3 px-3 font-medium text-warm-600">Variance</th>
+              <th scope="col" className="py-3 px-3 font-medium text-warm-600 w-32">Progress</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-warm-100">

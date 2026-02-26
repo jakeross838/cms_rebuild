@@ -1646,14 +1646,14 @@ export function EquipmentPreview() {
               <table className="w-full text-sm">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Equipment</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Vendor</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Project</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Rate</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Days</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Cost</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Return</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Status</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Equipment</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Vendor</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Project</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Rate</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Days</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Cost</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Return</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1752,14 +1752,14 @@ export function EquipmentPreview() {
               <table className="w-full text-sm">
                 <thead className="bg-warm-50">
                   <tr>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Equipment</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Type</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Description</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Date</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Provider</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Parts</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Labor</th>
-                    <th className="text-left py-2 px-3 text-xs font-medium text-warm-500">Total</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Equipment</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Type</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Description</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Date</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Provider</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Parts</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Labor</th>
+                    <th scope="col" className="text-left py-2 px-3 text-xs font-medium text-warm-500">Total</th>
                   </tr>
                 </thead>
                 <tbody>

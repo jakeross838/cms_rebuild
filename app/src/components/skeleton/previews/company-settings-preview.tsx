@@ -487,9 +487,9 @@ function TerminologySection() {
         <table className="w-full">
           <thead className="bg-warm-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Platform Term</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Your Display Name</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Actions</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Platform Term</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Your Display Name</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-200">
@@ -584,12 +584,12 @@ function UsersForm() {
         <table className="w-full">
           <thead className="bg-warm-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">User</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Role</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Active Jobs</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Last Active</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Actions</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">User</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Role</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Status</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Active Jobs</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Last Active</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-200">
@@ -715,12 +715,12 @@ function ConfigVersioningSection() {
         <table className="w-full">
           <thead className="bg-warm-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Section</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Version</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Change</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Changed By</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Date</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Actions</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Section</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Version</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Change</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Changed By</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Date</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-warm-200">
