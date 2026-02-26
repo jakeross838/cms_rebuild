@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewPayablePage() {
   const router = useRouter()
@@ -104,10 +105,13 @@ export default function NewPayablePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Payable created')
       router.push('/financial/payables')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create bill')
+      const errorMessage = (err as Error)?.message || 'Failed to create bill'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

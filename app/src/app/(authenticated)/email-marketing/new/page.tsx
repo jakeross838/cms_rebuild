@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewCampaignPage() {
   const router = useRouter()
@@ -77,10 +78,13 @@ export default function NewCampaignPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Campaign created')
       router.push('/email-marketing')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create campaign')
+      const errorMessage = (err as Error)?.message || 'Failed to create campaign'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewInsurancePolicyPage() {
   const router = useRouter()
@@ -95,10 +96,13 @@ export default function NewInsurancePolicyPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Insurance policy created')
       router.push('/compliance/insurance')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create insurance policy')
+      const errorMessage = (err as Error)?.message || 'Failed to create insurance policy'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

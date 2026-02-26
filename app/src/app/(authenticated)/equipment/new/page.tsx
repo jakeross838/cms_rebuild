@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewEquipmentPage() {
   const router = useRouter()
@@ -78,10 +79,13 @@ export default function NewEquipmentPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Equipment added')
       router.push('/equipment')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to add equipment')
+      const errorMessage = (err as Error)?.message || 'Failed to add equipment'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

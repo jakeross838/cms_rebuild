@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewBudgetLinePage() {
   const router = useRouter()
@@ -101,10 +102,13 @@ export default function NewBudgetLinePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Budget line created')
       router.push(`/jobs/${jobId}/budget`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create budget line')
+      const errorMessage = (err as Error)?.message || 'Failed to create budget line'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

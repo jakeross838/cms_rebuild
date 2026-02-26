@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewTrainingCoursePage() {
   const router = useRouter()
@@ -76,10 +77,13 @@ export default function NewTrainingCoursePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Training course created')
       router.push('/training')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create course')
+      const errorMessage = (err as Error)?.message || 'Failed to create course'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

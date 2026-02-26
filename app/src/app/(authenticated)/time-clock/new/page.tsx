@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewTimeEntryPage() {
   const router = useRouter()
@@ -109,10 +110,13 @@ export default function NewTimeEntryPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Time entry created')
       router.push('/time-clock')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create time entry')
+      const errorMessage = (err as Error)?.message || 'Failed to create time entry'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

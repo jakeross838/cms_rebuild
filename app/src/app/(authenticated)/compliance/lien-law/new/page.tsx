@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewLienLawRecordPage() {
   const router = useRouter()
@@ -117,10 +118,13 @@ export default function NewLienLawRecordPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Tracking record created')
       router.push('/compliance/lien-law')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create record')
+      const errorMessage = (err as Error)?.message || 'Failed to create record'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setSaving(false)
     }

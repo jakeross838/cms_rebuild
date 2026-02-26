@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface JobOption {
   id: string
@@ -104,10 +105,13 @@ export default function NewBidPackagePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Bid package created')
       router.push('/bids')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create bid package')
+      const errorMessage = (err as Error)?.message || 'Failed to create bid package'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewPhotoPage() {
   const router = useRouter()
@@ -77,10 +78,13 @@ export default function NewPhotoPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Photo added')
       router.push(`/jobs/${jobId}/photos`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to add photo')
+      const errorMessage = (err as Error)?.message || 'Failed to add photo'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

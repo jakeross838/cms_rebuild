@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewSelectionCategoryPage() {
   const router = useRouter()
@@ -100,10 +101,13 @@ export default function NewSelectionCategoryPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Selection category created')
       router.push('/library/selections')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create selection category')
+      const errorMessage = (err as Error)?.message || 'Failed to create selection category'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

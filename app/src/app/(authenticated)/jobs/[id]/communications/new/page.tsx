@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewCommunicationPage() {
   const router = useRouter()
@@ -74,10 +75,13 @@ export default function NewCommunicationPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Communication created')
       router.push(`/jobs/${jobId}/communications`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create communication')
+      const errorMessage = (err as Error)?.message || 'Failed to create communication'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

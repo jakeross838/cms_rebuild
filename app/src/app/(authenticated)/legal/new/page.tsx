@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewContractTemplatePage() {
   const router = useRouter()
@@ -70,10 +71,13 @@ export default function NewContractTemplatePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Contract template created')
       router.push('/legal')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create contract template')
+      const errorMessage = (err as Error)?.message || 'Failed to create contract template'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

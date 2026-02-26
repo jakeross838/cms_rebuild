@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewFilePage() {
   const router = useRouter()
@@ -72,10 +73,13 @@ export default function NewFilePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Document added')
       router.push(`/jobs/${jobId}/files`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to add document')
+      const errorMessage = (err as Error)?.message || 'Failed to add document'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

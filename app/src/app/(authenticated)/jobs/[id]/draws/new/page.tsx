@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewDrawRequestPage() {
   const router = useRouter()
@@ -87,10 +88,13 @@ export default function NewDrawRequestPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Draw request created')
       router.push(`/jobs/${jobId}/draws`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create draw request')
+      const errorMessage = (err as Error)?.message || 'Failed to create draw request'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

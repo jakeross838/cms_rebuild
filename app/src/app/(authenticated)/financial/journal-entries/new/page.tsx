@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -164,10 +165,13 @@ export default function NewJournalEntryPage() {
 
       if (linesError) throw linesError
 
+      toast.success('Journal entry created')
       router.push('/financial/journal-entries')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create journal entry')
+      const errorMessage = (err as Error)?.message || 'Failed to create journal entry'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

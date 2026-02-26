@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewInventoryItemPage() {
   const router = useRouter()
@@ -69,10 +70,13 @@ export default function NewInventoryItemPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Inventory item created')
       router.push('/inventory')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to add inventory item')
+      const errorMessage = (err as Error)?.message || 'Failed to add inventory item'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

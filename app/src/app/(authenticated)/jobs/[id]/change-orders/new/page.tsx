@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewChangeOrderPage() {
   const router = useRouter()
@@ -72,10 +73,13 @@ export default function NewChangeOrderPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Change order created')
       router.push(`/jobs/${jobId}/change-orders`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create change order')
+      const errorMessage = (err as Error)?.message || 'Failed to create change order'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

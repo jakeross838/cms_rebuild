@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewEmployeePage() {
   const router = useRouter()
@@ -80,10 +81,13 @@ export default function NewEmployeePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Employee created')
       router.push('/hr')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create employee')
+      const errorMessage = (err as Error)?.message || 'Failed to create employee'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

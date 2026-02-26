@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface CompanyUser {
   id: string
@@ -126,10 +127,13 @@ export default function NewTeamMemberPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Team member added')
       router.push(`/jobs/${jobId}/team`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to add team member')
+      const errorMessage = (err as Error)?.message || 'Failed to add team member'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
