@@ -29,7 +29,7 @@ export const metadata: Metadata = { title: 'RFIs' }
 export default async function RfisPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; status?: string; page?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -43,12 +43,19 @@ export default async function RfisPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    subject: { column: 'subject', ascending: true },
+    status: { column: 'status', ascending: true },
+    due_date: { column: 'due_date', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'created_at', ascending: false }
+
   let query = supabase
     .from('rfis')
     .select('*, jobs(name)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
     query = query.or(`subject.ilike.%${escapeLike(params.search)}%,rfi_number.ilike.%${escapeLike(params.search)}%`)
@@ -83,6 +90,31 @@ export default async function RfisPage({
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <form><Input type="search" name="search" placeholder="Search RFIs..." aria-label="Search RFIs" defaultValue={params.search} className="pl-10" /></form>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Newest' },
+          { value: 'subject', label: 'Subject' },
+          { value: 'status', label: 'Status' },
+          { value: 'due_date', label: 'Due Date' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (params.status) sp.set('status', params.status)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/rfis${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       <Card>

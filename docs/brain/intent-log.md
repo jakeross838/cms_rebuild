@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Sort Controls, Missing CTAs, Invoice Job Context
+
+### Why
+1. List pages had no user-facing sort options — users couldn't reorder by name, value, or date
+2. Five list pages had empty states with no call-to-action — dead ends for new users
+3. "New Invoice" from job context lost the job_id — users had to manually re-select the job
+4. Communications page had no create form at all
+
+### What was done
+- Added sortMap + sort pill UI to 5 major list pages (jobs, clients, vendors, invoices, leads)
+- Added CTA buttons to 5 empty states (daily-logs, communications, crew-schedule, photos, schedule)
+- Created /communications/new/page.tsx with subject, message, type, priority, job selector
+- Made job-scoped "New Invoice" pass ?job_id= and invoice form pre-populate from it
+
+---
+
 ## 2026-02-25: Silent Failures, Date Formatting, Broken Routes, Job-Scoped Hardening
 
 ### Why

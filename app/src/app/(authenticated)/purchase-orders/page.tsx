@@ -28,7 +28,7 @@ export const metadata: Metadata = { title: 'Purchase Orders' }
 export default async function PurchaseOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; status?: string; page?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -42,12 +42,19 @@ export default async function PurchaseOrdersPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    total_amount: { column: 'total_amount', ascending: false },
+    status: { column: 'status', ascending: true },
+    delivery_date: { column: 'delivery_date', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'created_at', ascending: false }
+
   let query = supabase
     .from('purchase_orders')
     .select('id, po_number, title, status, total_amount, delivery_date, job_id, vendor_id, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.status) {
     query = query.eq('status', params.status)
@@ -130,20 +137,44 @@ export default async function PurchaseOrdersPage({
           </form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link
-              key={filter.value}
-              href={filter.value ? `/purchase-orders?status=${filter.value}` : '/purchase-orders'}
-            >
-              <Button
-                variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
-                size="sm"
-              >
-                {filter.label}
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            if (params.sort) sp.set('sort', params.sort)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/purchase-orders${qs ? `?${qs}` : ''}`}>
+                <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Newest' },
+          { value: 'total_amount', label: 'Amount' },
+          { value: 'status', label: 'Status' },
+          { value: 'delivery_date', label: 'Delivery Date' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (params.status) sp.set('status', params.status)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/purchase-orders${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
               </Button>
             </Link>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
       {/* Purchase orders list */}

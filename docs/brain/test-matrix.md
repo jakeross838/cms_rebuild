@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Sort Controls, Missing CTAs, Invoice Job Context (2026-02-25)
+
+### Sort Controls
+| Test | Expected |
+|------|----------|
+| Click "Name" sort on jobs page | Jobs reorder alphabetically, ?sort=name in URL |
+| Click "Contract Amount" sort | Jobs reorder by value descending |
+| Sort + search combined | Both ?sort= and ?search= preserved in URL |
+| Sort + status filter combined | Both ?sort= and ?status= preserved in URL |
+| Default (no sort param) | Shows "Newest" pill active, order by created_at desc |
+
+### Missing CTAs
+| Test | Expected |
+|------|----------|
+| Empty daily-logs page | Shows "Go to Jobs" button linking to /jobs |
+| Empty communications page | Shows "New Message" button linking to /communications/new |
+| Empty schedule page | Shows "New Job" button linking to /jobs/new |
+
+### Invoice Job Context
+| Test | Expected |
+|------|----------|
+| Click "New Invoice" from /jobs/[id]/invoices | URL is /invoices/new?job_id=XXX |
+| Invoice form with ?job_id= | Job dropdown pre-selected with that job |
+
+---
+
 ## Silent Failures, Date Formatting, Broken Routes, Job-Scoped (2026-02-25)
 
 ### Tenant Switcher Error Toasts

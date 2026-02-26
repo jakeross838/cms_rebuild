@@ -7,6 +7,7 @@ import { Plus, Search, Wrench } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatCurrency, getStatusColor } from '@/lib/utils'
 
@@ -30,9 +31,12 @@ export const metadata: Metadata = { title: 'Equipment' }
 export default async function EquipmentPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -41,13 +45,20 @@ export default async function EquipmentPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    name: { column: 'name', ascending: true },
+    status: { column: 'status', ascending: true },
+    equipment_type: { column: 'equipment_type', ascending: true },
+    daily_rate: { column: 'daily_rate', ascending: false },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'name', ascending: true }
 
   let query = supabase
     .from('equipment')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
-    .order('name', { ascending: true })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.status) {
     query = query.eq('status', params.status)
@@ -57,9 +68,12 @@ export default async function EquipmentPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,serial_number.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: equipmentData, error } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: equipmentData, count, error } = await query
   if (error) throw error
   const equipment = (equipmentData || []) as Equipment[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -85,12 +99,44 @@ export default async function EquipmentPage({
           <form><Input type="search" name="search" placeholder="Search equipment..." aria-label="Search equipment" defaultValue={params.search} className="pl-10" /></form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link key={filter.value} href={filter.value ? `/equipment?status=${filter.value}` : '/equipment'}>
-              <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
-            </Link>
-          ))}
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            if (params.sort) sp.set('sort', params.sort)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/equipment${qs ? `?${qs}` : ''}`}>
+                <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
+              </Link>
+            )
+          })}
         </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Name' },
+          { value: 'status', label: 'Status' },
+          { value: 'equipment_type', label: 'Type' },
+          { value: 'daily_rate', label: 'Daily Rate' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (params.status) sp.set('status', params.status)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/equipment${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
@@ -132,6 +178,7 @@ export default async function EquipmentPage({
           </div>
         )}
       </div>
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/equipment" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

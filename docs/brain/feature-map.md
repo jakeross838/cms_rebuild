@@ -1,5 +1,35 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Quality Hardening: Sort Controls, Missing CTAs, Invoice Job Context (2026-02-25)
+
+### Sort Controls (5 Major List Pages)
+- Jobs: Sort by Newest (default), Name, Contract Amount, Status — `?sort=name|contract_amount|status`
+- Clients: Sort by Newest, Name, City — `?sort=name|city`
+- Vendors: Sort by Newest, Name, Trade — `?sort=name|trade`
+- Invoices: Sort by Newest, Amount, Due Date, Status — `?sort=amount|due_date|status`
+- Leads: Sort by Newest, Name, Value, Status — `?sort=name|expected_contract_value|status`
+- Pattern: `sortMap` object → `.order(sort.column, { ascending })` → pill-style Link+Button UI
+- Sort pills preserve all other query params (search, status, page)
+
+### Missing CTA Buttons (5 List Pages)
+- Daily Logs empty state: "Go to Jobs" outline button → `/jobs`
+- Communications empty state: "New Message" button → `/communications/new`
+- Crew Schedule empty state: "Add Employee" button → `/hr/new`
+- Photos empty state: "Go to Jobs" outline button → `/jobs`
+- Schedule empty state: "New Job" button → `/jobs/new`
+
+### Communications Create Form
+- New page: `/communications/new/page.tsx`
+- Fields: subject, message, type (announcement/update/request/alert), priority, job selector dropdown
+- Job dropdown auto-populated from company's jobs
+- Redirects to /communications on success with toast
+
+### Invoice Job Context
+- "New Invoice" from `/jobs/[id]/invoices` now links to `/invoices/new?job_id=${jobId}`
+- Invoice create form reads `?job_id=` via useSearchParams and pre-selects job
+
+---
+
 ## Quality Hardening: Silent Failures, Date Formatting, Broken Routes (2026-02-25)
 
 ### Silent Error Toasts

@@ -43,7 +43,7 @@ function statusBadge(status: string | null) {
 export default async function LienWaiversPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -57,12 +57,19 @@ export default async function LienWaiversPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    amount: { column: 'amount', ascending: false },
+    status: { column: 'status', ascending: true },
+    claimant_name: { column: 'claimant_name', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'created_at', ascending: false }
+
   let query = supabase
     .from('lien_waivers')
     .select('id, waiver_type, status, amount, claimant_name, through_date, check_number, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
     query = query.ilike('claimant_name', `%${escapeLike(params.search)}%`)
@@ -106,6 +113,30 @@ export default async function LienWaiversPage({
             />
           </form>
         </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Newest' },
+          { value: 'amount', label: 'Amount' },
+          { value: 'status', label: 'Status' },
+          { value: 'claimant_name', label: 'Claimant' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/lien-waivers${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       {/* Waivers table */}

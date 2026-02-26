@@ -35,7 +35,7 @@ export const metadata: Metadata = { title: 'HR & Workforce' }
 export default async function HRWorkforcePage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -48,12 +48,19 @@ export default async function HRWorkforcePage({
   const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
   const companyId = profile?.company_id
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    last_name: { column: 'last_name', ascending: true },
+    hire_date: { column: 'hire_date', ascending: false },
+    employment_status: { column: 'employment_status', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'last_name', ascending: true }
+
   let empQuery = supabase
     .from('employees')
     .select('id, first_name, last_name, employee_number, employment_status, employment_type, email, phone, hire_date', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId!)
-    .order('last_name', { ascending: true })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
     empQuery = empQuery.or(`first_name.ilike.%${escapeLike(params.search)}%,last_name.ilike.%${escapeLike(params.search)}%,employee_number.ilike.%${escapeLike(params.search)}%`)
@@ -91,6 +98,29 @@ export default async function HRWorkforcePage({
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <form><Input type="search" name="search" placeholder="Search employees..." aria-label="Search employees" defaultValue={params.search} className="pl-10" /></form>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Name' },
+          { value: 'hire_date', label: 'Hire Date' },
+          { value: 'employment_status', label: 'Status' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/hr${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

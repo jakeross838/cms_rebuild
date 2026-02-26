@@ -61,7 +61,7 @@ function statusVariant(
 export default async function DrawRequestsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -75,6 +75,13 @@ export default async function DrawRequestsPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    created_at: { column: 'created_at', ascending: false },
+    status: { column: 'status', ascending: true },
+    current_due: { column: 'current_due', ascending: false },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'draw_number', ascending: false }
+
   let query = supabase
     .from('draw_requests')
     .select(
@@ -83,7 +90,7 @@ export default async function DrawRequestsPage({
     )
     .eq('company_id', companyId)
     .is('deleted_at', null)
-    .order('draw_number', { ascending: false })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
     query = query.ilike('lender_reference', `%${escapeLike(params.search)}%`)
@@ -127,6 +134,30 @@ export default async function DrawRequestsPage({
             />
           </form>
         </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Draw #' },
+          { value: 'created_at', label: 'Newest' },
+          { value: 'status', label: 'Status' },
+          { value: 'current_due', label: 'Current Due' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/draw-requests${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       {/* Table */}

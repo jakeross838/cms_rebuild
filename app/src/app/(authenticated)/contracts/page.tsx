@@ -30,7 +30,7 @@ export const metadata: Metadata = { title: 'Contracts' }
 export default async function ContractsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string; page?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string; sort?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -44,13 +44,19 @@ export default async function ContractsPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    contract_value: { column: 'contract_value', ascending: false },
+    status: { column: 'status', ascending: true },
+    title: { column: 'title', ascending: true },
+  }
+  const sort = sortMap[params.sort || ''] || { column: 'created_at', ascending: false }
 
   let query = supabase
     .from('contracts')
     .select('*, jobs(name)', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
-    .order('created_at', { ascending: false })
+    .order(sort.column, { ascending: sort.ascending })
 
   if (params.status) {
     query = query.eq('status', params.status)
@@ -91,12 +97,44 @@ export default async function ContractsPage({
           <form><Input type="search" name="search" placeholder="Search contracts..." aria-label="Search contracts" defaultValue={params.search} className="pl-10" /></form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-          {statusFilters.map((filter) => (
-            <Link key={filter.value} href={filter.value ? `/contracts?status=${filter.value}` : '/contracts'}>
-              <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
-            </Link>
-          ))}
+          {statusFilters.map((filter) => {
+            const sp = new URLSearchParams()
+            if (filter.value) sp.set('status', filter.value)
+            if (params.search) sp.set('search', params.search)
+            if (params.sort) sp.set('sort', params.sort)
+            const qs = sp.toString()
+            return (
+              <Link key={filter.value} href={`/contracts${qs ? `?${qs}` : ''}`}>
+                <Button variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'} size="sm">{filter.label}</Button>
+              </Link>
+            )
+          })}
         </div>
+      </div>
+
+      {/* Sort */}
+      <div className="flex gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground self-center">Sort:</span>
+        {[
+          { value: '', label: 'Newest' },
+          { value: 'contract_value', label: 'Value' },
+          { value: 'status', label: 'Status' },
+          { value: 'title', label: 'Title' },
+        ].map((s) => {
+          const sp = new URLSearchParams()
+          if (params.search) sp.set('search', params.search)
+          if (params.status) sp.set('status', params.status)
+          if (s.value) sp.set('sort', s.value)
+          if (params.page) sp.set('page', params.page)
+          const qs = sp.toString()
+          return (
+            <Link key={s.value} href={`/contracts${qs ? `?${qs}` : ''}`}>
+              <Button variant={(params.sort || '') === s.value ? 'default' : 'outline'} size="sm">
+                {s.label}
+              </Button>
+            </Link>
+          )
+        })}
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
