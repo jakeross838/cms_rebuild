@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -40,13 +41,14 @@ export function ArchiveJobButton({ jobId }: { jobId: string }) {
 
   return (
     <>
-      <button
+      <Button
         onClick={() => setShowArchiveDialog(true)}
         disabled={archiving}
-        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+        variant="outline"
+        className="text-destructive hover:text-destructive"
       >
         {archiving ? 'Archiving...' : 'Archive'}
-      </button>
+      </Button>
 
       <ConfirmDialog
         open={showArchiveDialog}
