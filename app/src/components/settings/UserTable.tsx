@@ -185,19 +185,19 @@ export function UserTable({
         <table className="w-full">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
+              <th scope="col" className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
                 User
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
+              <th scope="col" className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
                 Role
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
+              <th scope="col" className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
                 Status
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
+              <th scope="col" className="text-left px-4 py-3 text-sm font-medium text-muted-foreground">
                 Last Login
               </th>
-              <th className="text-right px-4 py-3 text-sm font-medium text-muted-foreground">
+              <th scope="col" className="text-right px-4 py-3 text-sm font-medium text-muted-foreground">
                 Actions
               </th>
             </tr>

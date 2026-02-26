@@ -147,9 +147,10 @@ export function PermissionGrid({ baseRole, selectedPermissions, onChange }: Perm
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/30">
-              <th className="text-left px-4 py-2 font-medium text-muted-foreground">Resource</th>
+              <th scope="col" className="text-left px-4 py-2 font-medium text-muted-foreground">Resource</th>
               {ACTIONS.map((action) => (
                 <th
+                  scope="col"
                   key={action.key}
                   className="text-center px-2 py-2 font-medium text-muted-foreground min-w-[70px]"
                 >
