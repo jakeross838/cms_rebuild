@@ -123,6 +123,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .eq('status', 'draft')
       .select('*')
       .single()
 

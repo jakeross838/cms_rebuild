@@ -88,6 +88,29 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
+    // Verify budget exists and is not locked/archived
+    const { data: existing, error: existError } = await supabase
+      .from('budgets')
+      .select('id, status')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Budget not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    if (existing.status === 'locked' || existing.status === 'archived') {
+      return NextResponse.json(
+        { error: 'Conflict', message: 'Locked or archived budgets cannot be updated', requestId: ctx.requestId },
+        { status: 409 }
+      )
+    }
+
     // Build update object (only include fields that were provided)
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.name !== undefined) updates.name = input.name
@@ -104,6 +127,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .eq('status', existing.status)
       .select('*')
       .single()
 

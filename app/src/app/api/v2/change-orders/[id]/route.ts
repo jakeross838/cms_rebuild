@@ -140,6 +140,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .in('status', ['draft', 'pending_approval'])
       .select('*')
       .single()
 

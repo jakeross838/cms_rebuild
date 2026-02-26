@@ -172,9 +172,10 @@ export const POST = createApiHandler(
       .single()
 
     if (receiptError) {
+      const mapped = mapDbError(receiptError)
       return NextResponse.json(
-        { error: 'Database Error', message: receiptError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -192,27 +193,19 @@ export const POST = createApiHandler(
       .select('*')
 
     if (linesError) {
+      const mapped = mapDbError(linesError)
       return NextResponse.json(
-        { error: 'Database Error', message: linesError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
-    // Update received_quantity on each PO line
+    // Atomically increment received_quantity on each PO line (prevents race conditions)
     for (const line of input.lines) {
-      const { data: poLine } = await supabase
-        .from('purchase_order_lines')
-        .select('received_quantity')
-        .eq('id', line.po_line_id)
-        .single()
-
-      if (poLine) {
-        const newReceived = Number(poLine.received_quantity) + line.quantity_received
-        await supabase
-          .from('purchase_order_lines')
-          .update({ received_quantity: newReceived, updated_at: new Date().toISOString() })
-          .eq('id', line.po_line_id)
-      }
+      await (supabase as any).rpc('increment_po_line_received', {
+        p_line_id: line.po_line_id,
+        p_quantity: line.quantity_received,
+      })
     }
 
     // Check if all PO lines are fully received, update PO status accordingly

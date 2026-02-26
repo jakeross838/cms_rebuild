@@ -127,9 +127,10 @@ export const POST = createApiHandler(
       .single()
 
     if (receiptError) {
+      const mapped = mapDbError(receiptError)
       return NextResponse.json(
-        { error: 'Database Error', message: receiptError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -146,36 +147,20 @@ export const POST = createApiHandler(
       .select('*')
 
     if (appError) {
+      const mapped = mapDbError(appError)
       return NextResponse.json(
-        { error: 'Database Error', message: appError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
-    // Update invoice balance_due and status for each applied invoice
+    // Atomically update invoice balance_due and status (prevents race conditions)
     for (const app of input.applications) {
-      // Get current invoice
-      const { data: invoice } = await supabase
-        .from('ar_invoices')
-        .select('balance_due, amount')
-        .eq('id', app.invoice_id)
-        .eq('company_id', ctx.companyId!)
-        .single()
-
-      if (invoice) {
-        const newBalance = Number(invoice.balance_due) - app.amount
-        const newStatus = newBalance <= 0.01 ? 'paid' : 'partially_paid'
-
-        await supabase
-          .from('ar_invoices')
-          .update({
-            balance_due: Math.max(0, newBalance),
-            status: newStatus,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', app.invoice_id)
-          .eq('company_id', ctx.companyId!)
-      }
+      await (supabase as any).rpc('apply_receipt_to_invoice', {
+        p_invoice_id: app.invoice_id,
+        p_company_id: ctx.companyId!,
+        p_amount: app.amount,
+      })
     }
 
     return NextResponse.json({
