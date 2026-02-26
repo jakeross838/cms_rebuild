@@ -109,7 +109,8 @@ export default async function TimeClockPage({
             <div className="text-center py-8">
               <Clock className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No time entries yet</p>
-              <p className="text-sm text-muted-foreground mt-1">Clock in to start tracking time</p>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">Clock in to start tracking time</p>
+              <Link href="/time-clock/new"><Button><Plus className="h-4 w-4 mr-2" />New Entry</Button></Link>
             </div>
           )}
         </CardContent>

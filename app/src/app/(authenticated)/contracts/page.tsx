@@ -170,6 +170,9 @@ export default async function ContractsPage({
             <p className="text-muted-foreground mb-4">
               {params.search || params.status ? 'Try adjusting your filters' : 'Create your first contract'}
             </p>
+            {!params.search && !params.status && (
+              <Link href="/contracts/new"><Button><Plus className="h-4 w-4 mr-2" />New Contract</Button></Link>
+            )}
           </div>
         )}
       </div>

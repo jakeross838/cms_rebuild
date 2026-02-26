@@ -114,7 +114,8 @@ export default async function WarrantyClaimsPage({
             <div className="text-center py-8">
               <ShieldAlert className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No warranty claims</p>
-              <p className="text-sm text-muted-foreground mt-1">All warranties in good standing</p>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">All warranties in good standing</p>
+              <Link href="/warranty-claims/new"><Button><Plus className="h-4 w-4 mr-2" />New Claim</Button></Link>
             </div>
           )}
         </CardContent>

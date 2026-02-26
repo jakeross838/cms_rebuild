@@ -175,6 +175,9 @@ export default async function EquipmentPage({
             <p className="text-muted-foreground mb-4">
               {params.search || params.status ? 'Try adjusting your filters' : 'Start tracking your equipment and tools'}
             </p>
+            {!params.search && !params.status && (
+              <Link href="/equipment/new"><Button><Plus className="h-4 w-4 mr-2" />Add Equipment</Button></Link>
+            )}
           </div>
         )}
       </div>
