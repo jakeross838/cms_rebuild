@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { UserRole, User } from '@/types/database'
+import { toast } from 'sonner'
 
 interface UserTableProps {
   search?: string
@@ -119,7 +120,7 @@ export function UserTable({
       onStatusChange()
     } catch (err) {
       console.error('Deactivate error:', err)
-      alert((err as Error)?.message || 'Failed to deactivate user')
+      toast.error((err as Error)?.message || 'Failed to deactivate user')
     } finally {
       setActionLoading(null)
     }
@@ -142,7 +143,7 @@ export function UserTable({
       onStatusChange()
     } catch (err) {
       console.error('Reactivate error:', err)
-      alert((err as Error)?.message || 'Failed to reactivate user')
+      toast.error((err as Error)?.message || 'Failed to reactivate user')
     } finally {
       setActionLoading(null)
     }

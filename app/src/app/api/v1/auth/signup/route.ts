@@ -162,8 +162,6 @@ export const POST = createApiHandler(
         user_agent: req.headers.get('user-agent') ?? null,
         metadata: { email, company_name: finalCompanyName },
       } as never)
-      console.log('[Signup] User signed up:', { email, company_name: finalCompanyName })
-
       // Step 8: Send verification email via Supabase (it handles this automatically on createUser with email_confirm: false)
       // Also send welcome email via Resend
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
