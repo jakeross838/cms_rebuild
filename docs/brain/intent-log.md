@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 9 — Rate Limits, Audit Actions, Pagination Hardening
+
+### Why
+1. **17+ financial routes using standard 'api' rate limit** — Budget, change order, cost transaction, invoice extraction, lien waiver, PO, and payroll endpoints had the lenient 'api' tier instead of the stricter 'financial' tier, allowing higher request rates on sensitive financial operations.
+2. **20+ financial/security write operations missing audit trail** — API key CRUD, cost transactions, invoice extractions, PO approvals/receipts/lines, budget lines, and lien waiver templates/tracking had no `auditAction` in createApiHandler, meaning these operations weren't recorded in the audit log.
+3. **5 sub-resource list endpoints returned unbounded arrays** — Document versions, daily log entries/photos/labor, and punch item photos returned ALL records without pagination, risking large payload sizes and slow responses.
+4. **3 cross-tenant data exposure gaps** — Documents UPDATE, ai_feedback SELECT, and dashboard_widgets SELECT were missing company_id filters, allowing potential cross-tenant data access.
+
+### What was done
+- Changed `rateLimit: 'api'` → `rateLimit: 'financial'` on 35 financial route files across 2 commits
+- Added `auditAction` to 20+ financial/security write operations across 18 files
+- Added pagination (`getPaginationParams` + `paginatedResponse`) to 5 sub-resource GET endpoints
+- Added `.eq('company_id', ctx.companyId!)` to 3 queries with cross-tenant gaps
+- Ran 6 comprehensive scans (all clean): input validation, error responses, soft-delete filters, HTTP method consistency, list endpoint pagination, deleted_at coverage
+
+### Commits
+- `e0e7f77` — Apply financial rate limit tier to all financial v2 routes (17 files)
+- `42e80de` — Add audit actions to financial/security write routes + fix remaining rate limits (18 files)
+- `a26c6f3` — Add pagination to 5 sub-resource list endpoints
+
 ## 2026-02-26: Session 8 — V2 Soft-Delete, Sensitive Data, Unhandled Operations
 
 ### Why

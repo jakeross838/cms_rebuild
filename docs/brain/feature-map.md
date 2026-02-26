@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 9 — Rate Limits, Audit Actions, Pagination, Cross-Tenant (2026-02-26)
+
+### Financial Rate Limit Tier Hardening (35 files total)
+- **17 files (first pass):** budgets (2), change-orders (4), cost-transactions (1), invoice-extractions (4), lien-waivers (2), purchase-orders (1), payroll (3) — all changed `rateLimit: 'api'` → `rateLimit: 'financial'`
+- **18 files (second pass):** PO sub-routes (approve/send/receipts/lines/[lineId]), budget lines, lien-waiver-templates, lien-waiver-tracking — same rate limit fix plus audit actions
+
+### Audit Action Coverage (18 files, 20+ actions)
+- **Security-critical:** `api_key.create`, `api_key.update`, `api_key.revoke` — all API key operations now audit-logged
+- **Financial:** `cost_transaction.create`, `extraction.create`, `extraction.update`, `extraction.review`, `extraction.create_bill`, `po.approve`, `po.send`, `po_receipt.create`, `po_line.create`, `po_line.update`, `po_line.archive`, `budget_line.update`, `budget_line.archive`, `lien_waiver_template.create`, `lien_waiver_template.update`, `lien_waiver_template.archive`, `lien_waiver_tracking.create`
+
+### Cross-Tenant Security (3 files — from Session 8 continuation)
+- documents/[id]/versions PUT: Added `.eq('company_id', ctx.companyId!)` to documents UPDATE
+- ai-documents/extractions/[id] GET: Added `.eq('company_id', ctx.companyId!)` to ai_feedback SELECT
+- advanced-reports/dashboards/[id] GET: Added `.eq('company_id', ctx.companyId!)` to dashboard_widgets SELECT
+
+### Pagination Added to Sub-Resource Endpoints (5 files)
+- `/api/v2/documents/:id/versions` GET — now uses `getPaginationParams` + `paginatedResponse`
+- `/api/v2/daily-logs/:id/entries` GET — now paginated
+- `/api/v2/daily-logs/:id/photos` GET — now paginated
+- `/api/v2/daily-logs/:id/labor` GET — now paginated
+- `/api/v2/punch-list/:id/photos` GET — now paginated
+
+### Scans Completed (All Clean)
+- **Input validation:** All 396+ POST/PUT handlers use Zod safeParse — zero gaps
+- **Error response consistency:** All 430 route files use `{ error, message, requestId }` pattern — zero gaps
+- **Soft-delete on list endpoints:** All GET list routes have `.is('deleted_at', null)` where applicable — zero gaps
+- **HTTP method consistency:** All 430 route files use correct export patterns (GET+POST parent, GET+PUT+DELETE child) — zero deviations
+
 ## Session 8 — V2 Soft-Delete, Sensitive Data, Unhandled Operations (2026-02-26)
 
 ### V2 Soft-Delete Filter Fixes (6 files, 12 queries)

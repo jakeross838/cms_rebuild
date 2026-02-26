@@ -1,5 +1,60 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 9 — Rate Limits, Audit Actions, Pagination (2026-02-26)
+
+### Financial Rate Limit Tier
+- [ ] GET /api/v2/budgets — uses 'financial' rate limit
+- [ ] GET /api/v2/change-orders — uses 'financial' rate limit
+- [ ] POST /api/v2/cost-transactions — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/invoice-extractions — uses 'financial' rate limit
+- [ ] PUT /api/v2/invoice-extractions/:id — uses 'financial' rate limit
+- [ ] POST /api/v2/invoice-extractions/:id/create-bill — uses 'financial' rate limit
+- [ ] POST /api/v2/invoice-extractions/:id/review — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/payroll/periods — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/payroll/exports — uses 'financial' rate limit
+- [ ] POST /api/v2/purchase-orders/:id/approve — uses 'financial' rate limit
+- [ ] POST /api/v2/purchase-orders/:id/send — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/purchase-orders/:id/lines — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/purchase-orders/:id/receipts — uses 'financial' rate limit
+- [ ] GET /api/v2/budgets/:id/lines — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/lien-waiver-templates — uses 'financial' rate limit
+- [ ] GET/POST /api/v2/lien-waiver-tracking — uses 'financial' rate limit
+
+### Audit Actions
+- [ ] POST /api/v2/api-keys — triggers 'api_key.create' audit
+- [ ] PUT /api/v2/api-keys/:id — triggers 'api_key.update' audit
+- [ ] DELETE /api/v2/api-keys/:id — triggers 'api_key.revoke' audit
+- [ ] POST /api/v2/cost-transactions — triggers 'cost_transaction.create' audit
+- [ ] POST /api/v2/invoice-extractions — triggers 'extraction.create' audit
+- [ ] PUT /api/v2/invoice-extractions/:id — triggers 'extraction.update' audit
+- [ ] POST /api/v2/invoice-extractions/:id/create-bill — triggers 'extraction.create_bill' audit
+- [ ] PUT /api/v2/invoice-extractions/:id/review — triggers 'extraction.review' audit
+- [ ] POST /api/v2/purchase-orders/:id/approve — triggers 'po.approve' audit
+- [ ] POST /api/v2/purchase-orders/:id/send — triggers 'po.send' audit
+- [ ] POST /api/v2/purchase-orders/:id/receipts — triggers 'po_receipt.create' audit
+- [ ] POST /api/v2/purchase-orders/:id/lines — triggers 'po_line.create' audit
+- [ ] PUT /api/v2/purchase-orders/:id/lines/:lineId — triggers 'po_line.update' audit
+- [ ] DELETE /api/v2/purchase-orders/:id/lines/:lineId — triggers 'po_line.archive' audit
+- [ ] PUT /api/v2/budgets/:id/lines/:lineId — triggers 'budget_line.update' audit
+- [ ] DELETE /api/v2/budgets/:id/lines/:lineId — triggers 'budget_line.archive' audit
+- [ ] POST /api/v2/lien-waiver-templates — triggers 'lien_waiver_template.create' audit
+- [ ] PUT /api/v2/lien-waiver-templates/:id — triggers 'lien_waiver_template.update' audit
+- [ ] DELETE /api/v2/lien-waiver-templates/:id — triggers 'lien_waiver_template.archive' audit
+- [ ] POST /api/v2/lien-waiver-tracking — triggers 'lien_waiver_tracking.create' audit
+
+### Pagination on Sub-Resources
+- [ ] GET /api/v2/documents/:id/versions — returns paginated response with page/limit/total
+- [ ] GET /api/v2/daily-logs/:id/entries — returns paginated response
+- [ ] GET /api/v2/daily-logs/:id/photos — returns paginated response
+- [ ] GET /api/v2/daily-logs/:id/labor — returns paginated response
+- [ ] GET /api/v2/punch-list/:id/photos — returns paginated response
+- [ ] GET /api/v2/documents/:id/versions?page=2&limit=5 — second page returns correct offset
+
+### Cross-Tenant Security
+- [ ] POST /api/v2/documents/:id/versions — document UPDATE includes company_id filter
+- [ ] GET /api/v2/ai-documents/extractions/:id — ai_feedback query includes company_id filter
+- [ ] GET /api/v2/advanced-reports/dashboards/:id — dashboard_widgets query includes company_id filter
+
 ## Session 8 — V2 Soft-Delete, Sensitive Data, Unhandled Operations (2026-02-26)
 
 ### V2 Soft-Delete Filters
