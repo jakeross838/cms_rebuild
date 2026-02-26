@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 14 — Rate Limit Fix + RLS Hardening (2026-02-26)
+
+### Rate Limit Double-Counting Fix
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Authenticated request increments IP counter exactly once | `memoryStore` shows count=1 after 1 request | verify |
+| Post-auth check only runs checkUserRateLimit + checkCompanyRateLimit | No redundant IP check in post-auth path | pass (code review) |
+| Company aggregate limit enforced at 1000 req/min | Request #1001 from same company returns 429 | verify |
+| User limit enforced per endpoint type | API=100, financial=30, auth=10, heavy=10 | verify |
+| Trusted requests skip all rate limiting | isTrustedRequest() true → no rate limit checks | verify |
+
+### RLS DELETE Policy Removal
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero DELETE policies in pg_policies | `SELECT COUNT(*) WHERE cmd='DELETE'` = 0 | pass |
+| Supabase client `.delete()` call fails with RLS error | 42501 insufficient privilege | verify |
+| Service role can still hard-delete (bypasses RLS) | DELETE succeeds with service_role | verify |
+| All API DELETE endpoints use UPDATE deleted_at (not .delete()) | Code audit confirms soft-delete pattern | pass (code review) |
+
+### Previous Audit Confirmations
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero tables with RLS but no policies | pg_class + pg_policies join returns 0 | pass |
+| Zero write policies with USING(true) | pg_policies query returns 0 | pass |
+| .env.local not tracked in git | `git ls-files app/.env.local` returns empty | pass |
+
 ## Session 13 — N+1 Fixes + Structured Logging (2026-02-26)
 
 ### Structured Logging (14 fixes across 12 files)

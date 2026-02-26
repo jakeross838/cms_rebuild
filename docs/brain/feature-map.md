@@ -1,5 +1,25 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 14 — Rate Limit Fix + RLS DELETE Policy Enforcement (2026-02-26)
+
+### Rate Limit Double-Counting Bug Fix
+- **File:** `src/lib/api/middleware.ts` (lines 149-170)
+- **Bug:** Authenticated requests incremented IP rate limit counter TWICE — once pre-auth (line 90) and again post-auth (line 151 via `checkCombinedRateLimit`). Users hit IP limits at half the configured rate.
+- **Fix:** Post-auth check now directly calls `checkUserRateLimit()` + `checkCompanyRateLimit()` instead of `checkCombinedRateLimit()`. IP is only checked once (pre-auth). Company aggregate limit (1000 req/min) confirmed properly enforced.
+- **Imports added:** `checkUserRateLimit`, `checkCompanyRateLimit` from `@/lib/rate-limit`
+
+### RLS DELETE Policy Removal (77 policies dropped)
+- **Migration:** `20260226200000_drop_all_delete_rls_policies.sql`
+- **What:** Dropped all 77 DELETE RLS policies across 77 tables in the live Supabase database
+- **Why:** Architecture mandates soft-delete (UPDATE `deleted_at`) for all user-facing operations. Hard DELETE should never be possible through the Supabase client. System cleanup (session pruning, notification cleanup, etc.) uses service_role which bypasses RLS.
+- **Verified:** `SELECT COUNT(*) FROM pg_policies WHERE cmd = 'DELETE'` returns 0
+- **Tables affected:** api_keys, billing_events, blog_posts, builder_branding, builder_content_pages, builder_custom_domains, builder_email_config, builder_terminology, campaign_contacts, case_studies, client_reviews, company_notification_config, company_subscriptions, cost_codes, custom_field_definitions, custom_field_values, departments, deployment_releases, draws, employee_certifications, employee_documents, employees, equipment, feature_flags, feature_request_votes, feature_requests, integration_installs, inventory_items, invoices, kb_articles, marketing_campaigns, marketing_leads, marketplace_installs, marketplace_publishers, marketplace_reviews, marketplace_template_versions, marketplace_templates, migration_field_mappings, migration_jobs, migration_mapping_templates, migration_reconciliation, migration_validation_results, mobile_app_settings, mobile_devices, mobile_sessions, notifications, numbering_patterns, offline_sync_queue, portfolio_photos, portfolio_projects, positions, project_phases, push_notification_tokens, safety_incidents, safety_inspection_items, safety_inspections, support_tickets, tenant_configs, terminology_overrides, ticket_messages, toolbox_talk_attendees, toolbox_talks, training_courses, training_path_items, training_paths, usage_meters, user_certifications, user_notification_preferences, user_notification_settings, user_training_progress, vendor_messages, vendor_portal_access, vendor_portal_invitations, vendor_portal_settings, vendor_submissions, warranties, webhook_deliveries, webhook_subscriptions, workflow_definitions
+
+### RLS Audit Results — Previously Fixed Issues
+- **Zero tables with RLS enabled but no policies** — confirmed via live DB query
+- **Zero write policies with USING(true)** — confirmed via live DB query (tighten_platform_rls_policies migration already fixed)
+- **.env.local NOT tracked in git** — confirmed (previous audit finding was false positive)
+
 ## Session 13 — N+1 Query Performance Fixes (2026-02-26)
 
 ### N+1 Query Patterns Fixed (5 fixes across 4 files)

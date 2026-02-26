@@ -13,6 +13,8 @@ import { canPerform, resolvePermissions } from '@/lib/auth/permissions'
 import { recordMetric, createLogger, recordAudit } from '@/lib/monitoring'
 import {
   checkCombinedRateLimit,
+  checkUserRateLimit,
+  checkCompanyRateLimit,
   applyRateLimitHeaders,
   isTrustedRequest,
   type RATE_LIMITS,
@@ -147,14 +149,9 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         ctx.companyId = profile.company_id
 
         // 3. Post-auth rate limiting (user + company scoped)
+        // IP was already checked pre-auth — only check user + company here to avoid double-counting
         if (!trusted) {
-          const userResult = await checkCombinedRateLimit(
-            req,
-            ctx.user.id,
-            ctx.companyId,
-            rateLimit
-          )
-
+          const userResult = await checkUserRateLimit(ctx.user.id, rateLimit)
           if (!userResult.success) {
             const response = NextResponse.json(
               {
@@ -165,6 +162,21 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
               { status: 429 }
             )
             return applyRateLimitHeaders(response, userResult)
+          }
+
+          if (ctx.companyId) {
+            const companyResult = await checkCompanyRateLimit(ctx.companyId)
+            if (!companyResult.success) {
+              const response = NextResponse.json(
+                {
+                  error: 'Too Many Requests',
+                  message: `Rate limit exceeded. Retry after ${companyResult.retryAfter} seconds.`,
+                  requestId,
+                },
+                { status: 429 }
+              )
+              return applyRateLimitHeaders(response, companyResult)
+            }
           }
         }
 

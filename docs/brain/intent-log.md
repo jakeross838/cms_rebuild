@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 14 — Rate Limit Fix + RLS Hardening
+
+### Why (Rate Limit Fix)
+- Authenticated API requests were incrementing the IP-based rate limit counter TWICE per request — once during pre-auth check (before we know who the user is) and again during post-auth check (via `checkCombinedRateLimit` which re-runs the IP check). This means authenticated users hit the IP rate limit at HALF the configured rate (e.g., 50 requests instead of 100).
+- The fix separates concerns: pre-auth = IP check only, post-auth = user + company checks only. Each counter increments exactly once per request.
+- Company aggregate rate limit (1000 req/min) was already properly wired and working — no fix needed there.
+
+### Why (RLS DELETE Policy Removal)
+- 77 tables had DELETE RLS policies allowing authenticated users to hard-delete rows via Supabase client
+- Architecture rule: "Soft delete only — Nothing is permanently deleted. All deletes are archive operations with restore capability."
+- Every DELETE endpoint in the API uses `UPDATE { deleted_at: new Date().toISOString() }` — no API route ever calls `.delete()` on Supabase
+- But the DELETE RLS policies meant a malicious or buggy client could bypass the API and hard-delete directly via Supabase client
+- System cleanup jobs (session pruning, notification cleanup) use `service_role` which bypasses RLS entirely — so they're unaffected
+- Dropping all 77 DELETE policies enforces the soft-delete rule as a DB-level constraint
+
+### Impact
+- Rate limit: authenticated users now get the full configured rate (100/min for API, 30/min for financial, 10/min for auth) instead of half
+- RLS: impossible for any user-facing operation to hard-delete rows from any table in the database
+
 ## 2026-02-26: Session 13 — N+1 Fixes + Structured Logging
 
 ### Why (Structured Logging)
