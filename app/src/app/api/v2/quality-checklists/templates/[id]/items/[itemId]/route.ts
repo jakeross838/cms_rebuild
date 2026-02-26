@@ -79,6 +79,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', itemId)
       .eq('template_id', templateId)
+      .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
 
