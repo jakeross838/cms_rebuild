@@ -45,6 +45,7 @@ export const GET = createApiHandler(
       .from('schedule_baselines')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('job_id', filters.job_id)
 
     query = query.order('created_at', { ascending: false })
