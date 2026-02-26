@@ -1,5 +1,18 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Soft Delete Enforcement (2026-02-26)
+
+### Soft Delete on Child Tables
+| Route | Test | Expected |
+|-------|------|----------|
+| DELETE /api/v2/vendors/:id/contacts/:cid | Delete a contact | Record has deleted_at set, still in DB |
+| GET /api/v2/vendors/:id/contacts/:cid | After soft delete | 404 Not Found (filtered out) |
+| DELETE /api/v2/equipment/assignments/:id | Delete assignment | Record archived, not destroyed |
+| DELETE /api/v2/rfis/:id/responses/:rid | Delete RFI response | deleted_at set, excluded from GETs |
+| PUT on any soft-deleted child record | Update after delete | 404 (filtered by deleted_at) |
+
+---
+
 ## Rate Limit Tiering, JSON Parse Safety (2026-02-26)
 
 ### Financial Rate Limits

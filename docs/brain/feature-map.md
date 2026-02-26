@@ -1,5 +1,19 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Soft Delete Enforcement, Query Optimization (2026-02-26)
+
+### Soft Delete Migration (18 child tables)
+- DB migration `add_deleted_at_to_child_tables` applied — added `deleted_at TIMESTAMPTZ` + partial indexes
+- Tables: vendor_contacts, vendor_insurance, equipment_assignments/costs/inspections/maintenance, budget_lines, change_order_items, contract_signers, lead_activities, purchase_order_lines, quality_checklist_items, rfi_responses, custom_report_widgets, dashboard_widgets, saved_filters, bid_comparisons, ticket_messages
+- All 18 DELETE handlers converted from `.delete()` to `.update({ deleted_at })`
+- GET/PUT handlers now filter `.is('deleted_at', null)`
+- Note: Line-item replace-on-update tables (ap_bill_lines, ar_invoice_lines, gl_journal_lines, etc.) intentionally kept as hard delete
+
+### Billing Page Query Optimization
+- Parallelized subscription + billing events queries with Promise.all()
+
+---
+
 ## Rate Limit Tiering, JSON Parse Safety (2026-02-26)
 
 ### Financial Rate Limits (29 route files, 57 handlers)

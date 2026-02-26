@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Soft Delete Enforcement, Query Optimization
+
+### Why
+1. 44 API routes used hard `.delete()` — violates arch rule "nothing permanently deleted"
+2. 18 child tables (vendor_contacts, equipment_*, budget_lines, etc.) lacked `deleted_at` column
+3. Billing page ran subscription + events queries sequentially instead of in parallel
+
+### What was done
+- Applied DB migration adding `deleted_at TIMESTAMPTZ` + partial indexes to 18 child tables
+- Converted 18 DELETE handlers to soft delete: `.update({ deleted_at })` with `.is('deleted_at', null)` guard
+- Added `.is('deleted_at', null)` to GET/PUT handlers on those tables
+- Note: 6 line-item tables (bill_lines, invoice_lines, journal_lines, etc.) kept as hard delete — these are replaced-on-update, not user-facing deletes
+- Parallelized billing page queries with Promise.all()
+
+---
+
 ## 2026-02-26: Rate Limit Tiering, JSON Parse Safety
 
 ### Why
