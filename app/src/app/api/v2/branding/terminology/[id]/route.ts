@@ -104,7 +104,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/branding/terminology/:id — Hard delete
+// DELETE /api/v2/branding/terminology/:id — Soft delete (archive)
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -136,7 +136,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('builder_terminology')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

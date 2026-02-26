@@ -24,6 +24,7 @@ export const GET = createApiHandler(
       .from('document_folders')
       .select('*')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true })
 

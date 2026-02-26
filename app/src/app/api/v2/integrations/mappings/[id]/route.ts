@@ -113,7 +113,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('sync_mappings')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
