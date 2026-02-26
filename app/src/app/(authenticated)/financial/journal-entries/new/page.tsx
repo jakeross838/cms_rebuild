@@ -274,6 +274,7 @@ export default function NewJournalEntryPage() {
                     <tr key={index} className="border-b last:border-0">
                       <td className="py-2 pr-2">
                         <select
+                          aria-label="Account"
                           value={line.account_id}
                           onChange={(e) => handleLineChange(index, 'account_id', e.target.value)}
                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
