@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { createDependencySchema } from '@/lib/validation/schemas/scheduling'
 
@@ -136,9 +136,10 @@ export const POST = createApiHandler(
           { status: 409 }
         )
       }
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

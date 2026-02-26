@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updateDashboardWidgetSchema } from '@/lib/validation/schemas/advanced-reporting'
 
@@ -103,9 +103,10 @@ export const DELETE = createApiHandler(
       .is('deleted_at', null)
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

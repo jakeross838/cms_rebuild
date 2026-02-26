@@ -13,6 +13,7 @@ import {
   paginatedResponse,
   type ApiContext,
 } from '@/lib/api/middleware'
+import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { listPurchaseOrderLinesSchema, createPurchaseOrderLineSchema } from '@/lib/validation/schemas/purchase-orders'
 
@@ -81,9 +82,10 @@ export const GET = createApiHandler(
       .range(offset, offset + limit - 1)
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -151,9 +153,10 @@ export const POST = createApiHandler(
       .single()
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

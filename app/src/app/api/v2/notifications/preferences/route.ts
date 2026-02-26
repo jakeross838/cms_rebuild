@@ -7,7 +7,7 @@
 
 import { NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updatePreferencesSchema } from '@/lib/validation/schemas/notifications'
 
@@ -29,9 +29,10 @@ export const GET = createApiHandler(
       .eq('company_id', ctx.companyId!) as unknown as { data: PreferenceRow[] | null; error: { message: string } | null }
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -67,9 +68,10 @@ export const PUT = createApiHandler(
       .upsert(records, { onConflict: 'user_id,company_id,category,channel' })
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

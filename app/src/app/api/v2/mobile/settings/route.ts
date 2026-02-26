@@ -7,7 +7,7 @@
 
 import { NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updateMobileSettingsSchema } from '@/lib/validation/schemas/mobile-app'
 
@@ -108,10 +108,11 @@ export const PUT = createApiHandler(
         .single()
 
       if (error) {
-        return NextResponse.json(
-          { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-          { status: 500 }
-        )
+        const mapped = mapDbError(error)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
       }
 
       return NextResponse.json({ data, requestId: ctx.requestId })
@@ -140,10 +141,11 @@ export const PUT = createApiHandler(
         .single()
 
       if (error) {
-        return NextResponse.json(
-          { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-          { status: 500 }
-        )
+        const mapped = mapDbError(error)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
       }
 
       return NextResponse.json({ data, requestId: ctx.requestId })

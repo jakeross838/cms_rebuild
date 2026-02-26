@@ -11,6 +11,7 @@ import {
   createApiHandler,
   type ApiContext,
 } from '@/lib/api/middleware'
+import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { batchCreateDrawLinesSchema } from '@/lib/validation/schemas/draw-requests'
 
@@ -52,9 +53,10 @@ export const GET = createApiHandler(
       .order('sort_order', { ascending: true })
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
