@@ -167,5 +167,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
 
 export const POST = createApiHandler(handlePost, {
   requireAuth: true,
+  requiredRoles: ['owner', 'admin', 'pm'],
   schema: previewSchema,
+  auditAction: 'settings.numbering.preview',
 })
