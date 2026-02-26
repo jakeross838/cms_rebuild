@@ -16,7 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 import { createJobSchema, listJobsSchema, type CreateJobInput } from '@/lib/validation/schemas/jobs'
 import type { Job } from '@/types/database'
 
@@ -89,8 +89,7 @@ export const GET = createApiHandler(
       query = query.eq('client_id', filters.client_id) as typeof query
     }
     if (filters.search) {
-      const term = `%${escapeLike(filters.search)}%`
-      query = query.or(`name.ilike.${term},job_number.ilike.${term}`) as typeof query
+      query = query.or(`name.ilike.${safeOrIlike(filters.search)},job_number.ilike.${safeOrIlike(filters.search)}`) as typeof query
     }
     if (filters.startDate) {
       query = query.gte('start_date', filters.startDate) as typeof query

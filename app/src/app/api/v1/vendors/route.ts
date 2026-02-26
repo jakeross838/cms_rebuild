@@ -16,7 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 import { createVendorSchema, listVendorsSchema, type CreateVendorInput } from '@/lib/validation/schemas/vendors'
 import type { Vendor } from '@/types/database'
 
@@ -72,8 +72,7 @@ export const GET = createApiHandler(
       query = query.eq('trade', filters.trade) as typeof query
     }
     if (filters.search) {
-      const term = `%${escapeLike(filters.search)}%`
-      query = query.or(`name.ilike.${term},dba_name.ilike.${term}`) as typeof query
+      query = query.or(`name.ilike.${safeOrIlike(filters.search)},dba_name.ilike.${safeOrIlike(filters.search)}`) as typeof query
     }
 
     // Sort and paginate

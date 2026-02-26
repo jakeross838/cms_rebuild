@@ -16,7 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 import { createClientSchema, listClientsSchema, type CreateClientInput } from '@/lib/validation/schemas/clients'
 import type { Client } from '@/types/database'
 
@@ -72,8 +72,7 @@ export const GET = createApiHandler(
       query = query.eq('lead_source', filters.lead_source) as typeof query
     }
     if (filters.search) {
-      const term = `%${escapeLike(filters.search)}%`
-      query = query.or(`name.ilike.${term},email.ilike.${term}`) as typeof query
+      query = query.or(`name.ilike.${safeOrIlike(filters.search)},email.ilike.${safeOrIlike(filters.search)}`) as typeof query
     }
 
     // Sort and paginate

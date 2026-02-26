@@ -342,8 +342,10 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
  */
 export function getPaginationParams(req: NextRequest) {
   const url = req.nextUrl
-  const page = parseInt(url.searchParams.get('page') || '1', 10)
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '20', 10), 100)
+  const rawPage = parseInt(url.searchParams.get('page') || '1', 10)
+  const rawLimit = parseInt(url.searchParams.get('limit') || '20', 10)
+  const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1
+  const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, 100) : 20
   const offset = (page - 1) * limit
 
   return { page, limit, offset }

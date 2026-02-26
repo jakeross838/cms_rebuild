@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 import type { SearchResult, SearchResultGroup, SearchResponse } from '@/types/search'
 import { searchQuerySchema } from '@/lib/validation/schemas/search'
 
@@ -42,8 +42,6 @@ export const GET = createApiHandler(
     const { q, types, limit } = parseResult.data
     const companyId = ctx.companyId!
     const supabase = await createClient()
-    const term = `%${escapeLike(q)}%`
-
     const entityTypes = types ?? ['jobs', 'clients', 'vendors', 'invoices']
 
     const queries: Promise<SearchResultGroup>[] = []
@@ -56,7 +54,7 @@ export const GET = createApiHandler(
             .select('id, name, job_number, address, status', { count: 'exact' })
             .eq('company_id', companyId)
             .is('deleted_at', null)
-            .or(`name.ilike.${term},job_number.ilike.${term},address.ilike.${term}`)
+            .or(`name.ilike.${safeOrIlike(q)},job_number.ilike.${safeOrIlike(q)},address.ilike.${safeOrIlike(q)}`)
             .order('updated_at', { ascending: false })
             .limit(limit) as unknown as { data: JobRow[] | null; count: number | null }
 
@@ -82,7 +80,7 @@ export const GET = createApiHandler(
             .select('id, name, email, company_name', { count: 'exact' })
             .eq('company_id', companyId)
             .is('deleted_at', null)
-            .or(`name.ilike.${term},email.ilike.${term},company_name.ilike.${term}`)
+            .or(`name.ilike.${safeOrIlike(q)},email.ilike.${safeOrIlike(q)},company_name.ilike.${safeOrIlike(q)}`)
             .order('updated_at', { ascending: false })
             .limit(limit) as unknown as { data: ClientRow[] | null; count: number | null }
 
@@ -108,7 +106,7 @@ export const GET = createApiHandler(
             .select('id, name, email, trade, company_name', { count: 'exact' })
             .eq('company_id', companyId)
             .is('deleted_at', null)
-            .or(`name.ilike.${term},email.ilike.${term},trade.ilike.${term},company_name.ilike.${term}`)
+            .or(`name.ilike.${safeOrIlike(q)},email.ilike.${safeOrIlike(q)},trade.ilike.${safeOrIlike(q)},company_name.ilike.${safeOrIlike(q)}`)
             .order('updated_at', { ascending: false })
             .limit(limit) as unknown as { data: VendorRow[] | null; count: number | null }
 
@@ -134,7 +132,7 @@ export const GET = createApiHandler(
             .select('id, invoice_number, amount, status', { count: 'exact' })
             .eq('company_id', companyId)
             .is('deleted_at', null)
-            .or(`invoice_number.ilike.${term}`)
+            .or(`invoice_number.ilike.${safeOrIlike(q)}`)
             .order('updated_at', { ascending: false })
             .limit(limit) as unknown as { data: InvoiceRow[] | null; count: number | null }
 
