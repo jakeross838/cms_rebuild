@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Executive Dashboard & Quality Fixes
+
+### Why
+1. Landing page showed custom reports list — not a useful overview for daily work
+2. Found 4 more dropdown tenant leaks and 2 detail page query leaks
+3. Currency fields lacked min="0" validation
+4. Job detail counts included archived records
+
+### What was done
+- Built `/dashboards/overview` with 12 parallel Supabase queries for real KPIs
+- Fixed 6 more tenant isolation gaps across forms and detail pages
+- Added min="0" and NaN validation to currency inputs
+- Added soft-delete filter to job detail count queries
+
+---
+
 ## 2026-02-25: Server-Side Pagination (40 Pages)
 
 ### Why

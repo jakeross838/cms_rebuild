@@ -1,5 +1,24 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Executive Dashboard — /dashboards/overview (2026-02-25)
+
+### Landing Page (root redirects here)
+- Personalized greeting with time-of-day and user's first name
+- 4 KPI cards: Active Jobs (with total), Revenue (paid+approved invoices), Pending Invoices (count+amount), Clients (with vendor count)
+- 3 Action Item cards: Open Change Orders, Open RFIs, Open Punch Items
+- Recent Jobs list (last 5, with status badges, links to detail)
+- Recent Invoices list (last 5, with amount and status, links to detail)
+- Overdue RFIs section (only shows if any exist, due_date < today)
+- All cards are clickable links to their respective list pages
+
+### Form Validation & Tenant Isolation Fixes (Round 2)
+- purchase-orders/new, contracts/new, warranties/new, contacts/new: dropdown tenant leak fixes
+- purchase-orders/[id], punch-lists/[id]: main query tenant leak fixes
+- invoices/new, contracts/new, payables/new: min="0" on currency fields
+- Job detail count queries: soft-delete filter added
+
+---
+
 ## Server-Side Pagination (2026-02-25)
 
 ### ListPagination Component (`components/ui/list-pagination.tsx`)

@@ -1,5 +1,20 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Executive Dashboard Test Cases (2026-02-25)
+
+### /dashboards/overview
+| Test | Expected |
+|------|----------|
+| Unauthenticated | Redirects to /login |
+| Active jobs card | Shows count of pre_construction + active jobs |
+| Revenue card | Shows sum of paid + approved invoice amounts |
+| Pending invoices | Shows draft/pm_pending/accountant_pending/owner_pending totals |
+| Recent jobs | Last 5 with status badges, links to detail |
+| Overdue RFIs | Only shows when open RFIs have past due_date |
+| All cards clickable | Navigate to respective list pages |
+
+---
+
 ## Pagination Test Cases (2026-02-25)
 
 ### ListPagination Component
