@@ -78,6 +78,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Note: lien_waiver_templates has no deleted_at column — hard delete is intentional
     const { error } = await (supabase as any)
       .from('lien_waiver_templates')
       .delete()

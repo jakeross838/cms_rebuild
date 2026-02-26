@@ -126,7 +126,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('employee_certifications')
-      .delete()
+      .update({ status: 'revoked', updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
