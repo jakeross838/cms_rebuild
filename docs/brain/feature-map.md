@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 3 — Performance, Console Cleanup, Injection Fixes (2026-02-26)
+
+### DB Performance — 103 FK Indexes Added
+- All foreign key columns now indexed for fast JOINs and DELETE cascades
+- user_company_memberships: merged 2 permissive SELECT policies into 1 combined policy
+- Performance advisors: 0 WARN remaining
+
+### Console Cleanup — 37 Calls Replaced/Removed
+- cache/index.ts, queue/index.ts, rate-limit/index.ts, email/resend.ts: console.error → logger.error with structured context
+- 9 skeleton preview files: removed 27 placeholder console.log/warn calls
+- Remaining console calls are all expected: logger implementation (5), error.tsx boundaries (79), client components (10)
+
+### PostgREST Injection Fix — 6 Pages
+- daily-logs, communications, draws, inspections, inventory, submittals pages
+- Added `escapeLike()` around search input before `.or()` ILIKE patterns
+- Without escaping, attackers could inject PostgREST filter conditions via `%`, `_`, or `\`
+
+### Soft Delete Compliance — 4 More Tables
+- Added deleted_at to: lien_waiver_templates, document_folders, builder_terminology, sync_mappings
+- Converted 4 DELETE handlers from `.delete()` to `.update({ deleted_at })`
+- Added `.is('deleted_at', null)` to list endpoints for schedule_baselines, portal_messages, hr_certifications
+
+### Env Validation + Header Cleanup
+- Cron routes use `serverEnv.CRON_SECRET` (Zod-validated) instead of raw `process.env.CRON_SECRET`
+- Removed 4 duplicate security headers from vercel.json (middleware.ts is single source of truth)
+
+---
+
 ## Type System Overhaul — database.ts Regenerated, 430 Files Type-Safe (2026-02-26)
 
 ### database.ts Regenerated from Live Supabase Schema

@@ -1,5 +1,42 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 3 — Performance, Injection Fixes, Soft Delete (2026-02-26)
+
+### PostgREST Injection Prevention
+| Test | Expected |
+|------|----------|
+| Search with `%` in daily-logs search box | Returns results containing literal `%`, not all rows |
+| Search with `_` in submittals search | Returns results with literal `_`, not wildcard match |
+| Search with `%,status.eq.completed` | Treated as literal text, NOT parsed as filter condition |
+| All 6 fixed pages use escapeLike() | Grep for `escapeLike` in each page returns match |
+
+### Soft Delete Compliance
+| Test | Expected |
+|------|----------|
+| DELETE /api/v2/lien-waiver-templates/:id | Sets deleted_at, does NOT remove row |
+| DELETE /api/v2/folders/:id | Sets deleted_at, does NOT remove row |
+| DELETE /api/v2/branding/terminology/:id | Sets deleted_at, does NOT remove row |
+| DELETE /api/v2/integrations/mappings/:id | Sets deleted_at, does NOT remove row |
+| GET /api/v2/schedule/baselines excludes deleted | Query includes `.is('deleted_at', null)` |
+| GET /api/v2/portal/messages excludes deleted | Query includes `.is('deleted_at', null)` |
+| GET /api/v2/hr/certifications excludes deleted | Query includes `.is('deleted_at', null)` |
+
+### Console Cleanup
+| Test | Expected |
+|------|----------|
+| Grep for console.error in lib/cache | 0 results (uses logger.error) |
+| Grep for console.error in lib/queue | 0 results (uses logger.error) |
+| Grep for console.error in lib/rate-limit | 0 results (uses logger.error) |
+| Grep for console.log in skeleton/previews | 0 results (all removed) |
+
+### DB Performance
+| Test | Expected |
+|------|----------|
+| Supabase performance advisors | 0 WARN advisories |
+| All FK columns have indexes | 0 unindexed_foreign_keys (was 103) |
+
+---
+
 ## Type System Overhaul — database.ts + 430 Files Type-Safe (2026-02-26)
 
 ### Compile-Time Validation (`tsc --noEmit`)

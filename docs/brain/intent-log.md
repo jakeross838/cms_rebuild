@@ -1,5 +1,38 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 3 — Performance Indexes, Console Cleanup, Injection Fixes
+
+### Why
+1. 103 FK columns still lacked indexes after prior batches — performance advisors flagged them
+2. 4 WARN advisories from multiple permissive policies on user_company_memberships
+3. 37 console.error/log/warn calls in production lib code + skeleton previews — should use structured logger
+4. 6 authenticated pages had PostgREST query injection via unescaped `.or()` ILIKE patterns
+5. 4 more entity DELETE handlers used hard `.delete()` — tables lacked deleted_at columns
+6. 3 list endpoints missing `.is('deleted_at', null)` filter
+7. Cron routes used raw `process.env.CRON_SECRET` instead of Zod-validated `serverEnv.CRON_SECRET`
+8. vercel.json duplicated 4 security headers already set by middleware.ts
+
+### What was done
+- Applied 3 DB migrations: 103 FK indexes (2 batches), merge 2 permissive policies into 1
+- Applied 1 DB migration: add deleted_at to lien_waiver_templates, document_folders, builder_terminology, sync_mappings
+- Replaced console.error with logger in cache, queue, rate-limit, email libs (13 calls)
+- Removed 27 placeholder console.log/warn from 9 skeleton preview files
+- Fixed 6 PostgREST injection vulnerabilities — added escapeLike() to search filters in daily-logs, communications, draws, inspections, inventory, submittals pages
+- Converted 4 hard deletes to soft deletes, added deleted_at filter to 3 list endpoints
+- Cron routes now import serverEnv for validated CRON_SECRET
+- Removed duplicate headers from vercel.json
+
+### Audit results (all clean)
+- Performance advisors: 0 WARN (down from 4), 0 unindexed FKs (down from 103)
+- Security advisors: 1 remaining (leaked password protection — dashboard only)
+- RLS coverage: 243/243 tables have RLS enabled with policies
+- Zod validation: 100% of POST/PUT/PATCH routes validated
+- Auth protection: 469/469 API routes protected (createApiHandler or CRON_SECRET)
+- Search escaping: 81/81 v2 routes + 6 fixed page routes properly escape ILIKE input
+- Pagination: 91% of v2 list endpoints implement consistent pagination
+
+---
+
 ## 2026-02-26: Type System Overhaul — Eliminate Blanket Type Suppression
 
 ### Why
