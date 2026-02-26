@@ -103,5 +103,5 @@ export const PUT = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'financial', requiredRoles: ['owner'] }
+  { requireAuth: true, rateLimit: 'financial', requiredRoles: ['owner'], auditAction: 'usage_record.update' }
 )

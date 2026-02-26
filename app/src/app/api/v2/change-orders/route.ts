@@ -145,5 +145,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'api', auditAction: 'change_order.create' }
 )
