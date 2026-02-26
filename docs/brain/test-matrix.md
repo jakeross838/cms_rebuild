@@ -1,5 +1,44 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 4 — Race Conditions, Financial Integrity (2026-02-26)
+
+### Atomic Balance Updates
+- [ ] POST /api/v2/ap/payments — concurrent payments to same bill don't corrupt balance_due
+- [ ] POST /api/v2/ar/receipts — concurrent receipts to same invoice don't corrupt balance_due
+- [ ] POST /api/v2/purchase-orders/:id/receipts — concurrent receipts don't corrupt received_quantity
+- [ ] RPC apply_payment_to_bill — balance goes to 0, status changes to 'paid'
+- [ ] RPC apply_receipt_to_invoice — balance goes to 0, status changes to 'paid'
+- [ ] RPC increment_po_line_received — quantity increments correctly
+
+### Status Transition Guards
+- [ ] PUT /api/v2/change-orders/:id — concurrent status change, second request fails (PGRST116)
+- [ ] PUT /api/v2/bid-packages/:id — concurrent status change, second request fails
+- [ ] PUT /api/v2/contracts/:id — concurrent status change, second request fails
+- [ ] PUT /api/v2/gl/journal-entries/:id — only draft entries can be updated
+- [ ] PUT /api/v2/budgets/:id — locked/archived budgets rejected with 409
+- [ ] PUT /api/v2/ap/bills/:id — paid/voided bills rejected with 409
+- [ ] PUT /api/v2/ar/invoices/:id — paid/voided invoices rejected with 409
+
+### Line Total Validation
+- [ ] POST /api/v2/ap/bills — lines sum != amount returns 400
+- [ ] PUT /api/v2/ap/bills/:id — lines sum != amount returns 400
+- [ ] POST /api/v2/ar/invoices — lines sum != amount returns 400
+- [ ] PUT /api/v2/ar/invoices/:id — lines sum != amount returns 400
+
+### Error Sanitization
+- [ ] All POST routes returning DB error use mapDbError, not raw message
+- [ ] Malformed JSON body returns 400 with "Invalid JSON body" (not 500)
+
+### Soft Delete Compliance
+- [ ] DELETE /api/v2/hr/documents/:id — sets deleted_at, not hard delete
+- [ ] DELETE /api/v2/marketplace/reviews/:id — sets deleted_at, not hard delete
+- [ ] DELETE /api/v2/mobile/push-tokens/:id — sets deleted_at, not hard delete
+- [ ] DELETE /api/v2/mobile/sync-queue/:id — sets deleted_at, not hard delete
+- [ ] DELETE /api/v2/reports/schedules/:id — sets deleted_at, not hard delete
+- [ ] GET list endpoints exclude deleted_at IS NOT NULL records
+
+---
+
 ## Session 3 — Performance, Injection Fixes, Soft Delete (2026-02-26)
 
 ### PostgREST Injection Prevention

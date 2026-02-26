@@ -1,5 +1,37 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 4 — Race Conditions, Error Sanitization, Soft Delete, JSON Guard
+
+### Why
+1. **Race conditions in financial balance updates** — AP payments, AR receipts, PO receipts used read-then-write patterns to update balance_due/received_quantity. Concurrent requests could corrupt balances.
+2. **Status transition race conditions** — change orders, bid packages, contracts, GL journal entries, budgets checked status then updated without atomicity. Double-approve or double-submit possible.
+3. **29 raw error.message exposures** — API routes returned Supabase internal error details to consumers (SQL syntax, table names, constraint names).
+4. **AP/AR missing line total validation** — bills and invoices accepted lines that didn't sum to header amount.
+5. **5 more hard-delete violations** — employee_documents, marketplace_reviews, push_notification_tokens, offline_sync_queue, report_schedules used `.delete()`.
+6. **2 branding routes with raw error strings** — branding and email config upsert routes.
+7. **397 routes vulnerable to malformed JSON** — `req.json()` could throw SyntaxError with no catch, returning 500 instead of 400.
+
+### What was done
+- Created 3 PostgreSQL RPC functions via migration: apply_payment_to_bill, apply_receipt_to_invoice, increment_po_line_received — all do single-statement atomic updates
+- Updated AP payments, AR receipts, PO receipts to use atomic RPC instead of read-then-write loops
+- Added status WHERE guards to UPDATE queries: GL journal entries (.eq status draft), change orders (.in status draft/pending_approval), bid packages (.eq status existing.status), contracts (.eq status existing.status), budgets (.eq status existing.status)
+- Added locked/archived budget protection (reject updates when budget is locked or archived)
+- Replaced 29 raw error.message with mapDbError() across 22 route files
+- Added line total validation to AP bills POST/PUT and AR invoices POST/PUT
+- Added status WHERE guards to AP bills and AR invoices PUT
+- Converted 5 hard deletes to soft delete, added deleted_at columns + partial indexes via migration
+- Added .is('deleted_at', null) to 12 queries (5 list, 4 single-item GET, 3 sub-queries)
+- Fixed 2 branding routes to use mapDbError
+- Added SyntaxError catch in createApiHandler middleware — returns 400 for malformed JSON
+
+### Commits
+- `8d80eac` — Fix race conditions — atomic RPC for balances, status WHERE guards
+- `ebe89d5` — Sanitize 29 raw error.message exposures — use mapDbError everywhere
+- `8ad5cf1` — Add AP/AR line total validation + status WHERE guards on bill/invoice updates
+- `e8bc9ad` — Fix 5 hard-delete violations, 2 raw error strings, add JSON parse guard
+
+---
+
 ## 2026-02-26: Session 3 — Performance Indexes, Console Cleanup, Injection Fixes
 
 ### Why

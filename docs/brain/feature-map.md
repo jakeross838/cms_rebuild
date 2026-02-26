@@ -1,5 +1,41 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 4 — Race Conditions, Error Sanitization, Soft Delete (2026-02-26)
+
+### Atomic Financial Balance Updates (3 PostgreSQL RPC functions)
+- `apply_payment_to_bill(p_bill_id, p_company_id, p_amount)` — single-statement UPDATE on ap_bills
+- `apply_receipt_to_invoice(p_invoice_id, p_company_id, p_amount)` — single-statement UPDATE on ar_invoices
+- `increment_po_line_received(p_line_id, p_quantity)` — atomic increment on purchase_order_lines
+- AP payments POST, AR receipts POST, PO receipts POST all use RPC instead of read-then-write
+
+### Status Transition WHERE Guards (7 routes)
+- GL journal entries PUT: `.eq('status', 'draft')` on UPDATE query
+- Change orders PUT: `.in('status', ['draft', 'pending_approval'])` on UPDATE query
+- Bid packages PUT: `.eq('status', existing.status)` on UPDATE query
+- Contracts PUT: `.eq('status', existing.status)` on UPDATE query
+- Budgets PUT: locked/archived check + `.eq('status', existing.status)` on UPDATE query
+- AP bills PUT: `.eq('status', existing.status)` on UPDATE query
+- AR invoices PUT: `.eq('status', existing.status)` on UPDATE query
+
+### Error Message Sanitization (31 total across 24 files)
+- All `{ error: 'Database Error', message: xxxError.message }` replaced with `mapDbError()`
+- Zero raw error.message strings remain in v2 API routes
+
+### Line Total Validation (4 routes)
+- AP bills POST/PUT: validates sum(line.amount) == header amount
+- AR invoices POST/PUT: validates sum(line.amount) == header amount
+
+### Soft Delete Expansion (5 more tables)
+- employee_documents, marketplace_reviews, push_notification_tokens, offline_sync_queue, report_schedules
+- DB migration: deleted_at column + partial index on each
+- 12 queries updated with .is('deleted_at', null) filter
+
+### Malformed JSON Body Guard (middleware)
+- createApiHandler catch block detects SyntaxError from req.json() and returns 400 instead of 500
+- Covers all 397+ POST/PUT/PATCH routes automatically
+
+---
+
 ## Session 3 — Performance, Console Cleanup, Injection Fixes (2026-02-26)
 
 ### DB Performance — 103 FK Indexes Added
