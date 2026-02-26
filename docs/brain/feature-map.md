@@ -1,5 +1,17 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## List Filter Fixes, Audit Logging (2026-02-26)
+
+### Deleted_at Filter on List Endpoints (20 routes)
+- 17 child collection GET handlers + 3 top-level list handlers were returning soft-deleted records
+- Added `.is('deleted_at', null)` to vendor contacts/insurance, equipment children, budget lines, change order items, contract signers, lead activities, PO lines, quality checklist items, RFI responses, report widgets, dashboard widgets, ticket messages, bid comparisons, saved filters, AP payments, AR receipts
+
+### Audit Logging on Critical Operations (25 handlers, 16 files)
+- Added `auditAction` to financial (AP bills/payments, AR invoices/receipts, GL journal entries, period close), billing (subscriptions, addons), draw requests (create/update/archive/approve/submit), and HR employees (create/update/archive)
+- Middleware records: company ID, user ID, action name, IP, user agent, request body
+
+---
+
 ## Soft Delete Enforcement, Query Optimization (2026-02-26)
 
 ### Soft Delete Migration (18 child tables)

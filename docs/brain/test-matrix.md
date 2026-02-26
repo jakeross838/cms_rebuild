@@ -1,5 +1,24 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## List Filter Fixes, Audit Logging (2026-02-26)
+
+### List Endpoints Exclude Soft-Deleted Records
+| Route | Test | Expected |
+|-------|------|----------|
+| GET /api/v2/vendors/:id/contacts | After soft-deleting a contact | Deleted contact not in list |
+| GET /api/v2/budgets/:id/lines | After soft-deleting a line | Deleted line not in list |
+| GET /api/v2/ap/payments | After soft-deleting a payment | Deleted payment not in list |
+
+### Audit Logging on Financial Operations
+| Route | Action | Test | Expected |
+|-------|--------|------|----------|
+| POST /api/v2/ap/bills | bill.create | Create a bill | Audit log entry with user, company, action |
+| DELETE /api/v2/ar/invoices/:id | invoice.archive | Archive invoice | Audit log entry recorded |
+| POST /api/v2/draw-requests/:id/approve | draw_request.approve | Approve draw | Audit log entry recorded |
+| PUT /api/v2/billing/subscriptions/:id | subscription.update | Update subscription | Audit log entry recorded |
+
+---
+
 ## Soft Delete Enforcement (2026-02-26)
 
 ### Soft Delete on Child Tables

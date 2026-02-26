@@ -1,5 +1,17 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: List Filter Fixes, Audit Logging
+
+### Why
+1. After adding deleted_at to 18 child tables, the parent list endpoints still returned soft-deleted records — users could see archived items
+2. Zero v2 API routes had audit logging — no trail for who created/modified/archived financial records, billing changes, or HR data
+
+### What was done
+- Added `.is('deleted_at', null)` to 20 list GET handlers (17 child collections + 3 top-level)
+- Added `auditAction` to 25 critical handlers: AP (bills, payments), AR (invoices, receipts), GL (journal entries, post), financial period close, billing (subscriptions, addons), draw requests (CRUD + approve + submit), HR employees (CRUD)
+
+---
+
 ## 2026-02-26: Soft Delete Enforcement, Query Optimization
 
 ### Why
