@@ -28,12 +28,14 @@ export default async function DeliveriesPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: receiptsData } = await supabase
+  const { data: receiptsData, error } = await supabase
     .from('po_receipts')
     .select('*')
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .order('received_date', { ascending: false })
     .limit(100)
+  if (error) throw error
 
   const receipts = (receiptsData || []) as POReceipt[]
 

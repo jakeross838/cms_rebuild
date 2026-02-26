@@ -41,12 +41,14 @@ export default async function CertifiedPayrollPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: exportsData, count } = await supabase
+  const { data: exportsData, count, error } = await supabase
     .from('payroll_exports')
     .select('*', { count: 'exact' })
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const exports = (exportsData || []) as PayrollExportRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)

@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Bell, Check, CheckCheck, Trash2 } from 'lucide-react'
+import { Bell, Check } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 
 interface NotificationRow {
   id: string
@@ -25,23 +26,28 @@ export const metadata: Metadata = { title: 'Notifications' }
 export default async function NotificationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: string }>
+  searchParams: Promise<{ filter?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   let query = supabase
     .from('notifications')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(100)
+    .range(offset, offset + pageSize - 1)
 
   if (params.filter === 'unread') {
     query = query.eq('read', false)
   }
 
-  const { data: notificationsData } = await query
+  const { data: notificationsData, count, error } = await query
+  if (error) throw error
   const notifications = (notificationsData || []) as NotificationRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
@@ -52,20 +58,25 @@ export default async function NotificationsPage({
           <h1 className="text-2xl font-bold text-foreground">Notifications</h1>
           <p className="text-muted-foreground">
             {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
-            {' '}&middot; {notifications.length} total
+            {' '}&middot; {count || 0} total
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/notifications?filter=unread">
-            <Button variant={params.filter === 'unread' ? 'default' : 'outline'} size="sm">
-              Unread Only
-            </Button>
-          </Link>
-          <Link href="/notifications">
-            <Button variant={!params.filter ? 'default' : 'outline'} size="sm">
-              All
-            </Button>
-          </Link>
+          {[
+            { value: 'unread', label: 'Unread Only' },
+            { value: '', label: 'All' },
+          ].map((f) => {
+            const sp = new URLSearchParams()
+            if (f.value) sp.set('filter', f.value)
+            const qs = sp.toString()
+            return (
+              <Link key={f.value} href={`/notifications${qs ? `?${qs}` : ''}`}>
+                <Button variant={(params.filter || '') === f.value ? 'default' : 'outline'} size="sm">
+                  {f.label}
+                </Button>
+              </Link>
+            )
+          })}
         </div>
       </div>
 
@@ -107,6 +118,8 @@ export default async function NotificationsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/notifications" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

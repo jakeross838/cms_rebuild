@@ -59,7 +59,8 @@ export default async function SubmittalsPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: submittalsData, count } = await query
+  const { data: submittalsData, count, error } = await query
+  if (error) throw error
   const submittals = (submittalsData || []) as SubmittalRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 

@@ -43,6 +43,7 @@ export default async function PaymentsPage({
     .from('client_payments')
     .select('*', { count: 'exact' })
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
 
