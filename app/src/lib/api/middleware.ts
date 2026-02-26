@@ -128,7 +128,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         if (profileError) {
           logger.error('Failed to fetch user profile', { error: profileError.message, userId: user.id })
           return NextResponse.json(
-            { error: 'Internal Server Error', requestId },
+            { error: 'Internal Server Error', message: 'Failed to load user profile', requestId },
             { status: 500 }
           )
         }

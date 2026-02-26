@@ -143,13 +143,14 @@ export const PUT = createApiHandler(
       .select('*')
       .single()
 
-    if (error || !data) {
-      if (error?.code === '23505') {
-        return NextResponse.json(
-          { error: 'Conflict', message: 'A template with this slug already exists', requestId: ctx.requestId },
-          { status: 409 }
-        )
-      }
+    if (error) {
+      const mapped = mapDbError(error)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+    if (!data) {
       return NextResponse.json(
         { error: 'Not Found', message: 'Template not found', requestId: ctx.requestId },
         { status: 404 }

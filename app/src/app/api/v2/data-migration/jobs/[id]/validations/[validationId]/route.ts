@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updateValidationResultSchema } from '@/lib/validation/schemas/data-migration'
 
@@ -110,7 +110,14 @@ export const PUT = createApiHandler(
       .select('*')
       .single()
 
-    if (error || !data) {
+    if (error) {
+      const mapped = mapDbError(error)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+    if (!data) {
       return NextResponse.json(
         { error: 'Not Found', message: 'Validation result not found', requestId: ctx.requestId },
         { status: 404 }
