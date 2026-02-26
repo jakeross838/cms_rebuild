@@ -268,9 +268,19 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         })
       }
 
-      // Add request ID to response headers
+      // Add standard headers to response
       if (response instanceof NextResponse) {
         response.headers.set('X-Request-ID', requestId)
+
+        // Cache-Control: never cache mutating requests or errors
+        const status = response.status
+        const method = req.method
+        if (method !== 'GET' || status >= 400) {
+          response.headers.set('Cache-Control', 'no-store')
+        } else if (!response.headers.has('Cache-Control')) {
+          // GET success — private, short TTL (API data is user-specific)
+          response.headers.set('Cache-Control', 'private, no-cache, max-age=0, must-revalidate')
+        }
       }
 
       return response
