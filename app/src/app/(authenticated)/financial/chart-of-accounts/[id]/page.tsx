@@ -40,6 +40,7 @@ export default function ChartOfAccountsDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     account_number: '',
@@ -58,6 +59,7 @@ export default function ChartOfAccountsDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
 
       const { data, error: fetchError } = await supabase
         .from('gl_accounts')
@@ -106,6 +108,7 @@ export default function ChartOfAccountsDetailPage() {
         .from('gl_accounts')
         .update({ deleted_at: new Date().toISOString() } as never)
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
       if (archiveError) throw archiveError
       router.push('/financial/chart-of-accounts')
     } catch (err) {
@@ -132,6 +135,7 @@ export default function ChartOfAccountsDetailPage() {
           description: formData.description || null,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -168,6 +172,7 @@ export default function ChartOfAccountsDetailPage() {
       .from('gl_accounts')
       .update({ is_active: newActive })
       .eq('id', params.id as string)
+      .eq('company_id', companyId)
 
     if (toggleError) {
       setError(`Failed to ${action} account`)

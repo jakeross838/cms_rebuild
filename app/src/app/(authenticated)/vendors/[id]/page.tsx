@@ -40,6 +40,7 @@ export default function VendorDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -61,6 +62,7 @@ export default function VendorDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
       const { data, error: fetchError } = await supabase
         .from('vendors')
         .select('*')
@@ -120,6 +122,7 @@ export default function VendorDetailPage() {
           notes: formData.notes || null,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -141,6 +144,7 @@ export default function VendorDetailPage() {
       .from('vendors')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', params.id as string)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive vendor')

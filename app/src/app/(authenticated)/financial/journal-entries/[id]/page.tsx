@@ -61,6 +61,7 @@ export default function JournalEntryDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     entry_date: '',
@@ -77,6 +78,7 @@ export default function JournalEntryDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
 
       const [entryRes, linesRes, accountsRes] = await Promise.all([
         supabase
@@ -140,6 +142,7 @@ export default function JournalEntryDetailPage() {
         .from('gl_journal_entries')
         .update({ deleted_at: new Date().toISOString() } as never)
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
       if (archiveError) throw archiveError
       router.push('/financial/journal-entries')
     } catch (err) {
@@ -164,6 +167,7 @@ export default function JournalEntryDetailPage() {
           source_type: formData.source_type,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 

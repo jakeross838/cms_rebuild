@@ -53,6 +53,7 @@ export default function TimeClockDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<TimeEntryFormData>({
     entry_date: '',
@@ -72,6 +73,7 @@ export default function TimeClockDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
 
       const { data, error: fetchError } = await supabase
         .from('time_entries')
@@ -127,6 +129,7 @@ export default function TimeClockDetailPage() {
           notes: formData.notes || undefined,
         })
         .eq('id', entryId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -162,6 +165,7 @@ export default function TimeClockDetailPage() {
       .from('time_entries')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', entryId)
+      .eq('company_id', companyId)
 
     if (archiveError) {
       setError('Failed to archive entry')

@@ -65,6 +65,7 @@ export default function TrainingCourseDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<CourseFormData>({
     title: '',
@@ -84,6 +85,7 @@ export default function TrainingCourseDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
 
       const { data, error: fetchError } = await supabase
         .from('training_courses')
@@ -144,6 +146,7 @@ export default function TrainingCourseDetailPage() {
           is_published: formData.is_published,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -179,6 +182,7 @@ export default function TrainingCourseDetailPage() {
       .from('training_courses')
       .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', params.id as string)
+      .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive course')
       setArchiving(false)

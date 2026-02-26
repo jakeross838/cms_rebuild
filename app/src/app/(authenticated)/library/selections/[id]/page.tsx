@@ -57,6 +57,7 @@ export default function SelectionCategoryDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<CategoryFormData>({
     name: '',
@@ -78,6 +79,7 @@ export default function SelectionCategoryDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
 
       const { data, error: fetchError } = await supabase
         .from('selection_categories')
@@ -142,6 +144,7 @@ export default function SelectionCategoryDetailPage() {
           notes: formData.notes || undefined,
         })
         .eq('id', categoryId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -179,6 +182,7 @@ export default function SelectionCategoryDetailPage() {
       .from('selection_categories')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', categoryId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive category')

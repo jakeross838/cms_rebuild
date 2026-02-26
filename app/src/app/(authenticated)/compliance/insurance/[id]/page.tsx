@@ -48,6 +48,7 @@ export default function InsurancePolicyDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     vendor_id: '',
@@ -66,6 +67,7 @@ export default function InsurancePolicyDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
 
       const [policyRes, vendorsRes] = await Promise.all([
         supabase
@@ -126,6 +128,7 @@ export default function InsurancePolicyDetailPage() {
           status: formData.status,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -160,6 +163,7 @@ export default function InsurancePolicyDetailPage() {
       .from('vendor_insurance')
       .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', params.id as string)
+      .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive policy')
       setArchiving(false)

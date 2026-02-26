@@ -34,6 +34,7 @@ export default function InvoiceDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
   const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -51,6 +52,7 @@ export default function InvoiceDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
+      setCompanyId(companyId)
       const { data, error: fetchError } = await supabase
         .from('invoices')
         .select('*')
@@ -91,6 +93,7 @@ export default function InvoiceDetailPage() {
         .from('invoices')
         .update({ deleted_at: new Date().toISOString() } as never)
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
       if (archiveError) throw archiveError
       router.push('/invoices')
     } catch (err) {
@@ -115,6 +118,7 @@ export default function InvoiceDetailPage() {
           notes: formData.notes || null,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
