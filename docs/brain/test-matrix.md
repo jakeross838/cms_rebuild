@@ -1,5 +1,34 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Security + Responsive Test Cases (2026-02-25)
+
+### LIKE Injection Prevention
+| Test | Expected |
+|------|----------|
+| Search for `%` character | Results filtered normally, no query error |
+| Search for `_` character | Treated as literal underscore, not wildcard |
+| Search for `\` character | Escaped properly, no SQL error |
+| escapeLike used in all .or()/.ilike() | Grep confirms 0 raw params.search in LIKE patterns |
+
+### Mobile Responsive Sidebar
+| Test | Expected |
+|------|----------|
+| Screen < 768px | Sidebar hidden, hamburger visible |
+| Click hamburger | Sidebar slides in from left with backdrop |
+| Click backdrop | Sidebar closes |
+| Navigate to new page | Sidebar closes |
+| Screen >= 768px | Sidebar always visible, no hamburger |
+
+### Soft-Delete Filters
+| Test | Expected |
+|------|----------|
+| GET /api/v1/jobs | Only returns records where deleted_at IS NULL |
+| GET /api/v1/clients | Only returns records where deleted_at IS NULL |
+| GET /api/v1/vendors | Only returns records where deleted_at IS NULL |
+| Search invoices | Only returns records where deleted_at IS NULL |
+
+---
+
 ## Toast Notification Test Cases (2026-02-25)
 
 ### Create Forms (50 pages)

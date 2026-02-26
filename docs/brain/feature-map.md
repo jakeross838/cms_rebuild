@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Security Hardening + Mobile Responsive + Search Fixes (2026-02-25)
+
+### LIKE Injection Prevention
+- New `escapeLike(input)` utility in `@/lib/utils` — escapes `%`, `_`, `\` in LIKE/ILIKE patterns
+- Applied to **42 server-side list pages** (all search inputs)
+- Applied to **5 v1 API routes** (jobs, clients, vendors, cost-codes, users)
+- Applied to **v2 search API** route
+
+### Soft-Delete Filter Fixes
+- Added `.is('deleted_at', null)` to v1 `/api/v1/jobs`, `/api/v1/clients`, `/api/v1/vendors` GET endpoints
+- Added `.is('deleted_at', null)` to v2 search API invoices query
+- Previously missing: archived records were returned in API results
+
+### Mobile Responsive Sidebar
+- Sidebar hidden on screens < md breakpoint (`hidden md:flex`)
+- Hamburger menu button in TopNav (visible < md, `md:hidden`)
+- Slide-out overlay sidebar on mobile with backdrop + close button
+- Closes on route change and backdrop click
+- Main content padding: `p-4 md:p-6` for mobile optimization
+- Event-driven: TopNav dispatches `open-mobile-sidebar`, Sidebar listens
+
+### Search URL Fixes
+- Fixed search result URLs: `/directory/clients/[id]` → `/clients/[id]`, `/directory/vendors/[id]` → `/vendors/[id]`
+- Fixed invoice search URL: `/financial/payables/[id]` → `/invoices/[id]`
+- Fixed quick action URLs: `/directory/clients/new` → `/clients/new`, `/directory/vendors/new` → `/vendors/new`
+
+---
+
 ## Quality Hardening: Toast Notifications + Status Filters + Confirm Dialogs (2026-02-25)
 
 ### Toast Notifications (sonner)

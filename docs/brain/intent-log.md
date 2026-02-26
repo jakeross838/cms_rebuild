@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Security Hardening + Mobile Responsive + Search Fixes
+
+### Why
+1. LIKE patterns used unsanitized user input — `%` and `_` could alter query semantics
+2. v1 API routes missing `deleted_at` filter — returned archived records in list endpoints
+3. Sidebar was fixed 256px on all screens — unusable on mobile devices
+4. Search results pointed to non-existent `/directory/` URLs — clicking results would 404
+
+### What was done
+- Created `escapeLike()` utility and applied to 48 files (42 pages + 6 API routes)
+- Added `deleted_at` filter to v1 jobs, clients, vendors APIs + v2 search invoices
+- Made sidebar responsive: hidden on mobile, hamburger menu triggers slide-out overlay
+- Fixed 5 broken URLs in search API and quick actions (directory → direct paths)
+
+---
+
 ## 2026-02-25: Toast Notifications, Status Filters, Confirm Dialogs, Accessibility
 
 ### Why
