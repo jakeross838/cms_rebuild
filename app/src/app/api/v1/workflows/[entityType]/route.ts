@@ -55,7 +55,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({ data: data ?? [], total: (data ?? []).length, requestId: ctx.requestId })
 }
 
-export const GET = createApiHandler(handleGet, { requireAuth: true })
+export const GET = createApiHandler(handleGet, { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'] })
 
 // ============================================================================
 // PUT — Create or update workflow for entity type
