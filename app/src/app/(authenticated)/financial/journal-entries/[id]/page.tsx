@@ -72,6 +72,12 @@ export default function JournalEntryDetailPage() {
 
   useEffect(() => {
     async function loadData() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
+
       const [entryRes, linesRes, accountsRes] = await Promise.all([
         supabase
           .from('gl_journal_entries')
@@ -83,7 +89,7 @@ export default function JournalEntryDetailPage() {
           .select('*')
           .eq('journal_entry_id', params.id as string)
           .order('created_at'),
-        supabase.from('gl_accounts').select('id, name, account_number').order('account_number'),
+        supabase.from('gl_accounts').select('id, name, account_number').eq('company_id', companyId).is('deleted_at', null).order('account_number'),
       ])
 
       if (entryRes.error || !entryRes.data) {

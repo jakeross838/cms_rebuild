@@ -80,6 +80,12 @@ export default function PunchItemDetailPage() {
 
   useEffect(() => {
     async function loadData() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
+
       const [itemRes, jobsRes] = await Promise.all([
         supabase
           .from('punch_items')
@@ -87,7 +93,7 @@ export default function PunchItemDetailPage() {
           .eq('id', params.id as string)
           .is('deleted_at', null)
           .single(),
-        supabase.from('jobs').select('id, name').is('deleted_at', null).order('name'),
+        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
       ])
 
       if (itemRes.error || !itemRes.data) {

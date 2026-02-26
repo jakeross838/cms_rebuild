@@ -150,9 +150,16 @@ export default function PurchaseOrderDetailPage() {
     if (!editing) return
 
     async function loadOptions() {
+      // Get current user's company_id for tenant-scoped dropdown queries
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) return
+
       const [jobsResult, vendorsResult] = await Promise.all([
-        supabase.from('jobs').select('id, name, job_number').is('deleted_at', null).order('name'),
-        supabase.from('vendors').select('id, name').is('deleted_at', null).order('name'),
+        supabase.from('jobs').select('id, name, job_number').eq('company_id', companyId).is('deleted_at', null).order('name'),
+        supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
       ])
       setJobs((jobsResult.data || []) as JobInfo[])
       setVendors((vendorsResult.data || []) as VendorInfo[])

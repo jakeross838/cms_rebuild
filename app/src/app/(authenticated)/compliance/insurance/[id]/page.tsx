@@ -61,13 +61,19 @@ export default function InsurancePolicyDetailPage() {
 
   useEffect(() => {
     async function loadData() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
+
       const [policyRes, vendorsRes] = await Promise.all([
         supabase
           .from('vendor_insurance')
           .select('*')
           .eq('id', params.id as string)
           .single(),
-        supabase.from('vendors').select('id, name').is('deleted_at', null).order('name'),
+        supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
       ])
 
       if (policyRes.error || !policyRes.data) {
