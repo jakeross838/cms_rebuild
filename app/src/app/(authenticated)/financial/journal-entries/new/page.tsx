@@ -1,22 +1,41 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Plus, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatCurrency } from '@/lib/utils'
+
+// ── Types ──────────────────────────────────────────────────────
+
+interface AccountOption {
+  id: string
+  name: string
+  account_number: string
+}
+
+interface JournalLine {
+  account_id: string
+  debit_amount: string
+  credit_amount: string
+  memo: string
+}
+
+// ── Component ──────────────────────────────────────────────────
 
 export default function NewJournalEntryPage() {
   const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [accounts, setAccounts] = useState<AccountOption[]>([])
 
   const [formData, setFormData] = useState({
     entry_date: '',
@@ -26,14 +45,78 @@ export default function NewJournalEntryPage() {
     source_type: 'manual',
   })
 
+  const [lines, setLines] = useState<JournalLine[]>([
+    { account_id: '', debit_amount: '', credit_amount: '', memo: '' },
+    { account_id: '', debit_amount: '', credit_amount: '', memo: '' },
+  ])
+
+  useEffect(() => {
+    async function loadAccounts() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', user.id)
+        .single()
+
+      const companyId = (profile as { company_id: string } | null)?.company_id
+      if (!companyId) return
+
+      const { data } = await supabase
+        .from('gl_accounts')
+        .select('id, name, account_number')
+        .eq('company_id', companyId)
+        .is('deleted_at', null)
+        .order('account_number')
+
+      if (data) setAccounts(data as AccountOption[])
+    }
+    loadAccounts()
+  }, [])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  const handleLineChange = (index: number, field: keyof JournalLine, value: string) => {
+    setLines((prev) => {
+      const next = [...prev]
+      next[index] = { ...next[index], [field]: value }
+      return next
+    })
+  }
+
+  const addLine = () => {
+    setLines((prev) => [...prev, { account_id: '', debit_amount: '', credit_amount: '', memo: '' }])
+  }
+
+  const removeLine = (index: number) => {
+    if (lines.length <= 2) return
+    setLines((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const totalDebits = lines.reduce((sum, l) => sum + (parseFloat(l.debit_amount) || 0), 0)
+  const totalCredits = lines.reduce((sum, l) => sum + (parseFloat(l.credit_amount) || 0), 0)
+  const isBalanced = Math.abs(totalDebits - totalCredits) < 0.01
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    // Validate lines
+    const validLines = lines.filter((l) => l.account_id && (parseFloat(l.debit_amount) > 0 || parseFloat(l.credit_amount) > 0))
+    if (validLines.length < 2) {
+      setError('At least 2 journal lines with amounts are required')
+      return
+    }
+    if (!isBalanced) {
+      setError(`Debits (${formatCurrency(totalDebits)}) must equal credits (${formatCurrency(totalCredits)})`)
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -49,7 +132,8 @@ export default function NewJournalEntryPage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
-      const { error: insertError } = await supabase
+      // Create the journal entry header
+      const { data: entry, error: entryError } = await supabase
         .from('gl_journal_entries')
         .insert({
           company_id: companyId,
@@ -60,8 +144,25 @@ export default function NewJournalEntryPage() {
           source_type: formData.source_type,
           created_by: user.id,
         })
+        .select('id')
+        .single()
 
-      if (insertError) throw insertError
+      if (entryError || !entry) throw entryError || new Error('Failed to create entry')
+
+      // Insert journal lines
+      const lineInserts = validLines.map((l) => ({
+        journal_entry_id: (entry as { id: string }).id,
+        account_id: l.account_id,
+        debit_amount: parseFloat(l.debit_amount) || 0,
+        credit_amount: parseFloat(l.credit_amount) || 0,
+        memo: l.memo || null,
+      }))
+
+      const { error: linesError } = await supabase
+        .from('gl_journal_lines')
+        .insert(lineInserts)
+
+      if (linesError) throw linesError
 
       router.push('/financial/journal-entries')
       router.refresh()
@@ -73,13 +174,13 @@ export default function NewJournalEntryPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <Link href="/financial/journal-entries" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Journal Entries
         </Link>
         <h1 className="text-2xl font-bold text-foreground">New Journal Entry</h1>
-        <p className="text-muted-foreground">Create a new general ledger journal entry</p>
+        <p className="text-muted-foreground">Create a new general ledger journal entry with line items</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -135,14 +236,119 @@ export default function NewJournalEntryPage() {
             <CardDescription>Description of this journal entry</CardDescription>
           </CardHeader>
           <CardContent>
-            <textarea id="memo" name="memo" value={formData.memo} onChange={handleChange} rows={4} placeholder="Describe the purpose of this journal entry..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+            <textarea id="memo" name="memo" value={formData.memo} onChange={handleChange} rows={3} placeholder="Describe the purpose of this journal entry..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+          </CardContent>
+        </Card>
+
+        {/* Journal Lines */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Journal Lines</CardTitle>
+                <CardDescription>Debit and credit entries must balance</CardDescription>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={addLine}>
+                <Plus className="h-4 w-4 mr-1" />Add Line
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left">
+                    <th className="pb-2 pr-2 font-medium text-muted-foreground">Account <span className="text-red-500">*</span></th>
+                    <th className="pb-2 pr-2 font-medium text-muted-foreground text-right w-32">Debit</th>
+                    <th className="pb-2 pr-2 font-medium text-muted-foreground text-right w-32">Credit</th>
+                    <th className="pb-2 pr-2 font-medium text-muted-foreground w-40">Memo</th>
+                    <th className="pb-2 w-10"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lines.map((line, index) => (
+                    <tr key={index} className="border-b last:border-0">
+                      <td className="py-2 pr-2">
+                        <select
+                          value={line.account_id}
+                          onChange={(e) => handleLineChange(index, 'account_id', e.target.value)}
+                          className="flex h-9 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        >
+                          <option value="">Select account...</option>
+                          {accounts.map((a) => (
+                            <option key={a.id} value={a.id}>{a.account_number} — {a.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="py-2 pr-2">
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={line.debit_amount}
+                          onChange={(e) => handleLineChange(index, 'debit_amount', e.target.value)}
+                          className="text-right"
+                        />
+                      </td>
+                      <td className="py-2 pr-2">
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={line.credit_amount}
+                          onChange={(e) => handleLineChange(index, 'credit_amount', e.target.value)}
+                          className="text-right"
+                        />
+                      </td>
+                      <td className="py-2 pr-2">
+                        <Input
+                          placeholder="Line memo"
+                          value={line.memo}
+                          onChange={(e) => handleLineChange(index, 'memo', e.target.value)}
+                        />
+                      </td>
+                      <td className="py-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeLine(index)}
+                          disabled={lines.length <= 2}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t-2 font-medium">
+                    <td className="py-2 pr-2">Totals</td>
+                    <td className="py-2 pr-2 text-right font-mono">{formatCurrency(totalDebits)}</td>
+                    <td className="py-2 pr-2 text-right font-mono">{formatCurrency(totalCredits)}</td>
+                    <td className="py-2 pr-2" colSpan={2}>
+                      {totalDebits > 0 || totalCredits > 0 ? (
+                        isBalanced ? (
+                          <span className="text-green-600 text-xs">Balanced</span>
+                        ) : (
+                          <span className="text-destructive text-xs">
+                            Difference: {formatCurrency(Math.abs(totalDebits - totalCredits))}
+                          </span>
+                        )
+                      ) : null}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </CardContent>
         </Card>
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/financial/journal-entries"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading || (!isBalanced && (totalDebits > 0 || totalCredits > 0))}>
             {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Journal Entry'}
           </Button>
         </div>

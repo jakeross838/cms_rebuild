@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -18,9 +18,15 @@ export default function NewWarrantyClaimPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // ── Dropdown data ──────────────────────────────────────────────
+  const [jobs, setJobs] = useState<{ id: string; name: string }[]>([])
+  const [warranties, setWarranties] = useState<{ id: string; title: string; job_id: string | null }[]>([])
+
   const today = new Date().toISOString().split('T')[0]
 
   const [formData, setFormData] = useState({
+    job_id: '',
+    warranty_id: '',
     title: '',
     description: '',
     priority: 'Medium',
@@ -29,9 +35,44 @@ export default function NewWarrantyClaimPage() {
     resolution_notes: '',
   })
 
+  useEffect(() => {
+    async function loadDropdowns() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('company_id')
+        .eq('id', user.id)
+        .single()
+
+      const companyId = (profile as { company_id: string } | null)?.company_id
+      if (!companyId) return
+
+      const [jobsRes, warrantiesRes] = await Promise.all([
+        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
+        supabase.from('warranties').select('id, title, job_id').eq('company_id', companyId).is('deleted_at', null).order('title'),
+      ])
+
+      if (jobsRes.data) setJobs(jobsRes.data)
+      if (warrantiesRes.data) setWarranties(warrantiesRes.data as { id: string; title: string; job_id: string | null }[])
+    }
+    loadDropdowns()
+  }, [])
+
+  // Filter warranties by selected job (if a job is selected)
+  const filteredWarranties = formData.job_id
+    ? warranties.filter((w) => w.job_id === formData.job_id)
+    : warranties
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev) => {
+      const next = { ...prev, [name]: value }
+      // Reset warranty when job changes
+      if (name === 'job_id') next.warranty_id = ''
+      return next
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,12 +93,13 @@ export default function NewWarrantyClaimPage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
-      // claim_number generated client-side; warranty_id nullable per spec
       const claimNumber = `WC-${Date.now().toString(36).toUpperCase()}`
 
       const insertPayload = {
         company_id: companyId,
         claim_number: claimNumber,
+        job_id: formData.job_id || null,
+        warranty_id: formData.warranty_id || null,
         title: formData.title,
         description: formData.description || null,
         priority: formData.priority,
@@ -96,6 +138,32 @@ export default function NewWarrantyClaimPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
+
+        {/* Job & Warranty Linkage */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Linkage</CardTitle>
+            <CardDescription>Link this claim to a job and warranty</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="job_id" className="text-sm font-medium">Job</label>
+                <select id="job_id" name="job_id" value={formData.job_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                  <option value="">No job</option>
+                  {jobs.map((j) => <option key={j.id} value={j.id}>{j.name}</option>)}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="warranty_id" className="text-sm font-medium">Warranty</label>
+                <select id="warranty_id" name="warranty_id" value={formData.warranty_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                  <option value="">No warranty</option>
+                  {filteredWarranties.map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                </select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
