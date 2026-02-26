@@ -1,5 +1,45 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 5 — Tenant Isolation, Audit Logging, Rate Limiting (2026-02-26)
+
+### Tenant Isolation — company_id on Line-Item DELETEs (5 routes)
+- estimates/[id]/lines/[lineId] DELETE: `.eq('company_id', ctx.companyId!)`
+- safety/inspections/[id]/items/[itemId] DELETE: `.eq('company_id', ctx.companyId!)`
+- punch-list/[id]/photos/[photoId] DELETE: `.eq('company_id', ctx.companyId!)`
+- quality-checklists/templates/[id]/items/[itemId] DELETE: `.eq('company_id', ctx.companyId!)`
+- safety/toolbox-talks/[id]/attendees/[attendeeId] DELETE: `.eq('company_id', ctx.companyId!)`
+
+### Deleted_at Consistency (11 queries across 6 files)
+- GL journal entries GET: `.is('deleted_at', null)`
+- push-tokens PUT + DELETE-verify: `.is('deleted_at', null)`
+- sync-queue PUT + DELETE-verify: `.is('deleted_at', null)`
+- hr/documents PUT: `.is('deleted_at', null)`
+- report-schedules PUT: `.is('deleted_at', null)`
+- marketplace reviews PUT-verify + update + DELETE-verify: `.is('deleted_at', null)`
+
+### Audit Logging Coverage (28 handlers across 17+ files)
+- Budgets: budget.create, budget.update, budget.archive, budget_line.create
+- Change Orders: change_order.create, change_order.update, change_order.archive, change_order.approve
+- Contracts: contract.create, contract.update, contract.archive
+- Purchase Orders: po.create, po.update, po.archive
+- GL Accounts: gl_account.create, gl_account.update
+- Financial Periods: financial_period.create, financial_period.update
+- Draw Request Lines: draw_request_lines.update
+- Lien Waivers: lien_waiver.create, lien_waiver.update, lien_waiver.archive, lien_waiver.approve
+- Billing Plans: billing_plan.create, billing_plan.update, billing_plan.deactivate
+- Billing Usage: usage_record.create, usage_record.update
+- Report Generation: report.generate
+
+### Financial Rate Limiting (14 mutation routes)
+- Budgets (create/update/archive + budget line create): 'api' → 'financial'
+- Change Orders (create/update/archive/approve): 'api' → 'financial'
+- Contracts (create/update/archive): 'api' → 'financial'
+- Purchase Orders (create/update/archive): 'api' → 'financial'
+- Lien Waivers (create/update/archive/approve): 'api' → 'financial'
+- Report Generation: 'api' → 'financial'
+
+---
+
 ## Session 4 — Race Conditions, Error Sanitization, Soft Delete (2026-02-26)
 
 ### Atomic Financial Balance Updates (3 PostgreSQL RPC functions)

@@ -1,5 +1,28 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 5 — Tenant Isolation, Deleted_at Consistency, Audit Logging, Rate Limiting
+
+### Why
+1. **5 line-item DELETE handlers missing company_id** — estimate lines, inspection items, punch photos, checklist template items, toolbox talk attendees could be deleted cross-tenant if attacker guessed the child record ID.
+2. **GL journal entries GET missing deleted_at filter** — soft-deleted journal entries would still be returned by the GET-by-ID endpoint.
+3. **9 more queries missing deleted_at filter** — push-tokens PUT/DELETE-verify, sync-queue PUT/DELETE-verify, hr/documents PUT, report-schedules PUT, marketplace reviews PUT-verify/update/DELETE-verify all operated on soft-deleted records.
+4. **21 financial route handlers missing audit logging** — budgets, change orders, contracts, purchase orders, GL accounts, financial periods, draw request lines, billing plans, billing usage had no auditAction parameter.
+5. **14 financial mutation routes using wrong rate limit** — budgets, change orders, contracts, purchase orders, lien waivers, and report generation used 'api' rate limit instead of the stricter 'financial' rate limit.
+6. **Lien waiver routes missing audit logging** — compliance-critical documents had no audit trail (create/update/archive/approve).
+
+### What was done
+- Added `.eq('company_id', ctx.companyId!)` to 5 line-item DELETE handlers
+- Added `.is('deleted_at', null)` to GL journal entries GET and 9 more queries across 5 files
+- Added `auditAction` to 28 financial route handlers across 17 files
+- Upgraded `rateLimit` from 'api' to 'financial' on 14 financial mutation routes across 14 files
+
+### Commits
+- `3be7eb6` — Add company_id to 5 line-item DELETEs, deleted_at filters to 11 routes
+- `b719041` — Add audit logging to 21 financial route handlers
+- `b5da6e0` — Upgrade financial routes to stricter rate limiting + add audit logging
+
+---
+
 ## 2026-02-26: Session 4 — Race Conditions, Error Sanitization, Soft Delete, JSON Guard
 
 ### Why

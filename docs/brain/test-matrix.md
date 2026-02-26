@@ -1,5 +1,35 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 5 — Tenant Isolation, Audit, Rate Limiting (2026-02-26)
+
+### Tenant Isolation on Line-Item DELETEs
+- [ ] DELETE /api/v2/estimates/:id/lines/:lineId — rejects if company_id doesn't match
+- [ ] DELETE /api/v2/safety/inspections/:id/items/:itemId — rejects if company_id doesn't match
+- [ ] DELETE /api/v2/punch-list/:id/photos/:photoId — rejects if company_id doesn't match
+- [ ] DELETE /api/v2/quality-checklists/templates/:id/items/:itemId — rejects if company_id doesn't match
+- [ ] DELETE /api/v2/safety/toolbox-talks/:id/attendees/:attendeeId — rejects if company_id doesn't match
+
+### Deleted_at Filter Consistency
+- [ ] GET /api/v2/gl/journal-entries/:id — excludes soft-deleted entries
+- [ ] PUT /api/v2/mobile/push-tokens/:id — rejects updates to soft-deleted tokens
+- [ ] PUT /api/v2/mobile/sync-queue/:id — rejects updates to soft-deleted items
+- [ ] PUT /api/v2/hr/documents/:id — rejects updates to soft-deleted documents
+- [ ] PUT /api/v2/reports/schedules/:id — rejects updates to soft-deleted schedules
+- [ ] PUT /api/v2/marketplace/reviews/:id — rejects updates to soft-deleted reviews
+
+### Audit Logging
+- [ ] POST /api/v2/budgets — creates audit log entry with action 'budget.create'
+- [ ] POST /api/v2/lien-waivers — creates audit log entry with action 'lien_waiver.create'
+- [ ] POST /api/v2/lien-waivers/:id/approve — creates audit log entry with action 'lien_waiver.approve'
+- [ ] POST /api/v2/change-orders/:id/approve — creates audit log entry with action 'change_order.approve'
+
+### Financial Rate Limiting
+- [ ] Rapid budget creation requests — throttled at 'financial' rate (stricter than 'api')
+- [ ] Rapid lien waiver creation requests — throttled at 'financial' rate
+- [ ] Rapid report generation requests — throttled at 'financial' rate
+
+---
+
 ## Session 4 — Race Conditions, Financial Integrity (2026-02-26)
 
 ### Atomic Balance Updates
