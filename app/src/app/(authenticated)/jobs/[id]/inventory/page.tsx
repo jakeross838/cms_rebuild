@@ -11,6 +11,10 @@ import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Inventory' }
+
 interface InventoryItem {
   id: string
   name: string

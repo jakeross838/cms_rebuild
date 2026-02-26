@@ -5,6 +5,9 @@ import { BarChart3, FileText, DollarSign, Calendar, Camera, ClipboardList } from
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Job Reports' }
 
 export default async function JobReportsPage({
   params,

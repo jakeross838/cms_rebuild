@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 interface DailyLog {
   id: string
@@ -23,6 +24,8 @@ interface DailyLog {
   created_by: string | null
   submitted_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Daily Logs' }
 
 export default async function DailyLogsPage({
   params,

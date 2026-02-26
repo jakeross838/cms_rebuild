@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 interface BudgetLine {
   id: string
@@ -23,6 +24,8 @@ interface BudgetLine {
   sort_order: number | null
   cost_codes: { code: string; name: string } | null
 }
+
+export const metadata: Metadata = { title: 'Budget' }
 
 export default async function BudgetPage({
   params,

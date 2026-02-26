@@ -11,6 +11,10 @@ import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Inspections' }
+
 interface PermitInspection {
   id: string
   inspection_type: string

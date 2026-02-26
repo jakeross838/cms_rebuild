@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { ArchiveJobButton } from './archive-job-button'
+import type { Metadata } from 'next'
 
 interface JobDetail {
   id: string
@@ -39,6 +40,8 @@ interface JobDetail {
   updated_at: string | null
   clients: { id: string; name: string; email: string | null; phone: string | null } | null
 }
+
+export const metadata: Metadata = { title: 'Job Details' }
 
 export default async function JobDetailPage({
   params,

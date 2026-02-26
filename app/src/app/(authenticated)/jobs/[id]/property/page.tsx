@@ -4,6 +4,7 @@ import { Home } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 
 interface JobPropertyData {
   id: string
@@ -21,6 +22,8 @@ interface JobPropertyData {
   actual_completion: string | null
   notes: string | null
 }
+
+export const metadata: Metadata = { title: 'Property Details' }
 
 export default async function JobPropertyPage({
   params,

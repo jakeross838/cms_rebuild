@@ -11,6 +11,10 @@ import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Lien Waivers' }
+
 interface LienWaiver {
   id: string
   waiver_type: string | null

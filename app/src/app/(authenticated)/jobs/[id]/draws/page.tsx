@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 interface DrawRequest {
   id: string
@@ -24,6 +25,8 @@ interface DrawRequest {
   submitted_at: string | null
   approved_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Draws' }
 
 export default async function DrawsPage({
   params,

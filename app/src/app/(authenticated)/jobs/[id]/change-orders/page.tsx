@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 interface ChangeOrder {
   id: string
@@ -23,6 +24,8 @@ interface ChangeOrder {
   created_at: string | null
   approved_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Change Orders' }
 
 export default async function ChangeOrdersPage({
   params,

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 interface Communication {
   id: string
@@ -22,6 +23,8 @@ interface Communication {
   notes: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Communications' }
 
 export default async function JobCommunicationsPage({
   params,
