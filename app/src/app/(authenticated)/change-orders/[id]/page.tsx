@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 // -- Types --------------------------------------------------------------------
 
@@ -154,11 +155,13 @@ export default function ChangeOrderDetailPage() {
         cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
         schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
       } : prev)
+      toast.success('Change order updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save change order')
     } finally {
       setSaving(false)
     }
@@ -173,9 +176,11 @@ export default function ChangeOrderDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive change order')
+      toast.error('Failed to archive change order')
       return
     }
 
+    toast.success('Change order archived')
     router.push('/change-orders')
     router.refresh()
   }

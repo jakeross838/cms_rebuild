@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface LeadData {
   id: string
@@ -163,11 +164,13 @@ export default function LeadDetailPage() {
         budget_range_low: formData.budget_range_low ? parseFloat(formData.budget_range_low) : null,
         budget_range_high: formData.budget_range_high ? parseFloat(formData.budget_range_high) : null,
       } : prev)
+      toast.success('Lead updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save lead')
     } finally {
       setSaving(false)
     }
@@ -182,9 +185,11 @@ export default function LeadDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive lead')
+      toast.error('Failed to archive lead')
       return
     }
 
+    toast.success('Lead archived')
     router.push('/leads')
     router.refresh()
   }

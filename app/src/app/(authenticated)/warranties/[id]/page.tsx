@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface WarrantyData {
   id: string
@@ -142,11 +143,13 @@ export default function WarrantyDetailPage() {
         contact_email: formData.contact_email || null,
         description: formData.description || null,
       } : prev)
+      toast.success('Warranty updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save warranty')
     } finally {
       setSaving(false)
     }
@@ -161,9 +164,11 @@ export default function WarrantyDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive warranty')
+      toast.error('Failed to archive warranty')
       return
     }
 
+    toast.success('Warranty archived')
     router.push('/warranties')
     router.refresh()
   }

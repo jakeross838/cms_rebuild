@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
@@ -124,11 +125,13 @@ export default function ClientDetailPage() {
       if (updateError) throw updateError
 
       setClient((prev) => prev ? { ...prev, ...formData } : prev)
+      toast.success('Client updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save client')
     } finally {
       setSaving(false)
     }
@@ -143,9 +146,11 @@ export default function ClientDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive client')
+      toast.error('Failed to archive client')
       return
     }
 
+    toast.success('Client archived')
     router.push('/clients')
     router.refresh()
   }

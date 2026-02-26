@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -148,11 +149,13 @@ export default function PermitDetailPage() {
             }
           : prev
       )
+      toast.success('Permit updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save permit')
     } finally {
       setSaving(false)
     }
@@ -167,9 +170,11 @@ export default function PermitDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive permit')
+      toast.error('Failed to archive permit')
       return
     }
 
+    toast.success('Permit archived')
     router.push('/permits')
     router.refresh()
   }

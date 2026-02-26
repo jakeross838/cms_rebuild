@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface ContractData {
   id: string
@@ -133,11 +134,13 @@ export default function ContractDetailPage() {
         end_date: formData.end_date || null,
         description: formData.description || null,
       } : prev)
+      toast.success('Contract updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save contract')
     } finally {
       setSaving(false)
     }
@@ -152,9 +155,11 @@ export default function ContractDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive contract')
+      toast.error('Failed to archive contract')
       return
     }
 
+    toast.success('Contract archived')
     router.push('/contracts')
     router.refresh()
   }

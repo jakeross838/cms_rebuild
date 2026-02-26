@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -156,6 +157,7 @@ export default function EditJobPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Job updated')
       setSuccess(true)
       setTimeout(() => {
         router.push(`/jobs/${jobId}`)
@@ -163,6 +165,7 @@ export default function EditJobPage() {
       }, 1000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save job')
     } finally {
       setSaving(false)
     }

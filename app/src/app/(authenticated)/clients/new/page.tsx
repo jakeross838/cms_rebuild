@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewClientPage() {
   const router = useRouter()
@@ -71,10 +72,13 @@ export default function NewClientPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Client created')
       router.push('/clients')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create client')
+      const errorMessage = (err as Error)?.message || 'Failed to create client'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

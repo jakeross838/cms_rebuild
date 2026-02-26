@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface EstimateData {
   id: string
@@ -140,11 +141,13 @@ export default function EstimateDetailPage() {
         description: formData.description || null,
         notes: formData.notes || null,
       } : prev)
+      toast.success('Estimate updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save estimate')
     } finally {
       setSaving(false)
     }
@@ -159,9 +162,11 @@ export default function EstimateDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive estimate')
+      toast.error('Failed to archive estimate')
       return
     }
 
+    toast.success('Estimate archived')
     router.push('/estimates')
     router.refresh()
   }

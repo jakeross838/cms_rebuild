@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -163,11 +164,13 @@ export default function RfiDetailPage() {
         cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
         schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
       } : prev)
+      toast.success('RFI updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save RFI')
     } finally {
       setSaving(false)
     }
@@ -182,9 +185,11 @@ export default function RfiDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive RFI')
+      toast.error('Failed to archive RFI')
       return
     }
 
+    toast.success('RFI archived')
     router.push('/rfis')
     router.refresh()
   }

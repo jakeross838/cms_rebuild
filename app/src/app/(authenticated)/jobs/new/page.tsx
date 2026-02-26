@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { CONTRACT_TYPES, US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewJobPage() {
   const router = useRouter()
@@ -79,10 +80,13 @@ export default function NewJobPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Job created')
       router.push(`/jobs/${job.id}`)
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create job')
+      const errorMessage = (err as Error)?.message || 'Failed to create job'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

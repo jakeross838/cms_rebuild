@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NewVendorPage() {
   const router = useRouter()
@@ -71,10 +72,13 @@ export default function NewVendorPage() {
 
       if (insertError) throw insertError
 
+      toast.success('Vendor created')
       router.push('/vendors')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create vendor')
+      const errorMessage = (err as Error)?.message || 'Failed to create vendor'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

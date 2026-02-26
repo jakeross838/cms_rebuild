@@ -1,5 +1,7 @@
 import { Source_Serif_4, IBM_Plex_Sans } from "next/font/google";
 
+import { Toaster } from "sonner";
+
 import { ThemeProvider } from "@/components/theme-provider";
 
 import Providers from "./providers";
@@ -40,6 +42,7 @@ export default function RootLayout({
         <Providers>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <Toaster richColors position="bottom-right" />
           </ThemeProvider>
         </Providers>
       </body>

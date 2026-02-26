@@ -15,6 +15,7 @@ import {
 import { CommandPalette } from '@/components/command-palette/command-palette'
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
 import { NotificationBell } from '@/components/notifications/notification-bell'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { createClient } from '@/lib/supabase/client'
 
 
@@ -63,6 +64,9 @@ export function TopNav({ user }: TopNavProps) {
 
       {/* Right side */}
       <div className="flex items-center gap-4">
+        {/* Theme toggle */}
+        <ThemeToggle />
+
         {/* Notifications */}
         <NotificationBell />
 

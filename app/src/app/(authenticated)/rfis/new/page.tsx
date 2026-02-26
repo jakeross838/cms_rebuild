@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface JobOption {
   id: string
@@ -111,10 +112,13 @@ export default function NewRfiPage() {
 
       if (insertError) throw insertError
 
+      toast.success('RFI created')
       router.push('/rfis')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create RFI')
+      const errorMessage = (err as Error)?.message || 'Failed to create RFI'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

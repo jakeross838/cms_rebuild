@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface InvoiceData {
   id: string
@@ -95,9 +96,11 @@ export default function InvoiceDetailPage() {
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
+      toast.success('Invoice archived')
       router.push('/invoices')
     } catch (err) {
       setError((err as Error)?.message || 'Failed to archive')
+      toast.error('Failed to archive invoice')
       setArchiving(false)
     }
   }
@@ -130,11 +133,13 @@ export default function InvoiceDetailPage() {
         due_date: formData.due_date || null,
         notes: formData.notes || null,
       } : prev)
+      toast.success('Invoice updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save invoice')
     } finally {
       setSaving(false)
     }

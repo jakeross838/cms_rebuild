@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface VendorData {
   id: string
@@ -129,11 +130,13 @@ export default function VendorDetailPage() {
       if (updateError) throw updateError
 
       setVendor((prev) => prev ? { ...prev, ...formData } : prev)
+      toast.success('Vendor updated')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError((err as Error)?.message || 'Failed to save')
+      toast.error('Failed to save vendor')
     } finally {
       setSaving(false)
     }
@@ -148,9 +151,11 @@ export default function VendorDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive vendor')
+      toast.error('Failed to archive vendor')
       return
     }
 
+    toast.success('Vendor archived')
     router.push('/vendors')
     router.refresh()
   }

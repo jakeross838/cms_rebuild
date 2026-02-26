@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface SelectOption {
   id: string
@@ -118,10 +119,13 @@ export default function NewInvoicePage() {
 
       if (insertError) throw insertError
 
+      toast.success('Invoice created')
       router.push('/invoices')
       router.refresh()
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to create invoice')
+      const errorMessage = (err as Error)?.message || 'Failed to create invoice'
+      toast.error(errorMessage)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
