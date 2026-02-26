@@ -1,5 +1,19 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 13 — N+1 Query Performance Fixes
+
+### Why
+- Audit found 5 N+1 query patterns: 3 HIGH severity (frequent endpoints with sequential DB round-trips), 2 MEDIUM severity
+- PO receipts GET was making N+1 queries (1 list + N line fetches) on every page load — replaced with batch `.in()` query
+- AR receipts, AP payments, and PO receipts POST were making sequential RPC calls in for-loops — parallelized with Promise.all since each call targets a different record
+- Draw request lines POST was making a redundant query for `retainage_pct` that was already available from the initial existence check
+- Also ran pagination audit (141/155 endpoints use paginatedResponse — 91% compliance, remainder intentionally unpaginated) and cron/internal audit (all clean)
+
+### Impact
+- PO receipts list: ~20x fewer DB round-trips per page (1+N → 2 queries)
+- Financial POST endpoints (AR receipts, AP payments, PO receipts): N sequential RPC calls → 1 parallel batch
+- Draw request lines POST: 4 queries → 3 queries (eliminated redundant fetch)
+
 ## 2026-02-26: Session 12 — Soft-Delete & Response Format Hardening
 
 ### Why

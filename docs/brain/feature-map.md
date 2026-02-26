@@ -1,5 +1,29 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 13 — N+1 Query Performance Fixes (2026-02-26)
+
+### N+1 Query Patterns Fixed (5 fixes across 4 files)
+
+**HIGH severity (3 fixes — frequently-called endpoints with sequential DB calls):**
+- `v2/purchase-orders/[id]/receipts/route.ts` GET: Replaced Promise.all loop (N+1 queries fetching receipt lines individually) with single batch `.in('receipt_id', receiptIds)` query + client-side grouping. Reduces N+1 to 2 queries.
+- `v2/ar/receipts/route.ts` POST: Parallelized sequential `apply_receipt_to_invoice` RPC calls using `Promise.all`. Each targets a different invoice, so safe to run concurrently. Reduces N sequential round-trips to 1 parallel batch.
+- `v2/ap/payments/route.ts` POST: Parallelized sequential `apply_payment_to_bill` RPC calls using `Promise.all`. Same pattern as AR receipts. Reduces N sequential round-trips to 1 parallel batch.
+
+**MEDIUM severity (2 fixes — less frequent endpoints):**
+- `v2/purchase-orders/[id]/receipts/route.ts` POST: Parallelized sequential `increment_po_line_received` RPC calls using `Promise.all`. Each targets a different PO line, safe to run concurrently.
+- `v2/draw-requests/[id]/lines/route.ts` POST: Eliminated redundant `retainage_pct` query by including it in the initial draw existence check (`select('id, status, retainage_pct')` instead of `select('id, status')`). Reduces 4 sequential queries to 3.
+
+### Pagination Audit Results (no fixes needed)
+- 141/155 v2 list endpoints use `paginatedResponse()` with proper `.range()` — 91% compliance
+- 14 endpoints intentionally unpaginated (singleton settings, user preferences, aggregates)
+- Zero manual pagination patterns found — 100% use `getPaginationParams()` + `paginatedResponse()` helper
+
+### Cron/Internal Endpoint Audit Results (no fixes needed)
+- Both cron endpoints (`cleanup`, `process-jobs`) use proper Bearer token auth with CRON_SECRET
+- Health endpoint is minimal and correct
+- All error handlers log context before returning
+- `createApiHandler` middleware catches malformed JSON at line 287-294 (SyntaxError global catch)
+
 ## Session 12 — Soft-Delete & Response Format Hardening (2026-02-26)
 
 ### Soft-Delete Consistency Fixes (14 issues across 8 files)

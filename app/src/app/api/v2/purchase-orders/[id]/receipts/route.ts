@@ -89,17 +89,27 @@ export const GET = createApiHandler(
       )
     }
 
-    // For each receipt, fetch receipt lines
-    const receiptsWithLines = await Promise.all(
-      (data ?? []).map(async (receipt: Record<string, unknown>) => {
-        const { data: lines } = await supabase
+    // Batch-fetch all receipt lines in one query (instead of N+1)
+    const receiptIds = (data ?? []).map((r: Record<string, unknown>) => r.id as string)
+    const { data: allLines } = receiptIds.length > 0
+      ? await supabase
           .from('po_receipt_lines')
           .select('*')
-          .eq('receipt_id', receipt.id as string)
+          .in('receipt_id', receiptIds)
+      : { data: [] }
 
-        return { ...receipt, lines: lines ?? [] }
-      })
-    )
+    // Group lines by receipt_id
+    const linesByReceipt = new Map<string, Record<string, unknown>[]>()
+    for (const line of (allLines ?? []) as Record<string, unknown>[]) {
+      const rid = line.receipt_id as string
+      if (!linesByReceipt.has(rid)) linesByReceipt.set(rid, [])
+      linesByReceipt.get(rid)!.push(line)
+    }
+
+    const receiptsWithLines = (data ?? []).map((receipt: Record<string, unknown>) => ({
+      ...receipt,
+      lines: linesByReceipt.get(receipt.id as string) ?? [],
+    }))
 
     return NextResponse.json(paginatedResponse(receiptsWithLines, count ?? 0, page, limit, ctx.requestId))
   },
@@ -200,14 +210,18 @@ export const POST = createApiHandler(
       )
     }
 
-    // Atomically increment received_quantity on each PO line (prevents race conditions)
-    for (const line of input.lines) {
-      const { error: rpcError } = await (supabase as any).rpc('increment_po_line_received', {
-        p_line_id: line.po_line_id,
-        p_quantity: line.quantity_received,
-      })
-      if (rpcError) {
-        const mapped = mapDbError(rpcError)
+    // Atomically increment received_quantity on each PO line (parallel, prevents race conditions)
+    const rpcResults = await Promise.all(
+      input.lines.map((line) =>
+        (supabase as any).rpc('increment_po_line_received', {
+          p_line_id: line.po_line_id,
+          p_quantity: line.quantity_received,
+        })
+      )
+    )
+    for (const result of rpcResults) {
+      if (result.error) {
+        const mapped = mapDbError(result.error)
         return NextResponse.json(
           { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
           { status: mapped.status }

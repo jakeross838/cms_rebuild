@@ -1,5 +1,28 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 13 — N+1 Query Performance Fixes (2026-02-26)
+
+### PO Receipts GET — Batch Line Fetch
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET receipts returns correct lines per receipt | Each receipt has its own `lines[]` array | verify |
+| GET receipts with 0 results returns empty array | No crash on empty `.in()` | verify |
+| GET receipts lines grouped correctly by receipt_id | No cross-contamination between receipts | verify |
+
+### AR/AP/PO Parallel RPC Calls
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| AR receipt POST with 3 applications updates all 3 invoices | All invoice balances decremented atomically | verify |
+| AP payment POST with 3 applications updates all 3 bills | All bill balances decremented atomically | verify |
+| PO receipt POST increments all PO line received_quantity | All lines updated in parallel | verify |
+| RPC error in one application returns mapped error | Error surfaced with proper status code | verify |
+
+### Draw Request Lines POST — Eliminated Redundant Query
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| POST lines uses retainage_pct from initial draw fetch | No second query for retainage_pct | verify |
+| POST lines recalculates draw totals correctly | contract_amount, total_completed, retainage_amount all updated | verify |
+
 ## Session 12 — Soft-Delete & Response Format Hardening (2026-02-26)
 
 ### Soft-Delete Consistency (14 fixes)

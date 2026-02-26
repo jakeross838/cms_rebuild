@@ -93,7 +93,7 @@ export const POST = createApiHandler(
     // Verify draw exists, belongs to company, and is editable
     const { data: draw } = await supabase
       .from('draw_requests')
-      .select('id, status')
+      .select('id, status, retainage_pct')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -163,14 +163,8 @@ export const POST = createApiHandler(
       const totalBalance = allLines.reduce((sum: number, l: { balance_to_finish: number }) => sum + Number(l.balance_to_finish), 0)
       const currentWork = allLines.reduce((sum: number, l: { current_work: number; materials_stored: number }) => sum + Number(l.current_work) + Number(l.materials_stored), 0)
 
-      // Fetch retainage_pct from the draw
-      const { data: drawData } = await supabase
-        .from('draw_requests')
-        .select('retainage_pct')
-        .eq('id', id)
-        .single()
-
-      const retainagePct = drawData?.retainage_pct ?? 10
+      // Use retainage_pct from the already-fetched draw (no extra query needed)
+      const retainagePct = draw.retainage_pct ?? 10
       const retainageAmount = totalCompleted * (retainagePct / 100)
       const totalEarned = totalCompleted - retainageAmount
       const currentDue = totalEarned - totalPrevious
