@@ -117,11 +117,19 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         }
 
         // Get user profile with company
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('users')
           .select('id, company_id, role, email')
           .eq('id', user.id)
-          .single() as { data: { id: string; company_id: string; role: string; email: string } | null; error: unknown }
+          .single() as { data: { id: string; company_id: string; role: string; email: string } | null; error: { message: string } | null }
+
+        if (profileError) {
+          logger.error('Failed to fetch user profile', { error: profileError.message, userId: user.id })
+          return NextResponse.json(
+            { error: 'Internal Server Error', requestId },
+            { status: 500 }
+          )
+        }
 
         if (!profile) {
           return NextResponse.json(
@@ -175,6 +183,14 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
 
       // 5. Schema validation (POST/PATCH/PUT only)
       if (schema && ['POST', 'PATCH', 'PUT'].includes(req.method)) {
+        const contentType = req.headers.get('content-type')?.split(';')[0]?.trim()
+        if (contentType && contentType !== 'application/json') {
+          return NextResponse.json(
+            { error: 'Bad Request', message: 'Content-Type must be application/json', requestId },
+            { status: 400 }
+          )
+        }
+
         let body: unknown
         try {
           body = await req.clone().json()

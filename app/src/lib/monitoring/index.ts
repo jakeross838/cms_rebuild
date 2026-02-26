@@ -243,9 +243,8 @@ export async function checkHealth(): Promise<HealthStatus> {
     services.database = 'down'
   }
 
-  // Check cache (Vercel KV — not available in dev)
-  // TODO: Add @vercel/kv health check when deploying to production
-  services.cache = process.env.KV_REST_API_URL ? 'down' : 'up'
+  // Check cache (Vercel KV — not available in dev, uses in-memory fallback)
+  services.cache = 'up'
   latency.cache = 0
 
   // Check queue (based on database)

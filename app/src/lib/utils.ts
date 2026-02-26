@@ -16,6 +16,7 @@ export function formatCurrency(amount: number | null | undefined): string {
 export function formatDate(date: string | Date | null | undefined): string {
   if (!date) return ''
   const d = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(d.getTime())) return ''
   return d.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -26,9 +27,11 @@ export function formatDate(date: string | Date | null | undefined): string {
 export function formatRelativeDate(date: string | Date | null | undefined): string {
   if (!date) return ''
   const d = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(d.getTime())) return ''
   const now = new Date()
   const diffInDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24))
 
+  if (diffInDays < 0) return formatDate(d)
   if (diffInDays === 0) return 'Today'
   if (diffInDays === 1) return 'Yesterday'
   if (diffInDays < 7) return `${diffInDays} days ago`
