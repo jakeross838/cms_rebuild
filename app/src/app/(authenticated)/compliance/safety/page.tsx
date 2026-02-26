@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -39,10 +40,13 @@ interface SafetyInspection {
 export default async function SafetyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; tab?: string }>
+  searchParams: Promise<{ search?: string; tab?: string; page?: string }>
 }) {
   const params = await searchParams
   const tab = params.tab || 'incidents'
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   // Resolve current user's company_id for defense-in-depth tenant filtering
@@ -51,15 +55,22 @@ export default async function SafetyPage({
   const companyId = profile?.company_id
 
   const [
-    { data: incidentsData },
-    { data: inspectionsData },
+    { data: incidentsData, count: incidentsCount },
+    { data: inspectionsData, count: inspectionsCount },
   ] = await Promise.all([
-    supabase.from('safety_incidents').select('*').is('deleted_at', null).eq('company_id', companyId!).order('incident_date', { ascending: false }).limit(100),
-    supabase.from('safety_inspections').select('*').is('deleted_at', null).eq('company_id', companyId!).order('inspection_date', { ascending: false }).limit(100),
+    tab === 'incidents'
+      ? supabase.from('safety_incidents').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('incident_date', { ascending: false }).range(offset, offset + pageSize - 1)
+      : supabase.from('safety_incidents').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('incident_date', { ascending: false }).limit(0),
+    tab === 'inspections'
+      ? supabase.from('safety_inspections').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('inspection_date', { ascending: false }).range(offset, offset + pageSize - 1)
+      : supabase.from('safety_inspections').select('*', { count: 'exact' }).is('deleted_at', null).eq('company_id', companyId!).order('inspection_date', { ascending: false }).limit(0),
   ])
 
   const incidents = (incidentsData || []) as SafetyIncident[]
   const inspections = (inspectionsData || []) as SafetyInspection[]
+  const totalPages = tab === 'incidents'
+    ? Math.ceil((incidentsCount || 0) / pageSize)
+    : Math.ceil((inspectionsCount || 0) / pageSize)
 
   const oshaRecordable = incidents.filter((i) => i.osha_recordable).length
   const openIncidents = incidents.filter((i) => i.status === 'open' || i.status === 'investigating').length
@@ -70,7 +81,7 @@ export default async function SafetyPage({
         <div>
           <h1 className="text-2xl font-bold text-foreground">Safety & Compliance</h1>
           <p className="text-muted-foreground">
-            {incidents.length} incidents &bull; {inspections.length} inspections &bull; {oshaRecordable} OSHA recordable
+            {incidentsCount || 0} incidents &bull; {inspectionsCount || 0} inspections &bull; {oshaRecordable} OSHA recordable
           </p>
         </div>
         <Link href="/compliance/safety/new"><Button><Plus className="h-4 w-4 mr-2" />Report Incident</Button></Link>
@@ -78,10 +89,10 @@ export default async function SafetyPage({
 
       <div className="flex gap-2">
         <Link href="/compliance/safety?tab=incidents">
-          <Button variant={tab === 'incidents' ? 'default' : 'outline'} size="sm">Incidents ({incidents.length})</Button>
+          <Button variant={tab === 'incidents' ? 'default' : 'outline'} size="sm">Incidents ({incidentsCount || 0})</Button>
         </Link>
         <Link href="/compliance/safety?tab=inspections">
-          <Button variant={tab === 'inspections' ? 'default' : 'outline'} size="sm">Inspections ({inspections.length})</Button>
+          <Button variant={tab === 'inspections' ? 'default' : 'outline'} size="sm">Inspections ({inspectionsCount || 0})</Button>
         </Link>
       </div>
 
@@ -165,6 +176,8 @@ export default async function SafetyPage({
           </CardContent>
         </Card>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/compliance/safety" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { MessageSquare } from 'lucide-react'
 
 interface Communication {
@@ -13,7 +14,15 @@ interface Communication {
   created_at: string
 }
 
-export default async function CommunicationsPage() {
+export default async function CommunicationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -22,15 +31,16 @@ export default async function CommunicationsPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: communications } = await supabase
+  const { data: communications, count } = await supabase
     .from('communications')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
   const items = (communications ?? []) as Communication[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6 p-6">
@@ -73,6 +83,8 @@ export default async function CommunicationsPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/communications" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

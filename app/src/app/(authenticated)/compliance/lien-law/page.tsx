@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
@@ -26,9 +27,12 @@ interface LienWaiverTracking {
 export default async function LienLawPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,15 +41,16 @@ export default async function LienLawPage({
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: trackingData } = await supabase
+  const { data: trackingData, count } = await supabase
     .from('lien_waiver_tracking')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(100)
+    .range(offset, offset + pageSize - 1)
 
   const records = (trackingData || []) as LienWaiverTracking[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const compliant = records.filter((r) => r.is_compliant).length
   const nonCompliant = records.filter((r) => !r.is_compliant).length
@@ -126,6 +131,8 @@ export default async function LienLawPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/compliance/lien-law" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

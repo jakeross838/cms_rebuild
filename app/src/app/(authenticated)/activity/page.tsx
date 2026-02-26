@@ -6,6 +6,7 @@ import { Activity, Clock } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ export const metadata: Metadata = { title: 'Activity' }
 export default async function ActivityPage({
   searchParams,
 }: {
-  searchParams: Promise<{ entity_type?: string }>
+  searchParams: Promise<{ entity_type?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,17 +41,18 @@ export default async function ActivityPage({
 
   let query = supabase
     .from('audit_log')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
-    .limit(100)
+    .range(offset, offset + pageSize - 1)
 
   if (params.entity_type) {
     query = query.eq('table_name', params.entity_type)
   }
 
-  const { data: logsData } = await query
+  const { data: logsData, count } = await query
   const logs = (logsData || []) as AuditLogRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -106,6 +111,8 @@ export default async function ActivityPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/activity" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }
