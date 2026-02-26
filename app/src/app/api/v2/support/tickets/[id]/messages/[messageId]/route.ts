@@ -12,17 +12,26 @@ import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middlew
 import { createClient } from '@/lib/supabase/server'
 import { updateTicketMessageSchema } from '@/lib/validation/schemas/customer-support'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const ticketsIdx = segments.indexOf('tickets')
+  const messagesIdx = segments.indexOf('messages')
+  return {
+    ticketId: ticketsIdx >= 0 && segments.length > ticketsIdx + 1 ? segments[ticketsIdx + 1] : null,
+    messageId: messagesIdx >= 0 && segments.length > messagesIdx + 1 ? segments[messagesIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/support/tickets/:id/messages/:messageId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const messageId = segments[segments.length - 1]
-    if (!messageId) {
+    const { ticketId, messageId } = extractIds(req.nextUrl.pathname)
+    if (!ticketId || !messageId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing message ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing ticket or message ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -33,6 +42,7 @@ export const GET = createApiHandler(
       .from('ticket_messages')
       .select('*')
       .eq('id', messageId)
+      .eq('ticket_id', ticketId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
@@ -55,11 +65,10 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const messageId = segments[segments.length - 1]
-    if (!messageId) {
+    const { ticketId, messageId } = extractIds(req.nextUrl.pathname)
+    if (!ticketId || !messageId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing message ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing ticket or message ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -86,6 +95,7 @@ export const PUT = createApiHandler(
       .from('ticket_messages')
       .update(updates)
       .eq('id', messageId)
+      .eq('ticket_id', ticketId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('*')
@@ -116,11 +126,10 @@ export const PUT = createApiHandler(
 
 export const DELETE = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const messageId = segments[segments.length - 1]
-    if (!messageId) {
+    const { ticketId, messageId } = extractIds(req.nextUrl.pathname)
+    if (!ticketId || !messageId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing message ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing ticket or message ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -131,6 +140,7 @@ export const DELETE = createApiHandler(
       .from('ticket_messages')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', messageId)
+      .eq('ticket_id', ticketId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 

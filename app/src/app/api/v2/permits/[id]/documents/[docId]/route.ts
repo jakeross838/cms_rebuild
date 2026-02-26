@@ -10,14 +10,30 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const permitsIdx = segments.indexOf('permits')
+  const documentsIdx = segments.indexOf('documents')
+  return {
+    permitId: permitsIdx >= 0 && segments.length > permitsIdx + 1 ? segments[permitsIdx + 1] : null,
+    docId: documentsIdx >= 0 && segments.length > documentsIdx + 1 ? segments[documentsIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/permits/:id/documents/:docId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const docId = segments[segments.length - 1]
+    const { permitId, docId } = extractIds(req.nextUrl.pathname)
+
+    if (!permitId || !docId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or document ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -25,6 +41,7 @@ export const GET = createApiHandler(
       .from('permit_documents')
       .select('*')
       .eq('id', docId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -46,8 +63,14 @@ export const GET = createApiHandler(
 
 export const DELETE = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const docId = segments[segments.length - 1]
+    const { permitId, docId } = extractIds(req.nextUrl.pathname)
+
+    if (!permitId || !docId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or document ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -56,6 +79,7 @@ export const DELETE = createApiHandler(
       .from('permit_documents')
       .select('id')
       .eq('id', docId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -70,6 +94,7 @@ export const DELETE = createApiHandler(
       .from('permit_documents')
       .delete()
       .eq('id', docId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
 
     if (error) {

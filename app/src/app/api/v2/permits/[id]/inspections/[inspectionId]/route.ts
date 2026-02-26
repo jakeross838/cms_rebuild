@@ -18,7 +18,16 @@ import { updateInspectionSchema } from '@/lib/validation/schemas/permitting'
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
     const segments = req.nextUrl.pathname.split('/')
+    const permitsIdx = segments.indexOf('permits')
+    const permitId = permitsIdx >= 0 && segments.length > permitsIdx + 1 ? segments[permitsIdx + 1] : null
     const inspectionId = segments[segments.length - 1]
+
+    if (!permitId || !inspectionId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or inspection ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -26,6 +35,7 @@ export const GET = createApiHandler(
       .from('permit_inspections')
       .select('*')
       .eq('id', inspectionId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -61,7 +71,16 @@ export const GET = createApiHandler(
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
     const segments = req.nextUrl.pathname.split('/')
+    const permitsIdx = segments.indexOf('permits')
+    const permitId = permitsIdx >= 0 && segments.length > permitsIdx + 1 ? segments[permitsIdx + 1] : null
     const inspectionId = segments[segments.length - 1]
+
+    if (!permitId || !inspectionId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or inspection ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const body = await req.json()
     const parseResult = updateInspectionSchema.safeParse(body)
@@ -76,11 +95,12 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    // Verify inspection exists
+    // Verify inspection exists and belongs to specified permit
     const { data: existing, error: existError } = await supabase
       .from('permit_inspections')
       .select('id')
       .eq('id', inspectionId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 

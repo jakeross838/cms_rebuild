@@ -15,14 +15,30 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { updateChecklistSchema } from '@/lib/validation/schemas/onboarding'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const onboardingIdx = segments.indexOf('onboarding')
+  const checklistsIdx = segments.indexOf('checklists')
+  return {
+    sessionId: onboardingIdx >= 0 && segments.length > onboardingIdx + 1 ? segments[onboardingIdx + 1] : null,
+    checklistId: checklistsIdx >= 0 && segments.length > checklistsIdx + 1 ? segments[checklistsIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/onboarding/:id/checklists/:checklistId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
-    const urlParts = req.nextUrl.pathname.split('/')
-    const checklistId = urlParts[urlParts.length - 1]
+    const { sessionId, checklistId } = extractIds(req.nextUrl.pathname)
+
+    if (!sessionId || !checklistId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing session or checklist ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -30,6 +46,7 @@ export const GET = createApiHandler(
       .from('onboarding_checklists')
       .select('*')
       .eq('id', checklistId)
+      .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -51,8 +68,14 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req, ctx: ApiContext) => {
-    const urlParts = req.nextUrl.pathname.split('/')
-    const checklistId = urlParts[urlParts.length - 1]
+    const { sessionId, checklistId } = extractIds(req.nextUrl.pathname)
+
+    if (!sessionId || !checklistId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing session or checklist ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const body = await req.json()
     const parseResult = updateChecklistSchema.safeParse(body)
@@ -87,6 +110,7 @@ export const PUT = createApiHandler(
       .from('onboarding_checklists')
       .update(updateFields)
       .eq('id', checklistId)
+      .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()

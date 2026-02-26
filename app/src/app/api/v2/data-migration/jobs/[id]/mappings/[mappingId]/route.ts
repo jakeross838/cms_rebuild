@@ -13,11 +13,16 @@ import { createClient } from '@/lib/supabase/server'
 import { updateFieldMappingSchema } from '@/lib/validation/schemas/data-migration'
 
 /**
- * Extract mapping ID from the last segment
+ * Extract job ID and mapping ID from URL path
  */
-function extractMappingId(pathname: string): string | null {
+function extractIds(pathname: string): { jobId: string | null; mappingId: string | null } {
   const segments = pathname.split('/')
-  return segments[segments.length - 1] || null
+  const jobsIdx = segments.indexOf('jobs')
+  const mappingsIdx = segments.indexOf('mappings')
+  return {
+    jobId: jobsIdx >= 0 && segments.length > jobsIdx + 1 ? segments[jobsIdx + 1] : null,
+    mappingId: mappingsIdx >= 0 && segments.length > mappingsIdx + 1 ? segments[mappingsIdx + 1] : null,
+  }
 }
 
 // ============================================================================
@@ -26,10 +31,10 @@ function extractMappingId(pathname: string): string | null {
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const mappingId = extractMappingId(req.nextUrl.pathname)
-    if (!mappingId) {
+    const { jobId, mappingId } = extractIds(req.nextUrl.pathname)
+    if (!jobId || !mappingId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing mapping ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing job or mapping ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -40,6 +45,7 @@ export const GET = createApiHandler(
       .from('migration_field_mappings')
       .select('*')
       .eq('id', mappingId)
+      .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -61,10 +67,10 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const mappingId = extractMappingId(req.nextUrl.pathname)
-    if (!mappingId) {
+    const { jobId, mappingId } = extractIds(req.nextUrl.pathname)
+    if (!jobId || !mappingId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing mapping ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing job or mapping ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -98,6 +104,7 @@ export const PUT = createApiHandler(
       .from('migration_field_mappings')
       .update(updates)
       .eq('id', mappingId)
+      .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
@@ -127,10 +134,10 @@ export const PUT = createApiHandler(
 
 export const DELETE = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const mappingId = extractMappingId(req.nextUrl.pathname)
-    if (!mappingId) {
+    const { jobId, mappingId } = extractIds(req.nextUrl.pathname)
+    if (!jobId || !mappingId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing mapping ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing job or mapping ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -141,6 +148,7 @@ export const DELETE = createApiHandler(
       .from('migration_field_mappings')
       .select('id')
       .eq('id', mappingId)
+      .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -163,6 +171,7 @@ export const DELETE = createApiHandler(
       .from('migration_field_mappings')
       .delete()
       .eq('id', mappingId)
+      .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
 
     if (error) {

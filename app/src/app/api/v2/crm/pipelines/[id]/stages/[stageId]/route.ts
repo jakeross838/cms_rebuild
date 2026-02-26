@@ -12,18 +12,27 @@ import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middlew
 import { createClient } from '@/lib/supabase/server'
 import { updatePipelineStageSchema } from '@/lib/validation/schemas/crm'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const pipelinesIdx = segments.indexOf('pipelines')
+  const stagesIdx = segments.indexOf('stages')
+  return {
+    pipelineId: pipelinesIdx >= 0 && segments.length > pipelinesIdx + 1 ? segments[pipelinesIdx + 1] : null,
+    stageId: stagesIdx >= 0 && segments.length > stagesIdx + 1 ? segments[stagesIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/crm/pipelines/:id/stages/:stageId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const stageId = segments[segments.length - 1]
+    const { pipelineId, stageId } = extractIds(req.nextUrl.pathname)
 
-    if (!stageId) {
+    if (!pipelineId || !stageId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing stage ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing pipeline or stage ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -34,6 +43,7 @@ export const GET = createApiHandler(
       .from('pipeline_stages')
       .select('*')
       .eq('id', stageId)
+      .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -56,12 +66,11 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const stageId = segments[segments.length - 1]
+    const { pipelineId, stageId } = extractIds(req.nextUrl.pathname)
 
-    if (!stageId) {
+    if (!pipelineId || !stageId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing stage ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing pipeline or stage ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -91,6 +100,7 @@ export const PUT = createApiHandler(
       .from('pipeline_stages')
       .update(updates)
       .eq('id', stageId)
+      .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
@@ -114,12 +124,11 @@ export const PUT = createApiHandler(
 
 export const DELETE = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const stageId = segments[segments.length - 1]
+    const { pipelineId, stageId } = extractIds(req.nextUrl.pathname)
 
-    if (!stageId) {
+    if (!pipelineId || !stageId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing stage ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing pipeline or stage ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -130,6 +139,7 @@ export const DELETE = createApiHandler(
       .from('pipeline_stages')
       .update({ is_active: false })
       .eq('id', stageId)
+      .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()

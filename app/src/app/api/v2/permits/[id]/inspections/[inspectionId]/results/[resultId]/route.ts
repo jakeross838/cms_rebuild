@@ -15,10 +15,26 @@ import { updateInspectionResultSchema } from '@/lib/validation/schemas/permittin
 // GET /api/v2/permits/:id/inspections/:inspectionId/results/:resultId
 // ============================================================================
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const inspectionsIdx = segments.indexOf('inspections')
+  const resultsIdx = segments.indexOf('results')
+  return {
+    inspectionId: inspectionsIdx >= 0 && segments.length > inspectionsIdx + 1 ? segments[inspectionsIdx + 1] : null,
+    resultId: resultsIdx >= 0 && segments.length > resultsIdx + 1 ? segments[resultsIdx + 1] : null,
+  }
+}
+
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const resultId = segments[segments.length - 1]
+    const { inspectionId, resultId } = extractIds(req.nextUrl.pathname)
+
+    if (!inspectionId || !resultId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing inspection or result ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -26,6 +42,7 @@ export const GET = createApiHandler(
       .from('inspection_results')
       .select('*')
       .eq('id', resultId)
+      .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -47,8 +64,14 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const resultId = segments[segments.length - 1]
+    const { inspectionId, resultId } = extractIds(req.nextUrl.pathname)
+
+    if (!inspectionId || !resultId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing inspection or result ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const body = await req.json()
     const parseResult = updateInspectionResultSchema.safeParse(body)
@@ -63,11 +86,12 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    // Verify result exists
+    // Verify result exists and belongs to specified inspection
     const { data: existing, error: existError } = await supabase
       .from('inspection_results')
       .select('id')
       .eq('id', resultId)
+      .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
       .single()
 

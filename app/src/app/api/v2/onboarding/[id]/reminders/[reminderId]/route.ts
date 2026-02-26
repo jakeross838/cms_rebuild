@@ -15,14 +15,30 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { updateReminderSchema } from '@/lib/validation/schemas/onboarding'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const onboardingIdx = segments.indexOf('onboarding')
+  const remindersIdx = segments.indexOf('reminders')
+  return {
+    sessionId: onboardingIdx >= 0 && segments.length > onboardingIdx + 1 ? segments[onboardingIdx + 1] : null,
+    reminderId: remindersIdx >= 0 && segments.length > remindersIdx + 1 ? segments[remindersIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/onboarding/:id/reminders/:reminderId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
-    const urlParts = req.nextUrl.pathname.split('/')
-    const reminderId = urlParts[urlParts.length - 1]
+    const { sessionId, reminderId } = extractIds(req.nextUrl.pathname)
+
+    if (!sessionId || !reminderId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing session or reminder ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -30,6 +46,7 @@ export const GET = createApiHandler(
       .from('onboarding_reminders')
       .select('*')
       .eq('id', reminderId)
+      .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -51,8 +68,14 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req, ctx: ApiContext) => {
-    const urlParts = req.nextUrl.pathname.split('/')
-    const reminderId = urlParts[urlParts.length - 1]
+    const { sessionId, reminderId } = extractIds(req.nextUrl.pathname)
+
+    if (!sessionId || !reminderId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing session or reminder ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const body = await req.json()
     const parseResult = updateReminderSchema.safeParse(body)
@@ -83,6 +106,7 @@ export const PUT = createApiHandler(
       .from('onboarding_reminders')
       .update(updateFields)
       .eq('id', reminderId)
+      .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()

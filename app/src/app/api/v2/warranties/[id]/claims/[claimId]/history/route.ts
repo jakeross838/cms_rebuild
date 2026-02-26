@@ -17,13 +17,16 @@ import { createClient } from '@/lib/supabase/server'
 import { listClaimHistorySchema } from '@/lib/validation/schemas/warranty'
 
 /**
- * Extract claim ID from /api/v2/warranties/:id/claims/:claimId/history
+ * Extract warranty ID and claim ID from URL path
  */
-function extractClaimId(pathname: string): string | null {
+function extractIds(pathname: string): { warrantyId: string | null; claimId: string | null } {
   const segments = pathname.split('/')
+  const wIdx = segments.indexOf('warranties')
   const cIdx = segments.indexOf('claims')
-  if (cIdx === -1 || cIdx + 1 >= segments.length) return null
-  return segments[cIdx + 1]
+  return {
+    warrantyId: wIdx >= 0 && segments.length > wIdx + 1 ? segments[wIdx + 1] : null,
+    claimId: cIdx >= 0 && segments.length > cIdx + 1 ? segments[cIdx + 1] : null,
+  }
 }
 
 // ============================================================================
@@ -32,10 +35,10 @@ function extractClaimId(pathname: string): string | null {
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const claimId = extractClaimId(req.nextUrl.pathname)
-    if (!claimId) {
+    const { warrantyId, claimId } = extractIds(req.nextUrl.pathname)
+    if (!warrantyId || !claimId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing claim ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing warranty or claim ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -56,11 +59,12 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    // Verify claim belongs to company
+    // Verify claim belongs to specified warranty and company
     const { data: claim, error: claimError } = await supabase
       .from('warranty_claims')
       .select('id')
       .eq('id', claimId)
+      .eq('warranty_id', warrantyId)
       .eq('company_id', ctx.companyId!)
       .single()
 

@@ -12,14 +12,30 @@ import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middlew
 import { createClient } from '@/lib/supabase/server'
 import { updatePermitFeeSchema } from '@/lib/validation/schemas/permitting'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const permitsIdx = segments.indexOf('permits')
+  const feesIdx = segments.indexOf('fees')
+  return {
+    permitId: permitsIdx >= 0 && segments.length > permitsIdx + 1 ? segments[permitsIdx + 1] : null,
+    feeId: feesIdx >= 0 && segments.length > feesIdx + 1 ? segments[feesIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/permits/:id/fees/:feeId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const feeId = segments[segments.length - 1]
+    const { permitId, feeId } = extractIds(req.nextUrl.pathname)
+
+    if (!permitId || !feeId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or fee ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -27,6 +43,7 @@ export const GET = createApiHandler(
       .from('permit_fees')
       .select('*')
       .eq('id', feeId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -48,8 +65,14 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const feeId = segments[segments.length - 1]
+    const { permitId, feeId } = extractIds(req.nextUrl.pathname)
+
+    if (!permitId || !feeId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or fee ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const body = await req.json()
     const parseResult = updatePermitFeeSchema.safeParse(body)
@@ -69,6 +92,7 @@ export const PUT = createApiHandler(
       .from('permit_fees')
       .select('id')
       .eq('id', feeId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -94,6 +118,7 @@ export const PUT = createApiHandler(
       .from('permit_fees')
       .update(updates)
       .eq('id', feeId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
@@ -117,8 +142,14 @@ export const PUT = createApiHandler(
 
 export const DELETE = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const feeId = segments[segments.length - 1]
+    const { permitId, feeId } = extractIds(req.nextUrl.pathname)
+
+    if (!permitId || !feeId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing permit or fee ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -127,6 +158,7 @@ export const DELETE = createApiHandler(
       .from('permit_fees')
       .select('id')
       .eq('id', feeId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -141,6 +173,7 @@ export const DELETE = createApiHandler(
       .from('permit_fees')
       .delete()
       .eq('id', feeId)
+      .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
 
     if (error) {

@@ -43,11 +43,16 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    // Verify inspection ownership
+    // Extract permit ID from URL for parent verification
+    const permitsIdx = segments.indexOf('permits')
+    const permitId = permitsIdx >= 0 && segments.length > permitsIdx + 1 ? segments[permitsIdx + 1] : null
+
+    // Verify inspection ownership and parent permit relationship
     const { error: inspError } = await supabase
       .from('permit_inspections')
       .select('id')
       .eq('id', inspectionId)
+      .eq('permit_id', permitId!)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -101,11 +106,16 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    // Verify inspection ownership
+    // Extract permit ID from URL for parent verification
+    const permitsIdx = segments.indexOf('permits')
+    const permitId = permitsIdx >= 0 && segments.length > permitsIdx + 1 ? segments[permitsIdx + 1] : null
+
+    // Verify inspection ownership and parent permit relationship
     const { data: inspection, error: inspError } = await supabase
       .from('permit_inspections')
       .select('id, status')
       .eq('id', inspectionId)
+      .eq('permit_id', permitId!)
       .eq('company_id', ctx.companyId!)
       .single()
 

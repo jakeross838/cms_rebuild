@@ -30,7 +30,7 @@ export const POST = createApiHandler(
     })
 
     if (authError || !authData.user || !authData.session) {
-      // Log the failed login attempt — look up user to get company_id
+      // Log the failed login attempt — always perform audit insert to prevent timing oracle
       try {
         const admin = createAdminClient()
         const { data: failedUser } = await admin
@@ -40,17 +40,15 @@ export const POST = createApiHandler(
           .limit(1)
           .single() as { data: { id: string; company_id: string } | null; error: unknown }
 
-        if (failedUser) {
-          const failedEntry: AuthAuditLogInsert = {
-            company_id: failedUser.company_id,
-            user_id: failedUser.id,
-            event_type: 'login_failed',
-            ip_address: ipAddress,
-            user_agent: userAgent,
-            metadata: { email, reason: authError?.message ?? 'Unknown error' },
-          }
-          await admin.from('auth_audit_log').insert(failedEntry as never)
+        const failedEntry: AuthAuditLogInsert = {
+          company_id: failedUser?.company_id ?? '00000000-0000-0000-0000-000000000000',
+          user_id: failedUser?.id ?? '00000000-0000-0000-0000-000000000000',
+          event_type: 'login_failed',
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          metadata: { email, reason: authError?.message ?? 'Unknown error' },
         }
+        await admin.from('auth_audit_log').insert(failedEntry as never)
       } catch {
         // Don't block login response if audit logging fails
       }

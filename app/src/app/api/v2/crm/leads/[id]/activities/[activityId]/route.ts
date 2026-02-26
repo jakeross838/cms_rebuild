@@ -12,18 +12,27 @@ import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middlew
 import { createClient } from '@/lib/supabase/server'
 import { updateLeadActivitySchema } from '@/lib/validation/schemas/crm'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const leadsIdx = segments.indexOf('leads')
+  const activitiesIdx = segments.indexOf('activities')
+  return {
+    leadId: leadsIdx >= 0 && segments.length > leadsIdx + 1 ? segments[leadsIdx + 1] : null,
+    activityId: activitiesIdx >= 0 && segments.length > activitiesIdx + 1 ? segments[activitiesIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/crm/leads/:id/activities/:activityId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const activityId = segments[segments.length - 1]
+    const { leadId, activityId } = extractIds(req.nextUrl.pathname)
 
-    if (!activityId) {
+    if (!leadId || !activityId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing activity ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing lead or activity ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -34,6 +43,7 @@ export const GET = createApiHandler(
       .from('lead_activities')
       .select('*')
       .eq('id', activityId)
+      .eq('lead_id', leadId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
@@ -56,12 +66,11 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const activityId = segments[segments.length - 1]
+    const { leadId, activityId } = extractIds(req.nextUrl.pathname)
 
-    if (!activityId) {
+    if (!leadId || !activityId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing activity ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing lead or activity ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -90,15 +99,17 @@ export const PUT = createApiHandler(
       .from('lead_activities')
       .update(updates)
       .eq('id', activityId)
+      .eq('lead_id', leadId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('*')
       .single()
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Not Found', message: 'Activity not found', requestId: ctx.requestId },
-        { status: 404 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -113,12 +124,11 @@ export const PUT = createApiHandler(
 
 export const DELETE = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
-    const segments = req.nextUrl.pathname.split('/')
-    const activityId = segments[segments.length - 1]
+    const { leadId, activityId } = extractIds(req.nextUrl.pathname)
 
-    if (!activityId) {
+    if (!leadId || !activityId) {
       return NextResponse.json(
-        { error: 'Bad Request', message: 'Missing activity ID', requestId: ctx.requestId },
+        { error: 'Bad Request', message: 'Missing lead or activity ID', requestId: ctx.requestId },
         { status: 400 }
       )
     }
@@ -129,6 +139,7 @@ export const DELETE = createApiHandler(
       .from('lead_activities')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', activityId)
+      .eq('lead_id', leadId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 

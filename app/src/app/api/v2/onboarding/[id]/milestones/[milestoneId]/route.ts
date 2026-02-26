@@ -15,14 +15,30 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { updateMilestoneSchema } from '@/lib/validation/schemas/onboarding'
 
+function extractIds(pathname: string) {
+  const segments = pathname.split('/')
+  const onboardingIdx = segments.indexOf('onboarding')
+  const milestonesIdx = segments.indexOf('milestones')
+  return {
+    sessionId: onboardingIdx >= 0 && segments.length > onboardingIdx + 1 ? segments[onboardingIdx + 1] : null,
+    milestoneId: milestonesIdx >= 0 && segments.length > milestonesIdx + 1 ? segments[milestonesIdx + 1] : null,
+  }
+}
+
 // ============================================================================
 // GET /api/v2/onboarding/:id/milestones/:milestoneId
 // ============================================================================
 
 export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
-    const urlParts = req.nextUrl.pathname.split('/')
-    const milestoneId = urlParts[urlParts.length - 1]
+    const { sessionId, milestoneId } = extractIds(req.nextUrl.pathname)
+
+    if (!sessionId || !milestoneId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing session or milestone ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -30,6 +46,7 @@ export const GET = createApiHandler(
       .from('onboarding_milestones')
       .select('*')
       .eq('id', milestoneId)
+      .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -51,8 +68,14 @@ export const GET = createApiHandler(
 
 export const PUT = createApiHandler(
   async (req, ctx: ApiContext) => {
-    const urlParts = req.nextUrl.pathname.split('/')
-    const milestoneId = urlParts[urlParts.length - 1]
+    const { sessionId, milestoneId } = extractIds(req.nextUrl.pathname)
+
+    if (!sessionId || !milestoneId) {
+      return NextResponse.json(
+        { error: 'Bad Request', message: 'Missing session or milestone ID', requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
 
     const body = await req.json()
     const parseResult = updateMilestoneSchema.safeParse(body)
@@ -90,6 +113,7 @@ export const PUT = createApiHandler(
       .from('onboarding_milestones')
       .update(updateFields)
       .eq('id', milestoneId)
+      .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
