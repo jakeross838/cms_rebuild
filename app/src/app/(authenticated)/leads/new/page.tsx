@@ -65,6 +65,7 @@ export default function NewLeadPage() {
           project_type: formData.project_type || null,
           expected_contract_value: formData.expected_contract_value ? parseFloat(formData.expected_contract_value) : null,
           status: 'new',
+          created_by: user.id,
         })
 
       if (insertError) throw insertError
