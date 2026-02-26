@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { ShieldCheck, Clock } from 'lucide-react'
 
@@ -25,9 +26,16 @@ export default async function AuditLogPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('audit_log')
     .select('*')
+    .eq('company_id', companyId)
     .order('created_at', { ascending: false })
     .limit(200)
 
