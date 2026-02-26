@@ -2,6 +2,13 @@
 
 ## 2026-02-26: Session 14 — Rate Limit Fix + RLS Hardening
 
+### Why (RLS SELECT Soft-Delete Filter)
+- 34 tables had `deleted_at` columns but their SELECT RLS policies didn't filter them
+- The API routes correctly add `.is('deleted_at', null)` to every query — but this only works if code goes through the API
+- Direct Supabase client access (e.g., from a compromised frontend, or future client-side queries) would leak soft-deleted records
+- Defense-in-depth requires the DB itself to enforce the soft-delete boundary, not just the application code
+- Fixed all 34 policies: 5 pattern groups (get_user_company_id, get_current_company_id, subquery, public, compound)
+
 ### Why (Rate Limit Fix)
 - Authenticated API requests were incrementing the IP-based rate limit counter TWICE per request — once during pre-auth check (before we know who the user is) and again during post-auth check (via `checkCombinedRateLimit` which re-runs the IP check). This means authenticated users hit the IP rate limit at HALF the configured rate (e.g., 50 requests instead of 100).
 - The fix separates concerns: pre-auth = IP check only, post-auth = user + company checks only. Each counter increments exactly once per request.

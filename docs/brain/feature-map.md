@@ -1,6 +1,23 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
-## Session 14 — Rate Limit Fix + RLS DELETE Policy Enforcement (2026-02-26)
+## Session 14 — Rate Limit Fix + RLS Hardening (2026-02-26)
+
+### RLS SELECT Policy Soft-Delete Filter (34 policies fixed)
+- **Migration:** `20260226200200_add_deleted_at_filter_to_select_policies.sql`
+- **What:** 34 SELECT RLS policies on tables with `deleted_at` columns were missing the `AND deleted_at IS NULL` filter. Soft-deleted records were leaking at the DB level (defense-in-depth gap).
+- **Patterns fixed:** 20 tables with `get_user_company_id()`, 3 with `get_current_company_id()`, 4 with subquery, 5 public tables with `USING(true)`, 2 compound (nullable company_id)
+- **Verified:** `SELECT COUNT(*) ... WHERE qual NOT LIKE '%deleted_at%'` = 0
+
+### FK Index Fix (Supabase Performance Advisor)
+- **Migration:** `20260226200100_add_lien_waiver_tracking_fk_indexes.sql`
+- Added missing FK indexes on `lien_waiver_tracking.job_id` and `lien_waiver_tracking.vendor_id`
+- Only 2 unindexed FKs found by advisor (all others already indexed)
+
+### Audit Results — No Issues Found
+- **API response format:** 30+ routes sampled, 100% consistent (`{ data, requestId }` envelope, proper status codes)
+- **Zod validation:** 100% POST/PUT coverage, zero unvalidated `req.json()` calls across 430 route files
+- **API deleted_at filters:** All v2 routes correctly include `.is('deleted_at', null)` where applicable
+- **Leaked password protection:** Flagged by Supabase security advisor — requires manual enable in dashboard (Pro Plan)
 
 ### Rate Limit Double-Counting Bug Fix
 - **File:** `src/lib/api/middleware.ts` (lines 149-170)

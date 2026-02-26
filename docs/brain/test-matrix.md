@@ -2,6 +2,22 @@
 
 ## Session 14 — Rate Limit Fix + RLS Hardening (2026-02-26)
 
+### RLS SELECT Soft-Delete Filter (34 policies)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero SELECT policies on deleted_at tables missing the filter | `COUNT(*) WHERE qual NOT LIKE '%deleted_at%'` = 0 | pass |
+| Soft-deleted record not visible via Supabase client SELECT | Query returns 0 rows for archived records | verify |
+| Active records still visible after policy change | No regression in data access | verify |
+| Public tables (blog_posts, case_studies, etc.) filter deleted | USING(deleted_at IS NULL) without company check | pass |
+| Compound tables (kb_articles, training_courses) handle NULL company_id | `(company_id IS NULL OR ...) AND deleted_at IS NULL` | pass |
+
+### FK Index Addition
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| lien_waiver_tracking.job_id has index | idx_lien_waiver_tracking_job_id exists | pass |
+| lien_waiver_tracking.vendor_id has index | idx_lien_waiver_tracking_vendor_id exists | pass |
+| Supabase performance advisor reports 0 unindexed FKs | All FKs indexed | pass |
+
 ### Rate Limit Double-Counting Fix
 | Test Case | Expected | Status |
 |-----------|----------|--------|
