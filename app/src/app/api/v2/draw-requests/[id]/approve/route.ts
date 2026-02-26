@@ -22,7 +22,7 @@ export const POST = createApiHandler(
       return NextResponse.json({ error: 'Bad Request', message: 'Missing draw request ID', requestId: ctx.requestId }, { status: 400 })
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = approveDrawRequestSchema.safeParse(body)
 
     if (!parseResult.success) {
@@ -92,5 +92,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: draw, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'financial' }
 )

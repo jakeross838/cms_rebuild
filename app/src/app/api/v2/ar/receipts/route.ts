@@ -74,7 +74,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit, ctx.requestId))
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'financial' }
 )
 
 // ============================================================================
@@ -178,5 +178,5 @@ export const POST = createApiHandler(
       requestId: ctx.requestId,
     }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, rateLimit: 'financial' }
 )
