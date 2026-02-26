@@ -6,6 +6,7 @@ import { Plus, FolderOpen, FileText, Image, File, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -37,10 +38,13 @@ export default async function FilesPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -62,18 +66,20 @@ export default async function FilesPage({
 
   let docsQuery = supabase
     .from('documents')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
 
   if (sp.search) {
     docsQuery = docsQuery.ilike('filename', `%${sp.search}%`)
   }
 
-  const { data: docsData } = await docsQuery
+  const { data: docsData, count } = await docsQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const documents = (docsData || []) as JobDocument[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -134,6 +140,8 @@ export default async function FilesPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/files`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

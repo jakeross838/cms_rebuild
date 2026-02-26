@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -26,10 +27,13 @@ export default async function LienWaiversPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -51,7 +55,7 @@ export default async function LienWaiversPage({
 
   let waiverQuery = supabase
     .from('lien_waivers')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
 
@@ -59,9 +63,12 @@ export default async function LienWaiversPage({
     waiverQuery = waiverQuery.or(`claimant_name.ilike.%${sp.search}%,waiver_type.ilike.%${sp.search}%`)
   }
 
-  const { data: waiverData } = await waiverQuery.order('created_at', { ascending: false })
+  const { data: waiverData, count } = await waiverQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const waivers = (waiverData || []) as LienWaiver[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const received = waivers.filter((w) => w.status === 'received' || w.status === 'approved').length
   const pending = waivers.filter((w) => w.status === 'requested' || w.status === 'pending').length
@@ -130,6 +137,8 @@ export default async function LienWaiversPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/lien-waivers`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

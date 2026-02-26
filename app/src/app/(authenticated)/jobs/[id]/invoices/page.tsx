@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -26,10 +27,13 @@ export default async function JobInvoicesPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ status?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sparams = await searchParams
+  const page = Number(sparams.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -43,17 +47,19 @@ export default async function JobInvoicesPage({
 
   let query = supabase
     .from('invoices')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
-    .order('invoice_date', { ascending: false })
 
   if (sparams.status) {
     query = query.eq('status', sparams.status as 'draft' | 'approved' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'in_draw' | 'paid' | 'denied')
   }
 
-  const { data: invoicesData } = await query
+  const { data: invoicesData, count } = await query
+    .order('invoice_date', { ascending: false })
+    .range(offset, offset + pageSize - 1)
   const invoices = (invoicesData || []) as Invoice[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const total = invoices.reduce((s, i) => s + i.amount, 0)
   const outstanding = invoices.filter((i) => i.status !== 'paid').reduce((s, i) => s + i.amount, 0)
@@ -118,6 +124,8 @@ export default async function JobInvoicesPage({
           <p className="text-muted-foreground">{sparams.status ? 'Try a different filter' : 'No invoices for this job yet'}</p>
         </div>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${jobId}/invoices`} searchParams={sparams as Record<string, string | undefined>} />
     </div>
   )
 }

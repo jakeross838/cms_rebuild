@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -30,10 +31,13 @@ export default async function JobInspectionsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -47,18 +51,20 @@ export default async function JobInspectionsPage({
 
   let query = supabase
     .from('permit_inspections')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
-    .order('scheduled_date', { ascending: true })
 
   if (sp.search) {
     query = query.or(`inspection_type.ilike.%${sp.search}%,inspector_name.ilike.%${sp.search}%`)
   }
 
-  const { data: inspectionsData } = await query
+  const { data: inspectionsData, count } = await query
+    .order('scheduled_date', { ascending: true })
+    .range(offset, offset + pageSize - 1)
 
   const inspections = (inspectionsData || []) as PermitInspection[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const scheduled = inspections.filter((i) => i.status === 'scheduled').length
   const passed = inspections.filter((i) => i.status === 'passed').length
@@ -120,6 +126,8 @@ export default async function JobInspectionsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${jobId}/inspections`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

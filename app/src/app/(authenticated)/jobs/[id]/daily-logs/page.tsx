@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -28,10 +29,13 @@ export default async function DailyLogsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -53,7 +57,7 @@ export default async function DailyLogsPage({
 
   let logsQuery = supabase
     .from('daily_logs')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
 
@@ -61,9 +65,12 @@ export default async function DailyLogsPage({
     logsQuery = logsQuery.or(`weather_summary.ilike.%${sp.search}%,notes.ilike.%${sp.search}%`)
   }
 
-  const { data: logsData } = await logsQuery.order('log_date', { ascending: false })
+  const { data: logsData, count } = await logsQuery
+    .order('log_date', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const logs = (logsData || []) as DailyLog[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -136,6 +143,8 @@ export default async function DailyLogsPage({
           </CardContent>
         </Card>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/daily-logs`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

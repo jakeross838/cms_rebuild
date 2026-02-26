@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -25,10 +26,16 @@ interface TimeEntry {
 
 export default async function JobTimeClockPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ page?: string }>
 }) {
   const { id: jobId } = await params
+  const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,15 +47,16 @@ export default async function JobTimeClockPage({
   const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
   if (!jobCheck) { notFound() }
 
-  const { data: entriesData } = await supabase
+  const { data: entriesData, count } = await supabase
     .from('time_entries')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
     .order('entry_date', { ascending: false })
-    .limit(100)
+    .range(offset, offset + pageSize - 1)
 
   const entries = (entriesData || []) as TimeEntry[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const totalRegular = entries.reduce((s, e) => s + e.regular_hours, 0)
   const totalOvertime = entries.reduce((s, e) => s + e.overtime_hours, 0)
@@ -108,6 +116,8 @@ export default async function JobTimeClockPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${jobId}/time-clock`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

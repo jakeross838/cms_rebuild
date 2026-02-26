@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -28,10 +29,13 @@ export default async function ChangeOrdersPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -53,7 +57,7 @@ export default async function ChangeOrdersPage({
 
   let coQuery = supabase
     .from('change_orders')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
 
@@ -61,9 +65,12 @@ export default async function ChangeOrdersPage({
     coQuery = coQuery.or(`co_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
   }
 
-  const { data: coData } = await coQuery.order('created_at', { ascending: false })
+  const { data: coData, count } = await coQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const changeOrders = (coData || []) as ChangeOrder[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const totalApproved = changeOrders
     .filter((co) => co.status === 'approved')
@@ -169,6 +176,8 @@ export default async function ChangeOrdersPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/change-orders`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

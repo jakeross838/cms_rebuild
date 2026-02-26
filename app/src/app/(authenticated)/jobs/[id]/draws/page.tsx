@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -29,10 +30,13 @@ export default async function DrawsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -54,7 +58,7 @@ export default async function DrawsPage({
 
   let drawQuery = supabase
     .from('draw_requests')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
 
@@ -62,9 +66,12 @@ export default async function DrawsPage({
     drawQuery = drawQuery.or(`draw_number::text.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
   }
 
-  const { data: drawData } = await drawQuery.order('application_date', { ascending: false })
+  const { data: drawData, count } = await drawQuery
+    .order('application_date', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const draws = (drawData || []) as DrawRequest[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const totalEarned = draws.reduce((sum, d) => sum + (d.total_earned ?? 0), 0)
   const totalDue = draws.reduce((sum, d) => sum + (d.current_due ?? 0), 0)
@@ -135,6 +142,8 @@ export default async function DrawsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/draws`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

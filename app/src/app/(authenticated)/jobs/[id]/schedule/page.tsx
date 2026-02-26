@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -33,10 +34,13 @@ export default async function SchedulePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -58,18 +62,20 @@ export default async function SchedulePage({
 
   let tasksQuery = supabase
     .from('schedule_tasks')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
-    .order('sort_order', { ascending: true })
 
   if (sp.search) {
     tasksQuery = tasksQuery.or(`name.ilike.%${sp.search}%,trade.ilike.%${sp.search}%`)
   }
 
-  const { data: tasksData } = await tasksQuery
+  const { data: tasksData, count } = await tasksQuery
+    .order('sort_order', { ascending: true })
+    .range(offset, offset + pageSize - 1)
 
   const tasks = (tasksData || []) as ScheduleTask[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   // Compute summary stats
   const completed = tasks.filter((t) => t.status === 'completed').length
@@ -175,6 +181,8 @@ export default async function SchedulePage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/schedule`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

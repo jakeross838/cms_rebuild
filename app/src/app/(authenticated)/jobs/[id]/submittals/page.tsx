@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -30,10 +31,13 @@ export default async function JobSubmittalsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -47,7 +51,7 @@ export default async function JobSubmittalsPage({
 
   let submittalsQuery = supabase
     .from('submittals')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
 
@@ -55,9 +59,12 @@ export default async function JobSubmittalsPage({
     submittalsQuery = submittalsQuery.or(`submittal_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
   }
 
-  const { data: submittalsData } = await submittalsQuery.order('created_at', { ascending: false })
+  const { data: submittalsData, count } = await submittalsQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const submittals = (submittalsData || []) as Submittal[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const pending = submittals.filter((s) => s.status === 'pending' || s.status === 'submitted').length
   const approved = submittals.filter((s) => s.status === 'approved').length
@@ -117,6 +124,8 @@ export default async function JobSubmittalsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${jobId}/submittals`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

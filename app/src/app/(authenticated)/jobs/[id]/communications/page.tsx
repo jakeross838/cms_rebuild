@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -27,10 +28,13 @@ export default async function JobCommunicationsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -44,19 +48,20 @@ export default async function JobCommunicationsPage({
 
   let query = supabase
     .from('communications')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-    .limit(100)
 
   if (sp.search) {
     query = query.or(`subject.ilike.%${sp.search}%,message_body.ilike.%${sp.search}%`)
   }
 
-  const { data: commsData } = await query
+  const { data: commsData, count } = await query
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const comms = (commsData || []) as Communication[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -109,6 +114,8 @@ export default async function JobCommunicationsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${jobId}/communications`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

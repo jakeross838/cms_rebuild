@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
 
@@ -25,10 +26,13 @@ export default async function JobInventoryPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -51,20 +55,23 @@ export default async function JobInventoryPage({
   const itemIds = [...new Set(transactions.map((t) => t.item_id))]
 
   let items: InventoryItem[] = []
+  let totalPages = 0
   if (itemIds.length > 0) {
     let itemsQuery = supabase
       .from('inventory_items')
-      .select('id, name, sku, category, unit_of_measure, unit_cost, is_active')
+      .select('id, name, sku, category, unit_of_measure, unit_cost, is_active', { count: 'exact' })
       .in('id', itemIds)
       .is('deleted_at', null)
-      .order('name', { ascending: true })
 
     if (sp.search) {
       itemsQuery = itemsQuery.or(`name.ilike.%${sp.search}%,sku.ilike.%${sp.search}%`)
     }
 
-    const { data: itemsData } = await itemsQuery
+    const { data: itemsData, count } = await itemsQuery
+      .order('name', { ascending: true })
+      .range(offset, offset + pageSize - 1)
     items = (itemsData || []) as InventoryItem[]
+    totalPages = Math.ceil((count || 0) / pageSize)
   }
 
   return (
@@ -118,6 +125,8 @@ export default async function JobInventoryPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${jobId}/inventory`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }

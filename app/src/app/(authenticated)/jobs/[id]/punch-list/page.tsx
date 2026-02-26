@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -29,10 +30,13 @@ export default async function PunchListPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
+  const page = Number(sp.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -54,18 +58,20 @@ export default async function PunchListPage({
 
   let itemsQuery = supabase
     .from('punch_items')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
 
   if (sp.search) {
     itemsQuery = itemsQuery.or(`title.ilike.%${sp.search}%,description.ilike.%${sp.search}%`)
   }
 
-  const { data: itemsData } = await itemsQuery
+  const { data: itemsData, count } = await itemsQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   const items = (itemsData || []) as PunchItem[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const open = items.filter((i) => i.status === 'open' || i.status === 'in_progress').length
   const completed = items.filter((i) => i.status === 'completed' || i.status === 'verified').length
@@ -131,6 +137,8 @@ export default async function PunchListPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath={`/jobs/${id}/punch-list`} searchParams={sp as Record<string, string | undefined>} />
     </div>
   )
 }
