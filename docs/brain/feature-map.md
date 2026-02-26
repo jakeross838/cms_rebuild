@@ -2137,3 +2137,17 @@ These list pages previously showed a blank/generic empty state. Now display a ca
 - **`/financial/journal-entries`** — Empty state CTA links to `/financial/journal-entries/new`
 - **`/financial/payables`** — Empty state CTA links to `/financial/payables/new`
 - **`/financial/receivables`** — Empty state CTA links to `/financial/receivables/new`
+
+---
+
+## Defense-in-Depth: Company ID Filtering Across All Pages (2026-02-25)
+
+### 51 SSR List Pages — company_id Defense-in-Depth Filtering
+Every SSR entity list page now includes an explicit `.eq('company_id', companyId)` filter at the application layer alongside Supabase RLS. This covers all entity types: jobs, invoices, contacts, vendors, clients, daily logs, RFIs, bids, submittals, change orders, purchase orders, draw requests, lien waivers, budgets, cost codes, schedules, punch lists, safety incidents, equipment, warranties, permits, inspections, HR records, inventory, training, selections, contracts, leads, and all financial list views. The query pattern is: get authenticated user → resolve `company_id` from profile → pass `company_id` as explicit filter on every Supabase `.select()` call.
+
+### 32 Client-Side Detail Pages — company_id Ownership Verification
+All client-side detail/edit pages (`/[entity]/[id]`) now verify that the fetched record's `company_id` matches the authenticated user's `company_id` before rendering. This prevents cross-tenant access via URL manipulation (e.g., guessing another tenant's record UUID). If ownership check fails, the page shows "Not found" rather than leaking data. Affected pages include detail views for: jobs, invoices, contacts, vendors, clients, daily-logs, rfis, bids, submittals, change-orders, purchase-orders, draw-requests, lien-waivers, punch-lists, safety, insurance, equipment, warranties, permits, inspections, hr, inventory, training, selections, contracts, leads, financial/payables, financial/receivables, financial/journal-entries, and related sub-entity pages.
+
+### NaN Guard on Financial Create Forms
+- **`/financial/payables/new`** — Amount field parsing now guards against `NaN` (uses `parseFloat` with fallback to `0` or validation error)
+- **`/financial/receivables/new`** — Same NaN guard applied to amount parsing

@@ -3875,3 +3875,42 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 | `/financial/journal-entries` (empty) | Page loads with no records | Shows CTA button linking to `/financial/journal-entries/new` |
 | `/financial/payables` (empty) | Page loads with no records | Shows CTA button linking to `/financial/payables/new` |
 | `/financial/receivables` (empty) | Page loads with no records | Shows CTA button linking to `/financial/receivables/new` |
+
+---
+
+## Defense-in-Depth: company_id Filtering Test Cases (2026-02-25)
+
+### 51 SSR List Pages — company_id Filter Verification
+
+| Category | Pages | Test | Expected |
+|----------|-------|------|----------|
+| Core entities | `/jobs`, `/contacts`, `/vendors`, `/clients` | SSR query includes `.eq('company_id', companyId)` | Only current tenant's records returned |
+| Financial | `/invoices`, `/financial/payables`, `/financial/receivables`, `/financial/journal-entries`, `/budgets`, `/cost-codes` | SSR query includes `company_id` filter | Only current tenant's financial data |
+| Construction ops | `/daily-logs`, `/rfis`, `/bids`, `/submittals`, `/change-orders`, `/purchase-orders`, `/draw-requests`, `/lien-waivers`, `/punch-lists` | SSR query includes `company_id` filter | Only current tenant's operational records |
+| Scheduling | `/schedule`, `/inspections`, `/permits` | SSR query includes `company_id` filter | Only current tenant's schedule data |
+| Compliance | `/compliance/safety`, `/compliance/insurance` | SSR query includes `company_id` filter | Only current tenant's compliance records |
+| People & assets | `/hr`, `/equipment`, `/training`, `/inventory` | SSR query includes `company_id` filter | Only current tenant's people/asset data |
+| Other | `/warranties`, `/selections`, `/contracts`, `/leads`, `/marketing`, `/post-build`, `/library/*` | SSR query includes `company_id` filter | Only current tenant's records |
+
+### 32 Client-Side Detail Pages — Ownership Verification
+
+| Test | Expected |
+|------|----------|
+| Fetch detail page with valid ID belonging to user's company | Record renders normally |
+| Fetch detail page with valid UUID belonging to DIFFERENT company | Shows "Not found" or equivalent error, does NOT render record data |
+| Fetch detail page with non-existent UUID | Shows "Not found" |
+| Verify ownership check runs BEFORE any data is rendered to DOM | No flash of cross-tenant data |
+
+### Affected Detail Pages (32)
+`/jobs/[id]`, `/invoices/[id]`, `/contacts/[id]`, `/vendors/[id]`, `/clients/[id]`, `/daily-logs/[id]`, `/rfis/[id]`, `/bids/[id]`, `/submittals/[id]`, `/change-orders/[id]`, `/purchase-orders/[id]`, `/draw-requests/[id]`, `/lien-waivers/[id]`, `/punch-lists/[id]`, `/compliance/safety/[id]`, `/compliance/insurance/[id]`, `/equipment/[id]`, `/warranties/[id]`, `/permits/[id]`, `/inspections/[id]`, `/hr/[id]`, `/inventory/[id]`, `/training/[id]`, `/selections/[id]`, `/contracts/[id]`, `/leads/[id]`, `/financial/payables/[id]`, `/financial/receivables/[id]`, `/financial/journal-entries/[id]`, plus related sub-entity detail pages
+
+### NaN Guard Test Cases
+
+| Page | Test | Expected |
+|------|------|----------|
+| `/financial/payables/new` | Enter non-numeric text in amount field, submit | Form rejects or defaults to 0, does NOT write NaN to DB |
+| `/financial/payables/new` | Enter empty amount field, submit | Validation error or defaults to 0 |
+| `/financial/payables/new` | Enter valid number (e.g., "1500.50"), submit | Parses correctly, inserts 1500.50 |
+| `/financial/receivables/new` | Enter non-numeric text in amount field, submit | Form rejects or defaults to 0, does NOT write NaN to DB |
+| `/financial/receivables/new` | Enter empty amount field, submit | Validation error or defaults to 0 |
+| `/financial/receivables/new` | Enter valid number (e.g., "2500.00"), submit | Parses correctly, inserts 2500.00 |

@@ -1289,3 +1289,26 @@ A security audit of detail pages and SSR pages found three categories of multi-t
 1. **Defense-in-depth is mandatory, not optional**: Even though Supabase RLS should prevent cross-tenant access, every query should also filter by `company_id` at the application layer. This protects against RLS misconfiguration, service-role bypass, and future schema changes that might inadvertently relax policies.
 2. **Dropdowns are the highest-risk UI element**: A cross-tenant data leak in a dropdown is worse than in a list page because (a) users actively interact with dropdowns when creating/editing records, (b) selecting a cross-tenant item creates a foreign key reference to another tenant's data, and (c) dropdown data is often cached or prefetched, widening the exposure window.
 3. **Empty state CTAs improve discoverability**: When a list page shows zero results, showing a "Create your first X" button teaches users the workflow and reduces support tickets. This is a UX improvement bundled with the security fixes.
+
+---
+
+## 2026-02-25: Defense-in-Depth — Full Platform company_id Hardening
+
+### Why
+A comprehensive security sweep identified that while many pages had been hardened in prior passes, a significant number of SSR list pages and client-side detail pages still relied solely on Supabase RLS for tenant isolation without application-layer `company_id` filtering. For a multi-tenant platform targeting 10,000+ companies, every query must filter at both layers. Three specific gaps were closed:
+
+1. **51 SSR list pages lacked explicit company_id filters**: These pages fetched entity lists and relied entirely on RLS. If RLS is ever misconfigured, temporarily disabled during a migration, or bypassed by a service-role query, all tenant data could leak. Adding application-layer filtering creates a second independent barrier.
+
+2. **32 client-side detail pages lacked company_id ownership verification**: Detail pages fetched records by UUID from the URL but did not verify the record belonged to the authenticated user's company. An attacker who guesses or enumerates UUIDs could view another tenant's records. Adding ownership verification on the main record fetch ensures cross-tenant URLs return "not found."
+
+3. **NaN bug in financial create forms**: The payables and receivables create forms used `parseFloat()` on amount inputs without guarding against `NaN`, which could result in `NaN` being written to the database or causing runtime errors.
+
+### What was done
+1. **Added `.eq('company_id', companyId)` to 51 SSR list page queries** — every entity list page now filters at the application layer
+2. **Added company_id ownership check to 32 detail pages** — after fetching the record by ID, verify `record.company_id === userCompanyId` before rendering
+3. **Added NaN guard to `/financial/payables/new` and `/financial/receivables/new`** — amount parsing now validates the parsed number is not NaN before submission
+
+### Key decisions
+1. **Belt-and-suspenders is the only acceptable approach for multi-tenancy**: RLS is the primary guard, but application-layer filtering is mandatory. Neither alone is sufficient for a platform at this scale.
+2. **Ownership verification on detail pages is as important as list filtering**: Lists leaking data is bad, but detail pages are worse because they expose full record data including sensitive financial information, contact details, and internal notes.
+3. **NaN in financial data is a data integrity issue, not just a UX bug**: A NaN in an amount field can cascade through budget calculations, reporting, and accounting, making it a correctness issue that must be caught at input time.
