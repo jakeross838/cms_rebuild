@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -149,6 +150,7 @@ export default function TrainingCourseDetailPage() {
         .eq('company_id', companyId)
 
       if (updateError) throw updateError
+      toast.success('Saved')
 
       setCourse((prev) =>
         prev
@@ -169,7 +171,9 @@ export default function TrainingCourseDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -185,9 +189,11 @@ export default function TrainingCourseDetailPage() {
       .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive course')
+      toast.error('Failed to archive course')
       setArchiving(false)
       return
     }
+    toast.success('Archived')
     router.push('/training')
     router.refresh()
   }

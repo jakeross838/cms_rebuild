@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 const BID_STATUSES = ['Draft', 'Open', 'Closed', 'Awarded']
 
@@ -137,11 +138,14 @@ export default function BidPackageDetailPage() {
       if (updateError) throw updateError
 
       setBid((prev) => prev ? { ...prev, ...formData, trade: formData.trade || null, description: formData.description || null, scope_of_work: formData.scope_of_work || null, bid_due_date: formData.bid_due_date || null } : prev)
+      toast.success('Saved')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -157,9 +161,11 @@ export default function BidPackageDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive bid package')
+      toast.error('Failed to archive bid package')
       return
     }
 
+    toast.success('Archived')
     router.push('/bids')
     router.refresh()
   }

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -149,9 +150,12 @@ export default function PhotoDetailPage() {
       )
       setSuccess(true)
       setEditing(false)
+      toast.success('Updated')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -166,9 +170,11 @@ export default function PhotoDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive photo')
+      toast.error('Failed to archive photo')
       return
     }
 
+    toast.success('Archived')
     router.push(`/jobs/${jobId}/photos`)
     router.refresh()
   }

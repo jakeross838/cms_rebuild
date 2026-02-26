@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface BillData {
   id: string
@@ -176,9 +177,12 @@ export default function BillDetailPage() {
       )
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -192,10 +196,13 @@ export default function BillDetailPage() {
       .eq('company_id', companyId)
 
     if (deleteError) {
-      setError('Failed to archive bill')
+      const errorMessage = 'Failed to archive bill'
+      setError(errorMessage)
+      toast.error(errorMessage)
       return
     }
 
+    toast.success('Archived')
     router.push('/financial/payables')
     router.refresh()
   }

@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -123,6 +124,7 @@ export default function FileDetailPage() {
         .eq('job_id', jobId)
 
       if (updateError) throw updateError
+      toast.success('Saved')
 
       setDocument((prev) =>
         prev
@@ -137,7 +139,9 @@ export default function FileDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -152,8 +156,10 @@ export default function FileDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive file')
+      toast.error('Failed to archive file')
       return
     }
+    toast.success('Archived')
 
     router.push(`/jobs/${jobId}/files`)
     router.refresh()

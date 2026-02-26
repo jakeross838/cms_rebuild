@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
 
@@ -145,6 +146,7 @@ export default function DrawRequestDetailPage() {
         .eq('job_id', jobId)
 
       if (updateError) throw updateError
+      toast.success('Saved')
 
       setDraw((prev) =>
         prev
@@ -165,7 +167,9 @@ export default function DrawRequestDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -180,8 +184,10 @@ export default function DrawRequestDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive draw request')
+      toast.error('Failed to archive draw request')
       return
     }
+    toast.success('Archived')
 
     router.push(`/jobs/${jobId}/draws`)
     router.refresh()

@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface ContractTemplateData {
   id: string
@@ -109,9 +110,12 @@ export default function ContractTemplateDetailPage() {
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
+      toast.success('Archived')
       router.push('/legal')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -150,9 +154,12 @@ export default function ContractTemplateDetailPage() {
       )
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }

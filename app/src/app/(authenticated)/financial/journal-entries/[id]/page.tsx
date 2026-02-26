@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface JournalEntryData {
   id: string
@@ -144,9 +145,12 @@ export default function JournalEntryDetailPage() {
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
+      toast.success('Archived')
       router.push('/financial/journal-entries')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -185,9 +189,12 @@ export default function JournalEntryDetailPage() {
       )
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }

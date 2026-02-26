@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -174,9 +175,12 @@ export default function ScheduleTaskDetailPage() {
       )
       setSuccess(true)
       setEditing(false)
+      toast.success('Updated')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -191,9 +195,11 @@ export default function ScheduleTaskDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive task')
+      toast.error('Failed to archive task')
       return
     }
 
+    toast.success('Archived')
     router.push(`/jobs/${jobId}/schedule`)
     router.refresh()
   }

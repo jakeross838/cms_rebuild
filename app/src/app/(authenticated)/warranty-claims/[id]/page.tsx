@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────────
 interface WarrantyClaimData {
@@ -145,6 +146,7 @@ export default function WarrantyClaimDetailPage() {
         .eq('company_id', companyId)
 
       if (updateError) throw updateError
+      toast.success('Saved')
 
       setClaim((prev) => prev ? {
         ...prev,
@@ -160,7 +162,9 @@ export default function WarrantyClaimDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -175,8 +179,10 @@ export default function WarrantyClaimDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive warranty claim')
+      toast.error('Failed to archive warranty claim')
       return
     }
+    toast.success('Archived')
 
     router.push('/warranty-claims')
     router.refresh()

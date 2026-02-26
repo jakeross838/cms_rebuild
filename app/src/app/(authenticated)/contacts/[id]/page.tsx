@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface ContactData {
   id: string
@@ -95,9 +96,12 @@ export default function ContactDetailPage() {
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
+      toast.success('Archived')
       router.push('/contacts')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -122,6 +126,7 @@ export default function ContactDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setContact((prev) => prev ? {
         ...prev,
         name: formData.name,
@@ -134,7 +139,9 @@ export default function ContactDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface TemplateData {
   id: string
@@ -94,9 +95,12 @@ export default function TemplateDetailPage() {
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
+      toast.success('Archived')
       router.push('/library/templates')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -129,9 +133,12 @@ export default function TemplateDetailPage() {
       } : prev)
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }

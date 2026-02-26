@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface ReportData {
   id: string
@@ -132,6 +133,7 @@ export default function DashboardDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setReport((prev) => prev ? {
         ...prev,
         name: formData.name,
@@ -147,7 +149,9 @@ export default function DashboardDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -162,9 +166,11 @@ export default function DashboardDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive dashboard')
+      toast.error('Failed to archive dashboard')
       return
     }
 
+    toast.success('Archived')
     router.push('/dashboards')
     router.refresh()
   }

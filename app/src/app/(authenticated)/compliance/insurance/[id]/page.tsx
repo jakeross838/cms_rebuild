@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface InsurancePolicyData {
   id: string
@@ -132,6 +133,7 @@ export default function InsurancePolicyDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setPolicy((prev) =>
         prev
           ? {
@@ -150,7 +152,9 @@ export default function InsurancePolicyDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -166,9 +170,11 @@ export default function InsurancePolicyDetailPage() {
       .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive policy')
+      toast.error('Failed to archive policy')
       setArchiving(false)
       return
     }
+    toast.success('Archived')
     router.push('/compliance/insurance')
     router.refresh()
   }

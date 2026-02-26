@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface AssemblyData {
   id: string
@@ -113,9 +114,12 @@ export default function AssemblyDetailPage() {
       } : prev)
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -129,10 +133,13 @@ export default function AssemblyDetailPage() {
       .eq('company_id', companyId)
 
     if (deleteError) {
-      setError('Failed to archive assembly')
+      const errorMessage = 'Failed to archive assembly'
+      setError(errorMessage)
+      toast.error(errorMessage)
       return
     }
 
+    toast.success('Archived')
     router.push('/library/assemblies')
     router.refresh()
   }

@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface EquipmentData {
   id: string
@@ -136,6 +137,7 @@ export default function EquipmentDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setEquipment((prev) => prev ? {
         ...prev,
         name: formData.name,
@@ -155,7 +157,9 @@ export default function EquipmentDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -170,9 +174,11 @@ export default function EquipmentDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive equipment')
+      toast.error('Failed to archive equipment')
       return
     }
 
+    toast.success('Archived')
     router.push('/equipment')
     router.refresh()
   }

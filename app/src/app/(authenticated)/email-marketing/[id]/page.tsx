@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface CampaignData {
   id: string
@@ -113,9 +114,12 @@ export default function CampaignDetailPage() {
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
+      toast.success('Archived')
       router.push('/email-marketing')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -144,6 +148,7 @@ export default function CampaignDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setCampaign((prev) => prev ? {
         ...prev,
         name: formData.name,
@@ -160,7 +165,9 @@ export default function CampaignDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }

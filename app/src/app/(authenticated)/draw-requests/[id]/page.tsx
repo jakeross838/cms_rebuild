@@ -19,6 +19,7 @@ import {
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -202,6 +203,7 @@ export default function DrawRequestDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setDraw((prev) =>
         prev
           ? {
@@ -245,7 +247,9 @@ export default function DrawRequestDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -260,9 +264,11 @@ export default function DrawRequestDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive draw request')
+      toast.error('Failed to archive draw request')
       return
     }
 
+    toast.success('Archived')
     router.push('/draw-requests')
     router.refresh()
   }

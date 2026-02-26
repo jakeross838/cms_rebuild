@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface CostCodeData {
   id: string
@@ -118,11 +119,14 @@ export default function CostCodeDetailPage() {
       if (updateError) throw updateError
 
       setCostCode((prev) => prev ? { ...prev, ...formData } : prev)
+      toast.success('Saved')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -137,9 +141,11 @@ export default function CostCodeDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive cost code')
+      toast.error('Failed to archive cost code')
       return
     }
 
+    toast.success('Archived')
     router.push('/cost-codes')
     router.refresh()
   }

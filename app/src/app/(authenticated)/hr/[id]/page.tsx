@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface EmployeeData {
   id: string
@@ -159,9 +160,12 @@ export default function EmployeeDetailPage() {
       } : prev)
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -175,10 +179,13 @@ export default function EmployeeDetailPage() {
       .eq('company_id', companyId)
 
     if (deleteError) {
-      setError('Failed to archive employee')
+      const errorMessage = 'Failed to archive employee'
+      setError(errorMessage)
+      toast.error(errorMessage)
       return
     }
 
+    toast.success('Archived')
     router.push('/hr')
     router.refresh()
   }

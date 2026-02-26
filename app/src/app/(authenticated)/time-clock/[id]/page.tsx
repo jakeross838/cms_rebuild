@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface TimeEntryData {
   id: string
@@ -134,6 +135,7 @@ export default function TimeClockDetailPage() {
         .eq('company_id', companyId)
 
       if (updateError) throw updateError
+      toast.success('Saved')
 
       setEntry((prev) =>
         prev
@@ -154,7 +156,9 @@ export default function TimeClockDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -169,8 +173,10 @@ export default function TimeClockDetailPage() {
 
     if (archiveError) {
       setError('Failed to archive entry')
+      toast.error('Failed to archive entry')
       return
     }
+    toast.success('Archived')
 
     router.push('/time-clock')
     router.refresh()

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface InventoryItemData {
   id: string
@@ -141,9 +142,12 @@ export default function InventoryItemDetailPage() {
       )
       setSuccess(true)
       setEditing(false)
+      toast.success('Saved')
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -157,10 +161,13 @@ export default function InventoryItemDetailPage() {
       .eq('company_id', companyId)
 
     if (deleteError) {
-      setError('Failed to archive item')
+      const errorMessage = 'Failed to archive item'
+      setError(errorMessage)
+      toast.error(errorMessage)
       return
     }
 
+    toast.success('Archived')
     router.push('/inventory')
     router.refresh()
   }

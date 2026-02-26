@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -137,6 +138,7 @@ export default function LicenseDetailPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Saved')
       setCert((prev) =>
         prev
           ? {
@@ -156,7 +158,9 @@ export default function LicenseDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -172,9 +176,11 @@ export default function LicenseDetailPage() {
       .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive certification')
+      toast.error('Failed to archive certification')
       setArchiving(false)
       return
     }
+    toast.success('Archived')
     router.push('/compliance/licenses')
     router.refresh()
   }

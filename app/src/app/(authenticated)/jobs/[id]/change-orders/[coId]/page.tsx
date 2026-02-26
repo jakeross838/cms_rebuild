@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
 
@@ -140,6 +141,7 @@ export default function ChangeOrderDetailPage() {
         .eq('job_id', jobId)
 
       if (updateError) throw updateError
+      toast.success('Saved')
 
       setCo((prev) =>
         prev
@@ -159,7 +161,9 @@ export default function ChangeOrderDetailPage() {
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
@@ -174,8 +178,10 @@ export default function ChangeOrderDetailPage() {
 
     if (deleteError) {
       setError('Failed to archive change order')
+      toast.error('Failed to archive change order')
       return
     }
+    toast.success('Archived')
 
     router.push(`/jobs/${jobId}/change-orders`)
     router.refresh()
