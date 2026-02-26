@@ -34,6 +34,7 @@ export default async function EquipmentPage({
   let query = supabase
     .from('equipment')
     .select('*')
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   if (params.status) {

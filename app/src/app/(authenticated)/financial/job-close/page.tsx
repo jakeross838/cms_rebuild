@@ -23,12 +23,14 @@ export default async function JobClosePage() {
   const { data: jobsData } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, contract_amount, actual_completion, target_completion')
+    .is('deleted_at', null)
     .in('status', ['completed', 'warranty'])
     .order('actual_completion', { ascending: false })
 
   const { data: activeData } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, contract_amount, actual_completion, target_completion')
+    .is('deleted_at', null)
     .not('status', 'in', '("completed","warranty","cancelled")')
     .order('name', { ascending: true })
 

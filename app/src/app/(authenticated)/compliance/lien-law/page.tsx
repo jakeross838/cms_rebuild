@@ -33,6 +33,7 @@ export default async function LienLawPage({
   const { data: trackingData } = await supabase
     .from('lien_waiver_tracking')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(100)
 

@@ -33,6 +33,7 @@ export default async function JobsPage({
   let query = supabase
     .from('jobs')
     .select('*, clients(name)')
+    .is('deleted_at', null)
     .order('updated_at', { ascending: false })
 
   if (params.status) {

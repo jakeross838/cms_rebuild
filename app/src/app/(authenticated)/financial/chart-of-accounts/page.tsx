@@ -32,6 +32,7 @@ export default async function ChartOfAccountsPage({
   let query = supabase
     .from('gl_accounts')
     .select('*')
+    .is('deleted_at', null)
     .order('account_number', { ascending: true })
 
   if (params.type) {

@@ -45,6 +45,7 @@ export default async function BudgetPage({
     .from('budget_lines')
     .select('*, cost_codes(code, name)')
     .eq('job_id', id)
+    .is('deleted_at', null)
     .order('sort_order', { ascending: true })
 
   const lines = (linesData || []) as BudgetLine[]

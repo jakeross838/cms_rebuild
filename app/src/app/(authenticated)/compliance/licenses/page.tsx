@@ -33,6 +33,7 @@ export default async function LicensesPage({
   let query = supabase
     .from('employee_certifications')
     .select('*')
+    .is('deleted_at', null)
     .order('expiration_date', { ascending: true })
 
   if (params.search) {

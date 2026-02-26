@@ -46,6 +46,7 @@ export default async function LienWaiversPage({
     .from('lien_waivers')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
 
   if (sp.search) {
     waiverQuery = waiverQuery.or(`claimant_name.ilike.%${sp.search}%,waiver_type.ilike.%${sp.search}%`)

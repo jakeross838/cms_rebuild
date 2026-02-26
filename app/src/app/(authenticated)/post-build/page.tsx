@@ -33,8 +33,10 @@ export default async function PostBuildPage() {
     { data: warrantiesData },
     { data: maintenanceData },
   ] = await Promise.all([
-    supabase.from('warranties').select('*').in('status', ['active', 'expiring_soon']).order('end_date', { ascending: true }).limit(50),
-    supabase.from('maintenance_schedules').select('*').eq('is_active', true).order('next_due_date', { ascending: true }).limit(50),
+    supabase.from('warranties').select('*')
+    .is('deleted_at', null).in('status', ['active', 'expiring_soon']).order('end_date', { ascending: true }).limit(50),
+    supabase.from('maintenance_schedules').select('*')
+    .is('deleted_at', null).eq('is_active', true).order('next_due_date', { ascending: true }).limit(50),
   ])
 
   const warranties = (warrantiesData || []) as Warranty[]

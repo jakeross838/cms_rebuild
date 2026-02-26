@@ -23,6 +23,7 @@ export default async function TrainingPage() {
   const { data: coursesData } = await supabase
     .from('training_courses')
     .select('*')
+    .is('deleted_at', null)
     .eq('is_published', true)
     .order('title', { ascending: true })
 

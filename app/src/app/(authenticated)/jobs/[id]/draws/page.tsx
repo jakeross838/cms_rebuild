@@ -49,6 +49,7 @@ export default async function DrawsPage({
     .from('draw_requests')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
 
   if (sp.search) {
     drawQuery = drawQuery.or(`draw_number::text.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)

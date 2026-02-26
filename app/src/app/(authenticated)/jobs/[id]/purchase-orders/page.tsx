@@ -46,6 +46,7 @@ export default async function PurchaseOrdersPage({
     .from('purchase_orders')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
 
   if (sp.search) {
     poQuery = poQuery.or(`po_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)

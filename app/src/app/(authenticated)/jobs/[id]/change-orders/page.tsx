@@ -48,6 +48,7 @@ export default async function ChangeOrdersPage({
     .from('change_orders')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
 
   if (sp.search) {
     coQuery = coQuery.or(`co_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)

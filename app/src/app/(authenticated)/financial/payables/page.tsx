@@ -32,6 +32,7 @@ export default async function PayablesPage({
   let query = supabase
     .from('ap_bills')
     .select('*')
+    .is('deleted_at', null)
     .order('due_date', { ascending: true })
 
   if (params.search) {

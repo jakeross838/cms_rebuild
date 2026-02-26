@@ -48,6 +48,7 @@ export default async function DailyLogsPage({
     .from('daily_logs')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
 
   if (sp.search) {
     logsQuery = logsQuery.or(`weather_summary.ilike.%${sp.search}%,notes.ilike.%${sp.search}%`)

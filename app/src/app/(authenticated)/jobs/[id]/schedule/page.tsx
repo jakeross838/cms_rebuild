@@ -53,6 +53,7 @@ export default async function SchedulePage({
     .from('schedule_tasks')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
     .order('sort_order', { ascending: true })
 
   if (sp.search) {

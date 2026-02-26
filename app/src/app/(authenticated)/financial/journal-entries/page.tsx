@@ -30,6 +30,7 @@ export default async function JournalEntriesPage({
   let query = supabase
     .from('gl_journal_entries')
     .select('*')
+    .is('deleted_at', null)
     .order('entry_date', { ascending: false })
 
   if (params.search) {

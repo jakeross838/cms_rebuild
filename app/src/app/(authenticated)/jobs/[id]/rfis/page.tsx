@@ -48,6 +48,7 @@ export default async function RFIsPage({
     .from('rfis')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
 
   if (sp.search) {
     rfiQuery = rfiQuery.or(`rfi_number.ilike.%${sp.search}%,subject.ilike.%${sp.search}%`)

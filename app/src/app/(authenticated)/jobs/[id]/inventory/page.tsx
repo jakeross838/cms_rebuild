@@ -35,6 +35,7 @@ export default async function JobInventoryPage({
     .from('inventory_transactions')
     .select('item_id, quantity, transaction_type')
     .eq('job_id', jobId)
+    .is('deleted_at', null)
 
   const transactions = transactionsData || []
   const itemIds = [...new Set(transactions.map((t) => t.item_id))]
@@ -45,6 +46,7 @@ export default async function JobInventoryPage({
       .from('inventory_items')
       .select('id, name, sku, category, unit_of_measure, unit_cost, is_active')
       .in('id', itemIds)
+      .is('deleted_at', null)
       .order('name', { ascending: true })
 
     if (sp.search) {

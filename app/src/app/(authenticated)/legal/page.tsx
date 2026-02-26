@@ -29,6 +29,7 @@ export default async function LegalCompliancePage({
   let query = supabase
     .from('contract_templates')
     .select('*')
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   if (params.search) {
@@ -40,7 +41,8 @@ export default async function LegalCompliancePage({
     { count: trackingCount },
   ] = await Promise.all([
     query,
-    supabase.from('lien_waiver_tracking').select('*', { count: 'exact', head: true }),
+    supabase.from('lien_waiver_tracking').select('*', { count: 'exact', head: true })
+    .is('deleted_at', null),
   ])
 
   const templates = (templatesData || []) as ContractTemplate[]

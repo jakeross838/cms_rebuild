@@ -30,13 +30,10 @@ const topLevelForms = [
 for (const form of topLevelForms) {
   test(`${form.name} form loads at ${form.path}`, async ({ page }) => {
     await page.goto(form.path)
-    await page.waitForLoadState('networkidle')
-    // Page should not be a 404 and should have a form or create content
+    // Wait for client-side hydration — form inputs may not render until React mounts
+    await page.waitForSelector('input, button[type="submit"]', { state: 'visible', timeout: 15000 })
+    // Page should not be a 404
     await expect(page.locator('body')).not.toContainText('404')
-    // Should have at least one input or button
-    const hasInput = await page.locator('input').first().isVisible().catch(() => false)
-    const hasButton = await page.locator('button').first().isVisible().catch(() => false)
-    expect(hasInput || hasButton).toBeTruthy()
   })
 }
 
@@ -65,10 +62,9 @@ const jobForms = [
 for (const form of jobForms) {
   test(`${form.name} form loads at ${form.path}`, async ({ page }) => {
     await page.goto(form.path)
-    await page.waitForLoadState('networkidle')
+    // Wait for client-side hydration — form inputs may not render until React mounts
+    await page.waitForSelector('input, button[type="submit"]', { state: 'visible', timeout: 15000 })
+    // Page should not be a 404
     await expect(page.locator('body')).not.toContainText('404')
-    const hasInput = await page.locator('input').first().isVisible().catch(() => false)
-    const hasButton = await page.locator('button').first().isVisible().catch(() => false)
-    expect(hasInput || hasButton).toBeTruthy()
   })
 }

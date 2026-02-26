@@ -32,6 +32,7 @@ export default async function ReceivablesPage({
   let query = supabase
     .from('ar_invoices')
     .select('*')
+    .is('deleted_at', null)
     .order('due_date', { ascending: true })
 
   if (params.search) {

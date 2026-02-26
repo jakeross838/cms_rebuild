@@ -24,6 +24,7 @@ export default async function TodosPage() {
   const { data: itemsData } = await supabase
     .from('punch_items')
     .select('*')
+    .is('deleted_at', null)
     .in('status', ['open', 'in_progress'])
     .order('created_at', { ascending: false })
     .limit(50)

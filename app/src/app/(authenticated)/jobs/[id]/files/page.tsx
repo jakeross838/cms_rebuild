@@ -57,6 +57,7 @@ export default async function FilesPage({
     .from('documents')
     .select('*')
     .eq('job_id', id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (sp.search) {

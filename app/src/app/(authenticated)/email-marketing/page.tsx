@@ -38,6 +38,7 @@ export default async function EmailMarketingPage({
   let query = supabase
     .from('marketing_campaigns')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (params.search) {

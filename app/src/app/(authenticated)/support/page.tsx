@@ -23,6 +23,7 @@ export default async function SupportPage() {
   const { data: ticketsData } = await supabase
     .from('support_tickets')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(50)
 

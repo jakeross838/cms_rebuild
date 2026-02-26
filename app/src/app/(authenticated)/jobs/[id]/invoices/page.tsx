@@ -35,6 +35,7 @@ export default async function JobInvoicesPage({
     .from('invoices')
     .select('*')
     .eq('job_id', jobId)
+    .is('deleted_at', null)
     .order('invoice_date', { ascending: false })
 
   if (sparams.status) {

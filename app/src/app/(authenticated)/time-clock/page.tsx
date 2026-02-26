@@ -33,6 +33,7 @@ export default async function TimeClockPage({
   let query = supabase
     .from('time_entries')
     .select('*')
+    .is('deleted_at', null)
     .order('clock_in', { ascending: false })
     .limit(50)
 

@@ -31,6 +31,7 @@ export default async function InventoryPage({
   let query = supabase
     .from('inventory_items')
     .select('*')
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   if (params.category) {

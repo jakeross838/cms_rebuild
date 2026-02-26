@@ -19,6 +19,7 @@ export default async function ProfitabilityPage() {
   const { data: jobsData } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, contract_amount')
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   const jobs = (jobsData || []) as JobSummary[]

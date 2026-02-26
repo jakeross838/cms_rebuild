@@ -29,6 +29,7 @@ export default async function TemplatesPage({
   let query = supabase
     .from('contract_templates')
     .select('*')
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   if (params.search) {
@@ -41,8 +42,10 @@ export default async function TemplatesPage({
     { count: lienTemplateCount },
   ] = await Promise.all([
     query,
-    supabase.from('rfi_templates').select('*', { count: 'exact', head: true }),
-    supabase.from('lien_waiver_templates').select('*', { count: 'exact', head: true }),
+    supabase.from('rfi_templates').select('*', { count: 'exact', head: true })
+    .is('deleted_at', null),
+    supabase.from('lien_waiver_templates').select('*', { count: 'exact', head: true })
+    .is('deleted_at', null),
   ])
 
   const templates = (templatesData || []) as ContractTemplate[]

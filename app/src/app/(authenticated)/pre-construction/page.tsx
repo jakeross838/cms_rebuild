@@ -24,6 +24,7 @@ export default async function FeasibilityPage() {
   const { data: jobsData } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, address, city, state, created_at')
+    .is('deleted_at', null)
     .eq('status', 'pre_construction')
     .order('created_at', { ascending: false })
 

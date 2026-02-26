@@ -33,6 +33,7 @@ export default async function PunchListsPage({
   let query = supabase
     .from('punch_items')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(100)
 

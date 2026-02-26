@@ -29,6 +29,7 @@ export default async function ContactsPage({
   let query = supabase
     .from('vendor_contacts')
     .select('*')
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   if (params.search) {

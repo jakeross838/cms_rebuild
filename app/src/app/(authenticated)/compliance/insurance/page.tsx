@@ -32,6 +32,7 @@ export default async function InsurancePage({
   let query = supabase
     .from('vendor_insurance')
     .select('*')
+    .is('deleted_at', null)
     .order('expiration_date', { ascending: true })
 
   if (params.search) {

@@ -34,6 +34,7 @@ export default async function EstimatesPage({
   let query = supabase
     .from('estimates')
     .select('*, jobs(name)')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (params.status) {

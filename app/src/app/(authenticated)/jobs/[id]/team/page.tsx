@@ -29,6 +29,7 @@ export default async function JobTeamPage({
     .from('project_user_roles')
     .select('*')
     .eq('job_id', jobId)
+    .is('deleted_at', null)
 
   const roles = (rolesData || []) as ProjectUserRole[]
 

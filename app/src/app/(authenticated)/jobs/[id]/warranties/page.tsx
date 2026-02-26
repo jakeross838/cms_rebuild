@@ -31,6 +31,7 @@ export default async function JobWarrantiesPage({
     .from('warranties')
     .select('*')
     .eq('job_id', jobId)
+    .is('deleted_at', null)
     .order('end_date', { ascending: true })
 
   const warranties = (warrantiesData || []) as Warranty[]

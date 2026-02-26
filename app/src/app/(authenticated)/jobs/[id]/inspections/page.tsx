@@ -39,6 +39,7 @@ export default async function JobInspectionsPage({
     .from('permit_inspections')
     .select('*')
     .eq('job_id', jobId)
+    .is('deleted_at', null)
     .order('scheduled_date', { ascending: true })
 
   if (sp.search) {

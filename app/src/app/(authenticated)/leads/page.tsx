@@ -33,6 +33,7 @@ export default async function LeadsPage({
   let query = supabase
     .from('leads')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (params.status) {
