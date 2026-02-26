@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Quality Hardening: Auth Guards, Tenant Isolation, Notifications Pagination (2026-02-25)
+
+### Notifications Pagination
+- Replaced .limit(100) with server-side pagination (25 per page)
+- Added ListPagination component
+- Filter links (Unread Only / All) now use URLSearchParams pattern
+- Subtitle shows total count from DB instead of array length
+- Removed unused imports (CheckCheck, Trash2, getStatusColor)
+
+### Auth Guard + Tenant Isolation Security Fixes (11 pages)
+- Added missing auth redirect guards: api-marketplace, bank-reconciliation
+- Added missing company_id filters: bank-reconciliation (financial_periods), business-management (financial_periods)
+- Replaced all user!.id non-null assertions with proper null checks + redirect: dashboard, hr, compliance/safety, financial/cash-flow, financial/dashboard, financial/business-management, revenue/*, revenue/attribution, revenue/employee
+- Replaced all companyId! assertions with safe references after null-guard redirect
+
+### Error Handling + deleted_at Fixes (4 pages)
+- submittals: Added missing error handling on query
+- payments: Added missing .is('deleted_at', null) filter
+- deliveries: Added error handling + deleted_at filter
+- certified-payroll: Added error handling + deleted_at filter
+
+### Unused Import Cleanup (3 pages)
+- bank-reconciliation: Removed Search, Input, formatCurrency
+- certified-payroll: Removed Clock, getStatusColor
+- integrations: Removed getStatusColor
+
+---
+
 ## Quality Hardening: Sort Controls (10 more), Pagination (10), Metadata (52), Draws Redirect (2026-02-25)
 
 ### Sort Controls (10 Additional List Pages)

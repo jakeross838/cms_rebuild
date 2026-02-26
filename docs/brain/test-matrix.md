@@ -1,5 +1,35 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Auth Guards, Tenant Isolation, Notifications Pagination (2026-02-25)
+
+### Notifications Pagination
+| Test | Expected |
+|------|----------|
+| Notifications with 30+ items | Shows pagination, 25 per page |
+| Click page 2 | Shows next 25 notifications |
+| Filter unread then paginate | Pagination respects filter |
+| Total count in subtitle | Shows count from DB, not array length |
+
+### Auth Guard Security
+| Test | Expected |
+|------|----------|
+| Visit api-marketplace without auth | Redirects to /login |
+| Visit bank-reconciliation without auth | Redirects to /login |
+| Visit dashboard without company_id | Redirects to /login |
+| Visit financial pages without auth | Redirects to /login |
+| Bank reconciliation shows only tenant data | financial_periods filtered by company_id |
+| Business management shows only tenant data | financial_periods filtered by company_id |
+
+### Error Handling + Soft Delete
+| Test | Expected |
+|------|----------|
+| Submittals query failure | Error thrown (not silently swallowed) |
+| Archived payments | Not shown in payments list |
+| Archived deliveries | Not shown in deliveries list |
+| Archived payroll exports | Not shown in certified-payroll list |
+
+---
+
 ## Extended Sort, Pagination, Metadata, Draws Redirect (2026-02-25)
 
 ### Sort Controls (10 pages)

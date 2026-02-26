@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Auth Guards, Tenant Isolation, Notifications Pagination, Unused Imports
+
+### Why
+1. notifications/page.tsx used .limit(100) — no way to see beyond 100 notifications
+2. 11 pages used `user!.id` non-null assertions without null checks — runtime crash risk if auth session expires
+3. 2 pages (bank-reconciliation, business-management) queried financial_periods without company_id filter — cross-tenant data leak risk
+4. api-marketplace had no auth guard at all despite querying DB
+5. 4 pages missing error handling or deleted_at filters
+6. 3 pages had unused imports cluttering code
+
+### What was done
+- Replaced .limit(100) with pagination on notifications page
+- Added proper `if (!user) redirect('/login')` + `if (!companyId) redirect('/login')` guards across 11 pages
+- Added .eq('company_id', companyId) to bank-reconciliation and business-management financial_periods queries
+- Eliminated all `user!.id` and `companyId!` non-null assertions from authenticated page components
+- Added missing error handling and deleted_at filters to 4 pages
+- Cleaned unused imports from 3 pages
+
+---
+
 ## 2026-02-25: Sort Controls (10 more), Pagination (10), Metadata (52), Draws Redirect
 
 ### Why
