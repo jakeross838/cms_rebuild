@@ -378,6 +378,11 @@ export function mapDbError(error: { code?: string; message?: string; details?: s
     return { status: 400, error: 'Bad Request', message: error.message ?? 'Value violates a constraint' }
   }
 
+  // Invalid text representation (e.g., non-UUID string passed to UUID column)
+  if (code === '22P02') {
+    return { status: 400, error: 'Bad Request', message: 'Invalid ID format' }
+  }
+
   // RLS policy violation (insufficient privilege)
   if (code === '42501') {
     return { status: 403, error: 'Forbidden', message: 'Insufficient permissions' }
