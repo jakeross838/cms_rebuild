@@ -1,5 +1,33 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Pagination Test Cases (2026-02-25)
+
+### ListPagination Component
+| Test | Expected |
+|------|----------|
+| totalPages <= 1 | Component returns null (hidden) |
+| Page 1 of N | Previous disabled, Next enabled |
+| Page N of N | Previous enabled, Next disabled |
+| Middle page | Both buttons enabled |
+| With search params | Page links preserve ?status=X&search=Y |
+
+### Company-Level List Pages (19 pages)
+| Test | Expected |
+|------|----------|
+| No data | Empty state shown, no pagination |
+| < 25 records | All shown, no pagination |
+| > 25 records | First 25 shown, pagination visible |
+| Page 2 | Items 26-50, Previous enabled |
+| With filter + pagination | Filter preserved on page change |
+
+### Job-Scoped List Pages (21 pages)
+| Test | Expected |
+|------|----------|
+| Same as company-level | Identical behavior within job context |
+| Job ownership + pagination | Auth + company check runs on every page load |
+
+---
+
 ## Final Quality Pass Test Cases (2026-02-25)
 
 ### Journal Entry Create with Line Items (`/financial/journal-entries/new`)

@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Server-Side Pagination (40 Pages)
+
+### Why
+All list pages either loaded every record from the database (no limit) or had a hard `.limit(50)` with no user-facing pagination controls. For tenants with hundreds or thousands of records, this causes slow page loads, high bandwidth, and poor UX.
+
+### What was done
+1. Created `ListPagination` component — reusable URL-based Previous/Next with page count
+2. Added server-side pagination to 19 company-level list pages (25/page)
+3. Added server-side pagination to 21 job-scoped list pages (25/page)
+4. All use Supabase `{ count: 'exact' }` + `.range()` for efficient server-side pagination
+5. Preserved existing search params (filters, status, search) across page navigation
+
+### Key decisions
+- 25 items per page (standard for data-heavy construction records)
+- URL-based (not state-based) for SSR compatibility and shareable URLs
+- Previous/Next only (no page number buttons) — simpler, works better for large datasets
+- Auto-hides pagination when only 1 page of results
+
+---
+
 ## 2026-02-25: Final Security & Quality Pass
 
 ### Why

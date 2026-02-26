@@ -1,5 +1,23 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Server-Side Pagination (2026-02-25)
+
+### ListPagination Component (`components/ui/list-pagination.tsx`)
+- Reusable SSR pagination: Previous/Next buttons with page count display
+- URL-based navigation preserving existing search params (filters, search, status)
+- Auto-hides when totalPages <= 1
+- Used across 40 list pages (19 company-level + 21 job-scoped)
+
+### 19 Company-Level List Pages
+- All use 25 items/page with `.select('...', { count: 'exact' })` + `.range(offset, offset + pageSize - 1)`
+- Pages: clients, vendors, jobs, contacts, cost-codes, invoices, leads, estimates, contracts, hr, purchase-orders, change-orders, permits, rfis, submittals, lien-waivers, draw-requests, punch-lists, audit-log
+
+### 21 Job-Scoped List Pages (`/jobs/[id]/*`)
+- Same pagination pattern as company-level pages
+- Pages: budget, change-orders, communications, daily-logs, draws, files, inspections, inventory, invoices, lien-waivers, permits, photos, punch-list, purchase-orders, rfis, schedule, selections, submittals, team, time-clock, warranties
+
+---
+
 ## Final Security & Quality Pass (2026-02-25)
 
 ### Audit Log company_id
