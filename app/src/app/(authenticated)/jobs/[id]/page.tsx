@@ -73,9 +73,9 @@ export default async function JobDetailPage({
     { count: purchaseOrderCount },
     { count: dailyLogCount },
   ] = await Promise.all([
-    supabase.from('change_orders').select('*', { count: 'exact', head: true }).eq('job_id', id),
-    supabase.from('purchase_orders').select('*', { count: 'exact', head: true }).eq('job_id', id),
-    supabase.from('daily_logs').select('*', { count: 'exact', head: true }).eq('job_id', id),
+    supabase.from('change_orders').select('*', { count: 'exact', head: true }).eq('job_id', id).is('deleted_at', null),
+    supabase.from('purchase_orders').select('*', { count: 'exact', head: true }).eq('job_id', id).is('deleted_at', null),
+    supabase.from('daily_logs').select('*', { count: 'exact', head: true }).eq('job_id', id).is('deleted_at', null),
   ])
 
   const status = job.status ?? 'pre_construction'
