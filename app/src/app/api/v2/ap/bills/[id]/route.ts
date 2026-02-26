@@ -172,7 +172,7 @@ export const PUT = createApiHandler(
       requestId: ctx.requestId,
     })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'bill.update' }
 )
 
 // ============================================================================
@@ -227,5 +227,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'bill.archive' }
 )

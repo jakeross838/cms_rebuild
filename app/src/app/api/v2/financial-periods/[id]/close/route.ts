@@ -89,5 +89,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'financial_period.close' }
 )

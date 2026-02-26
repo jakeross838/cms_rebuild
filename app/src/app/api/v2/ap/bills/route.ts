@@ -91,6 +91,7 @@ export const GET = createApiHandler(
 // POST /api/v2/ap/bills
 // ============================================================================
 
+
 export const POST = createApiHandler(
   async (req, ctx: ApiContext) => {
     const body = await req.json()
@@ -162,5 +163,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: bill, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'bill.create' }
 )

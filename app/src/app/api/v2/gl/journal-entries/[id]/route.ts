@@ -172,5 +172,5 @@ export const PUT = createApiHandler(
       requestId: ctx.requestId,
     })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'journal_entry.update' }
 )

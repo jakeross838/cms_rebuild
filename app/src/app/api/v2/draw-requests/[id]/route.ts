@@ -136,7 +136,7 @@ export const PUT = createApiHandler(
 
     return NextResponse.json({ data: draw, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'draw_request.update' }
 )
 
 // ============================================================================
@@ -191,5 +191,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'financial' }
+  { requireAuth: true, rateLimit: 'financial', auditAction: 'draw_request.archive' }
 )
