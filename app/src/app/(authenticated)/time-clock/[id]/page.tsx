@@ -149,15 +149,15 @@ export default function TimeClockDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Delete this time entry? This cannot be undone.')) return
+    if (!confirm('Archive this time entry? It can be restored later.')) return
 
-    const { error: deleteError } = await supabase
+    const { error: archiveError } = await supabase
       .from('time_entries')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', entryId)
 
-    if (deleteError) {
-      setError('Failed to delete entry')
+    if (archiveError) {
+      setError('Failed to archive entry')
       return
     }
 
@@ -277,7 +277,7 @@ export default function TimeClockDetailPage() {
 
             <div className="flex justify-end">
               <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
-                Delete Entry
+                Archive Entry
               </Button>
             </div>
           </>

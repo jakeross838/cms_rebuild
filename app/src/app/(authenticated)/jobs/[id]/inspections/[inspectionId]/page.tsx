@@ -58,6 +58,7 @@ export default function InspectionDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<InspectionFormData>({
     inspection_type: '',
@@ -150,19 +151,18 @@ export default function InspectionDetailPage() {
     }
   }
 
-  const handleDelete = async () => {
-    if (!confirm('Cancel this inspection? Its status will be set to cancelled.')) return
-
-    const { error: deleteError } = await supabase
+  const handleArchive = async () => {
+    if (!window.confirm('Archive this inspection? It can be restored later.')) return
+    setArchiving(true)
+    const { error: archiveError } = await supabase
       .from('permit_inspections')
-      .update({ status: 'cancelled' })
+      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', inspectionId)
-
-    if (deleteError) {
-      setError('Failed to cancel inspection')
+    if (archiveError) {
+      setError('Failed to archive inspection')
+      setArchiving(false)
       return
     }
-
     router.push(`/jobs/${jobId}/inspections`)
     router.refresh()
   }
@@ -313,9 +313,7 @@ export default function InspectionDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
-                Cancel Inspection
-              </Button>
+              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
             </div>
           </>
         ) : (

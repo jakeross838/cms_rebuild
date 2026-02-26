@@ -34,6 +34,7 @@ export default function ContactDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -74,6 +75,22 @@ export default function ContactDetailPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleArchive = async () => {
+    if (!window.confirm('Archive this contact? It can be restored later.')) return
+    setArchiving(true)
+    try {
+      const { error: archiveError } = await supabase
+        .from('vendor_contacts')
+        .update({ deleted_at: new Date().toISOString() } as never)
+        .eq('id', params.id as string)
+      if (archiveError) throw archiveError
+      router.push('/contacts')
+    } catch (err) {
+      setError((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
+    }
   }
 
   const handleSave = async () => {
@@ -151,7 +168,10 @@ export default function ContactDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
+              <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
+              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>

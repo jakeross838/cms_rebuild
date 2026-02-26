@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { ArrowLeft, Loader2, Save } from 'lucide-react'
 
@@ -50,6 +50,7 @@ interface AccountLookup {
 
 export default function JournalEntryDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const supabase = createClient()
   const [entry, setEntry] = useState<JournalEntryData | null>(null)
   const [lines, setLines] = useState<JournalLineData[]>([])
@@ -59,6 +60,7 @@ export default function JournalEntryDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
     entry_date: '',
@@ -122,6 +124,22 @@ export default function JournalEntryDetailPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleArchive = async () => {
+    if (!window.confirm('Archive this journal entry? It can be restored later.')) return
+    setArchiving(true)
+    try {
+      const { error: archiveError } = await supabase
+        .from('gl_journal_entries')
+        .update({ deleted_at: new Date().toISOString() } as never)
+        .eq('id', params.id as string)
+      if (archiveError) throw archiveError
+      router.push('/financial/journal-entries')
+    } catch (err) {
+      setError((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
+    }
   }
 
   const handleSave = async () => {
@@ -205,7 +223,10 @@ export default function JournalEntryDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
+              <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
+              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>

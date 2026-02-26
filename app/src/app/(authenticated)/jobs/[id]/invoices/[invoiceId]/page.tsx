@@ -64,6 +64,7 @@ export default function JobInvoiceDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<InvoiceFormData>({
     invoice_number: '',
@@ -159,18 +160,17 @@ export default function JobInvoiceDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this invoice? It will be marked as denied.')) return
-
+    if (!window.confirm('Archive this invoice? It can be restored later.')) return
+    setArchiving(true)
     const { error: archiveError } = await supabase
       .from('invoices')
-      .update({ status: 'denied' as const })
+      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', invoiceId)
-
     if (archiveError) {
       setError('Failed to archive invoice')
+      setArchiving(false)
       return
     }
-
     router.push(`/jobs/${jobId}/invoices`)
     router.refresh()
   }
@@ -285,9 +285,7 @@ export default function JobInvoiceDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
-                Archive Invoice
-              </Button>
+              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
             </div>
           </>
         ) : (

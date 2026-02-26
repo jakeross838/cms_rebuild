@@ -148,15 +148,15 @@ export default function LienLawDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Delete this tracking record?')) return
+    if (!confirm('Archive this tracking record? It can be restored later.')) return
 
-    const { error: deleteError } = await supabase
+    const { error: archiveError } = await supabase
       .from('lien_waiver_tracking')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', recordId)
 
-    if (deleteError) {
-      setError('Failed to delete record')
+    if (archiveError) {
+      setError('Failed to archive record')
       return
     }
 
@@ -264,7 +264,7 @@ export default function LienLawDetailPage() {
 
             <div className="flex justify-end">
               <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
-                Delete Record
+                Archive Record
               </Button>
             </div>
           </>

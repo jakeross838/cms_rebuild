@@ -151,15 +151,15 @@ export default function BudgetLineDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Delete this budget line? This action cannot be undone.')) return
+    if (!confirm('Archive this budget line? It can be restored later.')) return
 
-    const { error: deleteError } = await supabase
+    const { error: archiveError } = await supabase
       .from('budget_lines')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', lineId)
 
-    if (deleteError) {
-      setError('Failed to delete budget line')
+    if (archiveError) {
+      setError('Failed to archive budget line')
       return
     }
 
@@ -288,7 +288,7 @@ export default function BudgetLineDetailPage() {
 
             <div className="flex justify-end">
               <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
-                Delete Budget Line
+                Archive Budget Line
               </Button>
             </div>
           </>

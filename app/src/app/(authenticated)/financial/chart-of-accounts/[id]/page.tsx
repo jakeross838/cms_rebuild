@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { ArrowLeft, Loader2, Save } from 'lucide-react'
 
@@ -31,6 +31,7 @@ interface AccountData {
 
 export default function ChartOfAccountsDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const supabase = createClient()
   const [account, setAccount] = useState<AccountData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -38,6 +39,7 @@ export default function ChartOfAccountsDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
     account_number: '',
@@ -87,6 +89,22 @@ export default function ChartOfAccountsDetailPage() {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target
     setFormData((prev) => ({ ...prev, [name]: checked }))
+  }
+
+  const handleArchive = async () => {
+    if (!window.confirm('Archive this account? It can be restored later.')) return
+    setArchiving(true)
+    try {
+      const { error: archiveError } = await supabase
+        .from('gl_accounts')
+        .update({ deleted_at: new Date().toISOString() } as never)
+        .eq('id', params.id as string)
+      if (archiveError) throw archiveError
+      router.push('/financial/chart-of-accounts')
+    } catch (err) {
+      setError((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
+    }
   }
 
   const handleSave = async () => {
@@ -193,7 +211,10 @@ export default function ChartOfAccountsDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
+              <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
+              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>

@@ -56,6 +56,7 @@ export default function LicenseDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<CertificationFormData>({
     certification_name: '',
@@ -152,18 +153,17 @@ export default function LicenseDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this certification? It will be marked as revoked.')) return
-
+    if (!window.confirm('Archive this certification? It can be restored later.')) return
+    setArchiving(true)
     const { error: archiveError } = await supabase
       .from('employee_certifications')
-      .update({ status: 'revoked' })
+      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', certId)
-
     if (archiveError) {
       setError('Failed to archive certification')
+      setArchiving(false)
       return
     }
-
     router.push('/compliance/licenses')
     router.refresh()
   }
@@ -268,9 +268,7 @@ export default function LicenseDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
-                Archive Certification
-              </Button>
+              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
             </div>
           </>
         ) : (

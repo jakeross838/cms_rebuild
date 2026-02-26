@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { ArchiveJobButton } from './archive-job-button'
 
 interface JobDetail {
   id: string
@@ -91,9 +92,12 @@ export default async function JobDetailPage({
               <p className="text-muted-foreground mt-1">{job.notes}</p>
             )}
           </div>
-          <Link href={`/jobs/${id}/edit`}>
-            <Button variant="outline">Edit Job</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={`/jobs/${id}/edit`}>
+              <Button variant="outline">Edit Job</Button>
+            </Link>
+            <ArchiveJobButton jobId={id} />
+          </div>
         </div>
       </div>
 

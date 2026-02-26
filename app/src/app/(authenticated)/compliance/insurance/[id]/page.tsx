@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { ArrowLeft, Loader2, Save } from 'lucide-react'
 
@@ -38,6 +38,7 @@ interface VendorLookup {
 
 export default function InsurancePolicyDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const supabase = createClient()
   const [policy, setPolicy] = useState<InsurancePolicyData | null>(null)
   const [vendors, setVendors] = useState<VendorLookup[]>([])
@@ -46,6 +47,7 @@ export default function InsurancePolicyDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
     vendor_id: '',
@@ -145,6 +147,22 @@ export default function InsurancePolicyDetailPage() {
     }
   }
 
+  const handleArchive = async () => {
+    if (!window.confirm('Archive this insurance policy? It can be restored later.')) return
+    setArchiving(true)
+    const { error: archiveError } = await supabase
+      .from('vendor_insurance')
+      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+      .eq('id', params.id as string)
+    if (archiveError) {
+      setError('Failed to archive policy')
+      setArchiving(false)
+      return
+    }
+    router.push('/compliance/insurance')
+    router.refresh()
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -183,7 +201,10 @@ export default function InsurancePolicyDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
-              <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
+              <>
+                <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
+                <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
