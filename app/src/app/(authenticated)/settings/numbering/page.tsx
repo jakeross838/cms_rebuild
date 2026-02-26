@@ -214,8 +214,9 @@ export default function NumberingPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium">Pattern</label>
+                      <label htmlFor="numbering-pattern" className="text-sm font-medium">Pattern</label>
                       <Input
+                        id="numbering-pattern"
                         value={editPattern}
                         onChange={(e) => setEditPattern(e.target.value)}
                         placeholder="e.g., JOB-{YYYY}-{###}"
@@ -223,8 +224,9 @@ export default function NumberingPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium">Scope</label>
+                      <label htmlFor="numbering-scope" className="text-sm font-medium">Scope</label>
                       <select
+                        id="numbering-scope"
                         value={editScope}
                         onChange={(e) => setEditScope(e.target.value)}
                         className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -235,8 +237,9 @@ export default function NumberingPage() {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium">Padding</label>
+                      <label htmlFor="numbering-padding" className="text-sm font-medium">Padding</label>
                       <Input
+                        id="numbering-padding"
                         type="number"
                         min={1}
                         max={10}
@@ -245,9 +248,10 @@ export default function NumberingPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium">Reset Yearly</label>
+                      <label htmlFor="numbering-reset-yearly" className="text-sm font-medium">Reset Yearly</label>
                       <label className="flex items-center gap-2 mt-1">
                         <input
+                          id="numbering-reset-yearly"
                           type="checkbox"
                           checked={editResetYearly}
                           onChange={(e) => setEditResetYearly(e.target.checked)}

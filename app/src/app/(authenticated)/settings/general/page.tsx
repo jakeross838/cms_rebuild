@@ -231,20 +231,20 @@ export default function GeneralSettingsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FieldGroup label="Company Name">
-                  <Input value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
+                <FieldGroup label="Company Name" id="company-name">
+                  <Input id="company-name" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
                 </FieldGroup>
-                <FieldGroup label="Legal Name">
-                  <Input value={profile.legalName} onChange={(e) => setProfile({ ...profile, legalName: e.target.value })} />
+                <FieldGroup label="Legal Name" id="legal-name">
+                  <Input id="legal-name" value={profile.legalName} onChange={(e) => setProfile({ ...profile, legalName: e.target.value })} />
                 </FieldGroup>
-                <FieldGroup label="Email">
-                  <Input type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
+                <FieldGroup label="Email" id="company-email">
+                  <Input id="company-email" type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
                 </FieldGroup>
-                <FieldGroup label="Phone">
-                  <Input value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
+                <FieldGroup label="Phone" id="company-phone">
+                  <Input id="company-phone" value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
                 </FieldGroup>
-                <FieldGroup label="Website">
-                  <Input value={profile.website} onChange={(e) => setProfile({ ...profile, website: e.target.value })} />
+                <FieldGroup label="Website" id="company-website">
+                  <Input id="company-website" value={profile.website} onChange={(e) => setProfile({ ...profile, website: e.target.value })} />
                 </FieldGroup>
                 <FieldGroup label="Primary Color">
                   <div className="flex items-center gap-2">
@@ -252,8 +252,8 @@ export default function GeneralSettingsPage() {
                     <Input value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="flex-1" />
                   </div>
                 </FieldGroup>
-                <FieldGroup label="Address">
-                  <Input value={profile.address} onChange={(e) => setProfile({ ...profile, address: e.target.value })} />
+                <FieldGroup label="Address" id="company-address">
+                  <Input id="company-address" value={profile.address} onChange={(e) => setProfile({ ...profile, address: e.target.value })} />
                 </FieldGroup>
                 <FieldGroup label="City">
                   <Input value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} />
@@ -484,10 +484,10 @@ export default function GeneralSettingsPage() {
 }
 
 // Reusable field wrapper
-function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
+function FieldGroup({ label, id, children }: { label: string; id?: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-foreground">{label}</label>
+      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
       {children}
     </div>
   )

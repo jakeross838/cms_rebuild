@@ -289,6 +289,7 @@ export default function PhasesPage() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      aria-label="More options"
                       onClick={() => setOpenDropdown(openDropdown === phase.id ? null : phase.id)}
                     >
                       <MoreHorizontal className="h-4 w-4" />
@@ -408,8 +409,9 @@ export default function PhasesPage() {
                 ) : null}
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Name</label>
+                  <label htmlFor="phase-name" className="text-sm font-medium">Name</label>
                   <Input
+                    id="phase-name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g., Foundation"
@@ -418,8 +420,9 @@ export default function PhasesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Description</label>
+                  <label htmlFor="phase-description" className="text-sm font-medium">Description</label>
                   <Input
+                    id="phase-description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Optional description"
@@ -428,7 +431,7 @@ export default function PhasesPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium">Color</label>
+                    <label htmlFor="phase-color" className="text-sm font-medium">Color</label>
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
@@ -437,6 +440,7 @@ export default function PhasesPage() {
                         className="h-10 w-10 rounded border cursor-pointer"
                       />
                       <Input
+                        id="phase-color"
                         value={formData.color}
                         onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                         className="flex-1"
@@ -444,8 +448,9 @@ export default function PhasesPage() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium">Duration (days)</label>
+                    <label htmlFor="phase-duration" className="text-sm font-medium">Duration (days)</label>
                     <Input
+                      id="phase-duration"
                       type="number"
                       min={1}
                       max={365}
@@ -457,8 +462,9 @@ export default function PhasesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Milestone Type</label>
+                  <label htmlFor="phase-milestone-type" className="text-sm font-medium">Milestone Type</label>
                   <select
+                    id="phase-milestone-type"
                     value={formData.milestoneType}
                     onChange={(e) => setFormData({ ...formData, milestoneType: e.target.value })}
                     className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"

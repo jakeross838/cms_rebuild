@@ -258,6 +258,7 @@ export default function RolesPage() {
                             <Button
                               variant="ghost"
                               size="sm"
+                              aria-label="More options"
                               onClick={() =>
                                 setOpenDropdown(openDropdown === role.id ? null : role.id)
                               }

@@ -316,6 +316,7 @@ export default function NewJournalEntryPage() {
                           type="button"
                           variant="ghost"
                           size="sm"
+                          aria-label="Remove line"
                           onClick={() => removeLine(index)}
                           disabled={lines.length <= 2}
                           className="text-muted-foreground hover:text-destructive"

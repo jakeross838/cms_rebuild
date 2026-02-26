@@ -142,14 +142,15 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
-            <Input value={profile.email} disabled className="bg-muted" />
+            <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <Input id="email" value={profile.email} disabled className="bg-muted" />
             <p className="text-xs text-muted-foreground">Email cannot be changed here</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Full Name</label>
+            <label htmlFor="name" className="text-sm font-medium">Full Name</label>
             <Input
+              id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Your name"
@@ -157,8 +158,9 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Phone</label>
+            <label htmlFor="phone" className="text-sm font-medium">Phone</label>
             <Input
+              id="phone"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="Phone number"
@@ -166,13 +168,13 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Role</label>
-            <Input value={profile.role} disabled className="bg-muted capitalize" />
+            <label htmlFor="role" className="text-sm font-medium">Role</label>
+            <Input id="role" value={profile.role} disabled className="bg-muted capitalize" />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Member Since</label>
-            <Input value={profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'} disabled className="bg-muted" />
+            <label htmlFor="member-since" className="text-sm font-medium">Member Since</label>
+            <Input id="member-since" value={profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'} disabled className="bg-muted" />
           </div>
         </CardContent>
         <CardFooter className="border-t justify-end">

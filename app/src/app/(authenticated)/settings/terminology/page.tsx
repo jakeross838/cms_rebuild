@@ -271,7 +271,7 @@ export default function TerminologyPage() {
                     </td>
                     <td className="py-2">
                       {(term.overrideSingular || term.overridePlural) ? (
-                        <Button variant="ghost" size="sm" onClick={() => handleResetTerm(term.key)} title="Reset to default">
+                        <Button variant="ghost" size="sm" onClick={() => handleResetTerm(term.key)} aria-label="Reset to default">
                           <RotateCcw className="h-3.5 w-3.5" />
                         </Button>
                       ) : null}
