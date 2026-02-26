@@ -2,6 +2,14 @@
 
 ## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
 
+### Error Handling Consistency
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Unique constraint violation on write → returns 409 | mapDbError returns correct status | verify |
+| FK violation on write → returns 400 | mapDbError returns correct status | verify |
+| Missing record on write → returns 404 | Unchanged behavior | verify |
+| Middleware profile error has `message` field | Consistent error shape | verify |
+
 ### PostgREST .or() Filter Injection Fix
 | Test Case | Expected | Status |
 |-----------|----------|--------|

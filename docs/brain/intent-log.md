@@ -2,6 +2,11 @@
 
 ## 2026-02-26: Session 16 — Data Leakage Prevention + Filter Injection Fix
 
+### Why (Error Handling in Write Handlers)
+- 11 PUT handlers merged `error` and `!data` into `if (error || !data)` returning 404 for ALL failures
+- Unique constraint violations (23505) returned 404 instead of 409, FK violations returned 404 instead of 400
+- Fix: split into `if (error) { mapDbError }` + `if (!data) { 404 }` for proper status codes
+
 ### Why (PostgREST .or() Filter Injection)
 - `escapeLike()` escapes `%`, `_`, `\` (LIKE wildcards) but NOT `,` and `.` (PostgREST filter syntax delimiters)
 - In `.or()` strings, commas separate conditions and dots separate `column.operator.value`

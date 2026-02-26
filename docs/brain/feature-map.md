@@ -2,6 +2,11 @@
 
 ## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
 
+### Error Handling Consistency (12 files)
+- **File:** `src/lib/api/middleware.ts` — added missing `message` field to profile error response (line 131)
+- **11 write handlers** — split `if (error || !data)` into separate `if (error)` + `if (!data)` checks with `mapDbError`
+- **Impact:** DB errors now return correct HTTP status codes (409 for unique violations, 400 for FK errors) instead of blanket 404
+
 ### PostgREST .or() Filter Injection Fix (80 routes)
 - **Files:** 80 route files across `src/app/api/v2/` + `src/lib/utils.ts`
 - **What:** `.or()` filter strings used `escapeLike()` which only escapes LIKE wildcards (`%`, `_`, `\`), but not PostgREST delimiters (`,`, `.`). A search term containing commas could inject extra filter conditions.
