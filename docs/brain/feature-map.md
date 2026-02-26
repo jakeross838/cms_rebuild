@@ -1,12 +1,42 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Quality Hardening: Validation, Accessibility, Error Handling, Pagination (2026-02-25)
+
+### Form Validation Ordering
+- 4 create forms (change-orders, purchase-orders, rfis, invoices) now validate BEFORE `setLoading(true)`
+- Pattern: `setError(null)` → field checks with early return → `setLoading(true)` → network call
+- Prevents showing spinner for client-side validation failures
+
+### Accessibility Fixes
+- **Aria-labels**: 4 icon-only buttons (settings phases/roles MoreHorizontal, journal entries Trash2, terminology RotateCcw)
+- **Form labels**: Profile page (5 htmlFor/id pairs), FieldGroup component (systemic fix for 30+ fields), numbering (4), phases (5)
+- **Heading hierarchy**: 27 empty state `<h3>` tags changed to `<p>` to fix h1→h3 skip across list pages
+- **Empty state CTAs**: Added action buttons to estimates, contacts, punch-lists, files empty states
+
+### Server-Side Error Handling
+- 25 list pages now throw Supabase query errors to error boundary instead of silently showing empty state
+- Pattern: `const { data, count, error } = await query; if (error) throw error;`
+- Catches: DB connection failures, RLS blocks, network timeouts, table permission issues
+
+### Pagination Completion
+- 6 pages upgraded from hardcoded `.limit()` to proper pagination: activity, daily-logs, certified-payroll, communications, compliance/lien-law, compliance/safety
+- Bids page also upgraded (was `.limit(50)`, now paginated)
+- All use `{ count: 'exact' }`, `.range()`, and `ListPagination` component
+
+### Additional UI Fixes
+- Files page: Added search input (search param handler existed but no UI)
+- Permits page: Added status filter tabs (applied, approved, issued, expired, rejected)
+- escapeLike completed: 19 remaining files fixed (5 job-scoped pages + 14 v2 API routes)
+
+---
+
 ## Security Hardening + Mobile Responsive + Search Fixes (2026-02-25)
 
 ### LIKE Injection Prevention
 - New `escapeLike(input)` utility in `@/lib/utils` — escapes `%`, `_`, `\` in LIKE/ILIKE patterns
-- Applied to **42 server-side list pages** (all search inputs)
+- Applied to **all server-side list pages and API routes** — zero unescaped ilike patterns remain
 - Applied to **5 v1 API routes** (jobs, clients, vendors, cost-codes, users)
-- Applied to **v2 search API** route
+- Applied to **v2 search API** route + **14 v2 API routes**
 
 ### Soft-Delete Filter Fixes
 - Added `.is('deleted_at', null)` to v1 `/api/v1/jobs`, `/api/v1/clients`, `/api/v1/vendors` GET endpoints

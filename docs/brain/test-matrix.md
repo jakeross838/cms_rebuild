@@ -1,5 +1,42 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Validation, Accessibility, Error Handling, Pagination (2026-02-25)
+
+### Form Validation Ordering
+| Test | Expected |
+|------|----------|
+| Submit change-order with empty title | Error shown immediately, no spinner flash |
+| Submit PO with empty job_id | Error shown immediately, no loading state |
+| Submit RFI with empty subject | Error shown immediately, button stays enabled |
+| Submit invoice with invalid amount | Error shown immediately, no network call |
+
+### Accessibility
+| Test | Expected |
+|------|----------|
+| Screen reader on settings phases MoreHorizontal button | Announces "More options" |
+| Screen reader on journal entry Trash2 button | Announces "Remove line" |
+| Screen reader on profile page inputs | Labels properly associated via htmlFor/id |
+| Page heading structure audit | No h1→h3 skips in any list page |
+| Empty state on estimates page | Shows "Create Estimate" button |
+
+### Server-Side Error Handling
+| Test | Expected |
+|------|----------|
+| Supabase query fails on jobs page | Error boundary shows error message, not empty state |
+| RLS policy blocks query | Error thrown, error.tsx renders retry button |
+| Network timeout on list page | Error boundary catches, shows "Try again" |
+
+### Pagination
+| Test | Expected |
+|------|----------|
+| Activity page with 30+ entries | Shows pagination controls, 25 per page |
+| Daily logs with 60+ entries | Page 2 and 3 accessible via pagination |
+| Bids page with 30+ packages | Proper pagination instead of truncation at 50 |
+| Files page search input | Typing filters by filename, results update |
+| Permits status filter tabs | Clicking "Issued" filters to issued permits only |
+
+---
+
 ## Security + Responsive Test Cases (2026-02-25)
 
 ### LIKE Injection Prevention

@@ -1,5 +1,28 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Validation, Accessibility, Error Handling, Pagination
+
+### Why
+1. Form validation ran after setLoading(true) — spinner flashed before showing validation error
+2. Icon-only buttons had no accessible name — screen readers announced them as unlabeled
+3. Form labels not associated with inputs via htmlFor/id — screen readers couldn't pair them
+4. Empty state headings used h3 creating h1→h3 skip — violates WCAG heading hierarchy
+5. Server-side list pages silently swallowed query errors — users saw empty state on DB failure
+6. Six list pages truncated results silently with hardcoded .limit() — no pagination
+7. Files page had no search UI despite handling search param server-side
+8. Permits page had no status filter despite having status column
+
+### What was done
+- Moved validation before setLoading in 4 forms (change-orders, POs, RFIs, invoices)
+- Added aria-labels to 4 icon-only buttons, htmlFor/id to 20+ form fields, fixed FieldGroup component
+- Changed 27 empty state h3 → p tags, added CTA buttons to 4 stranded empty states
+- Added `if (error) throw error` to 25 list pages, surfacing errors to error boundary
+- Added ListPagination to 6 pages (activity, daily-logs, certified-payroll, communications, compliance/lien-law, safety)
+- Added search input to files page, status filter tabs to permits page
+- Completed escapeLike coverage (19 remaining files: 5 job pages + 14 v2 API routes)
+
+---
+
 ## 2026-02-25: Security Hardening + Mobile Responsive + Search Fixes
 
 ### Why
