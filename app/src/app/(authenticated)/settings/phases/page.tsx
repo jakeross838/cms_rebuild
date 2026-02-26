@@ -435,6 +435,7 @@ export default function PhasesPage() {
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
+                        aria-label="Phase color"
                         value={formData.color}
                         onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                         className="h-10 w-10 rounded border cursor-pointer"

@@ -250,20 +250,20 @@ export default function GeneralSettingsPage() {
                 <FieldGroup label="Primary Color">
                   <div className="flex items-center gap-2">
                     <input type="color" aria-label="Primary Color" value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="h-10 w-10 rounded border cursor-pointer" />
-                    <Input value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="flex-1" />
+                    <Input aria-label="Primary Color hex value" value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="flex-1" />
                   </div>
                 </FieldGroup>
                 <FieldGroup label="Address" id="company-address">
                   <Input id="company-address" value={profile.address} onChange={(e) => setProfile({ ...profile, address: e.target.value })} />
                 </FieldGroup>
                 <FieldGroup label="City">
-                  <Input value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} />
+                  <Input aria-label="City" value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} />
                 </FieldGroup>
                 <FieldGroup label="State">
-                  <Input value={profile.state} onChange={(e) => setProfile({ ...profile, state: e.target.value })} />
+                  <Input aria-label="State" value={profile.state} onChange={(e) => setProfile({ ...profile, state: e.target.value })} />
                 </FieldGroup>
                 <FieldGroup label="Zip">
-                  <Input value={profile.zip} onChange={(e) => setProfile({ ...profile, zip: e.target.value })} />
+                  <Input aria-label="Zip" value={profile.zip} onChange={(e) => setProfile({ ...profile, zip: e.target.value })} />
                 </FieldGroup>
               </div>
               {company ? (
@@ -303,19 +303,19 @@ export default function GeneralSettingsPage() {
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FieldGroup label="Invoice Approval Threshold ($)">
-                  <Input type="number" value={financial.invoiceApprovalThreshold} onChange={(e) => setFinancial({ ...financial, invoiceApprovalThreshold: Number(e.target.value) })} />
+                  <Input aria-label="Invoice Approval Threshold" type="number" value={financial.invoiceApprovalThreshold} onChange={(e) => setFinancial({ ...financial, invoiceApprovalThreshold: Number(e.target.value) })} />
                 </FieldGroup>
                 <FieldGroup label="PO Approval Threshold ($)">
-                  <Input type="number" value={financial.poApprovalThreshold} onChange={(e) => setFinancial({ ...financial, poApprovalThreshold: Number(e.target.value) })} />
+                  <Input aria-label="PO Approval Threshold" type="number" value={financial.poApprovalThreshold} onChange={(e) => setFinancial({ ...financial, poApprovalThreshold: Number(e.target.value) })} />
                 </FieldGroup>
                 <FieldGroup label="Default Markup (%)">
-                  <Input type="number" value={financial.defaultMarkupPercent} onChange={(e) => setFinancial({ ...financial, defaultMarkupPercent: Number(e.target.value) })} />
+                  <Input aria-label="Default Markup Percent" type="number" value={financial.defaultMarkupPercent} onChange={(e) => setFinancial({ ...financial, defaultMarkupPercent: Number(e.target.value) })} />
                 </FieldGroup>
                 <FieldGroup label="Default Retainage (%)">
-                  <Input type="number" value={financial.defaultRetainagePercent} onChange={(e) => setFinancial({ ...financial, defaultRetainagePercent: Number(e.target.value) })} />
+                  <Input aria-label="Default Retainage Percent" type="number" value={financial.defaultRetainagePercent} onChange={(e) => setFinancial({ ...financial, defaultRetainagePercent: Number(e.target.value) })} />
                 </FieldGroup>
                 <FieldGroup label="Payment Terms">
-                  <select value={financial.defaultPaymentTerms} onChange={(e) => setFinancial({ ...financial, defaultPaymentTerms: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Payment Terms" value={financial.defaultPaymentTerms} onChange={(e) => setFinancial({ ...financial, defaultPaymentTerms: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     <option value="Net 15">Net 15</option>
                     <option value="Net 30">Net 30</option>
                     <option value="Net 45">Net 45</option>
@@ -324,7 +324,7 @@ export default function GeneralSettingsPage() {
                   </select>
                 </FieldGroup>
                 <FieldGroup label="Fiscal Year Start Month">
-                  <select value={financial.fiscalYearStartMonth} onChange={(e) => setFinancial({ ...financial, fiscalYearStartMonth: Number(e.target.value) })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Fiscal Year Start Month" value={financial.fiscalYearStartMonth} onChange={(e) => setFinancial({ ...financial, fiscalYearStartMonth: Number(e.target.value) })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     {Array.from({ length: 12 }, (_, i) => (
                       <option key={i + 1} value={i + 1}>{new Date(2026, i).toLocaleString('default', { month: 'long' })}</option>
                     ))}
@@ -351,7 +351,7 @@ export default function GeneralSettingsPage() {
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FieldGroup label="Timezone">
-                  <select value={regional.timezone} onChange={(e) => setRegional({ ...regional, timezone: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Timezone" value={regional.timezone} onChange={(e) => setRegional({ ...regional, timezone: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     <option value="America/New_York">Eastern (America/New_York)</option>
                     <option value="America/Chicago">Central (America/Chicago)</option>
                     <option value="America/Denver">Mountain (America/Denver)</option>
@@ -361,14 +361,14 @@ export default function GeneralSettingsPage() {
                   </select>
                 </FieldGroup>
                 <FieldGroup label="Date Format">
-                  <select value={regional.dateFormat} onChange={(e) => setRegional({ ...regional, dateFormat: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Date Format" value={regional.dateFormat} onChange={(e) => setRegional({ ...regional, dateFormat: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                     <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                   </select>
                 </FieldGroup>
                 <FieldGroup label="Currency">
-                  <select value={regional.currency} onChange={(e) => setRegional({ ...regional, currency: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Currency" value={regional.currency} onChange={(e) => setRegional({ ...regional, currency: e.target.value })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     <option value="USD">USD ($)</option>
                     <option value="CAD">CAD (C$)</option>
                     <option value="EUR">EUR (&euro;)</option>
@@ -377,7 +377,7 @@ export default function GeneralSettingsPage() {
                   </select>
                 </FieldGroup>
                 <FieldGroup label="Measurement System">
-                  <select value={regional.measurementSystem} onChange={(e) => setRegional({ ...regional, measurementSystem: e.target.value as 'imperial' | 'metric' })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Measurement System" value={regional.measurementSystem} onChange={(e) => setRegional({ ...regional, measurementSystem: e.target.value as 'imperial' | 'metric' })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     <option value="imperial">Imperial (ft, in, lbs)</option>
                     <option value="metric">Metric (m, cm, kg)</option>
                   </select>
@@ -461,7 +461,7 @@ export default function GeneralSettingsPage() {
                 <ToggleSwitch checked={notifications.emailNotificationsEnabled} onChange={(v) => setNotifications({ ...notifications, emailNotificationsEnabled: v })} label="Email Notifications" />
                 <ToggleSwitch checked={notifications.pushNotificationsEnabled} onChange={(v) => setNotifications({ ...notifications, pushNotificationsEnabled: v })} label="Push Notifications" />
                 <FieldGroup label="Digest Frequency">
-                  <select value={notifications.digestFrequency} onChange={(e) => setNotifications({ ...notifications, digestFrequency: e.target.value as 'realtime' | 'hourly' | 'daily' | 'weekly' })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <select aria-label="Digest Frequency" value={notifications.digestFrequency} onChange={(e) => setNotifications({ ...notifications, digestFrequency: e.target.value as 'realtime' | 'hourly' | 'daily' | 'weekly' })} className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
                     <option value="realtime">Real-time</option>
                     <option value="hourly">Hourly</option>
                     <option value="daily">Daily</option>
