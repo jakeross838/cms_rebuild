@@ -39,13 +39,13 @@ export async function GET(request: Request) {
     // Prevent path traversal — resolve and verify the path stays inside DOCS_ROOT
     const filePath = path.resolve(DOCS_ROOT, ...slug.split('/'))
     if (!filePath.startsWith(DOCS_ROOT + path.sep) && filePath !== DOCS_ROOT) {
-      return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid path', requestId: crypto.randomUUID() }, { status: 400 })
     }
     try {
       const content = await readFile(filePath, 'utf-8')
       return NextResponse.json({ content, slug })
     } catch {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 })
+      return NextResponse.json({ error: 'File not found', requestId: crypto.randomUUID() }, { status: 404 })
     }
   }
 

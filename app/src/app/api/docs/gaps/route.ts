@@ -29,6 +29,6 @@ export async function GET() {
 
     return NextResponse.json({ gaps, summary })
   } catch {
-    return NextResponse.json({ error: 'Gap tracker not found' }, { status: 404 })
+    return NextResponse.json({ error: 'Gap tracker not found', requestId: crypto.randomUUID() }, { status: 404 })
   }
 }
