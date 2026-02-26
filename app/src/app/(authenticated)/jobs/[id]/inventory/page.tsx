@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency } from '@/lib/utils'
+import { escapeLike, formatCurrency } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -69,7 +69,8 @@ export default async function JobInventoryPage({
       .is('deleted_at', null)
 
     if (sp.search) {
-      itemsQuery = itemsQuery.or(`name.ilike.%${sp.search}%,sku.ilike.%${sp.search}%`)
+      const searchTerm = `%${escapeLike(sp.search)}%`
+      itemsQuery = itemsQuery.or(`name.ilike.${searchTerm},sku.ilike.${searchTerm}`)
     }
 
     const { data: itemsData, count, error: itemsError } = await itemsQuery

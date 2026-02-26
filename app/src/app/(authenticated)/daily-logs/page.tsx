@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface DailyLogRow {
   id: string
@@ -50,7 +50,8 @@ export default async function DailyLogsPage({
     .range(offset, offset + pageSize - 1)
 
   if (sp.search) {
-    query = query.or(`weather_summary.ilike.%${sp.search}%,notes.ilike.%${sp.search}%`)
+    const searchTerm = `%${escapeLike(sp.search)}%`
+    query = query.or(`weather_summary.ilike.${searchTerm},notes.ilike.${searchTerm}`)
   }
 
   const { data: logsData, error, count } = await query

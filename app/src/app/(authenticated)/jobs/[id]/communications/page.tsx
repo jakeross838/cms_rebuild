@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface Communication {
@@ -56,7 +56,8 @@ export default async function JobCommunicationsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    query = query.or(`subject.ilike.%${sp.search}%,message_body.ilike.%${sp.search}%`)
+    const searchTerm = `%${escapeLike(sp.search)}%`
+    query = query.or(`subject.ilike.${searchTerm},message_body.ilike.${searchTerm}`)
   }
 
   const { data: commsData, count, error: commsError } = await query

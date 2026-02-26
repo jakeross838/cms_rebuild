@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface DrawRequest {
@@ -66,7 +66,8 @@ export default async function DrawsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    drawQuery = drawQuery.or(`draw_number::text.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
+    const searchTerm = `%${escapeLike(sp.search)}%`
+    drawQuery = drawQuery.or(`draw_number::text.ilike.${searchTerm},title.ilike.${searchTerm}`)
   }
 
   const { data: drawData, count, error: drawError } = await drawQuery
