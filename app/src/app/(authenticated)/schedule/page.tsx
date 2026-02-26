@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { Calendar, Building2 } from 'lucide-react'
+import { Calendar, Building2, Plus } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -38,9 +39,17 @@ export default async function SchedulePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Schedule</h1>
-        <p className="text-muted-foreground">Company-wide project timeline</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Schedule</h1>
+          <p className="text-muted-foreground">Company-wide project timeline</p>
+        </div>
+        <Link href="/jobs/new">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Job
+          </Button>
+        </Link>
       </div>
 
       {/* Jobs schedule list */}

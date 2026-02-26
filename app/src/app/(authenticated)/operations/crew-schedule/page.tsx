@@ -1,7 +1,9 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Users, Search } from 'lucide-react'
+import { Users, Search, Plus } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
@@ -54,9 +56,17 @@ export default async function CrewSchedulePage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Crew Schedule</h1>
-        <p className="text-muted-foreground">{employees.length} employees &bull; {active} active &bull; {field} field crew</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Crew Schedule</h1>
+          <p className="text-muted-foreground">{employees.length} employees &bull; {active} active &bull; {field} field crew</p>
+        </div>
+        <Link href="/hr/new">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Employee
+          </Button>
+        </Link>
       </div>
 
       <div className="relative max-w-md">

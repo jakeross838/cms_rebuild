@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatDate } from '@/lib/utils'
 import { Camera } from 'lucide-react'
@@ -49,9 +50,11 @@ export default async function PhotosPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Photos</h1>
-          <p className="text-muted-foreground">Project photos across all jobs</p>
+          <p className="text-muted-foreground">Project photos across all jobs &bull; {photos.length} photo{photos.length !== 1 ? 's' : ''}</p>
         </div>
-        <span className="text-sm text-muted-foreground">{photos.length} photo{photos.length !== 1 ? 's' : ''}</span>
+        <Link href="/jobs">
+          <Button variant="outline">Go to Jobs</Button>
+        </Link>
       </div>
 
       {photos.length === 0 ? (

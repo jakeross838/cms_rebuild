@@ -1,5 +1,9 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { Plus } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -45,9 +49,17 @@ export default async function CommunicationsPage({
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Communications</h1>
-        <p className="text-muted-foreground">Messages, emails, and notifications</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Communications</h1>
+          <p className="text-muted-foreground">Messages, emails, and notifications</p>
+        </div>
+        <Link href="/communications/new">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Message
+          </Button>
+        </Link>
       </div>
       <Card>
         <CardHeader>

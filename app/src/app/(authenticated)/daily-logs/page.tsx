@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { ClipboardList, Building2, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
@@ -61,9 +62,17 @@ export default async function DailyLogsPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Daily Logs</h1>
-        <p className="text-muted-foreground">Field reports across all jobs</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Daily Logs</h1>
+          <p className="text-muted-foreground">Field reports across all jobs</p>
+        </div>
+        <Link href="/jobs">
+          <Button variant="outline">
+            <Building2 className="h-4 w-4 mr-2" />
+            Go to Jobs
+          </Button>
+        </Link>
       </div>
 
       {/* Search */}
