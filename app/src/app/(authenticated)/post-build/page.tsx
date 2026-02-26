@@ -5,6 +5,7 @@ import { Home, Shield, Wrench } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -31,7 +32,7 @@ interface MaintenanceSchedule {
 
 export const metadata: Metadata = { title: 'Post-Build' }
 
-export default async function PostBuildPage() {
+export default async function PostBuildPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const supabase = await createClient()
 
   // ── Auth & Company ID ──────────────────────────────────────────────
@@ -41,18 +42,29 @@ export default async function PostBuildPage() {
   const companyId = profile?.company_id
   if (!companyId) redirect('/login')
 
+  const params = await searchParams
+  const pageSize = 25
+  const currentPage = Math.max(1, parseInt(params.page || '1', 10) || 1)
+  const offset = (currentPage - 1) * pageSize
+
   const [
-    { data: warrantiesData },
-    { data: maintenanceData },
+    { data: warrantiesData, count: warrantiesCount, error: wError },
+    { data: maintenanceData, count: maintenanceCount, error: mError },
   ] = await Promise.all([
-    supabase.from('warranties').select('*')
-    .eq('company_id', companyId).is('deleted_at', null).in('status', ['active', 'expiring_soon']).order('end_date', { ascending: true }).limit(50),
-    supabase.from('maintenance_schedules').select('*')
-    .eq('company_id', companyId).is('deleted_at', null).eq('is_active', true).order('next_due_date', { ascending: true }).limit(50),
+    supabase.from('warranties').select('*', { count: 'exact' })
+      .eq('company_id', companyId).is('deleted_at', null).in('status', ['active', 'expiring_soon']).order('end_date', { ascending: true }).range(offset, offset + pageSize - 1),
+    supabase.from('maintenance_schedules').select('*', { count: 'exact' })
+      .eq('company_id', companyId).is('deleted_at', null).eq('is_active', true).order('next_due_date', { ascending: true }).range(offset, offset + pageSize - 1),
   ])
+  if (wError) throw wError
+  if (mError) throw mError
 
   const warranties = (warrantiesData || []) as Warranty[]
   const schedules = (maintenanceData || []) as MaintenanceSchedule[]
+  const totalPages = Math.max(
+    Math.ceil((warrantiesCount || 0) / pageSize),
+    Math.ceil((maintenanceCount || 0) / pageSize)
+  )
 
   return (
     <div className="space-y-6">
@@ -65,13 +77,13 @@ export default async function PostBuildPage() {
         <Card>
           <CardContent className="p-3">
             <p className="text-sm text-muted-foreground">Active Warranties</p>
-            <p className="text-2xl font-bold">{warranties.length}</p>
+            <p className="text-2xl font-bold">{warrantiesCount || 0}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3">
             <p className="text-sm text-muted-foreground">Maintenance Schedules</p>
-            <p className="text-2xl font-bold">{schedules.length}</p>
+            <p className="text-2xl font-bold">{maintenanceCount || 0}</p>
           </CardContent>
         </Card>
       </div>
@@ -145,6 +157,8 @@ export default async function PostBuildPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={currentPage} totalPages={totalPages} basePath="/post-build" />
     </div>
   )
 }
