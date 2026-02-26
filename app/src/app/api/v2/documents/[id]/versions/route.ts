@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, getPaginationParams, mapDbError, paginatedResponse, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { createVersionSchema } from '@/lib/validation/schemas/documents'
 import { buildStoragePath, validateFile } from '@/lib/documents/storage'
@@ -41,11 +41,14 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data: versions, error } = await supabase
+    const { page, limit, offset } = getPaginationParams(req)
+
+    const { data: versions, count, error } = await supabase
       .from('document_versions')
-      .select('id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at')
+      .select('id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at', { count: 'exact' })
       .eq('document_id', id)
       .order('version_number', { ascending: false })
+      .range(offset, offset + limit - 1)
 
     if (error) {
       const mapped = mapDbError(error)
@@ -55,7 +58,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json({ data: versions ?? [], requestId: ctx.requestId })
+    return NextResponse.json(paginatedResponse(versions ?? [], count ?? 0, page, limit, ctx.requestId))
   },
   { requireAuth: true, rateLimit: 'api' }
 )
