@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 
 import {
   createApiHandler,
@@ -55,7 +55,7 @@ export const GET = createApiHandler(
       query = query.eq('is_verified', filters.is_verified)
     }
     if (filters.q) {
-      query = query.or(`display_name.ilike.%${escapeLike(filters.q)}%,bio.ilike.%${escapeLike(filters.q)}%`)
+      query = query.or(`display_name.ilike.${safeOrIlike(filters.q)},bio.ilike.${safeOrIlike(filters.q)}`)
     }
 
     query = query.order('total_installs', { ascending: false })

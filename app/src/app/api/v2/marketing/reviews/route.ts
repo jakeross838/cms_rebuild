@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 
 import {
   createApiHandler,
@@ -68,7 +68,7 @@ export const GET = createApiHandler(
       query = query.eq('rating', filters.rating)
     }
     if (filters.q) {
-      query = query.or(`client_name.ilike.%${escapeLike(filters.q)}%,review_text.ilike.%${escapeLike(filters.q)}%`)
+      query = query.or(`client_name.ilike.${safeOrIlike(filters.q)},review_text.ilike.${safeOrIlike(filters.q)}`)
     }
 
     query = query.order('created_at', { ascending: false })

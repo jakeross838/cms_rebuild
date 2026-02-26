@@ -76,6 +76,16 @@ export function escapeLike(input: string): string {
   return input.replace(/[%_\\]/g, '\\$&')
 }
 
+/**
+ * Build a safely-quoted ILIKE pattern for use in PostgREST .or() filter strings.
+ * Escapes LIKE wildcards, then double-quotes the value to prevent PostgREST
+ * delimiter injection (commas and dots have special meaning in .or() syntax).
+ */
+export function safeOrIlike(input: string): string {
+  const pattern = `%${escapeLike(input)}%`
+  return `"${pattern.replace(/"/g, '\\"')}"`
+}
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /** Validate that a string is a valid UUID v4 format */
