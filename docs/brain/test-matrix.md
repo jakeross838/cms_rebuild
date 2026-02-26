@@ -1,5 +1,29 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Rate Limit Tiering, JSON Parse Safety (2026-02-26)
+
+### Financial Rate Limits
+| Route | Rate Limit | Fail Behavior | Test |
+|-------|-----------|---------------|------|
+| POST /api/v2/ap/bills | financial (30/min) | fail-closed | Send 31 requests in 1 min → 429 |
+| POST /api/v2/ar/invoices | financial (30/min) | fail-closed | Send 31 requests in 1 min → 429 |
+| POST /api/v2/gl/journal-entries | financial (30/min) | fail-closed | Send 31 requests in 1 min → 429 |
+
+### Search + AI Rate Limits
+| Route | Rate Limit | Test |
+|-------|-----------|------|
+| GET /api/v2/search | search (60/min) | Send 61 requests → 429 |
+| POST /api/v2/ai-documents/extractions | heavy (10/min) | Send 11 requests → 429 |
+| POST /api/v2/documents | heavy (10/min) | Send 11 requests → 429 |
+
+### JSON Parse Safety
+| Route | Test | Expected |
+|-------|------|----------|
+| POST /api/v2/change-orders/:id/approve | Send `{invalid json}` | 500 Internal Server Error (not silent empty) |
+| POST /api/v2/contracts/:id/send | Send `not json at all` | 500 Internal Server Error |
+
+---
+
 ## RBAC Enforcement, Error Handling, Env Validation (2026-02-26)
 
 ### mapDbError — Invalid UUID

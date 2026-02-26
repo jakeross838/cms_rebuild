@@ -1,5 +1,22 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Rate Limit Tiering, JSON Parse Safety (2026-02-26)
+
+### Financial Rate Limits (29 route files, 57 handlers)
+- All AP, AR, GL, draw-requests, financial-periods, and billing routes: `'api'` → `'financial'` (30/min, fail-closed)
+- Financial ops NEVER fail open — if rate limit check fails, request is denied
+
+### Search + AI Rate Limits (8 route files)
+- Search GET: `'api'` → `'search'` (60/min)
+- AI document POST handlers: `'api'` → `'heavy'` (10/min) — extractions, classifications, queue, templates
+- Document upload POST: `'api'` → `'heavy'`
+
+### JSON Parse Safety (24 action routes)
+- Removed `req.json().catch(() => ({}))` from 24 action routes (approve, submit, close, send, sign, etc.)
+- Invalid JSON now throws → caught by middleware → proper error response
+
+---
+
 ## RBAC Enforcement, Error Handling, Env Validation (2026-02-26)
 
 ### mapDbError — Invalid UUID Handling (lib/api/middleware.ts)

@@ -1,5 +1,20 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Rate Limit Tiering, JSON Parse Safety
+
+### Why
+1. All 898 API handlers used same `'api'` rate limit (100/min, fail-open) — financial ops (AP/AR/GL/billing) need fail-closed protection at 30/min
+2. Search endpoint at 100/min allowed abuse of expensive multi-table queries — should be 60/min
+3. AI document processing at 100/min allowed bulk job submission DoS — should be 10/min
+4. 24 action routes used `.catch(() => ({}))` on req.json() — invalid JSON silently became empty object instead of error
+
+### What was done
+- Changed 57 financial handlers (29 files) from `rateLimit: 'api'` to `'financial'`
+- Changed search GET to `'search'`, AI POST handlers to `'heavy'`, document upload POST to `'heavy'`
+- Removed `.catch(() => ({}))` from 24 action routes — JSON errors now propagate to middleware
+
+---
+
 ## 2026-02-26: RBAC Enforcement, Error Handling, Env Validation
 
 ### Why
