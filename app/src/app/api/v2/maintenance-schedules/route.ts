@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { escapeLike } from '@/lib/utils'
 
 import {
   createApiHandler,
@@ -59,7 +60,7 @@ export const GET = createApiHandler(
       query = query.eq('is_active', filters.is_active)
     }
     if (filters.q) {
-      query = query.or(`title.ilike.%${filters.q}%,category.ilike.%${filters.q}%`)
+      query = query.or(`title.ilike.%${escapeLike(filters.q)}%,category.ilike.%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('next_due_date', { ascending: true, nullsFirst: false })
