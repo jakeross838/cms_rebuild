@@ -144,7 +144,7 @@ export default function NewBudgetLinePage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="estimated_amount" className="text-sm font-medium">Estimated Amount ($)</label>
-                <Input id="estimated_amount" name="estimated_amount" type="number" step="0.01" value={formData.estimated_amount} onChange={handleChange} placeholder="0.00" />
+                <Input id="estimated_amount" name="estimated_amount" type="number" step="0.01" min="0" value={formData.estimated_amount} onChange={handleChange} placeholder="0.00" />
               </div>
             </div>
           </CardContent>

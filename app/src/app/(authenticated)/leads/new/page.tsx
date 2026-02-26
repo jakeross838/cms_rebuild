@@ -157,7 +157,7 @@ export default function NewLeadPage() {
                 <label htmlFor="expected_contract_value" className="text-sm font-medium">Expected Contract Value</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input id="expected_contract_value" name="expected_contract_value" type="number" step="0.01" value={formData.expected_contract_value} onChange={handleChange} placeholder="0.00" className="pl-7" />
+                  <Input id="expected_contract_value" name="expected_contract_value" type="number" step="0.01" min="0" value={formData.expected_contract_value} onChange={handleChange} placeholder="0.00" className="pl-7" />
                 </div>
               </div>
             </div>

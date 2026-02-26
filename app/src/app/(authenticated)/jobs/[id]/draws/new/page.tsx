@@ -145,11 +145,11 @@ export default function NewDrawRequestPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label htmlFor="contract_amount" className="text-sm font-medium">Contract Amount ($) <span className="text-red-500">*</span></label>
-                <Input id="contract_amount" name="contract_amount" type="number" step="0.01" value={formData.contract_amount} onChange={handleChange} placeholder="0.00" required />
+                <Input id="contract_amount" name="contract_amount" type="number" step="0.01" min="0" value={formData.contract_amount} onChange={handleChange} placeholder="0.00" required />
               </div>
               <div className="space-y-2">
                 <label htmlFor="total_completed" className="text-sm font-medium">Total Completed ($) <span className="text-red-500">*</span></label>
-                <Input id="total_completed" name="total_completed" type="number" step="0.01" value={formData.total_completed} onChange={handleChange} placeholder="0.00" required />
+                <Input id="total_completed" name="total_completed" type="number" step="0.01" min="0" value={formData.total_completed} onChange={handleChange} placeholder="0.00" required />
               </div>
               <div className="space-y-2">
                 <label htmlFor="retainage_pct" className="text-sm font-medium">Retainage (%)</label>

@@ -157,7 +157,7 @@ export default function NewEquipmentPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="year" className="text-sm font-medium">Year</label>
-                <Input id="year" name="year" type="number" value={formData.year} onChange={handleChange} placeholder="2024" />
+                <Input id="year" name="year" type="number" min="1900" max="2100" value={formData.year} onChange={handleChange} placeholder="2024" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

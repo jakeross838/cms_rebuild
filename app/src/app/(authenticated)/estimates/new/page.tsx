@@ -135,15 +135,15 @@ export default function NewEstimatePage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label htmlFor="markup_pct" className="text-sm font-medium">Markup %</label>
-                <Input id="markup_pct" name="markup_pct" type="number" step="0.1" value={formData.markup_pct} onChange={handleChange} placeholder="0" />
+                <Input id="markup_pct" name="markup_pct" type="number" step="0.1" min="0" max="100" value={formData.markup_pct} onChange={handleChange} placeholder="0" />
               </div>
               <div className="space-y-2">
                 <label htmlFor="overhead_pct" className="text-sm font-medium">Overhead %</label>
-                <Input id="overhead_pct" name="overhead_pct" type="number" step="0.1" value={formData.overhead_pct} onChange={handleChange} placeholder="0" />
+                <Input id="overhead_pct" name="overhead_pct" type="number" step="0.1" min="0" max="100" value={formData.overhead_pct} onChange={handleChange} placeholder="0" />
               </div>
               <div className="space-y-2">
                 <label htmlFor="profit_pct" className="text-sm font-medium">Profit %</label>
-                <Input id="profit_pct" name="profit_pct" type="number" step="0.1" value={formData.profit_pct} onChange={handleChange} placeholder="0" />
+                <Input id="profit_pct" name="profit_pct" type="number" step="0.1" min="0" max="100" value={formData.profit_pct} onChange={handleChange} placeholder="0" />
               </div>
             </div>
             <div className="space-y-2">

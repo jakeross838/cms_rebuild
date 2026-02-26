@@ -176,7 +176,7 @@ export default function NewEmployeePage() {
                 <label htmlFor="base_wage" className="text-sm font-medium">Base Wage</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input id="base_wage" name="base_wage" type="number" step="0.01" value={formData.base_wage} onChange={handleChange} placeholder="0.00" className="pl-7" />
+                  <Input id="base_wage" name="base_wage" type="number" step="0.01" min="0" value={formData.base_wage} onChange={handleChange} placeholder="0.00" className="pl-7" />
                 </div>
               </div>
             </div>
