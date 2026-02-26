@@ -139,9 +139,10 @@ export const POST = createApiHandler(
       .single()
 
     if (versionError) {
+      const mapped = mapDbError(versionError)
       return NextResponse.json(
-        { error: 'Database Error', message: versionError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

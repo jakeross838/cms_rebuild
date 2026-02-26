@@ -132,9 +132,10 @@ export const POST = createApiHandler(
       .single()
 
     if (entryError) {
+      const mapped = mapDbError(entryError)
       return NextResponse.json(
-        { error: 'Database Error', message: entryError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -157,9 +158,10 @@ export const POST = createApiHandler(
       .select('*')
 
     if (linesError) {
+      const mapped2 = mapDbError(linesError)
       return NextResponse.json(
-        { error: 'Database Error', message: linesError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped2.error, message: mapped2.message, requestId: ctx.requestId },
+        { status: mapped2.status }
       )
     }
 

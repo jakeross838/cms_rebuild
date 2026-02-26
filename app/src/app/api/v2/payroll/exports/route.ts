@@ -112,9 +112,10 @@ export const POST = createApiHandler(
       .lte('entry_date', period.period_end)
 
     if (entriesError) {
+      const mapped = mapDbError(entriesError)
       return NextResponse.json(
-        { error: 'Database Error', message: entriesError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

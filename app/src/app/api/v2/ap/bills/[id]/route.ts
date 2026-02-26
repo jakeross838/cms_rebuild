@@ -131,9 +131,10 @@ export const PUT = createApiHandler(
       .single()
 
     if (billError) {
+      const mapped = mapDbError(billError)
       return NextResponse.json(
-        { error: 'Database Error', message: billError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
