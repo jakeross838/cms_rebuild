@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -101,7 +102,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/mobile/push-tokens/:id — Hard delete
+// DELETE /api/v2/mobile/push-tokens/:id — Soft delete (archive)
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -132,7 +133,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('push_notification_tokens')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as any)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('push_notification_tokens')
       .select('id')
       .eq('device_id', id)
+      .is('deleted_at', null)
 
     // Fetch active sessions count
     const { data: sessions } = await supabase

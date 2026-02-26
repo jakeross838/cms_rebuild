@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -103,7 +104,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/mobile/sync-queue/:id — Hard delete
+// DELETE /api/v2/mobile/sync-queue/:id — Soft delete (archive)
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -134,7 +135,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('offline_sync_queue')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as any)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

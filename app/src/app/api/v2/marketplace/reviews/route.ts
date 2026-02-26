@@ -46,6 +46,7 @@ export const GET = createApiHandler(
     let query = supabase
       .from('marketplace_reviews')
       .select('*', { count: 'exact' })
+      .is('deleted_at', null)
 
     if (filters.template_id) {
       query = query.eq('template_id', filters.template_id)

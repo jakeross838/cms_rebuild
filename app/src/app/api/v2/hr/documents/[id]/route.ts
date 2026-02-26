@@ -34,6 +34,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -124,7 +125,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('employee_documents')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as any)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

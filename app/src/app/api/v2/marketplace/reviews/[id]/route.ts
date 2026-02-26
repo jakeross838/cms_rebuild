@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .from('marketplace_reviews')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -151,7 +152,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('marketplace_reviews')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() } as any)
       .eq('id', id)
 
     if (error) {

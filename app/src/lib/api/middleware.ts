@@ -285,6 +285,14 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
 
       return response
     } catch (error) {
+      // Malformed JSON body → return 400 instead of 500
+      if (error instanceof SyntaxError && (error.message.includes('JSON') || error.message.includes('Unexpected'))) {
+        return NextResponse.json(
+          { error: 'Bad Request', message: 'Invalid JSON body', requestId },
+          { status: 400 }
+        )
+      }
+
       // Log error
       logger.error('API handler error', {
         error: error instanceof Error ? error.message : 'Unknown error',

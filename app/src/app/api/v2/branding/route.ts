@@ -109,9 +109,10 @@ export const PUT = createApiHandler(
         .single()
 
       if (error || !data) {
+        const mapped = mapDbError(error ?? { code: 'PGRST116' })
         return NextResponse.json(
-          { error: 'Database Error', message: error?.message ?? 'Failed to update branding', requestId: ctx.requestId },
-          { status: 500 }
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
         )
       }
 

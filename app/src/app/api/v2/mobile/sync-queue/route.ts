@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('offline_sync_queue')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.device_id) {
       query = query.eq('device_id', filters.device_id)

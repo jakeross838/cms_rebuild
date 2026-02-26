@@ -55,6 +55,7 @@ export const GET = createApiHandler(
       .from('employee_documents')
       .select('id')
       .eq('employee_id', id)
+      .is('deleted_at', null)
 
     return NextResponse.json({
       data: {

@@ -58,6 +58,7 @@ export const GET = createApiHandler(
       .from('marketplace_reviews')
       .select('id', { count: 'exact', head: true })
       .eq('template_id', id)
+      .is('deleted_at', null)
 
     return NextResponse.json({
       data: {
