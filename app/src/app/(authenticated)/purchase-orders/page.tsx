@@ -28,7 +28,7 @@ export const metadata: Metadata = { title: 'Purchase Orders' }
 export default async function PurchaseOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -49,6 +49,10 @@ export default async function PurchaseOrdersPage({
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
+  if (params.status) {
+    query = query.eq('status', params.status)
+  }
+
   if (params.search) {
     query = query.or(`po_number.ilike.%${params.search}%,title.ilike.%${params.search}%`)
   }
@@ -58,6 +62,16 @@ export default async function PurchaseOrdersPage({
   const { data: posData, count, error } = await query
   const purchaseOrders = error ? [] : ((posData || []) as PurchaseOrderRow[])
   const totalPages = Math.ceil((count || 0) / pageSize)
+
+  const statusFilters = [
+    { value: '', label: 'All' },
+    { value: 'draft', label: 'Draft' },
+    { value: 'pending_approval', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'sent', label: 'Sent' },
+    { value: 'received', label: 'Received' },
+    { value: 'closed', label: 'Closed' },
+  ]
 
   // Fetch related jobs and vendors for display
   const jobIds = [...new Set(purchaseOrders.map((po) => po.job_id).filter(Boolean))] as string[]
@@ -99,7 +113,7 @@ export default async function PurchaseOrdersPage({
         <Link href="/purchase-orders/new"><Button><Plus className="h-4 w-4 mr-2" />New PO</Button></Link>
       </div>
 
-      {/* Search */}
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -113,6 +127,21 @@ export default async function PurchaseOrdersPage({
               className="pl-10"
             />
           </form>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
+          {statusFilters.map((filter) => (
+            <Link
+              key={filter.value}
+              href={filter.value ? `/purchase-orders?status=${filter.value}` : '/purchase-orders'}
+            >
+              <Button
+                variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
+                size="sm"
+              >
+                {filter.label}
+              </Button>
+            </Link>
+          ))}
         </div>
       </div>
 

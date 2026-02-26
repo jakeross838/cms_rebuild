@@ -28,7 +28,7 @@ export const metadata: Metadata = { title: 'Change Orders' }
 export default async function ChangeOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -49,6 +49,10 @@ export default async function ChangeOrdersPage({
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
+  if (params.status) {
+    query = query.eq('status', params.status)
+  }
+
   if (params.search) {
     query = query.or(`co_number.ilike.%${params.search}%,title.ilike.%${params.search}%`)
   }
@@ -58,6 +62,15 @@ export default async function ChangeOrdersPage({
   const { data: cosData, count, error } = await query
   const changeOrders = error ? [] : ((cosData || []) as ChangeOrderRow[])
   const totalPages = Math.ceil((count || 0) / pageSize)
+
+  const statusFilters = [
+    { value: '', label: 'All' },
+    { value: 'draft', label: 'Draft' },
+    { value: 'pending_approval', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'voided', label: 'Voided' },
+  ]
 
   // Fetch related jobs for display
   const jobIds = [...new Set(changeOrders.map((co) => co.job_id))]
@@ -90,7 +103,7 @@ export default async function ChangeOrdersPage({
         </Link>
       </div>
 
-      {/* Search */}
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -104,6 +117,21 @@ export default async function ChangeOrdersPage({
               className="pl-10"
             />
           </form>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
+          {statusFilters.map((filter) => (
+            <Link
+              key={filter.value}
+              href={filter.value ? `/change-orders?status=${filter.value}` : '/change-orders'}
+            >
+              <Button
+                variant={params.status === filter.value || (!params.status && !filter.value) ? 'default' : 'outline'}
+                size="sm"
+              >
+                {filter.label}
+              </Button>
+            </Link>
+          ))}
         </div>
       </div>
 
