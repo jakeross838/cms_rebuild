@@ -31,6 +31,7 @@ export const GET = createApiHandler(
       .from('ab_experiments')
       .select('*')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .single()
 
     if (error || !data) {
@@ -87,6 +88,7 @@ export const PUT = createApiHandler(
       .from('ab_experiments')
       .update(updates)
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
 

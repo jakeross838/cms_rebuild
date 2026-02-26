@@ -31,6 +31,7 @@ export const GET = createApiHandler(
       .from('deployment_releases')
       .select('*')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .single()
 
     if (error || !data) {
@@ -86,6 +87,7 @@ export const PUT = createApiHandler(
       .from('deployment_releases')
       .update(updates)
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
 
