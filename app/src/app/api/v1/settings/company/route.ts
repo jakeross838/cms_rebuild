@@ -63,6 +63,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
       updatedAt: company.updated_at,
     },
     settings,
+    requestId: ctx.requestId,
   })
 }
 
@@ -236,6 +237,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
       updatedAt: updatedCompany.updated_at,
     },
     settings,
+    requestId: ctx.requestId,
   })
 }
 

@@ -54,6 +54,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
       updatedAt: p.updated_at,
     })),
     total: phases.length,
+    requestId: ctx.requestId,
   })
 }
 
@@ -127,7 +128,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
 
   if (error || !phaseData) {
     return NextResponse.json(
-      { error: 'Database Error', message: error?.message || 'Failed to create phase', requestId: ctx.requestId },
+      { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
       { status: 500 }
     )
   }
@@ -148,6 +149,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
       createdAt: phase.created_at,
       updatedAt: phase.updated_at,
     },
+    requestId: ctx.requestId,
   }, { status: 201 })
 }
 

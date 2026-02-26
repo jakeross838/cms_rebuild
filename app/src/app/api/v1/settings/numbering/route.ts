@@ -33,6 +33,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({
     patterns,
     defaults,
+    requestId: ctx.requestId,
     patternTokens: [
       { token: '{YYYY}', description: 'Full year (e.g., 2026)' },
       { token: '{YY}', description: 'Two-digit year (e.g., 26)' },
@@ -118,6 +119,7 @@ async function handlePatch(_req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({
     patterns,
     updated: body.entityType,
+    requestId: ctx.requestId,
   })
 }
 
@@ -153,6 +155,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
     preview,
     entityType: body.entityType,
     jobId: body.jobId,
+    requestId: ctx.requestId,
   })
 }
 

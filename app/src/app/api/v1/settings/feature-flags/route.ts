@@ -36,6 +36,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
     grouped,
     companyPlan,
     definitions: FEATURE_FLAG_DEFINITIONS,
+    requestId: ctx.requestId,
   })
 }
 
@@ -78,6 +79,7 @@ async function handlePatch(_req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({
     flags,
     companyPlan,
+    requestId: ctx.requestId,
   })
 }
 

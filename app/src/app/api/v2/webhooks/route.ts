@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('webhook_subscriptions')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, url, events, status, description, retry_count, max_retries, failure_count, last_triggered_at, last_success_at, last_failure_at, created_by, created_at, updated_at, deleted_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
         max_retries: input.max_retries,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, url, events, status, secret, description, retry_count, max_retries, failure_count, last_triggered_at, last_success_at, last_failure_at, created_by, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {
@@ -118,6 +118,7 @@ export const POST = createApiHandler(
       )
     }
 
+    // Return secret ONCE on creation so user can store it — never returned on GET/list
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
   { requireAuth: true, rateLimit: 'api' }

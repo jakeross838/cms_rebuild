@@ -34,6 +34,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
     defaults,
     totalTerms: Object.keys(defaults).length,
     overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+    requestId: ctx.requestId,
   })
 }
 
@@ -79,6 +80,7 @@ async function handlePatch(_req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({
     terms,
     overrideCount: terms.filter((t) => t.overrideSingular || t.overridePlural).length,
+    requestId: ctx.requestId,
   })
 }
 
@@ -114,6 +116,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
     message: body.termKey
       ? `Terminology for "${body.termKey}" reset to default`
       : 'All terminology reset to defaults',
+    requestId: ctx.requestId,
   })
 }
 

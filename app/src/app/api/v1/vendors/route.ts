@@ -129,7 +129,7 @@ export const POST = createApiHandler(
 
     logger.info('Vendor created', { vendorId: vendor.id, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: vendor }, { status: 201 })
+    return NextResponse.json({ data: vendor, requestId: ctx.requestId }, { status: 201 })
   },
   {
     requireAuth: true,

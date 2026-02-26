@@ -129,7 +129,7 @@ export const POST = createApiHandler(
 
     logger.info('Client created', { clientId: client.id, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: client }, { status: 201 })
+    return NextResponse.json({ data: client, requestId: ctx.requestId }, { status: 201 })
   },
   {
     requireAuth: true,

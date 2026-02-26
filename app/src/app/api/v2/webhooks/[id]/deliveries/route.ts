@@ -70,7 +70,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('webhook_deliveries')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, subscription_id, event_type, payload, status, response_status_code, response_body, attempt_count, next_retry_at, delivered_at, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('subscription_id', subscriptionId)
 

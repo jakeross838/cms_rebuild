@@ -285,6 +285,7 @@ export const POST = createApiHandler(
         message: emailResult.success
           ? `Invitation sent to ${body.email}`
           : `Invitation created but email failed to send. The user can still use the invite link.`,
+        requestId: ctx.requestId,
       },
       { status: 201 }
     )

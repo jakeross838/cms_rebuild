@@ -174,7 +174,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
 
   if (error || !phaseData) {
     return NextResponse.json(
-      { error: 'Database Error', message: error?.message || 'Failed to update phase', requestId: ctx.requestId },
+      { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
       { status: 500 }
     )
   }

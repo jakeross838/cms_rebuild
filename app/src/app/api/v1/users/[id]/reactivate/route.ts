@@ -112,7 +112,7 @@ export const POST = createApiHandler(
       companyId: ctx.companyId!,
     })
 
-    return NextResponse.json({ data: reactivatedUser })
+    return NextResponse.json({ data: reactivatedUser, requestId: ctx.requestId })
   },
   {
     requireAuth: true,

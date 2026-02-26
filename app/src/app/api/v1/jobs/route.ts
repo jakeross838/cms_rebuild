@@ -154,7 +154,7 @@ export const POST = createApiHandler(
 
     logger.info('Job created', { jobId: job.id, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: job }, { status: 201 })
+    return NextResponse.json({ data: job, requestId: ctx.requestId }, { status: 201 })
   },
   {
     requireAuth: true,
