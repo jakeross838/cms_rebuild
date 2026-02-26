@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('accounting_connections')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, provider, status, external_company_id, external_company_name, last_sync_at, sync_direction, settings, created_at, updated_at, deleted_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -118,7 +118,7 @@ export const POST = createApiHandler(
         sync_direction: input.sync_direction,
         settings: input.settings ?? {},
       })
-      .select('*')
+      .select('id, company_id, provider, status, external_company_id, external_company_name, last_sync_at, sync_direction, settings, created_at, updated_at, deleted_at')
       .single()
 
     if (connError) {

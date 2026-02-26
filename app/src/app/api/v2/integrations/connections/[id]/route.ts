@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data: connection, error } = await supabase
       .from('accounting_connections')
-      .select('*')
+      .select('id, company_id, provider, status, external_company_id, external_company_name, last_sync_at, sync_direction, settings, created_at, updated_at, deleted_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -133,7 +133,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, provider, status, external_company_id, external_company_name, last_sync_at, sync_direction, settings, created_at, updated_at, deleted_at')
       .single()
 
     if (connError) {

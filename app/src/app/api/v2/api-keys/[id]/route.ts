@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('api_keys')
-      .select('*')
+      .select('id, company_id, name, key_prefix, permissions, status, rate_limit_per_minute, last_used_at, expires_at, revoked_at, revoked_by, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -93,7 +93,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, key_prefix, permissions, status, rate_limit_per_minute, last_used_at, expires_at, revoked_at, revoked_by, created_by, created_at, updated_at')
       .single()
 
     if (error || !data) {
