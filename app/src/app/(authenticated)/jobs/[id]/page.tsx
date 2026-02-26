@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
 import {
+  ArrowLeft,
   Building2,
   Calendar,
   DollarSign,
@@ -87,6 +88,10 @@ export default async function JobDetailPage({
     <div className="space-y-6">
       {/* Header */}
       <div>
+        <Link href="/jobs" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Jobs
+        </Link>
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3">
