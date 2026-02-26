@@ -49,10 +49,10 @@ export const GET = createApiHandler(
       .select('entity_type, sync_status')
       .eq('connection_id', id)
 
-    // Fetch recent sync logs
+    // Fetch recent sync logs (exclude error_details — may contain sensitive debug info)
     const { data: recentLogs } = await supabase
       .from('sync_logs')
-      .select('*')
+      .select('id, company_id, connection_id, sync_type, direction, status, entities_processed, entities_created, entities_updated, entities_failed, started_at, completed_at, created_at')
       .eq('connection_id', id)
       .order('started_at', { ascending: false })
       .limit(5)

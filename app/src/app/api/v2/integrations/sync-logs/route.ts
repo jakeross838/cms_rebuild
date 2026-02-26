@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('sync_logs')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, connection_id, sync_type, direction, status, entities_processed, entities_created, entities_updated, entities_failed, started_at, completed_at, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.connection_id) {

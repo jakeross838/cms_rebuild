@@ -82,7 +82,7 @@ export const POST = createApiHandler(
         status: 'started',
         started_at: new Date().toISOString(),
       })
-      .select('*')
+      .select('id, company_id, connection_id, sync_type, direction, status, entities_processed, entities_created, entities_updated, entities_failed, started_at, completed_at, created_at')
       .single()
 
     if (logError) {
