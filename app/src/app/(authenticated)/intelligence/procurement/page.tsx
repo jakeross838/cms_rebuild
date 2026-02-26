@@ -72,10 +72,11 @@ export default async function ProcurementPage() {
   const vendorIds = [...new Set(recentPOs.map((po) => po.vendor_id))]
   let vendorMap: Record<string, string> = {}
   if (vendorIds.length > 0) {
-    const { data: vendors } = await supabase
+    const { data: vendors, error: vendorError } = await supabase
       .from('vendors')
       .select('id, name')
       .in('id', vendorIds)
+    if (vendorError) throw vendorError
     if (vendors) {
       vendorMap = Object.fromEntries(vendors.map((v) => [v.id, v.name]))
     }

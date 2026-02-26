@@ -81,10 +81,11 @@ export default async function ProductionPage() {
   const jobIds = [...new Set(recentLogs.map((l) => l.job_id))]
   let jobMap: Record<string, string> = {}
   if (jobIds.length > 0) {
-    const { data: jobs } = await supabase
+    const { data: jobs, error: jobError } = await supabase
       .from('jobs')
       .select('id, name')
       .in('id', jobIds)
+    if (jobError) throw jobError
     if (jobs) {
       jobMap = Object.fromEntries(jobs.map((j) => [j.id, j.name]))
     }
