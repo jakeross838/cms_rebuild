@@ -36,8 +36,11 @@ export async function GET(request: Request) {
   const slug = searchParams.get('slug')
 
   if (slug) {
-    // Return specific file content
-    const filePath = path.join(DOCS_ROOT, ...slug.split('/'))
+    // Prevent path traversal — resolve and verify the path stays inside DOCS_ROOT
+    const filePath = path.resolve(DOCS_ROOT, ...slug.split('/'))
+    if (!filePath.startsWith(DOCS_ROOT + path.sep) && filePath !== DOCS_ROOT) {
+      return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
+    }
     try {
       const content = await readFile(filePath, 'utf-8')
       return NextResponse.json({ content, slug })
