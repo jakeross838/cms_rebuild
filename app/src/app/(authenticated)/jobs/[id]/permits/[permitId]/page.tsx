@@ -59,6 +59,7 @@ export default function PermitDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<PermitFormData>({
     permit_number: '',
@@ -74,6 +75,17 @@ export default function PermitDetailPage() {
 
   useEffect(() => {
     async function loadPermit() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const cid = profile?.company_id
+      if (!cid) { setError('No company found'); setLoading(false); return }
+      setCompanyId(cid)
+
+      // Verify job belongs to company
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', cid).single()
+      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('permits')
         .select('*')
@@ -131,6 +143,7 @@ export default function PermitDetailPage() {
           notes: formData.notes || null,
         })
         .eq('id', permitId)
+        .eq('job_id', jobId)
 
       if (updateError) throw updateError
 
@@ -167,6 +180,7 @@ export default function PermitDetailPage() {
       .from('permits')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', permitId)
+      .eq('job_id', jobId)
 
     if (deleteError) {
       setError('Failed to archive permit')

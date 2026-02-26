@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { notFound, redirect } from 'next/navigation'
 
 import { Plus, Users } from 'lucide-react'
 
@@ -24,6 +25,15 @@ export default async function JobTeamPage({
 }) {
   const { id: jobId } = await params
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
+  const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
+  if (!jobCheck) { notFound() }
 
   const { data: rolesData } = await supabase
     .from('project_user_roles')

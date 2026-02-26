@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { notFound, redirect } from 'next/navigation'
 
 import { Plus, FileCheck, Search } from 'lucide-react'
 
@@ -33,6 +34,15 @@ export default async function JobPermitsPage({
   const { id: jobId } = await params
   const sp = await searchParams
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
+  const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
+  if (!jobCheck) { notFound() }
 
   let permitsQuery = supabase
     .from('permits')

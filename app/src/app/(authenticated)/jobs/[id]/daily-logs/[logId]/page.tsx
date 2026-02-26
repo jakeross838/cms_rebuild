@@ -55,6 +55,7 @@ export default function DailyLogDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<DailyLogFormData>({
     log_date: '',
@@ -68,6 +69,17 @@ export default function DailyLogDetailPage() {
 
   useEffect(() => {
     async function loadLog() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const cid = profile?.company_id
+      if (!cid) { setError('No company found'); setLoading(false); return }
+      setCompanyId(cid)
+
+      // Verify job belongs to company
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', cid).single()
+      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('daily_logs')
         .select('*')
@@ -156,6 +168,7 @@ export default function DailyLogDetailPage() {
       .from('daily_logs')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', logId)
+      .eq('job_id', jobId)
 
     if (deleteError) {
       setError('Failed to archive daily log')

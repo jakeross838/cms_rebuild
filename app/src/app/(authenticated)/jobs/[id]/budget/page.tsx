@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { Plus, DollarSign } from 'lucide-react'
 
@@ -30,11 +30,18 @@ export default async function BudgetPage({
   const { id } = await params
   const supabase = await createClient()
 
-  // Verify job exists
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
+  // Verify job exists and belongs to company
   const { data: job, error: jobError } = await supabase
     .from('jobs')
     .select('id, name')
     .eq('id', id)
+    .eq('company_id', companyId)
     .single()
 
   if (jobError || !job) {

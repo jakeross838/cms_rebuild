@@ -55,6 +55,10 @@ export default function NewDrawRequestPage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
+      // Verify job belongs to company
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
+      if (!jobCheck) throw new Error('Job not found or access denied')
+
       const contractAmount = formData.contract_amount ? parseFloat(formData.contract_amount) : 0
       const totalCompleted = formData.total_completed ? parseFloat(formData.total_completed) : 0
       const retainagePct = formData.retainage_pct ? parseFloat(formData.retainage_pct) : 10

@@ -59,6 +59,7 @@ export default function InspectionDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<InspectionFormData>({
     inspection_type: '',
@@ -72,6 +73,17 @@ export default function InspectionDetailPage() {
 
   useEffect(() => {
     async function loadInspection() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const cid = profile?.company_id
+      if (!cid) { setError('No company found'); setLoading(false); return }
+      setCompanyId(cid)
+
+      // Verify job belongs to company
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', cid).single()
+      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('permit_inspections')
         .select('*')
@@ -124,6 +136,7 @@ export default function InspectionDetailPage() {
           notes: formData.notes || null,
         })
         .eq('id', inspectionId)
+        .eq('job_id', jobId)
 
       if (updateError) throw updateError
 
@@ -158,6 +171,7 @@ export default function InspectionDetailPage() {
       .from('permit_inspections')
       .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', inspectionId)
+      .eq('job_id', jobId)
     if (archiveError) {
       setError('Failed to archive inspection')
       setArchiving(false)

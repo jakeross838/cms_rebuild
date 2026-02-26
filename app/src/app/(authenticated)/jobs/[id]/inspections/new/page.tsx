@@ -84,6 +84,10 @@ export default function NewInspectionPage() {
       const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) throw new Error('No company found')
 
+      // Verify job belongs to company
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
+      if (!jobCheck) throw new Error('Job not found or access denied')
+
       if (!formData.permit_id) throw new Error('Please select a permit')
 
       const { error: insertError } = await supabase

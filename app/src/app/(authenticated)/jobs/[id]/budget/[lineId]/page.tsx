@@ -55,6 +55,7 @@ export default function BudgetLineDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<BudgetFormData>({
     description: '',
@@ -67,6 +68,17 @@ export default function BudgetLineDetailPage() {
 
   useEffect(() => {
     async function loadLine() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const cid = profile?.company_id
+      if (!cid) { setError('No company found'); setLoading(false); return }
+      setCompanyId(cid)
+
+      // Verify job belongs to company
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', cid).single()
+      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('budget_lines')
         .select('*, cost_codes(code, name)')
@@ -123,6 +135,7 @@ export default function BudgetLineDetailPage() {
           notes: formData.notes || null,
         })
         .eq('id', lineId)
+        .eq('job_id', jobId)
 
       if (updateError) throw updateError
 
@@ -157,6 +170,7 @@ export default function BudgetLineDetailPage() {
       .from('budget_lines')
       .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', lineId)
+      .eq('job_id', jobId)
 
     if (archiveError) {
       setError('Failed to archive budget line')
