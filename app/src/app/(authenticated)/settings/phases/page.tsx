@@ -174,31 +174,40 @@ export default function PhasesPage() {
     const targetPhase = phases[targetIdx]
     setOpenDropdown(null)
 
-    // Swap sort orders
-    await Promise.all([
-      fetch(`/api/v1/settings/phases/${phase.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sortOrder: targetPhase.sortOrder }),
-      }),
-      fetch(`/api/v1/settings/phases/${targetPhase.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sortOrder: phase.sortOrder }),
-      }),
-    ])
+    try {
+      // Swap sort orders
+      await Promise.all([
+        fetch(`/api/v1/settings/phases/${phase.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sortOrder: targetPhase.sortOrder }),
+        }),
+        fetch(`/api/v1/settings/phases/${targetPhase.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sortOrder: phase.sortOrder }),
+        }),
+      ])
 
-    fetchPhases()
+      fetchPhases()
+    } catch (err) {
+      toast.error((err as Error)?.message || 'Failed to reorder phases')
+    }
   }
 
   const handleToggleActive = async (phase: Phase) => {
     setOpenDropdown(null)
-    await fetch(`/api/v1/settings/phases/${phase.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isActive: !phase.isActive }),
-    })
-    fetchPhases()
+    try {
+      const res = await fetch(`/api/v1/settings/phases/${phase.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !phase.isActive }),
+      })
+      if (!res.ok) throw new Error('Failed to update phase')
+      fetchPhases()
+    } catch (err) {
+      toast.error((err as Error)?.message || 'Failed to toggle phase status')
+    }
   }
 
   if (loading) {

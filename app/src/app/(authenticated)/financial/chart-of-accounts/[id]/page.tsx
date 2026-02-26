@@ -176,19 +176,23 @@ export default function ChartOfAccountsDetailPage() {
     const newActive = !(account?.is_active !== false)
     const action = newActive ? 'activate' : 'deactivate'
 
-    const { error: toggleError } = await supabase
-      .from('gl_accounts')
-      .update({ is_active: newActive })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: toggleError } = await supabase
+        .from('gl_accounts')
+        .update({ is_active: newActive })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (toggleError) {
-      setError(`Failed to ${action} account`)
-      return
+      if (toggleError) throw toggleError
+
+      setAccount((prev) => prev ? { ...prev, is_active: newActive } : prev)
+      setFormData((prev) => ({ ...prev, is_active: newActive }))
+      toast.success(`Account ${action}d`)
+    } catch (err) {
+      const msg = (err as Error)?.message || `Failed to ${action} account`
+      setError(msg)
+      toast.error(msg)
     }
-
-    setAccount((prev) => prev ? { ...prev, is_active: newActive } : prev)
-    setFormData((prev) => ({ ...prev, is_active: newActive }))
   }
 
   if (loading) {

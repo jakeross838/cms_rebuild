@@ -65,6 +65,14 @@ export const emitNotificationSchema = z.object({
 })
 
 // ============================================================================
+// Mark Notification Read/Unread
+// ============================================================================
+
+export const markNotificationReadSchema = z.object({
+  read: z.boolean().default(true),
+})
+
+// ============================================================================
 // Inferred Types
 // ============================================================================
 
@@ -72,3 +80,4 @@ export type ListNotificationsInput = z.infer<typeof listNotificationsSchema>
 export type UpdatePreferencesInput = z.infer<typeof updatePreferencesSchema>
 export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>
 export type EmitNotificationInput = z.infer<typeof emitNotificationSchema>
+export type MarkNotificationReadInput = z.infer<typeof markNotificationReadSchema>

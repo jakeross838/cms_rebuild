@@ -169,19 +169,23 @@ export default function ContractTemplateDetailPage() {
     const newActive = !template?.is_active
     const action = newActive ? 'activate' : 'deactivate'
 
-    const { error: toggleError } = await supabase
-      .from('contract_templates')
-      .update({ is_active: newActive })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: toggleError } = await supabase
+        .from('contract_templates')
+        .update({ is_active: newActive })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (toggleError) {
-      setError(`Failed to ${action} template`)
-      return
+      if (toggleError) throw toggleError
+
+      setTemplate((prev) => prev ? { ...prev, is_active: newActive } : prev)
+      setFormData((prev) => ({ ...prev, is_active: newActive }))
+      toast.success(`Template ${action}d`)
+    } catch (err) {
+      const msg = (err as Error)?.message || `Failed to ${action} template`
+      setError(msg)
+      toast.error(msg)
     }
-
-    setTemplate((prev) => prev ? { ...prev, is_active: newActive } : prev)
-    setFormData((prev) => ({ ...prev, is_active: newActive }))
   }
 
   if (loading) {
