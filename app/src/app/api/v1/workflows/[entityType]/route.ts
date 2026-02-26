@@ -51,7 +51,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data: data ?? [], total: (data ?? []).length })
+  return NextResponse.json({ data: data ?? [], total: (data ?? []).length, requestId: ctx.requestId })
 }
 
 export const GET = createApiHandler(handleGet, { requireAuth: true })
@@ -212,7 +212,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data }, { status: existing ? 200 : 201 })
+  return NextResponse.json({ data, requestId: ctx.requestId }, { status: existing ? 200 : 201 })
 }
 
 export const PUT = createApiHandler(handlePut, {

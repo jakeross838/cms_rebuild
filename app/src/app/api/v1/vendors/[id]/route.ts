@@ -55,7 +55,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json({ data: vendor })
+    return NextResponse.json({ data: vendor, requestId: ctx.requestId })
   },
   {
     requireAuth: true,
@@ -120,7 +120,7 @@ export const PATCH = createApiHandler(
 
     logger.info('Vendor updated', { targetId, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: updated })
+    return NextResponse.json({ data: updated, requestId: ctx.requestId })
   },
   {
     requireAuth: true,
@@ -167,7 +167,7 @@ export const DELETE = createApiHandler(
 
     logger.info('Vendor soft-deleted', { targetId, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: deleted })
+    return NextResponse.json({ data: deleted, requestId: ctx.requestId })
   },
   {
     requireAuth: true,

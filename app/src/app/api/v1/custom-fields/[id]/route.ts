@@ -50,7 +50,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data })
+  return NextResponse.json({ data, requestId: ctx.requestId })
 }
 
 export const GET = createApiHandler(handleGet, { requireAuth: true })
@@ -155,7 +155,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data })
+  return NextResponse.json({ data, requestId: ctx.requestId })
 }
 
 export const PATCH = createApiHandler(handlePatch, {
@@ -197,7 +197,7 @@ async function handleDelete(req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data })
+  return NextResponse.json({ data, requestId: ctx.requestId })
 }
 
 export const DELETE = createApiHandler(handleDelete, {

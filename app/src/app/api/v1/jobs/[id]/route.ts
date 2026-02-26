@@ -55,7 +55,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json({ data: job })
+    return NextResponse.json({ data: job, requestId: ctx.requestId })
   },
   {
     requireAuth: true,
@@ -120,7 +120,7 @@ export const PATCH = createApiHandler(
 
     logger.info('Job updated', { targetId, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: updated })
+    return NextResponse.json({ data: updated, requestId: ctx.requestId })
   },
   {
     requireAuth: true,
@@ -168,7 +168,7 @@ export const DELETE = createApiHandler(
 
     logger.info('Job soft-deleted', { targetId, companyId: ctx.companyId! })
 
-    return NextResponse.json({ data: deleted })
+    return NextResponse.json({ data: deleted, requestId: ctx.requestId })
   },
   {
     requireAuth: true,

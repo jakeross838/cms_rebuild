@@ -58,7 +58,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json({ data: user })
+    return NextResponse.json({ data: user, requestId: ctx.requestId })
   },
   {
     requireAuth: true,
@@ -170,7 +170,7 @@ export const PATCH = createApiHandler(
       companyId: ctx.companyId!,
     })
 
-    return NextResponse.json({ data: updatedUser })
+    return NextResponse.json({ data: updatedUser, requestId: ctx.requestId })
   },
   {
     requireAuth: true,

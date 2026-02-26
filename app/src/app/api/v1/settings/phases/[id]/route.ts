@@ -58,6 +58,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext, { params }: RoutePa
       createdAt: phase.created_at,
       updatedAt: phase.updated_at,
     },
+    requestId: ctx.requestId,
   })
 }
 
@@ -194,6 +195,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
       createdAt: phase.created_at,
       updatedAt: phase.updated_at,
     },
+    requestId: ctx.requestId,
   })
 }
 
@@ -257,7 +259,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
     )
   }
 
-  return NextResponse.json({ success: true, id })
+  return NextResponse.json({ success: true, id, requestId: ctx.requestId })
 }
 
 export function DELETE(req: NextRequest, routeParams: RouteParams) {

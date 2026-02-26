@@ -90,7 +90,7 @@ export const GET = createApiHandler(
     }
 
     return NextResponse.json(
-      paginatedResponse(vendors ?? [], count ?? 0, page, limit)
+      { ...paginatedResponse(vendors ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
     )
   },
   {

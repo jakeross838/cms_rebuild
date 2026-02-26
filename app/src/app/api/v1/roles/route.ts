@@ -40,7 +40,7 @@ export const GET = createApiHandler(
       return a.name.localeCompare(b.name)
     })
 
-    return NextResponse.json(paginatedResponse(sorted, count ?? 0, page, limit))
+    return NextResponse.json({ ...paginatedResponse(sorted, count ?? 0, page, limit), requestId: ctx.requestId })
   },
   {
     requireAuth: true,

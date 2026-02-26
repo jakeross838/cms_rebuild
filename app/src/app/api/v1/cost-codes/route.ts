@@ -101,7 +101,7 @@ export const GET = createApiHandler(
     }
 
     return NextResponse.json(
-      paginatedResponse(costCodes ?? [], count ?? 0, page, limit)
+      { ...paginatedResponse(costCodes ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
     )
   },
   {

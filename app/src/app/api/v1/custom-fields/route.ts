@@ -74,7 +74,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data: data ?? [], total: (data ?? []).length })
+  return NextResponse.json({ data: data ?? [], total: (data ?? []).length, requestId: ctx.requestId })
 }
 
 export const GET = createApiHandler(handleGet, { requireAuth: true })
@@ -176,7 +176,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
     )
   }
 
-  return NextResponse.json({ data }, { status: 201 })
+  return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
 }
 
 export const POST = createApiHandler(handlePost, {
