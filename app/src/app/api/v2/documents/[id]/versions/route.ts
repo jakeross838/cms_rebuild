@@ -158,6 +158,7 @@ export const POST = createApiHandler(
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
 
     if (docErr) {
       const mapped = mapDbError(docErr)

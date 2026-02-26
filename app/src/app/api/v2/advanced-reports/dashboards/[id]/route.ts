@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('dashboard_widgets')
       .select('id')
       .eq('dashboard_id', id)
+      .eq('company_id', ctx.companyId!)
 
     return NextResponse.json({
       data: {

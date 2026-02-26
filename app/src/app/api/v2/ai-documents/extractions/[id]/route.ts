@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('ai_feedback')
       .select('id')
       .eq('extraction_id', id)
+      .eq('company_id', ctx.companyId!)
 
     return NextResponse.json({
       data: {
