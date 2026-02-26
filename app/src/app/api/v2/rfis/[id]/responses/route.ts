@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the RFI belongs to this company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id')
       .eq('id', rfiId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('rfi_responses')
       .select('*', { count: 'exact' })
       .eq('rfi_id', rfiId)
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI exists and belongs to company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id, status')
       .eq('id', rfiId)
@@ -144,7 +144,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfi_responses')
       .insert({
         rfi_id: rfiId,
@@ -168,7 +168,7 @@ export const POST = createApiHandler(
     // If this is an official response, update RFI status to answered
     if (input.is_official) {
       const now = new Date().toISOString()
-      await (supabase as any)
+      await supabase
         .from('rfis')
         .update({
           status: 'answered',

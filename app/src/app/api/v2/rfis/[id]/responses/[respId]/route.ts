@@ -43,7 +43,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI belongs to company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id')
       .eq('id', rfiId)
@@ -58,7 +58,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfi_responses')
       .select('*')
       .eq('id', respId)
@@ -106,7 +106,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI belongs to company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id')
       .eq('id', rfiId)
@@ -127,7 +127,7 @@ export const PUT = createApiHandler(
     if (input.attachments !== undefined) updates.attachments = input.attachments
     if (input.is_official !== undefined) updates.is_official = input.is_official
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfi_responses')
       .update(updates)
       .eq('id', respId)
@@ -165,7 +165,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI belongs to company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id')
       .eq('id', rfiId)
@@ -180,7 +180,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('rfi_responses')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', respId)

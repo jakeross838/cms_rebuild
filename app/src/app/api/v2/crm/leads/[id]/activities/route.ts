@@ -53,7 +53,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify lead exists
-    const { data: lead, error: leadError } = await (supabase as any)
+    const { data: lead, error: leadError } = await supabase
       .from('leads')
       .select('id')
       .eq('id', leadId)
@@ -68,7 +68,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('lead_activities')
       .select('*', { count: 'exact' })
       .eq('lead_id', leadId)
@@ -127,7 +127,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify lead exists
-    const { data: lead, error: leadError } = await (supabase as any)
+    const { data: lead, error: leadError } = await supabase
       .from('leads')
       .select('id')
       .eq('id', leadId)
@@ -142,7 +142,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('lead_activities')
       .insert({
         company_id: ctx.companyId!,

@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('tenant_health_scores')
       .select('*')
       .eq('id', id)
@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
     if (input.feature_utilization !== undefined) updates.feature_utilization = input.feature_utilization
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('tenant_health_scores')
       .update(updates)
       .eq('id', id)

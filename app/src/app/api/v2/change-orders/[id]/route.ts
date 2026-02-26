@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('change_orders')
       .select('*')
       .eq('id', id)
@@ -44,13 +44,13 @@ export const GET = createApiHandler(
     }
 
     // Fetch items count
-    const { data: items } = await (supabase as any)
+    const { data: items } = await supabase
       .from('change_order_items')
       .select('id')
       .eq('change_order_id', id)
 
     // Fetch history
-    const { data: history } = await (supabase as any)
+    const { data: history } = await supabase
       .from('change_order_history')
       .select('*')
       .eq('change_order_id', id)
@@ -96,7 +96,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify the CO exists and is editable (draft or pending_approval)
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('change_orders')
       .select('id, status')
       .eq('id', id)
@@ -134,7 +134,7 @@ export const PUT = createApiHandler(
     if (input.document_id !== undefined) updates.document_id = input.document_id
     if (input.budget_id !== undefined) updates.budget_id = input.budget_id
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('change_orders')
       .update(updates)
       .eq('id', id)
@@ -152,7 +152,7 @@ export const PUT = createApiHandler(
     }
 
     // Record history
-    await (supabase as any)
+    await supabase
       .from('change_order_history')
       .insert({
         change_order_id: id,
@@ -185,7 +185,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Only draft COs can be deleted
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('change_orders')
       .select('id, status')
       .eq('id', id)
@@ -207,7 +207,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('change_orders')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

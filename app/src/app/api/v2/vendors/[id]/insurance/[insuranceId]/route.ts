@@ -64,7 +64,7 @@ export const PUT = createApiHandler(
     if (input.verified_at !== undefined) updates.verified_at = input.verified_at
     if (input.verified_by !== undefined) updates.verified_by = input.verified_by
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_insurance')
       .update(updates)
       .eq('id', insuranceId)
@@ -102,7 +102,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('vendor_insurance')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', insuranceId)

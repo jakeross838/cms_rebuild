@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('equipment')
       .select('*')
       .eq('id', id)
@@ -44,19 +44,19 @@ export const GET = createApiHandler(
     }
 
     // Fetch assignment count
-    const { data: assignments } = await (supabase as any)
+    const { data: assignments } = await supabase
       .from('equipment_assignments')
       .select('id')
       .eq('equipment_id', id)
 
     // Fetch maintenance count
-    const { data: maintenance } = await (supabase as any)
+    const { data: maintenance } = await supabase
       .from('equipment_maintenance')
       .select('id')
       .eq('equipment_id', id)
 
     // Fetch cost count
-    const { data: costs } = await (supabase as any)
+    const { data: costs } = await supabase
       .from('equipment_costs')
       .select('id')
       .eq('equipment_id', id)
@@ -120,7 +120,7 @@ export const PUT = createApiHandler(
     if (input.notes !== undefined) updates.notes = input.notes
     if (input.photo_urls !== undefined) updates.photo_urls = input.photo_urls
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('equipment')
       .update(updates)
       .eq('id', id)
@@ -159,7 +159,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('equipment')
       .select('id')
       .eq('id', id)
@@ -174,7 +174,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('equipment')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

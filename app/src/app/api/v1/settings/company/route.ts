@@ -147,7 +147,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
   // Update company profile if there are changes
   if (Object.keys(profileUpdate).length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('companies')
       .update(profileUpdate)
       .eq('id', companyId)

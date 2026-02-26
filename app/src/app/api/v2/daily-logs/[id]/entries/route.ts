@@ -26,7 +26,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify daily log belongs to company
-    const { error: logError } = await (supabase as any)
+    const { error: logError } = await supabase
       .from('daily_logs')
       .select('id')
       .eq('id', id)
@@ -41,7 +41,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('daily_log_entries')
       .select('*')
       .eq('daily_log_id', id)
@@ -86,7 +86,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify daily log belongs to company and is in draft status
-    const { data: log, error: logError } = await (supabase as any)
+    const { data: log, error: logError } = await supabase
       .from('daily_logs')
       .select('id, status')
       .eq('id', id)
@@ -108,7 +108,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('daily_log_entries')
       .insert({
         daily_log_id: id,

@@ -51,7 +51,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('ai_feedback')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists and belongs to company
-    const { data: extraction, error: extractionError } = await (supabase as any)
+    const { data: extraction, error: extractionError } = await supabase
       .from('document_extractions')
       .select('id')
       .eq('id', extractionId)
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('ai_feedback')
       .insert({
         company_id: ctx.companyId!,

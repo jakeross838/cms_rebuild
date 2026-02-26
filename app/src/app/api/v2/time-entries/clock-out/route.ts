@@ -31,7 +31,7 @@ export const POST = createApiHandler(
     const now = new Date()
 
     // Fetch the open time entry
-    const { data: entry, error: fetchError } = await (supabase as any)
+    const { data: entry, error: fetchError } = await supabase
       .from('time_entries')
       .select('*')
       .eq('id', input.time_entry_id)
@@ -75,7 +75,7 @@ export const POST = createApiHandler(
     // Build notes
     const notes = [entry.notes, input.notes].filter(Boolean).join(' | ') || null
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('time_entries')
       .update({
         clock_out: now.toISOString(),

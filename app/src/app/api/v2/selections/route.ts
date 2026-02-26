@@ -46,7 +46,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('selections')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -105,7 +105,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify category exists and belongs to company
-    const { data: category, error: catError } = await (supabase as any)
+    const { data: category, error: catError } = await supabase
       .from('selection_categories')
       .select('id')
       .eq('id', input.category_id)
@@ -121,7 +121,7 @@ export const POST = createApiHandler(
     }
 
     // Verify option exists and belongs to company
-    const { data: option, error: optError } = await (supabase as any)
+    const { data: option, error: optError } = await supabase
       .from('selection_options')
       .select('id')
       .eq('id', input.option_id)
@@ -136,7 +136,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('selections')
       .insert({
         company_id: ctx.companyId!,
@@ -162,7 +162,7 @@ export const POST = createApiHandler(
     }
 
     // Record history entry
-    await (supabase as any)
+    await supabase
       .from('selection_history')
       .insert({
         company_id: ctx.companyId!,

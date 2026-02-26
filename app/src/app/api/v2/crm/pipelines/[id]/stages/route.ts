@@ -54,7 +54,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify pipeline exists
-    const { data: pipeline, error: pipelineError } = await (supabase as any)
+    const { data: pipeline, error: pipelineError } = await supabase
       .from('pipelines')
       .select('id')
       .eq('id', pipelineId)
@@ -68,7 +68,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('pipeline_stages')
       .select('*', { count: 'exact' })
       .eq('pipeline_id', pipelineId)
@@ -129,7 +129,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify pipeline exists
-    const { data: pipeline, error: pipelineError } = await (supabase as any)
+    const { data: pipeline, error: pipelineError } = await supabase
       .from('pipelines')
       .select('id')
       .eq('id', pipelineId)
@@ -143,7 +143,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('pipeline_stages')
       .insert({
         company_id: ctx.companyId!,

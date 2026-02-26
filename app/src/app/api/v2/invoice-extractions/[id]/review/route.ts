@@ -45,7 +45,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists and is in a reviewable state
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('invoice_extractions')
       .select('id, status, extracted_data')
       .eq('id', id)
@@ -72,14 +72,14 @@ export const POST = createApiHandler(
 
     // Apply corrections to extracted_data if provided
     const updatedData = corrections
-      ? { ...existing.extracted_data, ...corrections }
+      ? { ...(existing.extracted_data as Record<string, unknown> ?? {}), ...corrections }
       : existing.extracted_data
 
     // Determine new status based on decision
     const newStatus = decision === 'approved' ? 'completed' : 'failed'
 
     // Update extraction
-    const { data: updated, error: updateError } = await (supabase as any)
+    const { data: updated, error: updateError } = await supabase
       .from('invoice_extractions')
       .update({
         status: newStatus,
@@ -101,7 +101,7 @@ export const POST = createApiHandler(
     }
 
     // Log audit entry
-    await (supabase as any)
+    await supabase
       .from('extraction_audit_log')
       .insert({
         extraction_id: id,

@@ -20,7 +20,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Get document record
-    const { data: doc, error: docError } = await (supabase as any)
+    const { data: doc, error: docError } = await supabase
       .from('documents')
       .select('storage_path, filename, status')
       .eq('id', id)

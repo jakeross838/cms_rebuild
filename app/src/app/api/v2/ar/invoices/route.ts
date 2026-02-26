@@ -47,7 +47,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('ar_invoices')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -109,7 +109,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the invoice
-    const { data: invoice, error: invoiceError } = await (supabase as any)
+    const { data: invoice, error: invoiceError } = await supabase
       .from('ar_invoices')
       .insert({
         company_id: ctx.companyId!,
@@ -148,7 +148,7 @@ export const POST = createApiHandler(
         cost_code_id: line.cost_code_id ?? null,
       }))
 
-      const { data: lines, error: linesError } = await (supabase as any)
+      const { data: lines, error: linesError } = await supabase
         .from('ar_invoice_lines')
         .insert(lineRecords)
         .select('*')

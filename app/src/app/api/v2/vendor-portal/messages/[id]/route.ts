@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_messages')
       .select('*')
       .eq('id', id)
@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
       }
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_messages')
       .update(updates)
       .eq('id', id)
@@ -126,7 +126,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('vendor_messages')
       .select('id')
       .eq('id', id)
@@ -141,7 +141,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('vendor_messages')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

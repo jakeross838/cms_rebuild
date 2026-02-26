@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('report_snapshots')
       .select('*')
       .eq('id', id)

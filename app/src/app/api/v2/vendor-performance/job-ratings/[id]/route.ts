@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_job_performance')
       .select('*')
       .eq('id', id)
@@ -76,7 +76,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify it exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_job_performance')
       .select('id')
       .eq('id', id)
@@ -110,7 +110,7 @@ export const PUT = createApiHandler(
     if (input.change_order_count !== undefined) updates.change_order_count = input.change_order_count
     if (input.rating_notes !== undefined) updates.rating_notes = input.rating_notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_job_performance')
       .update(updates)
       .eq('id', id)
@@ -148,7 +148,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_job_performance')
       .select('id')
       .eq('id', id)
@@ -163,7 +163,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('vendor_job_performance')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

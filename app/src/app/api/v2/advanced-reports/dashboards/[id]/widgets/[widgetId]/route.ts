@@ -53,7 +53,7 @@ export const PUT = createApiHandler(
     if (input.configuration !== undefined) updates.configuration = input.configuration
     if (input.refresh_interval_seconds !== undefined) updates.refresh_interval_seconds = input.refresh_interval_seconds
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('dashboard_widgets')
       .update(updates)
       .eq('id', widgetId)
@@ -94,7 +94,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('dashboard_widgets')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', widgetId)

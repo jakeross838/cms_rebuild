@@ -41,7 +41,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('schedule_baselines')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -86,7 +86,7 @@ export const POST = createApiHandler(
     // If no baseline_data was provided, snapshot all current tasks for the job
     let baselineData = input.baseline_data
     if (Object.keys(baselineData).length === 0) {
-      const { data: tasks } = await (supabase as any)
+      const { data: tasks } = await supabase
         .from('schedule_tasks')
         .select('*')
         .eq('company_id', ctx.companyId!)
@@ -97,7 +97,7 @@ export const POST = createApiHandler(
       baselineData = { tasks: tasks ?? [] }
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('schedule_baselines')
       .insert({
         company_id: ctx.companyId!,

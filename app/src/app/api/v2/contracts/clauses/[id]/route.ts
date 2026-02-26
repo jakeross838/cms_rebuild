@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('contract_clauses')
       .select('*')
       .eq('id', id)
@@ -83,7 +83,7 @@ export const PUT = createApiHandler(
     if (input.is_active !== undefined) updates.is_active = input.is_active
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('contract_clauses')
       .update(updates)
       .eq('id', id)
@@ -120,7 +120,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('contract_clauses')
       .update({ is_active: false })
       .eq('id', id)

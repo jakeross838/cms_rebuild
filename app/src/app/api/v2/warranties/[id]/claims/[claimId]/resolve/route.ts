@@ -50,7 +50,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify claim exists and is not already resolved
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('warranty_claims')
       .select('id, status')
       .eq('id', claimId)
@@ -76,7 +76,7 @@ export const POST = createApiHandler(
     const now = new Date().toISOString()
     const input = parseResult.data
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('warranty_claims')
       .update({
         status: 'resolved',
@@ -100,7 +100,7 @@ export const POST = createApiHandler(
     }
 
     // Record history
-    await (supabase as any)
+    await supabase
       .from('warranty_claim_history')
       .insert({
         claim_id: claimId,

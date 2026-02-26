@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: draw, error } = await (supabase as any)
+    const { data: draw, error } = await supabase
       .from('draw_requests')
       .select('*')
       .eq('id', id)
@@ -41,14 +41,14 @@ export const GET = createApiHandler(
     }
 
     // Fetch line items
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('draw_request_lines')
       .select('*')
       .eq('draw_request_id', id)
       .order('sort_order', { ascending: true })
 
     // Fetch history
-    const { data: history } = await (supabase as any)
+    const { data: history } = await supabase
       .from('draw_request_history')
       .select('*')
       .eq('draw_request_id', id)
@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists and is editable (draft or rejected)
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('draw_requests')
       .select('status')
       .eq('id', id)
@@ -119,7 +119,7 @@ export const PUT = createApiHandler(
     if (input.lender_reference !== undefined) updates.lender_reference = input.lender_reference
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data: draw, error: drawError } = await (supabase as any)
+    const { data: draw, error: drawError } = await supabase
       .from('draw_requests')
       .update(updates)
       .eq('id', id)
@@ -153,7 +153,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists and is deletable (only draft)
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('draw_requests')
       .select('status')
       .eq('id', id)
@@ -175,7 +175,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('draw_requests')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)

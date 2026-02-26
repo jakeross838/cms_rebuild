@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: invoice, error } = await (supabase as any)
+    const { data: invoice, error } = await supabase
       .from('ar_invoices')
       .select('*')
       .eq('id', id)
@@ -41,14 +41,14 @@ export const GET = createApiHandler(
     }
 
     // Fetch invoice lines
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('ar_invoice_lines')
       .select('*')
       .eq('invoice_id', id)
       .order('created_at', { ascending: true })
 
     // Fetch receipt applications
-    const { data: receipts } = await (supabase as any)
+    const { data: receipts } = await supabase
       .from('ar_receipt_applications')
       .select('id, receipt_id, amount, created_at')
       .eq('invoice_id', id)
@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify invoice exists and is editable
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('ar_invoices')
       .select('status')
       .eq('id', id)
@@ -121,7 +121,7 @@ export const PUT = createApiHandler(
     if (input.notes !== undefined) updates.notes = input.notes
     if (input.status !== undefined) updates.status = input.status
 
-    const { data: invoice, error: invoiceError } = await (supabase as any)
+    const { data: invoice, error: invoiceError } = await supabase
       .from('ar_invoices')
       .update(updates)
       .eq('id', id)
@@ -138,7 +138,7 @@ export const PUT = createApiHandler(
 
     // Replace lines if provided
     if (input.lines) {
-      await (supabase as any)
+      await supabase
         .from('ar_invoice_lines')
         .delete()
         .eq('invoice_id', id)
@@ -155,14 +155,14 @@ export const PUT = createApiHandler(
           cost_code_id: line.cost_code_id ?? null,
         }))
 
-        await (supabase as any)
+        await supabase
           .from('ar_invoice_lines')
           .insert(lineRecords)
       }
     }
 
     // Fetch updated lines
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('ar_invoice_lines')
       .select('*')
       .eq('invoice_id', id)
@@ -190,7 +190,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify invoice exists and is deletable (only draft invoices)
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('ar_invoices')
       .select('status')
       .eq('id', id)
@@ -212,7 +212,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('ar_invoices')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)

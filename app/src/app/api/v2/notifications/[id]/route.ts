@@ -34,7 +34,7 @@ export const PUT = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('notifications')
       .update({
         read,
@@ -72,7 +72,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('notifications')
       .update({ archived: true })
       .eq('id', id)

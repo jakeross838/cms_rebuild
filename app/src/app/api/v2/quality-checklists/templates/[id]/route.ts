@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('quality_checklist_templates')
       .select('*')
       .eq('id', id)
@@ -43,7 +43,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch template items
-    const { data: items } = await (supabase as any)
+    const { data: items } = await supabase
       .from('quality_checklist_template_items')
       .select('*')
       .eq('template_id', id)
@@ -97,7 +97,7 @@ export const PUT = createApiHandler(
     if (input.is_active !== undefined) updates.is_active = input.is_active
     if (input.is_system !== undefined) updates.is_system = input.is_system
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('quality_checklist_templates')
       .update(updates)
       .eq('id', id)
@@ -134,7 +134,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('quality_checklist_templates')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)

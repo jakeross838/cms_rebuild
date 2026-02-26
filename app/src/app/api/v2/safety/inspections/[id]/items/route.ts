@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the inspection belongs to this company
-    const { data: inspection, error: inspError } = await (supabase as any)
+    const { data: inspection, error: inspError } = await supabase
       .from('safety_inspections')
       .select('id')
       .eq('id', inspectionId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('safety_inspection_items')
       .select('*', { count: 'exact' })
       .eq('inspection_id', inspectionId)
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection exists and belongs to company
-    const { data: inspection, error: inspError } = await (supabase as any)
+    const { data: inspection, error: inspError } = await supabase
       .from('safety_inspections')
       .select('id')
       .eq('id', inspectionId)
@@ -137,7 +137,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('safety_inspection_items')
       .insert({
         inspection_id: inspectionId,

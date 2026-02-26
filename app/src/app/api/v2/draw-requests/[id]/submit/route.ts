@@ -36,7 +36,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify draw exists and is in draft status
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('draw_requests')
       .select('id, status')
       .eq('id', id)
@@ -59,7 +59,7 @@ export const POST = createApiHandler(
     }
 
     // Verify the draw has at least one line item
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('draw_request_lines')
       .select('id')
       .eq('draw_request_id', id)
@@ -73,7 +73,7 @@ export const POST = createApiHandler(
 
     // Update status to pending_review
     const now = new Date().toISOString()
-    const { data: draw, error } = await (supabase as any)
+    const { data: draw, error } = await supabase
       .from('draw_requests')
       .update({
         status: 'pending_review',
@@ -95,7 +95,7 @@ export const POST = createApiHandler(
     }
 
     // Record in history
-    await (supabase as any)
+    await supabase
       .from('draw_request_history')
       .insert({
         draw_request_id: id,

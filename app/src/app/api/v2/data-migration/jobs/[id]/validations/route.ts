@@ -62,7 +62,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify job belongs to company
-    const { data: job, error: jError } = await (supabase as any)
+    const { data: job, error: jError } = await supabase
       .from('migration_jobs')
       .select('id')
       .eq('id', jobId)
@@ -77,7 +77,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('migration_validation_results')
       .select('*', { count: 'exact' })
       .eq('job_id', jobId)
@@ -138,7 +138,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify job belongs to company
-    const { data: job, error: jError } = await (supabase as any)
+    const { data: job, error: jError } = await supabase
       .from('migration_jobs')
       .select('id')
       .eq('id', jobId)
@@ -153,7 +153,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_validation_results')
       .insert({
         company_id: ctx.companyId!,

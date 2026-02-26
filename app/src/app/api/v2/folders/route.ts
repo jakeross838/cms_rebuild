@@ -20,7 +20,7 @@ export const GET = createApiHandler(
     const jobId = req.nextUrl.searchParams.get('job_id')
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('document_folders')
       .select('*')
       .eq('company_id', ctx.companyId!)
@@ -71,7 +71,7 @@ export const POST = createApiHandler(
     // Determine path
     let parentPath = ''
     if (input.parent_folder_id) {
-      const { data: parent } = await (supabase as any)
+      const { data: parent } = await supabase
         .from('document_folders')
         .select('path')
         .eq('id', input.parent_folder_id)
@@ -85,7 +85,7 @@ export const POST = createApiHandler(
 
     const folderPath = `${parentPath}/${input.name}`
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('document_folders')
       .insert({
         company_id: ctx.companyId!,

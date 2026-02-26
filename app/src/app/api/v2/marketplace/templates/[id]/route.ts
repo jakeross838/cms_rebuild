@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('marketplace_templates')
       .select('*')
       .eq('id', id)
@@ -44,17 +44,17 @@ export const GET = createApiHandler(
     }
 
     // Fetch counts
-    const { count: versionsCount } = await (supabase as any)
+    const { count: versionsCount } = await supabase
       .from('marketplace_template_versions')
       .select('id', { count: 'exact', head: true })
       .eq('template_id', id)
 
-    const { count: installsCount } = await (supabase as any)
+    const { count: installsCount } = await supabase
       .from('marketplace_installs')
       .select('id', { count: 'exact', head: true })
       .eq('template_id', id)
 
-    const { count: reviewsCount } = await (supabase as any)
+    const { count: reviewsCount } = await supabase
       .from('marketplace_reviews')
       .select('id', { count: 'exact', head: true })
       .eq('template_id', id)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('marketplace_templates')
       .select('id')
       .eq('id', id)
@@ -134,7 +134,7 @@ export const PUT = createApiHandler(
     if (input.is_featured !== undefined) updates.is_featured = input.is_featured
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('marketplace_templates')
       .update(updates)
       .eq('id', id)
@@ -177,7 +177,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('marketplace_templates')
       .select('id')
       .eq('id', id)
@@ -191,7 +191,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('marketplace_templates')
       .update({ deleted_at: new Date().toISOString(), is_active: false })
       .eq('id', id)

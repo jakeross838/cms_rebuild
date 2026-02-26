@@ -44,7 +44,7 @@ export const PUT = createApiHandler(
     if (input.state_code !== undefined) updates.state_code = input.state_code
     if (input.is_default !== undefined) updates.is_default = input.is_default
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('lien_waiver_templates')
       .update(updates)
       .eq('id', id)
@@ -80,7 +80,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Note: lien_waiver_templates has no deleted_at column — hard delete is intentional
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('lien_waiver_templates')
       .delete()
       .eq('id', id)

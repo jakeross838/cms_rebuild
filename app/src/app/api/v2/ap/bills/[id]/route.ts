@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: bill, error } = await (supabase as any)
+    const { data: bill, error } = await supabase
       .from('ap_bills')
       .select('*')
       .eq('id', id)
@@ -41,14 +41,14 @@ export const GET = createApiHandler(
     }
 
     // Fetch bill lines
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('ap_bill_lines')
       .select('*')
       .eq('bill_id', id)
       .order('created_at', { ascending: true })
 
     // Fetch payment applications
-    const { data: payments } = await (supabase as any)
+    const { data: payments } = await supabase
       .from('ap_payment_applications')
       .select('id, payment_id, amount, created_at')
       .eq('bill_id', id)
@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify bill exists and is editable
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('ap_bills')
       .select('status')
       .eq('id', id)
@@ -122,7 +122,7 @@ export const PUT = createApiHandler(
     if (input.terms !== undefined) updates.terms = input.terms
     if (input.status !== undefined) updates.status = input.status
 
-    const { data: bill, error: billError } = await (supabase as any)
+    const { data: bill, error: billError } = await supabase
       .from('ap_bills')
       .update(updates)
       .eq('id', id)
@@ -139,7 +139,7 @@ export const PUT = createApiHandler(
 
     // Replace lines if provided
     if (input.lines) {
-      await (supabase as any)
+      await supabase
         .from('ap_bill_lines')
         .delete()
         .eq('bill_id', id)
@@ -154,14 +154,14 @@ export const PUT = createApiHandler(
           cost_code_id: line.cost_code_id ?? null,
         }))
 
-        await (supabase as any)
+        await supabase
           .from('ap_bill_lines')
           .insert(lineRecords)
       }
     }
 
     // Fetch updated lines
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('ap_bill_lines')
       .select('*')
       .eq('bill_id', id)
@@ -189,7 +189,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify bill exists and is deletable (only draft bills)
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('ap_bills')
       .select('status')
       .eq('id', id)
@@ -211,7 +211,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('ap_bills')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)

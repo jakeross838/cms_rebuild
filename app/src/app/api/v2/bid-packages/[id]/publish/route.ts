@@ -43,7 +43,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package exists and is in draft status
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('bid_packages')
       .select('id, status')
       .eq('id', bidPackageId)
@@ -65,7 +65,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_packages')
       .update({ status: 'published' })
       .eq('id', bidPackageId)

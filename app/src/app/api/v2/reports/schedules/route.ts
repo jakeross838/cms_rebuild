@@ -45,7 +45,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('report_schedules')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -94,7 +94,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify the report definition exists
-    const { data: definition, error: defError } = await (supabase as any)
+    const { data: definition, error: defError } = await supabase
       .from('report_definitions')
       .select('id')
       .eq('id', input.report_definition_id)
@@ -108,7 +108,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('report_schedules')
       .insert({
         company_id: ctx.companyId!,

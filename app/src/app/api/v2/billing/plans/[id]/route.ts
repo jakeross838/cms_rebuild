@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('subscription_plans')
       .select('*')
       .eq('id', id)
@@ -88,7 +88,7 @@ export const PUT = createApiHandler(
     if (input.is_active !== undefined) updates.is_active = input.is_active
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('subscription_plans')
       .update(updates)
       .eq('id', id)
@@ -125,7 +125,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('subscription_plans')
       .select('id')
       .eq('id', id)
@@ -138,7 +138,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('subscription_plans')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)

@@ -50,7 +50,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify task exists and is completable
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('maintenance_tasks')
       .select('id, status')
       .eq('id', taskId)
@@ -75,7 +75,7 @@ export const POST = createApiHandler(
     const now = new Date().toISOString()
     const input = parseResult.data
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('maintenance_tasks')
       .update({
         status: 'completed',

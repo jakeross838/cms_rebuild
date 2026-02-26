@@ -38,7 +38,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify punch item exists and is in an appropriate status
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('punch_items')
       .select('id, status')
       .eq('id', id)
@@ -61,7 +61,7 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('punch_items')
       .update({
         status: 'completed',

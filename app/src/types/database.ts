@@ -5,6 +5,8 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+  | Record<string, unknown>
+  | unknown[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -1096,6 +1098,7 @@ export type Database = {
           comparison_data: Json | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           id: string
           name: string
           notes: string | null
@@ -1107,6 +1110,7 @@ export type Database = {
           comparison_data?: Json | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           id?: string
           name: string
           notes?: string | null
@@ -1118,6 +1122,7 @@ export type Database = {
           comparison_data?: Json | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           id?: string
           name?: string
           notes?: string | null
@@ -1500,6 +1505,7 @@ export type Database = {
           company_id: string
           cost_code_id: string | null
           created_at: string
+          deleted_at: string | null
           description: string
           estimated_amount: number
           id: string
@@ -1518,6 +1524,7 @@ export type Database = {
           company_id: string
           cost_code_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           description: string
           estimated_amount?: number
           id?: string
@@ -1536,6 +1543,7 @@ export type Database = {
           company_id?: string
           cost_code_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string
           estimated_amount?: number
           id?: string
@@ -2135,6 +2143,7 @@ export type Database = {
           change_order_id: string
           cost_code_id: string | null
           created_at: string
+          deleted_at: string | null
           description: string
           id: string
           markup_amount: number | null
@@ -2151,6 +2160,7 @@ export type Database = {
           change_order_id: string
           cost_code_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           description: string
           id?: string
           markup_amount?: number | null
@@ -2167,6 +2177,7 @@ export type Database = {
           change_order_id?: string
           cost_code_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string
           id?: string
           markup_amount?: number | null
@@ -3322,6 +3333,7 @@ export type Database = {
           created_at: string
           decline_reason: string | null
           declined_at: string | null
+          deleted_at: string | null
           email: string
           id: string
           ip_address: string | null
@@ -3340,6 +3352,7 @@ export type Database = {
           created_at?: string
           decline_reason?: string | null
           declined_at?: string | null
+          deleted_at?: string | null
           email: string
           id?: string
           ip_address?: string | null
@@ -3358,6 +3371,7 @@ export type Database = {
           created_at?: string
           decline_reason?: string | null
           declined_at?: string | null
+          deleted_at?: string | null
           email?: string
           id?: string
           ip_address?: string | null
@@ -3890,6 +3904,7 @@ export type Database = {
           configuration: Json
           created_at: string
           data_source: string
+          deleted_at: string | null
           filters: Json
           id: string
           report_id: string
@@ -3903,6 +3918,7 @@ export type Database = {
           configuration?: Json
           created_at?: string
           data_source?: string
+          deleted_at?: string | null
           filters?: Json
           id?: string
           report_id: string
@@ -3916,6 +3932,7 @@ export type Database = {
           configuration?: Json
           created_at?: string
           data_source?: string
+          deleted_at?: string | null
           filters?: Json
           id?: string
           report_id?: string
@@ -4284,6 +4301,7 @@ export type Database = {
           created_at: string
           dashboard_id: string
           data_source: string
+          deleted_at: string | null
           height: number
           id: string
           position_x: number
@@ -4301,6 +4319,7 @@ export type Database = {
           created_at?: string
           dashboard_id: string
           data_source?: string
+          deleted_at?: string | null
           height?: number
           id?: string
           position_x?: number
@@ -4318,6 +4337,7 @@ export type Database = {
           created_at?: string
           dashboard_id?: string
           data_source?: string
+          deleted_at?: string | null
           height?: number
           id?: string
           position_x?: number
@@ -5630,6 +5650,7 @@ export type Database = {
           assigned_to: string | null
           company_id: string
           created_at: string
+          deleted_at: string | null
           end_date: string | null
           equipment_id: string
           hours_used: number | null
@@ -5645,6 +5666,7 @@ export type Database = {
           assigned_to?: string | null
           company_id: string
           created_at?: string
+          deleted_at?: string | null
           end_date?: string | null
           equipment_id: string
           hours_used?: number | null
@@ -5660,6 +5682,7 @@ export type Database = {
           assigned_to?: string | null
           company_id?: string
           created_at?: string
+          deleted_at?: string | null
           end_date?: string | null
           equipment_id?: string
           hours_used?: number | null
@@ -5688,6 +5711,7 @@ export type Database = {
           cost_type: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           description: string | null
           equipment_id: string
           id: string
@@ -5704,6 +5728,7 @@ export type Database = {
           cost_type?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           equipment_id: string
           id?: string
@@ -5720,6 +5745,7 @@ export type Database = {
           cost_type?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           equipment_id?: string
           id?: string
@@ -5747,6 +5773,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           deficiencies: string | null
+          deleted_at: string | null
           equipment_id: string
           id: string
           inspection_date: string
@@ -5763,6 +5790,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           deficiencies?: string | null
+          deleted_at?: string | null
           equipment_id: string
           id?: string
           inspection_date?: string
@@ -5779,6 +5807,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           deficiencies?: string | null
+          deleted_at?: string | null
           equipment_id?: string
           id?: string
           inspection_date?: string
@@ -5804,6 +5833,7 @@ export type Database = {
           completed_date: string | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           description: string | null
           equipment_id: string
           id: string
@@ -5824,6 +5854,7 @@ export type Database = {
           completed_date?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           equipment_id: string
           id?: string
@@ -5844,6 +5875,7 @@ export type Database = {
           completed_date?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           equipment_id?: string
           id?: string
@@ -7920,6 +7952,7 @@ export type Database = {
           activity_type: string
           company_id: string
           created_at: string
+          deleted_at: string | null
           description: string | null
           duration_minutes: number | null
           id: string
@@ -7933,6 +7966,7 @@ export type Database = {
           activity_type?: string
           company_id: string
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           duration_minutes?: number | null
           id?: string
@@ -7946,6 +7980,7 @@ export type Database = {
           activity_type?: string
           company_id?: string
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           duration_minutes?: number | null
           id?: string
@@ -11933,6 +11968,7 @@ export type Database = {
           amount: number
           cost_code_id: string | null
           created_at: string
+          deleted_at: string | null
           description: string
           id: string
           po_id: string
@@ -11947,6 +11983,7 @@ export type Database = {
           amount?: number
           cost_code_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           description: string
           id?: string
           po_id: string
@@ -11961,6 +11998,7 @@ export type Database = {
           amount?: number
           cost_code_id?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string
           id?: string
           po_id?: string
@@ -12143,6 +12181,7 @@ export type Database = {
           checklist_id: string
           company_id: string
           created_at: string
+          deleted_at: string | null
           description: string
           id: string
           notes: string | null
@@ -12155,6 +12194,7 @@ export type Database = {
           checklist_id: string
           company_id: string
           created_at?: string
+          deleted_at?: string | null
           description: string
           id?: string
           notes?: string | null
@@ -12167,6 +12207,7 @@ export type Database = {
           checklist_id?: string
           company_id?: string
           created_at?: string
+          deleted_at?: string | null
           description?: string
           id?: string
           notes?: string | null
@@ -12620,6 +12661,7 @@ export type Database = {
           attachments: Json | null
           company_id: string
           created_at: string
+          deleted_at: string | null
           id: string
           is_official: boolean
           responded_by: string | null
@@ -12631,6 +12673,7 @@ export type Database = {
           attachments?: Json | null
           company_id: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
           is_official?: boolean
           responded_by?: string | null
@@ -12642,6 +12685,7 @@ export type Database = {
           attachments?: Json | null
           company_id?: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
           is_official?: boolean
           responded_by?: string | null
@@ -13282,6 +13326,7 @@ export type Database = {
           context: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           description: string | null
           filter_config: Json
           id: string
@@ -13294,6 +13339,7 @@ export type Database = {
           context?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           filter_config?: Json
           id?: string
@@ -13306,6 +13352,7 @@ export type Database = {
           context?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           filter_config?: Json
           id?: string
@@ -14780,6 +14827,7 @@ export type Database = {
           attachments: Json
           company_id: string
           created_at: string
+          deleted_at: string | null
           id: string
           is_internal: boolean
           message_text: string
@@ -14792,6 +14840,7 @@ export type Database = {
           attachments?: Json
           company_id: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
           is_internal?: boolean
           message_text: string
@@ -14804,6 +14853,7 @@ export type Database = {
           attachments?: Json
           company_id?: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
           is_internal?: boolean
           message_text?: string
@@ -15794,6 +15844,7 @@ export type Database = {
         Row: {
           company_id: string
           created_at: string | null
+          deleted_at: string | null
           email: string | null
           id: string
           is_primary: boolean | null
@@ -15806,6 +15857,7 @@ export type Database = {
         Insert: {
           company_id: string
           created_at?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: string
           is_primary?: boolean | null
@@ -15818,6 +15870,7 @@ export type Database = {
         Update: {
           company_id?: string
           created_at?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: string
           is_primary?: boolean | null
@@ -15851,6 +15904,7 @@ export type Database = {
           company_id: string
           coverage_amount: number | null
           created_at: string | null
+          deleted_at: string | null
           expiration_date: string
           id: string
           insurance_type: string
@@ -15867,6 +15921,7 @@ export type Database = {
           company_id: string
           coverage_amount?: number | null
           created_at?: string | null
+          deleted_at?: string | null
           expiration_date: string
           id?: string
           insurance_type: string
@@ -15883,6 +15938,7 @@ export type Database = {
           company_id?: string
           coverage_amount?: number | null
           created_at?: string | null
+          deleted_at?: string | null
           expiration_date?: string
           id?: string
           insurance_type?: string
@@ -17263,8 +17319,6 @@ export type Database = {
         Args: { p_company_id: string; p_flag_key: string }
         Returns: boolean
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
       user_has_role: { Args: { allowed_roles: string[] }; Returns: boolean }
     }
     Enums: {
@@ -17498,6 +17552,8 @@ export const Constants = {
     },
   },
 } as const
+
+// ── Convenience type aliases ─────────────────────────────────────────
 
 export type Company = Tables<'companies'>
 export type User = Tables<'users'>
@@ -17763,4 +17819,3 @@ export type Submittal = Tables<'submittals'>
 // Project/entity enum types (manual — not DB enums)
 export type ProjectType = 'new_construction' | 'renovation' | 'addition' | 'remodel' | 'commercial' | 'other'
 export type CostCodeCategory = 'labor' | 'material' | 'subcontractor' | 'equipment' | 'other'
-

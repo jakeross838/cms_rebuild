@@ -43,7 +43,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit ownership
-    const { error: permitError } = await (supabase as any)
+    const { error: permitError } = await supabase
       .from('permits')
       .select('id')
       .eq('id', permitId)
@@ -58,7 +58,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('permit_documents')
       .select('*', { count: 'exact' })
       .eq('permit_id', permitId)
@@ -102,7 +102,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit ownership
-    const { error: permitError } = await (supabase as any)
+    const { error: permitError } = await supabase
       .from('permits')
       .select('id')
       .eq('id', permitId)
@@ -117,7 +117,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permit_documents')
       .insert({
         company_id: ctx.companyId!,

@@ -46,7 +46,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('inventory_transactions')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -110,7 +110,7 @@ export const POST = createApiHandler(
     // Calculate total_cost if unit_cost provided
     const totalCost = input.total_cost ?? (input.unit_cost ? input.unit_cost * input.quantity : null)
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('inventory_transactions')
       .insert({
         company_id: ctx.companyId!,

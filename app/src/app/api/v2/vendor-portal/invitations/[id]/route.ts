@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_portal_invitations')
       .select('*')
       .eq('id', id)
@@ -85,7 +85,7 @@ export const PUT = createApiHandler(
     if (input.message !== undefined) updates.message = input.message
     if (input.status !== undefined) updates.status = input.status
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_portal_invitations')
       .update(updates)
       .eq('id', id)
@@ -124,7 +124,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('vendor_portal_invitations')
       .select('id')
       .eq('id', id)
@@ -139,7 +139,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('vendor_portal_invitations')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

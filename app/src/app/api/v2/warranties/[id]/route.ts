@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('warranties')
       .select('*')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch claims count
-    const { data: claims } = await (supabase as any)
+    const { data: claims } = await supabase
       .from('warranty_claims')
       .select('id')
       .eq('warranty_id', id)
@@ -89,7 +89,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify warranty exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('warranties')
       .select('id, status')
       .eq('id', id)
@@ -126,7 +126,7 @@ export const PUT = createApiHandler(
       updates.transferred_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('warranties')
       .update(updates)
       .eq('id', id)
@@ -164,7 +164,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('warranties')
       .select('id')
       .eq('id', id)
@@ -179,7 +179,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('warranties')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

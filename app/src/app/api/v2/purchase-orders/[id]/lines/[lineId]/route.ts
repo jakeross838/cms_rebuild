@@ -52,7 +52,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists and belongs to company
-    const { data: po, error: poError } = await (supabase as any)
+    const { data: po, error: poError } = await supabase
       .from('purchase_orders')
       .select('id')
       .eq('id', poId)
@@ -77,7 +77,7 @@ export const PUT = createApiHandler(
     if (input.cost_code_id !== undefined) updates.cost_code_id = input.cost_code_id
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('purchase_order_lines')
       .update(updates)
       .eq('id', lineId)
@@ -115,7 +115,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify PO exists and belongs to company
-    const { data: po, error: poError } = await (supabase as any)
+    const { data: po, error: poError } = await supabase
       .from('purchase_orders')
       .select('id')
       .eq('id', poId)
@@ -130,7 +130,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('purchase_order_lines')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', lineId)

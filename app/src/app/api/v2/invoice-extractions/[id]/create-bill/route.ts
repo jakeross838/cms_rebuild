@@ -45,7 +45,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists, belongs to company, and is in completed status
-    const { data: extraction, error: fetchError } = await (supabase as any)
+    const { data: extraction, error: fetchError } = await supabase
       .from('invoice_extractions')
       .select('id, status, matched_bill_id')
       .eq('id', id)
@@ -75,21 +75,21 @@ export const POST = createApiHandler(
     }
 
     // Create the AP bill
-    const { data: bill, error: billError } = await (supabase as any)
+    const { data: bill, error: billError } = await supabase
       .from('ap_bills')
       .insert({
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
         bill_number: input.bill_number,
-        bill_date: input.bill_date,
+        bill_date: input.bill_date ?? new Date().toISOString().split('T')[0],
         due_date: input.due_date ?? null,
         amount: input.amount,
         balance_due: input.amount,
-        status: 'draft',
+        status: 'draft' as const,
         job_id: input.job_id ?? null,
         description: input.description ?? null,
         created_by: ctx.user!.id,
-      })
+      } as never)
       .select('*')
       .single()
 
@@ -110,12 +110,12 @@ export const POST = createApiHandler(
         job_id: line.job_id ?? null,
         cost_code_id: line.cost_code_id ?? null,
       }))
-      await (supabase as any).from('ap_bill_lines').insert(lineRecords)
+      await supabase.from('ap_bill_lines').insert(lineRecords as never)
     }
 
     // Link extraction to the bill
     const now = new Date().toISOString()
-    await (supabase as any)
+    await supabase
       .from('invoice_extractions')
       .update({
         matched_bill_id: bill.id,
@@ -125,7 +125,7 @@ export const POST = createApiHandler(
       .eq('company_id', ctx.companyId!)
 
     // Log audit entry
-    await (supabase as any)
+    await supabase
       .from('extraction_audit_log')
       .insert({
         extraction_id: id,

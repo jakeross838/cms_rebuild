@@ -56,7 +56,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify project ownership
-    const { data: project, error: projectError } = await (supabase as any)
+    const { data: project, error: projectError } = await supabase
       .from('portfolio_projects')
       .select('id')
       .eq('id', projectId)
@@ -71,7 +71,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('portfolio_photos')
       .select('*', { count: 'exact' })
       .eq('portfolio_project_id', projectId)
@@ -126,7 +126,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify project ownership
-    const { data: project, error: projectError } = await (supabase as any)
+    const { data: project, error: projectError } = await supabase
       .from('portfolio_projects')
       .select('id')
       .eq('id', projectId)
@@ -141,7 +141,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('portfolio_photos')
       .insert({
         portfolio_project_id: projectId,

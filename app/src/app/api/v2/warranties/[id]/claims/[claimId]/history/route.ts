@@ -57,7 +57,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify claim belongs to company
-    const { data: claim, error: claimError } = await (supabase as any)
+    const { data: claim, error: claimError } = await supabase
       .from('warranty_claims')
       .select('id')
       .eq('id', claimId)
@@ -71,7 +71,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('warranty_claim_history')
       .select('*', { count: 'exact' })
       .eq('claim_id', claimId)

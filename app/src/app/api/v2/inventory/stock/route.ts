@@ -41,7 +41,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('inventory_stock')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)

@@ -53,7 +53,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify talk belongs to company
-    const { data: talk, error: talkError } = await (supabase as any)
+    const { data: talk, error: talkError } = await supabase
       .from('toolbox_talks')
       .select('id')
       .eq('id', talkId)
@@ -81,7 +81,7 @@ export const PUT = createApiHandler(
     }
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('toolbox_talk_attendees')
       .update(updates)
       .eq('id', attendeeId)
@@ -118,7 +118,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify talk belongs to company
-    const { data: talk, error: talkError } = await (supabase as any)
+    const { data: talk, error: talkError } = await supabase
       .from('toolbox_talks')
       .select('id')
       .eq('id', talkId)
@@ -132,7 +132,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('toolbox_talk_attendees')
       .delete()
       .eq('id', attendeeId)

@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('leads')
       .select('*')
       .eq('id', id)
@@ -45,7 +45,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch activities count
-    const { data: activities } = await (supabase as any)
+    const { data: activities } = await supabase
       .from('lead_activities')
       .select('id')
       .eq('lead_id', id)
@@ -91,7 +91,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify lead exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('leads')
       .select('id')
       .eq('id', id)
@@ -137,7 +137,7 @@ export const PUT = createApiHandler(
     if (input.lost_reason !== undefined) updates.lost_reason = input.lost_reason
     if (input.lost_competitor !== undefined) updates.lost_competitor = input.lost_competitor
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('leads')
       .update(updates)
       .eq('id', id)
@@ -177,7 +177,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify lead exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('leads')
       .select('id')
       .eq('id', id)
@@ -192,7 +192,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('leads')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('custom_reports')
       .select('*')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch widgets count
-    const { data: widgets } = await (supabase as any)
+    const { data: widgets } = await supabase
       .from('custom_report_widgets')
       .select('id')
       .eq('report_id', id)
@@ -105,7 +105,7 @@ export const PUT = createApiHandler(
     if (input.is_template !== undefined) updates.is_template = input.is_template
     if (input.shared_with !== undefined) updates.shared_with = input.shared_with
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('custom_reports')
       .update(updates)
       .eq('id', id)
@@ -143,7 +143,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('custom_reports')
       .select('id')
       .eq('id', id)
@@ -158,7 +158,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('custom_reports')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

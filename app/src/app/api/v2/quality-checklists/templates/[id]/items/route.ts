@@ -56,7 +56,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify template belongs to company
-    const { data: template, error: tError } = await (supabase as any)
+    const { data: template, error: tError } = await supabase
       .from('quality_checklist_templates')
       .select('id')
       .eq('id', templateId)
@@ -70,7 +70,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('quality_checklist_template_items')
       .select('*', { count: 'exact' })
       .eq('template_id', templateId)
@@ -118,7 +118,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify template belongs to company
-    const { data: template, error: tError } = await (supabase as any)
+    const { data: template, error: tError } = await supabase
       .from('quality_checklist_templates')
       .select('id')
       .eq('id', templateId)
@@ -132,7 +132,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('quality_checklist_template_items')
       .insert({
         company_id: ctx.companyId!,

@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('builder_custom_domains')
       .select('*')
       .eq('id', id)
@@ -95,7 +95,7 @@ export const PUT = createApiHandler(
     if (input.is_primary !== undefined) updates.is_primary = input.is_primary
     if (input.verification_token !== undefined) updates.verification_token = input.verification_token
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('builder_custom_domains')
       .update(updates)
       .eq('id', id)
@@ -134,7 +134,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('builder_custom_domains')
       .select('id')
       .eq('id', id)
@@ -149,7 +149,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('builder_custom_domains')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the CO belongs to this company
-    const { data: co, error: coError } = await (supabase as any)
+    const { data: co, error: coError } = await supabase
       .from('change_orders')
       .select('id')
       .eq('id', changeOrderId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('change_order_items')
       .select('*', { count: 'exact' })
       .eq('change_order_id', changeOrderId)
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify CO exists, belongs to company, and is editable
-    const { data: co, error: coError } = await (supabase as any)
+    const { data: co, error: coError } = await supabase
       .from('change_orders')
       .select('id, status')
       .eq('id', changeOrderId)
@@ -144,7 +144,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('change_order_items')
       .insert({
         change_order_id: changeOrderId,

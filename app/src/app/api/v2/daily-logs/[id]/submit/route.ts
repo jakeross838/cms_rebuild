@@ -35,7 +35,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify log exists and is in draft status
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('daily_logs')
       .select('id, status')
       .eq('id', id)
@@ -58,7 +58,7 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('daily_logs')
       .update({
         status: 'submitted',

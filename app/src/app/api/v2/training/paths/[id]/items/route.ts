@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify path exists and is accessible
-    const { data: path, error: pError } = await (supabase as any)
+    const { data: path, error: pError } = await supabase
       .from('training_paths')
       .select('id, company_id')
       .eq('id', pathId)
@@ -78,7 +78,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('training_path_items')
       .select('*', { count: 'exact' })
       .eq('path_id', pathId)
@@ -126,7 +126,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify path belongs to company
-    const { data: path, error: pError } = await (supabase as any)
+    const { data: path, error: pError } = await supabase
       .from('training_paths')
       .select('id')
       .eq('id', pathId)
@@ -140,7 +140,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('training_path_items')
       .insert({
         company_id: ctx.companyId!,

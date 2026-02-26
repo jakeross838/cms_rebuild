@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_reminders')
       .select('*')
       .eq('id', reminderId)
@@ -78,7 +78,7 @@ export const PUT = createApiHandler(
       updateFields.sent_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_reminders')
       .update(updateFields)
       .eq('id', reminderId)

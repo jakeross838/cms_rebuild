@@ -41,7 +41,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('payroll_exports')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -87,7 +87,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify payroll period exists and belongs to this company
-    const { data: period, error: periodError } = await (supabase as any)
+    const { data: period, error: periodError } = await supabase
       .from('payroll_periods')
       .select('id, period_start, period_end, status')
       .eq('id', input.payroll_period_id)
@@ -102,7 +102,7 @@ export const POST = createApiHandler(
     }
 
     // Gather approved time entries for this period
-    const { data: entries, error: entriesError } = await (supabase as any)
+    const { data: entries, error: entriesError } = await supabase
       .from('time_entries')
       .select('regular_hours, overtime_hours, double_time_hours, user_id')
       .eq('company_id', ctx.companyId!)
@@ -118,15 +118,15 @@ export const POST = createApiHandler(
       )
     }
 
-    const entryList = entries ?? []
+    const entryList = (entries ?? []) as Array<Record<string, unknown>>
     const totalHours = entryList.reduce(
-      (sum: number, e: { regular_hours: number; overtime_hours: number; double_time_hours: number }) =>
-        sum + (e.regular_hours || 0) + (e.overtime_hours || 0) + (e.double_time_hours || 0),
+      (sum: number, e) =>
+        sum + (Number(e.regular_hours) || 0) + (Number(e.overtime_hours) || 0) + (Number(e.double_time_hours) || 0),
       0
     )
-    const uniqueEmployees = new Set(entryList.map((e: { user_id: string }) => e.user_id))
+    const uniqueEmployees = new Set(entryList.map((e) => e.user_id as string))
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('payroll_exports')
       .insert({
         company_id: ctx.companyId!,
@@ -149,7 +149,7 @@ export const POST = createApiHandler(
     }
 
     // Mark the entries as exported
-    await (supabase as any)
+    await supabase
       .from('time_entries')
       .update({ status: 'exported', updated_at: new Date().toISOString() })
       .eq('company_id', ctx.companyId!)
@@ -159,7 +159,7 @@ export const POST = createApiHandler(
       .lte('entry_date', period.period_end)
 
     // Mark the payroll period as exported
-    await (supabase as any)
+    await supabase
       .from('payroll_periods')
       .update({
         status: 'exported',

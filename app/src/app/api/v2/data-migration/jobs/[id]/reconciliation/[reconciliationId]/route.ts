@@ -40,7 +40,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_reconciliation')
       .select('*')
       .eq('id', reconciliationId)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
       updates.reconciled_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_reconciliation')
       .update(updates)
       .eq('id', reconciliationId)

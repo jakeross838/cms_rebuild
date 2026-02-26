@@ -39,7 +39,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify session exists and is active
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('mobile_sessions')
       .select('id, status')
       .eq('id', id)
@@ -60,7 +60,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('mobile_sessions')
       .update({
         status: 'revoked',

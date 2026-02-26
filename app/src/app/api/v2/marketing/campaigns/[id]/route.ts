@@ -33,7 +33,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('marketing_campaigns')
       .select('*')
       .eq('id', id)
@@ -48,7 +48,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch contacts count
-    const { data: contacts } = await (supabase as any)
+    const { data: contacts } = await supabase
       .from('campaign_contacts')
       .select('id')
       .eq('campaign_id', id)
@@ -99,7 +99,7 @@ export const PUT = createApiHandler(
       }
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('marketing_campaigns')
       .update(updates)
       .eq('id', id)

@@ -53,7 +53,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify CO exists, belongs to company, and is editable
-    const { data: co, error: coError } = await (supabase as any)
+    const { data: co, error: coError } = await supabase
       .from('change_orders')
       .select('id, status')
       .eq('id', changeOrderId)
@@ -88,7 +88,7 @@ export const PUT = createApiHandler(
     if (input.vendor_id !== undefined) updates.vendor_id = input.vendor_id
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('change_order_items')
       .update(updates)
       .eq('id', itemId)
@@ -126,7 +126,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify CO exists, belongs to company, and is editable
-    const { data: co, error: coError } = await (supabase as any)
+    const { data: co, error: coError } = await supabase
       .from('change_orders')
       .select('id, status')
       .eq('id', changeOrderId)
@@ -148,7 +148,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('change_order_items')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', itemId)

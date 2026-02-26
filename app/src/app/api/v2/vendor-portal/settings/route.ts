@@ -24,7 +24,7 @@ export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_portal_settings')
       .select('*')
       .eq('company_id', ctx.companyId!)
@@ -62,7 +62,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing settings
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('vendor_portal_settings')
       .select('id')
       .eq('company_id', ctx.companyId!)
@@ -76,7 +76,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_portal_settings')
       .insert({
         company_id: ctx.companyId!,
@@ -136,7 +136,7 @@ export const PUT = createApiHandler(
     if (input.portal_branding !== undefined) updates.portal_branding = input.portal_branding
     if (input.notification_settings !== undefined) updates.notification_settings = input.notification_settings
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_portal_settings')
       .update(updates)
       .eq('company_id', ctx.companyId!)

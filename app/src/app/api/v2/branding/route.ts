@@ -23,7 +23,7 @@ export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('builder_branding')
       .select('*')
       .eq('company_id', ctx.companyId!)
@@ -78,7 +78,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing branding record
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('builder_branding')
       .select('id')
       .eq('company_id', ctx.companyId!)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
       if (input.custom_css !== undefined) updates.custom_css = input.custom_css
       if (input.metadata !== undefined) updates.metadata = input.metadata
 
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('builder_branding')
         .update(updates)
         .eq('company_id', ctx.companyId!)
@@ -118,7 +118,7 @@ export const PUT = createApiHandler(
       return NextResponse.json({ data, requestId: ctx.requestId })
     } else {
       // Create new
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('builder_branding')
         .insert({
           company_id: ctx.companyId!,

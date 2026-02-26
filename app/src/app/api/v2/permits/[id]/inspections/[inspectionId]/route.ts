@@ -22,7 +22,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permit_inspections')
       .select('*')
       .eq('id', inspectionId)
@@ -37,7 +37,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch results
-    const { data: results } = await (supabase as any)
+    const { data: results } = await supabase
       .from('inspection_results')
       .select('*')
       .eq('inspection_id', inspectionId)
@@ -77,7 +77,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('permit_inspections')
       .select('id')
       .eq('id', inspectionId)
@@ -102,7 +102,7 @@ export const PUT = createApiHandler(
     if (input.notes !== undefined) updates.notes = input.notes
     if (input.completed_at !== undefined) updates.completed_at = input.completed_at
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permit_inspections')
       .update(updates)
       .eq('id', inspectionId)

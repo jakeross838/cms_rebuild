@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: connection, error } = await (supabase as any)
+    const { data: connection, error } = await supabase
       .from('accounting_connections')
       .select('*')
       .eq('id', id)
@@ -44,13 +44,13 @@ export const GET = createApiHandler(
     }
 
     // Fetch mapping counts by entity type
-    const { data: mappings } = await (supabase as any)
+    const { data: mappings } = await supabase
       .from('sync_mappings')
       .select('entity_type, sync_status')
       .eq('connection_id', id)
 
     // Fetch recent sync logs
-    const { data: recentLogs } = await (supabase as any)
+    const { data: recentLogs } = await supabase
       .from('sync_logs')
       .select('*')
       .eq('connection_id', id)
@@ -58,7 +58,7 @@ export const GET = createApiHandler(
       .limit(5)
 
     // Count pending conflicts
-    const { count: pendingConflicts } = await (supabase as any)
+    const { count: pendingConflicts } = await supabase
       .from('sync_conflicts')
       .select('id', { count: 'exact', head: true })
       .eq('connection_id', id)
@@ -105,7 +105,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify connection exists
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('accounting_connections')
       .select('id')
       .eq('id', id)
@@ -128,7 +128,7 @@ export const PUT = createApiHandler(
     if (input.sync_direction !== undefined) updates.sync_direction = input.sync_direction
     if (input.settings !== undefined) updates.settings = input.settings
 
-    const { data: connection, error: connError } = await (supabase as any)
+    const { data: connection, error: connError } = await supabase
       .from('accounting_connections')
       .update(updates)
       .eq('id', id)
@@ -165,7 +165,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify connection exists
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('accounting_connections')
       .select('id, status')
       .eq('id', id)
@@ -181,7 +181,7 @@ export const DELETE = createApiHandler(
     }
 
     // Soft delete: set status to disconnected and mark deleted
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('accounting_connections')
       .update({
         status: 'disconnected',

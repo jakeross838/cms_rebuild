@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the estimate belongs to this company
-    const { data: estimate, error: estError } = await (supabase as any)
+    const { data: estimate, error: estError } = await supabase
       .from('estimates')
       .select('id')
       .eq('id', estimateId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('estimate_sections')
       .select('*', { count: 'exact' })
       .eq('estimate_id', estimateId)
@@ -121,7 +121,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify estimate exists, belongs to company, and is editable
-    const { data: estimate, error: estError } = await (supabase as any)
+    const { data: estimate, error: estError } = await supabase
       .from('estimates')
       .select('id, status')
       .eq('id', estimateId)
@@ -143,7 +143,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('estimate_sections')
       .insert({
         estimate_id: estimateId,

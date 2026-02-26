@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('departments')
       .select('*')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch employee count in this department
-    const { data: emps } = await (supabase as any)
+    const { data: emps } = await supabase
       .from('employees')
       .select('id')
       .eq('department_id', id)
@@ -52,7 +52,7 @@ export const GET = createApiHandler(
       .is('deleted_at', null)
 
     // Fetch positions count
-    const { data: positions } = await (supabase as any)
+    const { data: positions } = await supabase
       .from('positions')
       .select('id')
       .eq('department_id', id)
@@ -105,7 +105,7 @@ export const PUT = createApiHandler(
     if (input.head_user_id !== undefined) updates.head_user_id = input.head_user_id
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('departments')
       .update(updates)
       .eq('id', id)
@@ -143,7 +143,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('departments')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)

@@ -50,7 +50,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit ownership
-    const { error: permitError } = await (supabase as any)
+    const { error: permitError } = await supabase
       .from('permits')
       .select('id')
       .eq('id', permitId)
@@ -65,7 +65,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('permit_inspections')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -128,7 +128,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit ownership
-    const { data: permit, error: permitError } = await (supabase as any)
+    const { data: permit, error: permitError } = await supabase
       .from('permits')
       .select('id, job_id')
       .eq('id', permitId)
@@ -143,7 +143,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permit_inspections')
       .insert({
         company_id: ctx.companyId!,

@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('ticket_messages')
       .select('*')
       .eq('id', messageId)
@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
     if (input.attachments !== undefined) updates.attachments = input.attachments
     if (input.is_internal !== undefined) updates.is_internal = input.is_internal
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('ticket_messages')
       .update(updates)
       .eq('id', messageId)
@@ -120,7 +120,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('ticket_messages')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', messageId)

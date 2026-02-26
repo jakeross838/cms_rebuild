@@ -24,7 +24,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is in draft status
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('gl_journal_entries')
       .select('id, status')
       .eq('id', id)
@@ -46,7 +46,7 @@ export const POST = createApiHandler(
     }
 
     // Verify lines exist and balance
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('gl_journal_lines')
       .select('debit_amount, credit_amount')
       .eq('journal_entry_id', id)
@@ -58,8 +58,8 @@ export const POST = createApiHandler(
       )
     }
 
-    const totalDebits = lines.reduce((sum: number, l: { debit_amount: number }) => sum + Number(l.debit_amount), 0)
-    const totalCredits = lines.reduce((sum: number, l: { credit_amount: number }) => sum + Number(l.credit_amount), 0)
+    const totalDebits = lines.reduce((sum: number, l) => sum + Number((l as Record<string, unknown>).debit_amount ?? 0), 0)
+    const totalCredits = lines.reduce((sum: number, l) => sum + Number((l as Record<string, unknown>).credit_amount ?? 0), 0)
 
     if (Math.abs(totalDebits - totalCredits) > 0.01) {
       return NextResponse.json(
@@ -70,7 +70,7 @@ export const POST = createApiHandler(
 
     // Post the entry
     const now = new Date().toISOString()
-    const { data: entry, error } = await (supabase as any)
+    const { data: entry, error } = await supabase
       .from('gl_journal_entries')
       .update({
         status: 'posted',

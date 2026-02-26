@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('portal_update_posts')
       .select('*')
       .eq('id', id)
@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
     if (input.body !== undefined) updates.body = input.body
     if (input.post_type !== undefined) updates.post_type = input.post_type
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('portal_update_posts')
       .update(updates)
       .eq('id', id)
@@ -121,7 +121,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('portal_update_posts')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

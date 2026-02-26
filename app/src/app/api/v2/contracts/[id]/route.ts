@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('contracts')
       .select('*')
       .eq('id', id)
@@ -44,13 +44,13 @@ export const GET = createApiHandler(
     }
 
     // Fetch signers count
-    const { data: signers } = await (supabase as any)
+    const { data: signers } = await supabase
       .from('contract_signers')
       .select('id')
       .eq('contract_id', id)
 
     // Fetch versions
-    const { data: versions } = await (supabase as any)
+    const { data: versions } = await supabase
       .from('contract_versions')
       .select('*')
       .eq('contract_id', id)
@@ -96,7 +96,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify contract exists and is editable (draft or pending_review)
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('contracts')
       .select('id, status')
       .eq('id', id)
@@ -136,7 +136,7 @@ export const PUT = createApiHandler(
     if (input.content !== undefined) updates.content = input.content
     if (input.metadata !== undefined) updates.metadata = input.metadata
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('contracts')
       .update(updates)
       .eq('id', id)
@@ -175,7 +175,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Only draft contracts can be deleted
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('contracts')
       .select('id, status')
       .eq('id', id)
@@ -197,7 +197,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('contracts')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

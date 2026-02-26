@@ -53,7 +53,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify estimate exists, belongs to company, and is editable
-    const { data: estimate, error: estError } = await (supabase as any)
+    const { data: estimate, error: estError } = await supabase
       .from('estimates')
       .select('id, status')
       .eq('id', estimateId)
@@ -93,7 +93,7 @@ export const PUT = createApiHandler(
     if (input.ai_suggested !== undefined) updates.ai_suggested = input.ai_suggested
     if (input.ai_confidence !== undefined) updates.ai_confidence = input.ai_confidence
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('estimate_line_items')
       .update(updates)
       .eq('id', lineId)
@@ -130,7 +130,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify estimate exists, belongs to company, and is editable
-    const { data: estimate, error: estError } = await (supabase as any)
+    const { data: estimate, error: estError } = await supabase
       .from('estimates')
       .select('id, status')
       .eq('id', estimateId)
@@ -152,7 +152,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('estimate_line_items')
       .delete()
       .eq('id', lineId)

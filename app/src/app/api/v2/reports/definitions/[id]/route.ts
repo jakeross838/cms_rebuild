@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('report_definitions')
       .select('*')
       .eq('id', id)
@@ -81,7 +81,7 @@ export const PUT = createApiHandler(
     if (input.config !== undefined) updates.config = input.config
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('report_definitions')
       .update(updates)
       .eq('id', id)
@@ -118,7 +118,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('report_definitions')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)

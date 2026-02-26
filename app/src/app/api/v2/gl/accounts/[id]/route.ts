@@ -24,7 +24,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('gl_accounts')
       .select('*')
       .eq('id', id)
@@ -68,7 +68,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check if account is a system account — system accounts have restricted updates
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('gl_accounts')
       .select('is_system')
       .eq('id', id)
@@ -96,7 +96,7 @@ export const PUT = createApiHandler(
       if (input.normal_balance !== undefined) updates.normal_balance = input.normal_balance
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('gl_accounts')
       .update(updates)
       .eq('id', id)

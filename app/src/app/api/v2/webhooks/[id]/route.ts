@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('webhook_subscriptions')
       .select('*')
       .eq('id', id)
@@ -84,7 +84,7 @@ export const PUT = createApiHandler(
     if (input.status !== undefined) updates.status = input.status
     if (input.max_retries !== undefined) updates.max_retries = input.max_retries
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('webhook_subscriptions')
       .update(updates)
       .eq('id', id)
@@ -123,7 +123,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('webhook_subscriptions')
       .select('id')
       .eq('id', id)
@@ -138,7 +138,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('webhook_subscriptions')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

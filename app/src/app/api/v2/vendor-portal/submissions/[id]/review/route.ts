@@ -39,7 +39,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify submission exists and is submitted or under_review
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_submissions')
       .select('id, status')
       .eq('id', id)
@@ -72,7 +72,7 @@ export const POST = createApiHandler(
       updates.rejection_reason = input.rejection_reason
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_submissions')
       .update(updates)
       .eq('id', id)

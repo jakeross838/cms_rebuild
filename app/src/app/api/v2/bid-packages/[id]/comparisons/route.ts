@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('bid_comparisons')
       .select('*', { count: 'exact' })
       .eq('bid_package_id', bidPackageId)
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package exists and belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -137,7 +137,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_comparisons')
       .insert({
         company_id: ctx.companyId!,

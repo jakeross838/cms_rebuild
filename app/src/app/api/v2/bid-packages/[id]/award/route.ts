@@ -38,7 +38,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -53,7 +53,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_awards')
       .select('*')
       .eq('bid_package_id', bidPackageId)
@@ -100,7 +100,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package exists and is closed
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id, status')
       .eq('id', bidPackageId)
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_awards')
       .insert({
         company_id: ctx.companyId!,
@@ -147,7 +147,7 @@ export const POST = createApiHandler(
     }
 
     // Update bid package status to awarded
-    await (supabase as any)
+    await supabase
       .from('bid_packages')
       .update({ status: 'awarded' })
       .eq('id', bidPackageId)

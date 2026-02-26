@@ -42,7 +42,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -57,7 +57,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_comparisons')
       .select('*')
       .eq('id', compId)
@@ -105,7 +105,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -126,7 +126,7 @@ export const PUT = createApiHandler(
     if (input.comparison_data !== undefined) updates.comparison_data = input.comparison_data
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_comparisons')
       .update(updates)
       .eq('id', compId)
@@ -164,7 +164,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -179,7 +179,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('bid_comparisons')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', compId)

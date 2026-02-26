@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_packages')
       .select('*')
       .eq('id', id)
@@ -44,17 +44,17 @@ export const GET = createApiHandler(
     }
 
     // Fetch counts
-    const { data: invitations } = await (supabase as any)
+    const { data: invitations } = await supabase
       .from('bid_invitations')
       .select('id')
       .eq('bid_package_id', id)
 
-    const { data: responses } = await (supabase as any)
+    const { data: responses } = await supabase
       .from('bid_responses')
       .select('id')
       .eq('bid_package_id', id)
 
-    const { data: awards } = await (supabase as any)
+    const { data: awards } = await supabase
       .from('bid_awards')
       .select('id')
       .eq('bid_package_id', id)
@@ -100,7 +100,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify the bid package exists and is editable
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('bid_packages')
       .select('id, status')
       .eq('id', id)
@@ -132,7 +132,7 @@ export const PUT = createApiHandler(
     if (input.status !== undefined) updates.status = input.status
     if (input.documents !== undefined) updates.documents = input.documents
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_packages')
       .update(updates)
       .eq('id', id)
@@ -171,7 +171,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Only draft bid packages can be deleted
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('bid_packages')
       .select('id, status')
       .eq('id', id)
@@ -193,7 +193,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('bid_packages')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

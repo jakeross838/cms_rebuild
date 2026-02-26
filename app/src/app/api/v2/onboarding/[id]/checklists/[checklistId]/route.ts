@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_checklists')
       .select('*')
       .eq('id', checklistId)
@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
       updateFields.completed_at = null
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_checklists')
       .update(updateFields)
       .eq('id', checklistId)

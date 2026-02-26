@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('safety_inspections')
       .select('*')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch items
-    const { data: items } = await (supabase as any)
+    const { data: items } = await supabase
       .from('safety_inspection_items')
       .select('*')
       .eq('inspection_id', id)
@@ -91,7 +91,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('safety_inspections')
       .select('id, status')
       .eq('id', id)
@@ -127,7 +127,7 @@ export const PUT = createApiHandler(
     if (input.follow_up_date !== undefined) updates.follow_up_date = input.follow_up_date
     if (input.follow_up_notes !== undefined) updates.follow_up_notes = input.follow_up_notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('safety_inspections')
       .update(updates)
       .eq('id', id)
@@ -165,7 +165,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('safety_inspections')
       .select('id')
       .eq('id', id)
@@ -180,7 +180,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('safety_inspections')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

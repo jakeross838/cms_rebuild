@@ -35,7 +35,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify entry exists and is in pending status
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('time_entries')
       .select('status')
       .eq('id', id)
@@ -59,7 +59,7 @@ export const POST = createApiHandler(
 
     const now = new Date().toISOString()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('time_entries')
       .update({
         status: 'approved',

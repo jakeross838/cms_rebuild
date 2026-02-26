@@ -51,7 +51,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify signer exists and is in pending or viewed status
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('contract_signers')
       .select('id, status, contract_id')
       .eq('id', signerId)
@@ -74,7 +74,7 @@ export const POST = createApiHandler(
     }
 
     const now = new Date().toISOString()
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('contract_signers')
       .update({
         status: 'signed',
@@ -97,7 +97,7 @@ export const POST = createApiHandler(
     }
 
     // Check if all signers have signed to auto-update contract status
-    const { data: allSigners } = await (supabase as any)
+    const { data: allSigners } = await supabase
       .from('contract_signers')
       .select('id, status')
       .eq('contract_id', contractId)
@@ -106,13 +106,13 @@ export const POST = createApiHandler(
     const someSigned = (allSigners ?? []).some((s: { status: string }) => s.status === 'signed')
 
     if (allSigned) {
-      await (supabase as any)
+      await supabase
         .from('contracts')
         .update({ status: 'fully_signed', executed_at: now, updated_at: now })
         .eq('id', contractId)
         .eq('company_id', ctx.companyId!)
     } else if (someSigned) {
-      await (supabase as any)
+      await supabase
         .from('contracts')
         .update({ status: 'partially_signed', updated_at: now })
         .eq('id', contractId)

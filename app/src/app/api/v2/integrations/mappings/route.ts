@@ -43,7 +43,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('sync_mappings')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -95,7 +95,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify connection belongs to this company
-    const { data: connection } = await (supabase as any)
+    const { data: connection } = await supabase
       .from('accounting_connections')
       .select('id')
       .eq('id', input.connection_id)
@@ -111,7 +111,7 @@ export const POST = createApiHandler(
     }
 
     // Check for duplicate mapping
-    const { data: existingMapping } = await (supabase as any)
+    const { data: existingMapping } = await supabase
       .from('sync_mappings')
       .select('id')
       .eq('connection_id', input.connection_id)
@@ -126,7 +126,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: mapping, error: mapError } = await (supabase as any)
+    const { data: mapping, error: mapError } = await supabase
       .from('sync_mappings')
       .insert({
         company_id: ctx.companyId!,

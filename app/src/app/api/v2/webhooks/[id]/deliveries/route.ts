@@ -53,7 +53,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify webhook belongs to company
-    const { data: webhook } = await (supabase as any)
+    const { data: webhook } = await supabase
       .from('webhook_subscriptions')
       .select('id')
       .eq('id', subscriptionId)
@@ -68,7 +68,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('webhook_deliveries')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)

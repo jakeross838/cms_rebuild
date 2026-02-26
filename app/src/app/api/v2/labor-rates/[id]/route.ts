@@ -44,7 +44,7 @@ export const PUT = createApiHandler(
     if (input.effective_date !== undefined) updates.effective_date = input.effective_date
     if (input.end_date !== undefined) updates.end_date = input.end_date
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('labor_rates')
       .update(updates)
       .eq('id', id)
@@ -84,7 +84,7 @@ export const DELETE = createApiHandler(
     // doesn't have a deleted_at column in V1. We'll delete the row since
     // it's configuration data and new rates replace old via effective_date.
     // For safety, we set end_date to today instead of deleting.
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('labor_rates')
       .update({ end_date: new Date().toISOString().split('T')[0], updated_at: new Date().toISOString() })
       .eq('id', id)

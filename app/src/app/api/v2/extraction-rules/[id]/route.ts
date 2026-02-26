@@ -44,7 +44,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify rule exists and belongs to company
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('extraction_rules')
       .select('id')
       .eq('id', id)
@@ -58,7 +58,7 @@ export const PUT = createApiHandler(
       )
     }
 
-    const { data: updated, error: updateError } = await (supabase as any)
+    const { data: updated, error: updateError } = await supabase
       .from('extraction_rules')
       .update({
         ...updates,
@@ -100,7 +100,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify rule exists and belongs to company
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('extraction_rules')
       .select('id')
       .eq('id', id)
@@ -115,7 +115,7 @@ export const DELETE = createApiHandler(
     }
 
     // Soft delete: deactivate the rule
-    const { data: deactivated, error: updateError } = await (supabase as any)
+    const { data: deactivated, error: updateError } = await supabase
       .from('extraction_rules')
       .update({
         is_active: false,

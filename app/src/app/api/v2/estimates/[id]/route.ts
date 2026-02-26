@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('estimates')
       .select('*')
       .eq('id', id)
@@ -44,19 +44,19 @@ export const GET = createApiHandler(
     }
 
     // Fetch line items count
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('estimate_line_items')
       .select('id')
       .eq('estimate_id', id)
 
     // Fetch sections count
-    const { data: sections } = await (supabase as any)
+    const { data: sections } = await supabase
       .from('estimate_sections')
       .select('id')
       .eq('estimate_id', id)
 
     // Fetch versions
-    const { data: versions } = await (supabase as any)
+    const { data: versions } = await supabase
       .from('estimate_versions')
       .select('*')
       .eq('estimate_id', id)
@@ -103,7 +103,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify the estimate exists and is editable
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('estimates')
       .select('id, status')
       .eq('id', id)
@@ -142,7 +142,7 @@ export const PUT = createApiHandler(
     if (input.valid_until !== undefined) updates.valid_until = input.valid_until
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('estimates')
       .update(updates)
       .eq('id', id)
@@ -181,7 +181,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Only draft estimates can be deleted
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('estimates')
       .select('id, status')
       .eq('id', id)
@@ -203,7 +203,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('estimates')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

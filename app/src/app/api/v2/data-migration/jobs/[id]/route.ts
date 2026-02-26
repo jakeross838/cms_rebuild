@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_jobs')
       .select('*')
       .eq('id', id)
@@ -46,15 +46,15 @@ export const GET = createApiHandler(
 
     // Get counts for related entities
     const [mappingsResult, validationsResult, reconciliationResult] = await Promise.all([
-      (supabase as any).from('migration_field_mappings')
+      supabase.from('migration_field_mappings')
         .select('id', { count: 'exact', head: true })
         .eq('job_id', id)
         .eq('company_id', ctx.companyId!),
-      (supabase as any).from('migration_validation_results')
+      supabase.from('migration_validation_results')
         .select('id', { count: 'exact', head: true })
         .eq('job_id', id)
         .eq('company_id', ctx.companyId!),
-      (supabase as any).from('migration_reconciliation')
+      supabase.from('migration_reconciliation')
         .select('id', { count: 'exact', head: true })
         .eq('job_id', id)
         .eq('company_id', ctx.companyId!),
@@ -126,7 +126,7 @@ export const PUT = createApiHandler(
       updates.rolled_back_by = ctx.user!.id
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_jobs')
       .update(updates)
       .eq('id', id)
@@ -165,7 +165,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('migration_jobs')
       .select('id')
       .eq('id', id)
@@ -180,7 +180,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('migration_jobs')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

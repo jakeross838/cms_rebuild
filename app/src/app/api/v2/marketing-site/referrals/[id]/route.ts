@@ -33,7 +33,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('marketing_referrals')
       .select('*')
       .eq('id', id)
@@ -97,7 +97,7 @@ export const PUT = createApiHandler(
       updates.converted_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('marketing_referrals')
       .update(updates)
       .eq('id', id)

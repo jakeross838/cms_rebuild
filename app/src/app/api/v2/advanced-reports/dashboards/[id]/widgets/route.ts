@@ -43,7 +43,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify dashboard exists
-    const { data: dashboard, error: dashError } = await (supabase as any)
+    const { data: dashboard, error: dashError } = await supabase
       .from('report_dashboards')
       .select('id')
       .eq('id', dashboardId)
@@ -58,7 +58,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('dashboard_widgets')
       .select('*', { count: 'exact' })
       .eq('dashboard_id', dashboardId)
@@ -104,7 +104,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify dashboard exists and belongs to company
-    const { data: dashboard, error: dashError } = await (supabase as any)
+    const { data: dashboard, error: dashError } = await supabase
       .from('report_dashboards')
       .select('id')
       .eq('id', dashboardId)
@@ -119,7 +119,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('dashboard_widgets')
       .insert({
         dashboard_id: dashboardId,

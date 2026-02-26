@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('lien_waivers')
       .select('*')
       .eq('id', id)
@@ -72,7 +72,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify waiver exists and is not deleted
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('lien_waivers')
       .select('id, status')
       .eq('id', id)
@@ -108,7 +108,7 @@ export const PUT = createApiHandler(
     if (input.claimant_name !== undefined) updates.claimant_name = input.claimant_name
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('lien_waivers')
       .update(updates)
       .eq('id', id)
@@ -143,7 +143,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('lien_waivers')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)

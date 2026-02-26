@@ -60,7 +60,7 @@ export const PUT = createApiHandler(
     if (input.phone !== undefined) updates.phone = input.phone
     if (input.is_primary !== undefined) updates.is_primary = input.is_primary
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_contacts')
       .update(updates)
       .eq('id', contactId)
@@ -98,7 +98,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('vendor_contacts')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', contactId)

@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('employee_documents')
       .select('*')
       .eq('id', id)
@@ -84,7 +84,7 @@ export const PUT = createApiHandler(
     if (input.file_name !== undefined) updates.file_name = input.file_name
     if (input.file_size_bytes !== undefined) updates.file_size_bytes = input.file_size_bytes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('employee_documents')
       .update(updates)
       .eq('id', id)
@@ -122,7 +122,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('employee_documents')
       .delete()
       .eq('id', id)

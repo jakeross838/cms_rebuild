@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('inventory_locations')
       .select('*')
       .eq('id', id)
@@ -75,7 +75,7 @@ export const PUT = createApiHandler(
     if (input.job_id !== undefined) updates.job_id = input.job_id
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('inventory_locations')
       .update(updates)
       .eq('id', id)
@@ -109,7 +109,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('inventory_locations')
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)

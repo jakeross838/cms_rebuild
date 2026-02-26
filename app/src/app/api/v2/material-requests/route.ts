@@ -45,7 +45,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('material_requests')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -101,7 +101,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Create the request
-    const { data: request, error: requestError } = await (supabase as any)
+    const { data: request, error: requestError } = await supabase
       .from('material_requests')
       .insert({
         company_id: ctx.companyId!,
@@ -132,12 +132,12 @@ export const POST = createApiHandler(
       notes: item.notes ?? null,
     }))
 
-    await (supabase as any)
+    await supabase
       .from('material_request_items')
       .insert(lineItems)
 
     // Fetch the request with items
-    const { data: items } = await (supabase as any)
+    const { data: items } = await supabase
       .from('material_request_items')
       .select('*')
       .eq('request_id', request.id)

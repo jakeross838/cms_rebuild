@@ -40,7 +40,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_validation_results')
       .select('*')
       .eq('id', validationId)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
     if (input.severity !== undefined) updates.severity = input.severity
     if (input.message !== undefined) updates.message = input.message
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('migration_validation_results')
       .update(updates)
       .eq('id', validationId)

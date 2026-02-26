@@ -50,7 +50,7 @@ export const PUT = createApiHandler(
     if (input.filters !== undefined) updates.filters = input.filters
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('custom_report_widgets')
       .update(updates)
       .eq('id', widgetId)
@@ -91,7 +91,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('custom_report_widgets')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', widgetId)

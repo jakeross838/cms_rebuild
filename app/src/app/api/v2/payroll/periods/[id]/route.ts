@@ -24,7 +24,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('payroll_periods')
       .select('*')
       .eq('id', id)
@@ -39,7 +39,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch associated exports
-    const { data: exports } = await (supabase as any)
+    const { data: exports } = await supabase
       .from('payroll_exports')
       .select('*')
       .eq('payroll_period_id', id)
@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify period exists
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('payroll_periods')
       .select('status')
       .eq('id', id)
@@ -116,7 +116,7 @@ export const PUT = createApiHandler(
       updates.exported_by = ctx.user!.id
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('payroll_periods')
       .update(updates)
       .eq('id', id)

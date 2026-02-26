@@ -38,7 +38,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('campaign_contacts')
       .select('*')
       .eq('id', contactId)
@@ -107,7 +107,7 @@ export const PUT = createApiHandler(
       updates.converted_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('campaign_contacts')
       .update(updates)
       .eq('id', contactId)
@@ -144,7 +144,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('campaign_contacts')
       .delete()
       .eq('id', contactId)

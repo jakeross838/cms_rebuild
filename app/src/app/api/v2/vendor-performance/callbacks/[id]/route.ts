@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_warranty_callbacks')
       .select('*')
       .eq('id', id)
@@ -76,7 +76,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify it exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_warranty_callbacks')
       .select('id')
       .eq('id', id)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
     if (input.resolution_cost !== undefined) updates.resolution_cost = input.resolution_cost
     if (input.resolution_notes !== undefined) updates.resolution_notes = input.resolution_notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_warranty_callbacks')
       .update(updates)
       .eq('id', id)
@@ -139,7 +139,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_warranty_callbacks')
       .select('id')
       .eq('id', id)
@@ -154,7 +154,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('vendor_warranty_callbacks')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

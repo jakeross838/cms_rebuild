@@ -38,7 +38,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify CO exists and is in pending_approval status
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('change_orders')
       .select('id, status')
       .eq('id', id)
@@ -74,7 +74,7 @@ export const POST = createApiHandler(
       updateData.client_approved_at = now
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('change_orders')
       .update(updateData)
       .eq('id', id)
@@ -91,7 +91,7 @@ export const POST = createApiHandler(
     }
 
     // Record history
-    await (supabase as any)
+    await supabase
       .from('change_order_history')
       .insert({
         change_order_id: id,

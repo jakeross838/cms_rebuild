@@ -71,7 +71,7 @@ export const PUT = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('user_notification_settings')
       .upsert(
         {

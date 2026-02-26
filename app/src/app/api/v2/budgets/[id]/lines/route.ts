@@ -61,7 +61,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('budget_lines')
       .select('*', { count: 'exact' })
       .eq('budget_id', budgetId)
@@ -120,7 +120,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify budget exists and belongs to company
-    const { data: budget, error: budgetError } = await (supabase as any)
+    const { data: budget, error: budgetError } = await supabase
       .from('budgets')
       .select('id, job_id')
       .eq('id', budgetId)
@@ -135,7 +135,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('budget_lines')
       .insert({
         budget_id: budgetId,

@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('document_extractions')
       .select('*')
       .eq('id', id)
@@ -45,7 +45,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch feedback count
-    const { data: feedback } = await (supabase as any)
+    const { data: feedback } = await supabase
       .from('ai_feedback')
       .select('id')
       .eq('extraction_id', id)
@@ -90,7 +90,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('document_extractions')
       .select('id, status')
       .eq('id', id)
@@ -112,7 +112,7 @@ export const PUT = createApiHandler(
     if (input.reviewed_by !== undefined) updates.reviewed_by = input.reviewed_by
     if (input.reviewed_at !== undefined) updates.reviewed_at = input.reviewed_at
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('document_extractions')
       .update(updates)
       .eq('id', id)

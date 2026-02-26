@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('builder_terminology')
       .select('*')
       .eq('id', id)
@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
     if (input.context !== undefined) updates.context = input.context
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('builder_terminology')
       .update(updates)
       .eq('id', id)
@@ -120,7 +120,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('builder_terminology')
       .select('id')
       .eq('id', id)
@@ -134,7 +134,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('builder_terminology')
       .delete()
       .eq('id', id)

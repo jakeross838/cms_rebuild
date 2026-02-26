@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('lead_activities')
       .select('*')
       .eq('id', activityId)
@@ -86,7 +86,7 @@ export const PUT = createApiHandler(
     if (input.activity_date !== undefined) updates.activity_date = input.activity_date
     if (input.duration_minutes !== undefined) updates.duration_minutes = input.duration_minutes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('lead_activities')
       .update(updates)
       .eq('id', activityId)
@@ -125,7 +125,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('lead_activities')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', activityId)

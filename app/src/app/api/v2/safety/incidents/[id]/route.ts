@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('safety_incidents')
       .select('*')
       .eq('id', id)
@@ -76,7 +76,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify incident exists and is not closed
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('safety_incidents')
       .select('id, status')
       .eq('id', id)
@@ -135,7 +135,7 @@ export const PUT = createApiHandler(
       updates.closed_by = ctx.user!.id
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('safety_incidents')
       .update(updates)
       .eq('id', id)
@@ -173,7 +173,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('safety_incidents')
       .select('id')
       .eq('id', id)
@@ -188,7 +188,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('safety_incidents')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

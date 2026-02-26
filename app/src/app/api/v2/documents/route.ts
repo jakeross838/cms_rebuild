@@ -64,7 +64,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    let query = (supabase as any)
+    let query = supabase
       .from('documents')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
@@ -135,7 +135,7 @@ export const POST = createApiHandler(
     const storagePath = buildStoragePath(ctx.companyId!, input.job_id ?? null, input.filename, documentId)
 
     // Create document record
-    const { data: doc, error: docError } = await (supabase as any)
+    const { data: doc, error: docError } = await supabase
       .from('documents')
       .insert({
         id: documentId,
@@ -160,7 +160,7 @@ export const POST = createApiHandler(
     }
 
     // Create initial version record
-    await (supabase as any)
+    await supabase
       .from('document_versions')
       .insert({
         document_id: documentId,
@@ -177,7 +177,7 @@ export const POST = createApiHandler(
         document_id: documentId,
         tag,
       }))
-      await (supabase as any).from('document_tags').insert(tagRecords)
+      await supabase.from('document_tags').insert(tagRecords)
     }
 
     return NextResponse.json({ data: doc, requestId: ctx.requestId }, { status: 201 })

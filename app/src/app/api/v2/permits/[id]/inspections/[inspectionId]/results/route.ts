@@ -43,7 +43,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection ownership
-    const { error: inspError } = await (supabase as any)
+    const { error: inspError } = await supabase
       .from('permit_inspections')
       .select('id')
       .eq('id', inspectionId)
@@ -57,7 +57,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('inspection_results')
       .select('*', { count: 'exact' })
       .eq('inspection_id', inspectionId)
@@ -101,7 +101,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection ownership
-    const { data: inspection, error: inspError } = await (supabase as any)
+    const { data: inspection, error: inspError } = await supabase
       .from('permit_inspections')
       .select('id, status')
       .eq('id', inspectionId)
@@ -115,7 +115,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('inspection_results')
       .insert({
         company_id: ctx.companyId!,
@@ -149,7 +149,7 @@ export const POST = createApiHandler(
     }
     const newStatus = statusMap[input.result]
     if (newStatus) {
-      await (supabase as any)
+      await supabase
         .from('permit_inspections')
         .update({
           status: newStatus,

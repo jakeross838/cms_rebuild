@@ -23,7 +23,7 @@ export const GET = createApiHandler(
   async (_req, ctx: ApiContext) => {
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('client_portal_settings')
       .select('*')
       .eq('company_id', ctx.companyId!)
@@ -62,7 +62,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Upsert: create if not exists, update if exists
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('client_portal_settings')
       .upsert({
         company_id: ctx.companyId!,

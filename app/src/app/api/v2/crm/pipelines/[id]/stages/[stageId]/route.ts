@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('pipeline_stages')
       .select('*')
       .eq('id', stageId)
@@ -86,7 +86,7 @@ export const PUT = createApiHandler(
     if (input.color !== undefined) updates.color = input.color
     if (input.is_active !== undefined) updates.is_active = input.is_active
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('pipeline_stages')
       .update(updates)
       .eq('id', stageId)
@@ -124,7 +124,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('pipeline_stages')
       .update({ is_active: false })
       .eq('id', stageId)

@@ -53,7 +53,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection belongs to company
-    const { data: inspection, error: inspError } = await (supabase as any)
+    const { data: inspection, error: inspError } = await supabase
       .from('safety_inspections')
       .select('id')
       .eq('id', inspectionId)
@@ -77,7 +77,7 @@ export const PUT = createApiHandler(
     if (input.photo_url !== undefined) updates.photo_url = input.photo_url
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('safety_inspection_items')
       .update(updates)
       .eq('id', itemId)
@@ -114,7 +114,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify inspection belongs to company
-    const { data: inspection, error: inspError } = await (supabase as any)
+    const { data: inspection, error: inspError } = await supabase
       .from('safety_inspections')
       .select('id')
       .eq('id', inspectionId)
@@ -129,7 +129,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('safety_inspection_items')
       .delete()
       .eq('id', itemId)

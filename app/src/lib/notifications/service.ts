@@ -73,10 +73,10 @@ export async function emitNotification(options: EmitOptions): Promise<{ notifica
     idempotency_key: `${eventType}:${entityId ?? 'none'}:${userId}:${Math.floor(Date.now() / 60000)}`,
   }))
 
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from('notifications')
-    .upsert(records, { onConflict: 'idempotency_key', ignoreDuplicates: true })
-    .select('id') as unknown as { data: { id: string }[] | null; error: { message: string } | null }
+    .upsert(records as never, { onConflict: 'idempotency_key', ignoreDuplicates: true })
+    .select('id')
 
   if (error) {
     throw new Error(`Failed to emit notifications: ${error.message}`)
@@ -92,9 +92,9 @@ export async function emitNotification(options: EmitOptions): Promise<{ notifica
       status: 'delivered' as const,
     }))
 
-    await (supabase as any)
+    await supabase
       .from('notification_deliveries')
-      .insert(deliveries)
+      .insert(deliveries as never)
   }
 
   return { notificationIds }

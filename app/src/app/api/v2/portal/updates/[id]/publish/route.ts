@@ -28,7 +28,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // First verify the post exists and is not deleted
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('portal_update_posts')
       .select('id, is_published')
       .eq('id', id)
@@ -50,7 +50,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('portal_update_posts')
       .update({
         is_published: true,

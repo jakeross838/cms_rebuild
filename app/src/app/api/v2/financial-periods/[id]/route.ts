@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('financial_periods')
       .select('*')
       .eq('id', id)
@@ -73,7 +73,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check the period is not locked
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('financial_periods')
       .select('id, status')
       .eq('id', id)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
     if (input.fiscal_year !== undefined) updates.fiscal_year = input.fiscal_year
     if (input.fiscal_quarter !== undefined) updates.fiscal_quarter = input.fiscal_quarter
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('financial_periods')
       .update(updates)
       .eq('id', id)

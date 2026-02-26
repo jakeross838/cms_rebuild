@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('kb_articles')
       .select('*')
       .eq('id', id)
@@ -77,7 +77,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify existence
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('kb_articles')
       .select('id')
       .eq('id', id)
@@ -99,7 +99,7 @@ export const PUT = createApiHandler(
     if (input.tags !== undefined) updates.tags = input.tags
     if (input.status !== undefined) updates.status = input.status
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('kb_articles')
       .update(updates)
       .eq('id', id)
@@ -137,7 +137,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('kb_articles')
       .select('id')
       .eq('id', id)
@@ -151,7 +151,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('kb_articles')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_sessions')
       .select('*')
       .eq('id', sessionId)
@@ -44,11 +44,11 @@ export const GET = createApiHandler(
 
     // Get milestone and checklist counts
     const [milestonesResult, checklistsResult] = await Promise.all([
-      (supabase as any).from('onboarding_milestones')
+      supabase.from('onboarding_milestones')
         .select('id', { count: 'exact', head: true })
         .eq('session_id', sessionId)
         .eq('company_id', ctx.companyId!),
-      (supabase as any).from('onboarding_checklists')
+      supabase.from('onboarding_checklists')
         .select('id', { count: 'exact', head: true })
         .eq('session_id', sessionId)
         .eq('company_id', ctx.companyId!),
@@ -107,7 +107,7 @@ export const PUT = createApiHandler(
       updateFields.skipped_at = new Date().toISOString()
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_sessions')
       .update(updateFields)
       .eq('id', sessionId)
@@ -140,7 +140,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('onboarding_sessions')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', sessionId)

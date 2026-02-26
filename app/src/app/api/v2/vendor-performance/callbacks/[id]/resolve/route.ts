@@ -48,7 +48,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify callback exists and is not already resolved
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_warranty_callbacks')
       .select('id, status, reported_date')
       .eq('id', id)
@@ -80,7 +80,7 @@ export const POST = createApiHandler(
       resolutionDays = Math.max(0, Math.round((resolved.getTime() - reported.getTime()) / (1000 * 60 * 60 * 24)))
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_warranty_callbacks')
       .update({
         status: 'resolved',

@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('material_requests')
       .select('*')
       .eq('id', id)
@@ -42,7 +42,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch line items
-    const { data: items } = await (supabase as any)
+    const { data: items } = await supabase
       .from('material_request_items')
       .select('*')
       .eq('request_id', id)
@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify request exists and is editable (draft or submitted only)
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('material_requests')
       .select('id, status')
       .eq('id', id)
@@ -111,7 +111,7 @@ export const PUT = createApiHandler(
     if (input.notes !== undefined) updates.notes = input.notes
     if (input.status !== undefined) updates.status = input.status
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('material_requests')
       .update(updates)
       .eq('id', id)
@@ -130,7 +130,7 @@ export const PUT = createApiHandler(
     // Update items if provided (replace all)
     if (input.items !== undefined) {
       // Delete existing items
-      await (supabase as any)
+      await supabase
         .from('material_request_items')
         .delete()
         .eq('request_id', id)
@@ -145,13 +145,13 @@ export const PUT = createApiHandler(
         notes: item.notes ?? null,
       }))
 
-      await (supabase as any)
+      await supabase
         .from('material_request_items')
         .insert(lineItems)
     }
 
     // Fetch updated items
-    const { data: items } = await (supabase as any)
+    const { data: items } = await supabase
       .from('material_request_items')
       .select('*')
       .eq('request_id', id)
@@ -179,7 +179,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify it's in draft status for deletion
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('material_requests')
       .select('id, status')
       .eq('id', id)
@@ -201,7 +201,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('material_requests')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)

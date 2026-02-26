@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfis')
       .select('*')
       .eq('id', id)
@@ -44,13 +44,13 @@ export const GET = createApiHandler(
     }
 
     // Fetch responses count
-    const { data: responses } = await (supabase as any)
+    const { data: responses } = await supabase
       .from('rfi_responses')
       .select('id')
       .eq('rfi_id', id)
 
     // Fetch routing entries
-    const { data: routing } = await (supabase as any)
+    const { data: routing } = await supabase
       .from('rfi_routing')
       .select('*')
       .eq('rfi_id', id)
@@ -96,7 +96,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify the RFI exists and is editable (draft or open)
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('rfis')
       .select('id, status')
       .eq('id', id)
@@ -132,7 +132,7 @@ export const PUT = createApiHandler(
     if (input.schedule_impact_days !== undefined) updates.schedule_impact_days = input.schedule_impact_days
     if (input.related_document_id !== undefined) updates.related_document_id = input.related_document_id
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfis')
       .update(updates)
       .eq('id', id)
@@ -171,7 +171,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Only draft RFIs can be deleted
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('rfis')
       .select('id, status')
       .eq('id', id)
@@ -193,7 +193,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('rfis')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

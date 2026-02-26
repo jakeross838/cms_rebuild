@@ -57,7 +57,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the selection exists and belongs to company
-    const { data: selection, error: selError } = await (supabase as any)
+    const { data: selection, error: selError } = await supabase
       .from('selections')
       .select('id, category_id')
       .eq('id', selectionId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch history for the selection's category
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('selection_history')
       .select('*', { count: 'exact' })
       .eq('category_id', selection.category_id)

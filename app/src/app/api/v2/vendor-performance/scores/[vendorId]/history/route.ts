@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const { page, limit, offset } = getPaginationParams(req)
     const supabase = await createClient()
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('vendor_score_history')
       .select('*', { count: 'exact' })
       .eq('vendor_id', vendorId)

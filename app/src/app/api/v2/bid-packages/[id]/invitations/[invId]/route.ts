@@ -41,7 +41,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -56,7 +56,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_invitations')
       .select('*')
       .eq('id', invId)
@@ -103,7 +103,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify bid package belongs to this company
-    const { data: bp, error: bpError } = await (supabase as any)
+    const { data: bp, error: bpError } = await supabase
       .from('bid_packages')
       .select('id')
       .eq('id', bidPackageId)
@@ -125,7 +125,7 @@ export const PUT = createApiHandler(
     if (input.responded_at !== undefined) updates.responded_at = input.responded_at
     if (input.decline_reason !== undefined) updates.decline_reason = input.decline_reason
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('bid_invitations')
       .update(updates)
       .eq('id', invId)

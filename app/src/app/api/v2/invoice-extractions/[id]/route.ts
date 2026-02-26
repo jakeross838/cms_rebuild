@@ -33,7 +33,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Get the extraction
-    const { data: extraction, error: extractionError } = await (supabase as any)
+    const { data: extraction, error: extractionError } = await supabase
       .from('invoice_extractions')
       .select('*')
       .eq('id', id)
@@ -48,14 +48,14 @@ export const GET = createApiHandler(
     }
 
     // Get line items
-    const { data: lineItems } = await (supabase as any)
+    const { data: lineItems } = await supabase
       .from('invoice_line_extractions')
       .select('*')
       .eq('extraction_id', id)
       .order('line_number', { ascending: true })
 
     // Get audit log
-    const { data: auditLog } = await (supabase as any)
+    const { data: auditLog } = await supabase
       .from('extraction_audit_log')
       .select('*')
       .eq('extraction_id', id)
@@ -102,7 +102,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify extraction exists and belongs to company
-    const { data: existing, error: fetchError } = await (supabase as any)
+    const { data: existing, error: fetchError } = await supabase
       .from('invoice_extractions')
       .select('id, status')
       .eq('id', id)
@@ -117,7 +117,7 @@ export const PUT = createApiHandler(
     }
 
     // Update extraction
-    const { data: updated, error: updateError } = await (supabase as any)
+    const { data: updated, error: updateError } = await supabase
       .from('invoice_extractions')
       .update({
         ...updates,

@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('punch_items')
       .select('*')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch photos
-    const { data: photos } = await (supabase as any)
+    const { data: photos } = await supabase
       .from('punch_item_photos')
       .select('*')
       .eq('punch_item_id', id)
@@ -102,7 +102,7 @@ export const PUT = createApiHandler(
     if (input.due_date !== undefined) updates.due_date = input.due_date
     if (input.cost_estimate !== undefined) updates.cost_estimate = input.cost_estimate
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('punch_items')
       .update(updates)
       .eq('id', id)
@@ -140,7 +140,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('punch_items')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

@@ -23,7 +23,7 @@ export const GET = createApiHandler(
   async (req, ctx: ApiContext) => {
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('builder_email_config')
       .select('*')
       .eq('company_id', ctx.companyId!)
@@ -60,7 +60,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing email config
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('builder_email_config')
       .select('id')
       .eq('company_id', ctx.companyId!)
@@ -81,7 +81,7 @@ export const PUT = createApiHandler(
       if (input.smtp_username !== undefined) updates.smtp_username = input.smtp_username
       if (input.smtp_encrypted_password !== undefined) updates.smtp_encrypted_password = input.smtp_encrypted_password
 
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('builder_email_config')
         .update(updates)
         .eq('company_id', ctx.companyId!)
@@ -98,7 +98,7 @@ export const PUT = createApiHandler(
       return NextResponse.json({ data, requestId: ctx.requestId })
     } else {
       // Create new
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('builder_email_config')
         .insert({
           company_id: ctx.companyId!,

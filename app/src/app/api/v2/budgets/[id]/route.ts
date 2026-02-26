@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('budgets')
       .select('*')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch summary counts for budget lines
-    const { data: lines } = await (supabase as any)
+    const { data: lines } = await supabase
       .from('budget_lines')
       .select('id, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount')
       .eq('budget_id', id)
@@ -98,7 +98,7 @@ export const PUT = createApiHandler(
     if (input.version !== undefined) updates.version = input.version
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('budgets')
       .update(updates)
       .eq('id', id)
@@ -136,7 +136,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('budgets')
       .update({ deleted_at: new Date().toISOString(), status: 'archived' })
       .eq('id', id)

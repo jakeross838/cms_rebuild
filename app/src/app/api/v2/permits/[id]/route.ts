@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permits')
       .select('*')
       .eq('id', id)
@@ -45,19 +45,19 @@ export const GET = createApiHandler(
     }
 
     // Fetch inspections count
-    const { data: inspections } = await (supabase as any)
+    const { data: inspections } = await supabase
       .from('permit_inspections')
       .select('id')
       .eq('permit_id', id)
 
     // Fetch documents count
-    const { data: documents } = await (supabase as any)
+    const { data: documents } = await supabase
       .from('permit_documents')
       .select('id')
       .eq('permit_id', id)
 
     // Fetch fees
-    const { data: fees } = await (supabase as any)
+    const { data: fees } = await supabase
       .from('permit_fees')
       .select('*')
       .eq('permit_id', id)
@@ -105,7 +105,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify the permit exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('permits')
       .select('id, status')
       .eq('id', id)
@@ -132,7 +132,7 @@ export const PUT = createApiHandler(
     if (input.conditions !== undefined) updates.conditions = input.conditions
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permits')
       .update(updates)
       .eq('id', id)
@@ -172,7 +172,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify permit exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('permits')
       .select('id, status')
       .eq('id', id)
@@ -195,7 +195,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('permits')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

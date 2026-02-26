@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('employees')
       .select('*')
       .eq('id', id)
@@ -45,13 +45,13 @@ export const GET = createApiHandler(
     }
 
     // Fetch certifications count
-    const { data: certs } = await (supabase as any)
+    const { data: certs } = await supabase
       .from('employee_certifications')
       .select('id')
       .eq('employee_id', id)
 
     // Fetch documents count
-    const { data: docs } = await (supabase as any)
+    const { data: docs } = await supabase
       .from('employee_documents')
       .select('id')
       .eq('employee_id', id)
@@ -118,7 +118,7 @@ export const PUT = createApiHandler(
     if (input.address !== undefined) updates.address = input.address
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('employees')
       .update(updates)
       .eq('id', id)
@@ -158,7 +158,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('employees')
       .select('id')
       .eq('id', id)
@@ -173,7 +173,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('employees')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

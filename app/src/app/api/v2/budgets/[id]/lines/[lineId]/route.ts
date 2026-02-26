@@ -64,7 +64,7 @@ export const PUT = createApiHandler(
     if (input.sort_order !== undefined) updates.sort_order = input.sort_order
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('budget_lines')
       .update(updates)
       .eq('id', lineId)
@@ -102,7 +102,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('budget_lines')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', lineId)

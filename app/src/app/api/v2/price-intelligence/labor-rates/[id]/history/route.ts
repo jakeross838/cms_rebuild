@@ -52,7 +52,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify labor rate exists and belongs to company
-    const { data: rate, error: rateError } = await (supabase as any)
+    const { data: rate, error: rateError } = await supabase
       .from('labor_rates')
       .select('id')
       .eq('id', rateId)
@@ -67,7 +67,7 @@ export const GET = createApiHandler(
       )
     }
 
-    let query = (supabase as any)
+    let query = supabase
       .from('labor_rate_history')
       .select('*', { count: 'exact' })
       .eq('labor_rate_id', rateId)

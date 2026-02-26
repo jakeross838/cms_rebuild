@@ -41,7 +41,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('warranty_claims')
       .select('*')
       .eq('id', claimId)
@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     }
 
     // Fetch history
-    const { data: history } = await (supabase as any)
+    const { data: history } = await supabase
       .from('warranty_claim_history')
       .select('*')
       .eq('claim_id', claimId)
@@ -104,7 +104,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify claim exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('warranty_claims')
       .select('id, status')
       .eq('id', claimId)
@@ -133,7 +133,7 @@ export const PUT = createApiHandler(
     if (input.due_date !== undefined) updates.due_date = input.due_date
     if (input.photos !== undefined) updates.photos = input.photos
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('warranty_claims')
       .update(updates)
       .eq('id', claimId)
@@ -153,7 +153,7 @@ export const PUT = createApiHandler(
 
     // Record history if status changed
     if (input.status && input.status !== existing.status) {
-      await (supabase as any)
+      await supabase
         .from('warranty_claim_history')
         .insert({
           claim_id: claimId,
@@ -187,7 +187,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('warranty_claims')
       .select('id')
       .eq('id', claimId)
@@ -203,7 +203,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('warranty_claims')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', claimId)

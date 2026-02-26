@@ -42,7 +42,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI belongs to company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id')
       .eq('id', rfiId)
@@ -57,7 +57,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfi_routing')
       .select('*')
       .eq('id', routeId)
@@ -104,7 +104,7 @@ export const PUT = createApiHandler(
     const supabase = await createClient()
 
     // Verify RFI belongs to company
-    const { data: rfi, error: rfiError } = await (supabase as any)
+    const { data: rfi, error: rfiError } = await supabase
       .from('rfis')
       .select('id')
       .eq('id', rfiId)
@@ -124,7 +124,7 @@ export const PUT = createApiHandler(
     if (input.status !== undefined) updates.status = input.status
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('rfi_routing')
       .update(updates)
       .eq('id', routeId)

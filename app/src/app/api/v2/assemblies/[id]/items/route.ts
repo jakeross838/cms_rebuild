@@ -58,7 +58,7 @@ export const GET = createApiHandler(
     const supabase = await createClient()
 
     // Verify the assembly belongs to this company
-    const { data: assembly, error: asmError } = await (supabase as any)
+    const { data: assembly, error: asmError } = await supabase
       .from('assemblies')
       .select('id')
       .eq('id', assemblyId)
@@ -73,7 +73,7 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, count, error } = await (supabase as any)
+    const { data, count, error } = await supabase
       .from('assembly_items')
       .select('*', { count: 'exact' })
       .eq('assembly_id', assemblyId)
@@ -121,7 +121,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify assembly exists and belongs to company
-    const { data: assembly, error: asmError } = await (supabase as any)
+    const { data: assembly, error: asmError } = await supabase
       .from('assemblies')
       .select('id')
       .eq('id', assemblyId)
@@ -136,7 +136,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('assembly_items')
       .insert({
         assembly_id: assemblyId,

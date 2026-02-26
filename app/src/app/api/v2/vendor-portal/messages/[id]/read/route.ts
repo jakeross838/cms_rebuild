@@ -27,7 +27,7 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Verify message exists
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('vendor_messages')
       .select('id, is_read')
       .eq('id', id)
@@ -44,7 +44,7 @@ export const POST = createApiHandler(
 
     if (existing.is_read) {
       // Already read, return current state
-      const { data } = await (supabase as any)
+      const { data } = await supabase
         .from('vendor_messages')
         .select('*')
         .eq('id', id)
@@ -53,7 +53,7 @@ export const POST = createApiHandler(
       return NextResponse.json({ data, requestId: ctx.requestId })
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('vendor_messages')
       .update({
         is_read: true,

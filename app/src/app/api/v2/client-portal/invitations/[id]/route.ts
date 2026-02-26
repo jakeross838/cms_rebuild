@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('client_portal_invitations')
       .select('*')
       .eq('id', invitationId)
@@ -81,7 +81,7 @@ export const PUT = createApiHandler(
       updateFields.accepted_by = ctx.user!.id
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('client_portal_invitations')
       .update(updateFields)
       .eq('id', invitationId)
@@ -114,7 +114,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('client_portal_invitations')
       .update({
         deleted_at: new Date().toISOString(),

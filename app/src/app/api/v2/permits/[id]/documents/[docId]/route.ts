@@ -21,7 +21,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('permit_documents')
       .select('*')
       .eq('id', docId)
@@ -52,7 +52,7 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
 
     // Verify ownership
-    const { data: existing, error: existError } = await (supabase as any)
+    const { data: existing, error: existError } = await supabase
       .from('permit_documents')
       .select('id')
       .eq('id', docId)
@@ -66,7 +66,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('permit_documents')
       .delete()
       .eq('id', docId)

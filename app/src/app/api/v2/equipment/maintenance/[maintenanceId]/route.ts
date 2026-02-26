@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('equipment_maintenance')
       .select('*')
       .eq('id', maintenanceId)
@@ -89,7 +89,7 @@ export const PUT = createApiHandler(
     if (input.total_cost !== undefined) updates.total_cost = input.total_cost
     if (input.notes !== undefined) updates.notes = input.notes
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('equipment_maintenance')
       .update(updates)
       .eq('id', maintenanceId)
@@ -126,7 +126,7 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('equipment_maintenance')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', maintenanceId)
