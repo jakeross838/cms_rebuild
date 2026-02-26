@@ -1,5 +1,23 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 11 — Full RBAC & Audit Action Coverage (2026-02-26)
+
+### RBAC Role Restrictions — 335 Operational V2 Write Endpoints
+All v2 write endpoints (POST, PUT, DELETE) now enforce role-based access:
+- **Admin-only (48 files):** webhooks, branding/*, data-migration/*, onboarding/*, marketing-site/*, analytics/* → `['owner', 'admin']`
+- **PM+ (105 files):** bid-packages, contracts, rfis, selections, permits, crm, vendor-perf, warranties, schedule-intel, ai-docs, marketplace, integrations → `['owner', 'admin', 'pm']`
+- **PM+office (41 files):** estimates, price-intel, labor-rates, inventory, material-requests, assemblies, change-orders/items, reports, advanced-reports → `['owner', 'admin', 'pm', 'office']`
+- **Superintendent+ (55 files):** equipment, safety, schedule, daily-logs, punch-list, quality-checklists, maintenance, weather → `['owner', 'admin', 'pm', 'superintendent']`
+- **PM+ portal/marketing (44 files):** client-portal, vendor-portal, portal, marketing, vendors → `['owner', 'admin', 'pm']`
+- **All internal (43 files):** documents, folders, notifications, mobile, support, time-entries, training → `['owner', 'admin', 'pm', 'superintendent', 'office', 'field']`
+
+### Audit Actions — 336 V2 Write Endpoints (533 unique action names)
+Every write handler now has an `auditAction` for full accountability:
+- CRUD operations: `domain.create`, `domain.update`, `domain.archive`
+- Status transitions: `domain.approve`, `domain.submit`, `domain.complete`, `domain.close`, `domain.publish`
+- Special operations: `time_entry.clock_in`, `time_entry.clock_out`, `punch_item.verify`, `vendor_portal_invitation.revoke`
+- Also added requiredRoles to 6 'heavy' rate-limited endpoints (ai-documents, documents upload) missed in prior pass
+
 ## Session 10 — V1 Error Handling, Import Cleanup, DB Indexes (2026-02-26)
 
 ### V1 Route Error Handling Fix (9 files)

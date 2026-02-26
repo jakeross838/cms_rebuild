@@ -1,5 +1,22 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 11 — Full RBAC & Audit Action Coverage
+
+### Why
+1. **335 operational v2 write endpoints had no role restrictions** — Any authenticated user (including read_only) could call POST/PUT/DELETE on equipment, safety, scheduling, CRM, and other operational endpoints. While the project runs in "open" permissions mode, this is defense-in-depth for when v2 "standard" mode is enabled.
+2. **336 v2 write endpoints had no audit trail** — Write operations across all domains (equipment maintenance, safety incidents, daily logs, vendor portal actions, etc.) weren't being recorded in the audit log, making it impossible to trace who changed what.
+3. **6 'heavy' rate-limited endpoints missed in prior RBAC pass** — AI document processing and document upload endpoints had `rateLimit: 'heavy'` instead of `rateLimit: 'api'`, so the prior batch sed didn't match their config pattern.
+
+### What was done
+- Added `requiredRoles` to 335 v2 write endpoint files, categorized into 6 permission tiers by domain
+- Added `auditAction` to 336 v2 write endpoint files — 533 unique action names following `domain.operation` convention
+- Fixed 11 action route names (approve, complete, resolve, etc.) that were initially misnamed
+- Added both `requiredRoles` and `auditAction` to 6 'heavy' rate-limited endpoints
+
+### Commits
+- `731f070` — Add RBAC role restrictions to 335 operational v2 write endpoints
+- `796a9fa` — Add audit actions to 336 v2 write endpoints for full accountability
+
 ## 2026-02-26: Session 10 — V1 Error Handling, Import Cleanup, DB Indexes
 
 ### Why

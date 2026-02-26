@@ -1,5 +1,26 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 11 — Full RBAC & Audit Action Coverage (2026-02-26)
+
+### RBAC Role Restrictions (335 files)
+- [ ] POST /api/v2/webhooks — requires owner or admin role
+- [ ] POST /api/v2/data-migration/jobs — requires owner or admin role
+- [ ] POST /api/v2/bid-packages — requires owner, admin, or pm role
+- [ ] POST /api/v2/estimates — requires owner, admin, pm, or office role
+- [ ] POST /api/v2/equipment — requires owner, admin, pm, or superintendent role
+- [ ] POST /api/v2/time-entries — requires any internal role (not read_only)
+- [ ] POST /api/v2/documents — requires any internal role (not read_only)
+- [ ] PUT /api/v2/vendor-portal/settings — requires owner, admin, or pm role
+- [ ] read_only users cannot access any write endpoint (POST/PUT/DELETE)
+
+### Audit Actions (336 files, 533 unique actions)
+- [ ] POST /api/v2/equipment — creates audit log entry with action 'equipment.create'
+- [ ] PUT /api/v2/daily-logs/:id — creates audit log entry with action 'daily_log.update'
+- [ ] DELETE /api/v2/warranties/:id — creates audit log entry with action 'warranty.archive'
+- [ ] POST /api/v2/daily-logs/:id/approve — creates audit log entry with action 'daily_log.approve'
+- [ ] POST /api/v2/time-entries/clock-in — creates audit log entry with action 'time_entry.clock_in'
+- [ ] POST /api/v2/punch-list/:id/verify — creates audit log entry with action 'punch_item.verify'
+
 ## Session 10 — V1 Error Handling, Import Cleanup, DB Indexes (2026-02-26)
 
 ### V1 Error Handling
