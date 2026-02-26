@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export function ArchiveJobButton({ jobId }: { jobId: string }) {
   const [archiving, setArchiving] = useState(false)
@@ -17,10 +18,10 @@ export function ArchiveJobButton({ jobId }: { jobId: string }) {
     setArchiving(true)
 
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { alert('Not authenticated'); setArchiving(false); return }
+    if (!user) { toast.error('Not authenticated'); setArchiving(false); return }
     const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
     const companyId = profile?.company_id
-    if (!companyId) { alert('No company found'); setArchiving(false); return }
+    if (!companyId) { toast.error('No company found'); setArchiving(false); return }
 
     const { error } = await supabase
       .from('jobs')
@@ -28,10 +29,11 @@ export function ArchiveJobButton({ jobId }: { jobId: string }) {
       .eq('id', jobId)
       .eq('company_id', companyId)
     if (error) {
-      alert('Failed to archive job')
+      toast.error('Failed to archive job')
       setArchiving(false)
       return
     }
+    toast.success('Job archived')
     router.push('/jobs')
     router.refresh()
   }
