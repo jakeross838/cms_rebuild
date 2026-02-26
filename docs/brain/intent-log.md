@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Job-Scoped Page Security Hardening
+
+### Why
+All 61 job-scoped pages (list, detail, create) under `/jobs/[id]/` were querying sub-resources by `job_id` alone without verifying the job belongs to the authenticated user's company. If a user guessed another company's job UUID, they could access, edit, or create records in that job — bypassing tenant isolation. While Supabase RLS policies provide a first line of defense, defense-in-depth requires application-level verification too.
+
+### What was done
+1. **23 SSR list pages**: Added `getUser()` → company_id lookup → `.eq('company_id', companyId)` on job query (or new `jobCheck` query for pages that had no existing job query)
+2. **18 client detail pages**: Added `companyId` state, auth + company_id in load functions, job ownership verification, and `.eq('job_id', jobId)` on all update/archive operations
+3. **20 client create pages**: Added `jobCheck` query after company_id resolution but before any INSERT
+4. **Job edit page**: Added auth + company_id on load, company_id on update
+
+### Key decisions
+- SSR pages use `notFound()` for invalid job (404 is appropriate for URL-manipulated access)
+- Client pages use `setError()` for invalid job (gentler UX for edge cases)
+- Used `cid` variable inside load functions to avoid shadowing `companyId` state variable
+- Added `.eq('job_id', jobId)` to writes even though ID alone is sufficient — belt-and-suspenders for multi-tenant safety
+
+---
+
 ## 2026-02-25: Change Orders CRUD Pages
 
 ### Why

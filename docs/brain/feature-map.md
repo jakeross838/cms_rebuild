@@ -1,5 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Job-Scoped Page Security Hardening (2026-02-25)
+
+### 23 SSR List Pages (`/jobs/[id]/*`)
+- All now verify user auth via `supabase.auth.getUser()` + redirect to `/login`
+- All resolve `company_id` from user profile
+- All verify job belongs to company via `.eq('company_id', companyId)` on job query
+- Pages with existing job query: budget, change-orders, daily-logs, draws, files, lien-waivers, punch-list, purchase-orders, rfis, schedule, property, reports
+- Pages that needed new job ownership query: communications, inspections, inventory, invoices, permits, photos, selections, submittals, team, time-clock, warranties
+
+### 18 Client Detail Pages (`/jobs/[id]/*/[itemId]`)
+- All now have `companyId` state + auth + company_id lookup in load function
+- All verify job belongs to company before loading record
+- All include `.eq('job_id', jobId)` on update and archive operations
+- Pages: budget/[lineId], change-orders/[coId], communications/[commId], daily-logs/[logId], draws/[drawId], files/[fileId], inspections/[inspectionId], invoices/[invoiceId], lien-waivers/[waiverId], permits/[permitId], photos/[photoId], purchase-orders/[poId], rfis/[rfiId], schedule/[taskId], selections/[selectionId], submittals/[submittalId], time-clock/[entryId], warranties/[warrantyId]
+
+### 20 Client Create Pages (`/jobs/[id]/*/new`)
+- All verify job belongs to user's company before allowing INSERT
+- Pattern: `supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()`
+- Pages: budget/new, change-orders/new, communications/new, daily-logs/new, draws/new, files/new, inspections/new, inventory/new, lien-waivers/new, permits/new, photos/new, purchase-orders/new, rfis/new, schedule/new, selections/new, submittals/new, team/new, time-clock/new, warranties/new, punch-list/new
+
+### Job Edit Page (`/jobs/[id]/edit`)
+- Auth + company_id + job ownership on load (`.eq('company_id', cid)` on job query)
+- company_id on update (`.eq('company_id', companyId)` on save)
+
+---
+
 ## Change Orders CRUD Pages (2026-02-25)
 
 ### Create Change Order (`/change-orders/new`)

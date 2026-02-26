@@ -1,5 +1,40 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Job-Scoped Security Test Cases (2026-02-25)
+
+### SSR List Pages (`/jobs/[id]/*`)
+| Test | Expected |
+|------|----------|
+| Unauthenticated access | Redirects to `/login` |
+| User without company_id | Redirects to `/login` |
+| Job ID from different company | Returns 404 via `notFound()` |
+| Valid job + valid company | Page loads with data |
+
+### Client Detail Pages (`/jobs/[id]/*/[itemId]`)
+| Test | Expected |
+|------|----------|
+| Unauthenticated user | Shows "Not authenticated" error |
+| User without company_id | Shows "No company found" error |
+| Job from different company | Shows "Job not found" error |
+| Valid record from valid job | Loads record, edit/archive work |
+| Update operation | Includes `.eq('job_id', jobId)` in update query |
+| Archive operation | Includes `.eq('job_id', jobId)` in archive query |
+
+### Client Create Pages (`/jobs/[id]/*/new`)
+| Test | Expected |
+|------|----------|
+| Job from different company | Throws "Job not found or access denied" |
+| Valid job | INSERT succeeds with company_id + job_id |
+
+### Job Edit Page (`/jobs/[id]/edit`)
+| Test | Expected |
+|------|----------|
+| Job from different company | Shows "Job not found" error |
+| Valid job load | Loads job data with company_id filter |
+| Save changes | Update includes `.eq('company_id', companyId)` |
+
+---
+
 ## Change Orders CRUD Test Cases (2026-02-25)
 
 ### Create Change Order (`/change-orders/new`)

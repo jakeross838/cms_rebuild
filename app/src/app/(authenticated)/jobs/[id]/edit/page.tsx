@@ -60,6 +60,7 @@ export default function EditJobPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<JobFormData>({
     name: '',
@@ -78,10 +79,18 @@ export default function EditJobPage() {
 
   useEffect(() => {
     async function loadJob() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const cid = profile?.company_id
+      if (!cid) { setError('No company found'); setLoading(false); return }
+      setCompanyId(cid)
+
       const { data, error: fetchError } = await supabase
         .from('jobs')
         .select('*')
         .eq('id', jobId)
+        .eq('company_id', cid)
         .single()
 
       if (fetchError || !data) {
@@ -143,6 +152,7 @@ export default function EditJobPage() {
           target_completion: formData.target_completion || null,
         })
         .eq('id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
