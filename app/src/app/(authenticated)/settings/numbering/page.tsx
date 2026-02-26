@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface NumberingPatternData {
   entityType: string
@@ -124,8 +125,11 @@ export default function NumberingPage() {
       setSuccess(editingEntity)
       setTimeout(() => setSuccess(null), 3000)
       setEditingEntity(null)
+      toast.success('Numbering pattern saved')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const msg = (err as Error)?.message || 'Failed to save'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setSaving(false)
     }

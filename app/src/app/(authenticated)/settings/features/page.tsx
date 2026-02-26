@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { FeatureFlagKey, SubscriptionPlan } from '@/lib/config/types'
+import { toast } from 'sonner'
 
 interface FlagData {
   key: FeatureFlagKey
@@ -98,8 +99,11 @@ export default function FeaturesPage() {
       setOriginalFlags(orig)
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
+      toast.success('Feature flags saved')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const msg = (err as Error)?.message || 'Failed to save'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setSaving(false)
     }

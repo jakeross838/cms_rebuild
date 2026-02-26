@@ -8,6 +8,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
 
 interface Term {
   key: string
@@ -110,8 +111,11 @@ export default function TerminologyPage() {
       setEdits(new Map())
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
+      toast.success('Terminology saved')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const msg = (err as Error)?.message || 'Failed to save'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setSaving(false)
     }
@@ -132,8 +136,11 @@ export default function TerminologyPage() {
         next.delete(termKey)
         return next
       })
+      toast.success('Term reset to default')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to reset term')
+      const msg = (err as Error)?.message || 'Failed to reset term'
+      setError(msg)
+      toast.error(msg)
     }
   }
 
@@ -148,8 +155,11 @@ export default function TerminologyPage() {
       const data = await res.json()
       setTerms(data.terms)
       setEdits(new Map())
+      toast.success('All terminology reset to defaults')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to reset')
+      const msg = (err as Error)?.message || 'Failed to reset'
+      setError(msg)
+      toast.error(msg)
     }
   }
 

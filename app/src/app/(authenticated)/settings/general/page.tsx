@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { toast } from 'sonner'
 
 interface CompanyProfile {
   id: string
@@ -176,8 +177,11 @@ export default function GeneralSettingsPage() {
       setCompany(data.company)
       setSettings(data.settings)
       showSuccess(tab)
+      toast.success('Settings saved')
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
+      const msg = (err as Error)?.message || 'Failed to save'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setSaving(null)
     }

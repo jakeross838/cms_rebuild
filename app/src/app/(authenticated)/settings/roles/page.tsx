@@ -18,6 +18,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/types/database'
+import { toast } from 'sonner'
 
 interface Role {
   id: string
@@ -97,8 +98,11 @@ export default function RolesPage() {
       }
 
       fetchRoles()
+      toast.success('Role deleted')
     } catch (err) {
-      alert((err as Error)?.message || 'Failed to delete role')
+      const msg = (err as Error)?.message || 'Failed to delete role'
+      toast.error(msg)
+      alert(msg)
     } finally {
       setDeletingId(null)
     }

@@ -20,6 +20,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface Phase {
   id: string
@@ -135,8 +136,11 @@ export default function PhasesPage() {
 
       setShowModal(false)
       fetchPhases()
+      toast.success(editingPhase ? 'Phase updated' : 'Phase created')
     } catch (err) {
-      setFormError((err as Error)?.message || 'Failed to save')
+      const msg = (err as Error)?.message || 'Failed to save'
+      setFormError(msg)
+      toast.error(msg)
     } finally {
       setSaving(false)
     }
@@ -153,8 +157,11 @@ export default function PhasesPage() {
         throw new Error(data.message || 'Failed to delete')
       }
       fetchPhases()
+      toast.success('Phase deleted')
     } catch (err) {
-      alert((err as Error)?.message || 'Failed to delete')
+      const msg = (err as Error)?.message || 'Failed to delete'
+      toast.error(msg)
+      alert(msg)
     } finally {
       setDeletingId(null)
     }
