@@ -11,6 +11,21 @@
 - `cost-codes/[id]` GET: Added `.is('deleted_at', null)` — was returning archived cost codes
 - `workflows/[entityType]` PUT: Added `.is('deleted_at', null)` on is_default update — could accidentally unset default on archived workflows
 
+### RBAC Role Restrictions Added (58 files)
+- **Financial domain** (AP/AR/GL/budgets/POs/draws/change-orders/lien-waivers/invoices/contracts/cost-transactions/financial-periods): `requiredRoles: ['owner', 'admin', 'pm', 'office']`
+- **Payroll**: `requiredRoles: ['owner', 'admin']`
+- **API keys/branding**: `requiredRoles: ['owner', 'admin']`
+- **Client create/update**: `requiredRoles: ['owner', 'admin', 'pm']`
+- **Vendor create/update**: `requiredRoles: ['owner', 'admin']`
+
+### HR Audit Actions Added (8 files, 13 write operations)
+- All HR CRUD (certifications, departments, documents, positions) now have `auditAction`
+- Actions: `hr_certification.create/update/archive`, `hr_department.create/update/archive`, `hr_document.create/update/archive`, `hr_position.create/update/deactivate`
+
+### Type Cast Cleanup (8 files)
+- 5 soft-delete `as any` → `as never` for consistency
+- 4 stale `eslint-disable-next-line` comments removed
+
 ### Duplicate Import Consolidation (204 files)
 - All v2 API routes had `import { mapDbError } from '@/lib/api/middleware'` on a separate line
 - Merged into the existing destructured import block — pure cleanup, no behavior change

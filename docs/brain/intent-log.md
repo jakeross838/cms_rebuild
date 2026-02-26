@@ -11,6 +11,9 @@
 
 ### What was done
 - Added `mapDbError` import + usage to 8 v1 route files, added `.is('deleted_at', null)` to 2 queries
+- Added `requiredRoles` to 58 financial/admin/HR write endpoints
+- Added `auditAction` to 13 HR write operations and 3 payroll operations
+- Normalized 5 `as any` → `as never`, removed 4 stale eslint-disable comments
 - Consolidated 204 duplicate `import { mapDbError }` lines into main import block
 - Applied 72 database indexes via Supabase MCP (70 active-record + 2 FK indexes)
 - Created local migration files for reproducibility
@@ -18,6 +21,9 @@
 ### Commits
 - `a929e7b` — Fix v1 route error handling — use mapDbError instead of generic 500s (9 files)
 - `7177928` — Consolidate duplicate middleware imports across 204 API route files
+- `8ff18eb` — Add RBAC role restrictions to 58 financial/admin write endpoints
+- `2327223` — Fix type casts (as any → as never) and remove stale eslint-disable comments
+- `71a9dda` — Add audit actions to 13 HR write endpoints
 - `10774e7` — Add active-record partial indexes to 70 tables (DB performance)
 - `7c613b5` — Add missing FK indexes on lien_waiver_tracking
 

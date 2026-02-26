@@ -20,6 +20,20 @@
 - [ ] GET /api/v1/cost-codes/:id — returns 404 for archived cost codes (deleted_at IS NOT NULL)
 - [ ] PUT /api/v1/workflows/:entityType — is_default unset only applies to non-archived workflows
 
+### RBAC Role Restrictions
+- [ ] POST /api/v2/ap/bills — requires owner, admin, pm, or office role
+- [ ] POST /api/v2/gl/journal-entries — requires owner, admin, pm, or office role
+- [ ] POST /api/v2/api-keys — requires owner or admin role
+- [ ] PUT /api/v2/branding — requires owner or admin role
+- [ ] POST /api/v2/payroll/periods — requires owner or admin role
+- [ ] POST /api/v1/clients — requires owner, admin, or pm role
+- [ ] POST /api/v1/vendors — requires owner or admin role
+
+### HR Audit Actions
+- [ ] POST /api/v2/hr/certifications — creates audit log entry
+- [ ] PUT /api/v2/hr/departments/:id — creates audit log entry
+- [ ] DELETE /api/v2/hr/documents/:id — creates audit log entry
+
 ### Import Consolidation
 - [ ] All 430 API route files compile with zero TypeScript errors
 - [ ] No file has duplicate imports from '@/lib/api/middleware'
