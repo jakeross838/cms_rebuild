@@ -108,6 +108,7 @@ export default async function CostCodesPage({
               type="search"
               name="search"
               placeholder="Search cost codes..."
+              aria-label="Search cost codes"
               defaultValue={params.search}
               className="pl-10"
             />

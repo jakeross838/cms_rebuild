@@ -102,7 +102,7 @@ export default async function FilesPage({
       {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <form><Input type="search" name="search" placeholder="Search files..." defaultValue={sp.search} className="pl-10" /></form>
+        <form><Input type="search" name="search" placeholder="Search files..." aria-label="Search files" defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {/* File list */}

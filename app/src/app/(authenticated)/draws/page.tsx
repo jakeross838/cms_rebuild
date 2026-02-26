@@ -70,7 +70,8 @@ export default async function DrawsPage({
             <Input
               type="search"
               name="search"
-              placeholder="Search draw requests..."
+              placeholder="Search draws..."
+              aria-label="Search draws"
               defaultValue={params.search}
               className="pl-10"
             />

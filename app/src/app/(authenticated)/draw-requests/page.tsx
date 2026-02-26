@@ -119,7 +119,8 @@ export default async function DrawRequestsPage({
             <Input
               type="search"
               name="search"
-              placeholder="Search by lender reference..."
+              placeholder="Search draw requests..."
+              aria-label="Search draw requests"
               defaultValue={params.search}
               className="pl-10"
             />

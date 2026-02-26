@@ -68,7 +68,7 @@ export default async function ReceivablesPage({
 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <form><Input type="search" name="search" placeholder="Search receivables..." defaultValue={params.search} className="pl-10" /></form>
+        <form><Input type="search" name="search" placeholder="Search receivables..." aria-label="Search receivables" defaultValue={params.search} className="pl-10" /></form>
       </div>
 
       <Card>

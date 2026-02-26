@@ -89,7 +89,7 @@ export default async function LeadsPage({
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <form><Input type="search" name="search" placeholder="Search leads..." defaultValue={params.search} className="pl-10" /></form>
+          <form><Input type="search" name="search" placeholder="Search leads..." aria-label="Search leads" defaultValue={params.search} className="pl-10" /></form>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
           {statusFilters.map((filter) => (

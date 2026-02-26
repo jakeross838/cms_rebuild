@@ -108,6 +108,7 @@ export default async function PurchaseOrdersPage({
               type="search"
               name="search"
               placeholder="Search purchase orders..."
+              aria-label="Search purchase orders"
               defaultValue={params.search}
               className="pl-10"
             />

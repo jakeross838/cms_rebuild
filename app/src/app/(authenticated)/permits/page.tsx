@@ -84,6 +84,7 @@ export default async function PermitsPage({
               type="search"
               name="search"
               placeholder="Search by permit number..."
+              aria-label="Search permits"
               defaultValue={params.search}
               className="pl-10"
             />

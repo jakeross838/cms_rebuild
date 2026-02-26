@@ -85,6 +85,7 @@ export default async function VendorsPage({
               type="search"
               name="search"
               placeholder="Search vendors..."
+              aria-label="Search vendors"
               defaultValue={params.search}
               className="pl-10"
             />

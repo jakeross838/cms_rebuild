@@ -61,6 +61,7 @@ export default function UsersPage() {
           <Input
             type="search"
             placeholder="Search by name or email..."
+            aria-label="Search users"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"

@@ -86,6 +86,7 @@ export default async function ClientsPage({
               type="search"
               name="search"
               placeholder="Search clients..."
+              aria-label="Search clients"
               defaultValue={params.search}
               className="pl-10"
             />

@@ -78,7 +78,7 @@ export default async function BidsPage({
 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <form><Input type="search" name="search" placeholder="Search bids..." defaultValue={params.search} className="pl-10" /></form>
+        <form><Input type="search" name="search" placeholder="Search bids..." aria-label="Search bids" defaultValue={params.search} className="pl-10" /></form>
       </div>
 
       <Card>

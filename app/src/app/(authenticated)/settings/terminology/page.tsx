@@ -203,6 +203,7 @@ export default function TerminologyPage() {
           <Input
             type="search"
             placeholder="Search terms..."
+            aria-label="Search terms"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"

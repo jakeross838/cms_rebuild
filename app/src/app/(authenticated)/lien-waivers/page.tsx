@@ -99,6 +99,7 @@ export default async function LienWaiversPage({
               type="search"
               name="search"
               placeholder="Search by claimant name..."
+              aria-label="Search lien waivers"
               defaultValue={params.search}
               className="pl-10"
             />

@@ -58,7 +58,7 @@ export default async function IntegrationsPage({
 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <form><Input type="search" name="search" placeholder="Search integrations..." defaultValue={params.search} className="pl-10" /></form>
+        <form><Input type="search" name="search" placeholder="Search integrations..." aria-label="Search integrations" defaultValue={params.search} className="pl-10" /></form>
       </div>
 
       {integrations.length > 0 ? (

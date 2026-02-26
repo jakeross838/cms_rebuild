@@ -100,6 +100,7 @@ export default async function JobsPage({
               type="search"
               name="search"
               placeholder="Search jobs..."
+              aria-label="Search jobs"
               defaultValue={params.search}
               className="pl-10"
             />

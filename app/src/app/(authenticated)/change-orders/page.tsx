@@ -99,6 +99,7 @@ export default async function ChangeOrdersPage({
               type="search"
               name="search"
               placeholder="Search change orders..."
+              aria-label="Search change orders"
               defaultValue={params.search}
               className="pl-10"
             />
