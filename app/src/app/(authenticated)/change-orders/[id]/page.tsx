@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types --------------------------------------------------------------------
@@ -219,7 +220,7 @@ export default function ChangeOrderDetailPage() {
             <p className="text-muted-foreground">
               {changeOrder.co_number ? `${changeOrder.co_number} \u00b7 ` : ''}
               {changeOrder.change_type ? `${changeOrder.change_type} \u00b7 ` : ''}
-              Created {changeOrder.created_at ? new Date(changeOrder.created_at).toLocaleDateString() : 'Unknown'}
+              Created {formatDate(changeOrder.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -282,7 +283,7 @@ export default function ChangeOrderDetailPage() {
                   {changeOrder.approved_at && (
                     <div>
                       <dt className="text-muted-foreground">Approved</dt>
-                      <dd className="font-medium">{new Date(changeOrder.approved_at).toLocaleDateString()}</dd>
+                      <dd className="font-medium">{formatDate(changeOrder.approved_at)}</dd>
                     </div>
                   )}
                   {changeOrder.client_approved != null && (
@@ -290,7 +291,7 @@ export default function ChangeOrderDetailPage() {
                       <dt className="text-muted-foreground">Client Approved</dt>
                       <dd className="font-medium">
                         {changeOrder.client_approved ? 'Yes' : 'No'}
-                        {changeOrder.client_approved_at ? ` (${new Date(changeOrder.client_approved_at).toLocaleDateString()})` : ''}
+                        {changeOrder.client_approved_at ? ` (${formatDate(changeOrder.client_approved_at)})` : ''}
                       </dd>
                     </div>
                   )}

@@ -19,6 +19,7 @@ import {
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -319,9 +320,7 @@ export default function DrawRequestDetailPage() {
             </h1>
             <p className="text-muted-foreground">
               Created{' '}
-              {draw.created_at
-                ? new Date(draw.created_at).toLocaleDateString()
-                : 'Unknown'}
+              {formatDate(draw.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -386,21 +385,13 @@ export default function DrawRequestDetailPage() {
                   <div>
                     <dt className="text-muted-foreground">Application Date</dt>
                     <dd className="font-medium text-foreground">
-                      {draw.application_date
-                        ? new Date(
-                            draw.application_date + 'T00:00:00'
-                          ).toLocaleDateString()
-                        : '--'}
+                      {formatDate(draw.application_date) || '--'}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Period To</dt>
                     <dd className="font-medium text-foreground">
-                      {draw.period_to
-                        ? new Date(
-                            draw.period_to + 'T00:00:00'
-                          ).toLocaleDateString()
-                        : '--'}
+                      {formatDate(draw.period_to) || '--'}
                     </dd>
                   </div>
                   <div>

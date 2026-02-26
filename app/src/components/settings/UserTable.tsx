@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import type { UserRole, User } from '@/types/database'
 import { toast } from 'sonner'
 
@@ -251,9 +251,7 @@ export function UserTable({
 
                   {/* Last Login */}
                   <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {user.last_login_at
-                      ? new Date(user.last_login_at).toLocaleDateString()
-                      : 'Never'}
+                    {formatDate(user.last_login_at) || 'Never'}
                   </td>
 
                   {/* Actions */}

@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface CampaignData {
@@ -250,11 +250,11 @@ export default function CampaignDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Start Date</p>
-                    <p className="text-sm font-medium">{campaign.start_date ? new Date(campaign.start_date).toLocaleDateString() : 'Not set'}</p>
+                    <p className="text-sm font-medium">{formatDate(campaign.start_date) || 'Not set'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">End Date</p>
-                    <p className="text-sm font-medium">{campaign.end_date ? new Date(campaign.end_date).toLocaleDateString() : 'Not set'}</p>
+                    <p className="text-sm font-medium">{formatDate(campaign.end_date) || 'Not set'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Target Audience</p>

@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -228,7 +229,7 @@ export default function RfiDetailPage() {
             </div>
             <p className="text-muted-foreground">
               {rfi.rfi_number ? `${rfi.rfi_number} \u00b7 ` : ''}
-              Created {rfi.created_at ? new Date(rfi.created_at).toLocaleDateString() : 'Unknown'}
+              Created {formatDate(rfi.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -274,7 +275,7 @@ export default function RfiDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Due Date</dt>
-                    <dd className="font-medium">{rfi.due_date ? new Date(rfi.due_date).toLocaleDateString() : 'Not set'}</dd>
+                    <dd className="font-medium">{formatDate(rfi.due_date) || 'Not set'}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Cost Impact</dt>
@@ -287,13 +288,13 @@ export default function RfiDetailPage() {
                   {rfi.answered_at && (
                     <div>
                       <dt className="text-muted-foreground">Answered</dt>
-                      <dd className="font-medium">{new Date(rfi.answered_at).toLocaleDateString()}</dd>
+                      <dd className="font-medium">{formatDate(rfi.answered_at)}</dd>
                     </div>
                   )}
                   {rfi.closed_at && (
                     <div>
                       <dt className="text-muted-foreground">Closed</dt>
-                      <dd className="font-medium">{new Date(rfi.closed_at).toLocaleDateString()}</dd>
+                      <dd className="font-medium">{formatDate(rfi.closed_at)}</dd>
                     </div>
                   )}
                 </dl>

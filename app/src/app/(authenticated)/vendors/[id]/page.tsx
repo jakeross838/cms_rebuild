@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface VendorData {
@@ -194,7 +195,7 @@ export default function VendorDetailPage() {
               )}
             </div>
             <p className="text-muted-foreground">
-              {vendor.trade || 'No trade'} — Vendor since {vendor.created_at ? new Date(vendor.created_at).toLocaleDateString() : 'Unknown'}
+              {vendor.trade || 'No trade'} — Vendor since {formatDate(vendor.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">

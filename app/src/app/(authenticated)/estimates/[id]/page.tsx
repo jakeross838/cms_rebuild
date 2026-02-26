@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface EstimateData {
@@ -218,7 +219,7 @@ export default function EstimateDetailPage() {
               )}
             </div>
             <p className="text-muted-foreground">
-              Created {estimate.created_at ? new Date(estimate.created_at).toLocaleDateString() : 'Unknown'}
+              Created {formatDate(estimate.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -259,7 +260,7 @@ export default function EstimateDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Valid Until</span>
-                    <p className="font-medium">{estimate.valid_until ? new Date(estimate.valid_until).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(estimate.valid_until) || '--'}</p>
                   </div>
                 </div>
               </CardContent>

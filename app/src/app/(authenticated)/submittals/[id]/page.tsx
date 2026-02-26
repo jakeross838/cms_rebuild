@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface SubmittalData {
@@ -231,7 +232,7 @@ export default function SubmittalDetailPage() {
             </div>
             <p className="text-muted-foreground">
               {submittal.submittal_number}
-              {submittal.submission_date ? ` — Submitted ${new Date(submittal.submission_date).toLocaleDateString()}` : ''}
+              {submittal.submission_date ? ` — Submitted ${formatDate(submittal.submission_date)}` : ''}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -283,11 +284,11 @@ export default function SubmittalDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Submission Date</span>
-                    <p className="font-medium">{submittal.submission_date ? new Date(submittal.submission_date).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(submittal.submission_date) || '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Required Date</span>
-                    <p className="font-medium">{submittal.required_date ? new Date(submittal.required_date).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(submittal.required_date) || '--'}</p>
                   </div>
                 </div>
               </CardContent>

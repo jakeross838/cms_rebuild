@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ContractData {
@@ -206,7 +207,7 @@ export default function ContractDetailPage() {
             </div>
             <p className="text-muted-foreground">
               {contract.contract_number ? `#${contract.contract_number} — ` : ''}
-              Created {contract.created_at ? new Date(contract.created_at).toLocaleDateString() : 'Unknown'}
+              Created {formatDate(contract.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -255,11 +256,11 @@ export default function ContractDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Start Date</span>
-                    <p className="font-medium">{contract.start_date ? new Date(contract.start_date).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(contract.start_date) || '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">End Date</span>
-                    <p className="font-medium">{contract.end_date ? new Date(contract.end_date).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(contract.end_date) || '--'}</p>
                   </div>
                 </div>
               </CardContent>

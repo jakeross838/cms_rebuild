@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
@@ -68,7 +69,7 @@ export default async function CommunicationsPage({
                   <div className="flex flex-col gap-1">
                     <span className="font-medium">{item.subject}</span>
                     <span className="text-sm text-muted-foreground">
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {formatDate(item.created_at)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">

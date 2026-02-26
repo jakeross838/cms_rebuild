@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface UserProfile {
@@ -174,7 +175,7 @@ export default function ProfilePage() {
 
           <div className="space-y-2">
             <label htmlFor="member-since" className="text-sm font-medium">Member Since</label>
-            <Input id="member-since" value={profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'} disabled className="bg-muted" />
+            <Input id="member-since" value={formatDate(profile.created_at) || 'N/A'} disabled className="bg-muted" />
           </div>
         </CardContent>
         <CardFooter className="border-t justify-end">

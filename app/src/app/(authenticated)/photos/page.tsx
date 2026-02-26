@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-import { escapeLike } from '@/lib/utils'
+import { escapeLike, formatDate } from '@/lib/utils'
 import { Camera } from 'lucide-react'
 
 interface PhotoDocument {
@@ -101,7 +101,7 @@ export default async function PhotosPage({
                     )}
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
-                    {photo.created_at ? new Date(photo.created_at).toLocaleDateString() : '—'}
+                    {formatDate(photo.created_at) || '—'}
                   </td>
                 </tr>
               ))}

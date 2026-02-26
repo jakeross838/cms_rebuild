@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const US_STATES = [
@@ -184,7 +185,7 @@ export default function ClientDetailPage() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">{client.name}</h1>
             <p className="text-muted-foreground">
-              Client since {client.created_at ? new Date(client.created_at).toLocaleDateString() : 'Unknown'}
+              Client since {formatDate(client.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">

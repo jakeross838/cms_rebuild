@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { escapeLike } from '@/lib/utils'
+import { escapeLike, formatDate } from '@/lib/utils'
 import { FolderOpen, FileText, FileImage, File, Search } from 'lucide-react'
 
 interface Document {
@@ -138,7 +138,7 @@ export default async function FilesPage({
                       )}
                     </td>
                     <td className="p-3 text-sm text-muted-foreground">
-                      {doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '—'}
+                      {formatDate(doc.created_at) || '—'}
                     </td>
                   </tr>
                 )

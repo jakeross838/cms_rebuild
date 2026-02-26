@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface CompanyProfile {
@@ -272,7 +273,7 @@ export default function GeneralSettingsPage() {
                     Plan: <span className="font-medium capitalize">{company.subscriptionTier}</span>
                     {' '}&middot;{' '}
                     Status: <span className="font-medium capitalize">{company.subscriptionStatus}</span>
-                    {company.trialEndsAt ? <> &middot; Trial ends: {new Date(company.trialEndsAt).toLocaleDateString()}</> : null}
+                    {company.trialEndsAt ? <> &middot; Trial ends: {formatDate(company.trialEndsAt)}</> : null}
                   </p>
                 </div>
               ) : null}

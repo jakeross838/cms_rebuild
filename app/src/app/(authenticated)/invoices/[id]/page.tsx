@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface InvoiceData {
@@ -187,7 +188,7 @@ export default function InvoiceDetailPage() {
               )}
             </div>
             <p className="text-muted-foreground">
-              {invoice.invoice_date ? `Issued ${new Date(invoice.invoice_date).toLocaleDateString()}` : `Created ${invoice.created_at ? new Date(invoice.created_at).toLocaleDateString() : 'Unknown'}`}
+              {invoice.invoice_date ? `Issued ${formatDate(invoice.invoice_date)}` : `Created ${formatDate(invoice.created_at) || 'Unknown'}`}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -231,11 +232,11 @@ export default function InvoiceDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Invoice Date</span>
-                    <p className="font-medium">{invoice.invoice_date ? new Date(invoice.invoice_date).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(invoice.invoice_date) || '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Due Date</span>
-                    <p className="font-medium">{invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : '--'}</p>
+                    <p className="font-medium">{formatDate(invoice.due_date) || '--'}</p>
                   </div>
                 </div>
               </CardContent>

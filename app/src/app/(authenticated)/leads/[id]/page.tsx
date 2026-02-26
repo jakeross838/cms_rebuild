@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface LeadData {
@@ -238,7 +239,7 @@ export default function LeadDetailPage() {
               )}
             </div>
             <p className="text-muted-foreground">
-              Lead since {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : 'Unknown'}
+              Lead since {formatDate(lead.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">

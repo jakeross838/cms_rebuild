@@ -225,7 +225,7 @@ export default function WarrantyClaimDetailPage() {
             </div>
             <p className="text-muted-foreground">
               {claim.claim_number && <span className="font-mono text-xs mr-2">{claim.claim_number}</span>}
-              Filed {claim.created_at ? new Date(claim.created_at).toLocaleDateString() : 'Unknown'}
+              Filed {formatDate(claim.created_at) || 'Unknown'}
             </p>
           </div>
           <div className="flex items-center gap-2">
