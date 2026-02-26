@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -27,9 +28,12 @@ export const metadata: Metadata = { title: 'Bids' }
 export default async function BidsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; status?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,11 +44,10 @@ export default async function BidsPage({
 
   let query = supabase
     .from('bid_packages')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
 
   if (params.search) {
     query = query.ilike('title', `%${escapeLike(params.search)}%`)
@@ -54,8 +57,11 @@ export default async function BidsPage({
     query = query.eq('status', params.status)
   }
 
-  const { data: bidsData } = await query
+  query = query.range(offset, offset + pageSize - 1)
+
+  const { data: bidsData, count } = await query
   const bids = (bidsData || []) as BidPackageRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const openCount = bids.filter((b) => b.status === 'open' || b.status === 'draft').length
 
@@ -124,6 +130,8 @@ export default async function BidsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/bids" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

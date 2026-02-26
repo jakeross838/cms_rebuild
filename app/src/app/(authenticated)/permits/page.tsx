@@ -28,7 +28,7 @@ export const metadata: Metadata = { title: 'Permits & Inspections' }
 export default async function PermitsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -53,6 +53,10 @@ export default async function PermitsPage({
     query = query.ilike('permit_number', `%${escapeLike(params.search)}%`)
   }
 
+  if (params.status) {
+    query = query.eq('status', params.status)
+  }
+
   query = query.range(offset, offset + pageSize - 1)
 
   const { data: permitsData, count } = await query
@@ -75,7 +79,7 @@ export default async function PermitsPage({
         </Link>
       </div>
 
-      {/* Search */}
+      {/* Search & Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -89,6 +93,28 @@ export default async function PermitsPage({
               className="pl-10"
             />
           </form>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {[
+            { value: '', label: 'All' },
+            { value: 'applied', label: 'Applied' },
+            { value: 'approved', label: 'Approved' },
+            { value: 'issued', label: 'Issued' },
+            { value: 'expired', label: 'Expired' },
+            { value: 'rejected', label: 'Rejected' },
+          ].map((f) => (
+            <Link
+              key={f.value}
+              href={`/permits?${new URLSearchParams({ ...(params.search ? { search: params.search } : {}), ...(f.value ? { status: f.value } : {}) }).toString()}`}
+            >
+              <Button
+                variant={(params.status || '') === f.value ? 'default' : 'outline'}
+                size="sm"
+              >
+                {f.label}
+              </Button>
+            </Link>
+          ))}
         </div>
       </div>
 

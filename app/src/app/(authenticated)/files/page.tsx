@@ -3,9 +3,10 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike } from '@/lib/utils'
-import { FolderOpen, FileText, FileImage, File } from 'lucide-react'
+import { FolderOpen, FileText, FileImage, File, Search } from 'lucide-react'
 
 interface Document {
   id: string
@@ -72,6 +73,20 @@ export default async function FilesPage({
           <p className="text-muted-foreground">Company-wide document storage</p>
         </div>
         <span className="text-sm text-muted-foreground">{documents.length} file{documents.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form>
+          <Input
+            type="search"
+            name="search"
+            placeholder="Search files..."
+            aria-label="Search files"
+            defaultValue={params.search}
+            className="pl-10"
+          />
+        </form>
       </div>
 
       {documents.length === 0 ? (
