@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ interface Estimate {
 export default async function ProposalsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,10 +41,11 @@ export default async function ProposalsPage({
 
   let query = supabase
     .from('estimates')
-    .select('id, name, status, version, estimate_type, total, created_at, jobs(name)')
+    .select('id, name, status, version, estimate_type, total, created_at, jobs(name)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   if (params.status) {
     query = query.eq('status', params.status)
@@ -50,9 +55,10 @@ export default async function ProposalsPage({
     query = query.ilike('name', `%${escapeLike(params.search)}%`)
   }
 
-  const { data: estimatesData, error } = await query
+  const { data: estimatesData, count, error } = await query
   if (error) throw error
   const estimates = (estimatesData || []) as Estimate[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const sent = estimates.filter((e) => e.status === 'sent' || e.status === 'presented').length
   const totalValue = estimates.reduce((s, e) => s + (e.total || 0), 0)
@@ -70,7 +76,7 @@ export default async function ProposalsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Proposals</h1>
-          <p className="text-muted-foreground">{estimates.length} proposals &bull; {formatCurrency(totalValue)} total value</p>
+          <p className="text-muted-foreground">{count || 0} proposals &bull; {formatCurrency(totalValue)} total value</p>
         </div>
         <Link href="/estimates/new"><Button><Plus className="h-4 w-4 mr-2" />New Proposal</Button></Link>
       </div>
@@ -124,6 +130,8 @@ export default async function ProposalsPage({
           <p className="text-muted-foreground">{params.search || params.status ? 'Try adjusting your filters' : 'Create your first proposal from an estimate'}</p>
         </div>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/proposals" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

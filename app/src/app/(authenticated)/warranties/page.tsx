@@ -7,6 +7,7 @@ import { Plus, Search, Shield } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -27,9 +28,12 @@ export const metadata: Metadata = { title: 'Warranties' }
 export default async function WarrantiesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; search?: string }>
+  searchParams: Promise<{ status?: string; search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,10 +44,11 @@ export default async function WarrantiesPage({
 
   let query = supabase
     .from('warranties')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
+    .range(offset, offset + pageSize - 1)
 
   if (params.status) {
     query = query.eq('status', params.status)
@@ -53,9 +58,10 @@ export default async function WarrantiesPage({
     query = query.ilike('title', `%${escapeLike(params.search)}%`)
   }
 
-  const { data: warrantiesData, error } = await query
+  const { data: warrantiesData, count, error } = await query
   if (error) throw error
   const warranties = (warrantiesData || []) as Warranty[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -120,6 +126,8 @@ export default async function WarrantiesPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/warranties" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

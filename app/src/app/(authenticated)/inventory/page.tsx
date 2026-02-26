@@ -6,6 +6,7 @@ import { Plus, Search, Package } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatCurrency } from '@/lib/utils'
 
@@ -24,9 +25,12 @@ interface InventoryItem {
 export default async function InventoryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string }>
+  searchParams: Promise<{ search?: string; category?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -38,10 +42,11 @@ export default async function InventoryPage({
 
   let query = supabase
     .from('inventory_items')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('name', { ascending: true })
+    .range(offset, offset + pageSize - 1)
 
   if (params.category) {
     query = query.eq('category', params.category)
@@ -51,16 +56,17 @@ export default async function InventoryPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,sku.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: itemsData, error } = await query
+  const { data: itemsData, count, error } = await query
   if (error) throw error
   const items = (itemsData || []) as InventoryItem[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Inventory</h1>
-          <p className="text-muted-foreground">{items.length} items tracked</p>
+          <p className="text-muted-foreground">{count || 0} items tracked</p>
         </div>
         <Link href="/inventory/new"><Button><Plus className="h-4 w-4 mr-2" />Add Item</Button></Link>
       </div>
@@ -111,6 +117,8 @@ export default async function InventoryPage({
           </div>
         )}
       </div>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/inventory" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

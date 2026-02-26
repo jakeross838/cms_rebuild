@@ -6,6 +6,7 @@ import { Plus, HeadphonesIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -18,7 +19,16 @@ interface TicketRow {
   created_at: string
 }
 
-export default async function SupportPage() {
+export default async function SupportPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -27,15 +37,19 @@ export default async function SupportPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: ticketsData } = await supabase
+  const query = supabase
     .from('support_tickets')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
+
+  const { data: ticketsData, count, error } = await query
+  if (error) throw error
 
   const tickets = (ticketsData || []) as TicketRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
   const openCount = tickets.filter((t) => t.status === 'open' || t.status === 'in_progress').length
 
   return (
@@ -43,7 +57,7 @@ export default async function SupportPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Support</h1>
-          <p className="text-muted-foreground">{tickets.length} tickets &middot; {openCount} open</p>
+          <p className="text-muted-foreground">{count || 0} tickets &middot; {openCount} open</p>
         </div>
         <Link href="/support/new">
           <Button><Plus className="h-4 w-4 mr-2" />New Ticket</Button>
@@ -80,6 +94,8 @@ export default async function SupportPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/support" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

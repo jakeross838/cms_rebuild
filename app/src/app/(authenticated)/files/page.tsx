@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatDate } from '@/lib/utils'
 import { FolderOpen, FileText, FileImage, File, Search } from 'lucide-react'
@@ -36,9 +37,13 @@ export const metadata: Metadata = { title: 'Documents' }
 export default async function FilesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string }>
+  searchParams: Promise<{ search?: string; type?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -49,11 +54,11 @@ export default async function FilesPage({
 
   let query = supabase
     .from('documents')
-    .select('id, filename, mime_type, file_size, document_type, status, created_at')
+    .select('id, filename, mime_type, file_size, document_type, status, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
   if (params.search) {
     query = query.ilike('filename', `%${escapeLike(params.search)}%`)
@@ -62,9 +67,10 @@ export default async function FilesPage({
     query = query.eq('document_type', params.type)
   }
 
-  const { data, error } = await query
+  const { data, count, error } = await query
   if (error) throw error
   const documents = (data ?? []) as unknown as Document[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -73,7 +79,7 @@ export default async function FilesPage({
           <h1 className="text-2xl font-bold text-foreground">Files &amp; Documents</h1>
           <p className="text-muted-foreground">Company-wide document storage</p>
         </div>
-        <span className="text-sm text-muted-foreground">{documents.length} file{documents.length !== 1 ? 's' : ''}</span>
+        <span className="text-sm text-muted-foreground">{count || 0} file{(count || 0) !== 1 ? 's' : ''}</span>
       </div>
 
       <div className="relative max-w-md">
@@ -147,6 +153,8 @@ export default async function FilesPage({
           </table>
         </div>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/files" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

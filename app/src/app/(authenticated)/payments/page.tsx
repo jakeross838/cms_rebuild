@@ -5,6 +5,7 @@ import { CreditCard } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -18,7 +19,15 @@ interface PaymentRow {
   created_at: string
 }
 
-export default async function PaymentsPage() {
+export default async function PaymentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -27,14 +36,16 @@ export default async function PaymentsPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: paymentsData } = await supabase
+  const { data: paymentsData, count, error } = await supabase
     .from('client_payments')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
+  if (error) throw error
   const payments = (paymentsData || []) as PaymentRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const totalAmount = payments.reduce((sum, p) => sum + (p.amount || 0), 0)
 
@@ -43,7 +54,7 @@ export default async function PaymentsPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Payments</h1>
         <p className="text-muted-foreground">
-          {payments.length} payments &middot; {formatCurrency(totalAmount)} total
+          {count || 0} payments &middot; {formatCurrency(totalAmount)} total
         </p>
       </div>
 
@@ -85,6 +96,8 @@ export default async function PaymentsPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/payments" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

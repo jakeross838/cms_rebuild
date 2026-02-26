@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -29,9 +30,12 @@ export const metadata: Metadata = { title: 'Time Clock' }
 export default async function TimeClockPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; status?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -42,18 +46,20 @@ export default async function TimeClockPage({
 
   let query = supabase
     .from('time_entries')
-    .select('*')
+    .select('*', { count: 'exact' })
     .is('deleted_at', null)
     .eq('company_id', companyId)
     .order('clock_in', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
   if (params.status) {
     query = query.eq('status', params.status)
   }
 
-  const { data: entriesData } = await query
+  const { data: entriesData, count, error } = await query
+  if (error) throw error
   const entries = (entriesData || []) as TimeEntry[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const totalHours = entries.reduce((sum, e) => sum + (e.regular_hours ?? 0) + (e.overtime_hours ?? 0), 0)
 
@@ -62,7 +68,7 @@ export default async function TimeClockPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Time Clock</h1>
-          <p className="text-muted-foreground">{entries.length} entries • {totalHours.toFixed(1)} hours total</p>
+          <p className="text-muted-foreground">{count || 0} entries • {totalHours.toFixed(1)} hours total</p>
         </div>
         <Link href="/time-clock/new"><Button><Plus className="h-4 w-4 mr-2" />Clock In</Button></Link>
       </div>
@@ -108,6 +114,8 @@ export default async function TimeClockPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/time-clock" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatDate } from '@/lib/utils'
 import { Camera } from 'lucide-react'
@@ -17,9 +18,13 @@ interface PhotoDocument {
 export default async function PhotosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -30,27 +35,28 @@ export default async function PhotosPage({
 
   let query = supabase
     .from('documents')
-    .select('id, filename, file_size, status, created_at')
+    .select('id, filename, file_size, status, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .like('mime_type', 'image/%')
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
   if (params.search) {
     query = query.ilike('filename', `%${escapeLike(params.search)}%`)
   }
 
-  const { data, error } = await query
+  const { data, count, error } = await query
   if (error) throw error
   const photos = (data ?? []) as unknown as PhotoDocument[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Photos</h1>
-          <p className="text-muted-foreground">Project photos across all jobs &bull; {photos.length} photo{photos.length !== 1 ? 's' : ''}</p>
+          <p className="text-muted-foreground">Project photos across all jobs &bull; {count || 0} photo{(count || 0) !== 1 ? 's' : ''}</p>
         </div>
         <Link href="/jobs">
           <Button variant="outline">Go to Jobs</Button>
@@ -112,6 +118,8 @@ export default async function PhotosPage({
           </table>
         </div>
       )}
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/photos" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

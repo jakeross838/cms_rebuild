@@ -5,6 +5,7 @@ import { CheckSquare, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -19,7 +20,16 @@ interface PunchItemRow {
   created_at: string
 }
 
-export default async function TodosPage() {
+export default async function TodosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -28,16 +38,20 @@ export default async function TodosPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: itemsData } = await supabase
+  const query = supabase
     .from('punch_items')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .in('status', ['open', 'in_progress'])
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
+
+  const { data: itemsData, count, error } = await query
+  if (error) throw error
 
   const items = (itemsData || []) as PunchItemRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -47,7 +61,7 @@ export default async function TodosPage() {
             <CheckSquare className="h-6 w-6" />
             To-Do Items
           </h1>
-          <p className="text-muted-foreground">{items.length} open items</p>
+          <p className="text-muted-foreground">{count || 0} open items</p>
         </div>
         <Link href="/punch-lists/new"><Button><Plus className="h-4 w-4 mr-2" />New Item</Button></Link>
       </div>
@@ -82,6 +96,8 @@ export default async function TodosPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/todos" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

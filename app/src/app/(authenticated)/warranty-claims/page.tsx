@@ -6,6 +6,7 @@ import { Plus, ShieldAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -23,9 +24,12 @@ interface WarrantyClaimRow {
 export default async function WarrantyClaimsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ status?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Number(params.page) || 1
+  const pageSize = 25
+  const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -36,18 +40,20 @@ export default async function WarrantyClaimsPage({
 
   let query = supabase
     .from('warranty_claims')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(offset, offset + pageSize - 1)
 
   if (params.status) {
     query = query.eq('status', params.status)
   }
 
-  const { data: claimsData } = await query
+  const { data: claimsData, count, error } = await query
+  if (error) throw error
   const claims = (claimsData || []) as WarrantyClaimRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const openCount = claims.filter((c) => c.status === 'open' || c.status === 'in_progress').length
 
@@ -57,7 +63,7 @@ export default async function WarrantyClaimsPage({
         <div>
           <h1 className="text-2xl font-bold text-foreground">Warranty Claims</h1>
           <p className="text-muted-foreground">
-            {claims.length} claims &middot; {openCount} open
+            {count || 0} claims &middot; {openCount} open
           </p>
         </div>
         <Link href="/warranty-claims/new">
@@ -110,6 +116,8 @@ export default async function WarrantyClaimsPage({
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={page} totalPages={totalPages} basePath="/warranty-claims" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }
