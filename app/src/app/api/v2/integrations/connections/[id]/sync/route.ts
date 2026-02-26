@@ -127,5 +127,5 @@ export const POST = createApiHandler(
       requestId: ctx.requestId,
     }, { status: 202 })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'] }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'integrations_connections_sync.create' }
 )

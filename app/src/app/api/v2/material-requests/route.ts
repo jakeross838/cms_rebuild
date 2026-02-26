@@ -156,5 +156,5 @@ export const POST = createApiHandler(
       { status: 201 }
     )
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'] }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'material_request.create' }
 )

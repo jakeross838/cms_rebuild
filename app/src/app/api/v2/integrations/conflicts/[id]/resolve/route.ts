@@ -86,5 +86,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: conflict, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'] }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'integrations_conflict.resolve' }
 )
