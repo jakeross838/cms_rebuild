@@ -1,5 +1,44 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 17 — Security Hardening: Nested Resources + Remaining Gaps (2026-02-26)
+
+### Missed .or() Filter Injection Fix (5 files)
+- `search/route.ts` — 4 `.or()` calls converted from `escapeLike` → `safeOrIlike`
+- 4 v1 routes (jobs, clients, vendors, cost-codes) — `.or()` calls converted
+- **0 unsafe `.or()` + `escapeLike` patterns remain** across entire codebase
+
+### Pagination Guard (`getPaginationParams`)
+- Added `Number.isFinite()` and positivity checks for page/limit
+- NaN or negative values now default to page=1, limit=20
+- Max limit still capped at 100
+
+### Audit/Role Fixes (2 v1 write endpoints)
+- `switch-company` POST — added `auditAction: 'auth.switch_company'`
+- `numbering/preview` POST — added `requiredRoles: ['owner', 'admin', 'pm']` + `auditAction`
+
+### Login Timing Oracle Fix
+- Failed login now ALWAYS inserts audit log (even for non-existent emails)
+- Uses nil UUID for company_id/user_id when email not found
+- Prevents email enumeration via response timing differences
+
+### Nested Resource Parent ID Enforcement (14 files)
+- All nested routes now extract AND verify parent IDs from URL path
+- Pattern: `.eq('child_fk', parentIdFromUrl)` added to all queries
+- Routes fixed:
+  - `permits/[id]/inspections/[inspectionId]` — added `permit_id` filter
+  - `permits/[id]/inspections/[inspectionId]/results/[resultId]` — added `inspection_id` filter
+  - `permits/[id]/inspections/[inspectionId]/results` (list/create) — added `permit_id` to inspection verify
+  - `permits/[id]/documents/[docId]` — added `permit_id` filter
+  - `permits/[id]/fees/[feeId]` — added `permit_id` filter
+  - `crm/leads/[id]/activities/[activityId]` — added `lead_id` filter
+  - `crm/pipelines/[id]/stages/[stageId]` — added `pipeline_id` filter
+  - `data-migration/jobs/[id]/mappings/[mappingId]` — added `job_id` filter
+  - `onboarding/[id]/checklists/[checklistId]` — added `session_id` filter
+  - `onboarding/[id]/milestones/[milestoneId]` — added `session_id` filter
+  - `onboarding/[id]/reminders/[reminderId]` — added `session_id` filter
+  - `support/tickets/[id]/messages/[messageId]` — added `ticket_id` filter
+  - `warranties/[id]/claims/[claimId]/history` — added `warranty_id` filter
+
 ## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
 
 ### RLS Policy Hardening (2 migrations, 172 tables)

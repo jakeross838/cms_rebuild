@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 17 — Security Hardening: Nested Resources + Remaining Gaps (2026-02-26)
+
+### Nested Resource Parent ID Enforcement
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /permits/WRONG_ID/fees/REAL_FEE_ID | 404 (fee not found for that permit) | verify |
+| GET /permits/CORRECT_ID/fees/REAL_FEE_ID | 200 with fee data | verify |
+| PUT /tickets/WRONG_ID/messages/REAL_MSG_ID | 404 (message not found for that ticket) | verify |
+| GET /onboarding/WRONG_ID/checklists/REAL_ID | 404 (checklist not found for that session) | verify |
+| GET /crm/leads/WRONG_ID/activities/REAL_ID | 404 (activity not found for that lead) | verify |
+
+### Login Timing Oracle
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Login with non-existent email | 401 + audit_log entry with nil UUIDs | verify |
+| Login with valid email, wrong password | 401 + audit_log entry with real user/company IDs | verify |
+| Response time for both scenarios | Similar (both perform INSERT) | verify |
+
+### Pagination Guard
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /api/v2/jobs?page=NaN | Defaults to page=1, returns valid results | verify |
+| GET /api/v2/jobs?limit=-5 | Defaults to limit=20 | verify |
+| GET /api/v2/jobs?page=0 | Defaults to page=1 | verify |
+| GET /api/v2/jobs?limit=999 | Capped at 100 | verify |
+
 ## Session 16 — Data Leakage Prevention + Filter Injection Fix (2026-02-26)
 
 ### RLS Policy Hardening

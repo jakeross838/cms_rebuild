@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 17 — Security Hardening: Nested Resources + Remaining Gaps
+
+### Why (Nested Resource Parent ID Enforcement)
+- 13 nested routes ignored parent IDs from URL path — queried child resources by child ID + company_id only
+- Risk: GET /permits/WRONG_ID/fees/REAL_FEE_ID returns data even though fee doesn't belong to that permit
+- Violates RESTful contract and enables cross-resource enumeration within same tenant
+- Fix: extract parent ID from URL and add `.eq('parent_fk', parentId)` to all Supabase queries
+
+### Why (Login Timing Oracle Fix)
+- Failed login with valid email: lookup user → INSERT audit log → respond (slower)
+- Failed login with invalid email: lookup user → no user → skip audit → respond (faster)
+- Timing difference allows attackers to enumerate valid email addresses
+- Fix: always INSERT audit log regardless of whether email exists in DB
+
+### Why (Missed .or() + Pagination)
+- 5 search routes missed in Session 16's 80-file batch fix — found by post-fix verification audit
+- getPaginationParams accepted NaN/negative page/limit — could produce negative offsets or invalid ranges
+
 ## 2026-02-26: Session 16 — Data Leakage Prevention + Filter Injection Fix
 
 ### Why (RLS Policy Hardening — Block DELETE, Add WITH CHECK)
