@@ -8,7 +8,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updatePipelineSchema } from '@/lib/validation/schemas/crm'
 
@@ -104,9 +104,10 @@ export const PUT = createApiHandler(
       .single()
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Not Found', message: 'Pipeline not found', requestId: ctx.requestId },
-        { status: 404 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -141,9 +142,10 @@ export const DELETE = createApiHandler(
       .single()
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Not Found', message: 'Pipeline not found', requestId: ctx.requestId },
-        { status: 404 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updateGlAccountSchema } from '@/lib/validation/schemas/accounting'
 
@@ -105,15 +105,10 @@ export const PUT = createApiHandler(
       .single()
 
     if (error) {
-      if (error.code === '23505') {
-        return NextResponse.json(
-          { error: 'Conflict', message: 'An account with this number already exists', requestId: ctx.requestId },
-          { status: 409 }
-        )
-      }
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

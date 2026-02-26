@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updateJournalEntrySchema } from '@/lib/validation/schemas/accounting'
 
@@ -127,9 +127,10 @@ export const PUT = createApiHandler(
       .single()
 
     if (entryError) {
+      const mapped = mapDbError(entryError)
       return NextResponse.json(
-        { error: 'Database Error', message: entryError.message, requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

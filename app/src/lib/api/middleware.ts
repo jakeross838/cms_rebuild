@@ -341,3 +341,48 @@ export function paginatedResponse<T>(
     ...(requestId ? { requestId } : {}),
   }
 }
+
+/**
+ * Maps a Supabase/Postgres error to an appropriate HTTP status and message.
+ * Use in API routes to return consistent, accurate error responses.
+ */
+export function mapDbError(error: { code?: string; message?: string; details?: string }): {
+  status: number
+  error: string
+  message: string
+} {
+  const code = error.code ?? ''
+
+  // PostgREST: expected single row but got zero
+  if (code === 'PGRST116') {
+    return { status: 404, error: 'Not Found', message: 'Resource not found' }
+  }
+
+  // Unique constraint violation
+  if (code === '23505') {
+    return { status: 409, error: 'Conflict', message: error.details ?? 'A record with that value already exists' }
+  }
+
+  // Foreign key violation
+  if (code === '23503') {
+    return { status: 400, error: 'Bad Request', message: 'Referenced record does not exist' }
+  }
+
+  // Not-null violation
+  if (code === '23502') {
+    return { status: 400, error: 'Bad Request', message: error.message ?? 'A required field is missing' }
+  }
+
+  // Check constraint violation
+  if (code === '23514') {
+    return { status: 400, error: 'Bad Request', message: error.message ?? 'Value violates a constraint' }
+  }
+
+  // RLS policy violation (insufficient privilege)
+  if (code === '42501') {
+    return { status: 403, error: 'Forbidden', message: 'Insufficient permissions' }
+  }
+
+  // Default: server error
+  return { status: 500, error: 'Database Error', message: error.message ?? 'An unexpected database error occurred' }
+}
