@@ -10,6 +10,7 @@ import {
   User,
   Settings,
   ChevronDown,
+  Menu,
 } from 'lucide-react'
 
 import { CommandPalette } from '@/components/command-palette/command-palette'
@@ -40,8 +41,18 @@ export function TopNav({ user }: TopNavProps) {
 
   return (
     <header className="h-16 bg-card/95 backdrop-blur supports-backdrop-blur:bg-card/60 border-b border-border/40 flex items-center justify-between px-6 z-10 shadow-sm">
-      {/* Left side: Tenant switcher + Search */}
+      {/* Left side: Hamburger (mobile) + Tenant switcher + Search */}
       <div className="flex items-center gap-4 flex-1">
+        {/* Mobile hamburger */}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event('open-mobile-sidebar'))}
+          className="md:hidden p-2 -ml-2 rounded-md hover:bg-accent text-muted-foreground"
+          aria-label="Open sidebar"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+
         {/* Tenant Switcher */}
         <TenantSwitcher />
 

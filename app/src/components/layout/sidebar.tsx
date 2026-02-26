@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -19,6 +19,7 @@ import {
   Wrench,
   DollarSign,
   CheckSquare,
+  X,
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -100,6 +101,21 @@ const bottomNav: NavItem[] = [
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname()
   const [openMenus, setOpenMenus] = useState<string[]>(['Financial', 'Field'])
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Listen for mobile sidebar toggle event from TopNav hamburger
+  useEffect(() => {
+    const handler = () => setMobileOpen(true)
+    window.addEventListener('open-mobile-sidebar', handler)
+    return () => window.removeEventListener('open-mobile-sidebar', handler)
+  }, [])
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
+
+  const closeMobile = useCallback(() => setMobileOpen(false), [])
 
   const toggleMenu = (name: string) => {
     setOpenMenus((prev) =>
@@ -170,10 +186,10 @@ export function Sidebar({ user }: SidebarProps) {
     )
   }
 
-  return (
-    <aside className="w-64 bg-card border-r border-border/40 flex flex-col z-20 shadow-sm">
+  const sidebarContent = (
+    <>
       {/* Logo */}
-      <div className="h-16 flex items-center px-6 border-b border-border/40">
+      <div className="h-16 flex items-center justify-between px-6 border-b border-border/40">
         <Link href="/dashboard" className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
             <Building2 className="h-4 w-4 text-primary-foreground" />
@@ -183,6 +199,14 @@ export function Sidebar({ user }: SidebarProps) {
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Construction</div>
           </div>
         </Link>
+        <button
+          type="button"
+          onClick={closeMobile}
+          className="md:hidden p-1.5 rounded-md hover:bg-muted text-muted-foreground"
+          aria-label="Close sidebar"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -215,6 +239,32 @@ export function Sidebar({ user }: SidebarProps) {
             </div>
           </div>
         </div> : null}
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-64 bg-card border-r border-border/40 flex-col z-20 shadow-sm">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {mobileOpen ? (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={closeMobile}
+            onKeyDown={(e) => e.key === 'Escape' && closeMobile()}
+            role="button"
+            tabIndex={-1}
+            aria-label="Close sidebar"
+          />
+          <aside className="fixed inset-y-0 left-0 w-72 bg-card flex flex-col shadow-xl animate-in slide-in-from-left duration-200">
+            {sidebarContent}
+          </aside>
+        </div>
+      ) : null}
+    </>
   )
 }
