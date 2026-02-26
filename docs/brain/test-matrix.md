@@ -3746,3 +3746,76 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 | View mode | Shows all fields with status badge |
 | Edit and Save | Updates record |
 | Archive | Soft delete, redirects to `/warranty-claims` |
+
+---
+
+## Soft Delete Compliance & Archive Buttons (2026-02-25)
+
+### Archive Button Test Cases (7 detail pages + training + job)
+
+**Pattern: All archive buttons follow the same behavior**
+| Test | Expected |
+|------|----------|
+| Archive button visible | Red/destructive archive button present on detail page |
+| Click archive | Confirmation dialog appears |
+| Cancel confirmation | Dialog closes, no changes |
+| Confirm archive | Sets `deleted_at` on record, redirects to parent list |
+| Archived record hidden from list | Parent list page no longer shows the archived record |
+
+**Pages with new archive buttons:**
+- `/contacts/[id]` → archives in `contacts` → redirects to `/contacts`
+- `/email-marketing/[id]` → archives in `email_campaigns` → redirects to `/email-marketing`
+- `/financial/chart-of-accounts/[id]` → archives in `chart_of_accounts` → redirects to `/financial/chart-of-accounts`
+- `/financial/journal-entries/[id]` → archives in `journal_entries` → redirects to `/financial/journal-entries`
+- `/invoices/[id]` → archives in `invoices` → redirects to `/invoices`
+- `/legal/[id]` → archives in `legal_documents` → redirects to `/legal`
+- `/library/templates/[id]` → archives in `estimate_templates` → redirects to `/library/templates`
+- `/training/[id]` → archives in `training_courses` → redirects to `/training`
+- `/jobs/[id]` → archives in `jobs` → redirects to `/jobs` (via ArchiveJobButton component)
+
+### Hard Delete → Soft Delete Conversion (3 pages)
+| Page | Test | Expected |
+|------|------|----------|
+| `/compliance/lien-law/[id]` | Delete/archive record | Uses `.update({ deleted_at })` NOT `.delete()` — record remains in DB |
+| `/time-clock/[id]` | Delete/archive record | Uses `.update({ deleted_at })` NOT `.delete()` — record remains in DB |
+| `/jobs/[id]/budget/[lineId]` | Delete/archive record | Uses `.update({ deleted_at })` NOT `.delete()` — record remains in DB |
+
+### Status Archive → deleted_at Conversion (4 pages)
+| Page | Test | Expected |
+|------|------|----------|
+| `/compliance/insurance/[id]` | Archive record | Sets `deleted_at` NOT `status='archived'` |
+| `/compliance/licenses/[id]` | Archive record | Sets `deleted_at` NOT `status='archived'` |
+| `/jobs/[id]/invoices/[invoiceId]` | Archive record | Sets `deleted_at` NOT `status='archived'` |
+| `/jobs/[id]/inspections/[inspectionId]` | Archive record | Sets `deleted_at` NOT `status='archived'` |
+
+### Training Detail Edit Mode (new)
+| Test | Expected |
+|------|----------|
+| Page loads | View mode with course details |
+| Click Edit | Switches to form with title, description, content_url, course_type, difficulty, duration_minutes, category, is_published |
+| Save changes | Updates `training_courses` record, returns to view mode |
+| Archive | Soft delete, redirects to `/training` |
+
+### deleted_at Filter on List Pages (44 pages)
+| Test | Expected |
+|------|----------|
+| Any list page loads | Query includes `.is('deleted_at', null)` filter |
+| Record with `deleted_at` set | Does NOT appear in list results |
+| Record with `deleted_at` NULL | Appears in list results normally |
+
+**29 top-level pages verified:** `/bids`, `/change-orders`, `/clients`, `/communications`, `/compliance/insurance`, `/compliance/lien-law`, `/compliance/licenses`, `/contacts`, `/daily-logs`, `/dashboards`, `/draws`, `/email-marketing`, `/equipment`, `/estimates`, `/financial/chart-of-accounts`, `/financial/journal-entries`, `/invoices`, `/legal`, `/library/selections`, `/library/templates`, `/notifications`, `/permits`, `/proposals`, `/rfis`, `/submittals`, `/support`, `/time-clock`, `/training`, `/warranty-claims`
+
+**15 job-scoped pages verified:** `/jobs/[id]/budget`, `/jobs/[id]/change-orders`, `/jobs/[id]/clients`, `/jobs/[id]/daily-logs`, `/jobs/[id]/documents`, `/jobs/[id]/draws`, `/jobs/[id]/inspections`, `/jobs/[id]/invoices`, `/jobs/[id]/materials`, `/jobs/[id]/permits`, `/jobs/[id]/photos`, `/jobs/[id]/punch-list`, `/jobs/[id]/rfis`, `/jobs/[id]/schedule`, `/jobs/[id]/selections`
+
+### Search UI Test Cases
+| Page | Test | Expected |
+|------|------|----------|
+| `/bids` | Type in search box | Filters bid_packages by title (ilike) |
+| `/bids` | Clear search | Shows all bid packages |
+| `/rfis` | Type in search box | Filters rfis by subject (ilike) |
+| `/rfis` | Clear search | Shows all RFIs |
+
+### E2E Test Fix
+| Test | Previous Issue | Fix |
+|------|---------------|-----|
+| create-forms visibility checks | Checked element visibility before React hydration complete | Added `waitForFunction(() => document.readyState === 'complete')` before assertions |

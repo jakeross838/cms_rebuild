@@ -2043,3 +2043,49 @@ All list rows updated from `<div>` to `<Link>` for navigation to detail pages:
 - **Daily log create test**: date generation changed from bit-shift on `Date.now()` (caused overflow producing invalid years like 47364) to `Math.random()` with year range 1900-1999. Adds hydration wait before form fill.
 - **RFI create test**: `rfi_number` field now generates values that fit within `varchar(20)` column limit (was exceeding it with timestamp-based values).
 - **Result**: 78/78 E2E tests now pass.
+
+---
+
+## Soft Delete Compliance & Archive Buttons (2026-02-25)
+
+### Search UI Added to List Pages
+- **Bids** (`/bids`) — Search input filters `bid_packages` by title (ilike)
+- **RFIs** (`/rfis`) — Search input filters `rfis` by subject (ilike)
+
+### Archive Buttons Added to 7 Detail Pages
+- **Contacts Detail** (`/contacts/[id]`) — Archive button: sets `deleted_at = now()` on `contacts` table, confirm dialog, redirects to `/contacts`
+- **Email Marketing Detail** (`/email-marketing/[id]`) — Archive button: sets `deleted_at = now()` on `email_campaigns` table, confirm dialog, redirects to `/email-marketing`
+- **Chart of Accounts Detail** (`/financial/chart-of-accounts/[id]`) — Archive button: sets `deleted_at = now()` on `chart_of_accounts` table, confirm dialog, redirects to `/financial/chart-of-accounts`
+- **Journal Entries Detail** (`/financial/journal-entries/[id]`) — Archive button: sets `deleted_at = now()` on `journal_entries` table, confirm dialog, redirects to `/financial/journal-entries`
+- **Invoices Detail** (`/invoices/[id]`) — Archive button: sets `deleted_at = now()` on `invoices` table, confirm dialog, redirects to `/invoices`
+- **Legal Detail** (`/legal/[id]`) — Archive button: sets `deleted_at = now()` on `legal_documents` table, confirm dialog, redirects to `/legal`
+- **Library Templates Detail** (`/library/templates/[id]`) — Archive button: sets `deleted_at = now()` on `estimate_templates` table, confirm dialog, redirects to `/library/templates`
+
+### Hard Delete → Soft Delete (3 Pages)
+- **Compliance Lien Law Detail** (`/compliance/lien-law/[id]`) — Changed `.delete().eq('id')` to `.update({ deleted_at: new Date().toISOString() }).eq('id')` on `lien_waivers` table
+- **Time Clock Detail** (`/time-clock/[id]`) — Changed `.delete().eq('id')` to `.update({ deleted_at: new Date().toISOString() }).eq('id')` on `time_entries` table
+- **Job Budget Line Detail** (`/jobs/[id]/budget/[lineId]`) — Changed `.delete().eq('id')` to `.update({ deleted_at: new Date().toISOString() }).eq('id')` on `budget_lines` table
+
+### Status-Only Archive → Proper deleted_at (4 Pages)
+- **Compliance Insurance Detail** (`/compliance/insurance/[id]`) — Changed from setting `status = 'archived'` to setting `deleted_at = now()` on `insurance_policies` table
+- **Compliance Licenses Detail** (`/compliance/licenses/[id]`) — Changed from setting `status = 'archived'` to setting `deleted_at = now()` on `licenses` table
+- **Job Invoices Detail** (`/jobs/[id]/invoices/[invoiceId]`) — Changed from setting `status = 'archived'` to setting `deleted_at = now()` on `invoices` table
+- **Job Inspections Detail** (`/jobs/[id]/inspections/[inspectionId]`) — Changed from setting `status = 'archived'` to setting `deleted_at = now()` on `inspections` table
+
+### Edit + Archive Added to Training Detail
+- **Training Detail** (`/training/[id]`) — Was read-only. Now has edit mode (inline form with title, description, content_url, course_type, difficulty, duration_minutes, category, is_published) and archive button (soft delete via `deleted_at`).
+
+### Archive Job Button Added
+- **Job Detail** (`/jobs/[id]`) — New `ArchiveJobButton` client component. Sets `deleted_at = now()` on `jobs` table, confirm dialog, redirects to `/jobs`.
+
+### deleted_at Filter Added to 44 List Pages
+All list pages now filter out archived records with `.is('deleted_at', null)` in their Supabase queries.
+
+**29 Top-Level List Pages:**
+`/bids`, `/change-orders`, `/clients`, `/communications`, `/compliance/insurance`, `/compliance/lien-law`, `/compliance/licenses`, `/contacts`, `/daily-logs`, `/dashboards`, `/draws`, `/email-marketing`, `/equipment`, `/estimates`, `/financial/chart-of-accounts`, `/financial/journal-entries`, `/invoices`, `/legal`, `/library/selections`, `/library/templates`, `/notifications`, `/permits`, `/proposals`, `/rfis`, `/submittals`, `/support`, `/time-clock`, `/training`, `/warranty-claims`
+
+**15 Job-Scoped List Pages:**
+`/jobs/[id]/budget`, `/jobs/[id]/change-orders`, `/jobs/[id]/clients`, `/jobs/[id]/daily-logs`, `/jobs/[id]/documents`, `/jobs/[id]/draws`, `/jobs/[id]/inspections`, `/jobs/[id]/invoices`, `/jobs/[id]/materials`, `/jobs/[id]/permits`, `/jobs/[id]/photos`, `/jobs/[id]/punch-list`, `/jobs/[id]/rfis`, `/jobs/[id]/schedule`, `/jobs/[id]/selections`
+
+### E2E Test Fix
+- **create-forms.spec.ts** — Added `waitForFunction(() => document.readyState === 'complete')` before visibility checks to prevent hydration race conditions.

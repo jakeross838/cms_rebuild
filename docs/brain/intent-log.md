@@ -1237,3 +1237,31 @@ Fixed remaining CRUD gaps -- dashboards and training were missing create/detail 
 - Used same CRUD page pattern (view/edit toggle, archive via soft delete, back link) established across all other detail pages
 - Daily log date fix uses intentionally old dates (1900-1999) to avoid UNIQUE constraint collisions with real data
 - RFI number uses short random prefix (`RFI-` + 5-digit random) instead of timestamp to stay within DB column limit
+
+---
+
+## 2026-02-25: Soft Delete Compliance, Archive Buttons, deleted_at Filtering
+
+### Why
+The platform's architecture mandates "soft delete only — nothing is permanently deleted" (see CLAUDE.md Key Architecture Decisions). An audit found three categories of violations:
+1. **Hard deletes**: 3 detail pages used `.delete()` which permanently removes records from the DB, violating data integrity and audit trail requirements.
+2. **Status-based archive**: 4 detail pages set `status = 'archived'` instead of using `deleted_at` timestamp. This is inconsistent with the rest of the platform and makes it impossible to distinguish "user chose archived status" from "record was soft-deleted."
+3. **Missing archive buttons**: 7 detail pages had no way to archive/delete records at all, and 1 page (training) was entirely read-only with no edit capability.
+4. **Archived records showing in lists**: 44 list pages had no `deleted_at IS NULL` filter, meaning soft-deleted records would still appear in listings alongside active records.
+
+### What was done
+1. **Converted 3 hard deletes to soft deletes**: `compliance/lien-law/[id]`, `time-clock/[id]`, `jobs/[id]/budget/[lineId]` — changed `.delete()` to `.update({ deleted_at: new Date().toISOString() })`
+2. **Converted 4 status-based archives to deleted_at**: `compliance/insurance/[id]`, `compliance/licenses/[id]`, `jobs/[id]/invoices/[invoiceId]`, `jobs/[id]/inspections/[inspectionId]`
+3. **Added archive buttons to 7 detail pages**: `contacts/[id]`, `email-marketing/[id]`, `financial/chart-of-accounts/[id]`, `financial/journal-entries/[id]`, `invoices/[id]`, `legal/[id]`, `library/templates/[id]`
+4. **Added edit + archive to training detail**: `training/[id]` was read-only, now has full edit mode and archive capability
+5. **Added ArchiveJobButton to job detail**: `jobs/[id]` now has a dedicated client component for archiving jobs
+6. **Added deleted_at filter to 44 list pages** (29 top-level + 15 job-scoped): ensures archived records are hidden from all list views
+7. **Added search UI to bids and RFIs list pages**: users can now search/filter these lists
+8. **Fixed E2E create-forms test**: added hydration wait to prevent flaky test failures caused by checking visibility before React hydration completes
+
+### Key decisions
+- Used `deleted_at = new Date().toISOString()` consistently across all archive operations (not `new Date()` or `'now()'`)
+- All archive buttons use a confirmation dialog before executing
+- All archive operations redirect back to the parent list page after completion
+- List pages use `.is('deleted_at', null)` Supabase filter (not `.eq('deleted_at', null)` which doesn't work for NULL comparisons)
+- ArchiveJobButton is a separate client component because the job detail page is a server component
