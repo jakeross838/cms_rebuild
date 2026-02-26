@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, Search, FileCheck } from 'lucide-react'
 
@@ -28,9 +29,16 @@ export default async function PermitsPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('permits')
     .select('id, permit_number, permit_type, jurisdiction, status, applied_date, issued_date, expiration_date, created_at')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { ShoppingCart, Search, Plus } from 'lucide-react'
 
@@ -28,9 +29,16 @@ export default async function PurchaseOrdersPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('purchase_orders')
     .select('id, po_number, title, status, total_amount, delivery_date, job_id, vendor_id, created_at')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
@@ -52,6 +60,7 @@ export default async function PurchaseOrdersPage({
     const { data: jobsData } = await supabase
       .from('jobs')
       .select('id, name, job_number')
+      .eq('company_id', companyId)
       .in('id', jobIds)
     for (const job of jobsData || []) {
       jobsMap.set(job.id, { name: job.name, job_number: job.job_number })
@@ -62,6 +71,7 @@ export default async function PurchaseOrdersPage({
     const { data: vendorsData } = await supabase
       .from('vendors')
       .select('id, name')
+      .eq('company_id', companyId)
       .in('id', vendorIds)
     for (const vendor of vendorsData || []) {
       vendorsMap.set(vendor.id, { name: vendor.name })

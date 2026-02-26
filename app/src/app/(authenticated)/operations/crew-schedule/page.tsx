@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { Users, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -28,9 +29,16 @@ export default async function CrewSchedulePage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('employees')
     .select('*')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('last_name', { ascending: true })
 

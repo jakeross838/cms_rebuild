@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { CheckSquare, Briefcase } from 'lucide-react'
 
@@ -20,9 +21,16 @@ interface Job {
 export default async function JobClosePage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   const { data: jobsData } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, contract_amount, actual_completion, target_completion')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .in('status', ['completed', 'warranty'])
     .order('actual_completion', { ascending: false })
@@ -30,6 +38,7 @@ export default async function JobClosePage() {
   const { data: activeData } = await supabase
     .from('jobs')
     .select('id, name, job_number, status, contract_amount, actual_completion, target_completion')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .not('status', 'in', '("completed","warranty","cancelled")')
     .order('name', { ascending: true })

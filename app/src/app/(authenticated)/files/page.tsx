@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import { createClient } from '@/lib/supabase/server'
 import { FolderOpen, FileText, FileImage, File } from 'lucide-react'
 
@@ -33,9 +35,16 @@ export default async function FilesPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('documents')
     .select('id, filename, mime_type, file_size, document_type, status, created_at')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(50)

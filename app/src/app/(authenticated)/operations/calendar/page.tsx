@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Calendar, Clock } from 'lucide-react'
 
@@ -21,11 +22,18 @@ interface ScheduleTask {
 export default async function CompanyCalendarPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   const today = new Date().toISOString().split('T')[0]
 
   const { data: tasksData } = await supabase
     .from('schedule_tasks')
     .select('id, name, status, planned_start, planned_end, progress_pct, is_critical_path, job_id')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .gte('planned_end', today)
     .order('planned_start', { ascending: true })

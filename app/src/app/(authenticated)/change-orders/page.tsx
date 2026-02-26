@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { FileText, Plus, Search } from 'lucide-react'
 
@@ -28,9 +29,16 @@ export default async function ChangeOrdersPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('change_orders')
     .select('id, job_id, co_number, title, status, amount, change_type, schedule_impact_days, created_at')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
@@ -49,6 +57,7 @@ export default async function ChangeOrdersPage({
     const { data: jobsData } = await supabase
       .from('jobs')
       .select('id, name, job_number')
+      .eq('company_id', companyId)
       .in('id', jobIds)
     for (const job of jobsData || []) {
       jobsMap.set(job.id, { name: job.name, job_number: job.job_number })

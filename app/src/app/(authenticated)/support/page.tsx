@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, HeadphonesIcon } from 'lucide-react'
 
@@ -20,10 +21,17 @@ interface TicketRow {
 export default async function SupportPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   const { data: ticketsData } = await supabase
     .from('support_tickets')
     .select('*')
     .is('deleted_at', null)
+    .eq('company_id', companyId)
     .order('created_at', { ascending: false })
     .limit(50)
 

@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { Package, Truck } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,9 +18,16 @@ interface POReceipt {
 export default async function DeliveriesPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   const { data: receiptsData } = await supabase
     .from('po_receipts')
     .select('*')
+    .eq('company_id', companyId)
     .order('received_date', { ascending: false })
     .limit(100)
 

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { FileText, Clock } from 'lucide-react'
 
@@ -22,9 +23,16 @@ interface PayrollExportRow {
 export default async function CertifiedPayrollPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   const { data: exportsData } = await supabase
     .from('payroll_exports')
     .select('*')
+    .eq('company_id', companyId)
     .order('created_at', { ascending: false })
     .limit(50)
 

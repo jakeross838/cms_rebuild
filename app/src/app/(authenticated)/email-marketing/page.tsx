@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, Search, Mail } from 'lucide-react'
 
@@ -35,9 +36,16 @@ export default async function EmailMarketingPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('marketing_campaigns')
     .select('*')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 

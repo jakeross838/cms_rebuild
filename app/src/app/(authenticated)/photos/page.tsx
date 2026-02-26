@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import { createClient } from '@/lib/supabase/server'
 import { Camera } from 'lucide-react'
 
@@ -18,9 +20,16 @@ export default async function PhotosPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
   let query = supabase
     .from('documents')
     .select('id, filename, file_size, status, created_at')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .like('mime_type', 'image/%')
     .order('created_at', { ascending: false })
