@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('push_notification_tokens')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at, deleted_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -105,7 +105,7 @@ export const POST = createApiHandler(
         provider: input.provider,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {
