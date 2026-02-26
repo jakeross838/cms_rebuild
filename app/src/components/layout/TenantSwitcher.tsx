@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Building2, Check, ChevronDown, Loader2 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface Company {
   id: string
@@ -34,6 +35,7 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
         const response = await fetch('/api/v1/auth/companies')
         if (!response.ok) {
           console.error('[TenantSwitcher] Failed to fetch companies')
+          toast.error('Failed to load companies')
           return
         }
         const data = await response.json()
@@ -42,6 +44,7 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
         setCurrentCompany(current || null)
       } catch (error) {
         console.error('[TenantSwitcher] Error fetching companies:', error)
+        toast.error('Failed to load companies')
       } finally {
         setIsLoading(false)
       }
@@ -66,6 +69,7 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
       if (!response.ok) {
         const data = await response.json()
         console.error('[TenantSwitcher] Failed to switch company:', data.message)
+        toast.error('Failed to switch company')
         return
       }
 
@@ -86,6 +90,7 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
       router.refresh()
     } catch (error) {
       console.error('[TenantSwitcher] Error switching company:', error)
+      toast.error('Failed to switch company')
     } finally {
       setIsSwitching(false)
     }

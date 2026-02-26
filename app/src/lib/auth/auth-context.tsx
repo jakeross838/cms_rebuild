@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 
 import { hasPermission, isRoleAtLeast, resolvePermissions } from '@/lib/auth/permissions'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import type {
   AuthContext,
@@ -87,7 +88,11 @@ export function AuthProvider({
     async function fetchCompanies() {
       try {
         const response = await fetch('/api/v1/auth/companies')
-        if (!response.ok) return
+        if (!response.ok) {
+          console.error('[AuthProvider] Failed to fetch companies')
+          toast.error('Failed to load companies')
+          return
+        }
 
         const data = await response.json()
         const fetchedCompanies: CompanyInfo[] = (data.companies || []).map(
@@ -111,6 +116,7 @@ export function AuthProvider({
         }
       } catch (error) {
         console.error('[AuthProvider] Failed to fetch companies:', error)
+        toast.error('Failed to load companies')
       }
     }
 
@@ -144,6 +150,7 @@ export function AuthProvider({
 
       if (!response.ok) {
         console.error('[AuthProvider] Failed to switch company')
+        toast.error('Failed to switch company')
         return false
       }
 
@@ -164,6 +171,7 @@ export function AuthProvider({
       return true
     } catch (error) {
       console.error('[AuthProvider] Error switching company:', error)
+      toast.error('Failed to switch company')
       return false
     } finally {
       setLoading(false)
