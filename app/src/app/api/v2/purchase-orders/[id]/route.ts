@@ -108,6 +108,32 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
+    // Validate status transition — only draft or pending POs can be updated
+    if (input.status !== undefined) {
+      const { data: existing } = await (supabase as any)
+        .from('purchase_orders')
+        .select('status')
+        .eq('id', id)
+        .eq('company_id', ctx.companyId!)
+        .is('deleted_at', null)
+        .single()
+
+      if (!existing) {
+        return NextResponse.json(
+          { error: 'Not Found', message: 'Purchase order not found', requestId: ctx.requestId },
+          { status: 404 }
+        )
+      }
+
+      const editableStatuses = ['draft', 'pending', 'rejected']
+      if (!editableStatuses.includes(existing.status)) {
+        return NextResponse.json(
+          { error: 'Conflict', message: `Cannot update a purchase order with status "${existing.status}". Only draft, pending, or rejected POs can be updated.`, requestId: ctx.requestId },
+          { status: 409 }
+        )
+      }
+    }
+
     // Build update object (only include fields that were provided)
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.vendor_id !== undefined) updates.vendor_id = input.vendor_id

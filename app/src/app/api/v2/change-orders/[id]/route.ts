@@ -113,8 +113,8 @@ export const PUT = createApiHandler(
 
     if (existing.status !== 'draft' && existing.status !== 'pending_approval') {
       return NextResponse.json(
-        { error: 'Forbidden', message: 'Only draft or pending change orders can be updated', requestId: ctx.requestId },
-        { status: 403 }
+        { error: 'Conflict', message: 'Only draft or pending change orders can be updated', requestId: ctx.requestId },
+        { status: 409 }
       )
     }
 
@@ -202,8 +202,8 @@ export const DELETE = createApiHandler(
 
     if (existing.status !== 'draft') {
       return NextResponse.json(
-        { error: 'Forbidden', message: 'Only draft change orders can be deleted', requestId: ctx.requestId },
-        { status: 403 }
+        { error: 'Conflict', message: 'Only draft change orders can be deleted', requestId: ctx.requestId },
+        { status: 409 }
       )
     }
 

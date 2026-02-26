@@ -113,8 +113,8 @@ export const PUT = createApiHandler(
 
     if (existing.status !== 'draft' && existing.status !== 'pending_review') {
       return NextResponse.json(
-        { error: 'Forbidden', message: 'Only draft or pending review contracts can be updated', requestId: ctx.requestId },
-        { status: 403 }
+        { error: 'Conflict', message: 'Only draft or pending review contracts can be updated', requestId: ctx.requestId },
+        { status: 409 }
       )
     }
 
@@ -192,8 +192,8 @@ export const DELETE = createApiHandler(
 
     if (existing.status !== 'draft') {
       return NextResponse.json(
-        { error: 'Forbidden', message: 'Only draft contracts can be deleted', requestId: ctx.requestId },
-        { status: 403 }
+        { error: 'Conflict', message: 'Only draft contracts can be deleted', requestId: ctx.requestId },
+        { status: 409 }
       )
     }
 
