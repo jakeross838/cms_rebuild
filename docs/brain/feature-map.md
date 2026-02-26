@@ -1,5 +1,32 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Infrastructure Hardening: Security, Date Validation, API Middleware (2026-02-26)
+
+### Path Traversal Fix
+- `/api/docs/route.ts`: Resolve slug to absolute path and verify it stays inside DOCS_ROOT before reading
+
+### Date Utility Hardening
+- `formatDate()`: Returns empty string for invalid dates (instead of "Invalid Date")
+- `formatRelativeDate()`: Returns absolute date for future dates (instead of negative days)
+
+### API Middleware Improvements
+- Profile query: Returns 500 on DB failure (was returning 403 incorrectly)
+- Company settings query: Logs errors instead of silently ignoring
+- Content-Type validation: Rejects non-JSON bodies for POST/PATCH/PUT
+- Audit logging: Reuses ctx.validatedBody when available (avoids extra body clone)
+
+### Health Check Fix
+- Cache health check was backwards — marked cache as 'down' when KV_REST_API_URL was configured
+
+### Empty State CTAs (4 pages)
+- Equipment, contracts, time-clock, warranty-claims: Added create/new button in empty states
+
+### Error Handling
+- Intelligence procurement/production: Added error handling on vendor/job name lookups
+- Job selections: Added missing error handling on query
+
+---
+
 ## Quality Hardening: Auth Guards, Tenant Isolation, Notifications Pagination (2026-02-25)
 
 ### Notifications Pagination

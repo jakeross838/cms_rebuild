@@ -1,5 +1,26 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Infrastructure Security Hardening
+
+### Why
+1. `/api/docs/route.ts` had path traversal vulnerability — attacker could read arbitrary files via `?slug=../../.env`
+2. `formatDate()` returned "Invalid Date" for malformed dates instead of empty string
+3. `formatRelativeDate()` produced negative days for future dates
+4. API middleware returned 403 on DB failures (should be 500) and silently ignored company settings errors
+5. No Content-Type validation on API POST/PATCH/PUT — non-JSON bodies crashed parser
+6. Health check marked cache as "down" when KV was configured (logic inverted)
+7. Several pages missing empty state CTAs and error handling on subqueries
+
+### What was done
+- Fixed path traversal with resolve + startsWith check
+- Added isNaN guards to both date formatters + future date handling
+- Added DB error handling + logging on profile and company settings queries
+- Added Content-Type validation, reuse ctx.validatedBody in audit logging
+- Fixed backwards cache health check
+- Added CTA buttons to 4 empty states, error handling to 3 queries
+
+---
+
 ## 2026-02-25: Auth Guards, Tenant Isolation, Notifications Pagination, Unused Imports
 
 ### Why

@@ -1,5 +1,36 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Infrastructure Security Hardening (2026-02-26)
+
+### Path Traversal Prevention
+| Test | Expected |
+|------|----------|
+| GET /api/docs?slug=../../.env | Returns 400 "Invalid path" |
+| GET /api/docs?slug=modules/01-auth.md | Returns file content |
+| GET /api/docs?slug=../secrets.local.md | Returns 400 "Invalid path" |
+
+### Date Utility Edge Cases
+| Test | Expected |
+|------|----------|
+| formatDate("invalid") | Returns empty string |
+| formatDate("2026-99-99") | Returns empty string |
+| formatRelativeDate(futureDate) | Returns formatted absolute date |
+| formatRelativeDate(null) | Returns empty string |
+
+### API Middleware
+| Test | Expected |
+|------|----------|
+| POST with Content-Type: text/plain | Returns 400 "Content-Type must be application/json" |
+| POST with valid JSON | Proceeds normally |
+| Profile query DB failure | Returns 500 (not 403) |
+
+### Health Check
+| Test | Expected |
+|------|----------|
+| GET /api/health | Cache shows "up" (not "down") |
+
+---
+
 ## Auth Guards, Tenant Isolation, Notifications Pagination (2026-02-25)
 
 ### Notifications Pagination
