@@ -20,26 +20,32 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: subscription, error: subError } = await supabase
-    .from('company_subscriptions')
-    .select('*')
-    .eq('company_id', companyId)
-    .limit(1)
-    .single()
-  if (subError) throw subError
-
   const params = await searchParams
   const pageSize = 25
   const currentPage = Math.max(1, parseInt(params.page || '1', 10) || 1)
   const offset = (currentPage - 1) * pageSize
 
-  const { data: events, count, error: eventsError } = await supabase
-    .from('billing_events')
-    .select('*', { count: 'exact' })
-    .eq('company_id', companyId)
-    .order('created_at', { ascending: false })
-    .range(offset, offset + pageSize - 1)
-  if (eventsError) throw eventsError
+  const [subscriptionRes, eventsRes] = await Promise.all([
+    supabase
+      .from('company_subscriptions')
+      .select('*')
+      .eq('company_id', companyId)
+      .limit(1)
+      .single(),
+    supabase
+      .from('billing_events')
+      .select('*', { count: 'exact' })
+      .eq('company_id', companyId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1),
+  ])
+
+  if (subscriptionRes.error) throw subscriptionRes.error
+  if (eventsRes.error) throw eventsRes.error
+
+  const subscription = subscriptionRes.data
+  const events = eventsRes.data
+  const count = eventsRes.count
 
   const billingEvents = (events || []) as Array<{
     id: string
