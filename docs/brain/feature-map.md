@@ -1,5 +1,32 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Dashboards, Intelligence & Placeholder Conversion (2026-02-25)
+
+### Three Real Dashboards
+- `/dashboards/overview` — Executive KPIs: active jobs, revenue, pending invoices, clients, action items, recent activity
+- `/dashboards/financial` — Financial KPIs: contract value, invoiced, AR, AP, budget variance, recent bills/draws
+- `/dashboards/operations` — Ops KPIs: active jobs, employees, permits, equipment, safety, inspections, daily logs
+
+### 8 Intelligence Hub Pages (all with real data)
+- ai-hub, accuracy-engine, bidding, communication-hub, learning-metrics, plan-analysis, procurement, production
+- Each queries relevant tables for counts/metrics, shows stat cards, links to feature pages
+
+### 6 Other Converted Placeholders
+- admin: hub with user/role/flag stats + nav grid
+- meetings: upcoming inspections + meeting quick-links
+- community (3 pages): hub, best-practices, forums with category cards
+- sustainability: environmental permit metrics
+
+### 3 Redirects (replaced coming soon with useful redirects)
+- expenses → /financial/payables
+- vendor-reviews → /vendors
+- white-label → /settings/general
+
+### 5 Job-Scoped Pages Got Search
+- budget (description), invoices (invoice_number), selections (room), team (role_override), warranties (title)
+
+---
+
 ## Executive Dashboard — /dashboards/overview (2026-02-25)
 
 ### Landing Page (root redirects here)
