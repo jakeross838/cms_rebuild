@@ -1,5 +1,44 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 8 — V2 Soft-Delete, Sensitive Data, Unhandled Operations (2026-02-26)
+
+### V2 Soft-Delete Filters
+- [ ] GET /api/v2/branding/terminology/:id — returns 404 for archived terminology
+- [ ] PUT /api/v2/branding/terminology/:id — returns 404 for archived terminology
+- [ ] DELETE /api/v2/branding/terminology/:id — returns 404 for already-archived terminology
+- [ ] PUT /api/v2/folders/:id — returns 404 for archived folder
+- [ ] DELETE /api/v2/folders/:id — does not count archived sub-folders as children
+- [ ] PUT /api/v2/integrations/mappings/:id — returns 404 for archived mapping
+- [ ] DELETE /api/v2/integrations/mappings/:id — returns 404 for already-archived mapping
+- [ ] PUT /api/v2/labor-rates/:id — returns 404 for archived rate
+- [ ] DELETE /api/v2/labor-rates/:id — properly soft-deletes with deleted_at
+- [ ] GET /api/v2/labor-rates — does not return archived rates
+- [ ] PUT /api/v2/lien-waiver-templates/:id — returns 404 for archived template
+
+### Sync Logs Error Details
+- [ ] GET /api/v2/integrations/sync-logs — response does NOT include `error_details`
+- [ ] GET /api/v2/integrations/connections/:id — recent_sync_logs do NOT include `error_details`
+- [ ] POST /api/v2/integrations/connections/:id/sync — sync log response does NOT include `error_details`
+
+### Critical Cascading Error Handling
+- [ ] PUT /api/v2/gl/journal-entries/:id (with lines) — returns error if line delete fails
+- [ ] PUT /api/v2/gl/journal-entries/:id (with lines) — returns error if line insert fails
+- [ ] POST /api/v2/contracts/:id/signers/:id/sign — returns error if contract status update fails
+- [ ] POST /api/v2/purchase-orders/:id/receipts — returns error if PO status update fails
+- [ ] POST /api/v2/draw-requests/:id/lines — returns error if draw totals update fails
+- [ ] POST /api/v2/documents/:id/versions — returns error if document metadata update fails
+- [ ] POST /api/v2/bid-packages/:id/award — returns error if bid package status update fails
+- [ ] POST /api/v2/invoice-extractions/:id/create-bill — returns error if extraction linkage fails
+- [ ] POST /api/v2/rfis/:id/responses (official) — returns error if RFI status update fails
+- [ ] POST /api/v2/payroll/exports — returns error if time entry status update fails
+- [ ] POST /api/v2/payroll/exports — returns error if payroll period status update fails
+
+### Non-Critical History/Audit Logging
+- [ ] Draw request history insert failure logs to console.error (does not block response)
+- [ ] Selection history insert failure logs to console.error (does not block response)
+- [ ] Warranty claim history insert failure logs to console.error (does not block response)
+- [ ] Extraction audit log insert failure logs to console.error (does not block response)
+
 ## Session 7 — API Consistency, Soft-Delete Fixes, mapDbError Standardization (2026-02-26)
 
 ### Webhook Secret Exposure

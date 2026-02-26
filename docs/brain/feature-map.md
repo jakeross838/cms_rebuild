@@ -1,5 +1,41 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 8 — V2 Soft-Delete, Sensitive Data, Unhandled Operations (2026-02-26)
+
+### V2 Soft-Delete Filter Fixes (6 files, 12 queries)
+- builder_terminology [id] GET/PUT/DELETE: Added `.is('deleted_at', null)` — prevents accessing archived terminology
+- document_folders [id] PUT fetch + DELETE children check: Added `.is('deleted_at', null)` — prevents editing/counting archived folders
+- sync_mappings [id] PUT existence + update + DELETE existence: Added `.is('deleted_at', null)` — prevents modifying archived mappings
+- labor_rates [id] PUT + DELETE: Added `.is('deleted_at', null)` — prevents editing archived rates; DELETE now properly soft-deletes with `deleted_at`
+- labor_rates GET list: Added `.is('deleted_at', null)` — list was missing soft-delete filter
+- lien_waiver_templates [id] PUT + DELETE: Added `.is('deleted_at', null)` — prevents modifying archived templates
+
+### Sync Logs Error Details Exclusion (3 files)
+- sync_logs GET list: `select('*')` → explicit columns excluding `error_details` (may contain stack traces, API errors)
+- sync_logs in connections/[id] GET: `select('*')` → explicit columns excluding `error_details`
+- sync_logs in connections/[id]/sync POST: `select('*')` → explicit columns excluding `error_details`
+
+### Unhandled DB Operations Fixed (22 files, ~30 operations)
+**Critical cascading — now return errors to client:**
+- GL journal entry [id] PUT: line delete + line insert now checked (prevents data loss if insert fails after delete)
+- Contract signer sign: contract status update to `fully_signed`/`partially_signed` now checked
+- PO receipt POST: PO status update to `received`/`partially_received` now checked (added `company_id` filter too)
+- Draw request lines POST: draw totals recalculation now checked
+- Document version POST: document metadata update now checked
+- Bid package award POST: bid package status update to `awarded` now checked
+- Invoice extraction create-bill: extraction-to-bill linkage now checked
+- RFI response POST (official): RFI status update to `answered` now checked
+- Payroll export POST: time entry status + payroll period status now checked
+
+**Non-critical — now log errors via console.error:**
+- Draw request history (create/approve/submit) — 3 files
+- Selection history (create/update) — 2 files
+- Warranty claim history (create/update/resolve) — 3 files
+- Extraction audit log (create/review/match) — 3 files
+- Bid invitation status update
+- Template version update
+- Support ticket first_response_at update
+
 ## Session 7 — API Consistency, Soft-Delete Fixes, mapDbError Standardization (2026-02-26)
 
 ### Webhook Secret Exposure Fix (3 files, 5 queries)

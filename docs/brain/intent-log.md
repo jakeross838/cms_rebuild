@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 8 — V2 Soft-Delete, Sensitive Data, Unhandled Operations
+
+### Why
+1. **5 v2 detail routes missing soft-delete filters** — GET/PUT/DELETE on builder_terminology, document_folders, sync_mappings, labor_rates, and lien_waiver_templates could return and modify archived records. Labor rates list endpoint also lacked the filter.
+2. **sync_logs.error_details exposed via select('*')** — The `error_details` JSONB field can contain stack traces, raw API error messages, and internal system paths that should never reach API callers.
+3. **26 fire-and-forget DB operations** — Critical cascading updates (GL journal lines, contract status, PO status, draw totals, payroll exports) silently failed without error handling, causing data inconsistency. History/audit inserts also silently failed without logging.
+4. **Labor rate DELETE wasn't truly soft-deleting** — Only set `end_date` without setting `deleted_at`, inconsistent with project-wide soft-delete pattern.
+
+### What was done
+- Added `.is('deleted_at', null)` to 12 queries across 6 v2 route files
+- Replaced `select('*')` with explicit columns excluding `error_details` on 3 sync_logs queries
+- Added proper error handling to 30 unhandled DB operations across 22 v2 route files
+- Critical cascading operations now return mapped errors; history/audit inserts now log on failure
+
+### Commits
+- `13aa767` — Add missing soft-delete filters to v2 detail routes (6 files)
+- `9ebfd26` — Exclude sync_logs.error_details from API responses (3 files)
+- `77b2161` — Handle all unhandled DB operations in v2 routes (22 files)
+
 ## 2026-02-26: Session 7 — API Consistency, Soft-Delete Fixes, mapDbError Standardization
 
 ### Why
