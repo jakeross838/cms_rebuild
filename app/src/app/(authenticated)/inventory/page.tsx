@@ -103,7 +103,7 @@ export default async function InventoryPage({
         ) : (
           <div className="text-center py-12">
             <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No inventory items found</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No inventory items found</p>
             <p className="text-muted-foreground mb-4">
               {params.search || params.category ? 'Try adjusting your filters' : 'Start tracking your materials and supplies'}
             </p>

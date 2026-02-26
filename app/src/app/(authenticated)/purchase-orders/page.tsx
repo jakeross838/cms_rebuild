@@ -205,7 +205,7 @@ export default async function PurchaseOrdersPage({
         ) : (
           <div className="text-center py-12">
             <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No purchase orders found</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No purchase orders found</p>
             <p className="text-muted-foreground mb-4">
               {params.search
                 ? 'Try adjusting your search'

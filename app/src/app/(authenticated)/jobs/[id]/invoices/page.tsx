@@ -134,7 +134,7 @@ export default async function JobInvoicesPage({
       ) : (
         <div className="text-center py-12">
           <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No invoices</h3>
+          <p className="text-lg font-medium text-foreground mb-1">No invoices</p>
           <p className="text-muted-foreground">{sparams.status ? 'Try a different filter' : 'No invoices for this job yet'}</p>
         </div>
       )}

@@ -134,7 +134,7 @@ export default async function JobClosePage() {
       {closedJobs.length === 0 && activeJobs.length === 0 && (
         <div className="text-center py-12">
           <CheckSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No jobs to close</h3>
+          <p className="text-lg font-medium text-foreground mb-1">No jobs to close</p>
           <p className="text-muted-foreground">Jobs ready for final reconciliation will appear here</p>
         </div>
       )}

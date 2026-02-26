@@ -119,7 +119,7 @@ export default async function ProposalsPage({
       ) : (
         <div className="text-center py-12">
           <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No proposals found</h3>
+          <p className="text-lg font-medium text-foreground mb-1">No proposals found</p>
           <p className="text-muted-foreground">{params.search || params.status ? 'Try adjusting your filters' : 'Create your first proposal from an estimate'}</p>
         </div>
       )}

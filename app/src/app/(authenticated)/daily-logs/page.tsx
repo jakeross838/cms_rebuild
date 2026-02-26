@@ -113,7 +113,7 @@ export default async function DailyLogsPage({
         ) : (
           <div className="text-center py-12">
             <ClipboardList className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No daily logs yet</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No daily logs yet</p>
             <p className="text-muted-foreground mb-4">
               Create daily logs from within a job
             </p>

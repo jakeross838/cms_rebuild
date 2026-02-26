@@ -173,7 +173,7 @@ export default async function JobsPage({
         ) : (
           <div className="text-center py-12">
             <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No jobs found</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No jobs found</p>
             <p className="text-muted-foreground mb-4">
               {params.search || params.status
                 ? 'Try adjusting your filters'

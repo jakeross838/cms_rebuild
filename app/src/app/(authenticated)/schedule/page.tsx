@@ -92,7 +92,7 @@ export default async function SchedulePage() {
         ) : (
           <div className="text-center py-12">
             <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No jobs scheduled</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No jobs scheduled</p>
             <p className="text-muted-foreground mb-4">
               Create jobs with start and end dates to see them here
             </p>

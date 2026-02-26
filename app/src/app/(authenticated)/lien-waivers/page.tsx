@@ -156,7 +156,7 @@ export default async function LienWaiversPage({
         ) : (
           <div className="text-center py-12">
             <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-medium text-foreground mb-1">No lien waivers yet</h3>
+            <p className="text-lg font-medium text-foreground mb-1">No lien waivers yet</p>
             <p className="text-muted-foreground mb-4">
               {params.search
                 ? 'Try adjusting your search'

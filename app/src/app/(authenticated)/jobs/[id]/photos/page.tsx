@@ -109,7 +109,7 @@ export default async function JobPhotosPage({
       ) : (
         <div className="text-center py-12">
           <Image className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No photos yet</h3>
+          <p className="text-lg font-medium text-foreground mb-1">No photos yet</p>
           <p className="text-muted-foreground">Upload job site photos to track progress</p>
         </div>
       )}

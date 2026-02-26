@@ -94,7 +94,7 @@ export default async function IntegrationsPage({
       ) : (
         <div className="text-center py-12">
           <Puzzle className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No integrations found</h3>
+          <p className="text-lg font-medium text-foreground mb-1">No integrations found</p>
           <p className="text-muted-foreground">{params.search ? 'Try a different search' : 'No integrations available yet'}</p>
         </div>
       )}
