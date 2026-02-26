@@ -69,6 +69,7 @@ export default function PurchaseOrderDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [companyId, setCompanyId] = useState<string | null>(null)
 
   // ── Options for edit mode selectors ──
   const [jobs, setJobs] = useState<JobInfo[]>([])
@@ -98,6 +99,7 @@ export default function PurchaseOrderDetailPage() {
       const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
       const cid = (profile as { company_id: string } | null)?.company_id
       if (!cid) { setError('No company found'); setLoading(false); return }
+      setCompanyId(cid)
 
       const { data, error: fetchError } = await supabase
         .from('purchase_orders')
@@ -215,6 +217,7 @@ export default function PurchaseOrderDetailPage() {
           notes: formData.notes || undefined,
         })
         .eq('id', params.id as string)
+        .eq('company_id', companyId!)
 
       if (updateError) throw updateError
 
@@ -267,6 +270,7 @@ export default function PurchaseOrderDetailPage() {
       .from('purchase_orders')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', params.id as string)
+      .eq('company_id', companyId!)
 
     if (deleteError) {
       setError('Failed to archive purchase order')

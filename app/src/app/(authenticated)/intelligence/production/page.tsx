@@ -84,7 +84,9 @@ export default async function ProductionPage() {
     const { data: jobs, error: jobError } = await supabase
       .from('jobs')
       .select('id, name')
+      .eq('company_id', companyId)
       .in('id', jobIds)
+      .is('deleted_at', null)
     if (jobError) throw jobError
     if (jobs) {
       jobMap = Object.fromEntries(jobs.map((j) => [j.id, j.name]))

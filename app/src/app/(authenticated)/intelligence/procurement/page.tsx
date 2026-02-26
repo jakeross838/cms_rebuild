@@ -75,7 +75,9 @@ export default async function ProcurementPage() {
     const { data: vendors, error: vendorError } = await supabase
       .from('vendors')
       .select('id, name')
+      .eq('company_id', companyId)
       .in('id', vendorIds)
+      .is('deleted_at', null)
     if (vendorError) throw vendorError
     if (vendors) {
       vendorMap = Object.fromEntries(vendors.map((v) => [v.id, v.name]))

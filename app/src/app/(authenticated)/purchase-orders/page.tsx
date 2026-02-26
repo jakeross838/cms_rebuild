@@ -88,26 +88,19 @@ export default async function PurchaseOrdersPage({
   const jobsMap = new Map<string, { name: string; job_number: string | null }>()
   const vendorsMap = new Map<string, { name: string }>()
 
-  if (jobIds.length > 0) {
-    const { data: jobsData } = await supabase
-      .from('jobs')
-      .select('id, name, job_number')
-      .eq('company_id', companyId)
-      .in('id', jobIds)
-    for (const job of jobsData || []) {
-      jobsMap.set(job.id, { name: job.name, job_number: job.job_number })
-    }
+  const [jobsResult, vendorsResult] = await Promise.all([
+    jobIds.length > 0
+      ? supabase.from('jobs').select('id, name, job_number').eq('company_id', companyId).in('id', jobIds).is('deleted_at', null)
+      : Promise.resolve({ data: null }),
+    vendorIds.length > 0
+      ? supabase.from('vendors').select('id, name').eq('company_id', companyId).in('id', vendorIds).is('deleted_at', null)
+      : Promise.resolve({ data: null }),
+  ])
+  for (const job of jobsResult.data || []) {
+    jobsMap.set(job.id, { name: job.name, job_number: job.job_number })
   }
-
-  if (vendorIds.length > 0) {
-    const { data: vendorsData } = await supabase
-      .from('vendors')
-      .select('id, name')
-      .eq('company_id', companyId)
-      .in('id', vendorIds)
-    for (const vendor of vendorsData || []) {
-      vendorsMap.set(vendor.id, { name: vendor.name })
-    }
+  for (const vendor of vendorsResult.data || []) {
+    vendorsMap.set(vendor.id, { name: vendor.name })
   }
 
   return (

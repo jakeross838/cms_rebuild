@@ -90,6 +90,7 @@ export default async function ChangeOrdersPage({
       .select('id, name, job_number')
       .eq('company_id', companyId)
       .in('id', jobIds)
+      .is('deleted_at', null)
     for (const job of jobsData || []) {
       jobsMap.set(job.id, { name: job.name, job_number: job.job_number })
     }

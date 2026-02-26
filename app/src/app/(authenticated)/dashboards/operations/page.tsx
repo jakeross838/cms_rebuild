@@ -142,7 +142,9 @@ export default async function OperationsDashboardPage() {
     const { data: jobRows } = await supabase
       .from('jobs')
       .select('id, name')
+      .eq('company_id', companyId)
       .in('id', uniqueJobIds)
+      .is('deleted_at', null)
     if (jobRows) {
       inspectionJobMap = Object.fromEntries(
         jobRows.map((j: { id: string; name: string }) => [j.id, j.name])
