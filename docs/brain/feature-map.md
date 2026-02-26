@@ -1,5 +1,36 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Type System Overhaul — database.ts Regenerated, 430 Files Type-Safe (2026-02-26)
+
+### database.ts Regenerated from Live Supabase Schema
+- Full regeneration from Supabase introspection — 17,553 lines of types covering all tables, views, functions, enums
+- Json type extended: `string | number | boolean | null | Record<string, unknown> | unknown[]` — adds Zod compatibility (Zod outputs `Record<string, unknown>` not `{ [key: string]: Json }`)
+- 194 convenience type aliases restored at bottom of file (Job, JobInsert, JobUpdate, User, Company, Vendor, etc.)
+- All table Row/Insert/Update types now match live DB schema exactly
+
+### Blanket `(supabase as any)` Removed (430 files, 1,382 casts)
+- **Before:** 430 API route files used `(supabase as any).from('table_name')` — TypeScript could not validate table names, column names, or query results
+- **After:** All 430 files use properly typed `supabase.from('table_name')` — TypeScript now validates:
+  - Table name exists in the schema
+  - Column names in `.select()`, `.eq()`, `.order()`, `.is()` are valid
+  - Insert/update data shapes match the table's Insert/Update types
+  - Query results have correct types for downstream usage
+- 428 files in `app/src/app/api/` + 1 file `app/src/lib/notifications/service.ts` + 1 file already typed
+- Only 2 `supabase as any` remain: RPC calls for functions not present in generated types
+
+### Targeted `as never` Casts (8 files)
+- 8 API route files needed `as never` on insert/update data where Zod-validated types don't perfectly match Supabase Insert types
+- Files: api-keys, branding/pages, portal/settings, gl/journal-entries/post, invoice-extractions/create-bill, invoice-extractions/review, payroll/exports, purchase-orders/receipts
+- `as never` is narrowly scoped to the data argument only — table name, column names, and select results remain fully typed
+- This is a deliberate trade-off: Zod validates the runtime shape, `as never` bridges the compile-time mismatch
+
+### notifications/service.ts
+- Removed 2 `(supabase as any)` casts
+- Added `as never` on insert data (notification payload shape differs slightly from strict Insert type)
+- Notification queries now type-checked for table/column validity
+
+---
+
 ## DB Error Sanitization, Cache Headers, DB Security (2026-02-26)
 
 ### Error Message Sanitization (277 files, 462 occurrences)

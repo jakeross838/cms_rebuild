@@ -16,6 +16,7 @@ import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { sendWelcomeEmail } from '@/lib/email/resend'
+import { logger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { signupSchema, type SignupInput } from '@/lib/validation/schemas/auth'
 
@@ -65,7 +66,7 @@ export const POST = createApiHandler(
     })
 
     if (authError || !authData.user) {
-      console.error('[Signup] Failed to create auth user:', authError)
+      logger.error('[Signup] Failed to create auth user', { error: authError?.message })
       return NextResponse.json(
         {
           error: 'Internal Server Error',
@@ -94,7 +95,7 @@ export const POST = createApiHandler(
         .single()
 
       if (companyError || !company) {
-        console.error('[Signup] Failed to create company:', companyError)
+        logger.error('[Signup] Failed to create company', { error: companyError?.message })
         // Rollback: delete auth user
         await admin.auth.admin.deleteUser(authUserId)
         return NextResponse.json(
@@ -120,7 +121,7 @@ export const POST = createApiHandler(
       } as never)
 
       if (userError) {
-        console.error('[Signup] Failed to create user profile:', userError)
+        logger.error('[Signup] Failed to create user profile', { error: userError?.message })
         // Rollback: delete company and auth user
         await admin.from('companies').delete().eq('id', companyId)
         await admin.auth.admin.deleteUser(authUserId)
@@ -189,7 +190,7 @@ export const POST = createApiHandler(
         { status: 201 }
       )
     } catch (err) {
-      console.error('[Signup] Unexpected error:', err)
+      logger.error('[Signup] Unexpected error', { error: (err as Error)?.message })
       // Attempt cleanup
       await admin.auth.admin.deleteUser(authUserId).catch(() => {})
       return NextResponse.json(

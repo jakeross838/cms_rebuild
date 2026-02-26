@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 
 interface CompanyMembership {
@@ -40,7 +41,7 @@ export const GET = createApiHandler(
       .order('companies(name)', { ascending: true })
 
     if (error) {
-      console.error('[GetCompanies] Failed to fetch memberships:', error)
+      logger.error('[GetCompanies] Failed to fetch memberships', { error: error?.message })
       return NextResponse.json(
         {
           error: 'Internal Server Error',

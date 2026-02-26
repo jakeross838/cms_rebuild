@@ -16,6 +16,7 @@ import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { hashToken } from '@/lib/auth/tokens'
+import { logger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { acceptInviteSchema, type AcceptInviteInput } from '@/lib/validation/schemas/auth'
 
@@ -158,7 +159,7 @@ export const POST = createApiHandler(
       })
 
       if (authError || !newAuthUser.user) {
-        console.error('[AcceptInvite] Failed to create auth user:', authError)
+        logger.error('[AcceptInvite] Failed to create auth user', { error: authError?.message })
         return NextResponse.json(
           {
             error: 'Internal Server Error',
@@ -195,7 +196,7 @@ export const POST = createApiHandler(
         )
       }
 
-      console.error('[AcceptInvite] Failed to create user profile:', profileError)
+      logger.error('[AcceptInvite] Failed to create user profile', { error: profileError?.message })
       // If we created a new auth user, we should clean up
       if (!existingAuthUser) {
         await admin.auth.admin.deleteUser(authUserId).catch(() => {})

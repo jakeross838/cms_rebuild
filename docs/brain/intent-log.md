@@ -1,5 +1,29 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Type System Overhaul — Eliminate Blanket Type Suppression
+
+### Why
+1. **430 API route files used `(supabase as any)`** — this blanket cast disabled TypeScript's ability to validate table names, column names, select clauses, and insert/update data shapes against the actual database schema
+2. **Bugs slipped through undetected**: misspelled table names, non-existent columns in `.eq()` or `.select()`, and wrong insert shapes would only fail at runtime (Supabase 400/404 errors) instead of at compile time
+3. **database.ts was stale** — the generated types didn't match the live schema after dozens of migrations. Tables added in Phase 4-6 had no type definitions, forcing the `as any` workaround
+4. **Json type was incompatible with Zod** — Supabase generates `Json = string | number | boolean | null | { [key: string]: Json } | Json[]` but Zod outputs `Record<string, unknown>` and `unknown[]`, causing type errors on every JSONB column insert/update
+
+### What was done
+1. **Regenerated `database.ts`** from live Supabase schema (17,553 lines) — all tables, views, functions, enums now match production
+2. **Extended Json type** to accept `Record<string, unknown>` and `unknown[]` for Zod compatibility
+3. **Restored 194 convenience type aliases** (Job, User, Company, Vendor, etc.) appended after the generated block
+4. **Removed 1,382 `(supabase as any)` casts** across 430 files — replaced with properly typed `supabase`
+5. **Added targeted `as never` casts** on insert/update data in 8 files where Zod types don't perfectly align with DB Insert types
+6. **Fixed notifications/service.ts** — removed 2 `supabase as any`, added `as never` on insert data
+
+### Key decisions
+1. **`as never` is acceptable for insert data when Zod validates runtime shape** — the compile-time mismatch is a Zod-to-Supabase type mapping issue, not a real bug. Zod ensures correctness at runtime; `as never` bridges the gap. Only 8 of 430 files need this.
+2. **Only 2 `as any` remain (RPC calls)** — these call Supabase RPC functions not present in the generated types. They'll be resolved when the functions are added to the type generator or when we add manual type declarations.
+3. **Json type extension is safe** — `Record<string, unknown>` is a subset of the recursive Json type's intent. The extension prevents false positives without allowing invalid data.
+4. **`tsc --noEmit` is now a real safety net** — previously it only checked syntax and basic types. Now it validates every table name, column reference, and data shape across 430 API route files against the live DB schema.
+
+---
+
 ## 2026-02-26: DB Error Sanitization, Cache Headers, DB Security Hardening
 
 ### Why

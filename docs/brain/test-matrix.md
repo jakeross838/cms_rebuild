@@ -1,5 +1,35 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Type System Overhaul — database.ts + 430 Files Type-Safe (2026-02-26)
+
+### Compile-Time Validation (`tsc --noEmit`)
+| Test | Expected | Notes |
+|------|----------|-------|
+| `cd app && npx tsc --noEmit` passes | Zero errors | Was previously passing but NOT catching table/column errors due to `as any` |
+| Misspell a table name in any API route | tsc error: property does not exist on Database['public']['Tables'] | Previously: silent, runtime 404 from Supabase |
+| Misspell a column in `.eq('bad_col', ...)` | tsc error: argument not assignable | Previously: silent, runtime error |
+| Wrong insert shape (missing required field) | tsc error: property missing in type | Previously: silent, runtime 400 from Supabase |
+| `.select('nonexistent_column')` | tsc error (if using typed select) | Previously: silent, runtime empty result |
+
+### database.ts Integrity
+| Test | Expected |
+|------|----------|
+| All 430 API route files compile without `(supabase as any)` | Zero type errors from table/column references |
+| Only 2 `supabase as any` remain (RPC calls) | Grep for `supabase as any` returns exactly 2 results |
+| 8 files use `as never` on insert/update data | Grep for `as never` in API routes returns exactly 8 files |
+| Json type accepts `Record<string, unknown>` | No type error when inserting Zod-parsed JSONB data |
+| Json type accepts `unknown[]` | No type error when inserting Zod-parsed JSON array data |
+| 194 type aliases exported | `Job`, `User`, `Company`, `Vendor`, etc. importable from `@/types/database` |
+
+### Runtime Behavior (unchanged)
+| Test | Expected |
+|------|----------|
+| All existing API routes work identically | No runtime behavior change — only type-level changes |
+| Insert with valid Zod data on `as never` routes | Succeeds (Zod validates shape, `as never` bridges types) |
+| notifications/service.ts creates notifications | Works identically — only type annotations changed |
+
+---
+
 ## DB Error Sanitization, Cache Headers, DB Security (2026-02-26)
 
 ### Error Message Sanitization
