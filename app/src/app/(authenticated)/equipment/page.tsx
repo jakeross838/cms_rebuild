@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, getStatusColor } from '@/lib/utils'
 
 interface Equipment {
   id: string
@@ -54,7 +54,7 @@ export default async function EquipmentPage({
   }
 
   if (params.search) {
-    query = query.or(`name.ilike.%${params.search}%,serial_number.ilike.%${params.search}%`)
+    query = query.or(`name.ilike.%${escapeLike(params.search)}%,serial_number.ilike.%${escapeLike(params.search)}%`)
   }
 
   const { data: equipmentData } = await query

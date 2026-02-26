@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, getStatusColor } from '@/lib/utils'
 
 interface SelectionCategory {
   id: string
@@ -46,7 +46,7 @@ export default async function SelectionsCatalogPage({
     .order('name', { ascending: true })
 
   if (params.search) {
-    query = query.ilike('name', `%${params.search}%`)
+    query = query.ilike('name', `%${escapeLike(params.search)}%`)
   }
 
   const [

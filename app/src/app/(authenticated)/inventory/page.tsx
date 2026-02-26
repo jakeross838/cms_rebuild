@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency } from '@/lib/utils'
+import { escapeLike, formatCurrency } from '@/lib/utils'
 
 interface InventoryItem {
   id: string
@@ -48,7 +48,7 @@ export default async function InventoryPage({
   }
 
   if (params.search) {
-    query = query.or(`name.ilike.%${params.search}%,sku.ilike.%${params.search}%`)
+    query = query.or(`name.ilike.%${escapeLike(params.search)}%,sku.ilike.%${escapeLike(params.search)}%`)
   }
 
   const { data: itemsData } = await query

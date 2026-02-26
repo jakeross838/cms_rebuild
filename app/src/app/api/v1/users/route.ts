@@ -18,6 +18,7 @@ import { sendInviteEmail } from '@/lib/email/resend'
 import { createLogger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { inviteUserSchema, listUsersSchema, type InviteUserInput } from '@/lib/validation/schemas/users'
 import type { User } from '@/types/database'
 
@@ -83,7 +84,7 @@ export const GET = createApiHandler(
 
     // Search filter (name or email ILIKE)
     if (filters.search) {
-      const searchTerm = `%${filters.search}%`
+      const searchTerm = `%${escapeLike(filters.search)}%`
       query = query.or(`name.ilike.${searchTerm},email.ilike.${searchTerm}`) as typeof query
     }
 

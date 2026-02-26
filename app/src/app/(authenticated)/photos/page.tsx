@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { Camera } from 'lucide-react'
 
 interface PhotoDocument {
@@ -36,7 +37,7 @@ export default async function PhotosPage({
     .limit(50)
 
   if (params.search) {
-    query = query.ilike('filename', `%${params.search}%`)
+    query = query.ilike('filename', `%${escapeLike(params.search)}%`)
   }
 
   const { data } = await query

@@ -15,6 +15,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { createCostCodeSchema, listCostCodesSchema, type CreateCostCodeInput } from '@/lib/validation/schemas/cost-codes'
 import type { CostCode } from '@/types/database'
 
@@ -81,7 +82,7 @@ export const GET = createApiHandler(
       query = query.eq('parent_id', filters.parent_id) as typeof query
     }
     if (filters.search) {
-      const term = `%${filters.search}%`
+      const term = `%${escapeLike(filters.search)}%`
       query = query.or(`code.ilike.${term},name.ilike.${term}`) as typeof query
     }
 

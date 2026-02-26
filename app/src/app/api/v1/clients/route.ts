@@ -15,6 +15,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { createClientSchema, listClientsSchema, type CreateClientInput } from '@/lib/validation/schemas/clients'
 import type { Client } from '@/types/database'
 
@@ -56,8 +57,10 @@ export const GET = createApiHandler(
     let query = supabase
       .from('clients')
       .select('*', { count: 'exact' })
-      .eq('company_id', ctx.companyId!) as unknown as {
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null) as unknown as {
         eq: (col: string, val: unknown) => typeof query
+        is: (col: string, val: unknown) => typeof query
         or: (filter: string) => typeof query
         order: (col: string, opts: { ascending: boolean }) => typeof query
         range: (from: number, to: number) => Promise<{ data: Client[] | null; count: number | null; error: { message: string } | null }>
@@ -68,7 +71,7 @@ export const GET = createApiHandler(
       query = query.eq('lead_source', filters.lead_source) as typeof query
     }
     if (filters.search) {
-      const term = `%${filters.search}%`
+      const term = `%${escapeLike(filters.search)}%`
       query = query.or(`name.ilike.${term},email.ilike.${term}`) as typeof query
     }
 

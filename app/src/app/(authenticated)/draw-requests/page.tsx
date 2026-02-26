@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate } from '@/lib/utils'
+import { escapeLike, formatDate } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Draw Requests' }
@@ -86,7 +86,7 @@ export default async function DrawRequestsPage({
     .order('draw_number', { ascending: false })
 
   if (params.search) {
-    query = query.ilike('lender_reference', `%${params.search}%`)
+    query = query.ilike('lender_reference', `%${escapeLike(params.search)}%`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

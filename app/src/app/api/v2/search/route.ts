@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import type { SearchResult, SearchResultGroup, SearchResponse } from '@/types/search'
 import { searchQuerySchema } from '@/lib/validation/schemas/search'
 
@@ -41,7 +42,7 @@ export const GET = createApiHandler(
     const { q, types, limit } = parseResult.data
     const companyId = ctx.companyId!
     const supabase = await createClient()
-    const term = `%${q}%`
+    const term = `%${escapeLike(q)}%`
 
     const entityTypes = types ?? ['jobs', 'clients', 'vendors', 'invoices']
 

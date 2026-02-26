@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface RfiRow {
   id: string
@@ -51,7 +51,7 @@ export default async function RfisPage({
     .order('created_at', { ascending: false })
 
   if (params.search) {
-    query = query.or(`subject.ilike.%${params.search}%,rfi_number.ilike.%${params.search}%`)
+    query = query.or(`subject.ilike.%${escapeLike(params.search)}%,rfi_number.ilike.%${escapeLike(params.search)}%`)
   }
 
   if (params.status) {

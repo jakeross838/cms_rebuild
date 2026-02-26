@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface Invoice {
   id: string
@@ -54,7 +54,7 @@ export default async function InvoicesPage({
   }
 
   if (params.search) {
-    query = query.ilike('invoice_number', `%${params.search}%`)
+    query = query.ilike('invoice_number', `%${escapeLike(params.search)}%`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

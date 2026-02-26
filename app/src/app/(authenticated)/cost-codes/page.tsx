@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Cost Codes' }
@@ -57,7 +58,7 @@ export default async function CostCodesPage({
     .order('code', { ascending: true })
 
   if (params.search) {
-    query = query.or(`code.ilike.%${params.search}%,name.ilike.%${params.search}%`)
+    query = query.or(`code.ilike.%${escapeLike(params.search)}%,name.ilike.%${escapeLike(params.search)}%`)
   }
 
   if (params.division) {

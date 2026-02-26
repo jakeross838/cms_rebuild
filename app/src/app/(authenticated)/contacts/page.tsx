@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 
 interface VendorContact {
   id: string
@@ -49,7 +50,7 @@ export default async function ContactsPage({
     .order('name', { ascending: true })
 
   if (params.search) {
-    query = query.or(`name.ilike.%${params.search}%,email.ilike.%${params.search}%`)
+    query = query.or(`name.ilike.%${escapeLike(params.search)}%,email.ilike.%${escapeLike(params.search)}%`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

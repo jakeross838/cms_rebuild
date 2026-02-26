@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -56,7 +56,7 @@ export default async function JobInvoicesPage({
     .is('deleted_at', null)
 
   if (sparams.search) {
-    query = query.ilike('invoice_number', `%${sparams.search}%`)
+    query = query.ilike('invoice_number', `%${escapeLike(sparams.search)}%`)
   }
 
   if (sparams.status) {

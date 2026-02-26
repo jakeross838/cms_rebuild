@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface PermitRow {
   id: string
@@ -50,7 +50,7 @@ export default async function PermitsPage({
     .order('created_at', { ascending: false })
 
   if (params.search) {
-    query = query.ilike('permit_number', `%${params.search}%`)
+    query = query.ilike('permit_number', `%${escapeLike(params.search)}%`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

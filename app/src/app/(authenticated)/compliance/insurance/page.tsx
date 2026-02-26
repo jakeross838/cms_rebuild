@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface VendorInsurance {
   id: string
@@ -44,7 +44,7 @@ export default async function InsurancePage({
     .order('expiration_date', { ascending: true })
 
   if (params.search) {
-    query = query.or(`carrier_name.ilike.%${params.search}%,policy_number.ilike.%${params.search}%`)
+    query = query.or(`carrier_name.ilike.%${escapeLike(params.search)}%,policy_number.ilike.%${escapeLike(params.search)}%`)
   }
 
   const { data: insuranceData } = await query

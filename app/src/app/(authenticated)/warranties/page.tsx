@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface Warranty {
   id: string
@@ -50,7 +50,7 @@ export default async function WarrantiesPage({
   }
 
   if (params.search) {
-    query = query.ilike('title', `%${params.search}%`)
+    query = query.ilike('title', `%${escapeLike(params.search)}%`)
   }
 
   const { data: warrantiesData } = await query

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface BidPackageRow {
   id: string
@@ -47,7 +47,7 @@ export default async function BidsPage({
     .limit(50)
 
   if (params.search) {
-    query = query.ilike('title', `%${params.search}%`)
+    query = query.ilike('title', `%${escapeLike(params.search)}%`)
   }
 
   if (params.status) {

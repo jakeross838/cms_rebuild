@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate } from '@/lib/utils'
+import { escapeLike, formatDate } from '@/lib/utils'
 
 interface EmployeeCertification {
   id: string
@@ -45,7 +45,7 @@ export default async function LicensesPage({
     .order('expiration_date', { ascending: true })
 
   if (params.search) {
-    query = query.or(`certification_name.ilike.%${params.search}%,issuing_authority.ilike.%${params.search}%`)
+    query = query.or(`certification_name.ilike.%${escapeLike(params.search)}%,issuing_authority.ilike.%${escapeLike(params.search)}%`)
   }
 
   const { data: certsData } = await query

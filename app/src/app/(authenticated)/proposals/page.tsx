@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface Estimate {
   id: string
@@ -47,7 +47,7 @@ export default async function ProposalsPage({
   }
 
   if (params.search) {
-    query = query.ilike('name', `%${params.search}%`)
+    query = query.ilike('name', `%${escapeLike(params.search)}%`)
   }
 
   const { data: estimatesData } = await query

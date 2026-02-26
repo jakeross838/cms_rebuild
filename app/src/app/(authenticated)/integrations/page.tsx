@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, getStatusColor } from '@/lib/utils'
 
 interface Integration {
   id: string
@@ -43,7 +43,7 @@ export default async function IntegrationsPage({
   }
 
   if (params.search) {
-    query = query.or(`name.ilike.%${params.search}%,description.ilike.%${params.search}%`)
+    query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
   }
 
   const { data: integrationsData } = await query

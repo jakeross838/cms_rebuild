@@ -15,6 +15,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { createJobSchema, listJobsSchema, type CreateJobInput } from '@/lib/validation/schemas/jobs'
 import type { Job } from '@/types/database'
 
@@ -61,8 +62,10 @@ export const GET = createApiHandler(
     let query = supabase
       .from('jobs')
       .select('*, clients!left(id, name)', { count: 'exact' })
-      .eq('company_id', ctx.companyId!) as unknown as {
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null) as unknown as {
         eq: (col: string, val: unknown) => typeof query
+        is: (col: string, val: unknown) => typeof query
         ilike: (col: string, val: string) => typeof query
         or: (filter: string) => typeof query
         gte: (col: string, val: string) => typeof query
@@ -85,7 +88,7 @@ export const GET = createApiHandler(
       query = query.eq('client_id', filters.client_id) as typeof query
     }
     if (filters.search) {
-      const term = `%${filters.search}%`
+      const term = `%${escapeLike(filters.search)}%`
       query = query.or(`name.ilike.${term},job_number.ilike.${term}`) as typeof query
     }
     if (filters.startDate) {

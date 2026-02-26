@@ -67,3 +67,8 @@ export function getStatusColor(status: string): string {
   }
   return colors[status] || 'bg-warm-100 text-warm-700'
 }
+
+/** Escape special characters in LIKE/ILIKE patterns to prevent query injection */
+export function escapeLike(input: string): string {
+  return input.replace(/[%_\\]/g, '\\$&')
+}

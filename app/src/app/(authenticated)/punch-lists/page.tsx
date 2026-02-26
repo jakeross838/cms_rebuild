@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface PunchItem {
   id: string
@@ -56,7 +56,7 @@ export default async function PunchListsPage({
   }
 
   if (params.search) {
-    query = query.ilike('title', `%${params.search}%`)
+    query = query.ilike('title', `%${escapeLike(params.search)}%`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

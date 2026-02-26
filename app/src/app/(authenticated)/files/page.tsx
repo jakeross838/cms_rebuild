@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { FolderOpen, FileText, FileImage, File } from 'lucide-react'
 
 interface Document {
@@ -53,7 +54,7 @@ export default async function FilesPage({
     .limit(50)
 
   if (params.search) {
-    query = query.ilike('filename', `%${params.search}%`)
+    query = query.ilike('filename', `%${escapeLike(params.search)}%`)
   }
   if (params.type) {
     query = query.eq('document_type', params.type)
