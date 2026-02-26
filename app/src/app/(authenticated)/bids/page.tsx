@@ -1,10 +1,11 @@
 import Link from 'next/link'
 
-import { Plus, Gavel } from 'lucide-react'
+import { Plus, Gavel, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -62,6 +63,11 @@ export default async function BidsPage({
             New Bid Package
           </Button>
         </Link>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search bids..." defaultValue={params.search} className="pl-10" /></form>
       </div>
 
       <Card>
