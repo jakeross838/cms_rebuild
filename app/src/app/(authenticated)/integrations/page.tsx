@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 
 import { Search, Puzzle } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike, formatCurrency } from '@/lib/utils'
 
@@ -30,14 +31,24 @@ export const metadata: Metadata = { title: 'Integrations' }
 export default async function IntegrationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string }>
+  searchParams: Promise<{ search?: string; category?: string; page?: string }>
 }) {
   const params = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: userProfile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = userProfile?.company_id
+  if (!companyId) { redirect('/login') }
+
+  const pageSize = 24
+  const currentPage = Math.max(1, parseInt(params.page || '1', 10) || 1)
+  const offset = (currentPage - 1) * pageSize
+
   let query = supabase
     .from('integration_listings')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('status', 'published')
     .order('is_featured', { ascending: false })
     .order('install_count', { ascending: false })
@@ -50,14 +61,16 @@ export default async function IntegrationsPage({
     query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
   }
 
-  const { data: integrationsData } = await query
+  const { data: integrationsData, count, error } = await query.range(offset, offset + pageSize - 1)
+  if (error) throw error
   const integrations = (integrationsData || []) as Integration[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
-        <p className="text-muted-foreground">{integrations.length} available integrations</p>
+        <p className="text-muted-foreground">{count || 0} available integrations</p>
       </div>
 
       <div className="relative max-w-md">
@@ -102,6 +115,7 @@ export default async function IntegrationsPage({
           <p className="text-muted-foreground">{params.search ? 'Try a different search' : 'No integrations available yet'}</p>
         </div>
       )}
+      <ListPagination currentPage={currentPage} totalPages={totalPages} basePath="/integrations" searchParams={params as Record<string, string | undefined>} />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { Package, Truck } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -19,7 +20,7 @@ interface POReceipt {
 
 export const metadata: Metadata = { title: 'Deliveries' }
 
-export default async function DeliveriesPage() {
+export default async function DeliveriesPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -28,16 +29,22 @@ export default async function DeliveriesPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
-  const { data: receiptsData, error } = await supabase
+  const params = await searchParams
+  const pageSize = 25
+  const currentPage = Math.max(1, parseInt(params.page || '1', 10) || 1)
+  const offset = (currentPage - 1) * pageSize
+
+  const { data: receiptsData, count, error } = await supabase
     .from('po_receipts')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('received_date', { ascending: false })
-    .limit(100)
+    .range(offset, offset + pageSize - 1)
   if (error) throw error
 
   const receipts = (receiptsData || []) as POReceipt[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const today = new Date().toISOString().split('T')[0]
   const todayCount = receipts.filter((r) => r.received_date === today).length
@@ -46,14 +53,14 @@ export default async function DeliveriesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Deliveries</h1>
-        <p className="text-muted-foreground">{receipts.length} recent deliveries &bull; {todayCount} today</p>
+        <p className="text-muted-foreground">{count || 0} deliveries &bull; {todayCount} today</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-3">
             <p className="text-sm text-muted-foreground">Total Deliveries</p>
-            <p className="text-2xl font-bold">{receipts.length}</p>
+            <p className="text-2xl font-bold">{count || 0}</p>
           </CardContent>
         </Card>
         <Card>
@@ -106,6 +113,8 @@ export default async function DeliveriesPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={currentPage} totalPages={totalPages} basePath="/operations/deliveries" />
     </div>
   )
 }

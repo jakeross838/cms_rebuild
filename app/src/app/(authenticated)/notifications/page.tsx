@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Bell, Check } from 'lucide-react'
 
@@ -34,9 +35,13 @@ export default async function NotificationsPage({
   const offset = (page - 1) * pageSize
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+
   let query = supabase
     .from('notifications')
     .select('*', { count: 'exact' })
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
 

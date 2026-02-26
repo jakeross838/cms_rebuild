@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Database, Upload } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -20,16 +21,30 @@ interface MigrationJobRow {
 
 export const metadata: Metadata = { title: 'Data Migration' }
 
-export default async function DataMigrationPage() {
+export default async function DataMigrationPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const supabase = await createClient()
 
-  const { data: jobsData } = await supabase
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { redirect('/login') }
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) { redirect('/login') }
+
+  const params = await searchParams
+  const pageSize = 20
+  const currentPage = Math.max(1, parseInt(params.page || '1', 10) || 1)
+  const offset = (currentPage - 1) * pageSize
+
+  const { data: jobsData, count, error } = await supabase
     .from('migration_jobs')
-    .select('*')
+    .select('*', { count: 'exact' })
+    .eq('company_id', companyId)
     .order('created_at', { ascending: false })
-    .limit(20)
+    .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const jobs = (jobsData || []) as MigrationJobRow[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   return (
     <div className="space-y-6">
@@ -82,6 +97,8 @@ export default async function DataMigrationPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={currentPage} totalPages={totalPages} basePath="/data-migration" />
     </div>
   )
 }

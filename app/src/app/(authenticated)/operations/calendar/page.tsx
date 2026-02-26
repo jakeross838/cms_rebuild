@@ -6,6 +6,7 @@ import { Calendar, Clock } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -22,7 +23,7 @@ interface ScheduleTask {
 
 export const metadata: Metadata = { title: 'Calendar' }
 
-export default async function CompanyCalendarPage() {
+export default async function CompanyCalendarPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -31,18 +32,25 @@ export default async function CompanyCalendarPage() {
   const companyId = profile?.company_id
   if (!companyId) { redirect('/login') }
 
+  const params = await searchParams
+  const pageSize = 25
+  const currentPage = Math.max(1, parseInt(params.page || '1', 10) || 1)
+  const offset = (currentPage - 1) * pageSize
+
   const today = new Date().toISOString().split('T')[0]
 
-  const { data: tasksData } = await supabase
+  const { data: tasksData, count, error } = await supabase
     .from('schedule_tasks')
-    .select('id, name, status, planned_start, planned_end, progress_pct, is_critical_path, job_id')
+    .select('id, name, status, planned_start, planned_end, progress_pct, is_critical_path, job_id', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .gte('planned_end', today)
     .order('planned_start', { ascending: true })
-    .limit(100)
+    .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const tasks = (tasksData || []) as ScheduleTask[]
+  const totalPages = Math.ceil((count || 0) / pageSize)
 
   const inProgress = tasks.filter((t) => t.status === 'in_progress').length
   const upcoming = tasks.filter((t) => t.status === 'not_started' || t.status === 'pending').length
@@ -59,7 +67,7 @@ export default async function CompanyCalendarPage() {
         <Card>
           <CardContent className="p-3">
             <p className="text-sm text-muted-foreground">Upcoming Tasks</p>
-            <p className="text-2xl font-bold">{tasks.length}</p>
+            <p className="text-2xl font-bold">{count || 0}</p>
           </CardContent>
         </Card>
         <Card>
@@ -119,6 +127,8 @@ export default async function CompanyCalendarPage() {
           )}
         </CardContent>
       </Card>
+
+      <ListPagination currentPage={currentPage} totalPages={totalPages} basePath="/operations/calendar" />
     </div>
   )
 }
