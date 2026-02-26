@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Punch List' }
@@ -66,12 +66,13 @@ export default async function PunchListPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    itemsQuery = itemsQuery.or(`title.ilike.%${sp.search}%,description.ilike.%${sp.search}%`)
+    itemsQuery = itemsQuery.or(`title.ilike.%${escapeLike(sp.search)}%,description.ilike.%${escapeLike(sp.search)}%`)
   }
 
-  const { data: itemsData, count } = await itemsQuery
+  const { data: itemsData, count, error } = await itemsQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const items = (itemsData || []) as PunchItem[]
   const totalPages = Math.ceil((count || 0) / pageSize)
@@ -116,7 +117,7 @@ export default async function PunchListPage({
           {items.length > 0 ? (
             <div className="divide-y divide-border">
               {items.map((item) => (
-                <Link key={item.id} href={`/punch-lists/${item.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
+                <Link key={item.id} href={`/jobs/${id}/punch-list/${item.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{item.title ?? 'Untitled'}</span>
                     <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>

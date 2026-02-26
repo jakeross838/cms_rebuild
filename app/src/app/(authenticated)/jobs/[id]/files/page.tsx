@@ -78,9 +78,10 @@ export default async function FilesPage({
     docsQuery = docsQuery.ilike('filename', `%${escapeLike(sp.search)}%`)
   }
 
-  const { data: docsData, count } = await docsQuery
+  const { data: docsData, count, error } = await docsQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const documents = (docsData || []) as JobDocument[]
   const totalPages = Math.ceil((count || 0) / pageSize)

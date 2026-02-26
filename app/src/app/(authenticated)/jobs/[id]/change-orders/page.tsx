@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface ChangeOrder {
@@ -65,12 +65,13 @@ export default async function ChangeOrdersPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    coQuery = coQuery.or(`co_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
+    coQuery = coQuery.or(`co_number.ilike.%${escapeLike(sp.search)}%,title.ilike.%${escapeLike(sp.search)}%`)
   }
 
-  const { data: coData, count } = await coQuery
+  const { data: coData, count, error } = await coQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const changeOrders = (coData || []) as ChangeOrder[]
   const totalPages = Math.ceil((count || 0) / pageSize)

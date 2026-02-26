@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate } from '@/lib/utils'
+import { escapeLike, formatDate } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -57,12 +57,13 @@ export default async function JobPhotosPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    query = query.or(`title.ilike.%${sp.search}%,description.ilike.%${sp.search}%`)
+    query = query.or(`title.ilike.%${escapeLike(sp.search)}%,description.ilike.%${escapeLike(sp.search)}%`)
   }
 
-  const { data: photosData, count } = await query
+  const { data: photosData, count, error } = await query
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const photos = (photosData || []) as Photo[]
   const totalPages = Math.ceil((count || 0) / pageSize)

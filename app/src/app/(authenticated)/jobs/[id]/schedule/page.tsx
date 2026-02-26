@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Schedule' }
@@ -70,12 +70,13 @@ export default async function SchedulePage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    tasksQuery = tasksQuery.or(`name.ilike.%${sp.search}%,trade.ilike.%${sp.search}%`)
+    tasksQuery = tasksQuery.or(`name.ilike.%${escapeLike(sp.search)}%,trade.ilike.%${escapeLike(sp.search)}%`)
   }
 
-  const { data: tasksData, count } = await tasksQuery
+  const { data: tasksData, count, error } = await tasksQuery
     .order('sort_order', { ascending: true })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const tasks = (tasksData || []) as ScheduleTask[]
   const totalPages = Math.ceil((count || 0) / pageSize)

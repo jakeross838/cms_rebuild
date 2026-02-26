@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -64,12 +64,13 @@ export default async function LienWaiversPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    waiverQuery = waiverQuery.or(`claimant_name.ilike.%${sp.search}%,waiver_type.ilike.%${sp.search}%`)
+    waiverQuery = waiverQuery.or(`claimant_name.ilike.%${escapeLike(sp.search)}%,waiver_type.ilike.%${escapeLike(sp.search)}%`)
   }
 
-  const { data: waiverData, count } = await waiverQuery
+  const { data: waiverData, count, error } = await waiverQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const waivers = (waiverData || []) as LienWaiver[]
   const totalPages = Math.ceil((count || 0) / pageSize)

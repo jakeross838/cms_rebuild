@@ -69,9 +69,10 @@ export default async function BudgetPage({
     linesQuery = linesQuery.ilike('description', `%${escapeLike(sp.search)}%`)
   }
 
-  const { data: linesData, count } = await linesQuery
+  const { data: linesData, count, error } = await linesQuery
     .order('sort_order', { ascending: true })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const lines = (linesData || []) as BudgetLine[]
   const totalPages = Math.ceil((count || 0) / pageSize)

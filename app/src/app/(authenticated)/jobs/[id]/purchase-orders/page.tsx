@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Purchase Orders' }
@@ -63,12 +63,13 @@ export default async function PurchaseOrdersPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    poQuery = poQuery.or(`po_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
+    poQuery = poQuery.or(`po_number.ilike.%${escapeLike(sp.search)}%,title.ilike.%${escapeLike(sp.search)}%`)
   }
 
-  const { data: poData, count } = await poQuery
+  const { data: poData, count, error } = await poQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const purchaseOrders = (poData || []) as PurchaseOrder[]
   const totalPages = Math.ceil((count || 0) / pageSize)

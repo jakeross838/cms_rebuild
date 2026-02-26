@@ -50,13 +50,14 @@ export default async function JobTimeClockPage({
   const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
   if (!jobCheck) { notFound() }
 
-  const { data: entriesData, count } = await supabase
+  const { data: entriesData, count, error } = await supabase
     .from('time_entries')
     .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
     .order('entry_date', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const entries = (entriesData || []) as TimeEntry[]
   const totalPages = Math.ceil((count || 0) / pageSize)

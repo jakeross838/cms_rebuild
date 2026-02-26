@@ -56,8 +56,9 @@ export default async function JobTeamPage({
     rolesQuery = rolesQuery.ilike('role_override', `%${escapeLike(sp.search)}%`)
   }
 
-  const { data: rolesData, count } = await rolesQuery
+  const { data: rolesData, count, error } = await rolesQuery
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const roles = (rolesData || []) as ProjectUserRole[]
   const totalPages = Math.ceil((count || 0) / pageSize)

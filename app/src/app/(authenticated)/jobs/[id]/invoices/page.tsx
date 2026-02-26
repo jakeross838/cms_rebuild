@@ -63,9 +63,10 @@ export default async function JobInvoicesPage({
     query = query.eq('status', sparams.status as 'draft' | 'approved' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'in_draw' | 'paid' | 'denied')
   }
 
-  const { data: invoicesData, count } = await query
+  const { data: invoicesData, count, error } = await query
     .order('invoice_date', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
   const invoices = (invoicesData || []) as Invoice[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 
