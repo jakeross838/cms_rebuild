@@ -48,12 +48,14 @@ export const GET = createApiHandler(
       .from('rfi_responses')
       .select('id')
       .eq('rfi_id', id)
+      .eq('company_id', ctx.companyId!)
 
     // Fetch routing entries
     const { data: routing } = await supabase
       .from('rfi_routing')
       .select('*')
       .eq('rfi_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('routed_at', { ascending: false })
 
     return NextResponse.json({

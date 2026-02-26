@@ -52,6 +52,7 @@ export const GET = createApiHandler(
       .from('daily_log_labor')
       .select('*')
       .eq('daily_log_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: true })
 
     // Fetch photos

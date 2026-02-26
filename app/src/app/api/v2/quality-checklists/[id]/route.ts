@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('quality_checklist_items')
       .select('*')
       .eq('checklist_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('sort_order', { ascending: true })
 
     return NextResponse.json({

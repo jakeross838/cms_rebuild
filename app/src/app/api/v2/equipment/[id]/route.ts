@@ -48,18 +48,21 @@ export const GET = createApiHandler(
       .from('equipment_assignments')
       .select('id')
       .eq('equipment_id', id)
+      .eq('company_id', ctx.companyId!)
 
     // Fetch maintenance count
     const { data: maintenance } = await supabase
       .from('equipment_maintenance')
       .select('id')
       .eq('equipment_id', id)
+      .eq('company_id', ctx.companyId!)
 
     // Fetch cost count
     const { data: costs } = await supabase
       .from('equipment_costs')
       .select('id')
       .eq('equipment_id', id)
+      .eq('company_id', ctx.companyId!)
 
     return NextResponse.json({
       data: {

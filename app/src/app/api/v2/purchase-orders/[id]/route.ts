@@ -65,6 +65,7 @@ export const GET = createApiHandler(
       .from('po_receipts')
       .select('*')
       .eq('po_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('received_date', { ascending: false })
 
     return NextResponse.json({

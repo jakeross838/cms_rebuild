@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('punch_item_photos')
       .select('*')
       .eq('punch_item_id', id)
+      .eq('company_id', ctx.companyId!)
       .order('uploaded_at', { ascending: true })
 
     return NextResponse.json({
