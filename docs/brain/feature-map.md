@@ -1,5 +1,26 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Quality Hardening: Accessibility + Confirmation Dialogs (2026-02-25)
+
+### Search Input Accessibility
+- All 59 search `<Input>` elements across list pages now have `aria-label` attributes
+- Pattern: `aria-label="Search jobs"`, `aria-label="Search invoices"`, etc.
+- Covers 39 company-level + 20 job-scoped list pages
+
+### Styled Confirmation Dialogs
+- New `ConfirmDialog` component at `@/components/ui/confirm-dialog`
+- Props: `open`, `onOpenChange`, `title`, `description`, `confirmLabel`, `variant`, `onConfirm`, `loading`
+- Replaces all 50 browser `confirm()` calls with branded Radix UI dialogs
+- Red warning icon for destructive actions, Cancel/Archive button pair
+- Special cases: toggle dialogs (chart-of-accounts, legal), reset/delete (settings)
+
+### Error Boundaries
+- `(authenticated)/error.tsx` — route-level error boundary within sidebar layout
+- `(authenticated)/not-found.tsx` — contextual 404 with Dashboard link
+- Both keep users in the authenticated layout instead of falling to global
+
+---
+
 ## Page Metadata & Title Template (2026-02-25)
 
 ### Root Layout Title Template

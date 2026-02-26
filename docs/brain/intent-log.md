@@ -1,5 +1,20 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Accessibility + Confirmation Dialogs
+
+### Why
+1. Search inputs had no aria-labels — screen readers couldn't identify them
+2. Browser confirm() dialogs are ugly, non-branded, and lack accessibility
+3. No route-level error boundaries — errors fell to generic global handler
+
+### What was done
+- Added aria-label to 59 search inputs across all list pages
+- Created ConfirmDialog component using existing Radix UI Dialog primitives
+- Replaced 50 confirm() calls across all detail pages with styled dialogs
+- Added error.tsx and not-found.tsx at authenticated route level
+
+---
+
 ## 2026-02-25: Page Metadata for 130+ Pages
 
 ### Why

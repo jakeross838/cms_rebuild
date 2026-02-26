@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Confirmation Dialog Test Cases (2026-02-25)
+
+### ConfirmDialog Component
+| Test | Expected |
+|------|----------|
+| Open prop true | Dialog visible with overlay |
+| Cancel button | Closes dialog, no action taken |
+| Confirm button | Calls onConfirm, closes dialog |
+| Destructive variant | Shows red warning icon |
+| Loading state | Confirm button disabled, shows "Processing..." |
+
+### Archive Flows (50 detail pages)
+| Test | Expected |
+|------|----------|
+| Click archive button | Opens styled confirmation dialog |
+| Confirm archive | Soft-deletes record, redirects to list |
+| Cancel archive | Dialog closes, record unchanged |
+
+### Search Accessibility
+| Test | Expected |
+|------|----------|
+| Screen reader on search | Announces aria-label text |
+| All 59 search inputs | Have aria-label attribute |
+
+---
+
 ## Page Metadata Test Cases (2026-02-25)
 
 ### Title Template
