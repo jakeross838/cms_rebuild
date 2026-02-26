@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server'
 import {
   createApiHandler,
   getPaginationParams,
+  mapDbError,
   paginatedResponse,
   type ApiContext,
 } from '@/lib/api/middleware'
@@ -108,9 +109,10 @@ export const GET = createApiHandler(
 
     if (error) {
       logger.error('Failed to list jobs', { error: error.message })
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to fetch jobs', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -146,9 +148,10 @@ export const POST = createApiHandler(
 
     if (error || !job) {
       logger.error('Failed to create job', { error: error?.message })
+      const mapped = mapDbError(error ?? { code: 'PGRST116' })
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to create job', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

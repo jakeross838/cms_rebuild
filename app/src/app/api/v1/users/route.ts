@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server'
 import {
   createApiHandler,
   getPaginationParams,
+  mapDbError,
   paginatedResponse,
   type ApiContext,
 } from '@/lib/api/middleware'
@@ -95,9 +96,10 @@ export const GET = createApiHandler(
 
     if (error) {
       logger.error('Failed to list users', { error: error.message })
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to fetch users', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

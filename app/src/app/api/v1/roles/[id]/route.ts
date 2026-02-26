@@ -6,7 +6,7 @@
 
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { updateRoleSchema, type UpdateRoleInput } from '@/lib/validation/schemas/roles'
@@ -103,15 +103,10 @@ export const PATCH = createApiHandler(
       .single() as unknown as { data: RoleRow | null; error: { message: string; code?: string } | null }
 
     if (updateError) {
-      if (updateError.code === '23505') {
-        return NextResponse.json(
-          { error: 'Conflict', message: 'A role with this name already exists', requestId: ctx.requestId },
-          { status: 409 }
-        )
-      }
+      const mapped = mapDbError(updateError)
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to update role', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -177,9 +172,10 @@ export const DELETE = createApiHandler(
       .eq('company_id', ctx.companyId!)
 
     if (deleteError) {
+      const mapped = mapDbError(deleteError)
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to delete role', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

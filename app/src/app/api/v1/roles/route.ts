@@ -5,7 +5,7 @@
 
 import { NextResponse } from 'next/server'
 
-import { createApiHandler, getPaginationParams, paginatedResponse, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, getPaginationParams, mapDbError, paginatedResponse, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { createRoleSchema, type CreateRoleInput } from '@/lib/validation/schemas/roles'
@@ -27,9 +27,10 @@ export const GET = createApiHandler(
       .range(offset, offset + limit - 1) as unknown as { data: RoleRow[] | null; error: { message: string; code?: string } | null; count: number | null }
 
     if (error) {
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to fetch roles', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
@@ -68,15 +69,10 @@ export const POST = createApiHandler(
       .single() as unknown as { data: RoleRow | null; error: { message: string; code?: string } | null }
 
     if (error) {
-      if (error.code === '23505') {
-        return NextResponse.json(
-          { error: 'Conflict', message: 'A role with this name already exists', requestId: ctx.requestId },
-          { status: 409 }
-        )
-      }
+      const mapped = mapDbError(error)
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to create role', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 

@@ -6,7 +6,7 @@
 
 import { NextResponse } from 'next/server'
 
-import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
+import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
@@ -81,9 +81,10 @@ export const POST = createApiHandler(
 
     if (updateError || !reactivatedUser) {
       logger.error('Failed to reactivate user', { error: updateError?.message ?? 'Unknown', targetId })
+      const mapped = mapDbError(updateError ?? { code: 'PGRST116' })
       return NextResponse.json(
-        { error: 'Internal Server Error', message: 'Failed to reactivate user', requestId: ctx.requestId },
-        { status: 500 }
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
       )
     }
 
