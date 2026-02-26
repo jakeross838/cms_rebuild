@@ -10,6 +10,7 @@ import { ArrowLeft, Hash, Loader2, Save } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 
@@ -39,6 +40,7 @@ export default function CostCodeDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     code: '',
@@ -127,8 +129,6 @@ export default function CostCodeDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this cost code? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('cost_codes')
       .update({ deleted_at: new Date().toISOString() })
@@ -256,7 +256,7 @@ export default function CostCodeDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Cost Code
               </Button>
             </div>
@@ -317,6 +317,15 @@ export default function CostCodeDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive cost code?"
+        description="This cost code will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

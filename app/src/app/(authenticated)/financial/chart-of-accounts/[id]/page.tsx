@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 
 interface AccountData {
@@ -41,6 +42,8 @@ export default function ChartOfAccountsDetailPage() {
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showToggleDialog, setShowToggleDialog] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     account_number: '',
@@ -101,7 +104,6 @@ export default function ChartOfAccountsDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!window.confirm('Archive this account? It can be restored later.')) return
     setArchiving(true)
     try {
       const { error: archiveError } = await supabase
@@ -166,7 +168,6 @@ export default function ChartOfAccountsDetailPage() {
   const handleToggleActive = async () => {
     const newActive = !(account?.is_active !== false)
     const action = newActive ? 'activate' : 'deactivate'
-    if (!confirm(`${newActive ? 'Activate' : 'Deactivate'} this account?`)) return
 
     const { error: toggleError } = await supabase
       .from('gl_accounts')
@@ -225,7 +226,7 @@ export default function ChartOfAccountsDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              <button onClick={() => setShowArchiveDialog(true)} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
               </>
             ) : (
               <>
@@ -297,7 +298,7 @@ export default function ChartOfAccountsDetailPage() {
               <Button
                 variant="outline"
                 className={account.is_active !== false ? 'text-destructive hover:text-destructive' : ''}
-                onClick={handleToggleActive}
+                onClick={() => setShowToggleDialog(true)}
               >
                 {account.is_active !== false ? 'Deactivate Account' : 'Activate Account'}
               </Button>
@@ -358,6 +359,25 @@ export default function ChartOfAccountsDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive account?"
+        description="This account will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
+
+      <ConfirmDialog
+        open={showToggleDialog}
+        onOpenChange={setShowToggleDialog}
+        title="Toggle account status?"
+        description={`This will ${account.is_active !== false ? 'deactivate' : 'activate'} the account. ${account.is_active !== false ? 'Inactive accounts cannot be used in new transactions.' : 'The account will be available for use again.'}`}
+        confirmLabel={account.is_active !== false ? 'Deactivate' : 'Activate'}
+        variant={account.is_active !== false ? 'destructive' : 'default'}
+        onConfirm={handleToggleActive}
+      />
     </div>
   )
 }

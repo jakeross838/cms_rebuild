@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
@@ -65,6 +66,7 @@ export default function PunchItemDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -185,8 +187,6 @@ export default function PunchItemDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this punch item? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('punch_items')
       .update({ deleted_at: new Date().toISOString() })
@@ -334,7 +334,7 @@ export default function PunchItemDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Item
               </Button>
             </div>
@@ -414,6 +414,15 @@ export default function PunchItemDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive punch item?"
+        description="This punch item will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

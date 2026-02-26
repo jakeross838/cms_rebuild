@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 
 import { RoleModal } from '@/components/settings/RoleModal'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/types/database'
@@ -57,6 +58,8 @@ export default function RolesPage() {
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   const fetchRoles = async () => {
     setLoading(true)
@@ -80,8 +83,6 @@ export default function RolesPage() {
   }, [])
 
   const handleDelete = async (roleId: string) => {
-    if (!confirm('Are you sure you want to delete this role?')) return
-
     setDeletingId(roleId)
     setOpenDropdown(null)
 
@@ -281,7 +282,7 @@ export default function RolesPage() {
                                       Edit
                                     </button>
                                     <button
-                                      onClick={() => handleDelete(role.id)}
+                                      onClick={() => { setPendingDeleteId(role.id); setShowDeleteDialog(true); setOpenDropdown(null) }}
                                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
                                     >
                                       <Trash2 className="h-4 w-4" />
@@ -309,6 +310,21 @@ export default function RolesPage() {
           </div>
         </>
       )}
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Delete role?"
+        description="This role will be permanently removed."
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (pendingDeleteId) {
+            handleDelete(pendingDeleteId)
+            setShowDeleteDialog(false)
+            setPendingDeleteId(null)
+          }
+        }}
+      />
 
       {/* Role Modal */}
       {showModal ? <RoleModal

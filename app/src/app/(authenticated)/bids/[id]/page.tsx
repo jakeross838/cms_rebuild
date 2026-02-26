@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
@@ -47,6 +48,7 @@ export default function BidPackageDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -147,8 +149,6 @@ export default function BidPackageDetailPage() {
 
   // ── Archive (soft delete) ───────────────────────────────────────────
   const handleArchive = async () => {
-    if (!confirm('Archive this bid package? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('bid_packages')
       .update({ deleted_at: new Date().toISOString() })
@@ -274,7 +274,7 @@ export default function BidPackageDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Bid Package
               </Button>
             </div>
@@ -338,6 +338,15 @@ export default function BidPackageDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive bid?"
+        description="This bid will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

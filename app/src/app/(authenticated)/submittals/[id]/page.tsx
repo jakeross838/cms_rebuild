@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 
 interface SubmittalData {
@@ -39,6 +40,7 @@ export default function SubmittalDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     submittal_number: '',
@@ -145,8 +147,6 @@ export default function SubmittalDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Are you sure you want to archive this submittal?')) return
-
     try {
       const { error: archiveError } = await supabase
         .from('submittals')
@@ -231,7 +231,7 @@ export default function SubmittalDetailPage() {
             {!editing ? (
               <>
                 <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-                <Button onClick={handleArchive} variant="outline" className="text-destructive hover:text-destructive">Archive</Button>
+                <Button onClick={() => setShowArchiveDialog(true)} variant="outline" className="text-destructive hover:text-destructive">Archive</Button>
               </>
             ) : (
               <>
@@ -375,6 +375,15 @@ export default function SubmittalDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive submittal?"
+        description="This submittal will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

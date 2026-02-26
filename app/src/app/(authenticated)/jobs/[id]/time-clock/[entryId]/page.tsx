@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -59,6 +60,7 @@ export default function TimeEntryDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<TimeEntryFormData>({
@@ -174,8 +176,6 @@ export default function TimeEntryDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this time entry? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('time_entries')
       .update({ deleted_at: new Date().toISOString() })
@@ -312,7 +312,7 @@ export default function TimeEntryDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Entry
               </Button>
             </div>
@@ -388,6 +388,15 @@ export default function TimeEntryDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive time entry?"
+        description="This time entry will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

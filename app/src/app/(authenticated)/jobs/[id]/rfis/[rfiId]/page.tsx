@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -57,6 +58,7 @@ export default function RFIDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<RFIFormData>({
@@ -164,8 +166,6 @@ export default function RFIDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this RFI? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('rfis')
       .update({ deleted_at: new Date().toISOString() })
@@ -287,7 +287,7 @@ export default function RFIDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive RFI
               </Button>
             </div>
@@ -351,6 +351,15 @@ export default function RFIDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive RFI?"
+        description="This RFI will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

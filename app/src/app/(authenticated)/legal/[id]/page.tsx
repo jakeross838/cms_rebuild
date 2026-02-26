@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
 
@@ -42,6 +43,8 @@ export default function ContractTemplateDetailPage() {
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showToggleDialog, setShowToggleDialog] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -98,7 +101,6 @@ export default function ContractTemplateDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!window.confirm('Archive this template? It can be restored later.')) return
     setArchiving(true)
     try {
       const { error: archiveError } = await supabase
@@ -159,7 +161,6 @@ export default function ContractTemplateDetailPage() {
   const handleToggleActive = async () => {
     const newActive = !template?.is_active
     const action = newActive ? 'activate' : 'deactivate'
-    if (!confirm(`${newActive ? 'Activate' : 'Deactivate'} this template?`)) return
 
     const { error: toggleError } = await supabase
       .from('contract_templates')
@@ -218,7 +219,7 @@ export default function ContractTemplateDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              <button onClick={() => setShowArchiveDialog(true)} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
               </>
             ) : (
               <>
@@ -299,7 +300,7 @@ export default function ContractTemplateDetailPage() {
               <Button
                 variant="outline"
                 className={template.is_active ? 'text-destructive hover:text-destructive' : ''}
-                onClick={handleToggleActive}
+                onClick={() => setShowToggleDialog(true)}
               >
                 {template.is_active ? 'Deactivate Template' : 'Activate Template'}
               </Button>
@@ -348,6 +349,25 @@ export default function ContractTemplateDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive template?"
+        description="This template will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
+
+      <ConfirmDialog
+        open={showToggleDialog}
+        onOpenChange={setShowToggleDialog}
+        title="Toggle template status?"
+        description={`This will ${template.is_active ? 'deactivate' : 'activate'} the template. ${template.is_active ? 'Inactive templates cannot be used for new contracts.' : 'The template will be available for use again.'}`}
+        confirmLabel={template.is_active ? 'Deactivate' : 'Activate'}
+        variant={template.is_active ? 'destructive' : 'default'}
+        onConfirm={handleToggleActive}
+      />
     </div>
   )
 }

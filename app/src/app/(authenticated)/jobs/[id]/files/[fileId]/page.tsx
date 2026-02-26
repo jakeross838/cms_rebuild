@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -56,6 +57,7 @@ export default function FileDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
@@ -142,8 +144,6 @@ export default function FileDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this file? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('documents')
       .update({ deleted_at: new Date().toISOString() })
@@ -258,7 +258,7 @@ export default function FileDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive File
               </Button>
             </div>
@@ -310,6 +310,15 @@ export default function FileDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive file?"
+        description="This file will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
@@ -54,6 +55,7 @@ export default function LienLawDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState<TrackingFormData>({
     job_id: '',
@@ -158,8 +160,6 @@ export default function LienLawDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this tracking record? It can be restored later.')) return
-
     const { error: archiveError } = await supabase
       .from('lien_waiver_tracking')
       .update({ deleted_at: new Date().toISOString() } as never)
@@ -274,7 +274,7 @@ export default function LienLawDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Record
               </Button>
             </div>
@@ -322,6 +322,15 @@ export default function LienLawDetailPage() {
           </Card>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive tracking record?"
+        description="This tracking record will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

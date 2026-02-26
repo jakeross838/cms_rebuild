@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 
@@ -81,6 +82,7 @@ export default function DrawRequestDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     draw_number: '',
@@ -250,8 +252,6 @@ export default function DrawRequestDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this draw request? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('draw_requests')
       .update({ deleted_at: new Date().toISOString() })
@@ -486,7 +486,7 @@ export default function DrawRequestDetailPage() {
               <Button
                 variant="outline"
                 className="text-destructive hover:text-destructive"
-                onClick={handleArchive}
+                onClick={() => setShowArchiveDialog(true)}
               >
                 Archive Draw Request
               </Button>
@@ -750,6 +750,15 @@ export default function DrawRequestDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive draw request?"
+        description="This draw request will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

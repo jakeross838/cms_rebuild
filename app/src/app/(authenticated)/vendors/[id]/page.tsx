@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { US_STATES } from '@/config/constants'
 import { createClient } from '@/lib/supabase/client'
 
@@ -41,6 +42,7 @@ export default function VendorDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -138,8 +140,6 @@ export default function VendorDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this vendor? They can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('vendors')
       .update({ deleted_at: new Date().toISOString() })
@@ -259,7 +259,7 @@ export default function VendorDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Vendor
               </Button>
             </div>
@@ -338,6 +338,15 @@ export default function VendorDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive vendor?"
+        description="This vendor will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

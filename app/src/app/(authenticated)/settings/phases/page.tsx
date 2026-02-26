@@ -16,6 +16,7 @@ import {
   Save,
 } from 'lucide-react'
 
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -61,6 +62,8 @@ export default function PhasesPage() {
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   const fetchPhases = async () => {
     try {
@@ -140,7 +143,6 @@ export default function PhasesPage() {
   }
 
   const handleDelete = async (phaseId: string) => {
-    if (!confirm('Are you sure you want to delete this phase?')) return
     setDeletingId(phaseId)
     setOpenDropdown(null)
 
@@ -331,7 +333,7 @@ export default function PhasesPage() {
                             </button>
                             {!phase.isSystem ? (
                               <button
-                                onClick={() => handleDelete(phase.id)}
+                                onClick={() => { setPendingDeleteId(phase.id); setShowDeleteDialog(true); setOpenDropdown(null) }}
                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -351,6 +353,21 @@ export default function PhasesPage() {
       </div>
 
       {/* Phase Modal */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Delete phase?"
+        description="This phase will be permanently removed."
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (pendingDeleteId) {
+            handleDelete(pendingDeleteId)
+            setShowDeleteDialog(false)
+            setPendingDeleteId(null)
+          }
+        }}
+      />
+
       {showModal ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto">
           <div

@@ -9,6 +9,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate } from '@/lib/utils'
@@ -64,6 +65,7 @@ export default function LienWaiverDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     claimant_name: '',
@@ -158,8 +160,6 @@ export default function LienWaiverDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this lien waiver? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('lien_waivers')
       .update({ deleted_at: new Date().toISOString() })
@@ -297,7 +297,7 @@ export default function LienWaiverDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Lien Waiver
               </Button>
             </div>
@@ -364,6 +364,15 @@ export default function LienWaiverDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive lien waiver?"
+        description="This lien waiver will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

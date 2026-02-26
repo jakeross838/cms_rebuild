@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Mail, MapPin, Phone, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 
 const US_STATES = [
@@ -42,6 +43,7 @@ export default function ClientDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -133,8 +135,6 @@ export default function ClientDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this client? They can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('clients')
       .update({ deleted_at: new Date().toISOString() })
@@ -236,7 +236,7 @@ export default function ClientDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Client
               </Button>
             </div>
@@ -302,6 +302,15 @@ export default function ClientDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive client?"
+        description="This client will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

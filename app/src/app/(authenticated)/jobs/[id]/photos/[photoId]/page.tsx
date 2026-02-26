@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
 
@@ -53,6 +54,7 @@ export default function PhotoDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<PhotoFormData>({
@@ -156,8 +158,6 @@ export default function PhotoDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this photo? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('job_photos')
       .update({ deleted_at: new Date().toISOString() })
@@ -292,7 +292,7 @@ export default function PhotoDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Photo
               </Button>
             </div>
@@ -339,6 +339,15 @@ export default function PhotoDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive photo?"
+        description="This photo will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

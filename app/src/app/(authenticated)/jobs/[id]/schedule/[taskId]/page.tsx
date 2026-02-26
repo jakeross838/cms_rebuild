@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -62,6 +63,7 @@ export default function ScheduleTaskDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<ScheduleFormData>({
@@ -181,8 +183,6 @@ export default function ScheduleTaskDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this task? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('schedule_tasks')
       .update({ deleted_at: new Date().toISOString() })
@@ -333,7 +333,7 @@ export default function ScheduleTaskDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Task
               </Button>
             </div>
@@ -410,6 +410,15 @@ export default function ScheduleTaskDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive task?"
+        description="This task will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

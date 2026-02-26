@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils'
 
@@ -55,6 +56,7 @@ export default function BudgetLineDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<BudgetFormData>({
@@ -164,8 +166,6 @@ export default function BudgetLineDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this budget line? It can be restored later.')) return
-
     const { error: archiveError } = await supabase
       .from('budget_lines')
       .update({ deleted_at: new Date().toISOString() } as never)
@@ -301,7 +301,7 @@ export default function BudgetLineDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Budget Line
               </Button>
             </div>
@@ -354,6 +354,15 @@ export default function BudgetLineDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive budget line?"
+        description="This budget line will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

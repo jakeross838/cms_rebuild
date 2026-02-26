@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
@@ -47,6 +48,7 @@ export default function PermitDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     permit_number: '',
@@ -157,8 +159,6 @@ export default function PermitDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this permit? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('permits')
       .update({ deleted_at: new Date().toISOString() })
@@ -287,7 +287,7 @@ export default function PermitDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Permit
               </Button>
             </div>
@@ -368,6 +368,15 @@ export default function PermitDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive permit?"
+        description="This permit will be archived and can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }

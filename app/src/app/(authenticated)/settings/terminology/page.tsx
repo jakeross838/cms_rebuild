@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 
 import { Languages, Loader2, Save, Search, RotateCcw, CheckCircle } from 'lucide-react'
 
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -24,6 +25,7 @@ export default function TerminologyPage() {
   const [search, setSearch] = useState('')
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [showResetDialog, setShowResetDialog] = useState(false)
 
   // Track edits as a map of key -> { singular, plural }
   const [edits, setEdits] = useState<Map<string, { singular: string; plural: string }>>(new Map())
@@ -136,7 +138,6 @@ export default function TerminologyPage() {
   }
 
   const handleResetAll = async () => {
-    if (!confirm('Are you sure you want to reset all terminology to defaults?')) return
     try {
       const res = await fetch('/api/v1/settings/terminology', {
         method: 'POST',
@@ -177,7 +178,7 @@ export default function TerminologyPage() {
         <div className="flex items-center gap-2">
           {success ? <span className="text-sm text-green-600 flex items-center gap-1"><CheckCircle className="h-4 w-4" /> Saved</span> : null}
           {overrideCount > 0 ? (
-            <Button variant="outline" size="sm" onClick={handleResetAll}>
+            <Button variant="outline" size="sm" onClick={() => setShowResetDialog(true)}>
               <RotateCcw className="h-4 w-4 mr-2" />
               Reset All
             </Button>
@@ -272,6 +273,15 @@ export default function TerminologyPage() {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={showResetDialog}
+        onOpenChange={setShowResetDialog}
+        title="Reset terminology?"
+        description="All terminology will be reset to defaults. This cannot be undone."
+        confirmLabel="Reset"
+        onConfirm={handleResetAll}
+      />
     </div>
   )
 }

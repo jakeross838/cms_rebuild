@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -55,6 +56,7 @@ export default function ARInvoiceDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     invoice_number: '',
@@ -178,8 +180,6 @@ export default function ARInvoiceDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Archive this invoice? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('ar_invoices')
       .update({ deleted_at: new Date().toISOString() })
@@ -306,7 +306,7 @@ export default function ARInvoiceDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleDelete}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Invoice
               </Button>
             </div>
@@ -386,6 +386,15 @@ export default function ARInvoiceDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive invoice?"
+        description="This invoice will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

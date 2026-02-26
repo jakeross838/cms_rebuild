@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -54,6 +55,7 @@ export default function SupportTicketDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     subject: '',
@@ -146,8 +148,6 @@ export default function SupportTicketDetailPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Archive this ticket? It can be restored later.')) return
-
     const { error: deleteError } = await supabase
       .from('support_tickets')
       .update({ deleted_at: new Date().toISOString() })
@@ -268,7 +268,7 @@ export default function SupportTicketDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={handleArchive}>
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
                 Archive Ticket
               </Button>
             </div>
@@ -339,6 +339,15 @@ export default function SupportTicketDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive ticket?"
+        description="This ticket will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleArchive}
+      />
     </div>
   )
 }
