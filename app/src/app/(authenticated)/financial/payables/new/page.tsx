@@ -83,6 +83,7 @@ export default function NewPayablePage() {
       if (!companyId) throw new Error('No company found')
 
       const amount = parseFloat(formData.amount)
+      if (isNaN(amount)) throw new Error('Amount must be a valid number')
 
       const { error: insertError } = await supabase
         .from('ap_bills')
