@@ -1,5 +1,22 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Status Transitions, FK Indexes (2026-02-26)
+
+### PO Status Transition Validation
+- PUT /api/v2/purchase-orders/:id now validates status — only draft/pending/rejected POs can be updated
+- Previously unrestricted — any status change accepted
+
+### Standardized 409 Conflict Codes
+- Change orders and contracts status violations: 403→409 (matches bills/invoices/draw-requests)
+- 409 Conflict = state machine violation; 403 Forbidden = permission denied (different semantics)
+
+### FK Index Migration (26 indexes)
+- 6 critical: company_id on custom_field_values, kb_articles, numbering_sequences, project_user_roles, time_entry_allocations, training_path_items
+- 11 high: budget_change_logs(budget_id), budget_lines(job_id), company_subscriptions(plan_id), cost_transactions(vendor_id), document_expirations(document_id), gl_journal_lines(client_id/vendor_id), lien_waiver_tracking(waiver_id), notifications(job_id), project_user_roles(role_id), usage_meters(addon_id)
+- 9 medium: hierarchy/relationship columns on cost_codes, document_folders, estimates, etc.
+
+---
+
 ## List Filter Fixes, Audit Logging (2026-02-26)
 
 ### Deleted_at Filter on List Endpoints (20 routes)

@@ -1,5 +1,19 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Status Transitions, FK Indexes
+
+### Why
+1. Purchase orders PUT had no status validation — any status change accepted, e.g. closed→draft
+2. Change orders/contracts used 403 (permission denied) for state violations — should be 409 (conflict)
+3. 100 FK columns lacked indexes — 6 critical company_id columns caused full table scans on RLS evaluation
+
+### What was done
+- Added status transition check to PO PUT (only draft/pending/rejected editable)
+- Changed change-orders + contracts status violation response from 403→409
+- Applied migration adding 26 indexes (6 critical company_id + 11 high + 9 medium priority)
+
+---
+
 ## 2026-02-26: List Filter Fixes, Audit Logging
 
 ### Why

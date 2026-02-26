@@ -1,5 +1,18 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Status Transitions, FK Indexes (2026-02-26)
+
+### PO Status Transition
+| Route | Current Status | New Status | Expected |
+|-------|---------------|------------|----------|
+| PUT /api/v2/purchase-orders/:id | draft | pending | 200 OK |
+| PUT /api/v2/purchase-orders/:id | closed | draft | 409 Conflict |
+| PUT /api/v2/purchase-orders/:id | received | pending | 409 Conflict |
+| PUT /api/v2/change-orders/:id | approved | draft | 409 Conflict (was 403) |
+| PUT /api/v2/contracts/:id | executed | draft | 409 Conflict (was 403) |
+
+---
+
 ## List Filter Fixes, Audit Logging (2026-02-26)
 
 ### List Endpoints Exclude Soft-Deleted Records
