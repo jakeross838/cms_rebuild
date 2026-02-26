@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
-import { Plus, Shield } from 'lucide-react'
+import { Plus, Shield, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
@@ -26,7 +27,7 @@ export default async function JobWarrantiesPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sp = await searchParams
@@ -44,11 +45,17 @@ export default async function JobWarrantiesPage({
   const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
   if (!jobCheck) { notFound() }
 
-  const { data: warrantiesData, count } = await supabase
+  let warrantiesQuery = supabase
     .from('warranties')
     .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
+
+  if (sp.search) {
+    warrantiesQuery = warrantiesQuery.ilike('title', `%${sp.search}%`)
+  }
+
+  const { data: warrantiesData, count } = await warrantiesQuery
     .order('end_date', { ascending: true })
     .range(offset, offset + pageSize - 1)
 
@@ -66,6 +73,12 @@ export default async function JobWarrantiesPage({
           <p className="text-muted-foreground">{warranties.length} warranties &bull; {active} active &bull; {expired} expired</p>
         </div>
         <Link href={`/jobs/${jobId}/warranties/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Warranty</Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative flex-1 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search warranties..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <Card>

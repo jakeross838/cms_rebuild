@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
-import { Plus, Users } from 'lucide-react'
+import { Plus, Users, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
@@ -24,7 +25,7 @@ export default async function JobTeamPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sp = await searchParams
@@ -42,11 +43,17 @@ export default async function JobTeamPage({
   const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
   if (!jobCheck) { notFound() }
 
-  const { data: rolesData, count } = await supabase
+  let rolesQuery = supabase
     .from('project_user_roles')
     .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
+
+  if (sp.search) {
+    rolesQuery = rolesQuery.ilike('role_override', `%${sp.search}%`)
+  }
+
+  const { data: rolesData, count } = await rolesQuery
     .range(offset, offset + pageSize - 1)
 
   const roles = (rolesData || []) as ProjectUserRole[]
@@ -60,6 +67,12 @@ export default async function JobTeamPage({
           <p className="text-muted-foreground">{roles.length} team members assigned</p>
         </div>
         <Link href={`/jobs/${jobId}/team/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Member</Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative flex-1 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search team members..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <Card>

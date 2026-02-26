@@ -27,7 +27,7 @@ export default async function JobInvoicesPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ status?: string; page?: string }>
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>
 }) {
   const { id: jobId } = await params
   const sparams = await searchParams
@@ -50,6 +50,10 @@ export default async function JobInvoicesPage({
     .select('*', { count: 'exact' })
     .eq('job_id', jobId)
     .is('deleted_at', null)
+
+  if (sparams.search) {
+    query = query.ilike('invoice_number', `%${sparams.search}%`)
+  }
 
   if (sparams.status) {
     query = query.eq('status', sparams.status as 'draft' | 'approved' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'in_draw' | 'paid' | 'denied')
@@ -81,6 +85,12 @@ export default async function JobInvoicesPage({
           </p>
         </div>
         <Link href="/invoices/new"><Button><Plus className="h-4 w-4 mr-2" />New Invoice</Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative flex-1 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search invoices..." defaultValue={sparams.search} className="pl-10" /></form>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">

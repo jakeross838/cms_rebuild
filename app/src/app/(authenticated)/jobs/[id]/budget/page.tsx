@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
-import { Plus, DollarSign } from 'lucide-react'
+import { Plus, DollarSign, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
@@ -28,7 +29,7 @@ export default async function BudgetPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ search?: string; page?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
@@ -55,11 +56,17 @@ export default async function BudgetPage({
     notFound()
   }
 
-  const { data: linesData, count } = await supabase
+  let linesQuery = supabase
     .from('budget_lines')
     .select('*, cost_codes(code, name)', { count: 'exact' })
     .eq('job_id', id)
     .is('deleted_at', null)
+
+  if (sp.search) {
+    linesQuery = linesQuery.ilike('description', `%${sp.search}%`)
+  }
+
+  const { data: linesData, count } = await linesQuery
     .order('sort_order', { ascending: true })
     .range(offset, offset + pageSize - 1)
 
@@ -90,6 +97,12 @@ export default async function BudgetPage({
           <Plus className="h-4 w-4 mr-2" />
           Add Line
         </Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative flex-1 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search budget lines..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {/* Summary cards */}
