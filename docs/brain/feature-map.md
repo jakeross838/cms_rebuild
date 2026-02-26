@@ -2267,3 +2267,47 @@ All client-side detail/edit pages (`/[entity]/[id]`) now verify that the fetched
 ### NaN Guard on Financial Create Forms
 - **`/financial/payables/new`** — Amount field parsing now guards against `NaN` (uses `parseFloat` with fallback to `0` or validation error)
 - **`/financial/receivables/new`** — Same NaN guard applied to amount parsing
+
+---
+
+## Cash Flow & Revenue Pages — Placeholder-to-Real Conversion (2026-02-25)
+
+### `/financial/cash-flow` — Cash Flow Overview (rewritten)
+- SSR page with auth + company_id tenant filtering
+- Queries `ar_invoices` (paid vs pending amounts) and `ap_bills` (paid vs pending balance_due) in parallel
+- 4 KPI cards: Total Receivable (green), Total Payable (red), Cash Position (Receivable - Payable, color-coded), Total Collected (with paid-out subtitle)
+- Overdue counts shown as amber badges on AR/AP cards when overdue items exist
+- Recent Cash Movements section: last 10 paid AR invoices ordered by updated_at desc, each with invoice number, relative date, amount, and "Paid" badge
+- Empty state when no paid invoices exist
+
+### `/revenue` — Revenue Hub (rewritten from placeholder)
+- SSR page with auth + company_id tenant filtering
+- Queries paid `ar_invoices` for total revenue, accepted `estimates` for pipeline value, AR invoice count
+- 4 KPI cards: Total Revenue (paid invoices), Pipeline Value (accepted estimates), Average Invoice (revenue / paid count), Invoice Count (all invoices)
+- Navigation grid with 4 sub-page cards linking to: attribution, employee, bonuses, formulas
+- Each nav card has icon, title, description, and arrow indicator
+
+### `/revenue/attribution` — Revenue by Job (rewritten from placeholder)
+- SSR page with auth + company_id tenant filtering
+- Queries paid `ar_invoices` with job join, aggregates revenue by job_id client-side
+- Shows top 5 jobs by revenue with rank number, job name, job number, amount, and percentage bar
+- Quick links to `/invoices` and `/jobs`
+- Empty state when no paid invoices exist
+
+### `/revenue/employee` — Team Overview (rewritten from placeholder)
+- SSR page with auth + company_id tenant filtering
+- Queries `employees` count and `time_entries` for regular_hours/overtime_hours sums
+- 4 KPI cards: Total Employees, Regular Hours, Overtime Hours, Total Hours
+- Labor Breakdown section with visual progress bars showing regular vs overtime percentage
+- Quick links to `/hr` and `/time-clock`
+- Empty state when no time entries exist
+
+### `/revenue/bonuses` — Redirect to `/hr`
+- Replaced placeholder with `redirect('/hr')` — bonus tracking is part of HR module
+
+### `/revenue/formulas` — Redirect to `/cost-codes`
+- Replaced placeholder with `redirect('/cost-codes')` — formulas relate to cost code calculations
+
+### `/api-marketplace` — Minor text fix
+- Already had real data fetching from `integration_listings` table
+- Removed "coming soon" text from empty state, replaced with neutral "Check back later" language

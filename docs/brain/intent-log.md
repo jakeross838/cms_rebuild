@@ -1386,3 +1386,28 @@ A comprehensive security sweep identified that while many pages had been hardene
 1. **Belt-and-suspenders is the only acceptable approach for multi-tenancy**: RLS is the primary guard, but application-layer filtering is mandatory. Neither alone is sufficient for a platform at this scale.
 2. **Ownership verification on detail pages is as important as list filtering**: Lists leaking data is bad, but detail pages are worse because they expose full record data including sensitive financial information, contact details, and internal notes.
 3. **NaN in financial data is a data integrity issue, not just a UX bug**: A NaN in an amount field can cascade through budget calculations, reporting, and accounting, making it a correctness issue that must be caught at input time.
+
+---
+
+## 2026-02-25: Cash Flow & Revenue — Placeholder-to-Real Conversion
+
+### Why
+1. `/financial/cash-flow` already had AR/AP queries but was missing paid vs pending breakdown, cash position calculation, and recent payment activity
+2. `/revenue` and its 4 sub-pages were pure placeholders with static "coming soon" text and no data queries
+3. `/revenue/bonuses` and `/revenue/formulas` don't have dedicated functionality — they map to existing features in HR and cost codes
+4. `/api-marketplace` already had real data but contained "coming soon" text in the empty state
+
+### What was done
+1. **Rewrote `/financial/cash-flow`** — added paid/pending AR/AP breakdown, cash position (receivable - payable), collected totals, and recent cash movements (last 10 paid invoices)
+2. **Rewrote `/revenue`** — added real KPIs from `ar_invoices` (paid = revenue) and `estimates` (accepted = pipeline), plus navigation grid to sub-pages
+3. **Rewrote `/revenue/attribution`** — queries paid invoices with job join, aggregates top 5 jobs by revenue with percentage bars
+4. **Rewrote `/revenue/employee`** — queries `employees` count and `time_entries` for regular/overtime hour sums with visual breakdown
+5. **Converted `/revenue/bonuses`** to redirect to `/hr`
+6. **Converted `/revenue/formulas`** to redirect to `/cost-codes`
+7. **Cleaned `/api-marketplace`** — removed "coming soon" from empty state
+
+### Key decisions
+1. **Revenue = paid AR invoices**: This is the most accurate metric. Unpaid invoices are "receivable" not "revenue."
+2. **Pipeline = accepted estimates**: Accepted estimates represent committed future work.
+3. **Client-side aggregation for job revenue**: Since we need to group by job with job details, we fetch all paid invoices with job join and aggregate in JS. For large datasets this should move to a DB view or RPC function.
+4. **Redirects over empty placeholders**: Bonuses and formulas pages don't have standalone data models yet. Redirecting to the closest functional page (HR, cost codes) is better UX than a "coming soon" wall.

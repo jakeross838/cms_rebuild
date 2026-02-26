@@ -4016,3 +4016,71 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 | `/financial/receivables/new` | Enter non-numeric text in amount field, submit | Form rejects or defaults to 0, does NOT write NaN to DB |
 | `/financial/receivables/new` | Enter empty amount field, submit | Validation error or defaults to 0 |
 | `/financial/receivables/new` | Enter valid number (e.g., "2500.00"), submit | Parses correctly, inserts 2500.00 |
+
+---
+
+## Cash Flow & Revenue Pages Test Cases (2026-02-25)
+
+### `/financial/cash-flow`
+| Test | Expected |
+|------|----------|
+| Unauthenticated | Redirects to /login |
+| No invoices or bills | All KPI cards show $0.00, empty state in recent movements |
+| Has pending AR invoices | Total Receivable card shows sum of pending AR amounts |
+| Has pending AP bills | Total Payable card shows sum of pending AP balance_due |
+| Cash Position positive | Shows green when receivable > payable |
+| Cash Position negative | Shows red when payable > receivable |
+| Has overdue AR invoices | Amber count badge appears on AR card |
+| Has overdue AP bills | Amber count badge appears on AP card |
+| Has paid AR invoices | Total Collected card shows sum, recent movements list populated |
+| Recent movements list | Shows last 10 paid invoices with invoice number, relative date, amount |
+
+### `/revenue`
+| Test | Expected |
+|------|----------|
+| Unauthenticated | Redirects to /login |
+| No data | All KPI cards show $0.00 or 0, nav grid still renders |
+| Has paid invoices | Total Revenue shows sum of paid AR amounts |
+| Has accepted estimates | Pipeline Value shows sum of accepted estimate totals |
+| Average Invoice | Revenue divided by paid invoice count |
+| Invoice Count | Total AR invoice count (all statuses) |
+| Nav cards | 4 cards link to attribution, employee, bonuses, formulas |
+| Click Attribution card | Navigates to /revenue/attribution |
+| Click Employee card | Navigates to /revenue/employee |
+| Click Bonuses card | Navigates to /revenue/bonuses (which redirects to /hr) |
+| Click Formulas card | Navigates to /revenue/formulas (which redirects to /cost-codes) |
+
+### `/revenue/attribution`
+| Test | Expected |
+|------|----------|
+| Unauthenticated | Redirects to /login |
+| No paid invoices | Empty state shown |
+| Has paid invoices with jobs | Top 5 jobs listed by revenue, percentage bars shown |
+| Job without name | Shows "Unknown Job" |
+| Quick links | Links to /invoices and /jobs render and navigate |
+
+### `/revenue/employee`
+| Test | Expected |
+|------|----------|
+| Unauthenticated | Redirects to /login |
+| No employees or time entries | Cards show 0, empty state in labor breakdown |
+| Has employees | Total Employees card shows count |
+| Has time entries | Regular and overtime hours summed and displayed |
+| Labor breakdown bars | Green bar for regular, amber for overtime, percentages correct |
+| Quick links | Links to /hr and /time-clock render and navigate |
+
+### `/revenue/bonuses`
+| Test | Expected |
+|------|----------|
+| Visit page | Immediately redirects to /hr |
+
+### `/revenue/formulas`
+| Test | Expected |
+|------|----------|
+| Visit page | Immediately redirects to /cost-codes |
+
+### `/api-marketplace`
+| Test | Expected |
+|------|----------|
+| No integration_listings | Shows "No integrations available yet" with "Check back later" text |
+| Has published listings | Grid of integration cards with name, description, category badges |
