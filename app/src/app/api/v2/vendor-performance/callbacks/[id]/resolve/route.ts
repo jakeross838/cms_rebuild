@@ -34,7 +34,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = resolveCallbackSchema.safeParse(body)
 
     if (!parseResult.success) {

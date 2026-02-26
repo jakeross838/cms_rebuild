@@ -30,7 +30,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = publishBidPackageSchema.safeParse(body)
 
     if (!parseResult.success) {

@@ -26,7 +26,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = revokeMobileSessionSchema.safeParse(body)
 
     if (!parseResult.success) {

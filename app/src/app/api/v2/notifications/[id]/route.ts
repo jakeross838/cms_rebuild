@@ -22,7 +22,7 @@ export const PUT = createApiHandler(
       return NextResponse.json({ error: 'Bad Request', message: 'Missing notification ID', requestId: ctx.requestId }, { status: 400 })
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = markNotificationReadSchema.safeParse(body)
     if (!parseResult.success) {
       return NextResponse.json(

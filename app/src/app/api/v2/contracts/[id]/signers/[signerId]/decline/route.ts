@@ -37,7 +37,7 @@ export const POST = createApiHandler(
       )
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = declineContractSchema.safeParse(body)
 
     if (!parseResult.success) {

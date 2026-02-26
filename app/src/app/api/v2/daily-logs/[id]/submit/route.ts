@@ -22,7 +22,7 @@ export const POST = createApiHandler(
       return NextResponse.json({ error: 'Bad Request', message: 'Missing daily log ID', requestId: ctx.requestId }, { status: 400 })
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await req.json()
     const parseResult = submitDailyLogSchema.safeParse(body)
 
     if (!parseResult.success) {
