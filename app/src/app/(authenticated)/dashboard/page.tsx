@@ -22,6 +22,11 @@ type JobWithClient = Job & { clients: Pick<Client, 'name'> | null }
 export default async function DashboardPage() {
   const supabase = await createClient()
 
+  // Resolve current user's company_id for defense-in-depth tenant filtering
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  const companyId = profile?.company_id
+
   // Fetch dashboard stats
   const [
     { count: activeJobs },
@@ -29,10 +34,10 @@ export default async function DashboardPage() {
     { count: pendingDraws },
     { data: recentJobsData },
   ] = await Promise.all([
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('status', 'active'),
-    supabase.from('invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
-    supabase.from('draw_requests').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('status', 'pending_approval'),
-    supabase.from('jobs').select('*, clients(name)').is('deleted_at', null).order('updated_at', { ascending: false }).limit(5),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).eq('status', 'active'),
+    supabase.from('invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
+    supabase.from('draw_requests').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).eq('status', 'pending_approval'),
+    supabase.from('jobs').select('*, clients(name)').is('deleted_at', null).eq('company_id', companyId!).order('updated_at', { ascending: false }).limit(5),
   ])
 
   const recentJobs = (recentJobsData || []) as JobWithClient[]

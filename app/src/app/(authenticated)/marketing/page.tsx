@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Megaphone, Mail, Star, Users, BarChart3 } from 'lucide-react'
 
@@ -8,16 +9,23 @@ import { createClient } from '@/lib/supabase/server'
 export default async function MarketingPage() {
   const supabase = await createClient()
 
+  // ── Auth & Company ID ──────────────────────────────────────────────
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) redirect('/login')
+
   const [
     { count: campaignCount },
     { count: leadCount },
     { count: reviewCount },
     { count: referralCount },
   ] = await Promise.all([
-    supabase.from('marketing_campaigns').select('*', { count: 'exact', head: true }).is('deleted_at', null),
-    supabase.from('marketing_leads').select('*', { count: 'exact', head: true }).is('deleted_at', null),
-    supabase.from('client_reviews').select('*', { count: 'exact', head: true }).is('deleted_at', null),
-    supabase.from('marketing_referrals').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('marketing_campaigns').select('*', { count: 'exact', head: true }).eq('company_id', companyId).is('deleted_at', null),
+    supabase.from('marketing_leads').select('*', { count: 'exact', head: true }).eq('company_id', companyId).is('deleted_at', null),
+    supabase.from('client_reviews').select('*', { count: 'exact', head: true }).eq('company_id', companyId).is('deleted_at', null),
+    supabase.from('marketing_referrals').select('*', { count: 'exact', head: true }).eq('company_id', companyId).is('deleted_at', null),
   ])
 
   const sections = [

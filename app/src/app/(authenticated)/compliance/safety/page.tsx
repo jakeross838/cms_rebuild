@@ -45,12 +45,17 @@ export default async function SafetyPage({
   const tab = params.tab || 'incidents'
   const supabase = await createClient()
 
+  // Resolve current user's company_id for defense-in-depth tenant filtering
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  const companyId = profile?.company_id
+
   const [
     { data: incidentsData },
     { data: inspectionsData },
   ] = await Promise.all([
-    supabase.from('safety_incidents').select('*').is('deleted_at', null).order('incident_date', { ascending: false }).limit(100),
-    supabase.from('safety_inspections').select('*').is('deleted_at', null).order('inspection_date', { ascending: false }).limit(100),
+    supabase.from('safety_incidents').select('*').is('deleted_at', null).eq('company_id', companyId!).order('incident_date', { ascending: false }).limit(100),
+    supabase.from('safety_inspections').select('*').is('deleted_at', null).eq('company_id', companyId!).order('inspection_date', { ascending: false }).limit(100),
   ])
 
   const incidents = (incidentsData || []) as SafetyIncident[]

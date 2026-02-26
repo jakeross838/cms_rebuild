@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, Search, Palette } from 'lucide-react'
 
@@ -30,9 +31,17 @@ export default async function SelectionsCatalogPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  // ── Auth & Company ID ──────────────────────────────────────────────
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) redirect('/login')
+
   let query = supabase
     .from('selection_categories')
     .select('*')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('name', { ascending: true })
 
@@ -45,7 +54,7 @@ export default async function SelectionsCatalogPage({
     { count: optionCount },
   ] = await Promise.all([
     query,
-    supabase.from('selection_options').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('selection_options').select('*', { count: 'exact', head: true }).eq('company_id', companyId).is('deleted_at', null),
   ])
 
   const categories = (categoriesData || []) as SelectionCategory[]

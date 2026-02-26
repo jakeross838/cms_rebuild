@@ -7,16 +7,21 @@ import { formatCurrency } from '@/lib/utils'
 export default async function CashFlowPage() {
   const supabase = await createClient()
 
+  // Resolve current user's company_id for defense-in-depth tenant filtering
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  const companyId = profile?.company_id
+
   const [
     { data: receivables },
     { data: payables },
     { count: overdueAR },
     { count: overdueAP },
   ] = await Promise.all([
-    supabase.from('ar_invoices').select('amount').is('deleted_at', null).neq('status', 'paid'),
-    supabase.from('ap_bills').select('amount').is('deleted_at', null).neq('status', 'paid'),
-    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
-    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).is('deleted_at', null).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
+    supabase.from('ar_invoices').select('amount').is('deleted_at', null).eq('company_id', companyId!).neq('status', 'paid'),
+    supabase.from('ap_bills').select('amount').is('deleted_at', null).eq('company_id', companyId!).neq('status', 'paid'),
+    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
+    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
   ])
 
   const totalAR = (receivables || []).reduce((sum, r) => sum + (r.amount || 0), 0)

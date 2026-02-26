@@ -20,6 +20,11 @@ interface FinancialPeriod {
 export default async function BusinessManagementPage() {
   const supabase = await createClient()
 
+  // Resolve current user's company_id for defense-in-depth tenant filtering
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  const companyId = profile?.company_id
+
   const [
     { data: periodsData },
     { count: jobCount },
@@ -27,9 +32,9 @@ export default async function BusinessManagementPage() {
     { count: accountCount },
   ] = await Promise.all([
     supabase.from('financial_periods').select('*').order('period_start', { ascending: false }).limit(12),
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null),
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('status', 'active'),
-    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).eq('status', 'active'),
+    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!),
   ])
 
   const periods = (periodsData || []) as FinancialPeriod[]

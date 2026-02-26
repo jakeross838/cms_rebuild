@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { Plus, Search, FileCheck, Scale } from 'lucide-react'
 
@@ -26,9 +27,17 @@ export default async function LegalCompliancePage({
   const params = await searchParams
   const supabase = await createClient()
 
+  // ── Auth & Company ID ──────────────────────────────────────────────
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) redirect('/login')
+
   let query = supabase
     .from('contract_templates')
     .select('*')
+    .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('name', { ascending: true })
 
@@ -42,7 +51,7 @@ export default async function LegalCompliancePage({
   ] = await Promise.all([
     query,
     supabase.from('lien_waiver_tracking').select('*', { count: 'exact', head: true })
-    .is('deleted_at', null),
+    .eq('company_id', companyId).is('deleted_at', null),
   ])
 
   const templates = (templatesData || []) as ContractTemplate[]

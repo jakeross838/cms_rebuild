@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+
 import { Home, Shield, Wrench } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -29,14 +31,21 @@ interface MaintenanceSchedule {
 export default async function PostBuildPage() {
   const supabase = await createClient()
 
+  // ── Auth & Company ID ──────────────────────────────────────────────
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  const companyId = profile?.company_id
+  if (!companyId) redirect('/login')
+
   const [
     { data: warrantiesData },
     { data: maintenanceData },
   ] = await Promise.all([
     supabase.from('warranties').select('*')
-    .is('deleted_at', null).in('status', ['active', 'expiring_soon']).order('end_date', { ascending: true }).limit(50),
+    .eq('company_id', companyId).is('deleted_at', null).in('status', ['active', 'expiring_soon']).order('end_date', { ascending: true }).limit(50),
     supabase.from('maintenance_schedules').select('*')
-    .is('deleted_at', null).eq('is_active', true).order('next_due_date', { ascending: true }).limit(50),
+    .eq('company_id', companyId).is('deleted_at', null).eq('is_active', true).order('next_due_date', { ascending: true }).limit(50),
   ])
 
   const warranties = (warrantiesData || []) as Warranty[]

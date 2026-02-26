@@ -36,10 +36,16 @@ export default async function HRWorkforcePage({
   const params = await searchParams
   const supabase = await createClient()
 
+  // Resolve current user's company_id for defense-in-depth tenant filtering
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
+  const companyId = profile?.company_id
+
   let empQuery = supabase
     .from('employees')
     .select('id, first_name, last_name, employee_number, employment_status, employment_type, email, phone, hire_date')
     .is('deleted_at', null)
+    .eq('company_id', companyId!)
     .order('last_name', { ascending: true })
 
   if (params.search) {
@@ -52,8 +58,8 @@ export default async function HRWorkforcePage({
     { count: posCount },
   ] = await Promise.all([
     empQuery,
-    supabase.from('departments').select('*').eq('is_active', true).order('name', { ascending: true }),
-    supabase.from('positions').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('departments').select('*').eq('is_active', true).eq('company_id', companyId!).order('name', { ascending: true }),
+    supabase.from('positions').select('*', { count: 'exact', head: true }).eq('is_active', true).eq('company_id', companyId!),
   ])
 
   const employees = (employeesData || []) as Employee[]
