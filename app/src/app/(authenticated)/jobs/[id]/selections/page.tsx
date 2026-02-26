@@ -58,9 +58,10 @@ export default async function JobSelectionsPage({
     selectionsQuery = selectionsQuery.ilike('room', `%${escapeLike(sp.search)}%`)
   }
 
-  const { data: selectionsData, count } = await selectionsQuery
+  const { data: selectionsData, count, error } = await selectionsQuery
     .order('created_at', { ascending: false })
     .range(offset, offset + pageSize - 1)
+  if (error) throw error
 
   const selections = (selectionsData || []) as Selection[]
   const totalPages = Math.ceil((count || 0) / pageSize)
