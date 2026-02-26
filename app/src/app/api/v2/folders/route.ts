@@ -66,7 +66,7 @@ export const POST = createApiHandler(
     }
 
     const input = parseResult.data
-    const jobId = body.job_id ?? null
+    const jobId = input.job_id ?? null
     const supabase = await createClient()
 
     // Determine path

@@ -50,6 +50,7 @@ export const updateDocumentSchema = z.object({
 export const createFolderSchema = z.object({
   name: z.string().trim().min(1).max(200),
   parent_folder_id: z.string().uuid().nullable().optional(),
+  job_id: z.string().uuid().nullable().optional(),
 })
 
 // ── Update Folder ─────────────────────────────────────────────────────────
