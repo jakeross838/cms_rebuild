@@ -137,6 +137,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', attendeeId)
       .eq('talk_id', talkId)
+      .eq('company_id', ctx.companyId!)
 
     if (error) {
       return NextResponse.json(

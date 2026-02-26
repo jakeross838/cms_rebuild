@@ -130,6 +130,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', itemId)
       .eq('template_id', templateId)
+      .eq('company_id', ctx.companyId!)
 
     if (error) {
       const mapped = mapDbError(error)

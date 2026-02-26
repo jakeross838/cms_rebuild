@@ -60,6 +60,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', photoId)
       .eq('punch_item_id', punchItemId)
+      .eq('company_id', ctx.companyId!)
 
     if (error) {
       const mapped = mapDbError(error)

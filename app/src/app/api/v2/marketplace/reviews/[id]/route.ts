@@ -81,6 +81,7 @@ export const PUT = createApiHandler(
       .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -104,6 +105,7 @@ export const PUT = createApiHandler(
       .from('marketplace_reviews')
       .update(updates)
       .eq('id', id)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -141,6 +143,7 @@ export const DELETE = createApiHandler(
       .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
+      .is('deleted_at', null)
       .single()
 
     if (!existing) {
