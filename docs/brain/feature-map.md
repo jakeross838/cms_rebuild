@@ -1,5 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Security Hardening: Filter Injection, Auth Guards, Pagination (2026-02-26)
+
+### Filter Injection Fix (79 v2 API routes)
+- All `.or()` ilike search filters now use `escapeLike()` to escape `%`, `_`, and `\` characters
+- Prevents Supabase filter injection attacks via search parameters
+- Applied to every v2 route that interpolates `filters.q` in ilike patterns
+
+### Auth Guard + Tenant Isolation Fixes (8 more pages)
+- price-intelligence: Added auth guard + company_id filter (was leaking cross-tenant data)
+- data-migration: Added auth guard + company_id filter (was leaking cross-tenant data)
+- financial/reports: Added auth guard + company_id filter
+- integrations: Added auth guard
+- notifications: Added auth guard + user_id filter
+- onboarding: Added auth guard + company_id filter + error handling
+
+### Pagination Added (8 pages)
+- price-intelligence, data-migration, deliveries, calendar, financial/reports, integrations: Replaced .limit() with proper .range() + ListPagination
+- Stats cards use total count from DB instead of page array length
+
+### Component Edge Cases
+- list-pagination: Added bounds clamping (Math.max/Math.min on currentPage)
+- UserTable: Added double-click prevention on both deactivate and reactivate handlers
+- todos: Made items clickable — link to punch list detail pages
+
+---
+
 ## Infrastructure Hardening: Security, Date Validation, API Middleware (2026-02-26)
 
 ### Path Traversal Fix

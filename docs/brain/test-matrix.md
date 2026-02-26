@@ -1,5 +1,53 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Filter Injection + Auth Guard + Pagination Hardening (2026-02-26)
+
+### Filter Injection Prevention (79 v2 routes)
+| Test | Expected |
+|------|----------|
+| GET /api/v2/ar/invoices?q=test%25 | escapeLike escapes %, returns safe results |
+| GET /api/v2/ar/invoices?q=test_foo | escapeLike escapes _, returns safe results |
+| GET /api/v2/ar/invoices?q=test\bar | escapeLike escapes \, returns safe results |
+| GET /api/v2/advanced-reports?q=normal | Returns filtered results normally |
+
+### Auth Guard Coverage (6 pages fixed)
+| Page | Test | Expected |
+|------|------|----------|
+| /price-intelligence | Unauthenticated access | Redirects to /login |
+| /data-migration | Unauthenticated access | Redirects to /login |
+| /financial/reports | Unauthenticated access | Redirects to /login |
+| /integrations | Unauthenticated access | Redirects to /login |
+| /notifications | Unauthenticated access | Redirects to /login |
+| /onboarding | Unauthenticated access | Redirects to /login |
+
+### Tenant Isolation (5 pages fixed)
+| Page | Test | Expected |
+|------|------|----------|
+| /price-intelligence | Company A user | Only sees Company A price data |
+| /data-migration | Company A user | Only sees Company A migration jobs |
+| /financial/reports | Company A user | Only sees Company A reports |
+| /onboarding | Company A user | Only sees Company A checklist |
+| /notifications | User A | Only sees User A notifications |
+
+### Pagination (8 pages)
+| Page | Test | Expected |
+|------|------|----------|
+| /price-intelligence?page=1 | First page | Shows 25 items, pagination controls |
+| /deliveries?page=2 | Second page | Shows next 25, correct offset |
+| /operations/calendar?page=999 | Invalid page | Clamped to last valid page |
+| /data-migration | 0 items | Shows empty state, no pagination |
+
+### Component Edge Cases
+| Component | Test | Expected |
+|-----------|------|----------|
+| ListPagination | currentPage=0 | Clamped to 1 |
+| ListPagination | currentPage > totalPages | Clamped to totalPages |
+| UserTable deactivate | Double-click | Second click ignored (actionLoading guard) |
+| UserTable reactivate | Double-click | Second click ignored (actionLoading guard) |
+| Todos list items | Click item | Navigates to /punch-lists/[id] |
+
+---
+
 ## Infrastructure Security Hardening (2026-02-26)
 
 ### Path Traversal Prevention

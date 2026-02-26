@@ -1,5 +1,28 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Filter Injection Fix + Auth Guard + Pagination Hardening
+
+### Why
+1. 79 v2 API routes interpolated `filters.q` directly into `.or()` ilike patterns without escaping — Supabase filter injection risk
+2. 4 more pages (price-intelligence, data-migration, financial/reports, onboarding) had NO auth guard — any unauthenticated user could query data
+3. price-intelligence and data-migration had NO company_id filter — cross-tenant data leak
+4. notifications had no user_id filter — could see other users' notifications
+5. 8 list pages used `.limit()` without pagination — truncated results with no way to see more
+6. UserTable allowed double-click on deactivate/reactivate — race condition
+7. list-pagination didn't clamp invalid page numbers
+8. todos page items weren't clickable
+
+### What was done
+- Added `escapeLike()` import + wrapping to all 79 affected v2 routes
+- Added full auth guards (getUser + redirect) to 6 pages
+- Added company_id filter to 5 pages, user_id filter to notifications
+- Replaced .limit() with .range() + ListPagination on 8 pages
+- Added `if (actionLoading) return` guard to both deactivate/reactivate handlers
+- Added Math.max/Math.min bounds clamping to list-pagination
+- Wrapped todo items in Link tags to punch-list detail pages
+
+---
+
 ## 2026-02-26: Infrastructure Security Hardening
 
 ### Why
