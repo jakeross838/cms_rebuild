@@ -60,7 +60,7 @@ export default async function ApiMarketplacePage() {
           <CardContent className="py-8 text-center">
             <Store className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
             <p className="text-muted-foreground">No integrations available yet</p>
-            <p className="text-sm text-muted-foreground mt-1">Third-party integrations coming soon</p>
+            <p className="text-sm text-muted-foreground mt-1">Check back later for third-party integrations</p>
           </CardContent>
         </Card>
       )}
