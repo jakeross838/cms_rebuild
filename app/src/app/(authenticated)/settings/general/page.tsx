@@ -249,7 +249,7 @@ export default function GeneralSettingsPage() {
                 </FieldGroup>
                 <FieldGroup label="Primary Color">
                   <div className="flex items-center gap-2">
-                    <input type="color" value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="h-10 w-10 rounded border cursor-pointer" />
+                    <input type="color" aria-label="Primary Color" value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="h-10 w-10 rounded border cursor-pointer" />
                     <Input value={profile.primaryColor} onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })} className="flex-1" />
                   </div>
                 </FieldGroup>
