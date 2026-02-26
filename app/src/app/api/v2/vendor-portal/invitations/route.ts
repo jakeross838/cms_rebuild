@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_portal_invitations')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, vendor_id, vendor_name, contact_name, email, phone, message, status, expires_at, accepted_at, invited_by, created_at, updated_at, deleted_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -118,7 +118,7 @@ export const POST = createApiHandler(
         expires_at: expiresAt.toISOString(),
         invited_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, vendor_id, vendor_name, contact_name, email, phone, message, status, expires_at, accepted_at, invited_by, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {

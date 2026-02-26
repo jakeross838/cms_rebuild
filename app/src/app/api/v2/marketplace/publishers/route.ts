@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketplace_publishers')
-      .select('*', { count: 'exact' })
+      .select('id, user_id, publisher_type, display_name, bio, website_url, profile_image, is_verified, total_installs, avg_rating, total_templates, revenue_share_pct, created_at, updated_at', { count: 'exact' })
 
     if (filters.publisher_type) {
       query = query.eq('publisher_type', filters.publisher_type)
@@ -105,7 +105,7 @@ export const POST = createApiHandler(
         website_url: input.website_url ?? null,
         profile_image: input.profile_image ?? null,
       })
-      .select('*')
+      .select('id, user_id, publisher_type, display_name, bio, website_url, profile_image, is_verified, total_installs, avg_rating, total_templates, revenue_share_pct, created_at, updated_at')
       .single()
 
     if (error) {

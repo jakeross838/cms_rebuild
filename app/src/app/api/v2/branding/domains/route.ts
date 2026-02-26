@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('builder_custom_domains')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, domain, subdomain, status, ssl_status, verified_at, ssl_issued_at, ssl_expires_at, is_primary, created_at, updated_at, deleted_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -106,7 +106,7 @@ export const POST = createApiHandler(
         verification_token: verificationToken,
         is_primary: input.is_primary,
       })
-      .select('*')
+      .select('id, company_id, domain, subdomain, status, ssl_status, verified_at, ssl_issued_at, ssl_expires_at, is_primary, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {

@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('marketplace_publishers')
-      .select('*')
+      .select('id, user_id, publisher_type, display_name, bio, website_url, profile_image, is_verified, total_installs, avg_rating, total_templates, revenue_share_pct, created_at, updated_at')
       .eq('id', id)
       .single()
 
@@ -115,7 +115,7 @@ export const PUT = createApiHandler(
       .from('marketplace_publishers')
       .update(updates)
       .eq('id', id)
-      .select('*')
+      .select('id, user_id, publisher_type, display_name, bio, website_url, profile_image, is_verified, total_installs, avg_rating, total_templates, revenue_share_pct, created_at, updated_at')
       .single()
 
     if (error || !data) {

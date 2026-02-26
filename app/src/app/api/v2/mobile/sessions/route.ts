@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('mobile_sessions')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, device_id, status, ip_address, user_agent, started_at, last_activity_at, expires_at, ended_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.device_id) {
@@ -106,7 +106,7 @@ export const POST = createApiHandler(
         user_agent: input.user_agent ?? null,
         expires_at: input.expires_at ?? null,
       })
-      .select('*')
+      .select('id, company_id, user_id, device_id, status, ip_address, user_agent, started_at, last_activity_at, expires_at, ended_at, created_at, updated_at')
       .single()
 
     if (error) {

@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('billing_events')
-      .select('*')
+      .select('id, company_id, event_type, description, amount, currency, metadata, created_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()

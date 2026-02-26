@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('mobile_devices')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, device_name, platform, status, device_model, os_version, app_version, last_active_at, last_ip_address, metadata, created_by, created_at, updated_at, deleted_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -116,7 +116,7 @@ export const POST = createApiHandler(
         metadata: input.metadata,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, user_id, device_name, platform, status, device_model, os_version, app_version, last_active_at, last_ip_address, metadata, created_by, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {

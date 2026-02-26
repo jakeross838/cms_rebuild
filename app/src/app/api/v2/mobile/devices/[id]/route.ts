@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('mobile_devices')
-      .select('*')
+      .select('id, company_id, user_id, device_name, platform, status, device_model, os_version, app_version, last_active_at, last_ip_address, metadata, created_by, created_at, updated_at, deleted_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -114,7 +114,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, user_id, device_name, platform, status, device_model, os_version, app_version, last_active_at, last_ip_address, metadata, created_by, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {

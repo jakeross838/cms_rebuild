@@ -69,7 +69,7 @@ export const POST = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, user_id, device_id, status, ip_address, user_agent, started_at, last_activity_at, expires_at, ended_at, created_at, updated_at')
       .single()
 
     if (error) {

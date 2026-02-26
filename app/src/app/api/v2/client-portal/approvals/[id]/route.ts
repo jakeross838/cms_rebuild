@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('client_approvals')
-      .select('*')
+      .select('id, company_id, job_id, client_user_id, approval_type, reference_id, title, description, status, requested_at, responded_at, expires_at, signature_data, signature_ip, comments, requested_by, created_at, updated_at, deleted_at')
       .eq('id', approvalId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -71,7 +71,7 @@ export const PUT = createApiHandler(
     // Check existing approval
     const { data: existing, error: fetchError } = await supabase
       .from('client_approvals')
-      .select('*')
+      .select('id, company_id, job_id, client_user_id, approval_type, reference_id, title, description, status, requested_at, responded_at, expires_at, signature_data, signature_ip, comments, requested_by, created_at, updated_at, deleted_at')
       .eq('id', approvalId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -109,7 +109,7 @@ export const PUT = createApiHandler(
       .update(updateFields)
       .eq('id', approvalId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, job_id, client_user_id, approval_type, reference_id, title, description, status, requested_at, responded_at, expires_at, signature_data, signature_ip, comments, requested_by, created_at, updated_at, deleted_at')
       .single()
 
     if (error) {

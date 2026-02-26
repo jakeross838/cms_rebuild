@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('builder_custom_domains')
-      .select('*')
+      .select('id, company_id, domain, subdomain, status, ssl_status, verified_at, ssl_issued_at, ssl_expires_at, is_primary, created_at, updated_at, deleted_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -101,7 +101,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, domain, subdomain, status, ssl_status, verified_at, ssl_issued_at, ssl_expires_at, is_primary, created_at, updated_at, deleted_at')
       .single()
 
     if (error || !data) {

@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('billing_events')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, event_type, description, amount, currency, metadata, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.event_type) {
