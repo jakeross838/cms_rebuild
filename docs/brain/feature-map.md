@@ -1,5 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Final Security & Quality Pass (2026-02-25)
+
+### Audit Log company_id
+- `activity/page.tsx` and `activity/audit-log/page.tsx` now filter by company_id (was last unprotected page)
+
+### Warranty Claims Create (`/warranty-claims/new`)
+- Added job selector dropdown (jobs from company, non-deleted)
+- Added warranty selector dropdown (warranties from company, filtered by selected job)
+- Inserts now include `job_id` and `warranty_id` (both nullable)
+
+### Journal Entries Create (`/financial/journal-entries/new`)
+- Added full line items table: account selector (from gl_accounts), debit/credit columns, line memo
+- Dynamic add/remove rows (minimum 2 lines)
+- Balance validation: debits must equal credits before submit
+- Creates header in `gl_journal_entries` then bulk inserts lines in `gl_journal_lines`
+- Totals footer with real-time balance indicator
+
+### Dropdown Tenant Isolation (6 forms)
+- draw-requests/new, change-orders/new, invoices/new, lien-waivers/new, submittals/new, rfis/new
+- All dropdown loaders now fetch user profile → company_id → filter dropdowns by company
+
+### Missing created_by
+- leads/new: added `created_by: user.id` to INSERT (only table with column that was missing it)
+
+---
+
 ## Job-Scoped Page Security Hardening (2026-02-25)
 
 ### 23 SSR List Pages (`/jobs/[id]/*`)

@@ -1,5 +1,29 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Final Quality Pass Test Cases (2026-02-25)
+
+### Journal Entry Create with Line Items (`/financial/journal-entries/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form with entry fields + line items table (2 empty rows) |
+| Add account to line | GL accounts dropdown populated from company's chart of accounts |
+| Add debit/credit | Running totals shown in footer |
+| Unbalanced submit | Error: "Debits must equal credits" |
+| Less than 2 lines | Error: "At least 2 journal lines required" |
+| Balanced submit | Creates header + inserts all lines |
+| Remove line (min 2) | Remove button disabled when only 2 lines remain |
+
+### Warranty Claim Create (`/warranty-claims/new`)
+| Test | Expected |
+|------|----------|
+| Page loads | Form with job + warranty dropdowns, claim fields |
+| Select job | Warranty dropdown filters to warranties for that job |
+| Change job | Warranty selection resets |
+| Submit with job + warranty | Creates claim with both IDs |
+| Submit without job | Creates claim with null job_id/warranty_id |
+
+---
+
 ## Job-Scoped Security Test Cases (2026-02-25)
 
 ### SSR List Pages (`/jobs/[id]/*`)

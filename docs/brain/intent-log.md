@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Final Security & Quality Pass
+
+### Why
+Comprehensive quality sweep found remaining gaps after the job-scoped hardening:
+1. Activity/audit-log pages were last pages without company_id filtering
+2. warranty-claims/new had no way to link claims to jobs or warranties
+3. journal-entries/new created empty entries with no line items (unusable)
+4. 6 create forms had dropdown queries loading data from all tenants
+5. leads/new was missing `created_by` audit field
+
+### What was done
+- Fixed audit-log and activity pages with company_id
+- Rebuilt warranty-claims/new with job/warranty dropdowns (smart filtering)
+- Rebuilt journal-entries/new with full line items table (account selector, debit/credit, balance validation)
+- Added company_id to 6 dropdown loaders
+- Added created_by to leads/new
+
+---
+
 ## 2026-02-25: Job-Scoped Page Security Hardening
 
 ### Why
