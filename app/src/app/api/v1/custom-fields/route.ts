@@ -69,7 +69,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
 
   if (error) {
     return NextResponse.json(
-      { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+      { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
       { status: 500 }
     )
   }
@@ -171,7 +171,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
 
   if (error) {
     return NextResponse.json(
-      { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+      { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
       { status: 500 }
     )
   }

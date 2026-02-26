@@ -378,7 +378,7 @@ export function mapDbError(error: { code?: string; message?: string; details?: s
 
   // Unique constraint violation
   if (code === '23505') {
-    return { status: 409, error: 'Conflict', message: error.details ?? 'A record with that value already exists' }
+    return { status: 409, error: 'Conflict', message: 'A record with that value already exists' }
   }
 
   // Foreign key violation
@@ -388,12 +388,12 @@ export function mapDbError(error: { code?: string; message?: string; details?: s
 
   // Not-null violation
   if (code === '23502') {
-    return { status: 400, error: 'Bad Request', message: error.message ?? 'A required field is missing' }
+    return { status: 400, error: 'Bad Request', message: 'A required field is missing' }
   }
 
   // Check constraint violation
   if (code === '23514') {
-    return { status: 400, error: 'Bad Request', message: error.message ?? 'Value violates a constraint' }
+    return { status: 400, error: 'Bad Request', message: 'Value violates a constraint' }
   }
 
   // Invalid text representation (e.g., non-UUID string passed to UUID column)
@@ -406,6 +406,6 @@ export function mapDbError(error: { code?: string; message?: string; details?: s
     return { status: 403, error: 'Forbidden', message: 'Insufficient permissions' }
   }
 
-  // Default: server error
-  return { status: 500, error: 'Database Error', message: error.message ?? 'An unexpected database error occurred' }
+  // Default: server error — never expose raw error.message to client
+  return { status: 500, error: 'Database Error', message: 'An unexpected database error occurred' }
 }

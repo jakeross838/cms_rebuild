@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     if (error) {
       return NextResponse.json(
-        { error: 'Database Error', message: error.message, requestId: ctx.requestId },
+        { error: 'Database Error', message: 'An unexpected database error occurred', requestId: ctx.requestId },
         { status: 500 }
       )
     }
