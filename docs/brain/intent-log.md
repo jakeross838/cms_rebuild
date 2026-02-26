@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: API Consistency, Form Validation, Error Handling
+
+### Why
+1. `paginatedResponse()` helper omitted `requestId` — all ~200 paginated list endpoints lacked traceability
+2. v1 API success responses missing `requestId` — inconsistent with v2 and error responses
+3. 8+ financial number inputs on create forms accepted negative values (prices, amounts, percentages)
+4. 3 handleToggleActive/handleMove handlers had no try/catch — network failures were completely silent
+5. PUT /api/v2/notifications/:id used `req.json().catch(() => ({}))` without Zod — only unvalidated PUT in the entire API
+
+### What was done
+- Added optional `requestId` parameter to `paginatedResponse()` in `lib/api/middleware.ts`
+- Updated all 198 v2 paginated callers to pass `ctx.requestId`
+- Added `requestId` to 17 v1 API route success responses (33 response objects)
+- Added `min="0"` to financial inputs, `max="100"` to percentage inputs, `min="1900" max="2100"` to year
+- Wrapped 4 async handlers in try/catch with toast.error feedback
+- Created `markNotificationReadSchema` in `lib/validation/schemas/notifications.ts`
+- Applied schema validation to PUT /api/v2/notifications/:id
+
+---
+
 ## 2026-02-26: IDOR, Deleted_at, Accessibility, Error Handling Hardening
 
 ### Why

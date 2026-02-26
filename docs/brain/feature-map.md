@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## API Response Consistency, Form Validation, Error Handling (2026-02-26)
+
+### API Response Consistency (215 routes)
+- v1 API: Added `requestId: ctx.requestId` to success responses in 17 route files
+- v2 API: Updated `paginatedResponse()` helper to accept optional `requestId` param
+- Updated all 198 v2 paginated GET callers to pass `ctx.requestId`
+- Every API response (v1 + v2, paginated + single) now includes requestId for traceability
+
+### Form Validation — min/max Constraints (7 create forms)
+- budget/new: `estimated_amount` min=0
+- draws/new: `contract_amount`, `total_completed` min=0
+- estimates/new: `markup_pct`, `overhead_pct`, `profit_pct` min=0 max=100
+- leads/new: `expected_contract_value` min=0
+- hr/new: `base_wage` min=0
+- equipment/new: `year` min=1900 max=2100
+- journal-entries/new: debit + credit amounts min=0
+
+### Error Handling — Async Handlers (3 pages)
+- settings/phases: `handleMove()` and `handleToggleActive()` wrapped in try/catch with toast
+- chart-of-accounts/[id]: `handleToggleActive()` wrapped in try/catch with toast
+- legal/[id]: `handleToggleActive()` wrapped in try/catch with toast
+
+### Zod Validation Gap (1 API route)
+- PUT /api/v2/notifications/:id: Added `markNotificationReadSchema` Zod validation
+- Was the only PUT handler (out of 406) without request body validation
+
+---
+
 ## Error Handling, Pagination, Metadata, Soft-Delete Fixes (2026-02-26)
 
 ### Error Handling (27 SSR pages, 31 queries)

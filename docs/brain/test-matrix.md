@@ -1,5 +1,40 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## API Consistency, Form Validation, Error Handling (2026-02-26)
+
+### API Response Consistency
+| Test | Expected |
+|------|----------|
+| GET /api/v2/jobs (paginated) | Response includes `requestId` field alongside `data` and `pagination` |
+| GET /api/v1/jobs | Response includes `requestId` in success JSON |
+| POST /api/v2/jobs | Response includes `requestId` in success JSON |
+
+### Form Validation — min/max
+| Form | Input | Test | Expected |
+|------|-------|------|----------|
+| /estimates/new | markup_pct | Enter -5 | Browser validation blocks, input rejected |
+| /estimates/new | profit_pct | Enter 150 | Browser validation blocks, max=100 |
+| /equipment/new | year | Enter 1800 | Browser validation blocks, min=1900 |
+| /hr/new | base_wage | Enter -10 | Browser validation blocks, min=0 |
+| /financial/journal-entries/new | debit amount | Enter -100 | Browser validation blocks |
+
+### Error Handling — Async Handlers
+| Page | Action | Test | Expected |
+|------|--------|------|----------|
+| /settings/phases | Move phase up (API fails) | Disconnect API | Toast error "Failed to reorder phases" |
+| /settings/phases | Toggle active | API returns 500 | Toast error "Failed to toggle phase status" |
+| /financial/chart-of-accounts/[id] | Toggle active | API error | Toast with error message |
+| /legal/[id] | Toggle active | API error | Toast with error message |
+
+### Zod Validation
+| Route | Test | Expected |
+|-------|------|----------|
+| PUT /api/v2/notifications/:id `{ read: "yes" }` | Invalid type | 400 Validation Error |
+| PUT /api/v2/notifications/:id `{}` | Missing read | Defaults to `read: true` |
+| PUT /api/v2/notifications/:id `{ read: false }` | Valid | Marks as unread |
+
+---
+
 ## Error Handling, Pagination, Metadata, Soft-Delete (2026-02-26)
 
 ### Error Handling (31 queries)
