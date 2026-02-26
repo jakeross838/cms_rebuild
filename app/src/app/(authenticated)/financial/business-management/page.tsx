@@ -27,9 +27,9 @@ export default async function BusinessManagementPage() {
     { count: accountCount },
   ] = await Promise.all([
     supabase.from('financial_periods').select('*').order('period_start', { ascending: false }).limit(12),
-    supabase.from('jobs').select('*', { count: 'exact', head: true }),
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('status', 'active'),
+    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null),
   ])
 
   const periods = (periodsData || []) as FinancialPeriod[]

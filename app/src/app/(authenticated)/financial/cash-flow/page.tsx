@@ -13,10 +13,10 @@ export default async function CashFlowPage() {
     { count: overdueAR },
     { count: overdueAP },
   ] = await Promise.all([
-    supabase.from('ar_invoices').select('amount').neq('status', 'paid'),
-    supabase.from('ap_bills').select('amount').neq('status', 'paid'),
-    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
-    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
+    supabase.from('ar_invoices').select('amount').is('deleted_at', null).neq('status', 'paid'),
+    supabase.from('ap_bills').select('amount').is('deleted_at', null).neq('status', 'paid'),
+    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
+    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).is('deleted_at', null).neq('status', 'paid').lt('due_date', new Date().toISOString().split('T')[0]),
   ])
 
   const totalAR = (receivables || []).reduce((sum, r) => sum + (r.amount || 0), 0)

@@ -21,10 +21,10 @@ export default async function FinancialDashboardPage() {
     { count: apCount },
     { count: jeCount },
   ] = await Promise.all([
-    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }),
-    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).neq('status', 'paid'),
-    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).neq('status', 'paid'),
-    supabase.from('gl_journal_entries').select('*', { count: 'exact', head: true }),
+    supabase.from('gl_accounts').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('ar_invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).neq('status', 'paid'),
+    supabase.from('ap_bills').select('*', { count: 'exact', head: true }).is('deleted_at', null).neq('status', 'paid'),
+    supabase.from('gl_journal_entries').select('*', { count: 'exact', head: true }).is('deleted_at', null),
   ])
 
   const quickLinks = [

@@ -29,10 +29,10 @@ export default async function DashboardPage() {
     { count: pendingDraws },
     { data: recentJobsData },
   ] = await Promise.all([
-    supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    supabase.from('invoices').select('*', { count: 'exact', head: true }).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
-    supabase.from('draw_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending_approval'),
-    supabase.from('jobs').select('*, clients(name)').order('updated_at', { ascending: false }).limit(5),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('status', 'active'),
+    supabase.from('invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
+    supabase.from('draw_requests').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('status', 'pending_approval'),
+    supabase.from('jobs').select('*, clients(name)').is('deleted_at', null).order('updated_at', { ascending: false }).limit(5),
   ])
 
   const recentJobs = (recentJobsData || []) as JobWithClient[]
