@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('company_subscriptions')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, plan_id, status, billing_cycle, current_period_start, current_period_end, trial_start, trial_end, cancelled_at, cancel_reason, grandfathered_plan, metadata, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -133,7 +133,7 @@ export const POST = createApiHandler(
         grandfathered_plan: input.grandfathered_plan ?? null,
         metadata: input.metadata,
       })
-      .select('*')
+      .select('id, company_id, plan_id, status, billing_cycle, current_period_start, current_period_end, trial_start, trial_end, cancelled_at, cancel_reason, grandfathered_plan, metadata, created_at, updated_at')
       .single()
 
     if (error) {

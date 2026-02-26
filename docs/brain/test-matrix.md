@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 16 — Data Leakage Prevention + Soft-Delete Defense (2026-02-26)
+
+### SMTP Password Leakage Fix
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /api/v2/branding/email returns config | Response has from_name, smtp_host etc. but NOT smtp_encrypted_password | verify |
+| PUT /api/v2/branding/email create response | New record returned without smtp_encrypted_password | verify |
+| PUT /api/v2/branding/email update response | Updated record returned without smtp_encrypted_password | verify |
+
+### Stripe ID Leakage Fix
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /api/v2/billing/subscriptions list | Subscriptions returned without stripe_subscription_id or stripe_customer_id | verify |
+| POST /api/v2/billing/subscriptions create | New subscription returned without Stripe IDs | verify |
+| GET /api/v2/billing/subscriptions/:id | Single subscription returned without Stripe IDs | verify |
+| PUT /api/v2/billing/subscriptions/:id | Updated subscription returned without Stripe IDs | verify |
+
+### Documents Soft-Delete Defense
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /api/v2/documents with deleted_at set | Record not returned even if status != 'deleted' | verify |
+| GET /api/v2/documents/:id with deleted_at set | 404 returned | verify |
+| GET /api/v2/documents/:id/download with deleted_at set | 404 returned | verify |
+| TypeScript compiles after all changes | `tsc --noEmit` = 0 errors | pass |
+| All 3309 tests still pass | No regressions | pass |
+
 ## Session 15 — Sort Injection Fix + Error Handling Hardening (2026-02-26)
 
 ### Sort Column Injection Fix

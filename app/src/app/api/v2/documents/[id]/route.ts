@@ -31,6 +31,7 @@ export const GET = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
+      .is('deleted_at', null)
       .single()
 
     if (error) {

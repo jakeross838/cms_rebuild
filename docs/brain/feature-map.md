@@ -1,5 +1,25 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 16 — Data Leakage Prevention + Soft-Delete Defense (2026-02-26)
+
+### SMTP Password Leakage Fix (branding/email)
+- **File:** `src/app/api/v2/branding/email/route.ts`
+- **What:** 3 `select('*')` calls on `builder_email_config` returned `smtp_encrypted_password` to the client
+- **Fix:** Replaced with explicit column list in GET (line 28), PUT update (line 96), PUT insert (line 126)
+- **Columns returned:** id, company_id, from_name, from_email, reply_to_email, email_header_html, email_footer_html, email_signature, use_custom_smtp, smtp_host, smtp_port, smtp_username, is_verified, verified_at, created_at, updated_at
+- **Excluded:** `smtp_encrypted_password`
+
+### Stripe ID Leakage Fix (billing/subscriptions)
+- **Files:** `src/app/api/v2/billing/subscriptions/route.ts`, `subscriptions/[id]/route.ts`
+- **What:** 4 `select('*')` calls on `company_subscriptions` returned `stripe_subscription_id` and `stripe_customer_id` to the client
+- **Fix:** Replaced with explicit column lists in all 4 locations (GET list, POST create, GET by ID, PUT update)
+- **Excluded:** `stripe_subscription_id`, `stripe_customer_id`
+
+### Documents Soft-Delete Defense-in-Depth (3 routes)
+- **Files:** `src/app/api/v2/documents/route.ts`, `documents/[id]/route.ts`, `documents/[id]/download/route.ts`
+- **What:** Documents routes were filtering `status != 'deleted'` but not `deleted_at IS NULL`. Both checks needed for defense-in-depth.
+- **Fix:** Added `.is('deleted_at', null)` to all 3 query locations
+
 ## Session 15 — Sort Injection Fix + Error Handling Hardening (2026-02-26)
 
 ### Sort Column Injection Fix (3 schemas)

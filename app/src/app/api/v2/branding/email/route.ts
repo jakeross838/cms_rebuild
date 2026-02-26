@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('builder_email_config')
-      .select('*')
+      .select('id, company_id, from_name, from_email, reply_to_email, email_header_html, email_footer_html, email_signature, use_custom_smtp, smtp_host, smtp_port, smtp_username, is_verified, verified_at, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
       .single()
 
@@ -93,7 +93,7 @@ export const PUT = createApiHandler(
         .from('builder_email_config')
         .update(updates)
         .eq('company_id', ctx.companyId!)
-        .select('*')
+        .select('id, company_id, from_name, from_email, reply_to_email, email_header_html, email_footer_html, email_signature, use_custom_smtp, smtp_host, smtp_port, smtp_username, is_verified, verified_at, created_at, updated_at')
         .single()
 
       if (error || !data) {
@@ -123,7 +123,7 @@ export const PUT = createApiHandler(
           smtp_username: input.smtp_username ?? null,
           smtp_encrypted_password: input.smtp_encrypted_password ?? null,
         })
-        .select('*')
+        .select('id, company_id, from_name, from_email, reply_to_email, email_header_html, email_footer_html, email_signature, use_custom_smtp, smtp_host, smtp_port, smtp_username, is_verified, verified_at, created_at, updated_at')
         .single()
 
       if (error) {

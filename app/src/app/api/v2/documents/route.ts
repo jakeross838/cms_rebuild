@@ -69,6 +69,7 @@ export const GET = createApiHandler(
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
+      .is('deleted_at', null)
 
     if (filters.job_id) {
       query = query.eq('job_id', filters.job_id)

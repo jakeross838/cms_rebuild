@@ -25,6 +25,7 @@ export const GET = createApiHandler(
       .select('storage_path, filename, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (docError || !doc) {

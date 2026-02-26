@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 16 — Data Leakage Prevention + Soft-Delete Defense
+
+### Why (SMTP Password Leakage)
+- `builder_email_config` table has `smtp_encrypted_password` column — an encrypted credential
+- API GET endpoint used `select('*')` which returned this field to the client
+- Even though encrypted, exposing it enables offline brute-force attacks on the encryption key
+- Fix: explicit column list in all 3 query paths (GET, PUT update response, PUT insert response)
+
+### Why (Stripe ID Leakage)
+- `company_subscriptions` has `stripe_subscription_id` and `stripe_customer_id` columns
+- These are internal billing identifiers that could be used for social engineering or unauthorized Stripe API calls
+- API routes used `select('*')` in 4 locations (GET list, POST create, GET by ID, PUT update)
+- Fix: explicit column lists excluding both Stripe ID fields
+
+### Why (Documents deleted_at Defense-in-Depth)
+- Documents table uses dual soft-delete: `status = 'deleted'` AND `deleted_at IS NOT NULL`
+- Routes already filtered `status != 'deleted'` but not `deleted_at IS NULL`
+- If a record somehow has status='active' but deleted_at set (data inconsistency), the API would still serve it
+- RLS policies already filter deleted_at, but API should enforce it too — belt and suspenders
+
 ## 2026-02-26: Session 15 — Sort Injection Fix + Error Handling Hardening
 
 ### Why (Sort Column Injection)
