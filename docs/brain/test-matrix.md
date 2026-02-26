@@ -1,5 +1,44 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 7 — API Consistency, Soft-Delete Fixes, mapDbError Standardization (2026-02-26)
+
+### Webhook Secret Exposure
+- [ ] GET /api/v2/webhooks — response does NOT include `secret` field
+- [ ] GET /api/v2/webhooks/:id — response does NOT include `secret` field
+- [ ] PUT /api/v2/webhooks/:id — response does NOT include `secret` field
+- [ ] POST /api/v2/webhooks — response DOES include `secret` (one-time on creation)
+
+### V1 Response Consistency
+- [ ] POST /api/v1/clients — 201 response includes `requestId`
+- [ ] POST /api/v1/vendors — 201 response includes `requestId`
+- [ ] POST /api/v1/cost-codes — 201 response includes `requestId`
+- [ ] POST /api/v1/jobs — 201 response includes `requestId`
+- [ ] POST /api/v1/users — 201 response includes `requestId`
+- [ ] POST /api/v1/users/:id/deactivate — response includes `requestId`
+- [ ] POST /api/v1/users/:id/reactivate — response includes `requestId`
+- [ ] GET /api/v1/settings/feature-flags — response includes `requestId`
+- [ ] GET /api/v1/settings/terminology — response includes `requestId`
+- [ ] GET /api/v1/settings/numbering — response includes `requestId`
+- [ ] GET /api/v1/settings/company — response includes `requestId`
+- [ ] GET /api/v1/settings/phases — response includes `requestId`
+
+### Soft-Delete Filters
+- [ ] GET /api/v1/clients/:id — returns 404 for soft-deleted client
+- [ ] PATCH /api/v1/clients/:id — returns 404 for soft-deleted client
+- [ ] GET /api/v1/vendors/:id — returns 404 for soft-deleted vendor
+- [ ] PATCH /api/v1/vendors/:id — returns 404 for soft-deleted vendor
+- [ ] GET /api/v1/jobs/:id — returns 404 for soft-deleted job
+- [ ] PATCH /api/v1/jobs/:id — returns 404 for soft-deleted job
+- [ ] GET /api/v1/users/:id — returns 404 for deactivated user
+- [ ] PATCH /api/v1/users/:id — returns 404 for deactivated user
+
+### mapDbError Integration
+- [ ] POST /api/v1/clients — duplicate name returns 409 (not 500)
+- [ ] POST /api/v1/jobs — FK violation returns 400 (not 500)
+- [ ] POST /api/v1/roles — duplicate name returns 409 (not 500)
+- [ ] PATCH /api/v1/roles/:id — duplicate name returns 409 (not 500)
+- [ ] RLS violation on any v1 route returns 403 (not 500)
+
 ## Session 6 — Sensitive Data Exposure, Error Leakage, Auth Hardening (2026-02-26)
 
 ### Sensitive Data Exposure

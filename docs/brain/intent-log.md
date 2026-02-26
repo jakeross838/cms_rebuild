@@ -1,5 +1,28 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 7 — API Consistency, Soft-Delete Fixes, mapDbError Standardization
+
+### Why
+1. **Webhook routes exposed signing secret** — `select('*')` on webhook_subscriptions returned the HMAC `secret` field, allowing attackers to forge webhook signatures.
+2. **17 v1 endpoints missing requestId** — POST 201 responses and all settings routes returned data without requestId, breaking API response consistency contracts.
+3. **phases route leaked error.message** — PATCH handler returned raw DB error message (`error?.message || 'Failed to update phase'`) to clients.
+4. **8 v1 detail queries missing soft-delete filter** — GET/PATCH on clients/vendors/jobs/users `[id]` routes returned soft-deleted/archived records, allowing viewing and editing of archived data.
+5. **All v1 CRUD routes returned generic 500** — Create/update/list errors all returned "Internal Server Error" regardless of actual error type (unique conflict=409, FK violation=400, RLS=403).
+6. **Roles route had manual error.code checks** — duplicated logic that mapDbError handles centrally, making error handling inconsistent.
+
+### What was done
+- Replaced `select('*')` with explicit columns excluding `secret` in 3 webhook route files (5 queries)
+- Added `requestId` to 19 v1 API endpoints across 16 files
+- Fixed error.message leak in phases/[id] route
+- Added `.is('deleted_at', null)` to 8 queries in 4 `[id]` route files (clients, vendors, jobs, users)
+- Added `mapDbError()` to 20 error handlers across 14 v1 route files
+- Replaced manual `error.code === '23505'` checks in roles routes with centralized mapDbError
+
+### Commits
+- `04b87b1` — Harden API response consistency — add requestId, exclude webhook secrets (16 files)
+- `b93e04e` — Add missing soft-delete filters to v1 detail routes (4 files)
+- `301486a` — Use mapDbError in all v1 routes — proper HTTP status codes for DB errors (14 files)
+
 ## 2026-02-26: Session 6 — Sensitive Data Exposure, Error Leakage, Auth Hardening
 
 ### Why

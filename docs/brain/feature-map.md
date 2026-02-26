@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 7 — API Consistency, Soft-Delete Fixes, mapDbError Standardization (2026-02-26)
+
+### Webhook Secret Exposure Fix (3 files, 5 queries)
+- webhook_subscriptions GET list: `select('*')` → explicit columns excluding `secret`
+- webhook_subscriptions GET by ID: `select('*')` → explicit columns excluding `secret`
+- webhook_subscriptions PUT: `select('*')` → explicit columns excluding `secret`
+- webhook_subscriptions POST: includes `secret` in select (returned ONCE on creation only)
+- webhook_deliveries GET list: `select('*')` → explicit columns (no sensitive fields but explicit for consistency)
+
+### V1 API Response Consistency (16 files, 19 endpoints)
+- Added missing `requestId` to POST 201 responses: clients, vendors, cost-codes, jobs, users/invite
+- Added missing `requestId` to user action endpoints: deactivate, reactivate
+- Added missing `requestId` to all settings routes: feature-flags GET/PATCH, terminology GET/PATCH/POST, numbering GET/PATCH/POST, company GET/PATCH, phases GET/POST
+- Fixed error.message leak in phases [id] route PATCH handler
+
+### Soft-Delete Filter Fixes (4 files, 8 queries)
+- clients/[id] GET + PATCH: Added `.is('deleted_at', null)` — prevents returning/editing archived clients
+- vendors/[id] GET + PATCH: Added `.is('deleted_at', null)` — prevents returning/editing archived vendors
+- jobs/[id] GET + PATCH: Added `.is('deleted_at', null)` — prevents returning/editing archived jobs
+- users/[id] GET + PATCH: Added `.eq('is_active', true).is('deleted_at', null)` — prevents returning/editing deactivated users
+
+### mapDbError Standardization (14 files, 20 error handlers)
+- All v1 CRUD routes now use `mapDbError()` instead of generic 500 responses
+- clients, vendors, cost-codes, jobs: GET list + POST create + PATCH update
+- users: GET list + PATCH update + deactivate + reactivate
+- roles: GET list + POST create + PATCH update + DELETE (replaced manual error.code checks)
+- Returns proper HTTP status codes: 409 for unique conflicts, 400 for FK/not-null violations, 403 for RLS
+
 ## Session 6 — Sensitive Data Exposure, Error Info Leakage, Auth Hardening (2026-02-26)
 
 ### Sensitive Data Exposure Fixes (6 files, 12 queries)
