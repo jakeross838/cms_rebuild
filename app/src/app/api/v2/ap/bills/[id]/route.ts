@@ -109,6 +109,20 @@ export const PUT = createApiHandler(
       )
     }
 
+    // Validate line totals match header amount (use input.amount if provided, else existing)
+    if (input.lines && input.lines.length > 0) {
+      const headerAmount = input.amount ?? 0
+      if (headerAmount > 0) {
+        const lineTotal = input.lines.reduce((sum, line) => sum + line.amount, 0)
+        if (Math.abs(lineTotal - headerAmount) > 0.01) {
+          return NextResponse.json(
+            { error: 'Validation Error', message: `Line items total (${lineTotal.toFixed(2)}) must equal bill amount (${headerAmount.toFixed(2)})`, requestId: ctx.requestId },
+            { status: 400 }
+          )
+        }
+      }
+    }
+
     // Build update object
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.vendor_id !== undefined) updates.vendor_id = input.vendor_id
@@ -127,6 +141,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .eq('status', existing.status)
       .select('*')
       .single()
 

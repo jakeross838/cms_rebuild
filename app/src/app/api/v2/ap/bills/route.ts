@@ -107,6 +107,18 @@ export const POST = createApiHandler(
     }
 
     const input = parseResult.data
+
+    // Validate line totals match header amount
+    if (input.lines && input.lines.length > 0) {
+      const lineTotal = input.lines.reduce((sum, line) => sum + line.amount, 0)
+      if (Math.abs(lineTotal - input.amount) > 0.01) {
+        return NextResponse.json(
+          { error: 'Validation Error', message: `Line items total (${lineTotal.toFixed(2)}) must equal bill amount (${input.amount.toFixed(2)})`, requestId: ctx.requestId },
+          { status: 400 }
+        )
+      }
+    }
+
     const supabase = await createClient()
 
     // Create the bill
