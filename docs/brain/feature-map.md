@@ -1,5 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## DB Error Sanitization, Cache Headers, DB Security (2026-02-26)
+
+### Error Message Sanitization (277 files, 462 occurrences)
+- All v2 API routes now use `mapDbError(error)` instead of raw `error.message`
+- Previously: `{ error: 'Database Error', message: error.message }` leaked table names, constraints, RLS details
+- Now: `{ error: mapped.error, message: mapped.message, status: mapped.status }` returns safe HTTP error messages
+- Error code mapping: 23505→409 Conflict, 23503→404 FK Not Found, 22P02→400 Invalid ID, 42501→403 Forbidden, 42P01→500 Not Found
+
+### Cache-Control Headers (middleware, covers all 430 routes)
+- GET success: `Cache-Control: private, no-cache, max-age=0, must-revalidate` (user-specific data, always revalidate)
+- Non-GET / status >= 400: `Cache-Control: no-store` (never cache mutations or errors)
+- Applied in createApiHandler alongside X-Request-ID header
+
+### PostgreSQL Function Search Path (11 functions fixed)
+- All public functions now have `SET search_path = ''` with fully-qualified table references
+- Prevents schema hijacking attacks on: get_current_company_id, user_has_role, get_config_value, is_feature_enabled, update_updated_at_column, update_time_tracking_updated_at, update_warranty_updated_at, update_updated_at, prevent_company_id_change, cleanup_old_metrics, get_next_sequence_number
+
+### RLS Security Hardening
+- **Always-true fix**: blog_posts, case_studies, marketing_leads — replaced `ALL USING(true)` with SELECT(public) + INSERT/UPDATE/DELETE(require auth)
+- **InitPlan optimization**: All policies now use `(SELECT auth.uid())` instead of `auth.uid()` — per-query evaluation vs per-row
+- **Duplicate policies removed**: marketplace_reviews (redundant SELECT), numbering_sequences (redundant SELECT)
+- **cost_codes fix**: Removed overly-broad "Tenant isolation" ALL policy that bypassed deleted_at filter and role checks
+- **pg_trgm moved**: From public to extensions schema, 3 GIN indexes recreated with extensions.gin_trgm_ops
+
+---
+
 ## Status Transitions, FK Indexes (2026-02-26)
 
 ### PO Status Transition Validation

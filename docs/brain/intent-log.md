@@ -1,5 +1,32 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: DB Error Sanitization, Cache Headers, DB Security Hardening
+
+### Why
+1. 277 API routes leaked raw Supabase/PostgreSQL error.message to clients — exposed table names, constraint names, RLS violation details
+2. Zero API responses had Cache-Control headers — browsers/CDNs could cache user-specific data
+3. 11 PostgreSQL functions had mutable search_path — attackable via schema hijacking
+4. 3 tables (blog_posts, case_studies, marketing_leads) had `USING (true)` on ALL commands — anyone could INSERT/UPDATE/DELETE
+5. 24 RLS policies evaluated `auth.uid()` per-row instead of per-query — performance penalty on large tables
+6. Duplicate/redundant RLS policies on marketplace_reviews, numbering_sequences, cost_codes
+7. pg_trgm extension in public schema (should be in extensions)
+
+### What was done
+- Replaced raw `error.message` with `mapDbError(error)` across 462 occurrences in 277 route files
+- Added Cache-Control headers in createApiHandler middleware: `private, no-cache` for GET success, `no-store` for mutations/errors
+- Applied 4 DB migrations via Supabase MCP:
+  - `fix_function_search_paths`: SET search_path='' on 5 core functions
+  - `fix_remaining_function_search_paths`: SET search_path='' on 6 more functions
+  - `rls_security_hardening`: Fix always-true policies, InitPlan optimization on all auth.uid() policies, remove 2 redundant policies
+  - `fix_cost_codes_permissive_policies`: Replace overly-broad ALL policy with specific INSERT/DELETE
+  - `move_pg_trgm_to_extensions_schema`: Move extension, recreate 3 GIN indexes
+
+### Security advisor status
+- Before: 11 function warnings, 3 RLS always-true, 32 InitPlan issues, extension in public, leaked password protection
+- After: Only 1 remaining — leaked password protection (dashboard setting, not code-fixable)
+
+---
+
 ## 2026-02-26: Status Transitions, FK Indexes
 
 ### Why

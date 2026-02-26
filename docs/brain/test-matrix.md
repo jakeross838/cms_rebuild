@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## DB Error Sanitization, Cache Headers, DB Security (2026-02-26)
+
+### Error Message Sanitization
+| Route | Test | Expected |
+|-------|------|----------|
+| Any GET with invalid UUID | GET /api/v2/jobs/not-a-uuid | 400 "Invalid ID format" (not raw PG error) |
+| Any POST with FK violation | POST /api/v2/budgets with bad job_id | 404 safe message (not table/constraint names) |
+| Any POST with unique violation | POST /api/v2/daily-logs duplicate | 409 safe message (not constraint details) |
+
+### Cache-Control Headers
+| Route | Method | Expected Header |
+|-------|--------|-----------------|
+| GET /api/v2/jobs | GET (success) | Cache-Control: private, no-cache, max-age=0, must-revalidate |
+| POST /api/v2/jobs | POST | Cache-Control: no-store |
+| GET /api/v2/jobs (401) | GET (unauthenticated) | No cache header (early return) |
+| DELETE /api/v2/jobs/:id | DELETE | Cache-Control: no-store |
+
+### RLS Security
+| Table | Test | Expected |
+|-------|------|----------|
+| blog_posts | Unauthenticated SELECT | Allowed (public read) |
+| blog_posts | Unauthenticated INSERT | Denied (requires auth) |
+| cost_codes | SELECT soft-deleted record | Not returned (deleted_at filter enforced at RLS) |
+
+---
+
 ## Status Transitions, FK Indexes (2026-02-26)
 
 ### PO Status Transition
