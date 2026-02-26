@@ -87,6 +87,7 @@ export default async function JournalEntriesPage({
             <div className="text-center py-8">
               <BookOpen className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No journal entries yet</p>
+              <Link href="/financial/journal-entries/new" className="text-sm font-medium text-primary hover:underline">Create your first journal entry</Link>
             </div>
           )}
         </CardContent>

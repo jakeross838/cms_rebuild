@@ -114,6 +114,7 @@ export default async function RfisPage({
               <FileQuestion className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No RFIs yet</p>
               <p className="text-sm text-muted-foreground mt-1">Create an RFI to track requests for information</p>
+              <Link href="/rfis/new" className="text-sm font-medium text-primary hover:underline">Create your first RFI</Link>
             </div>
           )}
         </CardContent>

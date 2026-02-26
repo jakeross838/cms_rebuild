@@ -111,6 +111,7 @@ export default async function InvoicesPage({
             <p className="text-muted-foreground mb-4">
               {params.search || params.status ? 'Try adjusting your filters' : 'No invoices yet'}
             </p>
+            <Link href="/invoices/new" className="text-sm font-medium text-primary hover:underline">Create your first invoice</Link>
           </div>
         )}
       </div>

@@ -95,6 +95,7 @@ export default async function ReceivablesPage({
             <div className="text-center py-8">
               <ArrowDownRight className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No receivables yet</p>
+              <Link href="/financial/receivables/new" className="text-sm font-medium text-primary hover:underline">Create your first receivable</Link>
             </div>
           )}
         </CardContent>

@@ -108,6 +108,7 @@ export default async function BidsPage({
               <Gavel className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No bid packages yet</p>
               <p className="text-sm text-muted-foreground mt-1">Create a bid package to start collecting bids</p>
+              <Link href="/bids/new" className="text-sm font-medium text-primary hover:underline">Create your first bid package</Link>
             </div>
           )}
         </CardContent>

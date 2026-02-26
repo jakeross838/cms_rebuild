@@ -105,6 +105,7 @@ export default async function SubmittalsPage({
               <FileCheck className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-muted-foreground">No submittals yet</p>
               <p className="text-sm text-muted-foreground mt-1">Create a submittal to track material and product approvals</p>
+              <Link href="/submittals/new" className="text-sm font-medium text-primary hover:underline">Create your first submittal</Link>
             </div>
           )}
         </CardContent>
