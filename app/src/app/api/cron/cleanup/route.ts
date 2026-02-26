@@ -18,6 +18,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { serverEnv } from '@/lib/env.server'
 import { createLogger } from '@/lib/monitoring'
 import { cleanupOldJobs } from '@/lib/queue'
 import { createClient } from '@/lib/supabase/server'
@@ -30,7 +31,7 @@ const logger = createLogger({ service: 'cleanup' })
 export async function GET(req: NextRequest) {
   // Verify cron secret — REQUIRED in all environments
   const authHeader = req.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
+  const cronSecret = serverEnv.CRON_SECRET
 
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized', requestId: crypto.randomUUID() }, { status: 401 })
