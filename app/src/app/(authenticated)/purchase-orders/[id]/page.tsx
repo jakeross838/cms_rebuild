@@ -577,7 +577,7 @@ export default function PurchaseOrderDetailPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="shipping_address" className="text-sm font-medium">Shipping Address</label>
-                  <textarea id="shipping_address" name="shipping_address" value={formData.shipping_address} onChange={handleChange} rows={2} className={textareaClassName} />
+                  <textarea id="shipping_address" aria-label="Shipping address" name="shipping_address" value={formData.shipping_address} onChange={handleChange} rows={2} className={textareaClassName} />
                 </div>
               </CardContent>
             </Card>
@@ -588,11 +588,11 @@ export default function PurchaseOrderDetailPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="terms" className="text-sm font-medium">Terms</label>
-                  <textarea id="terms" name="terms" value={formData.terms} onChange={handleChange} rows={3} className={textareaClassName} />
+                  <textarea id="terms" aria-label="Terms" name="terms" value={formData.terms} onChange={handleChange} rows={3} className={textareaClassName} />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="notes" className="text-sm font-medium">Notes</label>
-                  <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className={textareaClassName} />
+                  <textarea id="notes" aria-label="Notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className={textareaClassName} />
                 </div>
               </CardContent>
             </Card>

@@ -127,7 +127,7 @@ export default function NewTemplatePage() {
             <CardDescription>Contract body text — use {'{{variables}}'} for dynamic fields</CardDescription>
           </CardHeader>
           <CardContent>
-            <textarea id="content" name="content" value={formData.content} onChange={handleChange} rows={12} placeholder="This agreement is entered into between {{company_name}} and {{client_name}}..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm font-mono transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+            <textarea id="content" aria-label="Content" name="content" value={formData.content} onChange={handleChange} rows={12} placeholder="This agreement is entered into between {{company_name}} and {{client_name}}..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm font-mono transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
           </CardContent>
         </Card>
 

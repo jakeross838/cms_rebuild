@@ -110,7 +110,7 @@ export default function NewSupportTicketPage() {
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description <span className="text-red-500">*</span></label>
               <textarea
-                id="description"
+                id="description" aria-label="Description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}

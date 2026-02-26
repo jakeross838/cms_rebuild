@@ -206,7 +206,7 @@ export default function NewSelectionPage() {
         <Card>
           <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
           <CardContent>
-            <textarea id="change_reason" name="change_reason" value={formData.change_reason} onChange={handleChange} rows={3} placeholder="Reason for selection or change notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+            <textarea id="change_reason" aria-label="Change reason" name="change_reason" value={formData.change_reason} onChange={handleChange} rows={3} placeholder="Reason for selection or change notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
           </CardContent>
         </Card>
 

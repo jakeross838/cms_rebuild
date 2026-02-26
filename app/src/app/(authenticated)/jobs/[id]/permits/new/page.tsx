@@ -180,11 +180,11 @@ export default function NewPermitPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="conditions" className="text-sm font-medium">Conditions</label>
-              <textarea id="conditions" name="conditions" value={formData.conditions} onChange={handleChange} rows={3} placeholder="Any conditions on the permit..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="conditions" aria-label="Conditions" name="conditions" value={formData.conditions} onChange={handleChange} rows={3} placeholder="Any conditions on the permit..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="notes" className="text-sm font-medium">Notes</label>
-              <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={2} placeholder="Additional notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="notes" aria-label="Notes" name="notes" value={formData.notes} onChange={handleChange} rows={2} placeholder="Additional notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </CardContent>
         </Card>

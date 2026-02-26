@@ -128,7 +128,7 @@ export default function NewContractTemplatePage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={2} placeholder="What this template is used for..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="description" aria-label="Description" name="description" value={formData.description} onChange={handleChange} rows={2} placeholder="What this template is used for..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export default function NewContractTemplatePage() {
             <CardDescription>The body of the contract template. Use {'{{variable_name}}'} for dynamic fields.</CardDescription>
           </CardHeader>
           <CardContent>
-            <textarea id="content" name="content" value={formData.content} onChange={handleChange} rows={12} placeholder={"CONSTRUCTION CONTRACT\n\nThis agreement is entered into between {{company_name}} (\"Builder\") and {{client_name}} (\"Owner\")...\n\nScope of Work:\n{{scope_of_work}}\n\nContract Amount: ${{contract_amount}}"} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring font-mono" />
+            <textarea id="content" aria-label="Content" name="content" value={formData.content} onChange={handleChange} rows={12} placeholder={"CONSTRUCTION CONTRACT\n\nThis agreement is entered into between {{company_name}} (\"Builder\") and {{client_name}} (\"Owner\")...\n\nScope of Work:\n{{scope_of_work}}\n\nContract Amount: ${{contract_amount}}"} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring font-mono" />
           </CardContent>
         </Card>
 

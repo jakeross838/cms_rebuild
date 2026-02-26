@@ -227,15 +227,15 @@ export default function NewPurchaseOrderPage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="shipping_address" className="text-sm font-medium">Shipping Address</label>
-              <textarea id="shipping_address" name="shipping_address" value={formData.shipping_address} onChange={handleChange} rows={2} placeholder="Delivery address..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="shipping_address" aria-label="Shipping address" name="shipping_address" value={formData.shipping_address} onChange={handleChange} rows={2} placeholder="Delivery address..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="terms" className="text-sm font-medium">Terms</label>
-              <textarea id="terms" name="terms" value={formData.terms} onChange={handleChange} rows={2} placeholder="Payment terms, delivery terms..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="terms" aria-label="Terms" name="terms" value={formData.terms} onChange={handleChange} rows={2} placeholder="Payment terms, delivery terms..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="notes" className="text-sm font-medium">Notes</label>
-              <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={2} placeholder="Additional notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="notes" aria-label="Notes" name="notes" value={formData.notes} onChange={handleChange} rows={2} placeholder="Additional notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </CardContent>
         </Card>

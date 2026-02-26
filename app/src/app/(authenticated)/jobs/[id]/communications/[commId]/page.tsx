@@ -352,14 +352,14 @@ export default function CommunicationDetailPage() {
             <Card>
               <CardHeader><CardTitle>Message</CardTitle></CardHeader>
               <CardContent>
-                <textarea id="message_body" name="message_body" value={formData.message_body} onChange={handleChange} rows={6} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                <textarea id="message_body" aria-label="Message body" name="message_body" value={formData.message_body} onChange={handleChange} rows={6} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
               <CardContent>
-                <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                <textarea id="notes" aria-label="Notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
               </CardContent>
             </Card>
           </>

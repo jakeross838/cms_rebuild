@@ -735,7 +735,7 @@ export default function DrawRequestDetailPage() {
               </CardHeader>
               <CardContent>
                 <textarea
-                  id="notes"
+                  id="notes" aria-label="Notes"
                   name="notes"
                   value={formData.notes}
                   onChange={handleChange}

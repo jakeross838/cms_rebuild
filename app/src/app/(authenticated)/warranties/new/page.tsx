@@ -223,11 +223,11 @@ export default function NewWarrantyPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="coverage_details" className="text-sm font-medium">Coverage Details</label>
-              <textarea id="coverage_details" name="coverage_details" value={formData.coverage_details} onChange={handleChange} rows={2} placeholder="What's covered under this warranty..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="coverage_details" aria-label="Coverage details" name="coverage_details" value={formData.coverage_details} onChange={handleChange} rows={2} placeholder="What's covered under this warranty..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="exclusions" className="text-sm font-medium">Exclusions</label>
-              <textarea id="exclusions" name="exclusions" value={formData.exclusions} onChange={handleChange} rows={2} placeholder="What's NOT covered..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="exclusions" aria-label="Exclusions" name="exclusions" value={formData.exclusions} onChange={handleChange} rows={2} placeholder="What's NOT covered..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </CardContent>
         </Card>

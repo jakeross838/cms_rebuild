@@ -182,7 +182,7 @@ export default function NewWarrantyClaimPage() {
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
               <textarea
-                id="description"
+                id="description" aria-label="Description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -226,7 +226,7 @@ export default function NewWarrantyClaimPage() {
           </CardHeader>
           <CardContent>
             <textarea
-              id="resolution_notes"
+              id="resolution_notes" aria-label="Resolution notes"
               name="resolution_notes"
               value={formData.resolution_notes}
               onChange={handleChange}

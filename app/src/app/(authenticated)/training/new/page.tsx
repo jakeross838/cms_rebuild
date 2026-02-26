@@ -114,7 +114,7 @@ export default function NewTrainingCoursePage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={3} placeholder="What this course covers..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="description" aria-label="Description" name="description" value={formData.description} onChange={handleChange} rows={3} placeholder="What this course covers..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="content_url" className="text-sm font-medium">Content URL</label>

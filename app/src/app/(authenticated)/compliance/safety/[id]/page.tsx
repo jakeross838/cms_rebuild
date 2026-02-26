@@ -519,11 +519,11 @@ export default function SafetyIncidentDetailPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="description" className="text-sm font-medium">Description</label>
-                  <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <textarea id="description" aria-label="Description" name="description" value={formData.description} onChange={handleChange} rows={3} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="injury_description" className="text-sm font-medium">Injury Description</label>
-                  <textarea id="injury_description" name="injury_description" value={formData.injury_description} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <textarea id="injury_description" aria-label="Injury description" name="injury_description" value={formData.injury_description} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
                 </div>
               </CardContent>
             </Card>
@@ -565,15 +565,15 @@ export default function SafetyIncidentDetailPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="root_cause" className="text-sm font-medium">Root Cause</label>
-                  <textarea id="root_cause" name="root_cause" value={formData.root_cause} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <textarea id="root_cause" aria-label="Root cause" name="root_cause" value={formData.root_cause} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="corrective_actions" className="text-sm font-medium">Corrective Actions</label>
-                  <textarea id="corrective_actions" name="corrective_actions" value={formData.corrective_actions} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <textarea id="corrective_actions" aria-label="Corrective actions" name="corrective_actions" value={formData.corrective_actions} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="preventive_actions" className="text-sm font-medium">Preventive Actions</label>
-                  <textarea id="preventive_actions" name="preventive_actions" value={formData.preventive_actions} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                  <textarea id="preventive_actions" aria-label="Preventive actions" name="preventive_actions" value={formData.preventive_actions} onChange={handleChange} rows={2} className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
                 </div>
               </CardContent>
             </Card>

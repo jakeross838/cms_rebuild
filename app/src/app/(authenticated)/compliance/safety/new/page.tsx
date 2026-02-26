@@ -264,7 +264,7 @@ export default function NewSafetyIncidentPage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="injury_description" className="text-sm font-medium">Injury Description</label>
-              <textarea id="injury_description" name="injury_description" value={formData.injury_description} onChange={handleChange} rows={2} placeholder="Describe the injury..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="injury_description" aria-label="Injury description" name="injury_description" value={formData.injury_description} onChange={handleChange} rows={2} placeholder="Describe the injury..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </CardContent>
         </Card>
@@ -277,11 +277,11 @@ export default function NewSafetyIncidentPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Incident Description</label>
-              <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={4} placeholder="Describe what happened in detail..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="description" aria-label="Description" name="description" value={formData.description} onChange={handleChange} rows={4} placeholder="Describe what happened in detail..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="corrective_actions" className="text-sm font-medium">Corrective Actions</label>
-              <textarea id="corrective_actions" name="corrective_actions" value={formData.corrective_actions} onChange={handleChange} rows={3} placeholder="What corrective actions were or will be taken..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="corrective_actions" aria-label="Corrective actions" name="corrective_actions" value={formData.corrective_actions} onChange={handleChange} rows={3} placeholder="What corrective actions were or will be taken..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </CardContent>
         </Card>

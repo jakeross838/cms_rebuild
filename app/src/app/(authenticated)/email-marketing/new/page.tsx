@@ -169,11 +169,11 @@ export default function NewCampaignPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={2} placeholder="Campaign goals and strategy..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="description" aria-label="Description" name="description" value={formData.description} onChange={handleChange} rows={2} placeholder="Campaign goals and strategy..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
             <div className="space-y-2">
               <label htmlFor="notes" className="text-sm font-medium">Notes</label>
-              <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={2} placeholder="Internal notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+              <textarea id="notes" aria-label="Notes" name="notes" value={formData.notes} onChange={handleChange} rows={2} placeholder="Internal notes..." className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </CardContent>
         </Card>
