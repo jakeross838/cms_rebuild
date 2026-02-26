@@ -41,12 +41,12 @@ export const GET = createApiHandler(
     }
 
     // Fetch dependencies where this task is predecessor or successor
-    const { data: predecessors } = await supabase
+    const { data: predecessors, error: predError } = await supabase
       .from('schedule_dependencies')
       .select('*')
       .eq('successor_id', id)
 
-    const { data: successors } = await supabase
+    const { data: successors, error: succError } = await supabase
       .from('schedule_dependencies')
       .select('*')
       .eq('predecessor_id', id)

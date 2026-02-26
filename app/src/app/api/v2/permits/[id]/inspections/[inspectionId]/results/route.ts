@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { mapDbError } from '@/lib/api/middleware'
+import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import { listInspectionResultsSchema, createInspectionResultSchema } from '@/lib/validation/schemas/permitting'
 
@@ -149,7 +150,8 @@ export const POST = createApiHandler(
     }
     const newStatus = statusMap[input.result]
     if (newStatus) {
-      await supabase
+      const logger = createLogger({ service: 'permits' })
+      const { error: statusError } = await supabase
         .from('permit_inspections')
         .update({
           status: newStatus,
@@ -158,6 +160,9 @@ export const POST = createApiHandler(
         })
         .eq('id', inspectionId)
         .eq('company_id', ctx.companyId!)
+      if (statusError) {
+        logger.error('Failed to update inspection status', { inspectionId, error: statusError.message })
+      }
     }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })

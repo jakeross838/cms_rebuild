@@ -92,13 +92,21 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Check for existing access for this vendor
-    const { data: existing } = await supabase
+    const { data: existing, error: existError } = await supabase
       .from('vendor_portal_access')
       .select('id')
       .eq('company_id', ctx.companyId!)
       .eq('vendor_id', input.vendor_id)
       .is('deleted_at', null)
       .single()
+
+    if (existError && existError.code !== 'PGRST116') {
+      const mapped = mapDbError(existError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     if (existing) {
       return NextResponse.json(
