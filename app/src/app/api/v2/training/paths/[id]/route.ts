@@ -56,6 +56,7 @@ export const GET = createApiHandler(
       .from('training_path_items')
       .select('id')
       .eq('path_id', id)
+      .eq('company_id', ctx.companyId!)
 
     return NextResponse.json({
       data: {

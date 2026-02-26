@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('custom_report_widgets')
       .select('id')
       .eq('report_id', id)
+      .eq('company_id', ctx.companyId!)
 
     return NextResponse.json({
       data: {
