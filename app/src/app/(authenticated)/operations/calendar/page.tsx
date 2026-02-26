@@ -26,6 +26,7 @@ export default async function CompanyCalendarPage() {
   const { data: tasksData } = await supabase
     .from('schedule_tasks')
     .select('id, name, status, planned_start, planned_end, progress_pct, is_critical_path, job_id')
+    .is('deleted_at', null)
     .gte('planned_end', today)
     .order('planned_start', { ascending: true })
     .limit(100)

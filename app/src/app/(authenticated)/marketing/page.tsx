@@ -14,10 +14,10 @@ export default async function MarketingPage() {
     { count: reviewCount },
     { count: referralCount },
   ] = await Promise.all([
-    supabase.from('marketing_campaigns').select('*', { count: 'exact', head: true }),
-    supabase.from('marketing_leads').select('*', { count: 'exact', head: true }),
-    supabase.from('client_reviews').select('*', { count: 'exact', head: true }),
-    supabase.from('marketing_referrals').select('*', { count: 'exact', head: true }),
+    supabase.from('marketing_campaigns').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('marketing_leads').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('client_reviews').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('marketing_referrals').select('*', { count: 'exact', head: true }).is('deleted_at', null),
   ])
 
   const sections = [
