@@ -1,5 +1,41 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 6 — Sensitive Data Exposure, Error Leakage, Auth Hardening
+
+### Why
+1. **API keys routes exposed key_hash** — `select('*')` returned the secret hash to API consumers, allowing offline brute-force attacks on API keys.
+2. **Accounting connections routes exposed encrypted tokens** — `access_token_encrypted`, `refresh_token_encrypted`, `token_expires_at` returned to clients.
+3. **Push notification token routes exposed device tokens** — the `token` field is a sensitive push notification credential.
+4. **3 queries missing company_id** — estimate line UPDATE, advanced-reports widgets sub-query, training paths items sub-query allowed potential cross-tenant access.
+5. **15 child-resource routes used hardcoded 404** — mutation errors (unique violations, FK errors, permission errors) all returned generic 404 instead of accurate status codes via mapDbError().
+6. **8 unchecked DB operations** — AP/AR line replace operations and feature request vote count updates silently discarded errors.
+7. **mapDbError() leaked internal details** — fallback returned raw `error.message` and constraint `error.details` to clients.
+8. **8 v1 routes + 2 cron routes leaked error.message** — raw Supabase error strings (constraint names, table names) exposed to API consumers.
+9. **Docs routes publicly accessible** — /api/docs and /api/docs/gaps had no auth, exposing internal module specs and gap tracker.
+10. **Folder creation used unvalidated body.job_id** — bypassed Zod schema validation for the job_id field.
+
+### What was done
+- Replaced `select('*')` with explicit safe column lists in 6 files (12 queries) — api_keys, accounting_connections, push_notification_tokens
+- Added `company_id` filters to 3 queries in 3 files
+- Added `mapDbError` import and usage to 15 child-resource route files
+- Added error checks to 8 unchecked DB operations in 5 files
+- Hardened `mapDbError()` — removed `error.message` and `error.details` from all returns
+- Replaced raw `error.message` in 8 v1 routes and 2 cron routes with generic messages
+- Wrapped /api/docs and /api/docs/gaps in createApiHandler with owner/admin auth
+- Added `job_id` to createFolderSchema, changed route to use `input.job_id`
+
+### Commits
+- `03633dd` — Fix 8 unchecked DB operations + add isValidUuid utility
+- `7735101` — Add missing company_id filters — fix cross-tenant data exposure
+- `c463f86` — Use mapDbError in 15 route handlers — fix misleading error responses
+- `0c9fa38` — Fix sensitive data exposure — exclude secrets from API responses
+- `3eb4d2c` — Exclude push notification tokens from API responses
+- `dfa900f` — Protect docs routes — require auth for internal documentation API
+- `ec6ed46` — Fix unvalidated job_id in folder creation — add to schema
+- `aa4d52d` — Prevent internal error details from leaking to API clients
+
+---
+
 ## 2026-02-26: Session 5 — Tenant Isolation, Deleted_at Consistency, Audit Logging, Rate Limiting
 
 ### Why

@@ -1,5 +1,43 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 6 — Sensitive Data Exposure, Error Info Leakage, Auth Hardening (2026-02-26)
+
+### Sensitive Data Exposure Fixes (6 files, 12 queries)
+- api_keys GET/POST list + GET/PUT by ID: `select('*')` → explicit columns excluding `key_hash`
+- accounting_connections GET/POST list + GET/PUT by ID: `select('*')` → explicit columns excluding `access_token_encrypted`, `refresh_token_encrypted`, `token_expires_at`
+- push_notification_tokens GET list + POST + GET/PUT by ID: `select('*')` → explicit columns excluding `token`
+
+### Cross-Tenant Data Exposure Fixes (3 files)
+- estimates/[id]/lines/[lineId] PUT: Added `.eq('company_id', ctx.companyId!)` to UPDATE query
+- advanced-reports/[id] GET: Added `company_id` filter to widgets sub-query
+- training/paths/[id] GET: Added `company_id` filter to items sub-query
+
+### Consistent Error Handling (15 child-resource route files)
+- 15 route files switched from hardcoded 404 to `mapDbError()` for mutation errors
+- Tables: budget lines, change order items, CRM pipeline stages, PO lines, vendor contacts, vendor insurance, RFI responses, RFI routing, safety inspection items, toolbox talk attendees, bid invitations, bid responses, AI document classifications, report snapshots, estimate line items
+
+### Unchecked DB Operations Fixed (5 files, 8 operations)
+- AP bills PUT: Added error checks to line delete + line insert
+- AR invoices PUT: Added error checks to line delete + line insert
+- Material requests PUT: Added error checks to item delete + item insert
+- Feature request votes POST: Added error check to vote_count increment
+- Feature request votes DELETE: Added error check to vote_count decrement
+
+### Error Info Leakage Prevention (11 files)
+- `mapDbError()` fallback: No longer returns raw `error.message` or `error.details` — always generic messages
+- 8 v1 routes: Replaced `error.message` with generic 'An unexpected database error occurred'
+- 2 cron routes: Replaced `error.message` in response with generic messages
+
+### Auth Hardening (2 files)
+- /api/docs: Wrapped in `createApiHandler` with `requireAuth: true, requiredRoles: ['owner', 'admin']`
+- /api/docs/gaps: Same — was previously publicly accessible with no auth
+
+### Input Validation Fix (2 files)
+- folders/route.ts POST: Changed `body.job_id` → `input.job_id` (use validated data)
+- documents.ts schema: Added `job_id` to `createFolderSchema`
+
+---
+
 ## Session 5 — Tenant Isolation, Audit Logging, Rate Limiting (2026-02-26)
 
 ### Tenant Isolation — company_id on Line-Item DELETEs (5 routes)

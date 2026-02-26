@@ -1,5 +1,44 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 6 — Sensitive Data Exposure, Error Leakage, Auth Hardening (2026-02-26)
+
+### Sensitive Data Exposure
+- [ ] GET /api/v2/api-keys — response does NOT include `key_hash` field
+- [ ] GET /api/v2/api-keys/:id — response does NOT include `key_hash` field
+- [ ] POST /api/v2/api-keys — response does NOT include `key_hash` field
+- [ ] PUT /api/v2/api-keys/:id — response does NOT include `key_hash` field
+- [ ] GET /api/v2/integrations/connections — response does NOT include `access_token_encrypted`, `refresh_token_encrypted`, `token_expires_at`
+- [ ] GET /api/v2/integrations/connections/:id — response does NOT include encrypted tokens
+- [ ] GET /api/v2/mobile/push-tokens — response does NOT include `token` field
+- [ ] GET /api/v2/mobile/push-tokens/:id — response does NOT include `token` field
+
+### Error Info Leakage Prevention
+- [ ] Unique constraint violation returns 409 without exposing column names
+- [ ] Unknown DB error returns generic 'An unexpected database error occurred' (not raw message)
+- [ ] v1 workflow query error returns generic message (not error.message)
+- [ ] Cron job failure returns generic message (not error.message)
+
+### Auth Hardening
+- [ ] GET /api/docs — returns 401 for unauthenticated requests
+- [ ] GET /api/docs — returns 403 for non-owner/admin roles
+- [ ] GET /api/docs/gaps — returns 401 for unauthenticated requests
+
+### Input Validation
+- [ ] POST /api/v2/folders — job_id is validated as UUID (rejects non-UUID strings)
+- [ ] POST /api/v2/folders — omitting job_id defaults to null (not undefined)
+
+### Cross-Tenant Isolation
+- [ ] PUT /api/v2/estimates/:id/lines/:lineId — rejects if line's company_id doesn't match
+- [ ] GET /api/v2/advanced-reports/:id — widgets sub-query filtered by company_id
+- [ ] GET /api/v2/training/paths/:id — items sub-query filtered by company_id
+
+### Consistent Error Handling (mapDbError)
+- [ ] PUT /api/v2/budgets/:id/lines/:lineId — unique constraint returns 409 (not 404)
+- [ ] DELETE /api/v2/vendors/:id/contacts/:contactId — FK violation returns 400 (not 404)
+- [ ] PUT /api/v2/bid-packages/:id/invitations/:invId — permission error returns 403 (not 500)
+
+---
+
 ## Session 5 — Tenant Isolation, Audit, Rate Limiting (2026-02-26)
 
 ### Tenant Isolation on Line-Item DELETEs
