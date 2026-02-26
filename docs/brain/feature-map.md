@@ -1,5 +1,25 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Page Metadata & Title Template (2026-02-25)
+
+### Root Layout Title Template
+- `layout.tsx` uses `title: { template: '%s | RossOS', default: 'RossOS — Construction Intelligence Platform' }`
+- All pages just set `title: 'Page Name'` and browser tab shows "Page Name | RossOS"
+
+### 130+ Pages with Metadata
+- 51 company-level server component pages: direct `export const metadata`
+- 63 job-scoped pages under `jobs/[id]/`: 24 server + 39 layout.tsx wrappers
+- 19 detail `[id]` pages: layout.tsx wrappers (all are client components)
+- 15 `/new/` form pages: layout.tsx wrappers (all are client components)
+- Remaining: bids, equipment, templates, training, api-marketplace, activity
+
+### Dashboard Revenue Fix
+- `/dashboard` now calculates "This Month Revenue" from approved/funded draw_requests
+- Queries `draw_requests.current_due` where `status IN ('approved', 'funded')` and `approved_at >= monthStart`
+- Replaced hardcoded `formatCurrency(0)` TODO
+
+---
+
 ## Dashboards, Intelligence & Placeholder Conversion (2026-02-25)
 
 ### Three Real Dashboards

@@ -1,5 +1,25 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Page Metadata Test Cases (2026-02-25)
+
+### Title Template
+| Test | Expected |
+|------|----------|
+| Root layout | Has `title: { template: '%s | RossOS' }` |
+| Server component page | Tab shows "Jobs \| RossOS" |
+| Client component with layout.tsx | Tab shows "New Job \| RossOS" |
+| No metadata page | Tab shows "RossOS — Construction Intelligence Platform" |
+
+### Dashboard Revenue
+| Test | Expected |
+|------|----------|
+| No draws this month | Shows $0.00 |
+| Approved draws exist | Shows sum of current_due for approved/funded draws this month |
+| Billing page auth | Unauthenticated → redirect /login |
+| Billing page tenant | Only shows company's subscription + events |
+
+---
+
 ## Executive Dashboard Test Cases (2026-02-25)
 
 ### /dashboards/overview

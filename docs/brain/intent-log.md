@@ -1,5 +1,19 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Page Metadata for 130+ Pages
+
+### Why
+All 295 authenticated pages inherited only the root "RossOS" title — browser tabs all said the same thing, making it impossible to identify tabs and hurting UX/professionalism.
+
+### What was done
+1. Added title template `%s | RossOS` to root layout
+2. Added metadata to 130+ pages (server components get direct export, client components get layout.tsx wrappers)
+3. Fixed dashboard revenue TODO — now calculates from approved/funded draw requests this month
+4. Fixed broken link `/reports/cash-flow` → `/financial/cash-flow` in dashboard
+5. Added auth + company_id to billing page
+
+---
+
 ## 2026-02-25: Executive Dashboard & Quality Fixes
 
 ### Why
