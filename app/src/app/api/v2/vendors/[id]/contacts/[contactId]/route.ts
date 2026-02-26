@@ -66,6 +66,7 @@ export const PUT = createApiHandler(
       .eq('id', contactId)
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -97,15 +98,13 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    // Soft delete — we don't have a deleted_at on this table, so we just remove it
-    // Per project convention of soft delete, but since this is a junction-like record,
-    // we perform actual delete (contacts don't have a status/deleted_at field in V1)
     const { error } = await (supabase as any)
       .from('vendor_contacts')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', contactId)
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

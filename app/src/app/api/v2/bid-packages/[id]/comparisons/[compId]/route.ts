@@ -62,6 +62,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', compId)
       .eq('bid_package_id', bidPackageId)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -130,6 +131,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', compId)
       .eq('bid_package_id', bidPackageId)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -179,9 +181,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('bid_comparisons')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', compId)
       .eq('bid_package_id', bidPackageId)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

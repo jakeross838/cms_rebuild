@@ -70,6 +70,7 @@ export const PUT = createApiHandler(
       .eq('id', insuranceId)
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -86,7 +87,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/vendors/:id/insurance/:insuranceId
+// DELETE /api/v2/vendors/:id/insurance/:insuranceId — Soft delete
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -103,10 +104,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('vendor_insurance')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', insuranceId)
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

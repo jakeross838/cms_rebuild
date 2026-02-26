@@ -70,6 +70,7 @@ export const PUT = createApiHandler(
       .eq('id', lineId)
       .eq('budget_id', budgetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -103,10 +104,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('budget_lines')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', lineId)
       .eq('budget_id', budgetId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

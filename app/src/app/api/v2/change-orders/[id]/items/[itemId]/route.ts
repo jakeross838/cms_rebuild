@@ -93,6 +93,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', itemId)
       .eq('change_order_id', changeOrderId)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -149,9 +150,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('change_order_items')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', itemId)
       .eq('change_order_id', changeOrderId)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

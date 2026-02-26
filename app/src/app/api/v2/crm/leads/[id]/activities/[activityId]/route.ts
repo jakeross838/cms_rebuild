@@ -35,6 +35,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', activityId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -90,6 +91,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', activityId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -125,9 +127,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('lead_activities')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', activityId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

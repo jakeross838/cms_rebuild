@@ -63,6 +63,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', respId)
       .eq('rfi_id', rfiId)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -131,6 +132,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', respId)
       .eq('rfi_id', rfiId)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -180,9 +182,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('rfi_responses')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', respId)
       .eq('rfi_id', rfiId)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

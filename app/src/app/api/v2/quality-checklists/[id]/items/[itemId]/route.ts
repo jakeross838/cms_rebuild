@@ -81,6 +81,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', itemId)
       .eq('checklist_id', checklistId)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -130,9 +131,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('quality_checklist_items')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', itemId)
       .eq('checklist_id', checklistId)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

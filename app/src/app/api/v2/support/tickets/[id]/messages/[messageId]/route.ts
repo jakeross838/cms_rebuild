@@ -34,6 +34,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', messageId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -86,6 +87,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', messageId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -118,25 +120,12 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: existing } = await (supabase as any)
-      .from('ticket_messages')
-      .select('id')
-      .eq('id', messageId)
-      .eq('company_id', ctx.companyId!)
-      .single()
-
-    if (!existing) {
-      return NextResponse.json(
-        { error: 'Not Found', message: 'Message not found', requestId: ctx.requestId },
-        { status: 404 }
-      )
-    }
-
     const { error } = await (supabase as any)
       .from('ticket_messages')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', messageId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

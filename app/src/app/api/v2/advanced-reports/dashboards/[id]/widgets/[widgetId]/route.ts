@@ -59,6 +59,7 @@ export const PUT = createApiHandler(
       .eq('id', widgetId)
       .eq('dashboard_id', dashboardId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -95,10 +96,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('dashboard_widgets')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', widgetId)
       .eq('dashboard_id', dashboardId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

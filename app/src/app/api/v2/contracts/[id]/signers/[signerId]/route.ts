@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .eq('id', signerId)
       .eq('contract_id', contractId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -100,6 +101,7 @@ export const PUT = createApiHandler(
       .eq('id', signerId)
       .eq('contract_id', contractId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -133,10 +135,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('contract_signers')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', signerId)
       .eq('contract_id', contractId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       return NextResponse.json(

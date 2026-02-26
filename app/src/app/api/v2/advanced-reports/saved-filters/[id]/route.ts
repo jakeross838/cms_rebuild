@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -86,6 +87,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -103,7 +105,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/advanced-reports/saved-filters/:id — Hard delete
+// DELETE /api/v2/advanced-reports/saved-filters/:id — Soft delete
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -120,9 +122,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await (supabase as any)
       .from('saved_filters')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)
