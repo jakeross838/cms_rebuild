@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
@@ -49,6 +50,7 @@ export default function InsurancePolicyDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
@@ -160,8 +162,7 @@ export default function InsurancePolicyDetailPage() {
     }
   }
 
-  const handleArchive = async () => {
-    if (!window.confirm('Archive this insurance policy? It can be restored later.')) return
+  const handleConfirmArchive = async () => {
     setArchiving(true)
     const { error: archiveError } = await supabase
       .from('vendor_insurance')
@@ -219,7 +220,7 @@ export default function InsurancePolicyDetailPage() {
             {!editing ? (
               <>
                 <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-                <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+                <button onClick={() => setShowArchiveDialog(true)} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
               </>
             ) : (
               <>
@@ -348,6 +349,15 @@ export default function InsurancePolicyDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive this insurance policy?"
+        description="This insurance policy will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleConfirmArchive}
+      />
     </div>
   )
 }

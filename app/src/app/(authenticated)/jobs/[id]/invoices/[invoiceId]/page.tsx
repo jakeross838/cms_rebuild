@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
@@ -66,6 +67,7 @@ export default function JobInvoiceDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<InvoiceFormData>({
@@ -176,8 +178,7 @@ export default function JobInvoiceDetailPage() {
     }
   }
 
-  const handleArchive = async () => {
-    if (!window.confirm('Archive this invoice? It can be restored later.')) return
+  const handleConfirmArchive = async () => {
     setArchiving(true)
     const { error: archiveError } = await supabase
       .from('invoices')
@@ -305,7 +306,7 @@ export default function JobInvoiceDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              <button onClick={() => setShowArchiveDialog(true)} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
             </div>
           </>
         ) : (
@@ -369,6 +370,15 @@ export default function JobInvoiceDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive this invoice?"
+        description="This invoice will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleConfirmArchive}
+      />
     </div>
   )
 }

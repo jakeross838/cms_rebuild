@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
@@ -47,6 +48,7 @@ export default function CampaignDetailPage() {
   const [editing, setEditing] = useState(false)
   const [companyId, setCompanyId] = useState<string>('')
   const [archiving, setArchiving] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -104,8 +106,7 @@ export default function CampaignDetailPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleArchive = async () => {
-    if (!window.confirm('Archive this campaign? It can be restored later.')) return
+  const handleConfirmArchive = async () => {
     setArchiving(true)
     try {
       const { error: archiveError } = await supabase
@@ -212,7 +213,7 @@ export default function CampaignDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <button onClick={handleArchive} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
+              <button onClick={() => setShowArchiveDialog(true)} disabled={archiving} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">{archiving ? 'Archiving...' : 'Archive'}</button>
               </>
             ) : (
               <>
@@ -394,6 +395,15 @@ export default function CampaignDetailPage() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive this campaign?"
+        description="This campaign will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleConfirmArchive}
+      />
     </div>
   )
 }

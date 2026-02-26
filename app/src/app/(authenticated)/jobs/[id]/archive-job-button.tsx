@@ -4,15 +4,16 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { createClient } from '@/lib/supabase/client'
 
 export function ArchiveJobButton({ jobId }: { jobId: string }) {
   const [archiving, setArchiving] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
-  const handleArchive = async () => {
-    if (!window.confirm('Archive this job? It can be restored later.')) return
+  const handleConfirmArchive = async () => {
     setArchiving(true)
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -36,12 +37,23 @@ export function ArchiveJobButton({ jobId }: { jobId: string }) {
   }
 
   return (
-    <button
-      onClick={handleArchive}
-      disabled={archiving}
-      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
-    >
-      {archiving ? 'Archiving...' : 'Archive'}
-    </button>
+    <>
+      <button
+        onClick={() => setShowArchiveDialog(true)}
+        disabled={archiving}
+        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+      >
+        {archiving ? 'Archiving...' : 'Archive'}
+      </button>
+
+      <ConfirmDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
+        title="Archive this job?"
+        description="This job will be archived. It can be restored later."
+        confirmLabel="Archive"
+        onConfirm={handleConfirmArchive}
+      />
+    </>
   )
 }
