@@ -5,6 +5,9 @@ import { FileCheck, Leaf, Shield } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Sustainability' }
 
 export default async function SustainabilityPage() {
   const supabase = await createClient()

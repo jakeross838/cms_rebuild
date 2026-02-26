@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -17,6 +18,8 @@ interface VendorRow {
   trade: string | null
   is_active: boolean | null
 }
+
+export const metadata: Metadata = { title: 'Vendors' }
 
 export default async function VendorsPage({
   searchParams,

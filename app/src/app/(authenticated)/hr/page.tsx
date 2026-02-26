@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Plus, Search, Users, Building2 } from 'lucide-react'
@@ -28,6 +29,8 @@ interface Department {
   description: string | null
   is_active: boolean
 }
+
+export const metadata: Metadata = { title: 'HR & Workforce' }
 
 export default async function HRWorkforcePage({
   searchParams,

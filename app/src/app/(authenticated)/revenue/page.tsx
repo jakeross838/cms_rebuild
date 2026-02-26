@@ -14,6 +14,9 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Revenue' }
 
 export default async function RevenuePage() {
   const supabase = await createClient()

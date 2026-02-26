@@ -19,8 +19,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
+
+export const metadata: Metadata = { title: 'Operations' }
 
 export default async function OperationsDashboardPage() {
   const supabase = await createClient()

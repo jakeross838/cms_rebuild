@@ -20,7 +20,10 @@ const ibmPlex = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "RossOS",
+  title: {
+    template: "%s | RossOS",
+    default: "RossOS — Construction Intelligence Platform",
+  },
   description: "Construction Intelligence Platform",
 };
 

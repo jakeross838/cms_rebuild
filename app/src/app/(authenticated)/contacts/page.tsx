@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -19,6 +20,8 @@ interface VendorContact {
   is_primary: boolean
   vendor_id: string
 }
+
+export const metadata: Metadata = { title: 'Contacts' }
 
 export default async function ContactsPage({
   searchParams,

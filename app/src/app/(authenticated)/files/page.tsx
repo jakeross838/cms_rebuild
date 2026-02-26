@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -26,6 +27,8 @@ function getFileIcon(mimeType: string | null) {
   if (mimeType.startsWith('image/')) return FileImage
   return FileText
 }
+
+export const metadata: Metadata = { title: 'Documents' }
 
 export default async function FilesPage({
   searchParams,

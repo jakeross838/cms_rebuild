@@ -13,6 +13,7 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -25,6 +26,8 @@ function formatFileSize(bytes: number): string {
 }
 
 // ── Page ─────────────────────────────────────────────────────────────
+
+export const metadata: Metadata = { title: 'Plan Analysis' }
 
 export default async function PlanAnalysisPage() {
   const supabase = await createClient()

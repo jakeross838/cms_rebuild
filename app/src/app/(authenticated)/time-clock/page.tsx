@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -22,6 +23,8 @@ interface TimeEntry {
   notes: string | null
   created_at: string
 }
+
+export const metadata: Metadata = { title: 'Time Clock' }
 
 export default async function TimeClockPage({
   searchParams,

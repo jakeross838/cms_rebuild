@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -23,6 +24,8 @@ interface PunchItem {
   due_date: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Punch Lists' }
 
 export default async function PunchListsPage({
   searchParams,

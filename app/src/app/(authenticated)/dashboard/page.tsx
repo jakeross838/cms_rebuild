@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+import type { Metadata } from 'next'
+
 import {
   Briefcase,
   Receipt,
@@ -17,6 +19,8 @@ import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatRelativeDate, getStatusColor } from '@/lib/utils'
 import type { Job, Client } from '@/types/database'
 
+export const metadata: Metadata = { title: 'Dashboard' }
+
 type JobWithClient = Job & { clients: Pick<Client, 'name'> | null }
 
 export default async function DashboardPage() {
@@ -27,18 +31,28 @@ export default async function DashboardPage() {
   const { data: profile } = await supabase.from('users').select('company_id').eq('id', user!.id).single()
   const companyId = profile?.company_id
 
+  // Calculate this month's revenue from approved/funded draw requests
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+
   // Fetch dashboard stats
   const [
     { count: activeJobs },
     { count: pendingInvoices },
     { count: pendingDraws },
     { data: recentJobsData },
+    { data: monthlyDrawsData },
   ] = await Promise.all([
     supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).eq('status', 'active'),
     supabase.from('invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
     supabase.from('draw_requests').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId!).eq('status', 'pending_approval'),
     supabase.from('jobs').select('*, clients(name)').is('deleted_at', null).eq('company_id', companyId!).order('updated_at', { ascending: false }).limit(5),
+    supabase.from('draw_requests').select('current_due').is('deleted_at', null).eq('company_id', companyId!).in('status', ['approved', 'funded']).gte('approved_at', monthStart),
   ])
+
+  const monthlyRevenue = (monthlyDrawsData || []).reduce(
+    (sum, d) => sum + ((d as { current_due: number }).current_due || 0), 0
+  )
 
   const recentJobs = (recentJobsData || []) as JobWithClient[]
 
@@ -66,7 +80,7 @@ export default async function DashboardPage() {
     },
     {
       name: 'This Month Revenue',
-      value: formatCurrency(0), // TODO: Calculate from draws
+      value: formatCurrency(monthlyRevenue),
       icon: DollarSign,
       href: '/financial/cash-flow',
       color: 'text-green-600 bg-green-100',

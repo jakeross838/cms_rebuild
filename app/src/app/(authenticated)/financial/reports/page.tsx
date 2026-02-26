@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Financial Reports' }
 
 interface ReportDefinition {
   id: string

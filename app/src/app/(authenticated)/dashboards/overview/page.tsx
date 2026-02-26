@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -31,6 +32,8 @@ function fmtCurrency(value: number): string {
 }
 
 // ── Page ─────────────────────────────────────────────────────────────
+
+export const metadata: Metadata = { title: 'Overview' }
 
 export default async function DashboardOverviewPage() {
   const supabase = await createClient()

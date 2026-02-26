@@ -16,6 +16,7 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 
 // ── Hub Links ────────────────────────────────────────────────────────
 
@@ -79,6 +80,8 @@ const intelligenceModules = [
 ]
 
 // ── Page ─────────────────────────────────────────────────────────────
+
+export const metadata: Metadata = { title: 'AI Hub' }
 
 export default async function AIHubPage() {
   const supabase = await createClient()

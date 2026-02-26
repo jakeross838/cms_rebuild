@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Accounts Payable' }
 
 interface APBill {
   id: string

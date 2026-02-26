@@ -15,6 +15,7 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 
 // ── Admin Navigation Items ──────────────────────────────────────────
 
@@ -70,6 +71,8 @@ const adminLinks = [
 ]
 
 // ── Page ─────────────────────────────────────────────────────────────
+
+export const metadata: Metadata = { title: 'Admin' }
 
 export default async function AdminPage() {
   const supabase = await createClient()

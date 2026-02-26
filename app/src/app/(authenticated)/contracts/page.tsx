@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -23,6 +24,8 @@ interface Contract {
   created_at: string | null
   jobs: { name: string } | null
 }
+
+export const metadata: Metadata = { title: 'Contracts' }
 
 export default async function ContractsPage({
   searchParams,

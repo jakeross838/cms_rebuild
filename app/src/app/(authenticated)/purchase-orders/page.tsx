@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface PurchaseOrderRow {
   vendor_id: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Purchase Orders' }
 
 export default async function PurchaseOrdersPage({
   searchParams,

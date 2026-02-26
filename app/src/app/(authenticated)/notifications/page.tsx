@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Bell, Check, CheckCheck, Trash2 } from 'lucide-react'
@@ -18,6 +19,8 @@ interface NotificationRow {
   url_path: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Notifications' }
 
 export default async function NotificationsPage({
   searchParams,

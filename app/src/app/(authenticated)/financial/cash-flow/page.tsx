@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatRelativeDate } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Cash Flow' }
 
 export default async function CashFlowPage() {
   const supabase = await createClient()

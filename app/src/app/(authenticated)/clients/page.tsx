@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -20,6 +21,8 @@ interface ClientRow {
   created_at: string | null
   jobs: { id: string }[]
 }
+
+export const metadata: Metadata = { title: 'Clients' }
 
 export default async function ClientsPage({
   searchParams,

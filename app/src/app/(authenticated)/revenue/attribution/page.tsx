@@ -4,6 +4,9 @@ import { PieChart, Briefcase, FileText, ArrowRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Revenue Attribution' }
 
 export default async function RevenueAttributionPage() {
   const supabase = await createClient()

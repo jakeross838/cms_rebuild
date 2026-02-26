@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -20,6 +21,8 @@ interface Invoice {
   notes: string | null
   jobs: { name: string } | null
 }
+
+export const metadata: Metadata = { title: 'Invoices' }
 
 export default async function InvoicesPage({
   searchParams,

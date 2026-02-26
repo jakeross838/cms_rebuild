@@ -3,6 +3,9 @@ import { Users, Clock, Briefcase, ArrowRight } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Employee Productivity' }
 
 export default async function EmployeeRevenuePage() {
   const supabase = await createClient()

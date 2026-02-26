@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -21,6 +22,8 @@ interface PermitRow {
   expiration_date: string | null
   created_at: string | null
 }
+
+export const metadata: Metadata = { title: 'Permits & Inspections' }
 
 export default async function PermitsPage({
   searchParams,

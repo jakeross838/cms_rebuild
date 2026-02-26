@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -20,6 +21,8 @@ interface Warranty {
   created_at: string | null
   job_id: string | null
 }
+
+export const metadata: Metadata = { title: 'Warranties' }
 
 export default async function WarrantiesPage({
   searchParams,

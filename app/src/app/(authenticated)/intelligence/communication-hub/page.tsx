@@ -14,8 +14,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
+
+export const metadata: Metadata = { title: 'Communications' }
 
 export default async function CommunicationHubPage() {
   const supabase = await createClient()
