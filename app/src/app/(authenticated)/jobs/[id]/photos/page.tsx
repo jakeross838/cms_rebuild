@@ -1,3 +1,4 @@
+import NextImage from 'next/image'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
@@ -88,9 +89,9 @@ export default async function JobPhotosPage({
           {photos.map((photo) => (
             <Link key={photo.id} href={`/jobs/${jobId}/photos/${photo.id}`}>
             <Card className="overflow-hidden hover:ring-2 hover:ring-primary/20 transition-all cursor-pointer">
-              <div className="aspect-square bg-muted flex items-center justify-center">
+              <div className="aspect-square bg-muted flex items-center justify-center relative">
                 {photo.photo_url ? (
-                  <img src={photo.photo_url} alt={photo.title} className="w-full h-full object-cover" />
+                  <NextImage src={photo.photo_url} alt={photo.title} fill sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover" />
                 ) : (
                   <Image className="h-8 w-8 text-muted-foreground/50" />
                 )}
