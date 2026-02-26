@@ -94,5 +94,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: draw, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'financial', auditAction: 'draw_request.approve' }
+  { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'office'], rateLimit: 'financial', auditAction: 'draw_request.approve' }
 )

@@ -151,5 +151,5 @@ export const PUT = createApiHandler(
       return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
     }
   },
-  { requireAuth: true, rateLimit: 'api' }
+  { requireAuth: true, requiredRoles: ['owner', 'admin'], rateLimit: 'api', auditAction: 'branding.update' }
 )

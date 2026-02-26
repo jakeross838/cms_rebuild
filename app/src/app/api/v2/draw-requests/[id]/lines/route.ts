@@ -200,5 +200,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: lines ?? [], requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'financial', auditAction: 'draw_request_lines.update' }
+  { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'office'], rateLimit: 'financial', auditAction: 'draw_request_lines.update' }
 )

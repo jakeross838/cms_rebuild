@@ -136,6 +136,7 @@ export const POST = createApiHandler(
   },
   {
     requireAuth: true,
+    requiredRoles: ['owner', 'admin'],
     schema: createVendorSchema,
     permission: 'vendors:create:all',
     auditAction: 'vendor.create',

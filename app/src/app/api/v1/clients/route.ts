@@ -136,6 +136,7 @@ export const POST = createApiHandler(
   },
   {
     requireAuth: true,
+    requiredRoles: ['owner', 'admin', 'pm'],
     schema: createClientSchema,
     permission: 'clients:create:all',
     auditAction: 'client.create',

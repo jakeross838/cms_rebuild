@@ -127,6 +127,7 @@ export const PATCH = createApiHandler(
   },
   {
     requireAuth: true,
+    requiredRoles: ['owner', 'admin', 'pm'],
     schema: updateClientSchema,
     permission: 'clients:update:all',
     auditAction: 'client.update',

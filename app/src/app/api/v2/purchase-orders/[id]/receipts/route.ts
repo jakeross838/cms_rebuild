@@ -256,5 +256,5 @@ export const POST = createApiHandler(
       requestId: ctx.requestId,
     }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'financial', auditAction: 'po_receipt.create' }
+  { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'office'], rateLimit: 'financial', auditAction: 'po_receipt.create' }
 )

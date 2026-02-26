@@ -127,6 +127,7 @@ export const PATCH = createApiHandler(
   },
   {
     requireAuth: true,
+    requiredRoles: ['owner', 'admin'],
     schema: updateVendorSchema,
     permission: 'vendors:update:all',
     auditAction: 'vendor.update',

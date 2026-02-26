@@ -97,5 +97,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: snapshot, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'financial', auditAction: 'report.generate' }
+  { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'office'], rateLimit: 'financial', auditAction: 'report.generate' }
 )
