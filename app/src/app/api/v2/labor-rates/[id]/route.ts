@@ -49,6 +49,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -78,17 +79,14 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    // Labor rates don't have deleted_at, so we do a hard delete
-    // (they are configuration data, not transactional data)
-    // Actually, per project rules: soft delete only. But labor_rates table
-    // doesn't have a deleted_at column in V1. We'll delete the row since
-    // it's configuration data and new rates replace old via effective_date.
-    // For safety, we set end_date to today instead of deleting.
+    // Soft-delete: set end_date to today and mark deleted_at
+    const now = new Date().toISOString()
     const { data, error } = await supabase
       .from('labor_rates')
-      .update({ end_date: new Date().toISOString().split('T')[0], updated_at: new Date().toISOString() })
+      .update({ end_date: now.split('T')[0], deleted_at: now, updated_at: now } as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('*')
       .single()
 

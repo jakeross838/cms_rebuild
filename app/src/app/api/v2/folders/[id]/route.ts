@@ -41,6 +41,7 @@ export const PUT = createApiHandler(
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (fetchError || !current) {
@@ -104,6 +105,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('parent_folder_id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .limit(1)
 
     if (children && children.length > 0) {

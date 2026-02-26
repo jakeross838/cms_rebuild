@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('labor_rates')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.user_id) {
       query = query.eq('user_id', filters.user_id)
