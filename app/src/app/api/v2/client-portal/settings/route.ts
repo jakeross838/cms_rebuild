@@ -9,9 +9,9 @@ import { NextResponse } from 'next/server'
 
 import {
   createApiHandler,
+  mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
-import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { updateClientPortalSettingsSchema } from '@/lib/validation/schemas/client-portal'
 

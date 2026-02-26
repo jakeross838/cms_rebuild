@@ -11,9 +11,9 @@ import {
   createApiHandler,
   getPaginationParams,
   paginatedResponse,
+  mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
-import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { escapeLike } from '@/lib/utils'
 import { listInventoryItemsSchema, createInventoryItemSchema } from '@/lib/validation/schemas/inventory'

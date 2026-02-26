@@ -11,9 +11,9 @@ import {
   createApiHandler,
   getPaginationParams,
   paginatedResponse,
+  mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
-import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { listFeedbackSchema, createFeedbackSchema } from '@/lib/validation/schemas/ai-document-processing'
 

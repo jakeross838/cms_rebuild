@@ -9,9 +9,9 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import {
   createApiHandler,
+  mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
-import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { batchCreateDrawLinesSchema } from '@/lib/validation/schemas/draw-requests'
 

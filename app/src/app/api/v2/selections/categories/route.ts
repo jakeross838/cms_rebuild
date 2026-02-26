@@ -12,9 +12,9 @@ import {
   createApiHandler,
   getPaginationParams,
   paginatedResponse,
+  mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
-import { mapDbError } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
 import { listSelectionCategoriesSchema, createSelectionCategorySchema } from '@/lib/validation/schemas/selections'
 

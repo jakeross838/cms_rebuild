@@ -11,9 +11,9 @@ import {
   createApiHandler,
   getPaginationParams,
   paginatedResponse,
+  mapDbError,
   type ApiContext,
 } from '@/lib/api/middleware'
-import { mapDbError } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
 import { listInspectionResultsSchema, createInspectionResultSchema } from '@/lib/validation/schemas/permitting'
