@@ -156,11 +156,18 @@ export const POST = createApiHandler(
 
     // Atomically update invoice balance_due and status (prevents race conditions)
     for (const app of input.applications) {
-      await (supabase as any).rpc('apply_receipt_to_invoice', {
+      const { error: rpcError } = await (supabase as any).rpc('apply_receipt_to_invoice', {
         p_invoice_id: app.invoice_id,
         p_company_id: ctx.companyId!,
         p_amount: app.amount,
       })
+      if (rpcError) {
+        const mapped = mapDbError(rpcError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     return NextResponse.json({

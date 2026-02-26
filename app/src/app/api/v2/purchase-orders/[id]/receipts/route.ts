@@ -202,10 +202,17 @@ export const POST = createApiHandler(
 
     // Atomically increment received_quantity on each PO line (prevents race conditions)
     for (const line of input.lines) {
-      await (supabase as any).rpc('increment_po_line_received', {
+      const { error: rpcError } = await (supabase as any).rpc('increment_po_line_received', {
         p_line_id: line.po_line_id,
         p_quantity: line.quantity_received,
       })
+      if (rpcError) {
+        const mapped = mapDbError(rpcError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     // Check if all PO lines are fully received, update PO status accordingly

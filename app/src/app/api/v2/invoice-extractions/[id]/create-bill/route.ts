@@ -112,7 +112,14 @@ export const POST = createApiHandler(
         job_id: line.job_id ?? null,
         cost_code_id: line.cost_code_id ?? null,
       }))
-      await supabase.from('ap_bill_lines').insert(lineRecords as never)
+      const { error: linesError } = await supabase.from('ap_bill_lines').insert(lineRecords as never)
+      if (linesError) {
+        const mapped = mapDbError(linesError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     // Link extraction to the bill

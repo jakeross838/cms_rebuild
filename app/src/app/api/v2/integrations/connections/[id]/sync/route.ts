@@ -94,7 +94,7 @@ export const POST = createApiHandler(
     }
 
     // Update connection status to syncing
-    await supabase
+    const { error: syncError } = await supabase
       .from('accounting_connections')
       .update({
         status: 'syncing',
@@ -102,6 +102,14 @@ export const POST = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+
+    if (syncError) {
+      const mapped = mapDbError(syncError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     // Note: Actual sync work would be dispatched to a background job queue.
     // For V1, we return the sync log ID so the client can poll for status.

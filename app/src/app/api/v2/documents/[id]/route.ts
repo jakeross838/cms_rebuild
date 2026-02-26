@@ -114,9 +114,17 @@ export const PUT = createApiHandler(
     // Update tags if provided
     if (input.tags !== undefined) {
       // Remove existing tags
-      await supabase.from('document_tags')
+      const { error: deleteTagError } = await supabase.from('document_tags')
         .delete()
         .eq('document_id', id)
+
+      if (deleteTagError) {
+        const mapped = mapDbError(deleteTagError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
 
       // Insert new tags
       if (input.tags.length > 0) {
@@ -124,7 +132,14 @@ export const PUT = createApiHandler(
           document_id: id,
           tag,
         }))
-        await supabase.from('document_tags').insert(tagRecords)
+        const { error: insertTagError } = await supabase.from('document_tags').insert(tagRecords)
+        if (insertTagError) {
+          const mapped = mapDbError(insertTagError)
+          return NextResponse.json(
+            { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+            { status: mapped.status }
+          )
+        }
       }
     }
 

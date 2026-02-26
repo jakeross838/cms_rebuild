@@ -133,9 +133,17 @@ export const POST = createApiHandler(
       notes: item.notes ?? null,
     }))
 
-    await supabase
+    const { error: itemsError } = await supabase
       .from('material_request_items')
       .insert(lineItems)
+
+    if (itemsError) {
+      const mapped = mapDbError(itemsError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     // Fetch the request with items
     const { data: items } = await supabase

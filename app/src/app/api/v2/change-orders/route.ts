@@ -132,7 +132,7 @@ export const POST = createApiHandler(
     }
 
     // Record history entry
-    await supabase
+    const { error: historyError } = await supabase
       .from('change_order_history')
       .insert({
         change_order_id: data.id,
@@ -142,6 +142,13 @@ export const POST = createApiHandler(
         details: {},
         performed_by: ctx.user!.id,
       })
+    if (historyError) {
+      const mapped = mapDbError(historyError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

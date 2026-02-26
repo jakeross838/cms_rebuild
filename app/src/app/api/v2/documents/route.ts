@@ -161,7 +161,7 @@ export const POST = createApiHandler(
     }
 
     // Create initial version record
-    await supabase
+    const { error: versionError } = await supabase
       .from('document_versions')
       .insert({
         document_id: documentId,
@@ -172,13 +172,28 @@ export const POST = createApiHandler(
         uploaded_by: ctx.user!.id,
       })
 
+    if (versionError) {
+      const mapped = mapDbError(versionError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
     // Add tags if provided
     if (input.tags && input.tags.length > 0) {
       const tagRecords = input.tags.map((tag) => ({
         document_id: documentId,
         tag,
       }))
-      await supabase.from('document_tags').insert(tagRecords)
+      const { error: tagError } = await supabase.from('document_tags').insert(tagRecords)
+      if (tagError) {
+        const mapped = mapDbError(tagError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     return NextResponse.json({ data: doc, requestId: ctx.requestId }, { status: 201 })
