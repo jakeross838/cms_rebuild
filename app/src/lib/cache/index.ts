@@ -37,6 +37,19 @@ type CacheTTL = keyof typeof DEFAULT_TTL
 // In-memory cache fallback for development
 const memoryCache = new Map<string, { value: unknown; expires: number }>()
 
+// Periodic cleanup of expired entries (every 60 seconds)
+let lastCleanup = Date.now()
+const CLEANUP_INTERVAL = 60_000
+
+function cleanupExpired(): void {
+  const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL) return
+  lastCleanup = now
+  for (const [key, entry] of memoryCache.entries()) {
+    if (entry.expires <= now) memoryCache.delete(key)
+  }
+}
+
 /**
  * Check if Vercel KV is available
  */
@@ -67,7 +80,7 @@ export function buildGlobalKey(prefix: string, ...segments: string[]): string {
  */
 export async function cacheGet<T>(key: string): Promise<T | null> {
   try {
-    // TODO: Use @vercel/kv in production when isKVAvailable()
+    cleanupExpired()
     const cached = memoryCache.get(key)
     if (cached && cached.expires > Date.now()) {
       return cached.value as T
@@ -114,13 +127,15 @@ export async function cacheDelete(key: string): Promise<void> {
 }
 
 /**
- * Delete all keys matching a pattern (tenant invalidation)
+ * Delete all keys matching a pattern (tenant invalidation).
+ * Pattern uses * as wildcard, converted to regex for matching.
  */
 export async function cacheInvalidatePattern(pattern: string): Promise<void> {
   try {
     // TODO: Use @vercel/kv SCAN in production when isKVAvailable()
+    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
     for (const key of memoryCache.keys()) {
-      if (key.includes(pattern.replace('*', ''))) {
+      if (regex.test(key)) {
         memoryCache.delete(key)
       }
     }

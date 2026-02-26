@@ -78,10 +78,11 @@ function isKVAvailable(): boolean {
 }
 
 /**
- * Get client identifier from request
+ * Get client identifier from request.
+ * Priority: cf-connecting-ip (Cloudflare, can't be spoofed) > x-real-ip (Vercel) > x-forwarded-for.
+ * Safe behind Vercel/Cloudflare as they overwrite these headers with the actual client IP.
  */
 export function getClientIdentifier(req: NextRequest): string {
-  // Try to get real IP from various headers
   const forwardedFor = req.headers.get('x-forwarded-for')
   const realIp = req.headers.get('x-real-ip')
   const cfConnectingIp = req.headers.get('cf-connecting-ip')
