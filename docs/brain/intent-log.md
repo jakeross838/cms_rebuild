@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: RBAC Enforcement, Error Handling, Env Validation
+
+### Why
+1. 0/430 v2 API routes validated UUID format — non-UUID path params hit DB then returned 500 instead of 400
+2. CRON_SECRET not validated at startup — could be set to empty string or short weak value in production
+3. All 20 billing API handlers (10 files) had no role restrictions — any authenticated user could modify subscriptions, plans, addons. Architecture decision: owner has billing, admin does not.
+4. All 25 HR API handlers (10 files) had no role restrictions — field workers could create/delete employees, modify departments
+
+### What was done
+- Added 22P02 error code to mapDbError → returns 400 "Invalid ID format" for non-UUID strings
+- Added CRON_SECRET to server env schema (optional, min 16 chars when present)
+- Added `requiredRoles: ['owner']` to all billing POST/PUT/DELETE handlers
+- Added `requiredRoles: ['owner', 'admin']` to billing GET handlers
+- Added `requiredRoles: ['owner', 'admin']` to all HR POST/PUT/DELETE handlers
+- Added `requiredRoles: ['owner', 'admin', 'pm']` to HR GET handlers
+
+---
+
 ## 2026-02-26: Security Headers, Error Mapping, RLS, Image Optimization
 
 ### Why

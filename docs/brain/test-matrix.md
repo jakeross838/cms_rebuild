@@ -1,5 +1,43 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## RBAC Enforcement, Error Handling, Env Validation (2026-02-26)
+
+### mapDbError — Invalid UUID
+| Route | Test | Expected |
+|-------|------|----------|
+| GET /api/v2/jobs/not-a-uuid | Non-UUID path param | 400 Bad Request "Invalid ID format" |
+| PUT /api/v2/vendors/abc123 | Non-UUID in update | 400 Bad Request "Invalid ID format" |
+| DELETE /api/v2/invoices/-- | Special chars as ID | 400 Bad Request "Invalid ID format" |
+
+### Billing RBAC
+| Route | Role | Test | Expected |
+|-------|------|------|----------|
+| GET /api/v2/billing/plans | owner | View plans | 200 OK |
+| GET /api/v2/billing/plans | admin | View plans | 200 OK |
+| GET /api/v2/billing/plans | pm | View plans | 403 Forbidden |
+| POST /api/v2/billing/subscriptions | owner | Create subscription | 200/201 |
+| POST /api/v2/billing/subscriptions | admin | Create subscription | 403 Forbidden |
+| PUT /api/v2/billing/addons/:id | field | Modify addon | 403 Forbidden |
+
+### HR RBAC
+| Route | Role | Test | Expected |
+|-------|------|------|----------|
+| GET /api/v2/hr/employees | pm | View employees | 200 OK |
+| GET /api/v2/hr/employees | field | View employees | 403 Forbidden |
+| POST /api/v2/hr/employees | admin | Create employee | 200/201 |
+| POST /api/v2/hr/employees | pm | Create employee | 403 Forbidden |
+| DELETE /api/v2/hr/departments/:id | owner | Delete department | 200 OK |
+| DELETE /api/v2/hr/departments/:id | superintendent | Delete department | 403 Forbidden |
+
+### CRON_SECRET Env Validation
+| Env | Test | Expected |
+|-----|------|----------|
+| CRON_SECRET=short | Start server | Zod error: must be at least 16 chars |
+| CRON_SECRET=validLong16chars | Start server | Passes validation |
+| CRON_SECRET not set | Start server | Passes (optional) |
+
+---
+
 ## Security Headers, Error Mapping, RLS (2026-02-26)
 
 ### Security Headers

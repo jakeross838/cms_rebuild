@@ -1,5 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## RBAC Enforcement, Error Handling, Env Validation (2026-02-26)
+
+### mapDbError — Invalid UUID Handling (lib/api/middleware.ts)
+- Added Postgres error code 22P02 (invalid text representation) → 400 Bad Request "Invalid ID format"
+- Non-UUID strings passed to UUID columns now return 400 instead of 500
+- Total mapDbError codes: PGRST116→404, 23505→409, 23503/23502/23514→400, 22P02→400, 42501→403, default→500
+
+### CRON_SECRET Env Validation (lib/env.server.ts)
+- CRON_SECRET added to server env schema as optional with min 16 chars
+- Prevents weak/empty secrets in production while allowing dev without cron
+- Empty string → stripped to undefined (not validated); set but short → startup error
+
+### Billing RBAC (10 route files, 20 handlers)
+- All billing API routes now enforce role restrictions
+- GET: owner + admin (view billing info)
+- POST/PUT/DELETE: owner only (modify subscriptions, plans, addons, usage)
+- Routes: plans, subscriptions, addons, events, usage (list + detail)
+
+### HR RBAC (10 route files, 25 handlers)
+- All HR API routes now enforce role restrictions
+- GET: owner + admin + pm (view employees, departments, etc.)
+- POST/PUT/DELETE: owner + admin only (manage personnel)
+- Routes: employees, departments, positions, certifications, documents (list + detail)
+
+---
+
 ## Security Headers, Error Mapping, RLS, Image Optimization (2026-02-26)
 
 ### Content-Security-Policy (middleware.ts)
