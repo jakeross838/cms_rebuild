@@ -1,5 +1,36 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Silent Failures, Date Formatting, Broken Routes, Job-Scoped (2026-02-25)
+
+### Tenant Switcher Error Toasts
+| Test | Expected |
+|------|----------|
+| Company fetch fails (network error) | Toast "Failed to load companies" shown |
+| Company switch fails (non-ok response) | Toast "Failed to switch company" shown |
+| auth-context company fetch fails | Toast "Failed to load companies" shown |
+
+### Date Formatting Consistency
+| Test | Expected |
+|------|----------|
+| All detail pages display dates | Use formatDate() utility (no raw toLocaleDateString) |
+| Grep for toLocaleDateString in authenticated pages | Only time-clock pages (toLocaleTimeString) remain |
+
+### Punch List Detail Route
+| Test | Expected |
+|------|----------|
+| Click punch item from /jobs/[id]/punch-list | Navigates to /jobs/[id]/punch-list/[itemId] (no 404) |
+| Edit punch item | Fields editable, save shows toast.success |
+| Archive punch item | ConfirmDialog shown, redirects to punch-list |
+
+### Job-Scoped escapeLike
+| Test | Expected |
+|------|----------|
+| Search with % in job daily-logs | Treated as literal, no query injection |
+| Search with _ in job RFIs | Treated as literal underscore |
+| Grep for unescaped sp.search in .or() | Zero results under jobs/[id]/ |
+
+---
+
 ## Validation, Accessibility, Error Handling, Pagination (2026-02-25)
 
 ### Form Validation Ordering

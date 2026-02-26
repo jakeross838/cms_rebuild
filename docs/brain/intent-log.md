@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-25: Silent Failures, Date Formatting, Broken Routes, Job-Scoped Hardening
+
+### Why
+1. TenantSwitcher and auth-context had console.error-only failures — users never knew company loading/switching failed
+2. 32 date displays used raw toLocaleDateString instead of formatDate utility — inconsistent format
+3. Punch list items from job context linked to a non-existent route — immediate 404
+4. 12 archive buttons used raw `<button>` with inline red styling — inconsistent with Button component
+5. 9 job-scoped pages had unescaped search strings in .or() calls — LIKE injection risk
+6. 14 job-scoped pages silently swallowed query errors
+
+### What was done
+- Added toast.error to all silent error paths in TenantSwitcher (4) and auth-context (4)
+- Replaced 32 raw toLocaleDateString calls with formatDate() across 18 files
+- Created /jobs/[id]/punch-list/[itemId]/page.tsx with full edit/archive/toast functionality
+- Replaced 12 raw archive buttons with Button variant="outline" + text-destructive
+- Applied escapeLike to 9 job-scoped .or() search patterns
+- Added error throwing to 14 job-scoped subpages
+
+---
+
 ## 2026-02-25: Validation, Accessibility, Error Handling, Pagination
 
 ### Why

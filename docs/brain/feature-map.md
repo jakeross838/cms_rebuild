@@ -1,5 +1,33 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Quality Hardening: Silent Failures, Date Formatting, Broken Routes (2026-02-25)
+
+### Silent Error Toasts
+- TenantSwitcher: 4 error paths now show toast.error (fetch companies fail, switch company fail)
+- auth-context: 4 error paths now show toast.error (same patterns)
+- UserTable: 2 alert() calls replaced with toast.error (from earlier commit)
+- Zero silent console.error failures remaining in client-side components
+
+### Date Formatting Standardization
+- 32 raw `new Date().toLocaleDateString()` calls replaced with `formatDate()` from `@/lib/utils`
+- Affected 18 files: detail pages, list pages, settings, profile
+- All dates now display consistently via the formatDate utility
+
+### Broken Route Fix: Punch List Detail
+- Created `/jobs/[id]/punch-list/[itemId]/page.tsx` — was a 404 when clicking punch list items from job context
+- Client-side detail page with edit mode, archive with ConfirmDialog, toast notifications
+- Follows RFI detail page pattern for consistency
+
+### Archive Button Consistency
+- 12 raw `<button>` tags with `bg-red-600` replaced with `<Button variant="outline" className="text-destructive">`
+- All archive buttons now use consistent styling across all detail pages
+
+### Job-Scoped Security + Error Handling
+- escapeLike applied to 9 job-scoped `.or()` search patterns (daily-logs, change-orders, rfis, punch-list, schedule, POs, lien-waivers, permits, photos)
+- Error throwing added to 14 job-scoped subpages (silent empty state → error boundary)
+
+---
+
 ## Quality Hardening: Validation, Accessibility, Error Handling, Pagination (2026-02-25)
 
 ### Form Validation Ordering
