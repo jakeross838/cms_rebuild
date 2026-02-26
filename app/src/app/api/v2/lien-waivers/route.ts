@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listLienWaiversSchema, createLienWaiverSchema } from '@/lib/validation/schemas/lien-waivers'
 
 // ============================================================================
@@ -63,7 +64,7 @@ export const GET = createApiHandler(
       query = query.eq('status', filters.status)
     }
     if (filters.q) {
-      query = query.ilike('claimant_name', `%${filters.q}%`)
+      query = query.ilike('claimant_name', `%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('created_at', { ascending: false })

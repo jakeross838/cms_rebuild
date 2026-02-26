@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listBudgetsSchema, createBudgetSchema } from '@/lib/validation/schemas/budget'
 
 // ============================================================================
@@ -55,7 +56,7 @@ export const GET = createApiHandler(
       query = query.eq('status', filters.status)
     }
     if (filters.q) {
-      query = query.ilike('name', `%${filters.q}%`)
+      query = query.ilike('name', `%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('created_at', { ascending: false })

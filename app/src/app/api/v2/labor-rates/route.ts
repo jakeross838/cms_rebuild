@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listLaborRatesSchema, createLaborRateSchema } from '@/lib/validation/schemas/time-tracking'
 
 // ============================================================================
@@ -51,7 +52,7 @@ export const GET = createApiHandler(
       query = query.eq('user_id', filters.user_id)
     }
     if (filters.trade) {
-      query = query.ilike('trade', `%${filters.trade}%`)
+      query = query.ilike('trade', `%${escapeLike(filters.trade)}%`)
     }
     if (filters.rate_type) {
       query = query.eq('rate_type', filters.rate_type)

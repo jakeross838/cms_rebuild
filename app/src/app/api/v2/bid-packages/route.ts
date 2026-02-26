@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listBidPackagesSchema, createBidPackageSchema } from '@/lib/validation/schemas/bid-management'
 
 // ============================================================================
@@ -56,10 +57,10 @@ export const GET = createApiHandler(
       query = query.eq('status', filters.status)
     }
     if (filters.trade) {
-      query = query.ilike('trade', `%${filters.trade}%`)
+      query = query.ilike('trade', `%${escapeLike(filters.trade)}%`)
     }
     if (filters.q) {
-      query = query.or(`title.ilike.%${filters.q}%,description.ilike.%${filters.q}%`)
+      query = query.or(`title.ilike.%${escapeLike(filters.q)}%,description.ilike.%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('created_at', { ascending: false })

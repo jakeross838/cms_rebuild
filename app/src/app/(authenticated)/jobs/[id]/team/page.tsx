@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate } from '@/lib/utils'
+import { escapeLike, formatDate } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Team' }
@@ -53,7 +53,7 @@ export default async function JobTeamPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    rolesQuery = rolesQuery.ilike('role_override', `%${sp.search}%`)
+    rolesQuery = rolesQuery.ilike('role_override', `%${escapeLike(sp.search)}%`)
   }
 
   const { data: rolesData, count } = await rolesQuery

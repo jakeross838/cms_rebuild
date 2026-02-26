@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listMaterialRequestsSchema, createMaterialRequestSchema } from '@/lib/validation/schemas/inventory'
 
 // ============================================================================
@@ -59,7 +60,7 @@ export const GET = createApiHandler(
       query = query.eq('priority', filters.priority)
     }
     if (filters.q) {
-      query = query.ilike('notes', `%${filters.q}%`)
+      query = query.ilike('notes', `%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('created_at', { ascending: false })

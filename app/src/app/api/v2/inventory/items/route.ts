@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listInventoryItemsSchema, createInventoryItemSchema } from '@/lib/validation/schemas/inventory'
 
 // ============================================================================
@@ -55,7 +56,7 @@ export const GET = createApiHandler(
       query = query.eq('is_active', filters.is_active)
     }
     if (filters.q) {
-      query = query.ilike('name', `%${filters.q}%`)
+      query = query.ilike('name', `%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('name', { ascending: true })

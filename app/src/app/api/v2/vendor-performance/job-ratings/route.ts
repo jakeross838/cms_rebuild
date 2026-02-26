@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listJobRatingsSchema, createJobRatingSchema } from '@/lib/validation/schemas/vendor-performance'
 
 // ============================================================================
@@ -57,7 +58,7 @@ export const GET = createApiHandler(
       query = query.eq('job_id', filters.job_id)
     }
     if (filters.trade) {
-      query = query.ilike('trade', `%${filters.trade}%`)
+      query = query.ilike('trade', `%${escapeLike(filters.trade)}%`)
     }
 
     const sortCol = filters.sort_by || 'created_at'

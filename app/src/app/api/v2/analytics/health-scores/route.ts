@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { escapeLike } from '@/lib/utils'
 import { listHealthScoresSchema, createHealthScoreSchema } from '@/lib/validation/schemas/platform-analytics'
 
 // ============================================================================
@@ -66,7 +67,7 @@ export const GET = createApiHandler(
       query = query.lte('score_date', filters.date_to)
     }
     if (filters.q) {
-      query = query.ilike('notes', `%${filters.q}%`)
+      query = query.ilike('notes', `%${escapeLike(filters.q)}%`)
     }
 
     query = query.order('score_date', { ascending: false })
