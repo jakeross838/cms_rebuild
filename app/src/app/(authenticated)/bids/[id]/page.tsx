@@ -59,10 +59,16 @@ export default function BidPackageDetailPage() {
   // ── Load bid package ────────────────────────────────────────────────
   useEffect(() => {
     async function loadBid() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
       const { data, error: fetchError } = await supabase
         .from('bid_packages')
         .select('*')
         .eq('id', params.id as string)
+        .eq('company_id', companyId)
         .is('deleted_at', null)
         .single()
 

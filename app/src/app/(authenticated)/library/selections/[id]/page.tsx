@@ -73,9 +73,16 @@ export default function SelectionCategoryDetailPage() {
 
   useEffect(() => {
     async function loadCategory() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('selection_categories')
         .select('*')
+        .eq('company_id', companyId)
         .eq('id', categoryId)
         .is('deleted_at', null)
         .single()

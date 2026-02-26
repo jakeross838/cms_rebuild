@@ -56,9 +56,16 @@ export default function WarrantyDetailPage() {
 
   useEffect(() => {
     async function loadWarranty() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('warranties')
         .select('*')
+        .eq('company_id', companyId)
         .eq('id', params.id as string)
         .is('deleted_at', null)
         .single()

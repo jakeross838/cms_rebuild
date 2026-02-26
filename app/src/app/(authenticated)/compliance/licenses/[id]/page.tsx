@@ -71,9 +71,16 @@ export default function LicenseDetailPage() {
 
   useEffect(() => {
     async function loadCertification() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setError('Not authenticated'); setLoading(false); return }
+      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+      const companyId = profile?.company_id
+      if (!companyId) { setError('No company found'); setLoading(false); return }
+
       const { data, error: fetchError } = await supabase
         .from('employee_certifications')
         .select('*')
+        .eq('company_id', companyId)
         .eq('id', certId)
         .single()
 
