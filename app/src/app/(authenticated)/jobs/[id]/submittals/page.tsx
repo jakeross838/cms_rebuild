@@ -26,18 +26,26 @@ interface Submittal {
 
 export default async function JobSubmittalsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id: jobId } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
-  const { data: submittalsData } = await supabase
+  let submittalsQuery = supabase
     .from('submittals')
     .select('*')
     .eq('job_id', jobId)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
+
+  if (sp.search) {
+    submittalsQuery = submittalsQuery.or(`submittal_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
+  }
+
+  const { data: submittalsData } = await submittalsQuery.order('created_at', { ascending: false })
 
   const submittals = (submittalsData || []) as Submittal[]
 
@@ -52,6 +60,12 @@ export default async function JobSubmittalsPage({
           <p className="text-muted-foreground">{submittals.length} submittals &bull; {pending} pending &bull; {approved} approved</p>
         </div>
         <Link href={`/jobs/${jobId}/submittals/new`}><Button><Plus className="h-4 w-4 mr-2" />New Submittal</Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search submittals..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <Card>

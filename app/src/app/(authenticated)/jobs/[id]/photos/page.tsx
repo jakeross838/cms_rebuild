@@ -1,10 +1,11 @@
 import Link from 'next/link'
 
-import { Plus, Image } from 'lucide-react'
+import { Plus, Image, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate } from '@/lib/utils'
 
@@ -22,18 +23,27 @@ interface Photo {
 
 export default async function JobPhotosPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id: jobId } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
-  const { data: photosData } = await supabase
+  let query = supabase
     .from('job_photos')
     .select('*')
     .eq('job_id', jobId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
+
+  if (sp.search) {
+    query = query.or(`title.ilike.%${sp.search}%,description.ilike.%${sp.search}%`)
+  }
+
+  const { data: photosData } = await query
 
   const photos = (photosData || []) as Photo[]
 
@@ -45,6 +55,11 @@ export default async function JobPhotosPage({
           <p className="text-muted-foreground">{photos.length} photos</p>
         </div>
         <Link href={`/jobs/${jobId}/photos/new`}><Button><Plus className="h-4 w-4 mr-2" />Upload Photo</Button></Link>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search photos..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {photos.length > 0 ? (

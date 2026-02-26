@@ -1,8 +1,9 @@
 import Link from 'next/link'
 
-import { ClipboardList, Building2 } from 'lucide-react'
+import { ClipboardList, Building2, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -17,15 +18,26 @@ interface DailyLogRow {
   jobs: { name: string; job_number: string | null } | null
 }
 
-export default async function DailyLogsPage() {
+export default async function DailyLogsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>
+}) {
+  const sp = await searchParams
   const supabase = await createClient()
 
-  const { data: logsData, error } = await supabase
+  let query = supabase
     .from('daily_logs')
     .select('id, job_id, log_date, status, weather_summary, notes, created_at, jobs(name, job_number)')
     .is('deleted_at', null)
     .order('log_date', { ascending: false })
     .limit(50)
+
+  if (sp.search) {
+    query = query.or(`weather_summary.ilike.%${sp.search}%,notes.ilike.%${sp.search}%`)
+  }
+
+  const { data: logsData, error } = await query
 
   const logs = error ? [] : ((logsData || []) as DailyLogRow[])
 
@@ -35,6 +47,12 @@ export default async function DailyLogsPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Daily Logs</h1>
         <p className="text-muted-foreground">Field reports across all jobs</p>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search daily logs..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {/* Logs list */}

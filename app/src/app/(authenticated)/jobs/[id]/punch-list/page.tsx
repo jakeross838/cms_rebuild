@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Plus, CheckSquare } from 'lucide-react'
+import { Plus, CheckSquare, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -25,10 +26,13 @@ interface PunchItem {
 
 export default async function PunchListPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   const { data: job, error: jobError } = await supabase
@@ -41,11 +45,17 @@ export default async function PunchListPage({
     notFound()
   }
 
-  const { data: itemsData } = await supabase
+  let itemsQuery = supabase
     .from('punch_items')
     .select('*')
     .eq('job_id', id)
     .order('created_at', { ascending: false })
+
+  if (sp.search) {
+    itemsQuery = itemsQuery.or(`title.ilike.%${sp.search}%,description.ilike.%${sp.search}%`)
+  }
+
+  const { data: itemsData } = await itemsQuery
 
   const items = (itemsData || []) as PunchItem[]
 
@@ -65,6 +75,11 @@ export default async function PunchListPage({
             Add Item
           </Button>
         </Link>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search punch list..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

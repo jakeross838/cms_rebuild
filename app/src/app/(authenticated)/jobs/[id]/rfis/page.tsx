@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Plus, MessageSquare } from 'lucide-react'
+import { Plus, MessageSquare, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,10 +25,13 @@ interface RFI {
 
 export default async function RFIsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   const { data: job, error: jobError } = await supabase
@@ -40,11 +44,16 @@ export default async function RFIsPage({
     notFound()
   }
 
-  const { data: rfiData } = await supabase
+  let rfiQuery = supabase
     .from('rfis')
     .select('*')
     .eq('job_id', id)
-    .order('created_at', { ascending: false })
+
+  if (sp.search) {
+    rfiQuery = rfiQuery.or(`rfi_number.ilike.%${sp.search}%,subject.ilike.%${sp.search}%`)
+  }
+
+  const { data: rfiData } = await rfiQuery.order('created_at', { ascending: false })
 
   const rfis = (rfiData || []) as RFI[]
 
@@ -64,6 +73,12 @@ export default async function RFIsPage({
             New RFI
           </Button>
         </Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search RFIs..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

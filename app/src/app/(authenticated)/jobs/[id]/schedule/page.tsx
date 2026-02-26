@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Plus, Calendar, CheckCircle2 } from 'lucide-react'
+import { Plus, Calendar, CheckCircle2, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -29,10 +30,13 @@ interface ScheduleTask {
 
 export default async function SchedulePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   const { data: job, error: jobError } = await supabase
@@ -45,11 +49,17 @@ export default async function SchedulePage({
     notFound()
   }
 
-  const { data: tasksData } = await supabase
+  let tasksQuery = supabase
     .from('schedule_tasks')
     .select('*')
     .eq('job_id', id)
     .order('sort_order', { ascending: true })
+
+  if (sp.search) {
+    tasksQuery = tasksQuery.or(`name.ilike.%${sp.search}%,trade.ilike.%${sp.search}%`)
+  }
+
+  const { data: tasksData } = await tasksQuery
 
   const tasks = (tasksData || []) as ScheduleTask[]
 
@@ -70,6 +80,12 @@ export default async function SchedulePage({
           <Plus className="h-4 w-4 mr-2" />
           Add Task
         </Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search tasks..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {/* Summary */}

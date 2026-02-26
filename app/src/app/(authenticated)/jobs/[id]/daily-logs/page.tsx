@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Plus, CloudSun, Calendar } from 'lucide-react'
+import { Plus, CloudSun, Calendar, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,10 +25,13 @@ interface DailyLog {
 
 export default async function DailyLogsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   const { data: job, error: jobError } = await supabase
@@ -40,11 +44,16 @@ export default async function DailyLogsPage({
     notFound()
   }
 
-  const { data: logsData } = await supabase
+  let logsQuery = supabase
     .from('daily_logs')
     .select('*')
     .eq('job_id', id)
-    .order('log_date', { ascending: false })
+
+  if (sp.search) {
+    logsQuery = logsQuery.or(`weather_summary.ilike.%${sp.search}%,notes.ilike.%${sp.search}%`)
+  }
+
+  const { data: logsData } = await logsQuery.order('log_date', { ascending: false })
 
   const logs = (logsData || []) as DailyLog[]
 
@@ -62,6 +71,12 @@ export default async function DailyLogsPage({
             New Log
           </Button>
         </Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search logs..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {/* Logs list */}

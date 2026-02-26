@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Plus, Shield } from 'lucide-react'
+import { Plus, Shield, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -22,10 +23,13 @@ interface LienWaiver {
 
 export default async function LienWaiversPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   const { data: job, error: jobError } = await supabase
@@ -38,11 +42,16 @@ export default async function LienWaiversPage({
     notFound()
   }
 
-  const { data: waiverData } = await supabase
+  let waiverQuery = supabase
     .from('lien_waivers')
     .select('*')
     .eq('job_id', id)
-    .order('created_at', { ascending: false })
+
+  if (sp.search) {
+    waiverQuery = waiverQuery.or(`claimant_name.ilike.%${sp.search}%,waiver_type.ilike.%${sp.search}%`)
+  }
+
+  const { data: waiverData } = await waiverQuery.order('created_at', { ascending: false })
 
   const waivers = (waiverData || []) as LienWaiver[]
 
@@ -60,6 +69,12 @@ export default async function LienWaiversPage({
           <Plus className="h-4 w-4 mr-2" />
           Request Waiver
         </Button></Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search waivers..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

@@ -1,10 +1,11 @@
 import Link from 'next/link'
 
-import { Plus, ClipboardCheck } from 'lucide-react'
+import { Plus, ClipboardCheck, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -25,17 +26,26 @@ interface PermitInspection {
 
 export default async function JobInspectionsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id: jobId } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
-  const { data: inspectionsData } = await supabase
+  let query = supabase
     .from('permit_inspections')
     .select('*')
     .eq('job_id', jobId)
     .order('scheduled_date', { ascending: true })
+
+  if (sp.search) {
+    query = query.or(`inspection_type.ilike.%${sp.search}%,inspector_name.ilike.%${sp.search}%`)
+  }
+
+  const { data: inspectionsData } = await query
 
   const inspections = (inspectionsData || []) as PermitInspection[]
 
@@ -53,6 +63,11 @@ export default async function JobInspectionsPage({
           </p>
         </div>
         <Link href={`/jobs/${jobId}/inspections/new`}><Button><Plus className="h-4 w-4 mr-2" />Schedule Inspection</Button></Link>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search inspections..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <Card>

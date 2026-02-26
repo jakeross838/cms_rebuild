@@ -1,10 +1,11 @@
 import Link from 'next/link'
 
-import { Plus, MessageSquare } from 'lucide-react'
+import { Plus, MessageSquare, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
@@ -22,19 +23,28 @@ interface Communication {
 
 export default async function JobCommunicationsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id: jobId } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
-  const { data: commsData } = await supabase
+  let query = supabase
     .from('communications')
     .select('*')
     .eq('job_id', jobId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(100)
+
+  if (sp.search) {
+    query = query.or(`subject.ilike.%${sp.search}%,message_body.ilike.%${sp.search}%`)
+  }
+
+  const { data: commsData } = await query
 
   const comms = (commsData || []) as Communication[]
 
@@ -46,6 +56,11 @@ export default async function JobCommunicationsPage({
           <p className="text-muted-foreground">{comms.length} communications</p>
         </div>
         <Link href={`/jobs/${jobId}/communications/new`}><Button><Plus className="h-4 w-4 mr-2" />New Message</Button></Link>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search messages..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <Card>

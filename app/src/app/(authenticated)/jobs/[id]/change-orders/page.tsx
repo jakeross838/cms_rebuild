@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Plus, FileText } from 'lucide-react'
+import { Plus, FileText, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
@@ -24,10 +25,13 @@ interface ChangeOrder {
 
 export default async function ChangeOrdersPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   const { data: job, error: jobError } = await supabase
@@ -40,11 +44,16 @@ export default async function ChangeOrdersPage({
     notFound()
   }
 
-  const { data: coData } = await supabase
+  let coQuery = supabase
     .from('change_orders')
     .select('*')
     .eq('job_id', id)
-    .order('created_at', { ascending: false })
+
+  if (sp.search) {
+    coQuery = coQuery.or(`co_number.ilike.%${sp.search}%,title.ilike.%${sp.search}%`)
+  }
+
+  const { data: coData } = await coQuery.order('created_at', { ascending: false })
 
   const changeOrders = (coData || []) as ChangeOrder[]
 
@@ -70,6 +79,12 @@ export default async function ChangeOrdersPage({
             New Change Order
           </Button>
         </Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search change orders..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       {/* Summary */}

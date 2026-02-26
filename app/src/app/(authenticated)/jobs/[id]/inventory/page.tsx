@@ -1,10 +1,11 @@
 import Link from 'next/link'
 
-import { Plus, Package } from 'lucide-react'
+import { Plus, Package, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
 
@@ -20,10 +21,13 @@ interface InventoryItem {
 
 export default async function JobInventoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
   const { id: jobId } = await params
+  const sp = await searchParams
   const supabase = await createClient()
 
   // Get inventory transactions for this job to find which items are used
@@ -37,12 +41,17 @@ export default async function JobInventoryPage({
 
   let items: InventoryItem[] = []
   if (itemIds.length > 0) {
-    const { data: itemsData } = await supabase
+    let itemsQuery = supabase
       .from('inventory_items')
       .select('id, name, sku, category, unit_of_measure, unit_cost, is_active')
       .in('id', itemIds)
       .order('name', { ascending: true })
 
+    if (sp.search) {
+      itemsQuery = itemsQuery.or(`name.ilike.%${sp.search}%,sku.ilike.%${sp.search}%`)
+    }
+
+    const { data: itemsData } = await itemsQuery
     items = (itemsData || []) as InventoryItem[]
   }
 
@@ -54,6 +63,11 @@ export default async function JobInventoryPage({
           <p className="text-muted-foreground">{items.length} items &bull; {transactions.length} transactions</p>
         </div>
         <Link href={`/jobs/${jobId}/inventory/new`}><Button><Plus className="h-4 w-4 mr-2" />Add Material</Button></Link>
+      </div>
+
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <form><Input type="search" name="search" placeholder="Search materials..." defaultValue={sp.search} className="pl-10" /></form>
       </div>
 
       <Card>
