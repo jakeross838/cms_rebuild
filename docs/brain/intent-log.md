@@ -1,16 +1,19 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
-## 2026-02-25: Accessibility + Confirmation Dialogs
+## 2026-02-25: Toast Notifications, Status Filters, Confirm Dialogs, Accessibility
 
 ### Why
-1. Search inputs had no aria-labels — screen readers couldn't identify them
-2. Browser confirm() dialogs are ugly, non-branded, and lack accessibility
-3. No route-level error boundaries — errors fell to generic global handler
+1. Create/edit/archive actions had no user feedback — users couldn't tell if actions succeeded
+2. Purchase orders and change orders list pages had no status filter tabs
+3. Browser confirm() dialogs are ugly, non-branded, and lack accessibility
+4. Search inputs had no aria-labels — screen readers couldn't identify them
+5. No route-level error boundaries — errors fell to generic global handler
 
 ### What was done
+- Added sonner toast notifications to 96 pages (50 create + 46 detail) — success and error feedback
+- Added status filter tabs to purchase orders (7 statuses) and change orders (5 statuses)
+- Replaced ALL 61 browser confirm() calls with styled ConfirmDialog component — zero remain
 - Added aria-label to 59 search inputs across all list pages
-- Created ConfirmDialog component using existing Radix UI Dialog primitives
-- Replaced 50 confirm() calls across all detail pages with styled dialogs
 - Added error.tsx and not-found.tsx at authenticated route level
 
 ---

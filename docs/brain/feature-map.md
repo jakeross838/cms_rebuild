@@ -1,18 +1,31 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
-## Quality Hardening: Accessibility + Confirmation Dialogs (2026-02-25)
+## Quality Hardening: Toast Notifications + Status Filters + Confirm Dialogs (2026-02-25)
+
+### Toast Notifications (sonner)
+- `Toaster` component in root layout: `richColors position="bottom-right"`
+- **50 create form pages** — `toast.success('Item created')` before redirect + `toast.error(errorMessage)` in catch
+- **46 detail/edit pages** — `toast.success('Saved')` on update, `toast.success('Archived')` on soft-delete, `toast.error()` in all catch blocks
+- **22 previously wired pages** (jobs/new, clients/new, vendors/new, etc.) — already had toasts from prior session
+- Total: **118 pages** with toast notification coverage
+
+### Status Filter Tabs
+- Purchase Orders: All / Draft / Pending / Approved / Sent / Received / Closed — URL param `?status=X`
+- Change Orders: All / Draft / Pending / Approved / Rejected / Voided — URL param `?status=X`
+- Pattern: `statusFilters` array → Link + Button with active/outline variant
+- Query filter: `.eq('status', params.status)` when param present
+
+### Styled Confirmation Dialogs
+- `ConfirmDialog` component at `@/components/ui/confirm-dialog`
+- Props: `open`, `onOpenChange`, `title`, `description`, `confirmLabel`, `variant`, `onConfirm`, `loading`
+- Replaces ALL 61 browser `confirm()` calls with branded Radix UI dialogs (50 initial + 11 remaining)
+- Zero `window.confirm` calls remain in codebase
+- Red warning icon for destructive actions, Cancel/Archive button pair
 
 ### Search Input Accessibility
 - All 59 search `<Input>` elements across list pages now have `aria-label` attributes
 - Pattern: `aria-label="Search jobs"`, `aria-label="Search invoices"`, etc.
 - Covers 39 company-level + 20 job-scoped list pages
-
-### Styled Confirmation Dialogs
-- New `ConfirmDialog` component at `@/components/ui/confirm-dialog`
-- Props: `open`, `onOpenChange`, `title`, `description`, `confirmLabel`, `variant`, `onConfirm`, `loading`
-- Replaces all 50 browser `confirm()` calls with branded Radix UI dialogs
-- Red warning icon for destructive actions, Cancel/Archive button pair
-- Special cases: toggle dialogs (chart-of-accounts, legal), reset/delete (settings)
 
 ### Error Boundaries
 - `(authenticated)/error.tsx` — route-level error boundary within sidebar layout

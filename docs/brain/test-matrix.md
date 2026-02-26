@@ -1,5 +1,29 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Toast Notification Test Cases (2026-02-25)
+
+### Create Forms (50 pages)
+| Test | Expected |
+|------|----------|
+| Submit create form successfully | Green toast "X created" appears bottom-right |
+| Submit create form with error | Red toast with error message appears |
+| Toast auto-dismisses | Disappears after ~5 seconds |
+
+### Detail/Edit Pages (46 pages)
+| Test | Expected |
+|------|----------|
+| Save changes successfully | Green toast "Saved" appears |
+| Archive record successfully | Green toast "Archived" appears |
+| Save with server error | Red toast with error message appears |
+
+### Status Filter Test Cases
+| Test | Expected |
+|------|----------|
+| Purchase orders — click "Approved" | URL becomes `?status=approved`, only approved POs shown |
+| Change orders — click "Rejected" | URL becomes `?status=rejected`, only rejected COs shown |
+| Click "All" | Status param removed, all records shown |
+| Active filter highlighted | Active status button uses default variant, others outline |
+
 ## Confirmation Dialog Test Cases (2026-02-25)
 
 ### ConfirmDialog Component
@@ -11,11 +35,11 @@
 | Destructive variant | Shows red warning icon |
 | Loading state | Confirm button disabled, shows "Processing..." |
 
-### Archive Flows (50 detail pages)
+### Archive Flows (61 total pages — zero window.confirm remaining)
 | Test | Expected |
 |------|----------|
 | Click archive button | Opens styled confirmation dialog |
-| Confirm archive | Soft-deletes record, redirects to list |
+| Confirm archive | Soft-deletes record, redirects to list, green toast |
 | Cancel archive | Dialog closes, record unchanged |
 
 ### Search Accessibility
