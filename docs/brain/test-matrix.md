@@ -1,5 +1,41 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 28 — Data Integrity: Status Values, Display Formatting (2026-02-27)
+
+### Status Value Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All form status defaults match DB CHECK constraints | Lowercase values only | pass |
+| All dropdown option values match DB enum values | No capitalized option values | pass |
+| No remaining capitalized status/priority/change_type in Supabase calls | Grep finds 0 matches | pass |
+| TypeScript compiles clean after all changes | tsc --noEmit passes | pass |
+| next build succeeds | Zero build errors | pass |
+
+### Status Display Formatting
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| formatStatus('pending_approval') | 'Pending Approval' | pass |
+| formatStatus(null) | 'Unknown' | pass |
+| All Badge status displays use formatStatus() | No raw snake_case in UI | pass |
+| All change_type displays use formatStatus() | No raw DB values | pass |
+| No CSS capitalize on status fields | Replaced with formatStatus() | pass |
+
+### Code Cleanup
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| parseFloat with || 0 fallback in payables/receivables | Empty field → 0 | pass |
+| 11 unused icon imports removed | Grep finds 0 unused | pass |
+
+### Audits That Passed (No Fixes Needed)
+| Audit | Files Checked | Result |
+|-------|--------------|--------|
+| Loading state coverage | 297 server pages | All covered by parent loading.tsx |
+| Supabase client correctness | 127 files | Zero mismatches |
+| React key props | 197 .map() files | All correct |
+| Form reset after submit | 60+ forms | All navigate away |
+| Navigation href integrity | 643 files | Zero broken links |
+| Error boundary coverage | 48/48 top-level dirs | All covered |
+
 ## Session 27 — Quality Hardening: Forms, Security, Build Fixes (2026-02-27)
 
 ### Form Validation

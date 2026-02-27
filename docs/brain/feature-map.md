@@ -1,5 +1,30 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 28 — Data Integrity: Status Values, Display Formatting (2026-02-27)
+
+### formatStatus() Utility (lib/utils.ts)
+- New function: converts snake_case DB values to Title Case for display
+- `formatStatus('pending_approval')` → `'Pending Approval'`
+- `formatStatus(null)` → `'Unknown'`
+- Used in 21+ pages for status, priority, and change_type display
+
+### Status/Priority/Change Type Values — DB Alignment
+- **bid_packages:** status values `draft, published, closed, awarded, cancelled`
+- **change_orders:** status `draft, pending_approval, approved, rejected, voided`; change_type `owner_requested, field_condition, design_change, regulatory, allowance, credit`
+- **purchase_orders:** status `draft, pending_approval, approved, sent, partially_received, received, closed, voided`
+- **rfis:** status `draft, open, pending_response, answered, closed, voided`; priority `low, normal, high, urgent`
+- **permits:** status `draft, applied, issued, active, expired, closed, revoked`
+- **warranty_claims:** status `submitted, acknowledged, in_progress, resolved, denied, escalated`; priority `low, normal, high, urgent`
+- **submittals:** priority `low, normal, high, urgent`
+- All dropdown `<option value="">` use lowercase DB values; display labels are human-readable
+
+### Audits Passed (No Fixes Needed)
+- Loading states: all server component pages covered by parent loading.tsx files
+- Supabase client instantiation: all 127 files correct (client vs server, no duplicates, no hook-level)
+- React key props: all .map() calls have proper unique keys
+- Form reset after submit: all create forms navigate away on success
+- Navigation links: zero skeleton paths, zero broken hrefs, zero double slashes
+
 ## Session 27 — Quality Hardening: Forms, Security, Build Fixes (2026-02-27)
 
 ### Form Validation (35 create forms)

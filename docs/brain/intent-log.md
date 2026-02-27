@@ -1,5 +1,29 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 28 — Data Integrity: Status Values, Display Formatting, Code Cleanup
+
+### Why (Status Value Fixes — 15 files)
+- DB CHECK constraints require lowercase snake_case values ('draft', 'pending_approval', 'owner_requested')
+- UI forms were inserting capitalized values ('Draft', 'Open', 'Medium', 'Addition') that would fail constraints
+- Fixed defaults, dropdown option values, and constant arrays across bids, change-orders, purchase-orders, rfis, permits, warranty-claims, submittals, support
+- Also fixed change_type values: 'Addition'/'Deduction' → 'owner_requested'/'field_condition'/'design_change'/'regulatory'/'allowance'/'credit'
+- Also fixed priority values: 'Medium'/'Low'/'High'/'Urgent' → 'normal'/'low'/'high'/'urgent'
+
+### Why (formatStatus Utility + Display Fixes — 21 files)
+- After fixing DB values to lowercase, raw display showed 'pending_approval' instead of 'Pending Approval'
+- CSS `capitalize` class doesn't handle underscores (shows 'Pending_approval')
+- Created `formatStatus()` in lib/utils.ts: splits on underscores, capitalizes each word
+- Applied to 5 detail pages (bids, permits, warranties, inspections, selections) and 16 list/detail pages
+
+### Why (Unsafe parseFloat — 2 files)
+- financial/payables/[id] and financial/receivables/[id] had bare `parseFloat(formData.amount)` with no fallback
+- If user clears a numeric field, `parseFloat('')` returns NaN which gets sent to DB
+- Added `|| 0` fallback to 8 parseFloat calls across both files
+
+### Why (Unused Icon Imports — 11 files)
+- 11 files imported lucide-react icons that were never used in JSX
+- Dead imports increase bundle size and reduce code clarity
+
 ## 2026-02-27: Session 27 — Quality Hardening: Forms, Security, Build Fixes
 
 ### Why (Form Validation)
