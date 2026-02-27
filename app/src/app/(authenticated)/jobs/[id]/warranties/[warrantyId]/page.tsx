@@ -135,6 +135,7 @@ export default function WarrantyDetailPage() {
         })
         .eq('id', warrantyId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -170,6 +171,7 @@ export default function WarrantyDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', warrantyId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive warranty')

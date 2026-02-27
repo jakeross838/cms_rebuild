@@ -152,6 +152,7 @@ export default function TimeEntryDetailPage() {
         })
         .eq('id', entryId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -189,6 +190,7 @@ export default function TimeEntryDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', entryId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive time entry')

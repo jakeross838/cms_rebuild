@@ -141,6 +141,7 @@ export default function DailyLogDetailPage() {
         })
         .eq('id', logId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
       toast.success('Saved')
@@ -177,6 +178,7 @@ export default function DailyLogDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', logId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive daily log')

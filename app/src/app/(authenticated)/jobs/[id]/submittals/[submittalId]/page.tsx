@@ -153,6 +153,7 @@ export default function SubmittalDetailPage() {
         })
         .eq('id', submittalId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -191,6 +192,7 @@ export default function SubmittalDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', submittalId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive submittal')

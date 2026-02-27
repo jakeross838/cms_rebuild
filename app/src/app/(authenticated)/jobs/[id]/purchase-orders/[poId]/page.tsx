@@ -189,6 +189,7 @@ export default function PurchaseOrderDetailPage() {
         })
         .eq('id', poId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -228,6 +229,7 @@ export default function PurchaseOrderDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', poId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive purchase order')

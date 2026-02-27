@@ -126,6 +126,7 @@ export default function FileDetailPage() {
         })
         .eq('id', fileId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
       toast.success('Saved')
@@ -157,6 +158,7 @@ export default function FileDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', fileId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive file')

@@ -143,6 +143,7 @@ export default function ChangeOrderDetailPage() {
         })
         .eq('id', coId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
       toast.success('Saved')
@@ -179,6 +180,7 @@ export default function ChangeOrderDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', coId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive change order')

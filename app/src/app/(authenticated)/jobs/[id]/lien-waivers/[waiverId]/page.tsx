@@ -158,6 +158,7 @@ export default function LienWaiverDetailPage() {
         })
         .eq('id', waiverId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -194,6 +195,7 @@ export default function LienWaiverDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', waiverId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive lien waiver')

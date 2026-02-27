@@ -152,6 +152,7 @@ export default function JobInvoiceDetailPage() {
         })
         .eq('id', invoiceId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -189,6 +190,7 @@ export default function JobInvoiceDetailPage() {
       .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', invoiceId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive invoice')
       toast.error('Failed to archive invoice')

@@ -157,6 +157,7 @@ export default function ScheduleTaskDetailPage() {
         })
         .eq('id', taskId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -196,6 +197,7 @@ export default function ScheduleTaskDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', taskId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive task')

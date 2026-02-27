@@ -144,6 +144,7 @@ export default function InspectionDetailPage() {
         })
         .eq('id', inspectionId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -181,6 +182,7 @@ export default function InspectionDetailPage() {
       .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       .eq('id', inspectionId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
     if (archiveError) {
       setError('Failed to archive inspection')
       toast.error('Failed to archive inspection')

@@ -143,6 +143,7 @@ export default function CommunicationDetailPage() {
         })
         .eq('id', commId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
       toast.success('Saved')
@@ -179,6 +180,7 @@ export default function CommunicationDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', commId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive communication')

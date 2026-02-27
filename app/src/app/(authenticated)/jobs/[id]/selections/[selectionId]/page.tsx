@@ -136,6 +136,7 @@ export default function SelectionDetailPage() {
         })
         .eq('id', selectionId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -171,6 +172,7 @@ export default function SelectionDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', selectionId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive selection')

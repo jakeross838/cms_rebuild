@@ -143,6 +143,7 @@ export default function BudgetLineDetailPage() {
         })
         .eq('id', lineId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
       toast.success('Saved')
@@ -179,6 +180,7 @@ export default function BudgetLineDetailPage() {
       .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', lineId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (archiveError) {
       setError('Failed to archive budget line')

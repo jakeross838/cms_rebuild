@@ -148,6 +148,7 @@ export default function DrawRequestDetailPage() {
         })
         .eq('id', drawId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
       toast.success('Saved')
@@ -185,6 +186,7 @@ export default function DrawRequestDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', drawId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive draw request')

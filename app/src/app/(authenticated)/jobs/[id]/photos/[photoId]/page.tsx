@@ -136,6 +136,7 @@ export default function PhotoDetailPage() {
         })
         .eq('id', photoId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -171,6 +172,7 @@ export default function PhotoDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', photoId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive photo')

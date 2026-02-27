@@ -163,6 +163,7 @@ export default function JobPunchItemDetailPage() {
         })
         .eq('id', itemId)
         .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -201,6 +202,7 @@ export default function JobPunchItemDetailPage() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', itemId)
       .eq('job_id', jobId)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive punch item')
