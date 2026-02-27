@@ -58,7 +58,7 @@ export default function NewCertificationPage() {
       if (empsData) setEmployees(empsData.map((e) => ({ id: e.id, name: `${e.first_name} ${e.last_name}` })))
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

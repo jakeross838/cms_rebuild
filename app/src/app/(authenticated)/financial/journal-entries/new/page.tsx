@@ -76,7 +76,7 @@ export default function NewJournalEntryPage() {
       if (data) setAccounts(data as AccountOption[])
     }
     loadAccounts()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

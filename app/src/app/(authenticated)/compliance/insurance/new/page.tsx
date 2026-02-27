@@ -56,7 +56,7 @@ export default function NewInsurancePolicyPage() {
       if (vendorsData) setVendors(vendorsData)
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

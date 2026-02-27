@@ -58,7 +58,7 @@ export default function NewPayablePage() {
       if (jobsRes.data) setJobs(jobsRes.data)
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

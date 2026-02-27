@@ -60,7 +60,7 @@ export default function NewPunchItemPage() {
       if (usersRes.data) setUsers(usersRes.data)
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -58,7 +58,7 @@ export default function NewSelectionCategoryPage() {
       if (jobsData) setJobs(jobsData)
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

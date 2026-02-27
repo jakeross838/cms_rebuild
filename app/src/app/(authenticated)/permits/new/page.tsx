@@ -55,7 +55,7 @@ export default function NewPermitPage() {
       if (jobsData) setJobs(jobsData)
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

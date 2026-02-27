@@ -64,7 +64,7 @@ export default function NewSafetyIncidentPage() {
       if (jobsData) setJobs(jobsData)
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target

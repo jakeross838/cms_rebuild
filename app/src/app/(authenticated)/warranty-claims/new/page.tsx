@@ -59,7 +59,7 @@ export default function NewWarrantyClaimPage() {
       if (warrantiesRes.data) setWarranties(warrantiesRes.data as { id: string; title: string; job_id: string | null }[])
     }
     loadDropdowns()
-  }, [, companyId])
+  }, [companyId])
 
   // Filter warranties by selected job (if a job is selected)
   const filteredWarranties = formData.job_id
