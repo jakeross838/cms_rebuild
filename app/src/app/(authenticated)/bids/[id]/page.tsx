@@ -15,7 +15,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const BID_STATUSES = ['draft', 'published', 'closed', 'awarded', 'cancelled']
@@ -201,7 +201,7 @@ export default function BidPackageDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{bid.title}</h1>
-              <Badge className={getStatusColor(bid.status)}>{bid.status}</Badge>
+              <Badge className={getStatusColor(bid.status)}>{formatStatus(bid.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               Created {bid.created_at ? formatDate(bid.created_at) : 'Unknown'}

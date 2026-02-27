@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -253,7 +253,7 @@ export default function SelectionDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Status</span>
-                    <p className="font-medium capitalize">{selection.status}</p>
+                    <p className="font-medium">{formatStatus(selection.status)}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Room</span>

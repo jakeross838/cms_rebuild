@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -231,7 +231,7 @@ export default function PermitDetailPage() {
               </h1>
               {permit.permit_number && <span className="text-sm font-mono text-muted-foreground">#{permit.permit_number}</span>}
               <Badge className={getStatusColor(permit.status)}>
-                {permit.status}
+                {formatStatus(permit.status)}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -277,7 +277,7 @@ export default function PermitDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Status</span>
-                    <p className="font-medium capitalize">{permit.status}</p>
+                    <p className="font-medium">{formatStatus(permit.status)}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Jurisdiction</span>
