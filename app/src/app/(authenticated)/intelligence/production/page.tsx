@@ -55,7 +55,7 @@ export default async function ProductionPage() {
       .eq('company_id', companyId).is('deleted_at', null).eq('status', 'pending'),
     supabase.from('time_entries').select('regular_hours, overtime_hours')
       .eq('company_id', companyId).is('deleted_at', null),
-    supabase.from('daily_logs').select('id, log_date, status, job_id, notes, weather_summary')
+    supabase.from('daily_logs').select('id, log_date, status, job_id, notes, weather_summary, jobs(name)')
       .eq('company_id', companyId).is('deleted_at', null)
       .order('log_date', { ascending: false }).limit(5),
   ])
@@ -72,26 +72,11 @@ export default async function ProductionPage() {
   const totalRegularHours = timeData.reduce((sum, t) => sum + (t.regular_hours || 0), 0)
   const totalOvertimeHours = timeData.reduce((sum, t) => sum + (t.overtime_hours || 0), 0)
 
-  const recentLogs = (recentLogsRes.data || []) as {
+  const recentLogs = (recentLogsRes.data || []) as unknown as {
     id: string; log_date: string; status: string; job_id: string
     notes: string | null; weather_summary: string | null
+    jobs: { name: string } | null
   }[]
-
-  // ── Fetch job names for recent logs ──
-  const jobIds = [...new Set(recentLogs.map((l) => l.job_id))]
-  let jobMap: Record<string, string> = {}
-  if (jobIds.length > 0) {
-    const { data: jobs, error: jobError } = await supabase
-      .from('jobs')
-      .select('id, name')
-      .eq('company_id', companyId)
-      .in('id', jobIds)
-      .is('deleted_at', null)
-    if (jobError) throw jobError
-    if (jobs) {
-      jobMap = Object.fromEntries(jobs.map((j) => [j.id, j.name]))
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -223,7 +208,7 @@ export default async function ProductionPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{formatDate(log.log_date)}</span>
                         <span className="text-xs text-muted-foreground">
-                          {jobMap[log.job_id] || 'Unknown Job'}
+                          {log.jobs?.name || 'Unknown Job'}
                         </span>
                       </div>
                       {log.weather_summary && (

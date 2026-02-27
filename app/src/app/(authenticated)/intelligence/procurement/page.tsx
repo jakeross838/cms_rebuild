@@ -50,7 +50,7 @@ export default async function ProcurementPage() {
       .eq('company_id', companyId).is('deleted_at', null),
     supabase.from('vendors').select('*', { count: 'exact', head: true })
       .eq('company_id', companyId).is('deleted_at', null),
-    supabase.from('purchase_orders').select('id, po_number, title, status, total_amount, vendor_id, created_at')
+    supabase.from('purchase_orders').select('id, po_number, title, status, total_amount, vendor_id, created_at, vendors(name)')
       .eq('company_id', companyId).is('deleted_at', null)
       .order('created_at', { ascending: false }).limit(5),
   ])
@@ -63,26 +63,11 @@ export default async function ProcurementPage() {
   const poAmounts = (poAmountsRes.data || []) as { total_amount: number }[]
   const totalPOAmount = poAmounts.reduce((sum, po) => sum + (po.total_amount || 0), 0)
 
-  const recentPOs = (recentPOsRes.data || []) as {
+  const recentPOs = (recentPOsRes.data || []) as unknown as {
     id: string; po_number: string; title: string; status: string
     total_amount: number; vendor_id: string; created_at: string
+    vendors: { name: string } | null
   }[]
-
-  // ── Fetch vendor names for recent POs ──
-  const vendorIds = [...new Set(recentPOs.map((po) => po.vendor_id))]
-  let vendorMap: Record<string, string> = {}
-  if (vendorIds.length > 0) {
-    const { data: vendors, error: vendorError } = await supabase
-      .from('vendors')
-      .select('id, name')
-      .eq('company_id', companyId)
-      .in('id', vendorIds)
-      .is('deleted_at', null)
-    if (vendorError) throw vendorError
-    if (vendors) {
-      vendorMap = Object.fromEntries(vendors.map((v) => [v.id, v.name]))
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -176,7 +161,7 @@ export default async function ProcurementPage() {
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs text-muted-foreground">
-                          {vendorMap[po.vendor_id] || 'Unknown Vendor'}
+                          {po.vendors?.name || 'Unknown Vendor'}
                         </span>
                         <span className="text-xs text-muted-foreground">-</span>
                         <span className="text-xs text-muted-foreground">{formatDate(po.created_at)}</span>

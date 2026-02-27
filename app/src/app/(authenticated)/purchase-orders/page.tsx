@@ -21,6 +21,8 @@ interface PurchaseOrderRow {
   job_id: string | null
   vendor_id: string | null
   created_at: string | null
+  jobs: { name: string; job_number: string | null } | null
+  vendors: { name: string } | null
 }
 
 export const metadata: Metadata = { title: 'Purchase Orders' }
@@ -51,7 +53,7 @@ export default async function PurchaseOrdersPage({
 
   let query = supabase
     .from('purchase_orders')
-    .select('id, po_number, title, status, total_amount, delivery_date, job_id, vendor_id, created_at', { count: 'exact' })
+    .select('id, po_number, title, status, total_amount, delivery_date, job_id, vendor_id, created_at, jobs(name, job_number), vendors(name)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order(sort.column, { ascending: sort.ascending })
@@ -68,7 +70,7 @@ export default async function PurchaseOrdersPage({
 
   const { data: posData, count, error } = await query
   if (error) throw error
-  const purchaseOrders = (posData || []) as PurchaseOrderRow[]
+  const purchaseOrders = (posData || []) as unknown as PurchaseOrderRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
@@ -81,27 +83,6 @@ export default async function PurchaseOrdersPage({
     { value: 'closed', label: 'Closed' },
   ]
 
-  // Fetch related jobs and vendors for display
-  const jobIds = [...new Set(purchaseOrders.map((po) => po.job_id).filter(Boolean))] as string[]
-  const vendorIds = [...new Set(purchaseOrders.map((po) => po.vendor_id).filter(Boolean))] as string[]
-
-  const jobsMap = new Map<string, { name: string; job_number: string | null }>()
-  const vendorsMap = new Map<string, { name: string }>()
-
-  const [jobsResult, vendorsResult] = await Promise.all([
-    jobIds.length > 0
-      ? supabase.from('jobs').select('id, name, job_number').eq('company_id', companyId).in('id', jobIds).is('deleted_at', null)
-      : Promise.resolve({ data: null }),
-    vendorIds.length > 0
-      ? supabase.from('vendors').select('id, name').eq('company_id', companyId).in('id', vendorIds).is('deleted_at', null)
-      : Promise.resolve({ data: null }),
-  ])
-  for (const job of jobsResult.data || []) {
-    jobsMap.set(job.id, { name: job.name, job_number: job.job_number })
-  }
-  for (const vendor of vendorsResult.data || []) {
-    vendorsMap.set(vendor.id, { name: vendor.name })
-  }
 
   return (
     <div className="space-y-6">
@@ -175,8 +156,8 @@ export default async function PurchaseOrdersPage({
         {purchaseOrders.length > 0 ? (
           <div className="divide-y divide-border">
             {purchaseOrders.map((po) => {
-              const job = po.job_id ? jobsMap.get(po.job_id) : null
-              const vendor = po.vendor_id ? vendorsMap.get(po.vendor_id) : null
+              const job = po.jobs
+              const vendor = po.vendors
               return (
                 <Link
                   key={po.id}
