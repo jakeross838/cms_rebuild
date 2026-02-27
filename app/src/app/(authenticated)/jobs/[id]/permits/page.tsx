@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -53,7 +53,7 @@ export default async function JobPermitsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    permitsQuery = permitsQuery.or(`permit_number.ilike.%${escapeLike(sp.search)}%,permit_type.ilike.%${escapeLike(sp.search)}%`)
+    permitsQuery = permitsQuery.or(`permit_number.ilike.${safeOrIlike(sp.search)},permit_type.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: permitsData, count, error } = await permitsQuery

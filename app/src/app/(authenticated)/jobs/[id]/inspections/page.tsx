@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -54,7 +54,7 @@ export default async function JobInspectionsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    const searchTerm = `%${escapeLike(sp.search)}%`
+    const searchTerm = safeOrIlike(sp.search)
     query = query.or(`inspection_type.ilike.${searchTerm},inspector_name.ilike.${searchTerm}`)
   }
 

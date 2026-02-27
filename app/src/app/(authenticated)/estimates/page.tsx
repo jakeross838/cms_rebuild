@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface Estimate {
   id: string
@@ -58,7 +58,7 @@ export default async function EstimatesPage({
   }
 
   if (params.search) {
-    query = query.ilike('name', `%${escapeLike(params.search)}%`)
+    query = query.ilike('name', `${safeOrIlike(params.search)}`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

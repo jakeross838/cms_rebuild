@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface ChangeOrderRow {
   id: string
@@ -55,7 +55,7 @@ export default async function ChangeOrdersPage({
   }
 
   if (params.search) {
-    query = query.or(`co_number.ilike.%${escapeLike(params.search)}%,title.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`co_number.ilike.${safeOrIlike(params.search)},title.ilike.${safeOrIlike(params.search)}`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

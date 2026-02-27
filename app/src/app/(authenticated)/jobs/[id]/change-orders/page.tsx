@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface ChangeOrder {
@@ -59,7 +59,7 @@ export default async function ChangeOrdersPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    coQuery = coQuery.or(`co_number.ilike.%${escapeLike(sp.search)}%,title.ilike.%${escapeLike(sp.search)}%`)
+    coQuery = coQuery.or(`co_number.ilike.${safeOrIlike(sp.search)},title.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: coData, count, error } = await coQuery

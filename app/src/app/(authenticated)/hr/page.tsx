@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate } from '@/lib/utils'
 
 interface Employee {
   id: string
@@ -58,7 +58,7 @@ export default async function HRWorkforcePage({
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
-    empQuery = empQuery.or(`first_name.ilike.%${escapeLike(params.search)}%,last_name.ilike.%${escapeLike(params.search)}%,employee_number.ilike.%${escapeLike(params.search)}%`)
+    empQuery = empQuery.or(`first_name.ilike.${safeOrIlike(params.search)},last_name.ilike.${safeOrIlike(params.search)},employee_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   empQuery = empQuery.range(offset, offset + pageSize - 1)

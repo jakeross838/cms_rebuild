@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 
 interface VendorRow {
   id: string
@@ -47,7 +47,7 @@ export default async function VendorsPage({
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)}`)
   }
 
   if (params.trade) {

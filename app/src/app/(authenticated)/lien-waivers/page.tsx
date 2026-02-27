@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Lien Waivers' }
@@ -65,7 +65,7 @@ export default async function LienWaiversPage({
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
-    query = query.ilike('claimant_name', `%${escapeLike(params.search)}%`)
+    query = query.ilike('claimant_name', `${safeOrIlike(params.search)}`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

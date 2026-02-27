@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Chart of Accounts' }
@@ -45,7 +45,7 @@ export default async function ChartOfAccountsPage({
   }
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%,account_number.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)},account_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: accountsData, error } = await query

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Warranties' }
@@ -49,7 +49,7 @@ export default async function JobWarrantiesPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    warrantiesQuery = warrantiesQuery.ilike('title', `%${escapeLike(sp.search)}%`)
+    warrantiesQuery = warrantiesQuery.ilike('title', `${safeOrIlike(sp.search)}`)
   }
 
   const { data: warrantiesData, count, error: warError } = await warrantiesQuery

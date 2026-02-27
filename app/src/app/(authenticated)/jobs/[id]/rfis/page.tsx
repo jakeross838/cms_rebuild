@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'RFIs' }
@@ -59,7 +59,7 @@ export default async function RFIsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    rfiQuery = rfiQuery.or(`rfi_number.ilike.%${escapeLike(sp.search)}%,subject.ilike.%${escapeLike(sp.search)}%`)
+    rfiQuery = rfiQuery.or(`rfi_number.ilike.${safeOrIlike(sp.search)},subject.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: rfiData, count, error } = await rfiQuery

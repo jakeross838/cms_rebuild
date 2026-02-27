@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency } from '@/lib/utils'
+import { safeOrIlike, formatCurrency } from '@/lib/utils'
 
 interface Integration {
   id: string
@@ -51,7 +51,7 @@ export default async function IntegrationsPage({
   }
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)},description.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: integrationsData, count, error } = await query.range(offset, offset + pageSize - 1)

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface CustomReport {
   id: string
@@ -40,7 +40,7 @@ export default async function DashboardsPage({
     .order('name', { ascending: true })
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)},description.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: reportsData, error } = await query

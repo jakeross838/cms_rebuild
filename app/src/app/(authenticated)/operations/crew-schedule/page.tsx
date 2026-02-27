@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency } from '@/lib/utils'
+import { safeOrIlike, formatCurrency } from '@/lib/utils'
 
 interface Employee {
   id: string
@@ -42,7 +42,7 @@ export default async function CrewSchedulePage({
     .order('last_name', { ascending: true })
 
   if (params.search) {
-    query = query.or(`first_name.ilike.%${escapeLike(params.search)}%,last_name.ilike.%${escapeLike(params.search)}%,employee_number.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`first_name.ilike.${safeOrIlike(params.search)},last_name.ilike.${safeOrIlike(params.search)},employee_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: employeesData, error } = await query

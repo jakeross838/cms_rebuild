@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 
 interface SubmittalRow {
   id: string
@@ -43,7 +43,7 @@ export default async function SubmittalsPage({
     .order('created_at', { ascending: false })
 
   if (params.search) {
-    query = query.or(`title.ilike.%${escapeLike(params.search)}%,submittal_number.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`title.ilike.${safeOrIlike(params.search)},submittal_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   if (params.status) {

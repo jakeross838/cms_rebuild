@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface JournalEntry {
   id: string
@@ -38,7 +38,7 @@ export default async function JournalEntriesPage({
     .order('entry_date', { ascending: false })
 
   if (params.search) {
-    query = query.or(`reference_number.ilike.%${escapeLike(params.search)}%,memo.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`reference_number.ilike.${safeOrIlike(params.search)},memo.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: entriesData, error } = await query

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency } from '@/lib/utils'
+import { safeOrIlike, formatCurrency } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface BudgetLine {
@@ -60,7 +60,7 @@ export default async function BudgetPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    linesQuery = linesQuery.ilike('description', `%${escapeLike(sp.search)}%`)
+    linesQuery = linesQuery.ilike('description', `${safeOrIlike(sp.search)}`)
   }
 
   const { data: linesData, count, error } = await linesQuery

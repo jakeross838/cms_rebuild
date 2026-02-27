@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface DailyLog {
@@ -59,7 +59,7 @@ export default async function DailyLogsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    logsQuery = logsQuery.or(`weather_summary.ilike.%${escapeLike(sp.search)}%,notes.ilike.%${escapeLike(sp.search)}%`)
+    logsQuery = logsQuery.or(`weather_summary.ilike.${safeOrIlike(sp.search)},notes.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: logsData, count, error } = await logsQuery

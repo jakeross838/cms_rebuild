@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate } from '@/lib/utils'
 import { Camera } from 'lucide-react'
 
 interface PhotoDocument {
@@ -39,7 +39,7 @@ export default async function PhotosPage({
     .range(offset, offset + pageSize - 1)
 
   if (params.search) {
-    query = query.ilike('filename', `%${escapeLike(params.search)}%`)
+    query = query.ilike('filename', `${safeOrIlike(params.search)}`)
   }
 
   const { data, count, error } = await query

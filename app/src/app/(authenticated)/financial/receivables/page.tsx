@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Accounts Receivable' }
@@ -40,7 +40,7 @@ export default async function ReceivablesPage({
     .order('due_date', { ascending: true })
 
   if (params.search) {
-    query = query.ilike('invoice_number', `%${escapeLike(params.search)}%`)
+    query = query.ilike('invoice_number', `${safeOrIlike(params.search)}`)
   }
 
   const { data: invoicesData, error } = await query

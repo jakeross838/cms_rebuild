@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike } from '@/lib/utils'
+import { safeOrIlike } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Financial Reports' }
@@ -40,7 +40,7 @@ export default async function FinancialReportsPage({
     .order('name', { ascending: true })
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%,description.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)},description.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: reportsData, count, error } = await query.range(offset, offset + pageSize - 1)

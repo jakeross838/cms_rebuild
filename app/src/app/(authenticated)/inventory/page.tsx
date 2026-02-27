@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatCurrency } from '@/lib/utils'
+import { safeOrIlike, formatCurrency } from '@/lib/utils'
 
 interface InventoryItem {
   id: string
@@ -49,7 +49,7 @@ export default async function InventoryPage({
   }
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%,sku.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)},sku.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: itemsData, count, error } = await query

@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -69,7 +69,7 @@ export default async function FilesPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    docsQuery = docsQuery.ilike('filename', `%${escapeLike(sp.search)}%`)
+    docsQuery = docsQuery.ilike('filename', `${safeOrIlike(sp.search)}`)
   }
 
   const { data: docsData, count, error } = await docsQuery

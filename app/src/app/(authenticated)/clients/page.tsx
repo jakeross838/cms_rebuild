@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate } from '@/lib/utils'
 
 interface ClientRow {
   id: string
@@ -49,7 +49,7 @@ export default async function ClientsPage({
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
-    query = query.or(`name.ilike.%${escapeLike(params.search)}%,email.ilike.%${escapeLike(params.search)}%`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)},email.ilike.${safeOrIlike(params.search)}`)
   }
 
   // lead_source filter deferred until column added to clients table

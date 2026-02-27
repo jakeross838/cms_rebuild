@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { escapeLike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Submittals' }
@@ -53,7 +53,7 @@ export default async function JobSubmittalsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    const searchTerm = `%${escapeLike(sp.search)}%`
+    const searchTerm = safeOrIlike(sp.search)
     submittalsQuery = submittalsQuery.or(`submittal_number.ilike.${searchTerm},title.ilike.${searchTerm}`)
   }
 
