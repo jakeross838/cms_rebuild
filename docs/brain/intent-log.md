@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 25 — Audit Actions, Multi-Tenant Security & PostgREST Injection Fix
+
+### Why (Audit Action Normalization)
+- Auto-generated audit action names from URL path segments had truncation bugs (plural 's' stripping caused `responses` → `respons`) and inconsistent plural/singular usage
+- Consistent naming is critical for audit log queries, alerting rules, and compliance reporting
+- All actions now follow `singular_entity.action` convention for grep-ability and consistency
+
+### Why (Multi-Tenant company_id Guards)
+- Three mutation queries updated records using `.eq('id', id)` without `.eq('company_id', ...)` on the mutation itself
+- While prior SELECT queries verified ownership, without the guard on the UPDATE/DELETE, a race condition or TOCTOU exploit could theoretically modify another tenant's data
+- Defense-in-depth: always include company_id on mutations, not just reads
+
+### Why (PostgREST Filter Injection Fix)
+- `escapeLike()` only escapes LIKE wildcards but NOT PostgREST `.or()` delimiters (commas, dots)
+- A search for `test,role.eq.admin` could potentially inject filter conditions
+- `safeOrIlike()` double-quotes the entire pattern, making commas and dots literal rather than syntactic
+- Fixed in all 61 authenticated search pages that use `.or()` filters
+
 ## 2026-02-26: Session 24 — Type Safety, Rate Limiting & Next.js 16 Migration
 
 ### Why (Client Auth Deduplication)

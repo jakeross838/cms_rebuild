@@ -1,5 +1,26 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 25 — Audit Actions, Multi-Tenant Security & PostgREST Injection Fix (2026-02-26)
+
+### Audit Action Name Fixes (14 + 23 files)
+- Fixed 7 truncated audit action names caused by plural-suffix stripping (e.g., `rfis_respons` → `rfi_response`, `training_cours` → `training_course`)
+- Normalized 10 plural patterns to singular convention (e.g., `advanced_reports_widget` → `advanced_report_widget`, `bid_packages_invitation` → `bid_package_invitation`)
+- All audit actions now follow consistent `singular_entity.action` naming
+
+### Multi-Tenant Security Hardening (2 files, 3 queries)
+- Added missing `company_id` guards on 3 mutation queries:
+  - `settings/phases/[id]` PATCH: `.update().eq('id', id)` → added `.eq('company_id', companyId)`
+  - `settings/phases/[id]` DELETE: `.update({deleted_at}).eq('id', id)` → added `.eq('company_id', companyId)`
+  - `workflows/[entityType]` PUT: `.update().eq('id', existing.id)` → added `.eq('company_id', ctx.companyId!)`
+- Defense-in-depth: prior SELECTs verified ownership, but mutations didn't re-check
+
+### PostgREST Filter Injection Fix (61 pages)
+- Replaced `escapeLike()` with `safeOrIlike()` in all `.or()` filter contexts
+- `escapeLike()` only escapes LIKE wildcards (`%`, `_`, `\`) but NOT commas and dots which are PostgREST `.or()` delimiters
+- `safeOrIlike()` double-quotes the value to prevent delimiter injection
+- A crafted search string with commas could have injected additional filter conditions
+- All 61 authenticated search pages now use proper quoting
+
 ## Session 24 — Type Safety, Rate Limiting & Next.js 16 Migration (2026-02-26)
 
 ### Client Auth Deduplication (121 client components migrated)

@@ -1,5 +1,30 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 25 — Audit Actions, Multi-Tenant Security & PostgREST Injection Fix (2026-02-26)
+
+### Audit Action Normalization
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero truncated audit actions | Grep for `_releas\.`, `_respons\.`, etc. returns 0 | pass |
+| Zero plural audit action prefixes | Grep for `assemblies_`, `bid_packages_`, etc. returns 0 | pass |
+| All actions follow singular_entity.action | Manual audit of auditAction strings | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Multi-Tenant Security
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| settings/phases PATCH has company_id guard | .eq('company_id', companyId) on update query | pass |
+| settings/phases DELETE has company_id guard | .eq('company_id', companyId) on archive query | pass |
+| workflows PUT has company_id guard | .eq('company_id', ctx.companyId!) on update query | pass |
+
+### PostgREST Filter Injection
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero escapeLike in .or() contexts | Grep for `.or(` + `escapeLike` returns 0 | pass |
+| All 61 pages use safeOrIlike | safeOrIlike import present in all search pages | pass |
+| safeOrIlike double-quotes values | Function wraps pattern in `"..."` | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
 ## Session 24 — Type Safety, Rate Limiting & Next.js 16 Migration (2026-02-26)
 
 ### Client Auth Deduplication
