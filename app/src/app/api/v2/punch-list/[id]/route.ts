@@ -135,12 +135,27 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify punch item exists
+    const { data: existing, error: existError } = await supabase
+      .from('punch_items')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Punch item not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('punch_items')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

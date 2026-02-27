@@ -72,6 +72,22 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify notification exists and belongs to user
+    const { data: existing, error: existError } = await supabase
+      .from('notifications')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .eq('user_id', ctx.user!.id)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Notification not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('notifications')
       .update({ archived: true })

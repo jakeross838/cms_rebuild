@@ -187,6 +187,22 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify purchase order exists
+    const { data: existing, error: existError } = await supabase
+      .from('purchase_orders')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Purchase order not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('purchase_orders')
       .update({ deleted_at: new Date().toISOString(), status: 'voided' })

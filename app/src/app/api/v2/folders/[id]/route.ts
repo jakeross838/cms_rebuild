@@ -99,6 +99,22 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify folder exists
+    const { data: existing, error: existError } = await supabase
+      .from('document_folders')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Folder not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     // Check for child folders
     const { data: children, error: childrenError } = await supabase
       .from('document_folders')

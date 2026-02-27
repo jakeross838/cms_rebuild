@@ -153,6 +153,23 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify document exists and is not already deleted
+    const { data: existing, error: existError } = await supabase
+      .from('documents')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .neq('status', 'deleted')
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Document not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('documents')
       .update({ status: 'archived', deleted_at: new Date().toISOString() })

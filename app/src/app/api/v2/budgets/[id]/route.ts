@@ -155,6 +155,22 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify budget exists
+    const { data: existing, error: existError } = await supabase
+      .from('budgets')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Budget not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('budgets')
       .update({ deleted_at: new Date().toISOString(), status: 'archived' })

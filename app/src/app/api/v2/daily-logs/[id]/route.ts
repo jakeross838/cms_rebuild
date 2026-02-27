@@ -145,6 +145,22 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify daily log exists
+    const { data: existing, error: existError } = await supabase
+      .from('daily_logs')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Daily log not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('daily_logs')
       .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
