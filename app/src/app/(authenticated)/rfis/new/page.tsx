@@ -34,7 +34,7 @@ export default function NewRfiPage() {
     rfi_number: '',
     subject: '',
     question: '',
-    priority: 'Medium',
+    priority: 'normal',
     category: '',
     due_date: '',
     cost_impact: '',
@@ -102,7 +102,7 @@ export default function NewRfiPage() {
           due_date: formData.due_date || undefined,
           cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : undefined,
           schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : undefined,
-          status: 'Open',
+          status: 'draft',
           created_by: authUser.id,
         })
         .select()
@@ -157,10 +157,10 @@ export default function NewRfiPage() {
               <div className="space-y-2">
                 <label htmlFor="priority" className="text-sm font-medium">Priority</label>
                 <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                  <option value="Urgent">Urgent</option>
+                  <option value="low">Low</option>
+                  <option value="normal">Normal</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
                 </select>
               </div>
               <div className="space-y-2">

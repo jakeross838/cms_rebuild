@@ -75,8 +75,8 @@ export default function ChangeOrderDetailPage() {
     co_number: '',
     title: '',
     description: '',
-    change_type: 'Addition',
-    status: 'Draft',
+    change_type: 'owner_requested',
+    status: 'draft',
     amount: '',
     cost_impact: '',
     schedule_impact_days: '',
@@ -105,7 +105,7 @@ export default function ChangeOrderDetailPage() {
         co_number: co.co_number || '',
         title: co.title,
         description: co.description || '',
-        change_type: co.change_type || 'Addition',
+        change_type: co.change_type || 'owner_requested',
         status: co.status || 'Draft',
         amount: co.amount != null ? String(co.amount) : '',
         cost_impact: co.cost_impact != null ? String(co.cost_impact) : '',
@@ -320,10 +320,11 @@ export default function ChangeOrderDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="Draft">Draft</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Approved">Approved</option>
-                      <option value="Rejected">Rejected</option>
+                      <option value="draft">Draft</option>
+                      <option value="pending_approval">Pending Approval</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="voided">Voided</option>
                     </select>
                   </div>
                 </div>
@@ -338,8 +339,12 @@ export default function ChangeOrderDetailPage() {
                 <div className="space-y-2">
                   <label htmlFor="change_type" className="text-sm font-medium">Change Type</label>
                   <select id="change_type" name="change_type" value={formData.change_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                    <option value="Addition">Addition</option>
-                    <option value="Deduction">Deduction</option>
+                    <option value="owner_requested">Owner Requested</option>
+                    <option value="field_condition">Field Condition</option>
+                    <option value="design_change">Design Change</option>
+                    <option value="regulatory">Regulatory</option>
+                    <option value="allowance">Allowance</option>
+                    <option value="credit">Credit</option>
                     <option value="Credit">Credit</option>
                     <option value="Allowance">Allowance</option>
                   </select>

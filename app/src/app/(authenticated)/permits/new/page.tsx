@@ -76,7 +76,7 @@ export default function NewPermitPage() {
           jurisdiction: formData.jurisdiction || null,
           applied_date: formData.applied_date || null,
           notes: formData.notes || null,
-          status: 'Applied',
+          status: 'applied',
           created_by: authUser.id,
         })
 

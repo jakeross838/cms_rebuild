@@ -45,7 +45,7 @@ interface PermitFormData {
   notes: string
 }
 
-const STATUS_OPTIONS = ['pending', 'applied', 'issued', 'active', 'expired', 'revoked']
+const STATUS_OPTIONS = ['draft', 'applied', 'issued', 'active', 'expired', 'closed', 'revoked']
 
 // ── Component ──────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ export default function PermitDetailPage() {
   const [formData, setFormData] = useState<PermitFormData>({
     permit_number: '',
     permit_type: '',
-    status: 'pending',
+    status: 'draft',
     jurisdiction: '',
     applied_date: '',
     issued_date: '',

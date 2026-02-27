@@ -52,7 +52,7 @@ interface VendorInfo {
   name: string
 }
 
-const PO_STATUSES = ['Draft', 'Pending', 'Approved', 'Sent', 'Received', 'Closed']
+const PO_STATUSES = ['draft', 'pending_approval', 'approved', 'sent', 'partially_received', 'received', 'closed', 'voided']
 
 // ── Component ────────────────────────────────────────────────────────
 
@@ -119,7 +119,7 @@ export default function PurchaseOrderDetailPage() {
       setFormData({
         po_number: poData.po_number || '',
         title: poData.title || '',
-        status: poData.status || 'Draft',
+        status: poData.status || 'draft',
         job_id: poData.job_id || '',
         vendor_id: poData.vendor_id || '',
         subtotal: poData.subtotal != null ? String(poData.subtotal) : '',

@@ -18,7 +18,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
-const BID_STATUSES = ['Draft', 'Open', 'Closed', 'Awarded']
+const BID_STATUSES = ['draft', 'published', 'closed', 'awarded', 'cancelled']
 
 interface BidPackageData {
   id: string
@@ -61,7 +61,7 @@ export default function BidPackageDetailPage() {
     description: '',
     scope_of_work: '',
     bid_due_date: '',
-    status: 'Draft',
+    status: 'draft',
   })
 
   // ── Load bid package ────────────────────────────────────────────────

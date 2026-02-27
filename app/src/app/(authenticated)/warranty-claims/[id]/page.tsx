@@ -68,8 +68,8 @@ export default function WarrantyClaimDetailPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    priority: 'Medium',
-    status: 'Open',
+    priority: 'normal',
+    status: 'submitted',
     due_date: '',
     resolution_notes: '',
     resolution_cost: '',
@@ -329,10 +329,10 @@ export default function WarrantyClaimDetailPage() {
                       onChange={handleChange}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Urgent">Urgent</option>
+                      <option value="low">Low</option>
+                      <option value="normal">Normal</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -344,10 +344,12 @@ export default function WarrantyClaimDetailPage() {
                       onChange={handleChange}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                      <option value="Open">Open</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Resolved">Resolved</option>
-                      <option value="Closed">Closed</option>
+                      <option value="submitted">Submitted</option>
+                      <option value="acknowledged">Acknowledged</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="resolved">Resolved</option>
+                      <option value="denied">Denied</option>
+                      <option value="escalated">Escalated</option>
                     </select>
                   </div>
                 </div>

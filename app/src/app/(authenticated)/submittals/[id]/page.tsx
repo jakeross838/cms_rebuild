@@ -56,7 +56,7 @@ export default function SubmittalDetailPage() {
     submitted_to: '',
     submission_date: '',
     required_date: '',
-    priority: 'Medium',
+    priority: 'normal',
     notes: '',
   })
 
@@ -327,10 +327,10 @@ export default function SubmittalDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="priority" className="text-sm font-medium">Priority</label>
                     <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Urgent">Urgent</option>
+                      <option value="low">Low</option>
+                      <option value="normal">Normal</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
                     </select>
                   </div>
                 </div>

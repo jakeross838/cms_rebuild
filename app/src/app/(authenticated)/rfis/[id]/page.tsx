@@ -39,20 +39,21 @@ interface RfiData {
 
 function statusVariant(status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
-    case 'Open': return 'default'
-    case 'In Review': return 'secondary'
-    case 'Answered': return 'outline'
-    case 'Closed': return 'secondary'
+    case 'open': return 'default'
+    case 'pending_response': return 'secondary'
+    case 'answered': return 'outline'
+    case 'closed': return 'secondary'
+    case 'voided': return 'destructive'
     default: return 'default'
   }
 }
 
 function priorityVariant(priority: string | null): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (priority) {
-    case 'Urgent': return 'destructive'
-    case 'High': return 'destructive'
-    case 'Medium': return 'default'
-    case 'Low': return 'secondary'
+    case 'urgent': return 'destructive'
+    case 'high': return 'destructive'
+    case 'normal': return 'default'
+    case 'low': return 'secondary'
     default: return 'outline'
   }
 }
@@ -79,8 +80,8 @@ export default function RfiDetailPage() {
     rfi_number: '',
     subject: '',
     question: '',
-    status: 'Open',
-    priority: 'Medium',
+    status: 'draft',
+    priority: 'normal',
     category: '',
     due_date: '',
     cost_impact: '',
@@ -322,10 +323,12 @@ export default function RfiDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="Open">Open</option>
-                      <option value="In Review">In Review</option>
-                      <option value="Answered">Answered</option>
-                      <option value="Closed">Closed</option>
+                      <option value="draft">Draft</option>
+                      <option value="open">Open</option>
+                      <option value="pending_response">Pending Response</option>
+                      <option value="answered">Answered</option>
+                      <option value="closed">Closed</option>
+                      <option value="voided">Voided</option>
                     </select>
                   </div>
                 </div>
@@ -341,10 +344,10 @@ export default function RfiDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="priority" className="text-sm font-medium">Priority</label>
                     <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Urgent">Urgent</option>
+                      <option value="low">Low</option>
+                      <option value="normal">Normal</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
                     </select>
                   </div>
                   <div className="space-y-2">

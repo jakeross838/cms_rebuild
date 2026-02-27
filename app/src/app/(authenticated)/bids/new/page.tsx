@@ -84,7 +84,7 @@ export default function NewBidPackagePage() {
           description: formData.description || null,
           scope_of_work: formData.scope_of_work || null,
           bid_due_date: formData.bid_due_date || null,
-          status: 'Draft',
+          status: 'draft',
           created_by: authUser.id,
         })
         .select()

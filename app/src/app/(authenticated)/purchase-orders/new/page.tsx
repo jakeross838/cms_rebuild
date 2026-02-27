@@ -123,7 +123,7 @@ export default function NewPurchaseOrderPage() {
           vendor_id: formData.vendor_id,
           po_number: formData.po_number || `PO-${Date.now()}`,
           title: formData.title,
-          status: 'Draft',
+          status: 'draft',
           subtotal,
           tax_amount: taxAmount,
           shipping_amount: shippingAmount,

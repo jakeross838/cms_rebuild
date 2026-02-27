@@ -34,7 +34,7 @@ export default function NewChangeOrderPage() {
     co_number: '',
     title: '',
     description: '',
-    change_type: 'Addition',
+    change_type: 'owner_requested',
     amount: '',
     cost_impact: '',
     schedule_impact_days: '',
@@ -92,7 +92,7 @@ export default function NewChangeOrderPage() {
           amount: formData.amount ? parseFloat(formData.amount) : null,
           cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
           schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
-          status: 'Draft',
+          status: 'draft',
           created_by: authUser.id,
         })
         .select()
@@ -154,10 +154,12 @@ export default function NewChangeOrderPage() {
             <div className="space-y-2">
               <label htmlFor="change_type" className="text-sm font-medium">Change Type</label>
               <select id="change_type" name="change_type" value={formData.change_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                <option value="Addition">Addition</option>
-                <option value="Deduction">Deduction</option>
-                <option value="Credit">Credit</option>
-                <option value="Allowance">Allowance</option>
+                <option value="owner_requested">Owner Requested</option>
+                <option value="field_condition">Field Condition</option>
+                <option value="design_change">Design Change</option>
+                <option value="regulatory">Regulatory</option>
+                <option value="allowance">Allowance</option>
+                <option value="credit">Credit</option>
               </select>
             </div>
           </CardContent>
