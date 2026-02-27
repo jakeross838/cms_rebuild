@@ -89,7 +89,6 @@ export function AuthProvider({
       try {
         const response = await fetch('/api/v1/auth/companies')
         if (!response.ok) {
-          console.error('[AuthProvider] Failed to fetch companies')
           toast.error('Failed to load companies')
           return
         }
@@ -114,8 +113,7 @@ export function AuthProvider({
             role: current.role as UserRole,
           })
         }
-      } catch (error) {
-        console.error('[AuthProvider] Failed to fetch companies:', error)
+      } catch {
         toast.error('Failed to load companies')
       }
     }
@@ -149,7 +147,6 @@ export function AuthProvider({
       })
 
       if (!response.ok) {
-        console.error('[AuthProvider] Failed to switch company')
         toast.error('Failed to switch company')
         return false
       }
@@ -169,8 +166,7 @@ export function AuthProvider({
       }
 
       return true
-    } catch (error) {
-      console.error('[AuthProvider] Error switching company:', error)
+    } catch {
       toast.error('Failed to switch company')
       return false
     } finally {

@@ -34,7 +34,6 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
       try {
         const response = await fetch('/api/v1/auth/companies')
         if (!response.ok) {
-          console.error('[TenantSwitcher] Failed to fetch companies')
           toast.error('Failed to load companies')
           return
         }
@@ -42,8 +41,7 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
         setCompanies(data.companies || [])
         const current = data.companies?.find((c: Company) => c.isCurrent)
         setCurrentCompany(current || null)
-      } catch (error) {
-        console.error('[TenantSwitcher] Error fetching companies:', error)
+      } catch {
         toast.error('Failed to load companies')
       } finally {
         setIsLoading(false)
@@ -67,8 +65,6 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
       })
 
       if (!response.ok) {
-        const data = await response.json()
-        console.error('[TenantSwitcher] Failed to switch company:', data.message)
         toast.error('Failed to switch company')
         return
       }
@@ -88,8 +84,7 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
       // Close dropdown and refresh the page to reload data with new company context
       setIsOpen(false)
       router.refresh()
-    } catch (error) {
-      console.error('[TenantSwitcher] Error switching company:', error)
+    } catch {
       toast.error('Failed to switch company')
     } finally {
       setIsSwitching(false)

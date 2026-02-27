@@ -120,7 +120,6 @@ export function UserTable({
 
       onStatusChange()
     } catch (err) {
-      console.error('Deactivate error:', err)
       toast.error((err as Error)?.message || 'Failed to deactivate user')
     } finally {
       setActionLoading(null)
@@ -144,7 +143,6 @@ export function UserTable({
 
       onStatusChange()
     } catch (err) {
-      console.error('Reactivate error:', err)
       toast.error((err as Error)?.message || 'Failed to reactivate user')
     } finally {
       setActionLoading(null)
