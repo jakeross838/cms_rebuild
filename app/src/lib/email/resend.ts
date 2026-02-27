@@ -10,6 +10,16 @@ import { createLogger } from '@/lib/monitoring'
 
 const logger = createLogger({ service: 'email' })
 
+/** Escape HTML special characters to prevent injection in email templates */
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // Lazy-init Resend client (only when API key is available)
 let _resend: Resend | null = null
 function getResendClient(): Resend | null {
@@ -101,7 +111,7 @@ export async function sendInviteEmail(params: {
 
   <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
     <p style="font-size: 16px; margin-bottom: 20px;">
-      <strong>${inviterName}</strong> has invited you to join <strong>${companyName}</strong> on RossOS as a <strong>${role}</strong>.
+      <strong>${esc(inviterName)}</strong> has invited you to join <strong>${esc(companyName)}</strong> on RossOS as a <strong>${esc(role)}</strong>.
     </p>
 
     <p style="font-size: 14px; color: #6b7280; margin-bottom: 30px;">
@@ -178,7 +188,7 @@ export async function sendPasswordResetEmail(params: {
 
   <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
     <p style="font-size: 16px; margin-bottom: 20px;">
-      ${greeting}
+      ${esc(greeting)}
     </p>
 
     <p style="font-size: 14px; color: #6b7280; margin-bottom: 30px;">
@@ -251,7 +261,7 @@ export async function sendWelcomeEmail(params: {
 
   <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
     <p style="font-size: 16px; margin-bottom: 20px;">
-      Hi ${userName},
+      Hi ${esc(userName)},
     </p>
 
     <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">
@@ -337,7 +347,7 @@ export async function sendVerificationEmail(params: {
 
   <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
     <p style="font-size: 16px; margin-bottom: 20px;">
-      ${greeting}
+      ${esc(greeting)}
     </p>
 
     <p style="font-size: 14px; color: #6b7280; margin-bottom: 30px;">
