@@ -129,7 +129,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/data-migration/jobs/:id/mappings/:mappingId — Hard delete
+// DELETE /api/v2/data-migration/jobs/:id/mappings/:mappingId — Soft delete
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -150,6 +150,7 @@ export const DELETE = createApiHandler(
       .eq('id', mappingId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -169,10 +170,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('migration_field_mappings')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', mappingId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

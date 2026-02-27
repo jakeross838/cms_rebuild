@@ -157,6 +157,7 @@ export const DELETE = createApiHandler(
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -168,10 +169,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('maintenance_tasks')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

@@ -1975,7 +1975,8 @@ export type Database = {
           sent_at: string | null
           status: string
           updated_at: string
-        }
+                  deleted_at: string | null
+}
         Insert: {
           campaign_id: string
           clicked_at?: string | null
@@ -1992,7 +1993,8 @@ export type Database = {
           sent_at?: string | null
           status?: string
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Update: {
           campaign_id?: string
           clicked_at?: string | null
@@ -2009,7 +2011,8 @@ export type Database = {
           sent_at?: string | null
           status?: string
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "campaign_contacts_campaign_id_fkey"
@@ -5923,6 +5926,7 @@ export type Database = {
           unit: string | null
           unit_cost: number | null
           updated_at: string
+          deleted_at: string | null
         }
         Insert: {
           ai_confidence?: string | null
@@ -5945,6 +5949,7 @@ export type Database = {
           unit?: string | null
           unit_cost?: number | null
           updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
           ai_confidence?: string | null
@@ -5967,6 +5972,7 @@ export type Database = {
           unit?: string | null
           unit_cost?: number | null
           updated_at?: string
+          deleted_at?: string | null
         }
         Relationships: [
           {
@@ -6483,21 +6489,24 @@ export type Database = {
           feature_request_id: string
           id: string
           user_id: string
-        }
+                  deleted_at: string | null
+}
         Insert: {
           company_id: string
           created_at?: string
           feature_request_id: string
           id?: string
           user_id: string
-        }
+                  deleted_at?: string | null
+}
         Update: {
           company_id?: string
           created_at?: string
           feature_request_id?: string
           id?: string
           user_id?: string
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "feature_request_votes_company_id_fkey"
@@ -8476,6 +8485,7 @@ export type Database = {
           status: string
           title: string
           updated_at: string
+          deleted_at: string | null
         }
         Insert: {
           actual_cost?: number | null
@@ -8491,6 +8501,7 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
           actual_cost?: number | null
@@ -8506,6 +8517,7 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
+          deleted_at?: string | null
         }
         Relationships: [
           {
@@ -9246,7 +9258,8 @@ export type Database = {
           transform_config: Json
           transform_type: string
           updated_at: string
-        }
+                  deleted_at: string | null
+}
         Insert: {
           company_id: string
           created_at?: string
@@ -9263,7 +9276,8 @@ export type Database = {
           transform_config?: Json
           transform_type?: string
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Update: {
           company_id?: string
           created_at?: string
@@ -9280,7 +9294,8 @@ export type Database = {
           transform_config?: Json
           transform_type?: string
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "migration_field_mappings_company_id_fkey"
@@ -10493,7 +10508,8 @@ export type Database = {
           permit_id: string
           uploaded_at: string
           uploaded_by: string | null
-        }
+                  deleted_at: string | null
+}
         Insert: {
           company_id: string
           created_at?: string
@@ -10505,7 +10521,8 @@ export type Database = {
           permit_id: string
           uploaded_at?: string
           uploaded_by?: string | null
-        }
+                  deleted_at?: string | null
+}
         Update: {
           company_id?: string
           created_at?: string
@@ -10517,7 +10534,8 @@ export type Database = {
           permit_id?: string
           uploaded_at?: string
           uploaded_by?: string | null
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "permit_documents_company_id_fkey"
@@ -10550,7 +10568,8 @@ export type Database = {
           receipt_url: string | null
           status: string
           updated_at: string
-        }
+                  deleted_at: string | null
+}
         Insert: {
           amount?: number
           company_id: string
@@ -10565,6 +10584,7 @@ export type Database = {
           receipt_url?: string | null
           status?: string
           updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
           amount?: number
@@ -10580,7 +10600,8 @@ export type Database = {
           receipt_url?: string | null
           status?: string
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "permit_fees_company_id_fkey"
@@ -11843,7 +11864,8 @@ export type Database = {
           punch_item_id: string
           uploaded_at: string
           uploaded_by: string | null
-        }
+                  deleted_at: string | null
+}
         Insert: {
           caption?: string | null
           company_id: string
@@ -11854,7 +11876,8 @@ export type Database = {
           punch_item_id: string
           uploaded_at?: string
           uploaded_by?: string | null
-        }
+                  deleted_at?: string | null
+}
         Update: {
           caption?: string | null
           company_id?: string
@@ -11865,7 +11888,8 @@ export type Database = {
           punch_item_id?: string
           uploaded_at?: string
           uploaded_by?: string | null
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "punch_item_photos_company_id_fkey"
@@ -12244,6 +12268,7 @@ export type Database = {
           sort_order: number
           template_id: string
           updated_at: string
+          deleted_at: string | null
         }
         Insert: {
           category?: string | null
@@ -12255,6 +12280,7 @@ export type Database = {
           sort_order?: number
           template_id: string
           updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
           category?: string | null
@@ -12266,6 +12292,7 @@ export type Database = {
           sort_order?: number
           template_id?: string
           updated_at?: string
+          deleted_at?: string | null
         }
         Relationships: [
           {
@@ -13125,7 +13152,8 @@ export type Database = {
           result: string
           sort_order: number
           updated_at: string
-        }
+                  deleted_at: string | null
+}
         Insert: {
           category?: string | null
           company_id: string
@@ -13138,7 +13166,8 @@ export type Database = {
           result?: string
           sort_order?: number
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Update: {
           category?: string | null
           company_id?: string
@@ -13151,7 +13180,8 @@ export type Database = {
           result?: string
           sort_order?: number
           updated_at?: string
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "safety_inspection_items_company_id_fkey"
@@ -15032,7 +15062,8 @@ export type Database = {
           signed_at: string | null
           talk_id: string
           trade: string | null
-        }
+                  deleted_at: string | null
+}
         Insert: {
           attendee_id?: string | null
           attendee_name: string
@@ -15045,7 +15076,8 @@ export type Database = {
           signed_at?: string | null
           talk_id: string
           trade?: string | null
-        }
+                  deleted_at?: string | null
+}
         Update: {
           attendee_id?: string | null
           attendee_name?: string
@@ -15058,7 +15090,8 @@ export type Database = {
           signed_at?: string | null
           talk_id?: string
           trade?: string | null
-        }
+                  deleted_at?: string | null
+}
         Relationships: [
           {
             foreignKeyName: "toolbox_talk_attendees_company_id_fkey"
@@ -15238,6 +15271,7 @@ export type Database = {
           path_id: string
           sort_order: number
           updated_at: string
+          deleted_at: string | null
         }
         Insert: {
           company_id?: string | null
@@ -15249,6 +15283,7 @@ export type Database = {
           path_id: string
           sort_order?: number
           updated_at?: string
+          deleted_at?: string | null
         }
         Update: {
           company_id?: string | null
@@ -15260,6 +15295,7 @@ export type Database = {
           path_id?: string
           sort_order?: number
           updated_at?: string
+          deleted_at?: string | null
         }
         Relationships: [
           {

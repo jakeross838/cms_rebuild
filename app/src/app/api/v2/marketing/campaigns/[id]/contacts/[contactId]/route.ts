@@ -151,12 +151,30 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
-    const { error } = await supabase
+    // Verify contact exists and is not already archived
+    const { data: existing, error: existError } = await supabase
       .from('campaign_contacts')
-      .delete()
+      .select('id')
       .eq('id', contactId)
       .eq('campaign_id', campaignId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+      .single()
+
+    if (existError || !existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Contact not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('campaign_contacts')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', contactId)
+      .eq('campaign_id', campaignId)
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

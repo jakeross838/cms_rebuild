@@ -100,6 +100,7 @@ export const DELETE = createApiHandler(
       .eq('id', itemId)
       .eq('path_id', pathId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -111,10 +112,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('training_path_items')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', itemId)
       .eq('path_id', pathId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

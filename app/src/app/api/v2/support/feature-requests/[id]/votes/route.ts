@@ -264,6 +264,7 @@ export const DELETE = createApiHandler(
       .eq('feature_request_id', featureRequestId)
       .eq('company_id', ctx.companyId!)
       .eq('user_id', userId)
+      .is('deleted_at', null)
       .single()
 
     if (voteCheckError && voteCheckError.code !== 'PGRST116') {
@@ -283,9 +284,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('feature_request_votes')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', existingVote.id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

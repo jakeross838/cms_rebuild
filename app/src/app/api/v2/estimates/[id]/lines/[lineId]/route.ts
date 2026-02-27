@@ -156,10 +156,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('estimate_line_items')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', lineId)
       .eq('estimate_id', estimateId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

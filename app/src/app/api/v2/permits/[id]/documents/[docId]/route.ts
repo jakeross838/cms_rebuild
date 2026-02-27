@@ -81,6 +81,7 @@ export const DELETE = createApiHandler(
       .eq('id', docId)
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -92,10 +93,11 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('permit_documents')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', docId)
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)
