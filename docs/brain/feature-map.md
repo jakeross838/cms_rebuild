@@ -1,5 +1,29 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 27 — Quality Hardening: Forms, Security, Build Fixes (2026-02-27)
+
+### Form Validation (35 create forms)
+- Added JS validation guards to 35 create forms across the entire app
+- Validates required fields BEFORE Supabase insert (prevents cryptic DB errors)
+- Fields validated: name, title, job_id, vendor_id, dates, contract_number, etc.
+- Pattern: `if (!formData.field.trim()) { setError('Field is required'); setLoading(false); return }`
+
+### Multi-Tenant Security (38 update queries)
+- Added `.eq('company_id', companyId)` to 38 update/archive queries in 19 job-nested detail pages
+- Both save and archive handlers now enforce company_id alongside job_id
+- Prevents cross-tenant data modification even if RLS is misconfigured
+
+### Build Error Fix (128 client components)
+- Removed illegal `export const metadata` from 128 client components
+- Next.js explicitly disallows metadata exports in `'use client'` files
+- Also removed orphaned `import type { Metadata }` from all affected files
+- This was causing 128 build errors in `next build`
+
+### Minor Fixes
+- `dashboards/[id]`: Replaced `.toLocaleDateString()` with `formatDate()` for consistency
+- `admin/page.tsx`: Replaced `select('*')` with `select('id')` on count-only queries
+- `clients/[id]`: Deduplicated local `US_STATES` array — now imports from `@/config/constants`
+
 ## Session 26 — Quality Hardening: SEO, Accessibility, Dead Code, RLS (2026-02-26)
 
 ### Accessibility Fix (filter-bar.tsx)

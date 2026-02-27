@@ -1,5 +1,28 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 27 — Quality Hardening: Forms, Security, Build Fixes
+
+### Why (Form Validation)
+- 35 create forms could submit empty required fields to Supabase, causing DB constraint errors
+- Users would see cryptic PostgREST messages instead of clear "Field is required" errors
+- Added JS validation checks before every `.insert()` call for required fields
+
+### Why (Multi-Tenant Update Guards)
+- 19 job-nested detail pages had `.update()` calls with only `.eq('job_id', jobId)` — missing company_id
+- RLS policies provide defense-in-depth, but application-layer guards are the first line of defense
+- Added `.eq('company_id', companyId)` to all 38 update/archive queries in these pages
+
+### Why (Metadata Removal from Client Components)
+- Session 26 added `export const metadata` to 128 pages — but 128 of those were client components
+- Next.js explicitly disallows metadata exports from 'use client' files (causes build errors)
+- Fix: removed the export and orphaned import from all 128 files
+- Server components still retain their metadata exports (added correctly in Session 26)
+
+### Why (Minor Fixes)
+- `toLocaleDateString()` produces locale-dependent output — replaced with `formatDate()` for consistency
+- `select('*')` on users table in count queries is wasteful — replaced with `select('id')`
+- Local `US_STATES` duplicate in clients/[id] violates DRY — now imports from constants
+
 ## 2026-02-26: Session 26 — Quality Hardening: SEO, Accessibility, Dead Code, RLS
 
 ### Why (Accessibility)

@@ -1,5 +1,43 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 27 — Quality Hardening: Forms, Security, Build Fixes (2026-02-27)
+
+### Form Validation
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All 35 create forms validate required fields | Submit with empty required field shows error | pass |
+| Validation prevents Supabase insert on empty fields | setError() called, setLoading(false), return | pass |
+| TypeScript compiles clean after changes | tsc --noEmit passes | pass |
+
+### Multi-Tenant Update Guards
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All 19 job-nested detail pages have company_id on .update() | `.eq('company_id', companyId)` present | pass |
+| All 19 job-nested detail pages have company_id on archive | `.eq('company_id', companyId)` present | pass |
+| Non-job detail pages (39) have company_id on all mutations | Verified by Explore agent | pass |
+
+### Build Fix
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| No metadata exports in client components | grep returns 0 matches | pass |
+| No orphaned Metadata imports in client components | grep returns 0 matches | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Audits Passed (No Fixes Needed)
+| Audit | Result |
+|-------|--------|
+| Server/client Supabase client split | 100% correct (122 client, 0 violations) |
+| Soft-delete filters on list pages | 50+ pages all compliant |
+| Archive handlers company_id guards (non-job) | All 39 detail pages secure |
+| Toast notification consistency | 128 files, 100% using sonner |
+| Error handling in catch blocks | 28+ forms, all have toast + setError |
+| Select accessibility (label/htmlFor pairs) | 59 forms, 100% compliant |
+| Required HTML attribute on required fields | 59 forms, 100% compliant |
+| Edit page security | All 20 pages have company_id guards |
+| No TODOs in production code | Zero matches in authenticated pages |
+| No console.log in production code | Zero matches in authenticated pages |
+| No hard deletes on business entities | Only child line-item replace patterns |
+
 ## Session 26 — Quality Hardening: SEO, Accessibility, Dead Code, RLS (2026-02-26)
 
 ### Accessibility
