@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Textarea } from '@/components/ui/textarea'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -41,6 +42,10 @@ export default function BidPackageDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [bid, setBid] = useState<BidPackageData | null>(null)
   const [jobInfo, setJobInfo] = useState<JobInfo | null>(null)
   const [loading, setLoading] = useState(true)
@@ -48,7 +53,6 @@ export default function BidPackageDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -63,12 +67,7 @@ export default function BidPackageDetailPage() {
   // ── Load bid package ────────────────────────────────────────────────
   useEffect(() => {
     async function loadBid() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      setCompanyId(companyId)
       const { data, error: fetchError } = await supabase
         .from('bid_packages')
         .select('*')
@@ -109,7 +108,7 @@ export default function BidPackageDetailPage() {
       setLoading(false)
     }
     loadBid()
-  }, [params.id, supabase])
+  }, [params.id, supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

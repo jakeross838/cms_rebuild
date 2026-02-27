@@ -10,12 +10,17 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 export default function NewPunchItemPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -39,16 +44,6 @@ export default function NewPunchItemPage() {
 
   useEffect(() => {
     async function loadDropdowns() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
       const [jobsRes, usersRes] = await Promise.all([
@@ -60,7 +55,7 @@ export default function NewPunchItemPage() {
       if (usersRes.data) setUsers(usersRes.data)
     }
     loadDropdowns()
-  }, [])
+  }, [, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -73,17 +68,7 @@ export default function NewPunchItemPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const { error: insertError } = await supabase
         .from('punch_items')
@@ -100,7 +85,7 @@ export default function NewPunchItemPage() {
           description: formData.description || null,
           due_date: formData.due_date || null,
           cost_estimate: formData.cost_estimate ? parseFloat(formData.cost_estimate) : null,
-          created_by: user.id,
+          created_by: authUser.id,
         })
 
       if (insertError) throw insertError

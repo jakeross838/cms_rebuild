@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -42,6 +43,10 @@ export default function InsurancePolicyDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [policy, setPolicy] = useState<InsurancePolicyData | null>(null)
   const [vendors, setVendors] = useState<VendorLookup[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,7 +56,6 @@ export default function InsurancePolicyDetailPage() {
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState({
     vendor_id: '',
@@ -65,12 +69,7 @@ export default function InsurancePolicyDetailPage() {
 
   useEffect(() => {
     async function loadData() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      setCompanyId(companyId)
 
       const [policyRes, vendorsRes] = await Promise.all([
         supabase
@@ -102,7 +101,7 @@ export default function InsurancePolicyDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase])
+  }, [params.id, supabase, companyId])
 
   const vendorName = vendors.find((v) => v.id === policy?.vendor_id)?.name || 'Unknown Vendor'
 

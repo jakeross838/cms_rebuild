@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -67,6 +68,10 @@ export default function SafetyIncidentDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [incident, setIncident] = useState<SafetyIncidentData | null>(null)
   const [jobs, setJobs] = useState<JobLookup[]>([])
   const [loading, setLoading] = useState(true)
@@ -74,7 +79,6 @@ export default function SafetyIncidentDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -103,12 +107,7 @@ export default function SafetyIncidentDetailPage() {
   useEffect(() => {
     async function loadData() {
       // Get current user's company_id for tenant-scoped dropdown queries
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      setCompanyId(companyId)
 
       const [incidentRes, jobsRes] = await Promise.all([
         supabase
@@ -154,7 +153,7 @@ export default function SafetyIncidentDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase])
+  }, [params.id, supabase, companyId])
 
   const jobName = jobs.find((j) => j.id === incident?.job_id)?.name || 'Unknown Job'
 

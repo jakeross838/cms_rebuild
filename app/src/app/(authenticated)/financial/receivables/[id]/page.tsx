@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -48,6 +49,10 @@ export default function ARInvoiceDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [invoice, setInvoice] = useState<ARInvoiceData | null>(null)
   const [clients, setClients] = useState<ClientLookup[]>([])
   const [jobs, setJobs] = useState<JobLookup[]>([])
@@ -56,7 +61,6 @@ export default function ARInvoiceDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -75,12 +79,7 @@ export default function ARInvoiceDetailPage() {
   useEffect(() => {
     async function loadData() {
       // Get current user's company_id for tenant-scoped dropdown queries
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      setCompanyId(companyId)
 
       const [invoiceRes, clientsRes, jobsRes] = await Promise.all([
         supabase
@@ -119,7 +118,7 @@ export default function ARInvoiceDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase])
+  }, [params.id, supabase, companyId])
 
   const clientName = clients.find((c) => c.id === invoice?.client_id)?.name || 'Unknown Client'
   const jobName = jobs.find((j) => j.id === invoice?.job_id)?.name

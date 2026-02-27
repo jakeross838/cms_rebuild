@@ -11,12 +11,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { CONTRACT_TYPES, US_STATES } from '@/config/constants'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 export default function NewJobPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -46,17 +51,7 @@ export default function NewJobPage() {
 
     try {
       // Get user's company_id
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const { data: job, error: insertError } = await supabase
         .from('jobs')

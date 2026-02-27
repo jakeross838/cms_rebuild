@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -52,6 +53,10 @@ export default function DrawRequestDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const drawId = params.drawId as string
 
@@ -62,7 +67,6 @@ export default function DrawRequestDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<DrawRequestFormData>({
     draw_number: '',
@@ -77,15 +81,10 @@ export default function DrawRequestDetailPage() {
 
   useEffect(() => {
     async function loadDraw() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const cid = profile?.company_id
-      if (!cid) { setError('No company found'); setLoading(false); return }
-      setCompanyId(cid)
+      if (!companyId) { setError('No company found'); setLoading(false); return }
 
       // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', cid).single()
+      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
       if (!jobCheck) { setError('Job not found'); setLoading(false); return }
 
       const { data, error: fetchError } = await supabase
@@ -117,7 +116,7 @@ export default function DrawRequestDetailPage() {
       setLoading(false)
     }
     loadDraw()
-  }, [jobId, drawId, supabase])
+  }, [jobId, drawId, supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

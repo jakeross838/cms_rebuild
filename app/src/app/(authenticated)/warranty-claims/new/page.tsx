@@ -10,12 +10,17 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 export default function NewWarrantyClaimPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,16 +43,6 @@ export default function NewWarrantyClaimPage() {
 
   useEffect(() => {
     async function loadDropdowns() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
       const [jobsRes, warrantiesRes] = await Promise.all([
@@ -59,7 +54,7 @@ export default function NewWarrantyClaimPage() {
       if (warrantiesRes.data) setWarranties(warrantiesRes.data as { id: string; title: string; job_id: string | null }[])
     }
     loadDropdowns()
-  }, [])
+  }, [, companyId])
 
   // Filter warranties by selected job (if a job is selected)
   const filteredWarranties = formData.job_id
@@ -82,17 +77,7 @@ export default function NewWarrantyClaimPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const claimNumber = `WC-${Date.now().toString(36).toUpperCase()}`
 
@@ -108,8 +93,8 @@ export default function NewWarrantyClaimPage() {
         reported_date: formData.reported_date || undefined,
         due_date: formData.due_date || undefined,
         resolution_notes: formData.resolution_notes || null,
-        reported_by: user.id,
-        created_by: user.id,
+        reported_by: authUser.id,
+        created_by: authUser.id,
       }
 
       const { error: insertError } = await supabase

@@ -10,12 +10,17 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 export default function NewSupportTicketPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -37,29 +42,19 @@ export default function NewSupportTicketPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const ticketNumber = `TKT-${Date.now().toString(36).toUpperCase()}`
 
       const insertPayload: Record<string, unknown> = {
         company_id: companyId,
-        user_id: user.id,
+        user_id: authUser.id,
         subject: formData.subject,
         description: formData.description || undefined,
         priority: formData.priority.toLowerCase(),
         status: 'open',
         channel: 'web',
-        created_by: user.id,
+        created_by: authUser.id,
         ticket_number: ticketNumber,
       }
       if (formData.category) insertPayload.category = formData.category

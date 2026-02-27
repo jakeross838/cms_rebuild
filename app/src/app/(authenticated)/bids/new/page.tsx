@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -22,6 +23,10 @@ interface JobOption {
 export default function NewBidPackagePage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<JobOption[]>([])
@@ -39,16 +44,6 @@ export default function NewBidPackagePage() {
   // ── Load jobs for selector ──────────────────────────────────────────
   useEffect(() => {
     async function loadJobs() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
       const { data } = await supabase
@@ -62,7 +57,7 @@ export default function NewBidPackagePage() {
       setJobsLoading(false)
     }
     loadJobs()
-  }, [supabase])
+  }, [supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -75,17 +70,7 @@ export default function NewBidPackagePage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const { error: insertError } = await supabase
         .from('bid_packages')
@@ -98,7 +83,7 @@ export default function NewBidPackagePage() {
           scope_of_work: formData.scope_of_work || null,
           bid_due_date: formData.bid_due_date || null,
           status: 'Draft',
-          created_by: user.id,
+          created_by: authUser.id,
         })
         .select()
         .single()

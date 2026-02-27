@@ -9,6 +9,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -35,6 +36,10 @@ export default function NewTeamMemberPage() {
   const params = useParams()
   const jobId = params.id as string
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [loadingUsers, setLoadingUsers] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -47,25 +52,7 @@ export default function NewTeamMemberPage() {
 
   useEffect(() => {
     async function loadUsers() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setError('Not authenticated')
-        setLoadingUsers(false)
-        return
-      }
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) {
-        setError('No company found')
-        setLoadingUsers(false)
-        return
-      }
+      if (!companyId) { setLoadingUsers(false); return }
 
       const { data, error: fetchError } = await supabase
         .from('users')
@@ -82,7 +69,7 @@ export default function NewTeamMemberPage() {
       setLoadingUsers(false)
     }
     loadUsers()
-  }, [supabase])
+  }, [supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -95,17 +82,7 @@ export default function NewTeamMemberPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       // Verify job belongs to company
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
@@ -122,7 +99,7 @@ export default function NewTeamMemberPage() {
           user_id: formData.user_id,
           job_id: jobId,
           role_override: (formData.role_override || null) as RoleOverride | null,
-          granted_by: user.id,
+          granted_by: authUser.id,
         })
 
       if (insertError) throw insertError

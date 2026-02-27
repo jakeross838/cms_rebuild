@@ -10,12 +10,17 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 export default function NewLienLawRecordPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -35,18 +40,7 @@ export default function NewLienLawRecordPage() {
   // Load jobs and vendors for dropdowns
   useEffect(() => {
     async function loadDropdownData() {
-      const { data: userData } = await supabase.auth.getUser()
-      if (!userData.user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', userData.user.id)
-        .single()
-
-      if (!profile?.company_id) return
-
-      const companyId = profile.company_id
+      if (!companyId) return
 
       const [jobsResult, vendorsResult] = await Promise.all([
         supabase
@@ -68,8 +62,7 @@ export default function NewLienLawRecordPage() {
     }
 
     loadDropdownData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -91,22 +84,12 @@ export default function NewLienLawRecordPage() {
         return
       }
 
-      // Get current user's company_id
-      const { data: userData } = await supabase.auth.getUser()
-      if (!userData.user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', userData.user.id)
-        .single()
-
-      if (!profile?.company_id) throw new Error('No company found')
+      if (!companyId) throw new Error('No company found')
 
       const { error: insertError } = await supabase
         .from('lien_waiver_tracking')
         .insert({
-          company_id: profile.company_id,
+          company_id: companyId,
           job_id: formData.job_id,
           vendor_id: formData.vendor_id || undefined,
           expected_amount: formData.expected_amount ? Number(formData.expected_amount) : null,

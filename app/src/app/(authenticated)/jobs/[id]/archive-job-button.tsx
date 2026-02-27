@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -15,13 +16,14 @@ export function ArchiveJobButton({ jobId }: { jobId: string }) {
   const router = useRouter()
   const supabase = createClient()
 
+  const { profile: authProfile } = useAuth()
+
   const handleConfirmArchive = async () => {
     setArchiving(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Not authenticated'); setArchiving(false); return }
-    const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-    const companyId = profile?.company_id
+    const companyId = authProfile?.company_id
+
+
     if (!companyId) { toast.error('No company found'); setArchiving(false); return }
 
     const { error } = await supabase

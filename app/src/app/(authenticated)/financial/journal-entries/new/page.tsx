@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
@@ -35,6 +36,10 @@ interface JournalLine {
 export default function NewJournalEntryPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [accounts, setAccounts] = useState<AccountOption[]>([])
@@ -54,16 +59,6 @@ export default function NewJournalEntryPage() {
 
   useEffect(() => {
     async function loadAccounts() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
       const { data } = await supabase
@@ -76,7 +71,7 @@ export default function NewJournalEntryPage() {
       if (data) setAccounts(data as AccountOption[])
     }
     loadAccounts()
-  }, [])
+  }, [, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -122,17 +117,7 @@ export default function NewJournalEntryPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       // Create the journal entry header
       const { data: entry, error: entryError } = await supabase
@@ -144,7 +129,7 @@ export default function NewJournalEntryPage() {
           memo: formData.memo || null,
           status: formData.status,
           source_type: formData.source_type,
-          created_by: user.id,
+          created_by: authUser.id,
         })
         .select('id')
         .single()

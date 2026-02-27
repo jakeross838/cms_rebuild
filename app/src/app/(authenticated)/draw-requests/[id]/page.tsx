@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -77,13 +78,16 @@ export default function DrawRequestDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [draw, setDraw] = useState<DrawRequestData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -105,12 +109,7 @@ export default function DrawRequestDetailPage() {
 
   useEffect(() => {
     async function loadDraw() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      setCompanyId(companyId)
       const { data, error: fetchError } = await supabase
         .from('draw_requests')
         .select('*')
@@ -146,7 +145,7 @@ export default function DrawRequestDetailPage() {
       setLoading(false)
     }
     loadDraw()
-  }, [params.id, supabase])
+  }, [params.id, supabase, companyId])
 
   const handleChange = (
     e: React.ChangeEvent<

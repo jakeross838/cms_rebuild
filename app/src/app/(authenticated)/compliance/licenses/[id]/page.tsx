@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -50,6 +51,10 @@ export default function LicenseDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const certId = params.id as string
 
   const [cert, setCert] = useState<CertificationData | null>(null)
@@ -60,7 +65,6 @@ export default function LicenseDetailPage() {
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<CertificationFormData>({
     certification_name: '',
@@ -75,12 +79,7 @@ export default function LicenseDetailPage() {
 
   useEffect(() => {
     async function loadCertification() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      setCompanyId(companyId)
 
       const { data, error: fetchError } = await supabase
         .from('employee_certifications')
@@ -110,7 +109,7 @@ export default function LicenseDetailPage() {
       setLoading(false)
     }
     loadCertification()
-  }, [certId, supabase])
+  }, [certId, supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target

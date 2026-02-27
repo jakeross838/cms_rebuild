@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -21,6 +22,10 @@ interface SelectOption {
 export default function NewWarrantyPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<SelectOption[]>([])
@@ -43,16 +48,6 @@ export default function NewWarrantyPage() {
 
   useEffect(() => {
     async function loadOptions() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
       const { data: jobsData } = await supabase
@@ -80,7 +75,7 @@ export default function NewWarrantyPage() {
       })))
     }
     loadOptions()
-  }, [supabase])
+  }, [supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -93,17 +88,7 @@ export default function NewWarrantyPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const { error: insertError } = await supabase
         .from('warranties')
@@ -122,7 +107,7 @@ export default function NewWarrantyPage() {
           contact_email: formData.contact_email || null,
           contact_phone: formData.contact_phone || null,
           description: formData.description || null,
-          created_by: user.id,
+          created_by: authUser.id,
         })
 
       if (insertError) throw insertError

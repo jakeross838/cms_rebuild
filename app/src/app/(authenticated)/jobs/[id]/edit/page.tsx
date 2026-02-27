@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -55,13 +56,16 @@ export default function EditJobPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const [companyId, setCompanyId] = useState<string>('')
 
   const [formData, setFormData] = useState<JobFormData>({
     name: '',
@@ -80,18 +84,13 @@ export default function EditJobPage() {
 
   useEffect(() => {
     async function loadJob() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const cid = profile?.company_id
-      if (!cid) { setError('No company found'); setLoading(false); return }
-      setCompanyId(cid)
+      if (!companyId) { setError('No company found'); setLoading(false); return }
 
       const { data, error: fetchError } = await supabase
         .from('jobs')
         .select('*')
         .eq('id', jobId)
-        .eq('company_id', cid)
+        .eq('company_id', companyId)
         .single()
 
       if (fetchError || !data) {
@@ -118,7 +117,7 @@ export default function EditJobPage() {
       setLoading(false)
     }
     loadJob()
-  }, [jobId, supabase])
+  }, [jobId, supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -21,6 +22,10 @@ interface SelectOption {
 export default function NewSubmittalPage() {
   const router = useRouter()
   const supabase = createClient()
+
+  const { profile: authProfile, user: authUser } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<SelectOption[]>([])
@@ -40,16 +45,6 @@ export default function NewSubmittalPage() {
 
   useEffect(() => {
     async function loadOptions() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
       if (!companyId) return
 
       const { data: jobsData } = await supabase
@@ -65,7 +60,7 @@ export default function NewSubmittalPage() {
       })))
     }
     loadOptions()
-  }, [supabase])
+  }, [supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -81,17 +76,7 @@ export default function NewSubmittalPage() {
       if (!formData.job_id) throw new Error('Please select a job')
       if (!formData.submittal_number) throw new Error('Submittal number is required')
 
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const companyId = (profile as { company_id: string } | null)?.company_id
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       const { error: insertError } = await supabase
         .from('submittals')
@@ -103,13 +88,13 @@ export default function NewSubmittalPage() {
           description: formData.description || null,
           spec_section: formData.spec_section || null,
           submitted_to: formData.submitted_to || null,
-          submitted_by: user.id,
+          submitted_by: authUser.id,
           submission_date: formData.submission_date || null,
           required_date: formData.required_date || null,
           priority: formData.priority,
           status: 'draft',
           notes: formData.notes || null,
-          created_by: user.id,
+          created_by: authUser.id,
         })
         .select()
         .single()

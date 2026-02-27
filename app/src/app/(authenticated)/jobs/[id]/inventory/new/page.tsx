@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -25,11 +26,13 @@ export default function NewInventoryTransactionPage() {
   const params = useParams()
   const jobId = params.id as string
   const supabase = createClient()
+  const { profile: authProfile, user: authUser } = useAuth()
+  const companyId = authProfile?.company_id || ''
   const [loading, setLoading] = useState(false)
   const [loadingItems, setLoadingItems] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<InventoryItem[]>([])
-  const [companyId, setCompanyId] = useState<string | null>(null)
+
 
   const [formData, setFormData] = useState({
     item_id: '',
@@ -41,32 +44,12 @@ export default function NewInventoryTransactionPage() {
 
   useEffect(() => {
     async function loadItems() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setError('Not authenticated')
-        setLoadingItems(false)
-        return
-      }
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('company_id')
-        .eq('id', user.id)
-        .single()
-
-      const resolvedCompanyId = (profile as { company_id: string } | null)?.company_id
-      if (!resolvedCompanyId) {
-        setError('No company found')
-        setLoadingItems(false)
-        return
-      }
-
-      setCompanyId(resolvedCompanyId)
+      if (!companyId) { setLoadingItems(false); return }
 
       const { data, error: fetchError } = await supabase
         .from('inventory_items')
         .select('id, name, sku, unit_of_measure')
-        .eq('company_id', resolvedCompanyId)
+        .eq('company_id', companyId)
         .is('deleted_at', null)
         .eq('is_active', true)
         .order('name', { ascending: true })
@@ -79,7 +62,7 @@ export default function NewInventoryTransactionPage() {
       setLoadingItems(false)
     }
     loadItems()
-  }, [supabase])
+  }, [supabase, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -92,10 +75,7 @@ export default function NewInventoryTransactionPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      if (!companyId) throw new Error('No company found')
+      if (!authUser || !companyId) throw new Error('Not authenticated')
 
       // Verify job belongs to company
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
@@ -114,7 +94,7 @@ export default function NewInventoryTransactionPage() {
           quantity: parseFloat(formData.quantity),
           unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : null,
           notes: formData.notes || null,
-          performed_by: user.id,
+          performed_by: authUser.id,
         })
 
       if (insertError) throw insertError

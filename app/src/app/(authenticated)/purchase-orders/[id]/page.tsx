@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -60,6 +61,10 @@ export default function PurchaseOrderDetailPage() {
   const router = useRouter()
   const supabase = createClient()
 
+  const { profile: authProfile } = useAuth()
+
+  const companyId = authProfile?.company_id || ''
+
   const [po, setPo] = useState<PurchaseOrderData | null>(null)
   const [job, setJob] = useState<JobInfo | null>(null)
   const [vendor, setVendor] = useState<VendorInfo | null>(null)
@@ -69,7 +74,6 @@ export default function PurchaseOrderDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [companyId, setCompanyId] = useState<string | null>(null)
 
   // ── Options for edit mode selectors ──
   const [jobs, setJobs] = useState<JobInfo[]>([])
@@ -94,18 +98,13 @@ export default function PurchaseOrderDetailPage() {
 
   useEffect(() => {
     async function loadPurchaseOrder() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Not authenticated'); setLoading(false); return }
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const cid = (profile as { company_id: string } | null)?.company_id
-      if (!cid) { setError('No company found'); setLoading(false); return }
-      setCompanyId(cid)
+      if (!companyId) { setError('No company found'); setLoading(false); return }
 
       const { data, error: fetchError } = await supabase
         .from('purchase_orders')
         .select('*')
         .eq('id', params.id as string)
-        .eq('company_id', cid)
+        .eq('company_id', companyId)
         .is('deleted_at', null)
         .single()
 
@@ -138,7 +137,7 @@ export default function PurchaseOrderDetailPage() {
           .from('jobs')
           .select('id, name, job_number')
           .eq('id', poData.job_id)
-          .eq('company_id', cid)
+          .eq('company_id', companyId)
           .single()
         if (jobData) setJob(jobData as JobInfo)
       }
@@ -148,7 +147,7 @@ export default function PurchaseOrderDetailPage() {
           .from('vendors')
           .select('id, name')
           .eq('id', poData.vendor_id)
-          .eq('company_id', cid)
+          .eq('company_id', companyId)
           .single()
         if (vendorData) setVendor(vendorData as VendorInfo)
       }
@@ -156,7 +155,7 @@ export default function PurchaseOrderDetailPage() {
       setLoading(false)
     }
     loadPurchaseOrder()
-  }, [params.id, supabase])
+  }, [params.id, supabase, companyId])
 
   // ── Load job/vendor options when entering edit mode ──
 
@@ -164,11 +163,6 @@ export default function PurchaseOrderDetailPage() {
     if (!editing) return
 
     async function loadOptions() {
-      // Get current user's company_id for tenant-scoped dropdown queries
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-      const companyId = profile?.company_id
       if (!companyId) return
 
       const [jobsResult, vendorsResult] = await Promise.all([
@@ -179,7 +173,7 @@ export default function PurchaseOrderDetailPage() {
       setVendors((vendorsResult.data || []) as VendorInfo[])
     }
     loadOptions()
-  }, [editing, supabase])
+  }, [editing, supabase, companyId])
 
   // ── Handlers ──
 
@@ -217,7 +211,7 @@ export default function PurchaseOrderDetailPage() {
           notes: formData.notes || undefined,
         })
         .eq('id', params.id as string)
-        .eq('company_id', companyId!)
+        .eq('company_id', companyId)
 
       if (updateError) throw updateError
 
@@ -270,7 +264,7 @@ export default function PurchaseOrderDetailPage() {
       .from('purchase_orders')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', params.id as string)
-      .eq('company_id', companyId!)
+      .eq('company_id', companyId)
 
     if (deleteError) {
       setError('Failed to archive purchase order')
