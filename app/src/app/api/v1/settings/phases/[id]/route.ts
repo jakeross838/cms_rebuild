@@ -65,7 +65,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext, { params }: RoutePa
 export function GET(req: NextRequest, routeParams: RouteParams) {
   return createApiHandler(
     (r, c) => handleGet(r, c, routeParams),
-    { requireAuth: true }
+    { requireAuth: true, rateLimit: 'api' }
   )(req)
 }
 
@@ -202,8 +202,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
 export function PATCH(req: NextRequest, routeParams: RouteParams) {
   return createApiHandler(
     (r, c) => handlePatch(r, c, routeParams),
-    {
-      requireAuth: true,
+    { requireAuth: true, rateLimit: 'api',
       requiredRoles: ['owner', 'admin'],
       auditAction: 'settings.phases.update',
     }
@@ -265,8 +264,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
 export function DELETE(req: NextRequest, routeParams: RouteParams) {
   return createApiHandler(
     (r, c) => handleDelete(r, c, routeParams),
-    {
-      requireAuth: true,
+    { requireAuth: true, rateLimit: 'api',
       requiredRoles: ['owner', 'admin'],
       auditAction: 'settings.phases.delete',
     }

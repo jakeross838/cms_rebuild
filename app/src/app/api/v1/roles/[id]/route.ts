@@ -47,8 +47,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: role, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'roles:read:all',
   }
 )
@@ -122,8 +121,7 @@ export const PATCH = createApiHandler(
 
     return NextResponse.json({ data: updated, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: updateRoleSchema,
     permission: 'roles:update:all',
@@ -191,8 +189,7 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     permission: 'roles:delete:all',
     auditAction: 'role.delete',

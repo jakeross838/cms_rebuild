@@ -78,7 +78,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({ data: data ?? [], total: (data ?? []).length, requestId: ctx.requestId })
 }
 
-export const GET = createApiHandler(handleGet, { requireAuth: true })
+export const GET = createApiHandler(handleGet, { requireAuth: true, rateLimit: 'api' })
 
 // ============================================================================
 // POST — Create a custom field definition
@@ -181,8 +181,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
 }
 
-export const POST = createApiHandler(handlePost, {
-  requireAuth: true,
+export const POST = createApiHandler(handlePost, { requireAuth: true, rateLimit: 'api',
   requiredRoles: ['owner', 'admin'],
   schema: createCustomFieldSchema,
   auditAction: 'custom_field.create',

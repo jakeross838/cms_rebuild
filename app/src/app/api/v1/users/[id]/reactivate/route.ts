@@ -115,8 +115,7 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: reactivatedUser, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     permission: 'users:update:all',
     auditAction: 'user.reactivate',

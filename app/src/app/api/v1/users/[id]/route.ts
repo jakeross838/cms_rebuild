@@ -62,8 +62,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: user, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'users:read:all',
   }
 )
@@ -177,8 +176,7 @@ export const PATCH = createApiHandler(
 
     return NextResponse.json({ data: updatedUser, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     schema: updateUserSchema,
     auditAction: 'user.update',
   }

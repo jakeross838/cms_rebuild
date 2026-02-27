@@ -40,8 +40,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   })
 }
 
-export const GET = createApiHandler(handleGet, {
-  requireAuth: true,
+export const GET = createApiHandler(handleGet, { requireAuth: true, rateLimit: 'api',
 })
 
 // ============================================================================
@@ -88,8 +87,7 @@ async function handlePatch(_req: NextRequest, ctx: ApiContext) {
   })
 }
 
-export const PATCH = createApiHandler(handlePatch, {
-  requireAuth: true,
+export const PATCH = createApiHandler(handlePatch, { requireAuth: true, rateLimit: 'api',
   requiredRoles: ['owner', 'admin'],
   schema: updateTerminologySchema,
   auditAction: 'settings.terminology.update',
@@ -126,8 +124,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   })
 }
 
-export const POST = createApiHandler(handlePost, {
-  requireAuth: true,
+export const POST = createApiHandler(handlePost, { requireAuth: true, rateLimit: 'api',
   requiredRoles: ['owner', 'admin'],
   schema: resetTerminologySchema,
   auditAction: 'settings.terminology.reset',

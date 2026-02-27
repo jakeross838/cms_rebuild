@@ -106,8 +106,7 @@ export const GET = createApiHandler(
       { ...paginatedResponse(costCodes ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
     )
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'cost_codes:read:all',
   }
 )
@@ -145,8 +144,7 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: costCode, requestId: ctx.requestId }, { status: 201 })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: createCostCodeSchema,
     permission: 'cost_codes:create:all',

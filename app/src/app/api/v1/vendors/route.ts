@@ -94,8 +94,7 @@ export const GET = createApiHandler(
       { ...paginatedResponse(vendors ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
     )
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'vendors:read:all',
   }
 )
@@ -133,8 +132,7 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: vendor, requestId: ctx.requestId }, { status: 201 })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: createVendorSchema,
     permission: 'vendors:create:all',

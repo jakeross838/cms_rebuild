@@ -43,8 +43,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ ...paginatedResponse(sorted, count ?? 0, page, limit), requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'roles:read:all',
   }
 )
@@ -88,8 +87,7 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: role, requestId: ctx.requestId }, { status: 201 })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: createRoleSchema,
     permission: 'roles:create:all',

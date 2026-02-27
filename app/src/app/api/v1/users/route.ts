@@ -112,8 +112,7 @@ export const GET = createApiHandler(
       { ...paginatedResponse(users ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
     )
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'users:read:all',
   }
 )
@@ -297,8 +296,7 @@ export const POST = createApiHandler(
       { status: 201 }
     )
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin', 'pm'],
     schema: inviteUserSchema,
     permission: 'users:create:all',

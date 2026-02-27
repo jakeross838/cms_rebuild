@@ -70,8 +70,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   })
 }
 
-export const GET = createApiHandler(handleGet, {
-  requireAuth: true,
+export const GET = createApiHandler(handleGet, { requireAuth: true, rateLimit: 'api',
 })
 
 // ============================================================================
@@ -247,8 +246,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
   })
 }
 
-export const PATCH = createApiHandler(handlePatch, {
-  requireAuth: true,
+export const PATCH = createApiHandler(handlePatch, { requireAuth: true, rateLimit: 'api',
   requiredRoles: ['owner', 'admin'],
   schema: updateCompanySchema,
   auditAction: 'settings.company.update',

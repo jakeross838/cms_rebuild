@@ -59,8 +59,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   })
 }
 
-export const GET = createApiHandler(handleGet, {
-  requireAuth: true,
+export const GET = createApiHandler(handleGet, { requireAuth: true, rateLimit: 'api',
 })
 
 // ============================================================================
@@ -154,8 +153,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
   }, { status: 201 })
 }
 
-export const POST = createApiHandler(handlePost, {
-  requireAuth: true,
+export const POST = createApiHandler(handlePost, { requireAuth: true, rateLimit: 'api',
   requiredRoles: ['owner', 'admin'],
   schema: createPhaseSchema,
   auditAction: 'settings.phases.create',

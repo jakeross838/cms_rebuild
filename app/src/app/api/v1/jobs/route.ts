@@ -119,8 +119,7 @@ export const GET = createApiHandler(
       { ...paginatedResponse(jobs ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
     )
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'jobs:read:all',
   }
 )
@@ -158,8 +157,7 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: job, requestId: ctx.requestId }, { status: 201 })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin', 'pm'],
     schema: createJobSchema,
     permission: 'jobs:create:all',

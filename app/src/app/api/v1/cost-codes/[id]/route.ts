@@ -58,8 +58,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: costCode, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     permission: 'cost_codes:read:all',
   }
 )
@@ -125,8 +124,7 @@ export const PATCH = createApiHandler(
 
     return NextResponse.json({ data: updated, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: updateCostCodeSchema,
     permission: 'cost_codes:update:all',
@@ -173,8 +171,7 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: deleted, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     permission: 'cost_codes:delete:all',
     auditAction: 'cost_code.delete',

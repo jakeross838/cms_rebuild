@@ -87,5 +87,5 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ docs, requestId: ctx.requestId })
   },
-  { requireAuth: true, requiredRoles: ['owner', 'admin'] }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin'] }
 )

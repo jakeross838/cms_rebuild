@@ -55,7 +55,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({ data: data ?? [], total: (data ?? []).length, requestId: ctx.requestId })
 }
 
-export const GET = createApiHandler(handleGet, { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'] })
+export const GET = createApiHandler(handleGet, { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'] })
 
 // ============================================================================
 // PUT — Create or update workflow for entity type
@@ -218,8 +218,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
   return NextResponse.json({ data, requestId: ctx.requestId }, { status: existing ? 200 : 201 })
 }
 
-export const PUT = createApiHandler(handlePut, {
-  requireAuth: true,
+export const PUT = createApiHandler(handlePut, { requireAuth: true, rateLimit: 'api',
   requiredRoles: ['owner', 'admin'],
   schema: updateWorkflowSchema,
   auditAction: 'workflow.update',

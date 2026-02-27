@@ -35,5 +35,5 @@ export const GET = createApiHandler(
       return NextResponse.json({ error: 'Gap tracker not found', requestId: ctx.requestId }, { status: 404 })
     }
   },
-  { requireAuth: true, requiredRoles: ['owner', 'admin'] }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin'] }
 )

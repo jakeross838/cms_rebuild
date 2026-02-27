@@ -145,8 +145,7 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: deactivatedUser, requestId: ctx.requestId })
   },
-  {
-    requireAuth: true,
+  { requireAuth: true, rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     permission: 'users:update:all',
     auditAction: 'user.deactivate',
