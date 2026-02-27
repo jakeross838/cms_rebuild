@@ -1,5 +1,34 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 24 — Type Safety, Rate Limiting & Next.js 16 Migration (2026-02-26)
+
+### Client Auth Deduplication (121 client components migrated)
+- Migrated 121 client component files from redundant `supabase.from('users').select('company_id')` queries to `useAuth()` hook
+- Pattern: `const { profile: authProfile } = useAuth()` → `authProfile?.company_id` (SSR-hydrated, immediately available)
+- Net: 672 lines of boilerplate removed, 121 redundant DB queries eliminated per client-side page load
+
+### RPC Type Safety (5 files + database.ts)
+- Added 4 missing RPC function types to `database.ts` Functions section: `apply_payment_to_bill`, `apply_receipt_to_invoice`, `increment_install_count`, `increment_po_line_received`
+- Removed all 5 `as any` casts from API routes and config files that called RPCs
+- Zero `as any` and zero `eslint-disable` comments remain in entire codebase
+
+### setTimeout Memory Leak Fix (side-drawer-context.tsx)
+- Fixed setTimeout leak in `closeDrawer()` — added `useRef` for timer, `useCallback` for handler, cleanup `useEffect` on unmount
+- Prevents ghost timeouts when drawer unmounts before animation completes
+
+### Explicit Rate Limiting (27 API routes)
+- Added `rateLimit: 'api'` to all 27 v1 API routes that were relying on default
+- All 468 API routes now have explicit rate limiting visible at the route level
+
+### Next.js 16 Migration (middleware → proxy)
+- Renamed `middleware.ts` → `proxy.ts` and exported function `middleware` → `proxy`
+- Added `turbopack.root` to `next.config.ts` to fix workspace detection
+- Build now produces zero warnings
+
+### Empty Catch Block Documentation (2 auth routes)
+- Added explanatory comments to 2 empty `.catch(() => {})` blocks in auth signup/accept-invite
+- Both are best-effort cleanup of failed auth user accounts (non-critical operations)
+
 ## Session 22 — Query Optimization & Production Hardening (2026-02-26)
 
 ### Cached Server Auth Utility (117 server component pages migrated)

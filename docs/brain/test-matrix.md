@@ -1,5 +1,48 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 24 — Type Safety, Rate Limiting & Next.js 16 Migration (2026-02-26)
+
+### Client Auth Deduplication
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 121 client components use useAuth() | No redundant company_id queries | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+| All 3309 tests pass after migration | 56/56 files, 3309/3309 tests | pass |
+| useAuth().profile.company_id immediately available | SSR-hydrated, no async delay | pass |
+
+### RPC Type Safety
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 4 RPC functions typed in database.ts | apply_payment_to_bill, apply_receipt_to_invoice, increment_install_count, increment_po_line_received | pass |
+| Zero `as any` casts remain | Grep for `as any` returns 0 | pass |
+| Zero eslint-disable comments remain | Grep for `eslint-disable` returns 0 | pass |
+| TypeScript compiles clean after RPC fixes | tsc --noEmit passes | pass |
+
+### Rate Limiting
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 27 v1 API routes have explicit rateLimit | All include `rateLimit: 'api'` | pass |
+| All auth routes use 'auth' rate limit | 8/8 auth routes with `rateLimit: 'auth'` | pass |
+| All v2 routes have explicit rate limiting | Pre-existing from build time | pass |
+
+### Next.js 16 Migration
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| proxy.ts replaces middleware.ts | File renamed, function renamed | pass |
+| Build produces zero warnings | No turbopack or deprecation warnings | pass |
+| All tests pass after migration | 3309/3309 tests | pass |
+| Build compiles successfully (508 pages) | next build exits 0 | pass |
+
+### Security Audit
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero SQL injection vectors | All queries use Supabase PostgREST | pass |
+| Zero hardcoded secrets | All via env vars + Zod validation | pass |
+| All routes require auth | Only login/signup/health exempt | pass |
+| Error responses don't leak details | Dev-only error messages, sanitized in prod | pass |
+| Zero dangerouslySetInnerHTML | None found | pass |
+| Zero direct DOM manipulation | None found in React components | pass |
+
 ## Session 22 — Query Optimization & Production Hardening (2026-02-26)
 
 ### Cached getServerAuth

@@ -1,5 +1,31 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 24 — Type Safety, Rate Limiting & Next.js 16 Migration
+
+### Why (Client Auth Deduplication)
+- 121 client component files independently queried `supabase.from('users').select('company_id')` on every page load
+- The `useAuth()` hook provides `profile.company_id` from SSR-hydrated context, eliminating 121 redundant queries
+- `profile?.company_id` used instead of `currentCompany?.id` because profile is SSR-hydrated (immediate), while currentCompany requires an async API call
+
+### Why (RPC Type Safety)
+- 5 `as any` casts in API routes and config bypassed TypeScript safety on Supabase RPC calls
+- Adding proper function types to `database.ts` makes RPC args/returns type-checked at compile time
+- Zero `as any` and zero `eslint-disable` comments now remain — complete type coverage
+
+### Why (Rate Limit Explicitness)
+- 27 API routes relied on middleware default `rateLimit: 'api'` without declaring it
+- Making rate limits explicit improves auditability — you can grep for routes and see their rate limit tier
+- All 468 routes now have visible rate limiting config
+
+### Why (Next.js 16 Proxy Migration)
+- Next.js 16 deprecated `middleware.ts` file convention in favor of `proxy.ts`
+- Build was producing deprecation warning on every build
+- Migrating now prevents future breakage when Next.js removes backwards compatibility
+
+### Why (Build Warning Cleanup)
+- Two build warnings (turbopack root, middleware deprecation) were noise in CI/CD output
+- Clean builds make real errors visible immediately
+
 ## 2026-02-26: Session 22 — Query Optimization & Production Hardening
 
 ### Why (Cached getServerAuth)
