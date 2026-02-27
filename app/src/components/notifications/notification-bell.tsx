@@ -90,6 +90,7 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen(!open)}
         className="relative inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent transition-colors"
+        aria-label="Notifications"
       >
         <Bell className="h-5 w-5 text-muted-foreground" />
         {unreadCount > 0 ? (
@@ -157,7 +158,7 @@ export function NotificationBell() {
                         archiveNotification(notification.id)
                       }}
                       className="mt-0.5 p-1 rounded hover:bg-muted text-muted-foreground opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
-                      title="Dismiss"
+                      aria-label="Dismiss notification"
                     >
                       <X className="h-3 w-3" />
                     </button>
