@@ -66,7 +66,7 @@ export const POST = createApiHandler(
     // Fetch the full user profile
     const { data: profile, error: profileError } = await supabase
       .from('users')
-      .select('*')
+      .select('id, company_id, email, name, phone, avatar_url, is_active, last_login_at, preferences, role, created_at, updated_at')
       .eq('id', authData.user.id)
       .single() as { data: User | null; error: unknown }
 

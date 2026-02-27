@@ -62,7 +62,7 @@ export const GET = createApiHandler(
     // Build query — always scoped to company
     let query = supabase
       .from('users')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, email, name, phone, avatar_url, is_active, last_login_at, preferences, role, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!) as unknown as {
         eq: (col: string, val: unknown) => typeof query
         is: (col: string, val: unknown) => typeof query

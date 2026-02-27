@@ -32,7 +32,7 @@ export const GET = createApiHandler(
     // Fetch full user profile (exclude soft-deleted)
     const { data: profile, error: profileError } = await supabase
       .from('users')
-      .select('*')
+      .select('id, company_id, email, name, phone, avatar_url, is_active, last_login_at, preferences, role, created_at, updated_at')
       .eq('id', ctx.user.id)
       .is('deleted_at', null)
       .single() as { data: User | null; error: unknown }

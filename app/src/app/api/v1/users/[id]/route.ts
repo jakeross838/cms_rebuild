@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('*')
+      .select('id, company_id, email, name, phone, avatar_url, is_active, last_login_at, preferences, role, created_at, updated_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .eq('is_active', true)
@@ -117,7 +117,7 @@ export const PATCH = createApiHandler(
     // Verify the target user exists in the same company (exclude deactivated)
     const { data: existingUser, error: fetchError } = await supabase
       .from('users')
-      .select('*')
+      .select('id, company_id, email, name, phone, avatar_url, is_active, last_login_at, preferences, role, created_at, updated_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .eq('is_active', true)
