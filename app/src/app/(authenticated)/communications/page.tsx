@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate } from '@/lib/utils'
+import { formatDate , formatStatus } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
@@ -85,7 +85,7 @@ export default async function CommunicationsPage({
                     {item.communication_type && (
                       <Badge variant="secondary">{item.communication_type}</Badge>
                     )}
-                    <Badge variant="outline">{item.status}</Badge>
+                    <Badge variant="outline">{formatStatus(item.status)}</Badge>
                   </div>
                 </li>
               ))}

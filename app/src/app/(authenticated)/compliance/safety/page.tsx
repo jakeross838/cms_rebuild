@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface SafetyIncident {
   id: string
@@ -112,7 +112,7 @@ export default async function SafetyPage({
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-mono text-muted-foreground">{inc.incident_number}</span>
                           <span className="font-medium">{inc.title}</span>
-                          <Badge className={getStatusColor(inc.status)}>{inc.status}</Badge>
+                          <Badge className={getStatusColor(inc.status)}>{formatStatus(inc.status)}</Badge>
                           <Badge variant="outline" className="text-xs">{inc.severity}</Badge>
                           {inc.osha_recordable && <Badge className="text-red-700 bg-red-100">OSHA</Badge>}
                         </div>
@@ -151,7 +151,7 @@ export default async function SafetyPage({
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-mono text-muted-foreground">{insp.inspection_number}</span>
                           <span className="font-medium">{insp.title}</span>
-                          <Badge className={getStatusColor(insp.status)}>{insp.status}</Badge>
+                          <Badge className={getStatusColor(insp.status)}>{formatStatus(insp.status)}</Badge>
                           <Badge variant="outline" className="text-xs">{insp.inspection_type}</Badge>
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface CustomReport {
   id: string
@@ -78,7 +78,7 @@ export default async function DashboardsPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{report.name}</span>
-                        <Badge className={getStatusColor(report.status)}>{report.status}</Badge>
+                        <Badge className={getStatusColor(report.status)}>{formatStatus(report.status)}</Badge>
                         <Badge variant="outline" className="text-xs">{report.visualization_type}</Badge>
                         <Badge variant="outline" className="text-xs">{report.audience}</Badge>
                         {report.is_template && <Badge variant="outline" className="text-xs">Template</Badge>}

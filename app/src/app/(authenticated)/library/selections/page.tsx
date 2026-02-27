@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface SelectionCategory {
   id: string
@@ -85,7 +85,7 @@ export default async function SelectionsCatalogPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{cat.name}</span>
-                        <Badge className={getStatusColor(cat.status)}>{cat.status}</Badge>
+                        <Badge className={getStatusColor(cat.status)}>{formatStatus(cat.status)}</Badge>
                         <Badge variant="outline" className="text-xs">{cat.pricing_model}</Badge>
                         {cat.room && <Badge variant="outline" className="text-xs">{cat.room}</Badge>}
                       </div>

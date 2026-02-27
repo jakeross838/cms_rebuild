@@ -6,7 +6,7 @@ import { CheckSquare, Briefcase } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface Job {
   id: string
@@ -88,7 +88,7 @@ export default async function JobClosePage() {
                     <div className="flex items-center gap-2">
                       {job.job_number && <span className="text-sm font-mono text-muted-foreground">{job.job_number}</span>}
                       <span className="font-medium">{job.name}</span>
-                      {job.status && <Badge className={getStatusColor(job.status)}>{job.status}</Badge>}
+                      {job.status && <Badge className={getStatusColor(job.status)}>{formatStatus(job.status)}</Badge>}
                     </div>
                     <div className="text-right">
                       {job.contract_amount && <span className="font-medium">{formatCurrency(job.contract_amount)}</span>}
@@ -118,7 +118,7 @@ export default async function JobClosePage() {
                     <div className="flex items-center gap-2">
                       {job.job_number && <span className="text-sm font-mono text-muted-foreground">{job.job_number}</span>}
                       <span className="font-medium">{job.name}</span>
-                      {job.status && <Badge variant="outline" className="text-xs">{job.status}</Badge>}
+                      {job.status && <Badge variant="outline" className="text-xs">{formatStatus(job.status)}</Badge>}
                     </div>
                     {job.contract_amount && <span className="font-medium">{formatCurrency(job.contract_amount)}</span>}
                   </div>

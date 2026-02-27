@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate , formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types --------------------------------------------------------------------
@@ -218,7 +218,7 @@ export default function ChangeOrderDetailPage() {
             </div>
             <p className="text-muted-foreground">
               {changeOrder.co_number ? `${changeOrder.co_number} \u00b7 ` : ''}
-              {changeOrder.change_type ? `${changeOrder.change_type} \u00b7 ` : ''}
+              {changeOrder.change_type ? `${formatStatus(changeOrder.change_type)} \u00b7 ` : ''}
               Created {formatDate(changeOrder.created_at) || 'Unknown'}
             </p>
           </div>
@@ -265,7 +265,7 @@ export default function ChangeOrderDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Change Type</dt>
-                    <dd className="font-medium">{changeOrder.change_type || 'None'}</dd>
+                    <dd className="font-medium">{changeOrder.change_type ? formatStatus(changeOrder.change_type) : 'None'}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Amount</dt>

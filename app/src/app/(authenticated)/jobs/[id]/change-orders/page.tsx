@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface ChangeOrder {
@@ -150,7 +150,7 @@ export default async function ChangeOrdersPage({
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{co.description}</p>
                       )}
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                        {co.change_type && <span>{co.change_type.replace('_', ' ')}</span>}
+                        {co.change_type && <span>{formatStatus(co.change_type)}</span>}
                         {co.created_at && <span>Created {formatDate(co.created_at)}</span>}
                         {co.schedule_impact_days != null && co.schedule_impact_days !== 0 && (
                           <span className="text-amber-600">{co.schedule_impact_days > 0 ? '+' : ''}{co.schedule_impact_days} days</span>

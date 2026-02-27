@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface ChangeOrderRow {
   id: string
@@ -184,7 +184,7 @@ export default async function ChangeOrdersPage({
                           <div className="text-sm text-muted-foreground mt-0.5">
                             {job?.job_number ? `${job.job_number} - ` : ''}
                             {job?.name || 'Unknown job'}
-                            {co.change_type ? ` | ${co.change_type.replace('_', ' ')}` : ''}
+                            {co.change_type ? ` | ${formatStatus(co.change_type)}` : ''}
                             {co.schedule_impact_days ? ` | ${co.schedule_impact_days} day impact` : ''}
                           </div>
                         </div>

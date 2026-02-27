@@ -5,7 +5,7 @@ import { Building2, Calendar } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface FinancialPeriod {
   id: string
@@ -88,7 +88,7 @@ export default async function BusinessManagementPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{period.period_name}</span>
-                        <Badge className={getStatusColor(period.status)}>{period.status}</Badge>
+                        <Badge className={getStatusColor(period.status)}>{formatStatus(period.status)}</Badge>
                         {period.fiscal_quarter && <Badge variant="outline" className="text-xs">Q{period.fiscal_quarter}</Badge>}
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">

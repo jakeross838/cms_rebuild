@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
@@ -272,7 +272,7 @@ export default function ChangeOrderDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Change Type</p>
-                    <p className="font-medium">{co.change_type ? co.change_type.charAt(0).toUpperCase() + co.change_type.slice(1) : 'Not specified'}</p>
+                    <p className="font-medium">{co.change_type ? formatStatus(co.change_type) : 'Not specified'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Schedule Impact</p>

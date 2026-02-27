@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface Estimate {
   id: string
@@ -108,7 +108,7 @@ export default async function ProposalsPage({
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium">{est.name}</span>
-                        <Badge className={getStatusColor(est.status)}>{est.status}</Badge>
+                        <Badge className={getStatusColor(est.status)}>{formatStatus(est.status)}</Badge>
                         <Badge variant="outline" className="text-xs">v{est.version}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1 ml-6">

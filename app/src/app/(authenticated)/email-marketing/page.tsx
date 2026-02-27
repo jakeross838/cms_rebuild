@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface MarketingCampaign {
   id: string
@@ -115,7 +115,7 @@ export default async function EmailMarketingPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{campaign.name}</span>
-                        <Badge className={getStatusColor(campaign.status)}>{campaign.status}</Badge>
+                        <Badge className={getStatusColor(campaign.status)}>{formatStatus(campaign.status)}</Badge>
                         <Badge variant="outline" className="text-xs">{campaign.campaign_type}</Badge>
                         {campaign.channel && <Badge variant="outline" className="text-xs">{campaign.channel}</Badge>}
                       </div>

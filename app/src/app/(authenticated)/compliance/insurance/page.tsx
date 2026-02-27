@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
 interface VendorInsurance {
   id: string
@@ -89,7 +89,7 @@ export default async function InsurancePage({
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{pol.carrier_name}</span>
                         <Badge variant="outline" className="text-xs">{pol.insurance_type}</Badge>
-                        <Badge className={getStatusColor(pol.status)}>{pol.status}</Badge>
+                        <Badge className={getStatusColor(pol.status)}>{formatStatus(pol.status)}</Badge>
                         {pol.verified_at && <Badge className="text-green-700 bg-green-100">Verified</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">

@@ -5,7 +5,7 @@ import { TrendingUp, Briefcase } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency , formatStatus } from '@/lib/utils'
 
 interface JobSummary {
   id: string
@@ -77,7 +77,7 @@ export default async function ProfitabilityPage() {
                     <div className="flex items-center gap-2">
                       {job.job_number && <span className="text-sm font-mono text-muted-foreground">{job.job_number}</span>}
                       <span className="font-medium">{job.name}</span>
-                      {job.status && <Badge variant="outline" className="text-xs">{job.status}</Badge>}
+                      {job.status && <Badge variant="outline" className="text-xs">{formatStatus(job.status)}</Badge>}
                     </div>
                     <span className="font-medium">
                       {job.contract_amount ? formatCurrency(job.contract_amount) : '—'}
