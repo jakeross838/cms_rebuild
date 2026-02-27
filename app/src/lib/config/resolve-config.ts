@@ -347,7 +347,7 @@ export async function updateCompanySetting(
 ): Promise<void> {
   const supabase = await createClient()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('tenant_configs')
     .upsert({
@@ -376,7 +376,7 @@ export async function updateCompanySettings(
 ): Promise<void> {
   const supabase = await createClient()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('tenant_configs')
     .upsert(

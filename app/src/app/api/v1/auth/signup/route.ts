@@ -193,7 +193,7 @@ export const POST = createApiHandler(
     } catch (err) {
       logger.error('[Signup] Unexpected error', { error: (err as Error)?.message })
       // Attempt cleanup
-      await admin.auth.admin.deleteUser(authUserId).catch(() => {})
+      await admin.auth.admin.deleteUser(authUserId).catch(() => { /* best-effort cleanup */ })
       return NextResponse.json(
         {
           error: 'Internal Server Error',

@@ -199,7 +199,7 @@ export const POST = createApiHandler(
       logger.error('[AcceptInvite] Failed to create user profile', { error: profileError?.message })
       // If we created a new auth user, we should clean up
       if (!existingAuthUser) {
-        await admin.auth.admin.deleteUser(authUserId).catch(() => {})
+        await admin.auth.admin.deleteUser(authUserId).catch(() => { /* best-effort cleanup */ })
       }
       return NextResponse.json(
         {

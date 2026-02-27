@@ -258,7 +258,7 @@ export async function setTerminology(
     return
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('terminology_overrides')
     .upsert({
@@ -292,7 +292,7 @@ export async function setTerminologyBulk(
 ): Promise<void> {
   const supabase = await createClient()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('terminology_overrides')
     .upsert(

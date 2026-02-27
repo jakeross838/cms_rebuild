@@ -410,7 +410,7 @@ export async function setFeatureFlag(
 
   const definition = FEATURE_FLAG_DEFINITIONS.find((d) => d.key === flagKey)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('feature_flags')
     .upsert({
@@ -443,7 +443,7 @@ export async function setFeatureFlags(
 
   const now = new Date().toISOString()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('feature_flags')
     .upsert(

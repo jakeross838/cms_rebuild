@@ -195,7 +195,7 @@ export async function setNumberingPattern(
     padding: input.padding || defaultPattern.padding,
   } as NumberingPattern, 1)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('numbering_patterns')
     .upsert({
@@ -229,7 +229,7 @@ export async function resetSequence(
 ): Promise<void> {
   const supabase = await createClient()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { error } = await supabase
     .from('numbering_patterns')
     .update({ current_sequence: newValue })
@@ -389,7 +389,7 @@ async function generateNumberManually(
     const seqData = seqDataRaw as SequenceRow | null
     if (seqData) {
       sequence = seqData.current_value + 1
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
       await supabase
         .from('numbering_sequences')
         .update({ current_value: sequence })
@@ -398,7 +398,7 @@ async function generateNumberManually(
         .eq('year', year)
     } else {
       sequence = 1
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
       await supabase
         .from('numbering_sequences')
         .insert({
@@ -414,7 +414,7 @@ async function generateNumberManually(
     sequence = pattern.currentSequence + 1
 
     if (pattern.id) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
       await supabase
         .from('numbering_patterns')
         .update({ current_sequence: sequence })
@@ -422,7 +422,7 @@ async function generateNumberManually(
     } else {
       // Create the pattern if it doesn't exist
       const defaultPattern = DEFAULT_PATTERNS[entityType]
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
       await supabase
         .from('numbering_patterns')
         .insert({
