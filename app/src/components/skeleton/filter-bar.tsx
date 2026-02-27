@@ -139,6 +139,7 @@ export function FilterBar({
                 placeholder={searchPlaceholder ?? 'Search...'}
                 value={search ?? ''}
                 onChange={(e) => onSearchChange(e.target.value)}
+                aria-label={searchPlaceholder ?? 'Search'}
                 className="pl-8 pr-3 py-1.5 text-xs border border-warm-200 rounded-md w-48 bg-white focus:outline-none focus:border-stone-400 focus:shadow-[var(--shadow-focus)]"
               />
             </div> : null}
@@ -177,7 +178,7 @@ export function FilterBar({
               {activeSort && onSortDirectionChange ? <button
                   onClick={onSortDirectionChange}
                   className="p-1.5 text-warm-500 hover:bg-warm-100 rounded-lg transition-colors"
-                  title={sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                  aria-label={sortDirection === 'asc' ? 'Sort ascending' : 'Sort descending'}
                 >
                   {sortDirection === 'asc' ? (
                     <ArrowUp className="h-3.5 w-3.5" />
@@ -212,7 +213,7 @@ export function FilterBar({
                     ? 'bg-stone-50 text-stone-600'
                     : 'text-warm-400 hover:bg-warm-50',
                 )}
-                title="Grid view"
+                aria-label="Grid view"
               >
                 <Grid3X3 className="h-4 w-4" />
               </button>
@@ -224,7 +225,7 @@ export function FilterBar({
                     ? 'bg-stone-50 text-stone-600'
                     : 'text-warm-400 hover:bg-warm-50',
                 )}
-                title="List view"
+                aria-label="List view"
               >
                 <List className="h-4 w-4" />
               </button>
