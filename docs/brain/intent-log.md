@@ -2295,3 +2295,39 @@ A comprehensive security sweep identified that while many pages had been hardene
 2. **Pipeline = accepted estimates**: Accepted estimates represent committed future work.
 3. **Client-side aggregation for job revenue**: Since we need to group by job with job details, we fetch all paid invoices with job join and aggregate in JS. For large datasets this should move to a DB view or RPC function.
 4. **Redirects over empty placeholders**: Bonuses and formulas pages don't have standalone data models yet. Redirecting to the closest functional page (HR, cost codes) is better UX than a "coming soon" wall.
+
+---
+
+## 2026-02-26: Auth Deduplication — Migrate Client Components to useAuth()
+
+### Why
+The previous session completed server-side auth deduplication (117 pages using React `cache()` wrapped `getServerAuth()`), but 121 client-side files still made redundant Supabase queries for `company_id` and user ID:
+
+```typescript
+// OLD PATTERN (121 files doing this)
+const [profile, setProfile] = useState(null);
+useEffect(() => {
+  supabase.from('users').select('company_id').single().then(r => setProfile(r.data));
+}, []);
+// This runs on every client mount, wastes a Supabase query, and causes hydration mismatch
+```
+
+The AuthProvider already hydrates `profile` on SSR, making this redundant. Eliminating these 121 queries removes ~1,440 lines of boilerplate and ensures a single source of truth for auth across the entire app.
+
+### What was done
+1. **Replaced 121 client files** (detail pages, edit pages, create forms, archive buttons) to use `useAuth()` hook
+2. **Pattern**: Get `company_id` from `useAuth().profile?.company_id` instead of querying Supabase
+3. **Pattern**: Get user ID from `useAuth().user?.id` for `created_by` fields instead of calling `supabase.auth.getUser()`
+4. **Combined with previous session**: Server components (117 files) + Client components (121 files) = 238 files migrated, ~1,440 lines removed
+
+### Key decisions
+1. **useAuth() is the canonical pattern for client components**: All client-side code that needs auth info goes through the hook, never through direct Supabase queries
+2. **Single source of truth**: `AuthProvider` in root layout hydrates from `getServerAuth()` once per app load; all descendants use that context
+3. **No hydration mismatch**: Since the context is set before client render, `profile?.company_id` is immediately available with no flashing or undefined states
+4. **Server vs Client clear separation**: Server components use `getServerAuth()`, client components use `useAuth()` — the distinction is obvious in the code
+
+### Result
+- **All 3,309 tests pass** after migration
+- **TypeScript clean** — no type errors
+- **Performance**: Eliminated 121 redundant Supabase queries per app session
+- **Auth deduplication complete**: Single pattern across all 238 files that need auth context

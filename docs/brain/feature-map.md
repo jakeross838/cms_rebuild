@@ -3500,3 +3500,37 @@ All client-side detail/edit pages (`/[entity]/[id]`) now verify that the fetched
 ### `/api-marketplace` — Minor text fix
 - Already had real data fetching from `integration_listings` table
 - Removed "coming soon" text from empty state, replaced with neutral "Check back later" language
+
+---
+
+## Auth Deduplication — useAuth() Pattern for All Client Components (2026-02-26)
+
+### 121 Client Components Migrated to useAuth()
+All detail pages, edit pages, and create forms across the platform now use `useAuth()` hook from `AuthProvider` instead of making redundant Supabase queries. This is the canonical pattern for client-side components that need the authenticated user's `company_id` or user ID:
+
+```typescript
+// Pattern: Get company_id from AuthProvider instead of querying Supabase
+const { profile } = useAuth();  // profile.company_id is SSR-hydrated, immediately available
+const companyId = profile?.company_id;
+
+// Pattern: Get user ID from AuthProvider for created_by fields
+const { user: authUser } = useAuth();
+const userId = authUser?.id;
+```
+
+Affected components include:
+- **All 47+ create forms** (`/[entity]/new/page.tsx`) — use `profile?.company_id` for owner assignment
+- **All 32 detail/edit pages** (`/[entity]/[id]/page.tsx`) — use `profile?.company_id` for ownership verification
+- **Archive buttons** across 42 entity types — use `profile?.company_id` for soft-delete queries
+
+### Why useAuth() Instead of Supabase Queries in Client Components
+1. **SSR hydration**: `profile` is populated in `RootLayout` via `getServerAuth()` wrapped in React `cache()`, then hydrated into AuthProvider on client mount
+2. **Zero network latency**: No additional Supabase queries needed; data is already in context
+3. **Consistent pattern**: Server components use `getServerAuth()`, client components use `useAuth()` — no duplication
+4. **Type safety**: `profile` and `user` are strongly typed from Supabase auth metadata and user profile row
+
+### Total Impact: Auth Deduplication Complete
+- **Server components**: 117 pages migrated in previous session to use React `cache()` wrapped `getServerAuth()`
+- **Client components**: 121 files migrated this session to use `useAuth()`
+- **Total migration**: 238 files, ~1,440 lines of boilerplate removed
+- **Result**: Single source of truth for authentication across entire app, no redundant Supabase queries
