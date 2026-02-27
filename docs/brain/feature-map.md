@@ -1,5 +1,39 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 22 — Query Optimization & Production Hardening (2026-02-26)
+
+### Cached Server Auth Utility (117 server component pages migrated)
+- **New file**: `lib/supabase/get-auth.ts` — React `cache()` wrapper for auth + company_id fetch
+- Deduplicates `getUser()` + `users.select('company_id')` within single RSC render pass
+- Layout and child page share one DB round-trip instead of two
+- 117 server pages migrated from 5-line boilerplate to `const { companyId, supabase } = await getServerAuth()`
+- Net: 768 lines of boilerplate removed, ~117 redundant DB queries eliminated per full page load
+
+### Accessibility Fixes (2 files)
+- **notification-bell.tsx**: Added `aria-label="Notifications"` to bell button, `aria-label="Dismiss notification"` on dismiss buttons
+- **top-nav.tsx**: Added `aria-label="User menu"` on user menu button, `aria-label="Search"` on search trigger
+
+### Dead Code Removal (4 files, 3,909 lines deleted)
+- Deleted 4 unused skeleton preview components confirmed by import search:
+  - `ftq-dashboard-preview.tsx`, `public-estimator-preview.tsx`
+  - `quality-checklists-preview.tsx`, `vendor-performance-preview.tsx`
+
+### Loading State Coverage (40 files added)
+- Added `loading.tsx` to all 29 top-level `[id]` route segments + 11 nested `[id]` segments
+- Provides Suspense boundaries for detail page navigation (was inheriting full-screen spinner from parent)
+- Consistent spinner + "Loading [entity]..." text pattern
+
+### Quality Audits Completed (All Clean)
+- **React keys**: 12 files use non-unique string keys — all static nav/config cards, not dynamic data (no fix needed)
+- **Console statements**: Zero found in production code
+- **Image optimization**: 100% compliant — zero `<img>` tags, all use `next/image`
+- **Link vs anchor**: 100% compliant — all `<a>` tags are external (mailto, tel, video)
+- **Form validation**: All 40+ forms prevent double-submit and show errors
+- **Error boundary coverage**: 82 error.tsx files — comprehensive
+- **Metadata/SEO**: 253/253 pages have proper metadata exports with template pattern
+- **Middleware security**: Production-ready — auth, session refresh, security headers, rate limiting
+- **Supabase client patterns**: 100% correct — no client/server mixing
+
 ## Session 21 — Deep Security Hardening & Performance Optimization (2026-02-26)
 
 ### N+1 Query Fixes (4 pages, 7 queries eliminated)

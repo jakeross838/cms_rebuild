@@ -1,5 +1,34 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 22 — Query Optimization & Production Hardening
+
+### Why (Cached getServerAuth)
+- Every server component page independently fetched auth.getUser() + users.select('company_id')
+- Layout already fetches this — child pages were duplicating the same 2 DB queries
+- React cache() deduplicates within a single RSC render pass, so layout + child now share one round-trip
+- At scale with 175+ authenticated pages and 10K+ companies, this eliminates thousands of redundant daily queries
+- Also removed 768 lines of repetitive boilerplate (5 lines × 117 pages → 1 line each)
+
+### Why (Accessibility Fixes)
+- Interactive buttons (notification bell, user menu, search trigger) lacked aria-labels
+- Screen readers couldn't identify these controls without text or labels
+- Minor fix with outsized impact on WCAG 2.1 compliance
+
+### Why (Dead Code Removal)
+- 4 skeleton preview components totaling 3,909 lines were never imported anywhere
+- Confirmed via exhaustive import search across 591+ files
+- Dead code increases bundle size, maintenance confusion, and TypeScript check time
+
+### Why (Loading States for [id] Routes)
+- 40 detail route segments inherited loading state from parent, showing jarring full-screen spinner
+- Route-level loading.tsx provides per-segment Suspense boundary for smoother navigation
+- Users see contextual "Loading invoice..." instead of generic spinner replacing entire page
+
+### Why (Comprehensive Quality Audits)
+- Systematic verification of production readiness across 15+ categories
+- Ensures no common anti-patterns (wrong image component, raw anchors, missing metadata, etc.)
+- All audits passed — confirms codebase follows Next.js best practices
+
 ## 2026-02-26: Session 21 — Deep Security Hardening & Performance
 
 ### Why (N+1 Query Fixes)

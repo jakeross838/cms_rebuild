@@ -1,5 +1,36 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 22 — Query Optimization & Production Hardening (2026-02-26)
+
+### Cached getServerAuth
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| getServerAuth returns companyId + supabase + user | All three available | pass |
+| TypeScript compiles clean after 117 page migrations | tsc --noEmit passes | pass |
+| All 3309 Vitest tests still pass | 56/56 files, 3309/3309 tests | pass |
+| Pages that reference user.id (communication-hub) work | Destructure { user } alongside companyId | pass |
+| redirect import removed when unused | No dead imports in migrated files | pass |
+
+### Accessibility
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Notification bell has aria-label | aria-label="Notifications" | pass |
+| Dismiss notification button has aria-label | aria-label="Dismiss notification" | pass |
+| User menu button has aria-label | aria-label="User menu" | pass |
+| Search trigger has aria-label | aria-label="Search" | pass |
+
+### Loading States
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 40 [id] route segments have loading.tsx | Spinner + contextual message | pass |
+| Loading text matches entity (e.g., "Loading job...") | Entity-specific labels | pass |
+| TypeScript accepts all loading components | React.ReactElement return type | pass |
+
+### Dead Code Removal
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 4 deleted preview components don't break any imports | tsc clean, all tests pass | pass |
+
 ## Session 21 — Deep Security Hardening & Performance (2026-02-26)
 
 ### N+1 Query Fixes
