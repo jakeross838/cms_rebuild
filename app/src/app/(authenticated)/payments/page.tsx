@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface PaymentRow {
   id: string
@@ -71,7 +71,7 @@ export default async function PaymentsPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium font-mono">{formatCurrency(payment.amount)}</span>
-                        <Badge className={getStatusColor(payment.status)}>{payment.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(payment.status)}>{formatStatus(payment.status)}</Badge>
                         {payment.payment_method && (
                           <Badge variant="outline" className="text-xs">{payment.payment_method}</Badge>
                         )}

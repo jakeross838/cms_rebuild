@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface SubmittalData {
@@ -223,7 +223,7 @@ export default function SubmittalDetailPage() {
                 {submittal.title}
               </h1>
               <Badge variant="outline" className={`text-xs rounded ${getStatusBadgeClasses(submittal.status)}`}>
-                {submittal.status.replace('_', ' ')}
+                {formatStatus(submittal.status)}
               </Badge>
               <Badge variant="outline" className={`text-xs rounded ${getPriorityBadgeClasses(submittal.priority)}`}>
                 {submittal.priority}

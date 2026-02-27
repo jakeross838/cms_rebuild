@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface TimeEntry {
   id: string
@@ -82,7 +82,7 @@ export default async function TimeClockPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{formatDate(entry.entry_date)}</span>
-                        <Badge className={getStatusColor(entry.status)}>{entry.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(entry.status)}>{formatStatus(entry.status)}</Badge>
                         {entry.entry_method && <Badge variant="outline" className="text-xs">{entry.entry_method.replace('_', ' ')}</Badge>}
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

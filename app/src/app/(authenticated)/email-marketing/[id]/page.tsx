@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface CampaignData {
@@ -202,7 +202,7 @@ export default function CampaignDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{campaign.name}</h1>
-              <Badge className={getStatusColor(campaign.status)}>{campaign.status}</Badge>
+              <Badge className={getStatusColor(campaign.status)}>{formatStatus(campaign.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {campaign.campaign_type} campaign{campaign.channel ? ` via ${campaign.channel}` : ''}

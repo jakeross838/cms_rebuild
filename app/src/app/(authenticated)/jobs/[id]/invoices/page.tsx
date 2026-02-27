@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -111,7 +111,7 @@ export default async function JobInvoicesPage({
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         {inv.invoice_number && <span className="text-sm font-mono text-muted-foreground">#{inv.invoice_number}</span>}
-                        {inv.status && <Badge className={getStatusColor(inv.status)}>{inv.status.replace('_', ' ')}</Badge>}
+                        {inv.status && <Badge className={getStatusColor(inv.status)}>{formatStatus(inv.status)}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1 ml-6">
                         {inv.invoice_date && formatDate(inv.invoice_date)}

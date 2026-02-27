@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface InsurancePolicyData {
@@ -208,7 +208,7 @@ export default function InsurancePolicyDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{policy.insurance_type.replace(/_/g, ' ')}</h1>
-              <Badge className={`rounded ${getStatusColor(policy.status)}`}>{policy.status.replace(/_/g, ' ')}</Badge>
+              <Badge className={`rounded ${getStatusColor(policy.status)}`}>{formatStatus(policy.status)}</Badge>
               {isExpired && (
                 <Badge className="rounded bg-red-100 text-red-700">Expired</Badge>
               )}
@@ -273,7 +273,7 @@ export default function InsurancePolicyDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd><Badge className={`rounded ${getStatusColor(policy.status)}`}>{policy.status.replace(/_/g, ' ')}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(policy.status)}`}>{formatStatus(policy.status)}</Badge></dd>
                   </div>
                   {policy.verified_at && (
                     <div>

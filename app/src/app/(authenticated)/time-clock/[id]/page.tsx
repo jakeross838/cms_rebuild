@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface TimeEntryData {
@@ -214,7 +214,7 @@ export default function TimeClockDetailPage() {
               <h1 className="text-2xl font-bold text-foreground">
                 Time Entry {entry.entry_date ? `- ${formatDate(entry.entry_date)}` : ''}
               </h1>
-              <Badge className={`${getStatusColor(entry.status)} rounded`}>{entry.status.replace('_', ' ')}</Badge>
+              <Badge className={`${getStatusColor(entry.status)} rounded`}>{formatStatus(entry.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {totalHours > 0 ? `${totalHours.toFixed(1)} hours total` : 'No hours recorded'}
@@ -252,7 +252,7 @@ export default function TimeClockDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Status</p>
-                    <Badge className={`${getStatusColor(entry.status)} rounded`}>{entry.status.replace('_', ' ')}</Badge>
+                    <Badge className={`${getStatusColor(entry.status)} rounded`}>{formatStatus(entry.status)}</Badge>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Clock In</p>

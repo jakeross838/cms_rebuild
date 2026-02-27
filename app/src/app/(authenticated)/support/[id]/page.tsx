@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -236,7 +236,7 @@ export default function SupportTicketDetailPage() {
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium w-20">Status</span>
-                  <Badge className={`${getStatusColor(ticket.status)} rounded`}>{ticket.status.replace('_', ' ')}</Badge>
+                  <Badge className={`${getStatusColor(ticket.status)} rounded`}>{formatStatus(ticket.status)}</Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium w-20">Priority</span>

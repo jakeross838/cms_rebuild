@@ -177,7 +177,7 @@ export default async function ChangeOrdersPage({
                             </span>
                             {co.status && (
                               <Badge className={getStatusColor(co.status)}>
-                                {co.status.replace('_', ' ')}
+                                {formatStatus(co.status)}
                               </Badge>
                             )}
                           </div>

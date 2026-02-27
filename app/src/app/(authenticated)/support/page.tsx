@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface TicketRow {
   id: string
@@ -74,7 +74,7 @@ export default async function SupportPage({
                 <Link key={ticket.id} href={`/support/${ticket.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{ticket.subject}</span>
-                    <Badge className={getStatusColor(ticket.status)}>{ticket.status.replace('_', ' ')}</Badge>
+                    <Badge className={getStatusColor(ticket.status)}>{formatStatus(ticket.status)}</Badge>
                     {ticket.priority === 'high' && <Badge className="bg-red-100 text-red-700 rounded">High</Badge>}
                     {ticket.category && <Badge variant="outline" className="text-xs">{ticket.category}</Badge>}
                   </div>

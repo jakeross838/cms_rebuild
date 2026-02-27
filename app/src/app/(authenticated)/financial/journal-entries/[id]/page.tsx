@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface JournalEntryData {
@@ -234,7 +234,7 @@ export default function JournalEntryDetailPage() {
               <h1 className="text-2xl font-bold text-foreground">
                 Journal Entry {entry.reference_number ? `#${entry.reference_number}` : ''}
               </h1>
-              <Badge className={`rounded ${getStatusColor(entry.status)}`}>{entry.status.replace(/_/g, ' ')}</Badge>
+              <Badge className={`rounded ${getStatusColor(entry.status)}`}>{formatStatus(entry.status)}</Badge>
             </div>
             <p className="text-muted-foreground">{formatDate(entry.entry_date)} -- {entry.source_type.replace(/_/g, ' ')}</p>
           </div>
@@ -277,7 +277,7 @@ export default function JournalEntryDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd><Badge className={`rounded ${getStatusColor(entry.status)}`}>{entry.status.replace(/_/g, ' ')}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(entry.status)}`}>{formatStatus(entry.status)}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Source Type</dt>

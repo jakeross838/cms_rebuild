@@ -6,7 +6,7 @@ import { Compass, Briefcase } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface Job {
   id: string
@@ -69,7 +69,7 @@ export default async function FeasibilityPage() {
                         <Briefcase className="h-4 w-4 text-muted-foreground" />
                         {job.job_number && <span className="text-sm font-mono text-muted-foreground">{job.job_number}</span>}
                         <span className="font-medium">{job.name}</span>
-                        {job.status && <Badge className={getStatusColor(job.status)}>{job.status.replace('_', ' ')}</Badge>}
+                        {job.status && <Badge className={getStatusColor(job.status)}>{formatStatus(job.status)}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1 ml-6">
                         {[job.address, job.city, job.state].filter(Boolean).join(', ') || 'No address'}

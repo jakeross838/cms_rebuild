@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -219,8 +219,8 @@ export default function WarrantyClaimDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{claim.title}</h1>
-              <Badge className={getStatusColor(claim.status.toLowerCase().replace(/ /g, '_'))}>{claim.status}</Badge>
-              {claim.priority && <Badge className={getPriorityColor(claim.priority)}>{claim.priority}</Badge>}
+              <Badge className={getStatusColor(claim.status.toLowerCase().replace(/ /g, '_'))}>{formatStatus(claim.status)}</Badge>
+              {claim.priority && <Badge className={getPriorityColor(claim.priority)}>{formatStatus(claim.priority)}</Badge>}
             </div>
             <p className="text-muted-foreground">
               {claim.claim_number && <span className="font-mono text-xs mr-2">{claim.claim_number}</span>}

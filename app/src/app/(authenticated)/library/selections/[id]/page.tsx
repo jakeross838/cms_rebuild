@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface CategoryData {
@@ -228,7 +228,7 @@ export default function SelectionCategoryDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{category.name}</h1>
-              <Badge className={`${getStatusColor(category.status)} rounded`}>{category.status.replace('_', ' ')}</Badge>
+              <Badge className={`${getStatusColor(category.status)} rounded`}>{formatStatus(category.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {category.pricing_model} pricing {category.room && `\u2022 ${category.room}`}

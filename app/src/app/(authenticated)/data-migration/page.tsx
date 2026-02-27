@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface MigrationJobRow {
   id: string
@@ -65,7 +65,7 @@ export default async function DataMigrationPage({ searchParams }: { searchParams
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{job.source_platform}</span>
-                        <Badge className={getStatusColor(job.status)}>{job.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(job.status)}>{formatStatus(job.status)}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {job.total_records != null && (

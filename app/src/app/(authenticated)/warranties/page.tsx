@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface Warranty {
   id: string
@@ -104,7 +104,7 @@ export default async function WarrantiesPage({
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{warranty.title ?? 'Untitled'}</span>
                       <Badge className={getStatusColor(warranty.status ?? 'active')}>{(warranty.status ?? 'active').replace('_', ' ')}</Badge>
-                      {warranty.warranty_type && <Badge variant="outline" className="text-xs">{warranty.warranty_type.replace('_', ' ')}</Badge>}
+                      {warranty.warranty_type && <Badge variant="outline" className="text-xs">{formatStatus(warranty.warranty_type)}</Badge>}
                     </div>
                     <div className="text-sm text-muted-foreground mt-0.5">
                       {warranty.job_id ? 'Job assigned' : 'No job'}

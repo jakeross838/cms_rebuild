@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface RfiRow {
   id: string
@@ -133,7 +133,7 @@ export default async function RfisPage({
                           <span className="text-xs font-mono text-muted-foreground">{rfi.rfi_number}</span>
                         )}
                         <span className="font-medium">{rfi.subject}</span>
-                        <Badge className={getStatusColor(rfi.status)}>{rfi.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(rfi.status)}>{formatStatus(rfi.status)}</Badge>
                         {rfi.priority === 'high' && (
                           <Badge className="bg-red-100 text-red-700 rounded">High</Badge>
                         )}

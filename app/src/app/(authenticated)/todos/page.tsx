@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 
 interface PunchItemRow {
   id: string
@@ -77,7 +77,7 @@ export default async function TodosPage({
                       <p className="text-sm font-medium">{item.title}</p>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {item.due_date && <span>Due: {formatDate(item.due_date)}</span>}
-                        {item.priority && <span className="capitalize">{item.priority}</span>}
+                        {item.priority && <span className="">{formatStatus(item.priority)}</span>}
                       </div>
                     </div>
                   </div>

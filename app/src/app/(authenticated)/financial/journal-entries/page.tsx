@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface JournalEntry {
   id: string
@@ -76,7 +76,7 @@ export default async function JournalEntriesPage({
                     <div>
                       <div className="flex items-center gap-2">
                         {entry.reference_number && <span className="text-sm font-mono text-muted-foreground">{entry.reference_number}</span>}
-                        <Badge className={getStatusColor(entry.status)}>{entry.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(entry.status)}>{formatStatus(entry.status)}</Badge>
                         <Badge variant="outline" className="text-xs">{entry.source_type}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

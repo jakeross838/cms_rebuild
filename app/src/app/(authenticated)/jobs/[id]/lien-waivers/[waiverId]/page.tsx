@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -235,7 +235,7 @@ export default function LienWaiverDetailPage() {
                 {waiver.waiver_type.replace(/_/g, ' ')}
               </h1>
               <Badge className={getStatusColor(waiver.status)}>
-                {waiver.status.replace(/_/g, ' ')}
+                {formatStatus(waiver.status)}
               </Badge>
             </div>
             <p className="text-muted-foreground">

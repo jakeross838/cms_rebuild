@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface WarrantyClaimRow {
   id: string
@@ -93,7 +93,7 @@ export default async function WarrantyClaimsPage({
                           <span className="text-xs font-mono text-muted-foreground">{claim.claim_number}</span>
                         )}
                         <span className="font-medium">{claim.title}</span>
-                        <Badge className={getStatusColor(claim.status)}>{claim.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(claim.status)}>{formatStatus(claim.status)}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {claim.reported_date && <span>Reported: {formatDate(claim.reported_date)}</span>}

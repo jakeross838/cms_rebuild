@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface PurchaseOrderRow {
   id: string
@@ -175,7 +175,7 @@ export default async function PurchaseOrdersPage({
                             </span>
                             {po.status && (
                               <Badge className={getStatusColor(po.status)}>
-                                {po.status.replace('_', ' ')}
+                                {formatStatus(po.status)}
                               </Badge>
                             )}
                           </div>

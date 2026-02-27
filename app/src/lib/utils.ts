@@ -57,7 +57,7 @@ export function getStatusColor(status: string): string {
     completed: 'bg-warm-100 text-warm-700',
     warranty: 'bg-warm-100 text-warm-800',
     cancelled: 'bg-danger-bg text-danger-dark',
-    // Invoice statuses
+    // Invoice / financial
     needs_matching: 'bg-sand-100 text-orange-800',
     draft: 'bg-warm-100 text-warm-700',
     pm_pending: 'bg-info-bg text-info-dark',
@@ -67,6 +67,51 @@ export function getStatusColor(status: string): string {
     in_draw: 'bg-stone-100 text-teal-800',
     paid: 'bg-warm-200 text-warm-700',
     rejected: 'bg-danger-bg text-danger-dark',
+    denied: 'bg-danger-bg text-danger-dark',
+    posted: 'bg-success-bg text-success-dark',
+    // Workflow statuses
+    pending: 'bg-warning-bg text-warning-dark',
+    pending_approval: 'bg-warning-bg text-warning-dark',
+    submitted: 'bg-info-bg text-info-dark',
+    under_review: 'bg-info-bg text-info-dark',
+    acknowledged: 'bg-info-bg text-info-dark',
+    open: 'bg-info-bg text-info-dark',
+    in_progress: 'bg-info-bg text-info-dark',
+    answered: 'bg-success-bg text-success-dark',
+    resolved: 'bg-success-bg text-success-dark',
+    closed: 'bg-warm-100 text-warm-700',
+    voided: 'bg-danger-bg text-danger-dark',
+    archived: 'bg-warm-100 text-warm-600',
+    // Procurement / delivery
+    sent: 'bg-info-bg text-info-dark',
+    received: 'bg-success-bg text-success-dark',
+    partially_received: 'bg-warning-bg text-warning-dark',
+    awarded: 'bg-success-bg text-success-dark',
+    published: 'bg-info-bg text-info-dark',
+    // Permits / inspections
+    applied: 'bg-info-bg text-info-dark',
+    issued: 'bg-success-bg text-success-dark',
+    expired: 'bg-danger-bg text-danger-dark',
+    revoked: 'bg-danger-bg text-danger-dark',
+    scheduled: 'bg-info-bg text-info-dark',
+    passed: 'bg-success-bg text-success-dark',
+    failed: 'bg-danger-bg text-danger-dark',
+    // Selections / submittals
+    selected: 'bg-info-bg text-info-dark',
+    confirmed: 'bg-success-bg text-success-dark',
+    ordered: 'bg-info-bg text-info-dark',
+    installed: 'bg-success-bg text-success-dark',
+    approved_as_noted: 'bg-success-bg text-success-dark',
+    resubmit: 'bg-warning-bg text-warning-dark',
+    // Schedule / tasks
+    not_started: 'bg-warm-100 text-warm-600',
+    verified: 'bg-success-bg text-success-dark',
+    escalated: 'bg-danger-bg text-danger-dark',
+    // Priority colors
+    low: 'bg-warm-100 text-warm-700',
+    normal: 'bg-info-bg text-info-dark',
+    high: 'bg-warning-bg text-warning-dark',
+    urgent: 'bg-danger-bg text-danger-dark',
   }
   return colors[status] || 'bg-warm-100 text-warm-700'
 }

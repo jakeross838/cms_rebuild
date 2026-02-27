@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -103,7 +103,7 @@ export default async function JobInspectionsPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{insp.inspection_type}</span>
-                        <Badge className={getStatusColor(insp.status)}>{insp.status}</Badge>
+                        <Badge className={getStatusColor(insp.status)}>{formatStatus(insp.status)}</Badge>
                         {insp.is_reinspection && <Badge className="text-amber-700 bg-amber-100">Re-inspection</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">

@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ export default function TimeEntryDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">Time Entry</h1>
-              <Badge className={`${getStatusColor(entry.status)} rounded`}>{entry.status}</Badge>
+              <Badge className={`${getStatusColor(entry.status)} rounded`}>{formatStatus(entry.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {formatDate(entry.entry_date)} &bull; {entry.entry_method}
@@ -268,7 +268,7 @@ export default function TimeEntryDetailPage() {
                   <div>
                     <span className="text-muted-foreground">Status</span>
                     <p className="font-medium">
-                      <Badge className={`${getStatusColor(entry.status)} rounded`}>{entry.status}</Badge>
+                      <Badge className={`${getStatusColor(entry.status)} rounded`}>{formatStatus(entry.status)}</Badge>
                     </p>
                   </div>
                   <div>

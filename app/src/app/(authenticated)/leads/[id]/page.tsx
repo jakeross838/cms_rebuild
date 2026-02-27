@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface LeadData {
@@ -231,10 +231,10 @@ export default function LeadDetailPage() {
                 {lead.first_name} {lead.last_name}
               </h1>
               {lead.status && (
-                <Badge variant="outline" className="text-xs">{lead.status.replace('_', ' ')}</Badge>
+                <Badge variant="outline" className="text-xs">{formatStatus(lead.status)}</Badge>
               )}
               {lead.priority && (
-                <Badge variant="outline" className="text-xs">{lead.priority}</Badge>
+                <Badge variant="outline" className="text-xs">{formatStatus(lead.priority)}</Badge>
               )}
             </div>
             <p className="text-muted-foreground">
@@ -301,7 +301,7 @@ export default function LeadDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Source</span>
-                    <p className="font-medium">{lead.source ? lead.source.replace('_', ' ') : '--'}</p>
+                    <p className="font-medium">{lead.source ? formatStatus(lead.source) : '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Source Detail</span>

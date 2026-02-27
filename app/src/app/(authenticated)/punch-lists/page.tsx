@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface PunchItem {
   id: string
@@ -107,7 +107,7 @@ export default async function PunchListsPage({
                     <CheckSquare className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium">{item.title ?? 'Untitled'}</span>
                     <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>
-                    {item.priority && <Badge variant="outline" className="text-xs">{item.priority}</Badge>}
+                    {item.priority && <Badge variant="outline" className="text-xs">{formatStatus(item.priority)}</Badge>}
                   </div>
                   <div className="flex items-center gap-3 ml-6 mt-1 text-xs text-muted-foreground">
                     {item.location && <span>{item.location}</span>}

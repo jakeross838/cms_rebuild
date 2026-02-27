@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ReportData {
@@ -204,7 +204,7 @@ export default function DashboardDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{report.name}</h1>
-              <Badge variant={statusVariant(report.status)}>{report.status}</Badge>
+              <Badge variant={statusVariant(report.status)}>{formatStatus(report.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {report.visualization_type} &middot; {report.audience}

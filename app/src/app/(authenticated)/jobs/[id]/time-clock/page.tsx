@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Time Clock' }
@@ -90,7 +90,7 @@ export default async function JobTimeClockPage({
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{formatDate(entry.entry_date)}</span>
                         <Badge variant="outline" className="text-xs">{entry.entry_method}</Badge>
-                        <Badge variant="outline" className="text-xs">{entry.status}</Badge>
+                        <Badge variant="outline" className="text-xs">{formatStatus(entry.status)}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {entry.clock_in && `In: ${new Date(entry.clock_in).toLocaleTimeString()}`}

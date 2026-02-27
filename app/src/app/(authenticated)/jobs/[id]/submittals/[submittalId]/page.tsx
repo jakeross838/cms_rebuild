@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -237,7 +237,7 @@ export default function SubmittalDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{submittal.submittal_number}</h1>
               <Badge className={getStatusColor(submittal.status)}>
-                {submittal.status.replace(/_/g, ' ')}
+                {formatStatus(submittal.status)}
               </Badge>
               <Badge className={priorityColor[submittal.priority] || 'bg-warm-100 text-warm-700'}>
                 {submittal.priority}

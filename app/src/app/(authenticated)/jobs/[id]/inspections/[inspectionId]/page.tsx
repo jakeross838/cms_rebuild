@@ -230,7 +230,7 @@ export default function InspectionDetailPage() {
                 {inspection.inspection_type.replace(/_/g, ' ')}
               </h1>
               <Badge className={resultColor[inspection.status] || getStatusColor(inspection.status)}>
-                {inspection.status.replace(/_/g, ' ')}
+                {formatStatus(inspection.status)}
               </Badge>
               {inspection.is_reinspection && (
                 <Badge variant="outline" className="text-amber-700 bg-amber-50 border-amber-200 text-xs">Re-inspection</Badge>

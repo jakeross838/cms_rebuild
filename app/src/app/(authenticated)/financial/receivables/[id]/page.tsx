@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ARInvoiceData {
@@ -231,7 +231,7 @@ export default function ARInvoiceDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">Invoice #{invoice.invoice_number}</h1>
-              <Badge className={`rounded ${getStatusColor(invoice.status)}`}>{invoice.status.replace(/_/g, ' ')}</Badge>
+              <Badge className={`rounded ${getStatusColor(invoice.status)}`}>{formatStatus(invoice.status)}</Badge>
             </div>
             <p className="text-muted-foreground">{clientName}{jobName ? ` -- ${jobName}` : ''}</p>
           </div>
@@ -275,7 +275,7 @@ export default function ARInvoiceDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd><Badge className={`rounded ${getStatusColor(invoice.status)}`}>{invoice.status.replace(/_/g, ' ')}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(invoice.status)}`}>{formatStatus(invoice.status)}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Amount</dt>

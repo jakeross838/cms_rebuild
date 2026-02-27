@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -100,7 +100,7 @@ export default async function JobPermitsPage({
                       <div className="flex items-center gap-2">
                         {permit.permit_number && <span className="text-sm font-mono text-muted-foreground">#{permit.permit_number}</span>}
                         <span className="font-medium">{permit.permit_type}</span>
-                        <Badge className={getStatusColor(permit.status)}>{permit.status}</Badge>
+                        <Badge className={getStatusColor(permit.status)}>{formatStatus(permit.status)}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {permit.jurisdiction && <span>{permit.jurisdiction}</span>}

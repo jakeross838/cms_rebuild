@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -267,7 +267,7 @@ export default function PurchaseOrderDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{po.po_number}</h1>
               <Badge className={getStatusColor(po.status)}>
-                {po.status.replace(/_/g, ' ')}
+                {formatStatus(po.status)}
               </Badge>
             </div>
             <p className="text-muted-foreground">

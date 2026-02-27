@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Selections' }
@@ -94,7 +94,7 @@ export default async function JobSelectionsPage({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Badge className={getStatusColor(sel.status)}>{sel.status}</Badge>
+                        <Badge className={getStatusColor(sel.status)}>{formatStatus(sel.status)}</Badge>
                         {sel.room && <Badge variant="outline" className="text-xs">{sel.room}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">

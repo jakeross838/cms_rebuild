@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface BidPackageRow {
   id: string
@@ -133,7 +133,7 @@ export default async function BidsPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{bid.title}</span>
-                        <Badge className={getStatusColor(bid.status)}>{bid.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(bid.status)}>{formatStatus(bid.status)}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {bid.bid_due_date && <span>Due: {formatDate(bid.bid_due_date)}</span>}

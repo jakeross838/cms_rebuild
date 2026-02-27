@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface Warranty {
   id: string
@@ -96,7 +96,7 @@ export default async function PostBuildPage({ searchParams }: { searchParams: Pr
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{w.title}</span>
-                        <Badge className={getStatusColor(w.status)}>{w.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(w.status)}>{formatStatus(w.status)}</Badge>
                         {w.warranty_type && <Badge variant="outline" className="text-xs">{w.warranty_type}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">

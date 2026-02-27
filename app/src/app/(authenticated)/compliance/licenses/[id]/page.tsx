@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -253,7 +253,7 @@ export default function LicenseDetailPage() {
                   <div>
                     <span className="text-muted-foreground">Status</span>
                     <p className="font-medium">
-                      <Badge className={`${getStatusColor(cert.status)} rounded`}>{cert.status}</Badge>
+                      <Badge className={`${getStatusColor(cert.status)} rounded`}>{formatStatus(cert.status)}</Badge>
                     </p>
                   </div>
                   <div>

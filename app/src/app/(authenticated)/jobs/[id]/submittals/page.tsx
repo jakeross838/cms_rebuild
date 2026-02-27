@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Submittals' }
@@ -101,8 +101,8 @@ export default async function JobSubmittalsPage({
                       <div className="flex items-center gap-2">
                         {sub.submittal_number && <span className="text-sm font-mono text-muted-foreground">{sub.submittal_number}</span>}
                         <span className="font-medium">{sub.title}</span>
-                        <Badge className={getStatusColor(sub.status)}>{sub.status}</Badge>
-                        {sub.priority && <Badge variant="outline" className="text-xs">{sub.priority}</Badge>}
+                        <Badge className={getStatusColor(sub.status)}>{formatStatus(sub.status)}</Badge>
+                        {sub.priority && <Badge variant="outline" className="text-xs">{formatStatus(sub.priority)}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {sub.spec_section && <span>Spec {sub.spec_section}</span>}

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface SubmittalRow {
   id: string
@@ -95,7 +95,7 @@ export default async function SubmittalsPage({
                           <span className="text-xs font-mono text-muted-foreground">{submittal.submittal_number}</span>
                         )}
                         <span className="font-medium">{submittal.title}</span>
-                        <Badge className={getStatusColor(submittal.status)}>{submittal.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(submittal.status)}>{formatStatus(submittal.status)}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {submittal.jobs?.name && <span>{submittal.jobs.name}</span>}

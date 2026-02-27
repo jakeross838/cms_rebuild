@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface DailyLogRow {
   id: string
@@ -98,7 +98,7 @@ export default async function DailyLogsPage({
                           </span>
                           {log.status && (
                             <Badge className={getStatusColor(log.status)}>
-                              {log.status.replace('_', ' ')}
+                              {formatStatus(log.status)}
                             </Badge>
                           )}
                         </div>

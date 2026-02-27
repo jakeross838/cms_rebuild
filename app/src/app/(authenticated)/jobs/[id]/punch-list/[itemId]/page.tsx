@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
@@ -239,8 +239,8 @@ export default function JobPunchItemDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
-              <Badge className={`rounded ${getStatusColor(item.status)}`}>{item.status.replace(/_/g, ' ')}</Badge>
-              <Badge className={`rounded ${getPriorityColor(item.priority)}`}>{item.priority}</Badge>
+              <Badge className={`rounded ${getStatusColor(item.status)}`}>{formatStatus(item.status)}</Badge>
+              <Badge className={`rounded ${getPriorityColor(item.priority)}`}>{formatStatus(item.priority)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {item.location ? `${item.location}` : ''}
@@ -283,16 +283,16 @@ export default function JobPunchItemDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd><Badge className={`rounded ${getStatusColor(item.status)}`}>{item.status.replace(/_/g, ' ')}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(item.status)}`}>{formatStatus(item.status)}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Priority</dt>
-                    <dd><Badge className={`rounded ${getPriorityColor(item.priority)}`}>{item.priority}</Badge></dd>
+                    <dd><Badge className={`rounded ${getPriorityColor(item.priority)}`}>{formatStatus(item.priority)}</Badge></dd>
                   </div>
                   {item.category && (
                     <div>
                       <dt className="text-muted-foreground">Category</dt>
-                      <dd className="font-medium capitalize">{item.category.replace(/_/g, ' ')}</dd>
+                      <dd className="font-medium capitalize">{formatStatus(item.category)}</dd>
                     </div>
                   )}
                   {item.location && (

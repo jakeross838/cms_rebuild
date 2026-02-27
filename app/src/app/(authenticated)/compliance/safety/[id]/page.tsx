@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface SafetyIncidentData {
@@ -289,7 +289,7 @@ export default function SafetyIncidentDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{incident.title}</h1>
-              <Badge className={`rounded ${getStatusColor(incident.status)}`}>{incident.status.replace(/_/g, ' ')}</Badge>
+              <Badge className={`rounded ${getStatusColor(incident.status)}`}>{formatStatus(incident.status)}</Badge>
               <Badge className={`rounded ${getSeverityColor(incident.severity)}`}>{incident.severity}</Badge>
             </div>
             <p className="text-muted-foreground">#{incident.incident_number} -- {jobName} -- {formatDate(incident.incident_date)}</p>
@@ -334,7 +334,7 @@ export default function SafetyIncidentDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd><Badge className={`rounded ${getStatusColor(incident.status)}`}>{incident.status.replace(/_/g, ' ')}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(incident.status)}`}>{formatStatus(incident.status)}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Date</dt>

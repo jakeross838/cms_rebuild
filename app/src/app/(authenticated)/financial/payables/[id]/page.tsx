@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface BillData {
@@ -235,7 +235,7 @@ export default function BillDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">Bill #{bill.bill_number}</h1>
-              <Badge className={`rounded ${getStatusColor(bill.status)}`}>{bill.status.replace(/_/g, ' ')}</Badge>
+              <Badge className={`rounded ${getStatusColor(bill.status)}`}>{formatStatus(bill.status)}</Badge>
             </div>
             <p className="text-muted-foreground">{vendorName}{jobName ? ` -- ${jobName}` : ''}</p>
           </div>
@@ -279,7 +279,7 @@ export default function BillDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd><Badge className={`rounded ${getStatusColor(bill.status)}`}>{bill.status.replace(/_/g, ' ')}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(bill.status)}`}>{formatStatus(bill.status)}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Amount</dt>

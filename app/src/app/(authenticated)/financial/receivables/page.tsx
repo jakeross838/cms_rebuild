@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Accounts Receivable' }
@@ -81,7 +81,7 @@ export default async function ReceivablesPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-mono text-muted-foreground">{inv.invoice_number}</span>
-                        <Badge className={getStatusColor(inv.status)}>{inv.status.replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(inv.status)}>{formatStatus(inv.status)}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         <span>Issued: {formatDate(inv.invoice_date)}</span>
