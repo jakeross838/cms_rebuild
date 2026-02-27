@@ -13,14 +13,14 @@ const passwordSchema = z
 
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(72),
 })
 
 export const signupSchema = z
   .object({
     email: emailSchema,
     password: passwordSchema,
-    confirmPassword: z.string(),
+    confirmPassword: z.string().max(72),
     name: nameSchema,
     companyName: z.string().trim().min(1, 'Company name is required').max(255).optional(),
   })
@@ -36,7 +36,7 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z
   .object({
     password: passwordSchema,
-    confirmPassword: z.string(),
+    confirmPassword: z.string().max(72),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -45,9 +45,9 @@ export const resetPasswordSchema = z
 
 export const acceptInviteSchema = z
   .object({
-    token: z.string().min(1, 'Invite token is required'),
+    token: z.string().min(1, 'Invite token is required').max(500),
     password: passwordSchema.optional(), // Only required for new users
-    confirmPassword: z.string().optional(),
+    confirmPassword: z.string().max(72).optional(),
     name: nameSchema.optional(), // Can override the pre-filled name
   })
   .refine(

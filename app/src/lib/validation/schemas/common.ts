@@ -99,12 +99,13 @@ export const dateRangeSchema = z
 
 /** US mailing address — all fields optional */
 export const addressSchema = z.object({
-  address: z.string().trim().optional(),
-  city: z.string().trim().optional(),
-  state: z.string().trim().optional(),
+  address: z.string().trim().max(500).optional(),
+  city: z.string().trim().max(100).optional(),
+  state: z.string().trim().max(50).optional(),
   zip: z
     .string()
     .trim()
+    .max(20)
     .optional(),
 });
 
