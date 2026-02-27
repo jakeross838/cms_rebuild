@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('permits')
-      .select('*')
+      .select('*, permit_inspections(id), permit_documents(id), permit_fees(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -44,31 +44,14 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch inspections count
-    const { data: inspections } = await supabase
-      .from('permit_inspections')
-      .select('id')
-      .eq('permit_id', id)
-
-    // Fetch documents count
-    const { data: documents } = await supabase
-      .from('permit_documents')
-      .select('id')
-      .eq('permit_id', id)
-
-    // Fetch fees
-    const { data: fees } = await supabase
-      .from('permit_fees')
-      .select('*')
-      .eq('permit_id', id)
-      .order('created_at', { ascending: false })
+    const { permit_inspections, permit_documents, permit_fees, ...permit } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        inspections_count: (inspections ?? []).length,
-        documents_count: (documents ?? []).length,
-        fees: fees ?? [],
+        ...permit,
+        inspections_count: (permit_inspections ?? []).length,
+        documents_count: (permit_documents ?? []).length,
+        fees: permit_fees ?? [],
       },
       requestId: ctx.requestId,
     })

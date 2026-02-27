@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('daily_logs')
-      .select('*')
+      .select('*, daily_log_entries(*), daily_log_labor(*), daily_log_photos(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -40,34 +40,14 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch entries
-    const { data: entries } = await supabase
-      .from('daily_log_entries')
-      .select('*')
-      .eq('daily_log_id', id)
-      .order('sort_order', { ascending: true })
-
-    // Fetch labor records
-    const { data: labor } = await supabase
-      .from('daily_log_labor')
-      .select('*')
-      .eq('daily_log_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('created_at', { ascending: true })
-
-    // Fetch photos
-    const { data: photos } = await supabase
-      .from('daily_log_photos')
-      .select('*')
-      .eq('daily_log_id', id)
-      .order('created_at', { ascending: true })
+    const { daily_log_entries, daily_log_labor, daily_log_photos, ...log } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        entries: entries ?? [],
-        labor: labor ?? [],
-        photos: photos ?? [],
+        ...log,
+        entries: daily_log_entries ?? [],
+        labor: daily_log_labor ?? [],
+        photos: daily_log_photos ?? [],
       },
       requestId: ctx.requestId,
     })

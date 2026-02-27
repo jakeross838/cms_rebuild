@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('estimates')
-      .select('*')
+      .select('*, estimate_line_items(id), estimate_sections(id), estimate_versions(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,34 +43,14 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch line items count
-    const { data: lines } = await supabase
-      .from('estimate_line_items')
-      .select('id')
-      .eq('estimate_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    // Fetch sections count
-    const { data: sections } = await supabase
-      .from('estimate_sections')
-      .select('id')
-      .eq('estimate_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    // Fetch versions
-    const { data: versions } = await supabase
-      .from('estimate_versions')
-      .select('*')
-      .eq('estimate_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('version_number', { ascending: false })
+    const { estimate_line_items, estimate_sections, estimate_versions, ...estimate } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        lines_count: (lines ?? []).length,
-        sections_count: (sections ?? []).length,
-        versions: versions ?? [],
+        ...estimate,
+        lines_count: (estimate_line_items ?? []).length,
+        sections_count: (estimate_sections ?? []).length,
+        versions: estimate_versions ?? [],
       },
       requestId: ctx.requestId,
     })

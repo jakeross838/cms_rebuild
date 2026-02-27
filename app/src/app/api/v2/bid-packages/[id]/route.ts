@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('bid_packages')
-      .select('*')
+      .select('*, bid_invitations(id), bid_responses(id), bid_awards(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,31 +43,14 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch counts
-    const { data: invitations } = await supabase
-      .from('bid_invitations')
-      .select('id')
-      .eq('bid_package_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    const { data: responses } = await supabase
-      .from('bid_responses')
-      .select('id')
-      .eq('bid_package_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    const { data: awards } = await supabase
-      .from('bid_awards')
-      .select('id')
-      .eq('bid_package_id', id)
-      .eq('company_id', ctx.companyId!)
+    const { bid_invitations, bid_responses, bid_awards, ...pkg } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        invitations_count: (invitations ?? []).length,
-        responses_count: (responses ?? []).length,
-        awards_count: (awards ?? []).length,
+        ...pkg,
+        invitations_count: (bid_invitations ?? []).length,
+        responses_count: (bid_responses ?? []).length,
+        awards_count: (bid_awards ?? []).length,
       },
       requestId: ctx.requestId,
     })
