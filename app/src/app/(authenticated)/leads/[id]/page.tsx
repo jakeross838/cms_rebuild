@@ -413,7 +413,7 @@ export default function LeadDetailPage() {
                     <label htmlFor="priority" className="text-sm font-medium">Priority</label>
                     <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       <option value="">--</option>
-                      {PRIORITY_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
+                      {PRIORITY_OPTIONS.map((p) => <option key={p} value={p}>{formatStatus(p)}</option>)}
                     </select>
                   </div>
                 </div>

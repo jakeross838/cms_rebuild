@@ -322,7 +322,7 @@ export default function CommunicationDetailPage() {
                     <label htmlFor="communication_type" className="text-sm font-medium">Type</label>
                     <select id="communication_type" name="communication_type" value={formData.communication_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {TYPE_OPTIONS.map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                        <option key={t} value={t}>{formatStatus(t)}</option>
                       ))}
                     </select>
                   </div>
@@ -330,7 +330,7 @@ export default function CommunicationDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>
@@ -338,7 +338,7 @@ export default function CommunicationDetailPage() {
                     <label htmlFor="priority" className="text-sm font-medium">Priority</label>
                     <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {PRIORITY_OPTIONS.map((p) => (
-                        <option key={p} value={p}>{p}</option>
+                        <option key={p} value={p}>{formatStatus(p)}</option>
                       ))}
                     </select>
                   </div>

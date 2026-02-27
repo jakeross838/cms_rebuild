@@ -507,7 +507,7 @@ export default function PurchaseOrderDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className={selectClassName}>
                       {PO_STATUSES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>

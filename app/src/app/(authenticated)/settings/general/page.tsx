@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface CompanyProfile {
@@ -270,9 +270,9 @@ export default function GeneralSettingsPage() {
                 <div className="mt-6 p-4 bg-muted rounded-lg">
                   <p className="text-sm font-medium text-foreground">Subscription</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Plan: <span className="font-medium capitalize">{company.subscriptionTier}</span>
+                    Plan: <span className="font-medium">{formatStatus(company.subscriptionTier)}</span>
                     {' '}&middot;{' '}
-                    Status: <span className="font-medium capitalize">{company.subscriptionStatus}</span>
+                    Status: <span className="font-medium">{formatStatus(company.subscriptionStatus)}</span>
                     {company.trialEndsAt ? <> &middot; Trial ends: {formatDate(company.trialEndsAt)}</> : null}
                   </p>
                 </div>
