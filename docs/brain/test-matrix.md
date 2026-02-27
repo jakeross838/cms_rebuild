@@ -1,5 +1,32 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 20 — Extended Security Hardening (2026-02-26)
+
+### Console.error Removal
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| TenantSwitcher fetch fails | Shows toast error, no console.error | pass |
+| TenantSwitcher switch fails | Shows toast error, no console.error | pass |
+| UserTable deactivate fails | Shows toast error, no console.error | pass |
+| UserTable reactivate fails | Shows toast error, no console.error | pass |
+| AuthProvider fetch companies fails | Shows toast error, no console.error | pass |
+| AuthProvider switch company fails | Shows toast error, no console.error | pass |
+
+### Security Audit Verification
+| Audit Category | Result | Status |
+|---------------|--------|--------|
+| Auth redirect patterns (297 pages) | 287 direct + 10 layout-only (all safe) | pass |
+| Env var exposure (client components) | Zero secrets exposed | pass |
+| IDOR (30+ routes sampled) | All filter by company_id | pass |
+| File upload endpoints (6 found) | Extension blocking, size limits, path sanitization | pass |
+| XSS vectors | Zero dangerouslySetInnerHTML, innerHTML, eval | pass |
+| target="_blank" safety | All have rel="noopener noreferrer" | pass |
+| Malformed JSON handling | Middleware returns 400, not 500 | pass |
+| API response consistency (35+ routes) | All follow standard shape | pass |
+| Error boundary coverage | 79 error.tsx files, 100% routes | pass |
+| Loading state coverage | 78 loading.tsx files, all major routes | pass |
+| not-found.tsx coverage | Catch-all at authenticated level | pass |
+
 ## Session 19 — DELETE/PUT Handler Hardening (2026-02-26)
 
 ### DELETE Existence Verification
