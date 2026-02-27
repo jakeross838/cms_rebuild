@@ -51,6 +51,7 @@ export const GET = createApiHandler(
       .from('inspection_results')
       .select('*')
       .eq('inspection_id', inspectionId)
+      .eq('company_id', ctx.companyId!)
       .order('recorded_at', { ascending: false })
 
     return NextResponse.json({

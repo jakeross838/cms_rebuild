@@ -77,6 +77,7 @@ export const GET = createApiHandler(
       .from('rfi_responses')
       .select('*', { count: 'exact' })
       .eq('rfi_id', rfiId)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .order('created_at', { ascending: true })
       .range(offset, offset + limit - 1)
