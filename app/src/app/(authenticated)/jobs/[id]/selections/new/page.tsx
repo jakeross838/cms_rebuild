@@ -14,6 +14,11 @@ import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'New Selection' }
+
+
 type Category = { id: string; name: string; room: string | null }
 type Option = { id: string; name: string; category_id: string }
 

@@ -22,6 +22,11 @@ import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Phases' }
+
+
 interface Phase {
   id: string
   name: string

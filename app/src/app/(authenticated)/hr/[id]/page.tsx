@@ -17,6 +17,11 @@ import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Employee Details' }
+
+
 interface EmployeeData {
   id: string
   first_name: string

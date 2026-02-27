@@ -15,6 +15,11 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'New Journal Entry' }
+
+
 // ── Types ──────────────────────────────────────────────────────
 
 interface AccountOption {

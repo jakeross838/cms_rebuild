@@ -11,6 +11,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { UserRole } from '@/types/database'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Users' }
+
+
 export default function UsersPage() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all')

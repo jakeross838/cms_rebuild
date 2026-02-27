@@ -11,6 +11,11 @@ import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Profile' }
+
+
 interface UserProfile {
   id: string
   email: string

@@ -18,6 +18,11 @@ import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Bid Details' }
+
+
 const BID_STATUSES = ['Draft', 'Open', 'Closed', 'Awarded']
 
 interface BidPackageData {

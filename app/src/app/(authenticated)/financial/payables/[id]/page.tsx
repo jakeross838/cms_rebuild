@@ -17,6 +17,11 @@ import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Payable Details' }
+
+
 interface BillData {
   id: string
   company_id: string
