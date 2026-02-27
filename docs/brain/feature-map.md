@@ -1,5 +1,27 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 19 — DELETE/PUT Handler Hardening & Comprehensive Audit (2026-02-26)
+
+### DELETE Handler Existence Verification (8 handlers)
+- Added `.select('id').single()` existence check before soft-delete in 8 handlers
+- Files: documents, weather, folders, notifications, punch-list, budgets, daily-logs, purchase-orders
+- Before: silently returned `{ success: true }` even if record didn't exist
+- After: returns 404 Not Found if record doesn't exist or is already deleted
+
+### PUT Handler deleted_at Filter Fixes (3 handlers)
+- Added `.is('deleted_at', null)` to existence check and/or update queries
+- Files: invoice-extractions (existence + update), material-requests (update), folders (update)
+- Prevents updating soft-deleted records
+
+### Comprehensive API Audit Results (All Clean)
+- Rate limiting: 100% coverage — every handler has `rateLimit` configured
+- Audit logging: 100% coverage — every POST/PUT/DELETE has `auditAction`
+- Zod validation: 100% coverage — every POST/PUT validates with `.safeParse()`
+- Auth context: 100% correct — no handler uses `ctx.user/companyId` without `requireAuth: true`
+- List pagination: All list endpoints use `getPaginationParams` (max 100) except 4 legitimate exceptions (singleton, tree, preferences, count-only)
+- Soft-delete filters on lists: All GET list endpoints with `deleted_at` tables properly filter
+- Hard-delete audit: Only 5 `.delete()` calls remain — all legitimate child-record replacement patterns (bill lines, invoice lines, tags, journal lines, request items)
+
 ## Session 18 — Performance & Soft Delete Hardening (2026-02-26)
 
 ### Hard-Delete → Soft-Delete Conversion (12 child tables)

@@ -1,5 +1,27 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 19 — DELETE/PUT Handler Hardening (2026-02-26)
+
+### DELETE Existence Verification
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| DELETE /documents/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /documents/:id (already deleted) | Returns 404 Not Found | verify |
+| DELETE /weather/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /folders/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /notifications/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /punch-list/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /budgets/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /daily-logs/:id (non-existent) | Returns 404 Not Found | verify |
+| DELETE /purchase-orders/:id (non-existent) | Returns 404 Not Found | verify |
+
+### PUT deleted_at Filter
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| PUT /invoice-extractions/:id (deleted record) | Returns error (not found/no rows) | verify |
+| PUT /material-requests/:id (deleted record) | Returns error (not found/no rows) | verify |
+| PUT /folders/:id (deleted record) | Returns error (not found/no rows) | verify |
+
 ## Session 18 — Performance & Soft Delete Hardening (2026-02-26)
 
 ### Soft-Delete Conversion

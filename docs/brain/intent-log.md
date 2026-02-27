@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 19 — DELETE/PUT Handler Hardening
+
+### Why (DELETE Existence Verification)
+- 8 DELETE handlers used `.update({ deleted_at })` without verifying the record exists first
+- Supabase `.update()` affecting 0 rows does NOT error — it silently succeeds
+- API returned `{ success: true }` for non-existent or already-deleted records
+- Fix: add `.select('id').single()` existence check before update, return 404 if not found
+
+### Why (PUT deleted_at Filters)
+- 3 PUT handlers could modify soft-deleted records because `.update()` didn't filter by `deleted_at`
+- Race condition: record deleted between existence check and update query
+- Fix: add `.is('deleted_at', null)` to update queries as belt-and-suspenders defense
+
+### Why (Comprehensive Audit)
+- Ran systematic programmatic audits across all 430+ API route handlers
+- Confirmed 100% coverage for: rate limiting, audit logging, Zod validation, auth context safety
+- Confirmed all list endpoints properly exclude soft-deleted records
+- Confirmed remaining `.delete()` calls are legitimate child-record replacement patterns
+- No further action needed on these fronts — codebase is clean
+
 ## 2026-02-26: Session 18 — Performance & Soft Delete Hardening
 
 ### Why (Hard-Delete → Soft-Delete Conversion)
