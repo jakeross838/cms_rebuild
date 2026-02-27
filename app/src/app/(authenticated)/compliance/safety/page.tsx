@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Plus, Search, AlertTriangle, ClipboardCheck } from 'lucide-react'
+import { Plus, AlertTriangle, ClipboardCheck } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

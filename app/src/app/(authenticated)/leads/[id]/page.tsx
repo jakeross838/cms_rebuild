@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
-import { ArrowLeft, DollarSign, Loader2, Mail, MapPin, Phone, Save, User } from 'lucide-react'
+import { ArrowLeft, Loader2, Mail, MapPin, Phone, Save, User } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { Home, Shield, Wrench } from 'lucide-react'
+import { Shield, Wrench } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

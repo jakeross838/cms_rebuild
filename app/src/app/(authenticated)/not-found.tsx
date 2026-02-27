@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { FileQuestion, Home, ArrowLeft } from 'lucide-react'
+import { FileQuestion, Home } from 'lucide-react'
 
 export default function AuthenticatedNotFound() {
   return (

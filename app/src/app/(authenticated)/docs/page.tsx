@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { BookOpen, GraduationCap, HeadphonesIcon, Lightbulb } from 'lucide-react'
+import { GraduationCap, HeadphonesIcon, Lightbulb } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
