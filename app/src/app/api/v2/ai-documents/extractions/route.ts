@@ -119,5 +119,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'heavy', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'ai_extraction.create' }
+  { requireAuth: true, rateLimit: 'heavy', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'ai_document_extraction.create' }
 )

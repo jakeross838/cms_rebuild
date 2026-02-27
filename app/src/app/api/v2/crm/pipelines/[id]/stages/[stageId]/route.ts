@@ -115,7 +115,7 @@ export const PUT = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'crm_pipelines_stage.update' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'crm_pipeline_stage.update' }
 )
 
 // ============================================================================
@@ -154,5 +154,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'crm_pipelines_stage.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'crm_pipeline_stage.archive' }
 )

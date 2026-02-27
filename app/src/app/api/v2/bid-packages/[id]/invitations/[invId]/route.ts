@@ -144,5 +144,5 @@ export const PUT = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'bid_packages_invitation.update' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'bid_package_invitation.update' }
 )

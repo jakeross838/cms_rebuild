@@ -116,7 +116,7 @@ export const PUT = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'advanced_reports_dashboard.update' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'advanced_report_dashboard.update' }
 )
 
 // ============================================================================
@@ -166,5 +166,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'advanced_reports_dashboard.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'advanced_report_dashboard.archive' }
 )

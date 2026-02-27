@@ -148,5 +148,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'advanced_reports_dashboards_widget.create' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'advanced_report_dashboard_widget.create' }
 )

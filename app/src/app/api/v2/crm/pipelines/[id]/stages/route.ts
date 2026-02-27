@@ -168,5 +168,5 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'crm_pipelines_stage.create' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'crm_pipeline_stage.create' }
 )
