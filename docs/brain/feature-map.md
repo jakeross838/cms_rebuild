@@ -1,5 +1,47 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 26 — Quality Hardening: SEO, Accessibility, Dead Code, RLS (2026-02-26)
+
+### Accessibility Fix (filter-bar.tsx)
+- Added `aria-label` to search input (was relying on placeholder only)
+- Changed sort direction button from `title` to `aria-label` for screen reader access
+- Changed Grid/List view toggle buttons from `title` to `aria-label`
+- All icon-only buttons now screen-reader accessible (WCAG 2.1 AA 4.1.2)
+
+### Page Metadata (128 pages)
+- Added `export const metadata: Metadata = { title: '...' }` to all 128 authenticated pages missing it
+- Covers detail pages (`[id]/page.tsx`), create pages (`new/page.tsx`), edit pages, and settings pages
+- Fixed irregular plural titles (Warrantie→Warranty, Assemblie→Assembly, Entrie→Entry, Rfi→RFI)
+
+### Dead Code Removal (24 files)
+- Removed 19 unused React Query hooks (`use-budgets`, `use-clients`, `use-jobs`, etc.)
+- Removed 5 unused components (`dropdown-menu`, `tooltip`, `job-context-bar`, `skeleton-job-filter`, `skeleton-sidebar`)
+- All verified with zero imports across the codebase before deletion
+
+### Loading States (64 loading.tsx files)
+- Added loading.tsx to all server component pages that do async data fetching but lacked one
+- Covers: jobs/[id]/* (22), financial/* (12), intelligence/* (12), compliance/* (5), etc.
+- Consistent spinner pattern matching existing loading.tsx files
+
+### Form Validation (3 create forms)
+- Added JS validation to permits/new (job_id required), punch-lists/new (job_id + title), daily-logs/new (log_date)
+- Previously relied on HTML5 `required` attribute only — now have custom error messages
+
+### useEffect Dependency Fix (10 forms)
+- Fixed `[, companyId]` → `[companyId]` in 10 create form pages
+- Leading comma created phantom `undefined` dependency
+
+### RLS Security (13 tables, 1 migration)
+- Created migration `20260226300000_enable_rls_on_missing_tables.sql`
+- Enabled RLS + policies on 9 configuration engine tables (tenant_configs, feature_flags, workflow_definitions, etc.)
+- Enabled RLS + policies on notification_deliveries (child table via FK join)
+- Enabled RLS + policies on document_versions, document_tags, document_search_content (child tables via FK join)
+- All use `get_current_company_id()` consistently (fixed inconsistency with `current_setting()`)
+
+### Soft Delete Filter Fix (jobs layout)
+- Added `.is('deleted_at', null)` to jobs/[id]/layout.tsx job query
+- Prevents rendering tabs/breadcrumbs for soft-deleted jobs
+
 ## Session 25 — Audit Actions, Multi-Tenant Security & PostgREST Injection Fix (2026-02-26)
 
 ### Audit Action Name Fixes (14 + 23 files)

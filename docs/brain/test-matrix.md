@@ -1,5 +1,61 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 26 — Quality Hardening: SEO, Accessibility, Dead Code, RLS (2026-02-26)
+
+### Accessibility
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| filter-bar search has aria-label | `aria-label` prop present on input | pass |
+| Sort direction button has aria-label | `aria-label` not `title` | pass |
+| Grid/List toggle buttons have aria-label | `aria-label` not `title` | pass |
+
+### Page Metadata
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All pages have metadata export | Grep for `export const metadata` in all page.tsx | pass |
+| No irregular singularizations | No "Entrie", "Warrantie", "Assemblie", "Rfi" | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Dead Code
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| No unused hook files in hooks/ | use-auth-audit, use-budgets, etc. removed | pass |
+| No unused component files | dropdown-menu, tooltip, skeleton-* removed | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Loading States
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All async server pages have loading.tsx | 64 new files covering jobs/[id]/*, financial/*, etc. | pass |
+| Consistent spinner pattern | All use same div/animate-spin structure | pass |
+
+### Form Validation
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| permits/new validates job_id | handleSubmit checks formData.job_id | pass |
+| punch-lists/new validates job_id + title | handleSubmit checks both | pass |
+| daily-logs/new validates log_date | handleSubmit checks formData.log_date | pass |
+
+### useEffect Dependencies
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `[, companyId]` patterns | Grep returns 0 matches | pass |
+| All fixed to `[companyId]` | 10 files updated | pass |
+
+### RLS Security
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All config engine tables have RLS | pg_tables.rowsecurity = true for all 9 | pass |
+| notification_deliveries has RLS | pg_tables.rowsecurity = true | pass |
+| document child tables have RLS | document_versions, document_tags both true | pass |
+| All policies use get_current_company_id() | No current_setting() in new policies | pass |
+| Migration applies cleanly | Supabase MCP apply_migration succeeds | pass |
+
+### Soft Delete
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| jobs/[id]/layout filters deleted_at | `.is('deleted_at', null)` present | pass |
+
 ## Session 25 — Audit Actions, Multi-Tenant Security & PostgREST Injection Fix (2026-02-26)
 
 ### Audit Action Normalization
