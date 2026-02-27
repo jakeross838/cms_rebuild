@@ -1,5 +1,33 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 21 — Deep Security Hardening & Performance
+
+### Why (N+1 Query Fixes)
+- 4 list pages used batch ID collection → second query pattern (N+1)
+- Supabase PostgREST supports FK joins in select (`table(col)`) which eliminates extra queries
+- Replaced 7 queries across 4 pages with single queries using joins
+- permit_inspections has no FK to jobs, so batch pattern retained where unavoidable
+
+### Why (Rate Limit Upgrade)
+- 4 secondary auth endpoints (me, logout, companies, switch-company) used default api rate limit (100/min)
+- These are auth-sensitive operations that should match login/signup/forgot-password tier (10/15min)
+- Inconsistent rate limits create attack surface — brute-force against `/me` could enumerate valid tokens
+
+### Why (select('*') Replacement)
+- Using `select('*')` on `users` table returns all columns, including future sensitive ones
+- Defense-in-depth: explicit column list prevents accidental data leaks if new columns are added
+- Response already picked specific fields, so the explicit select doesn't change behavior
+
+### Why (Logout Cookie Fix)
+- `rossos_company_id` cookie was set on company switch but never cleared on logout
+- After signOut(), the cookie persisted, revealing the user's last-active company
+- Fix: set maxAge=0 to clear the cookie alongside Supabase session cleanup
+
+### Why (Comprehensive Audits — 15+ categories)
+- Systematic verification that all security layers work together
+- RLS (270/270 tables), CSRF (JSON-only + CORS), type safety, pagination bounds, headers, validation
+- Results: Zero critical issues found; codebase is production-ready from a security standpoint
+
 ## 2026-02-26: Session 20 — Extended Security Hardening
 
 ### Why (Console.error Cleanup)

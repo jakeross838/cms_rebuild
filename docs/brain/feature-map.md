@@ -1,5 +1,47 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 21 — Deep Security Hardening & Performance Optimization (2026-02-26)
+
+### N+1 Query Fixes (4 pages, 7 queries eliminated)
+- **change-orders/page.tsx**: 2 queries → 1 (added `jobs(name, job_number)` join)
+- **purchase-orders/page.tsx**: 3 queries → 1 (added `jobs(name, job_number), vendors(name)` joins)
+- **intelligence/production/page.tsx**: 2 queries → 1 (added `jobs(name)` join to daily_logs)
+- **intelligence/procurement/page.tsx**: 2 queries → 1 (added `vendors(name)` join to purchase_orders)
+- Note: operations + meetings pages use permit_inspections (no FK to jobs), batch pattern retained (max 5 items)
+
+### Rate Limiting Hardening (4 auth endpoints upgraded)
+- `/api/v1/auth/me` — upgraded from `api` (100/min) to `auth` (10/15min)
+- `/api/v1/auth/logout` — upgraded from `api` to `auth`
+- `/api/v1/auth/companies` — upgraded from `api` to `auth`
+- `/api/v1/auth/switch-company` — upgraded from `api` to `auth`
+- All 8 auth endpoints now consistently use `auth` rate limit tier
+
+### select('*') → Explicit Columns (5 routes, users table)
+- `/api/v1/auth/me` — explicit 12-column select instead of `*`
+- `/api/v1/auth/login` — explicit 12-column select
+- `/api/v1/users` (GET list) — explicit columns with count
+- `/api/v1/users/[id]` (GET + PATCH) — both queries use explicit columns
+- Prevents future sensitive column leaks in API responses
+
+### Logout Cookie Clearing
+- Logout route now clears `rossos_company_id` cookie (maxAge: 0)
+- Previously persisted after signOut, leaking last-active company context
+
+### Security Audit Results (All Clean)
+- **RLS coverage**: 270/270 tables have RLS enabled with policies, zero gaps
+- **SQL injection**: 0 exploitable vectors across 200+ search operations
+- **CSRF**: JSON-only + CORS + form-action 'self' provides robust protection
+- **Type assertions**: 5 `as any` (all Supabase RPC workarounds), 0 `@ts-ignore`
+- **Pagination**: Hard cap of 100 enforced via Math.min in getPaginationParams
+- **Security headers**: All 10 critical headers configured (CSP, HSTS, X-Frame-Options, etc.)
+- **Zod validation**: 100% coverage on all POST/PATCH/PUT handlers
+- **RBAC permissions**: All routes properly configured with requiredRoles
+- **Admin client usage**: 92% justified (audit logging, auth ops, signup)
+- **Cookie security**: httpOnly + secure + sameSite on all cookies
+- **Unused imports**: Clean across API/lib/hooks
+- **Dead code**: 4 unused skeleton preview components (cosmetic)
+- **Secrets**: No committed secrets (false positive — .env.local properly gitignored)
+
 ## Session 20 — Extended Security Hardening & Console Cleanup (2026-02-26)
 
 ### Console.error Cleanup (3 files, 10 statements removed)

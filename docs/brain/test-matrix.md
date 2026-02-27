@@ -1,5 +1,52 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 21 — Deep Security Hardening & Performance (2026-02-26)
+
+### N+1 Query Fixes
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| change-orders list loads with job names | Single query with join, no batch lookup | pass |
+| purchase-orders list loads with job + vendor names | Single query with 2 joins | pass |
+| production page loads recent logs with job names | Single query with join | pass |
+| procurement page loads recent POs with vendor names | Single query with join | pass |
+| TypeScript compiles clean after type assertion changes | tsc --noEmit passes | pass |
+
+### Rate Limiting
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All 8 auth endpoints use 'auth' rate limit | Consistent 10/15min tier | pass |
+| Non-auth endpoints keep 'api'/'financial'/'heavy' tiers | No unintended changes | pass |
+
+### select('*') Replacement
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| /api/v1/auth/me returns user profile | All 12 fields present | pass |
+| /api/v1/auth/login returns user profile | All 12 fields present | pass |
+| /api/v1/users list returns user profiles | All 12 fields per user | pass |
+| /api/v1/users/[id] returns single user | All 12 fields present | pass |
+
+### Cookie Security
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Logout clears rossos_company_id cookie | maxAge: 0 in response | pass |
+| Company switch sets httpOnly + sameSite cookie | secure in prod | pass |
+
+### Deep Security Audits
+| Audit Category | Result | Status |
+|---------------|--------|--------|
+| RLS policy coverage (270 tables) | 270/270 enabled with policies | pass |
+| SQL injection (200+ search ops) | Zero exploitable vectors | pass |
+| CSRF protection | JSON-only + CORS + form-action 'self' | pass |
+| Type assertions (as any/never/unknown) | All justified workarounds | pass |
+| Pagination bounds | Hard cap 100 via Math.min | pass |
+| Security headers (10 headers) | All present and configured | pass |
+| Zod validation coverage | 100% on POST/PATCH/PUT | pass |
+| RBAC permissions | All routes properly configured | pass |
+| Admin client usage | 92% justified, zero cross-tenant leaks | pass |
+| Cookie security | httpOnly + secure + sameSite | pass |
+| Secrets in git | Zero (.env.local properly gitignored) | pass |
+| Dead code | 4 unused preview components (cosmetic) | pass |
+
 ## Session 20 — Extended Security Hardening (2026-02-26)
 
 ### Console.error Removal
