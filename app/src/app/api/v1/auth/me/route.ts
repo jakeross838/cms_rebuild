@@ -90,5 +90,6 @@ export const GET = createApiHandler(
   },
   {
     requireAuth: true,
+    rateLimit: 'auth',
   }
 )

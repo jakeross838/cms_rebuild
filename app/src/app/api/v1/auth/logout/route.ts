@@ -53,6 +53,7 @@ export const POST = createApiHandler(
   },
   {
     requireAuth: true,
+    rateLimit: 'auth',
     auditAction: 'auth.logout',
   }
 )

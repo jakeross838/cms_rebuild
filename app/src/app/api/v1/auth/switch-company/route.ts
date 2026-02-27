@@ -118,6 +118,7 @@ export const POST = createApiHandler(
   },
   {
     requireAuth: true,
+    rateLimit: 'auth',
     schema: switchCompanySchema,
     auditAction: 'auth.switch_company',
   }
