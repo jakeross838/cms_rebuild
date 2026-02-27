@@ -21,6 +21,7 @@ interface ChangeOrderRow {
   change_type: string | null
   schedule_impact_days: number | null
   created_at: string | null
+  jobs: { name: string; job_number: string | null } | null
 }
 
 export const metadata: Metadata = { title: 'Change Orders' }
@@ -51,7 +52,7 @@ export default async function ChangeOrdersPage({
 
   let query = supabase
     .from('change_orders')
-    .select('id, job_id, co_number, title, status, amount, change_type, schedule_impact_days, created_at', { count: 'exact' })
+    .select('id, job_id, co_number, title, status, amount, change_type, schedule_impact_days, created_at, jobs(name, job_number)', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order(sort.column, { ascending: sort.ascending })
@@ -68,7 +69,7 @@ export default async function ChangeOrdersPage({
 
   const { data: cosData, count, error } = await query
   if (error) throw error
-  const changeOrders = (cosData || []) as ChangeOrderRow[]
+  const changeOrders = (cosData || []) as unknown as ChangeOrderRow[]
   const totalPages = Math.ceil((count || 0) / pageSize)
 
   const statusFilters = [
@@ -80,21 +81,6 @@ export default async function ChangeOrdersPage({
     { value: 'voided', label: 'Voided' },
   ]
 
-  // Fetch related jobs for display
-  const jobIds = [...new Set(changeOrders.map((co) => co.job_id))]
-  const jobsMap = new Map<string, { name: string; job_number: string | null }>()
-
-  if (jobIds.length > 0) {
-    const { data: jobsData } = await supabase
-      .from('jobs')
-      .select('id, name, job_number')
-      .eq('company_id', companyId)
-      .in('id', jobIds)
-      .is('deleted_at', null)
-    for (const job of jobsData || []) {
-      jobsMap.set(job.id, { name: job.name, job_number: job.job_number })
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -173,7 +159,7 @@ export default async function ChangeOrdersPage({
         {changeOrders.length > 0 ? (
           <div className="divide-y divide-border">
             {changeOrders.map((co) => {
-              const job = jobsMap.get(co.job_id)
+              const job = co.jobs
               return (
                 <Link
                   key={co.id}
