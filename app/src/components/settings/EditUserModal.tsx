@@ -40,9 +40,11 @@ export function EditUserModal({ userId, onClose, onSuccess }: EditUserModalProps
 
   // Fetch user data
   useEffect(() => {
+    const controller = new AbortController()
+
     async function fetchUser() {
       try {
-        const response = await fetch(`/api/v1/users/${userId}`)
+        const response = await fetch(`/api/v1/users/${userId}`, { signal: controller.signal })
         if (!response.ok) {
           throw new Error('Failed to fetch user')
         }
@@ -53,6 +55,7 @@ export function EditUserModal({ userId, onClose, onSuccess }: EditUserModalProps
         setPhone(userData.phone || '')
         setRole(userData.role ?? 'field')
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
         setError((err as Error)?.message || 'Failed to load user')
       } finally {
         setLoading(false)
@@ -60,6 +63,8 @@ export function EditUserModal({ userId, onClose, onSuccess }: EditUserModalProps
     }
 
     fetchUser()
+
+    return () => { controller.abort() }
   }, [userId])
 
   const handleSubmit = async (e: React.FormEvent) => {

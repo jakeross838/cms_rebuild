@@ -85,9 +85,11 @@ export function AuthProvider({
     // Only fetch if we don't have initial data
     if (initialCompanies.length > 0) return
 
+    const controller = new AbortController()
+
     async function fetchCompanies() {
       try {
-        const response = await fetch('/api/v1/auth/companies')
+        const response = await fetch('/api/v1/auth/companies', { signal: controller.signal })
         if (!response.ok) {
           toast.error('Failed to load companies')
           return
@@ -113,12 +115,15 @@ export function AuthProvider({
             role: current.role as UserRole,
           })
         }
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
         toast.error('Failed to load companies')
       }
     }
 
     fetchCompanies()
+
+    return () => { controller.abort() }
   }, [user, initialCompanies.length])
 
   const signOut = useCallback(async () => {

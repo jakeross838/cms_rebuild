@@ -30,9 +30,11 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
 
   // Fetch user's companies on mount
   useEffect(() => {
+    const controller = new AbortController()
+
     async function fetchCompanies() {
       try {
-        const response = await fetch('/api/v1/auth/companies')
+        const response = await fetch('/api/v1/auth/companies', { signal: controller.signal })
         if (!response.ok) {
           toast.error('Failed to load companies')
           return
@@ -41,13 +43,16 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
         setCompanies(data.companies || [])
         const current = data.companies?.find((c: Company) => c.isCurrent)
         setCurrentCompany(current || null)
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
         toast.error('Failed to load companies')
       } finally {
         setIsLoading(false)
       }
     }
     fetchCompanies()
+
+    return () => { controller.abort() }
   }, [])
 
   const handleSwitchCompany = useCallback(async (companyId: string) => {

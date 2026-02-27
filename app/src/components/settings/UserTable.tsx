@@ -65,6 +65,8 @@ export function UserTable({
   const limit = 10
 
   useEffect(() => {
+    const controller = new AbortController()
+
     async function fetchUsers() {
       setLoading(true)
       setError(null)
@@ -79,7 +81,7 @@ export function UserTable({
         if (search) params.set('search', search)
         if (roleFilter) params.set('role', roleFilter)
 
-        const response = await fetch(`/api/v1/users?${params.toString()}`)
+        const response = await fetch(`/api/v1/users?${params.toString()}`, { signal: controller.signal })
         if (!response.ok) {
           throw new Error('Failed to fetch users')
         }
@@ -89,6 +91,7 @@ export function UserTable({
         setTotalPages(data.pagination?.totalPages || 1)
         setTotalCount(data.pagination?.total || 0)
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
         setError((err as Error)?.message || 'An error occurred')
       } finally {
         setLoading(false)
@@ -96,6 +99,8 @@ export function UserTable({
     }
 
     fetchUsers()
+
+    return () => { controller.abort() }
   }, [page, search, roleFilter, statusFilter])
 
   // Reset page when filters change
