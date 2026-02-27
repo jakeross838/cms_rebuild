@@ -214,7 +214,7 @@ export default function ChangeOrderDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{changeOrder.title}</h1>
-              <Badge variant={statusVariant(changeOrder.status)}>{changeOrder.status || 'Draft'}</Badge>
+              <Badge variant={statusVariant(changeOrder.status)}>{formatStatus(changeOrder.status || 'draft')}</Badge>
             </div>
             <p className="text-muted-foreground">
               {changeOrder.co_number ? `${changeOrder.co_number} \u00b7 ` : ''}

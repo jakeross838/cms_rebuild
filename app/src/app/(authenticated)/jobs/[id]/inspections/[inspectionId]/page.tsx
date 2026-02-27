@@ -226,7 +226,7 @@ export default function InspectionDetailPage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-foreground capitalize">
+              <h1 className="text-2xl font-bold text-foreground">
                 {formatStatus(inspection.inspection_type)}
               </h1>
               <Badge className={resultColor[inspection.status] || getStatusColor(inspection.status)}>

@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -245,7 +245,7 @@ export default function PermitDetailPage() {
                   <div>
                     <span className="text-muted-foreground">Status</span>
                     <p className="font-medium">
-                      <Badge className={`${getStatusColor(permit.status ?? 'draft')} rounded`}>{permit.status || 'Applied'}</Badge>
+                      <Badge className={`${getStatusColor(permit.status ?? 'draft')} rounded`}>{formatStatus(permit.status ?? 'draft')}</Badge>
                     </p>
                   </div>
                   <div>

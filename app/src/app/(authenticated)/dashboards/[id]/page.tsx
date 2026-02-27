@@ -248,7 +248,7 @@ export default function DashboardDetailPage() {
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-4">
                   <div>
                     <dt className="text-muted-foreground">Report Type</dt>
-                    <dd className="font-medium capitalize">{report.report_type}</dd>
+                    <dd className="font-medium">{formatStatus(report.report_type)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Visualization</dt>
@@ -256,11 +256,11 @@ export default function DashboardDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Audience</dt>
-                    <dd className="font-medium capitalize">{report.audience}</dd>
+                    <dd className="font-medium">{formatStatus(report.audience)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Refresh</dt>
-                    <dd className="font-medium capitalize">{report.refresh_frequency}</dd>
+                    <dd className="font-medium">{formatStatus(report.refresh_frequency)}</dd>
                   </div>
                 </dl>
               </CardContent>

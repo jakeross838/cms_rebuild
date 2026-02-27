@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -307,7 +308,7 @@ export default function TrainingCourseDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Difficulty</span>
-                    <p className="font-medium capitalize">{course.difficulty || 'N/A'}</p>
+                    <p className="font-medium">{course.difficulty ? formatStatus(course.difficulty) : 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Duration</span>

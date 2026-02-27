@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface UserProfile {
@@ -170,7 +170,7 @@ export default function ProfilePage() {
 
           <div className="space-y-2">
             <label htmlFor="role" className="text-sm font-medium">Role</label>
-            <Input id="role" value={profile.role} disabled className="bg-muted capitalize" />
+            <Input id="role" value={formatStatus(profile.role)} disabled className="bg-muted" />
           </div>
 
           <div className="space-y-2">

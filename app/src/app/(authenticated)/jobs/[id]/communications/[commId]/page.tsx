@@ -265,7 +265,7 @@ export default function CommunicationDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Type</span>
-                    <p className="font-medium capitalize">{comm.communication_type}</p>
+                    <p className="font-medium">{formatStatus(comm.communication_type)}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Recipient</span>

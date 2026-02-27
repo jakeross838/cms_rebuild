@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -224,8 +224,8 @@ export default function RfiDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{rfi.subject}</h1>
-              <Badge variant={statusVariant(rfi.status)}>{rfi.status || 'Open'}</Badge>
-              <Badge variant={priorityVariant(rfi.priority)}>{rfi.priority || 'Medium'}</Badge>
+              <Badge variant={statusVariant(rfi.status)}>{formatStatus(rfi.status || 'open')}</Badge>
+              <Badge variant={priorityVariant(rfi.priority)}>{formatStatus(rfi.priority || 'normal')}</Badge>
             </div>
             <p className="text-muted-foreground">
               {rfi.rfi_number ? `${rfi.rfi_number} \u00b7 ` : ''}

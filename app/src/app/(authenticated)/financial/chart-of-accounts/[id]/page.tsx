@@ -282,7 +282,7 @@ export default function ChartOfAccountsDetailPage() {
                   )}
                   <div>
                     <dt className="text-muted-foreground">Normal Balance</dt>
-                    <dd className="font-medium capitalize">{account.normal_balance}</dd>
+                    <dd className="font-medium">{formatStatus(account.normal_balance)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>

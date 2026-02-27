@@ -13,7 +13,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const WAIVER_TYPES = [
@@ -51,7 +51,7 @@ function statusBadge(status: string | null) {
   }
   return (
     <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${colors[s] || colors.draft}`}>
-      {status || 'Draft'}
+      {formatStatus(status || 'draft')}
     </span>
   )
 }
