@@ -16,9 +16,6 @@ import { toast } from 'sonner'
 
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'New Photo' }
-
-
 export default function NewPhotoPage() {
   const router = useRouter()
   const params = useParams()

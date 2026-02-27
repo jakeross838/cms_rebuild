@@ -17,11 +17,6 @@ import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = { title: 'Punch List Details' }
-
-
 interface PunchItemData {
   id: string
   company_id: string

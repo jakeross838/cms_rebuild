@@ -17,11 +17,6 @@ import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = { title: 'Selection Details' }
-
-
 interface CategoryData {
   id: string
   name: string

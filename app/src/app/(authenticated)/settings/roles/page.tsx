@@ -20,11 +20,6 @@ import { cn } from '@/lib/utils'
 import type { UserRole } from '@/types/database'
 import { toast } from 'sonner'
 
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = { title: 'Roles' }
-
-
 interface Role {
   id: string
   name: string

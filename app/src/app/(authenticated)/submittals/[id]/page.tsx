@@ -17,11 +17,6 @@ import { createClient } from '@/lib/supabase/client'
 import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = { title: 'Submittal Details' }
-
-
 interface SubmittalData {
   id: string
   submittal_number: string

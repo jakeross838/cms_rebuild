@@ -10,11 +10,6 @@ import { cn } from '@/lib/utils'
 import type { FeatureFlagKey, SubscriptionPlan } from '@/lib/config/types'
 import { toast } from 'sonner'
 
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = { title: 'Features' }
-
-
 interface FlagData {
   key: FeatureFlagKey
   name: string

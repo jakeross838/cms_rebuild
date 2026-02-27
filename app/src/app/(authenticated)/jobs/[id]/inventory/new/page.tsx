@@ -14,11 +14,6 @@ import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = { title: 'New Material' }
-
-
 interface InventoryItem {
   id: string
   name: string
@@ -37,7 +32,6 @@ export default function NewInventoryTransactionPage() {
   const [loadingItems, setLoadingItems] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<InventoryItem[]>([])
-
 
   const [formData, setFormData] = useState({
     item_id: '',
