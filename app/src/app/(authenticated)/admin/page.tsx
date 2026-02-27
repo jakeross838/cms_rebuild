@@ -84,17 +84,17 @@ export default async function AdminPage() {
     featureFlagsRes,
   ] = await Promise.all([
     // Total users in company
-    supabase.from('users').select('*', { count: 'exact', head: true })
+    supabase.from('users').select('id', { count: 'exact', head: true })
       .eq('company_id', companyId).is('deleted_at', null),
     // Active users
-    supabase.from('users').select('*', { count: 'exact', head: true })
+    supabase.from('users').select('id', { count: 'exact', head: true })
       .eq('company_id', companyId).is('deleted_at', null)
       .eq('is_active', true),
     // Roles configured
-    supabase.from('roles').select('*', { count: 'exact', head: true })
+    supabase.from('roles').select('id', { count: 'exact', head: true })
       .eq('company_id', companyId).is('deleted_at', null),
     // Feature flags
-    supabase.from('feature_flags').select('*', { count: 'exact', head: true })
+    supabase.from('feature_flags').select('id', { count: 'exact', head: true })
       .eq('company_id', companyId),
   ])
 
