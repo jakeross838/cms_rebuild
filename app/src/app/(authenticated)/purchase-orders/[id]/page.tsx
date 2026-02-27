@@ -148,6 +148,7 @@ export default function PurchaseOrderDetailPage() {
           .select('id, name')
           .eq('id', poData.vendor_id)
           .eq('company_id', companyId)
+          .is('deleted_at', null)
           .single()
         if (vendorData) setVendor(vendorData as VendorInfo)
       }
