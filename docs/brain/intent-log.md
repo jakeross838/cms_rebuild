@@ -1,5 +1,30 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-26: Session 18 — Performance & Soft Delete Hardening
+
+### Why (Hard-Delete → Soft-Delete Conversion)
+- 12 child tables had DELETE handlers using `.delete()` — permanent data loss
+- Project mandate: "Soft delete only — nothing is permanently deleted"
+- Applied migration to add `deleted_at` columns + partial indexes, converted all 12 handlers
+- Types regenerated/patched to include new columns
+
+### Why (Composite Indexes)
+- High-frequency list queries filter by (company_id + deleted_at + entity filter)
+- Without composite indexes, each filter requires separate index lookups + intersection
+- Added 18 composite indexes covering the 7 most queried tables
+- These are the tables most likely to have thousands of rows per tenant
+
+### Why (N+1 Query Consolidation)
+- 5 detail GET routes were making 3-4 sequential DB calls for parent + children
+- Each round-trip adds ~5-10ms latency under load
+- Supabase supports relational selects via PostgREST — single query returns parent + all children
+- Consolidated saves 10-30ms per request on these 5 high-traffic routes
+
+### Why (Missing company_id Filters)
+- Child tables with company_id column weren't filtering by it in queries
+- Parent verification provides indirect isolation, but direct filtering is defense-in-depth
+- If an RLS policy is misconfigured or bypassed, the query-level filter is the last line of defense
+
 ## 2026-02-26: Session 17 — Security Hardening: Nested Resources + Remaining Gaps
 
 ### Why (Nested Resource Parent ID Enforcement)

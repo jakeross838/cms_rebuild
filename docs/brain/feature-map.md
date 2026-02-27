@@ -1,5 +1,35 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 18 — Performance & Soft Delete Hardening (2026-02-26)
+
+### Hard-Delete → Soft-Delete Conversion (12 child tables)
+- Applied migration `add_deleted_at_to_child_tables` adding `deleted_at TIMESTAMPTZ` + partial indexes
+- Tables: estimate_line_items, campaign_contacts, maintenance_tasks, toolbox_talk_attendees, safety_inspection_items, migration_field_mappings, checklist_template_items, permit_documents, permit_fees, punch_item_photos, feature_request_votes, training_path_items
+- All 12 DELETE handlers converted from `.delete()` → `.update({ deleted_at })`
+- Updated `database.ts` types to include `deleted_at` for all 12 tables
+- **0 hard-delete handlers remain** in the entire codebase
+
+### Composite Database Indexes (18 indexes, 7 tables)
+- Applied migration `add_composite_indexes_for_common_queries`
+- Tables: ap_bills (3), ar_invoices (3), documents (3), change_orders (2), safety_incidents (3), safety_inspections (2), toolbox_talks (2)
+- All indexes match API route query patterns: (company_id, deleted_at, filter_column)
+
+### N+1 Query Consolidation (5 detail routes)
+- Replaced 3-4 sequential Supabase queries with single relational select
+- Routes fixed:
+  - `daily-logs/[id]` — 4→1 queries (entries, labor, photos)
+  - `estimates/[id]` — 4→1 queries (line_items, sections, versions)
+  - `permits/[id]` — 4→1 queries (inspections, documents, fees)
+  - `bid-packages/[id]` — 4→1 queries (invitations, responses, awards)
+  - `ap/bills/[id]` — 3→1 queries (bill_lines, payment_applications)
+
+### Missing company_id Filters (5 files)
+- Defense-in-depth: added `.eq('company_id', ctx.companyId!)` to child-table queries
+- rfi_responses (GET list, GET single, PUT, DELETE) — 4 queries
+- inspection_results — 1 query
+- estimate_versions — 1 query
+- daily_log_labor — 1 query
+
 ## Session 17 — Security Hardening: Nested Resources + Remaining Gaps (2026-02-26)
 
 ### Missed .or() Filter Injection Fix (5 files)

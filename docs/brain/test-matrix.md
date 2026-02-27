@@ -1,5 +1,32 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 18 — Performance & Soft Delete Hardening (2026-02-26)
+
+### Soft-Delete Conversion
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| DELETE /estimates/:id/lines/:lineId | Sets deleted_at, returns { success: true } | verify |
+| DELETE /training/paths/:id/items/:itemId | Sets deleted_at, returns { success: true } | verify |
+| DELETE /feature-requests/:id/votes (by user) | Sets deleted_at, decrements vote_count | verify |
+| Deleted child records filtered from GET lists | Only rows with deleted_at IS NULL returned | verify |
+
+### N+1 Consolidation
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /daily-logs/:id | Returns log with entries, labor, photos arrays | verify |
+| GET /estimates/:id | Returns estimate with lines_count, sections_count, versions | verify |
+| GET /permits/:id | Returns permit with inspections_count, documents_count, fees | verify |
+| GET /bid-packages/:id | Returns bid with invitations_count, responses_count, awards_count | verify |
+| GET /ap/bills/:id | Returns bill with lines, payment_applications arrays | verify |
+
+### Missing company_id Filters
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| GET /rfis/:id/responses | Only returns responses for company | verify |
+| GET /rfis/:id/responses/:respId | Adds company_id filter to single response | verify |
+| GET /permits/:id/inspections/:inspId (results) | Results filtered by company_id | verify |
+| GET /estimates/:id/versions | Versions filtered by company_id | verify |
+
 ## Session 17 — Security Hardening: Nested Resources + Remaining Gaps (2026-02-26)
 
 ### Nested Resource Parent ID Enforcement
