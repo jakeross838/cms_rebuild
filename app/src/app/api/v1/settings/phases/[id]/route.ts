@@ -168,6 +168,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
     .from('project_phases')
     .update(update)
     .eq('id', id)
+    .eq('company_id', companyId)
     .select()
     .single()
 
@@ -249,6 +250,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
     .from('project_phases')
     .update({ deleted_at: new Date().toISOString() })
     .eq('id', id)
+    .eq('company_id', companyId)
 
   if (error) {
     const mapped = mapDbError(error)

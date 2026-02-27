@@ -193,6 +193,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
       .from('workflow_definitions')
       .update(record as never)
       .eq('id', existing.id)
+      .eq('company_id', ctx.companyId!)
       .select()
       .single()
     data = result.data
