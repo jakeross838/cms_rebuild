@@ -63,6 +63,7 @@ export default async function JobLayout({
     .select('name, job_number')
     .eq('id', id)
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .single()
 
   const tabs = getJobTabs(id)
