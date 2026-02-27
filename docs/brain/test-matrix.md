@@ -1,5 +1,18 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 29 — Complete formatStatus() Rollout (2026-02-27)
+
+### Universal Status Display
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `.replace('_', ' ')` patterns in authenticated pages | Grep finds 0 (except terminology) | pass |
+| Zero CSS `capitalize` on DB fields with formatStatus() | No redundant capitalize | pass |
+| All select option labels use formatStatus() | No raw snake_case in dropdowns | pass |
+| All hardcoded fallbacks use lowercase DB enum values | No 'Draft', 'Open', 'Medium' | pass |
+| All Badge text wrapped in formatStatus() | No raw status display | pass |
+| vendor lookup in PO detail has deleted_at filter | .is('deleted_at', null) present | pass |
+| TypeScript compiles clean after all changes | tsc --noEmit passes | pass |
+
 ## Session 28 — Data Integrity: Status Values, Display Formatting (2026-02-27)
 
 ### Status Value Alignment

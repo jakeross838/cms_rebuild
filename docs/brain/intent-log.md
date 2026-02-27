@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 29 — Complete formatStatus() Rollout + Final Data Integrity Sweep
+
+### Why (Universal formatStatus() — 80+ pages)
+- Session 28 applied formatStatus() to ~21 pages; this session completed the remaining ~60 pages
+- Replaced ALL `.replace('_', ' ')` and `.replace(/_/g, ' ')` patterns — these showed raw underscored text
+- Replaced all CSS `capitalize` class on DB fields — doesn't capitalize after underscores
+- Fixed ALL select dropdown option labels showing raw snake_case to users
+- Fixed ALL hardcoded fallback values ('Draft', 'Open', 'Medium') to lowercase DB enum values
+- Added missing `deleted_at` filter on vendor lookup in purchase-orders
+
+### Why (Systematic approach)
+- Used Node.js script for bulk `.replace` → `formatStatus()` conversion (53 files at once)
+- Then manual fixes for edge cases: optional chaining, capitalize CSS, raw Badge text
+- Then targeted audit agents for remaining gaps: dropdown labels, fallback values
+- Result: zero inconsistent status display remains across entire authenticated app
+
 ## 2026-02-27: Session 28 — Data Integrity: Status Values, Display Formatting, Code Cleanup
 
 ### Why (Status Value Fixes — 15 files)

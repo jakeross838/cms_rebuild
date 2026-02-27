@@ -1,12 +1,35 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 29 — Complete formatStatus() Rollout + Data Integrity (2026-02-27)
+
+### formatStatus() — Universal Coverage
+- **53 pages:** Replaced all `.replace('_', ' ')` patterns with `formatStatus()`
+- **11 pages:** Replaced CSS `capitalize` class with `formatStatus()` for DB field display
+- **10 pages:** Added `formatStatus()` to select dropdown option labels (raw enum → Title Case)
+- **9 pages:** Fixed hardcoded fallback values from Title Case to lowercase DB values
+  - `'Draft'` → `'draft'`, `'Open'` → `'submitted'`/`'draft'`, `'Medium'` → `'normal'`, `'Applied'` → `'draft'`
+- **Total: ~80 pages touched** — all status/type/priority display now goes through formatStatus()
+- **Zero `.replace('_', ' ')` patterns remain** (except settings/terminology which has its own formatKey utility)
+- **Zero raw snake_case option labels remain** in select dropdowns
+
+### Fields Covered by formatStatus()
+- Status, priority, change_type, permit_type, warranty_type, waiver_type
+- communication_type, inspection_type, insurance_type, incident_type
+- report_type, audience, refresh_frequency, estimate_type, contract_type
+- normal_balance, source_type, entry_method, difficulty, subscription tier/status
+- role (account profile page)
+
+### deleted_at Filter Fix
+- Added `.is('deleted_at', null)` to vendor lookup in purchase-orders/[id]
+- Confirmed invoices table has NO `deleted_at` column (archives via status change)
+
 ## Session 28 — Data Integrity: Status Values, Display Formatting (2026-02-27)
 
 ### formatStatus() Utility (lib/utils.ts)
 - New function: converts snake_case DB values to Title Case for display
 - `formatStatus('pending_approval')` → `'Pending Approval'`
 - `formatStatus(null)` → `'Unknown'`
-- Used in 21+ pages for status, priority, and change_type display
+- getStatusColor() expanded from 15 to 55+ status mappings
 
 ### Status/Priority/Change Type Values — DB Alignment
 - **bid_packages:** status values `draft, published, closed, awarded, cancelled`
@@ -24,6 +47,8 @@
 - React key props: all .map() calls have proper unique keys
 - Form reset after submit: all create forms navigate away on success
 - Navigation links: zero skeleton paths, zero broken hrefs, zero double slashes
+- Console statements: 78 console.error in error.tsx files — standard error boundary logging, acceptable
+- Form validation: most create forms have proper JS validation; 3-4 job-nested forms rely on HTML5 only (low priority)
 
 ## Session 27 — Quality Hardening: Forms, Security, Build Fixes (2026-02-27)
 
