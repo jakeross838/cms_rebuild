@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 
 import {
   Globe,
@@ -10,7 +9,7 @@ import {
 } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Forums' }
@@ -39,11 +38,7 @@ const forumCategories = [
 ]
 
 export default async function ForumsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) { redirect('/login') }
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  if (!profile?.company_id) { redirect('/login') }
+  await getServerAuth()
 
   return (
     <div className="space-y-6 p-6">

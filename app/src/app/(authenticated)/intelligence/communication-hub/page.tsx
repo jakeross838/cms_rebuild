@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import {
   MessageSquare,
@@ -12,7 +11,7 @@ import {
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 import { formatDate } from '@/lib/utils'
 import type { Metadata } from 'next'
 
@@ -21,13 +20,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = { title: 'Communications' }
 
 export default async function CommunicationHubPage() {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) { redirect('/login') }
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  const companyId = profile?.company_id
-  if (!companyId) { redirect('/login') }
+  const { companyId, supabase, user } = await getServerAuth()
 
   // ── Parallel data fetching ──
   const [

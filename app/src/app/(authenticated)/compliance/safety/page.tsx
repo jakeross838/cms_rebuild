@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import { Plus, Search, AlertTriangle, ClipboardCheck } from 'lucide-react'
 
@@ -9,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
 interface SafetyIncident {
@@ -51,13 +50,7 @@ export default async function SafetyPage({
   const page = Number(params.page) || 1
   const pageSize = 25
   const offset = (page - 1) * pageSize
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) { redirect('/login') }
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  const companyId = profile?.company_id
-  if (!companyId) { redirect('/login') }
+  const { companyId, supabase } = await getServerAuth()
 
   const [
     { data: incidentsData, count: incidentsCount },

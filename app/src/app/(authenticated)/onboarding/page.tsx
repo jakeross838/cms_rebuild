@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 
 import { CheckCircle, Circle, Rocket } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 
 interface ChecklistItem {
   id: string
@@ -18,13 +17,7 @@ interface ChecklistItem {
 export const metadata: Metadata = { title: 'Onboarding' }
 
 export default async function OnboardingPage() {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) { redirect('/login') }
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  const companyId = profile?.company_id
-  if (!companyId) { redirect('/login') }
+  const { companyId, supabase } = await getServerAuth()
 
   const { data: itemsData, error } = await supabase
     .from('onboarding_checklists')

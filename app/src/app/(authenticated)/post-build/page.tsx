@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 
 import { Home, Shield, Wrench } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 import { formatDate, getStatusColor } from '@/lib/utils'
 
 interface Warranty {
@@ -33,14 +32,7 @@ interface MaintenanceSchedule {
 export const metadata: Metadata = { title: 'Post-Build' }
 
 export default async function PostBuildPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const supabase = await createClient()
-
-  // ── Auth & Company ID ──────────────────────────────────────────────
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  const companyId = profile?.company_id
-  if (!companyId) redirect('/login')
+  const { companyId, supabase } = await getServerAuth()
 
   const params = await searchParams
   const pageSize = 25

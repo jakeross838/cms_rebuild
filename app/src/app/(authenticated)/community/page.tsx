@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import { Award, MessageCircle, Star, Users } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Community' }
@@ -31,11 +30,7 @@ const sections = [
 ]
 
 export default async function CommunityPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) { redirect('/login') }
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  if (!profile?.company_id) { redirect('/login') }
+  await getServerAuth()
 
   return (
     <div className="space-y-6 p-6">

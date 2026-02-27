@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import { Plus, Search, Palette } from 'lucide-react'
 
@@ -8,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 import { escapeLike, formatCurrency, getStatusColor } from '@/lib/utils'
 
 interface SelectionCategory {
@@ -32,14 +31,7 @@ export default async function SelectionsCatalogPage({
   searchParams: Promise<{ search?: string }>
 }) {
   const params = await searchParams
-  const supabase = await createClient()
-
-  // ── Auth & Company ID ──────────────────────────────────────────────
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  const companyId = profile?.company_id
-  if (!companyId) redirect('/login')
+  const { companyId, supabase } = await getServerAuth()
 
   let query = supabase
     .from('selection_categories')

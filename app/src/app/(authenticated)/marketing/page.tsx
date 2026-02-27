@@ -1,23 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import { Megaphone, Mail, Star, Users, BarChart3 } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/server'
+import { getServerAuth } from '@/lib/supabase/get-auth'
 
 export const metadata: Metadata = { title: 'Marketing' }
 
 export default async function MarketingPage() {
-  const supabase = await createClient()
-
-  // ── Auth & Company ID ──────────────────────────────────────────────
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-  const { data: profile } = await supabase.from('users').select('company_id').eq('id', user.id).single()
-  const companyId = profile?.company_id
-  if (!companyId) redirect('/login')
+  const { companyId, supabase } = await getServerAuth()
 
   const [
     { count: campaignCount },
