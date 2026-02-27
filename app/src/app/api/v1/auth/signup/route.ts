@@ -16,6 +16,7 @@ import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { sendWelcomeEmail } from '@/lib/email/resend'
+import { env } from '@/lib/env'
 import { logger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { signupSchema, type SignupInput } from '@/lib/validation/schemas/auth'
@@ -165,7 +166,7 @@ export const POST = createApiHandler(
       } as never)
       // Step 8: Send verification email via Supabase (it handles this automatically on createUser with email_confirm: false)
       // Also send welcome email via Resend
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      const appUrl = env.NEXT_PUBLIC_APP_URL
       await sendWelcomeEmail({
         to: email,
         userName: name,

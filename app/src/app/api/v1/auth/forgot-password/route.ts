@@ -14,6 +14,7 @@ import { NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { sendPasswordResetEmail } from '@/lib/email/resend'
+import { env } from '@/lib/env'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validation/schemas/auth'
 
@@ -54,7 +55,7 @@ export const POST = createApiHandler(
         type: 'recovery',
         email: email.toLowerCase(),
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password`,
+          redirectTo: `${env.NEXT_PUBLIC_APP_URL}/reset-password`,
         },
       })
 
@@ -65,7 +66,7 @@ export const POST = createApiHandler(
           type: 'recovery',
           email: email.toLowerCase(),
           options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password`,
+            redirectTo: `${env.NEXT_PUBLIC_APP_URL}/reset-password`,
           },
         })
 

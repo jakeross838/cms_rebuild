@@ -14,6 +14,7 @@ import {
   paginatedResponse,
   type ApiContext,
 } from '@/lib/api/middleware'
+import { env } from '@/lib/env'
 import { generateInviteToken } from '@/lib/auth/tokens'
 import { sendInviteEmail } from '@/lib/email/resend'
 import { createLogger } from '@/lib/monitoring'
@@ -231,7 +232,7 @@ export const POST = createApiHandler(
     }
 
     // Build invite URL
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = env.NEXT_PUBLIC_APP_URL
     const inviteUrl = `${appUrl}/accept-invite?token=${token}`
 
     // Send invitation email
