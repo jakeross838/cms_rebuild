@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, type ReactNode } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import {
     Sheet,
@@ -39,12 +39,21 @@ export function SideDrawerProvider({ children }: { children: ReactNode }) {
         setIsOpen(true)
     }
 
-    const closeDrawer = () => {
+    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const closeDrawer = useCallback(() => {
         setIsOpen(false)
-        setTimeout(() => {
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+        closeTimerRef.current = setTimeout(() => {
             setConfig((prev) => ({ ...prev, content: null }))
         }, 300) // Wait for animation
-    }
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+        }
+    }, [])
 
     const getSizeClass = (size: SideDrawerConfig['size']) => {
         switch (size) {

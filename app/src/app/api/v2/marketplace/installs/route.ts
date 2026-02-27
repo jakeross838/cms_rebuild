@@ -139,9 +139,8 @@ export const POST = createApiHandler(
     }
 
     // Increment install count on template
-    await (supabase.rpc as any)('increment_install_count', { template_id_input: input.template_id }).catch(() => {
-      // Non-critical: best-effort increment
-    })
+    // Non-critical: best-effort increment (ignore errors)
+    await supabase.rpc('increment_install_count', { template_id_input: input.template_id })
 
     return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
   },

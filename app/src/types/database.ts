@@ -17356,6 +17356,22 @@ export type Database = {
         Returns: boolean
       }
       user_has_role: { Args: { allowed_roles: string[] }; Returns: boolean }
+      apply_payment_to_bill: {
+        Args: { p_bill_id: string; p_company_id: string; p_amount: number }
+        Returns: undefined
+      }
+      apply_receipt_to_invoice: {
+        Args: { p_invoice_id: string; p_company_id: string; p_amount: number }
+        Returns: undefined
+      }
+      increment_install_count: {
+        Args: { template_id_input: string }
+        Returns: undefined
+      }
+      increment_po_line_received: {
+        Args: { p_line_id: string; p_quantity: number }
+        Returns: undefined
+      }
     }
     Enums: {
       contract_type: "fixed_price" | "cost_plus" | "time_materials"

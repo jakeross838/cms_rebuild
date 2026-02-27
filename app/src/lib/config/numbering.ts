@@ -89,11 +89,10 @@ export async function getNextNumber(
   const supabase = await createClient()
 
   // Try to use the database function first (atomic operation)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase.rpc as any)('get_next_sequence_number', {
+  const { data, error } = await supabase.rpc('get_next_sequence_number', {
     p_company_id: companyId,
     p_entity_type: entityType,
-    p_job_id: jobId || null,
+    p_job_id: jobId || undefined,
   })
 
   if (!error && data) {

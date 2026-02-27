@@ -157,7 +157,7 @@ export const POST = createApiHandler(
     // Atomically update bill balance_due and status (parallel, prevents race conditions)
     const rpcResults = await Promise.all(
       input.applications.map((app) =>
-        (supabase as any).rpc('apply_payment_to_bill', {
+        supabase.rpc('apply_payment_to_bill', {
           p_bill_id: app.bill_id,
           p_company_id: ctx.companyId!,
           p_amount: app.amount,

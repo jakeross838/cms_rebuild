@@ -213,7 +213,7 @@ export const POST = createApiHandler(
     // Atomically increment received_quantity on each PO line (parallel, prevents race conditions)
     const rpcResults = await Promise.all(
       input.lines.map((line) =>
-        (supabase as any).rpc('increment_po_line_received', {
+        supabase.rpc('increment_po_line_received', {
           p_line_id: line.po_line_id,
           p_quantity: line.quantity_received,
         })
