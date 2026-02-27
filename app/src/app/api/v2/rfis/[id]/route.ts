@@ -30,10 +30,11 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('rfis')
-      .select('*')
+      .select('*, rfi_responses(id), rfi_routing(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .order('routed_at', { referencedTable: 'rfi_routing', ascending: false })
       .single()
 
     if (error) {
@@ -43,26 +44,13 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch responses count
-    const { data: responses } = await supabase
-      .from('rfi_responses')
-      .select('id')
-      .eq('rfi_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    // Fetch routing entries
-    const { data: routing } = await supabase
-      .from('rfi_routing')
-      .select('*')
-      .eq('rfi_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('routed_at', { ascending: false })
+    const { rfi_responses, rfi_routing, ...rfi } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        responses_count: (responses ?? []).length,
-        routing: routing ?? [],
+        ...rfi,
+        responses_count: (rfi_responses ?? []).length,
+        routing: rfi_routing ?? [],
       },
       requestId: ctx.requestId,
     })

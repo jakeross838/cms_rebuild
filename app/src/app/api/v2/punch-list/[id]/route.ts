@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('punch_items')
-      .select('*')
+      .select('*, punch_item_photos(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,18 +43,12 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch photos
-    const { data: photos } = await supabase
-      .from('punch_item_photos')
-      .select('*')
-      .eq('punch_item_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('uploaded_at', { ascending: true })
+    const { punch_item_photos, ...punchItem } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        photos: photos ?? [],
+        ...punchItem,
+        photos: punch_item_photos ?? [],
       },
       requestId: ctx.requestId,
     })

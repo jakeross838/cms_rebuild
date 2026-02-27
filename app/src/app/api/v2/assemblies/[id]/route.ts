@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('assemblies')
-      .select('*')
+      .select('*, assembly_items(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,16 +43,12 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch items count
-    const { data: items } = await supabase
-      .from('assembly_items')
-      .select('id')
-      .eq('assembly_id', id)
+    const { assembly_items, ...assembly } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        items_count: (items ?? []).length,
+        ...assembly,
+        items_count: (assembly_items ?? []).length,
       },
       requestId: ctx.requestId,
     })

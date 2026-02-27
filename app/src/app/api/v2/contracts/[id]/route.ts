@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('contracts')
-      .select('*')
+      .select('*, contract_signers(id), contract_versions(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,26 +43,13 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch signers count
-    const { data: signers } = await supabase
-      .from('contract_signers')
-      .select('id')
-      .eq('contract_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    // Fetch versions
-    const { data: versions } = await supabase
-      .from('contract_versions')
-      .select('*')
-      .eq('contract_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('version_number', { ascending: false })
+    const { contract_signers, contract_versions, ...contract } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        signers_count: (signers ?? []).length,
-        versions: versions ?? [],
+        ...contract,
+        signers_count: (contract_signers ?? []).length,
+        versions: contract_versions ?? [],
       },
       requestId: ctx.requestId,
     })

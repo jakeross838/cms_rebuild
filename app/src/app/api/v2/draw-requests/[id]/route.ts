@@ -25,9 +25,9 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: draw, error } = await supabase
+    const { data, error } = await supabase
       .from('draw_requests')
-      .select('*')
+      .select('*, draw_request_lines(*), draw_request_history(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -40,22 +40,10 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch line items
-    const { data: lines } = await supabase
-      .from('draw_request_lines')
-      .select('*')
-      .eq('draw_request_id', id)
-      .order('sort_order', { ascending: true })
-
-    // Fetch history
-    const { data: history } = await supabase
-      .from('draw_request_history')
-      .select('*')
-      .eq('draw_request_id', id)
-      .order('created_at', { ascending: false })
+    const { draw_request_lines, draw_request_history, ...draw } = data
 
     return NextResponse.json({
-      data: { ...draw, lines: lines ?? [], history: history ?? [] },
+      data: { ...draw, lines: draw_request_lines ?? [], history: draw_request_history ?? [] },
       requestId: ctx.requestId,
     })
   },

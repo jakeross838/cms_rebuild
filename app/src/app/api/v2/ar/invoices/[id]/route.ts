@@ -25,9 +25,9 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: invoice, error } = await supabase
+    const { data, error } = await supabase
       .from('ar_invoices')
-      .select('*')
+      .select('*, ar_invoice_lines(*), ar_receipt_applications(id, receipt_id, amount, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -40,22 +40,10 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch invoice lines
-    const { data: lines } = await supabase
-      .from('ar_invoice_lines')
-      .select('*')
-      .eq('invoice_id', id)
-      .order('created_at', { ascending: true })
-
-    // Fetch receipt applications
-    const { data: receipts } = await supabase
-      .from('ar_receipt_applications')
-      .select('id, receipt_id, amount, created_at')
-      .eq('invoice_id', id)
-      .order('created_at', { ascending: true })
+    const { ar_invoice_lines, ar_receipt_applications, ...invoice } = data
 
     return NextResponse.json({
-      data: { ...invoice, lines: lines ?? [], receipt_applications: receipts ?? [] },
+      data: { ...invoice, lines: ar_invoice_lines ?? [], receipt_applications: ar_receipt_applications ?? [] },
       requestId: ctx.requestId,
     })
   },

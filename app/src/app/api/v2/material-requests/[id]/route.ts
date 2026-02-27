@@ -28,10 +28,11 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('material_requests')
-      .select('*')
+      .select('*, material_request_items(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .order('created_at', { referencedTable: 'material_request_items', ascending: true })
       .single()
 
     if (error) {
@@ -41,15 +42,10 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch line items
-    const { data: items } = await supabase
-      .from('material_request_items')
-      .select('*')
-      .eq('request_id', id)
-      .order('created_at', { ascending: true })
+    const { material_request_items, ...request } = data
 
     return NextResponse.json({
-      data: { ...data, items: items ?? [] },
+      data: { ...request, items: material_request_items ?? [] },
       requestId: ctx.requestId,
     })
   },

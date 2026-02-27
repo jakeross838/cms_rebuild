@@ -30,10 +30,11 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('quality_checklists')
-      .select('*')
+      .select('*, quality_checklist_items(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .order('sort_order', { referencedTable: 'quality_checklist_items', ascending: true })
       .single()
 
     if (error) {
@@ -43,19 +44,13 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch checklist items
-    const { data: items } = await supabase
-      .from('quality_checklist_items')
-      .select('*')
-      .eq('checklist_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('sort_order', { ascending: true })
+    const { quality_checklist_items, ...checklist } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        items: items ?? [],
-        items_count: (items ?? []).length,
+        ...checklist,
+        items: quality_checklist_items ?? [],
+        items_count: (quality_checklist_items ?? []).length,
       },
       requestId: ctx.requestId,
     })

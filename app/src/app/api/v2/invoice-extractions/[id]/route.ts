@@ -32,40 +32,30 @@ export const GET = createApiHandler(
 
     const supabase = await createClient()
 
-    // Get the extraction
-    const { data: extraction, error: extractionError } = await supabase
+    // Get the extraction with line items and audit log in a single query
+    const { data, error } = await supabase
       .from('invoice_extractions')
-      .select('*')
+      .select('*, invoice_line_extractions(*), extraction_audit_log(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .order('line_number', { referencedTable: 'invoice_line_extractions', ascending: true })
+      .order('created_at', { referencedTable: 'extraction_audit_log', ascending: true })
       .single()
 
-    if (extractionError || !extraction) {
+    if (error || !data) {
       return NextResponse.json(
         { error: 'Not Found', message: 'Extraction not found', requestId: ctx.requestId },
         { status: 404 }
       )
     }
 
-    // Get line items
-    const { data: lineItems } = await supabase
-      .from('invoice_line_extractions')
-      .select('*')
-      .eq('extraction_id', id)
-      .order('line_number', { ascending: true })
-
-    // Get audit log
-    const { data: auditLog } = await supabase
-      .from('extraction_audit_log')
-      .select('*')
-      .eq('extraction_id', id)
-      .order('created_at', { ascending: true })
+    const { invoice_line_extractions, extraction_audit_log, ...extraction } = data
 
     return NextResponse.json({
       data: {
         ...extraction,
-        line_items: lineItems ?? [],
-        audit_log: auditLog ?? [],
+        line_items: invoice_line_extractions ?? [],
+        audit_log: extraction_audit_log ?? [],
       },
       requestId: ctx.requestId,
     })

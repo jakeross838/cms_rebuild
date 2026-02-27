@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('documents')
-      .select('*')
+      .select('*, document_tags(tag), document_versions(id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
@@ -41,24 +41,13 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch tags
-    const { data: tags } = await supabase
-      .from('document_tags')
-      .select('tag')
-      .eq('document_id', id)
-
-    // Fetch versions
-    const { data: versions } = await supabase
-      .from('document_versions')
-      .select('id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at')
-      .eq('document_id', id)
-      .order('version_number', { ascending: false })
+    const { document_tags, document_versions, ...doc } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        tags: (tags ?? []).map((t: { tag: string }) => t.tag),
-        versions: versions ?? [],
+        ...doc,
+        tags: (document_tags ?? []).map((t: { tag: string }) => t.tag),
+        versions: document_versions ?? [],
       },
       requestId: ctx.requestId,
     })

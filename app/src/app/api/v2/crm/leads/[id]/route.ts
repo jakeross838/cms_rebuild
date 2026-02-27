@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('leads')
-      .select('*')
+      .select('*, lead_activities(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -44,17 +44,12 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch activities count
-    const { data: activities } = await supabase
-      .from('lead_activities')
-      .select('id')
-      .eq('lead_id', id)
-      .eq('company_id', ctx.companyId!)
+    const { lead_activities, ...lead } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        activities_count: (activities ?? []).length,
+        ...lead,
+        activities_count: (lead_activities ?? []).length,
       },
       requestId: ctx.requestId,
     })

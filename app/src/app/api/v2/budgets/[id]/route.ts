@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('budgets')
-      .select('*')
+      .select('*, budget_lines(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,17 +43,12 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch summary counts for budget lines
-    const { data: lines } = await supabase
-      .from('budget_lines')
-      .select('id, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount')
-      .eq('budget_id', id)
-      .eq('company_id', ctx.companyId!)
+    const { budget_lines, ...budget } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        lines_count: (lines ?? []).length,
+        ...budget,
+        lines_count: (budget_lines ?? []).length,
       },
       requestId: ctx.requestId,
     })

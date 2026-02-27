@@ -40,10 +40,12 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('purchase_orders')
-      .select('*')
+      .select('*, purchase_order_lines(*), po_receipts(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .order('sort_order', { referencedTable: 'purchase_order_lines', ascending: true })
+      .order('received_date', { referencedTable: 'po_receipts', ascending: false })
       .single()
 
     if (error) {
@@ -53,28 +55,15 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch line items
-    const { data: lines } = await supabase
-      .from('purchase_order_lines')
-      .select('*')
-      .eq('po_id', id)
-      .order('sort_order', { ascending: true })
-
-    // Fetch receipts
-    const { data: receipts } = await supabase
-      .from('po_receipts')
-      .select('*')
-      .eq('po_id', id)
-      .eq('company_id', ctx.companyId!)
-      .order('received_date', { ascending: false })
+    const { purchase_order_lines, po_receipts, ...po } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        lines: lines ?? [],
-        receipts: receipts ?? [],
-        lines_count: (lines ?? []).length,
-        receipts_count: (receipts ?? []).length,
+        ...po,
+        lines: purchase_order_lines ?? [],
+        receipts: po_receipts ?? [],
+        lines_count: (purchase_order_lines ?? []).length,
+        receipts_count: (po_receipts ?? []).length,
       },
       requestId: ctx.requestId,
     })

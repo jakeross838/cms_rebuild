@@ -31,10 +31,11 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('employees')
-      .select('*')
+      .select('*, employee_certifications(id), employee_documents(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
+      .is('employee_documents.deleted_at', null)
       .single()
 
     if (error) {
@@ -44,24 +45,13 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch certifications count
-    const { data: certs } = await supabase
-      .from('employee_certifications')
-      .select('id')
-      .eq('employee_id', id)
-
-    // Fetch documents count
-    const { data: docs } = await supabase
-      .from('employee_documents')
-      .select('id')
-      .eq('employee_id', id)
-      .is('deleted_at', null)
+    const { employee_certifications, employee_documents, ...employee } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        certifications_count: (certs ?? []).length,
-        documents_count: (docs ?? []).length,
+        ...employee,
+        certifications_count: (employee_certifications ?? []).length,
+        documents_count: (employee_documents ?? []).length,
       },
       requestId: ctx.requestId,
     })

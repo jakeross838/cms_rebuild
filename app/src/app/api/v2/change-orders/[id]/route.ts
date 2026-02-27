@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('change_orders')
-      .select('*')
+      .select('*, change_order_items(id), change_order_history(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,24 +43,13 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch items count
-    const { data: items } = await supabase
-      .from('change_order_items')
-      .select('id')
-      .eq('change_order_id', id)
-
-    // Fetch history
-    const { data: history } = await supabase
-      .from('change_order_history')
-      .select('*')
-      .eq('change_order_id', id)
-      .order('created_at', { ascending: false })
+    const { change_order_items, change_order_history, ...changeOrder } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        items_count: (items ?? []).length,
-        history: history ?? [],
+        ...changeOrder,
+        items_count: (change_order_items ?? []).length,
+        history: change_order_history ?? [],
       },
       requestId: ctx.requestId,
     })

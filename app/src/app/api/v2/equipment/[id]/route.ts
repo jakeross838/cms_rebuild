@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('equipment')
-      .select('*')
+      .select('*, equipment_assignments(id), equipment_maintenance(id), equipment_costs(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,33 +43,14 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch assignment count
-    const { data: assignments } = await supabase
-      .from('equipment_assignments')
-      .select('id')
-      .eq('equipment_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    // Fetch maintenance count
-    const { data: maintenance } = await supabase
-      .from('equipment_maintenance')
-      .select('id')
-      .eq('equipment_id', id)
-      .eq('company_id', ctx.companyId!)
-
-    // Fetch cost count
-    const { data: costs } = await supabase
-      .from('equipment_costs')
-      .select('id')
-      .eq('equipment_id', id)
-      .eq('company_id', ctx.companyId!)
+    const { equipment_assignments, equipment_maintenance, equipment_costs, ...equip } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        assignments_count: (assignments ?? []).length,
-        maintenance_count: (maintenance ?? []).length,
-        costs_count: (costs ?? []).length,
+        ...equip,
+        assignments_count: (equipment_assignments ?? []).length,
+        maintenance_count: (equipment_maintenance ?? []).length,
+        costs_count: (equipment_costs ?? []).length,
       },
       requestId: ctx.requestId,
     })

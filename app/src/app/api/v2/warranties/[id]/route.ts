@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('warranties')
-      .select('*')
+      .select('*, warranty_claims(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,17 +43,12 @@ export const GET = createApiHandler(
       )
     }
 
-    // Fetch claims count
-    const { data: claims } = await supabase
-      .from('warranty_claims')
-      .select('id')
-      .eq('warranty_id', id)
-      .is('deleted_at', null)
+    const { warranty_claims, ...warranty } = data
 
     return NextResponse.json({
       data: {
-        ...data,
-        claims_count: (claims ?? []).length,
+        ...warranty,
+        claims_count: (warranty_claims ?? []).length,
       },
       requestId: ctx.requestId,
     })
