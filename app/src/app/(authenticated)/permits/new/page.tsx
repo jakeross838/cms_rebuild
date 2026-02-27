@@ -69,6 +69,7 @@ export default function NewPermitPage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('permits')

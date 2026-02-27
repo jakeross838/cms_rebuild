@@ -54,6 +54,7 @@ export default function NewDailyLogPage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.log_date) { setError('Date is required'); setLoading(false); return }
 
       // Verify job belongs to company
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
