@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 import type { Metadata } from 'next'
@@ -214,7 +215,7 @@ export default function DashboardDetailPage() {
               {report.visualization_type} &middot; {report.audience}
               {report.is_template && ' \u00b7 Template'}
               {' \u00b7 Created '}
-              {new Date(report.created_at).toLocaleDateString()}
+              {formatDate(report.created_at)}
             </p>
           </div>
           <div className="flex items-center gap-2">
