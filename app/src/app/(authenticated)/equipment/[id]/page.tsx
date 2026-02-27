@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, getStatusColor } from '@/lib/utils'
+import { formatCurrency, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface EquipmentData {
@@ -229,7 +229,7 @@ export default function EquipmentDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{equipment.name}</h1>
               <Badge className={getStatusColor(equipment.status ?? 'available')}>
-                {(equipment.status ?? 'available').replace('_', ' ')}
+                {formatStatus((equipment.status ?? 'available'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">

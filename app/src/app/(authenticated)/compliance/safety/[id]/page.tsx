@@ -326,7 +326,7 @@ export default function SafetyIncidentDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Type</dt>
-                    <dd className="font-medium capitalize">{incident.incident_type.replace(/_/g, ' ')}</dd>
+                    <dd className="font-medium">{formatStatus(incident.incident_type)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Severity</dt>

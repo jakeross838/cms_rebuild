@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface DrawRequest {
@@ -118,7 +118,7 @@ export default async function DrawsPage({
                     <div>
                       <div className="flex items-center gap-2">
                         {draw.draw_number && <span className="text-sm font-mono text-muted-foreground">#{draw.draw_number}</span>}
-                        <Badge className={getStatusColor(draw.status ?? 'draft')}>{(draw.status ?? 'draft').replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(draw.status ?? 'draft')}>{formatStatus((draw.status ?? 'draft'))}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {draw.application_date && <span>Application: {formatDate(draw.application_date)}</span>}

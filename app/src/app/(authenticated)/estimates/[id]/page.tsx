@@ -251,11 +251,11 @@ export default function EstimateDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Type</span>
-                    <p className="font-medium">{estimate.estimate_type ? estimate.estimate_type.replace('_', ' ') : '--'}</p>
+                    <p className="font-medium">{estimate.estimate_type ? formatStatus(estimate.estimate_type) : '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Contract Type</span>
-                    <p className="font-medium">{estimate.contract_type ? estimate.contract_type.replace('_', ' ') : '--'}</p>
+                    <p className="font-medium">{estimate.contract_type ? formatStatus(estimate.contract_type) : '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Valid Until</span>
@@ -336,7 +336,7 @@ export default function EstimateDetailPage() {
                     <label htmlFor="estimate_type" className="text-sm font-medium">Estimate Type</label>
                     <select id="estimate_type" name="estimate_type" value={formData.estimate_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       <option value="">--</option>
-                      {ESTIMATE_TYPE_OPTIONS.map((t) => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
+                      {ESTIMATE_TYPE_OPTIONS.map((t) => <option key={t} value={t}>{formatStatus(t)}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">

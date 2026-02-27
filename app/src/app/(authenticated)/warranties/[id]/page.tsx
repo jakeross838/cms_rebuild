@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface WarrantyData {
@@ -214,7 +214,7 @@ export default function WarrantyDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{warranty.title || 'Untitled Warranty'}</h1>
               <Badge className={getStatusColor(warranty.status ?? 'active')}>
-                {(warranty.status ?? 'active').replace('_', ' ')}
+                {formatStatus((warranty.status ?? 'active'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -256,7 +256,7 @@ export default function WarrantyDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Status:</span>
-                    <span className="ml-2">{(warranty.status ?? 'active').replace('_', ' ')}</span>
+                    <span className="ml-2">{formatStatus((warranty.status ?? 'active'))}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Start Date:</span>

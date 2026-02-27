@@ -252,7 +252,7 @@ export default function DashboardDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Visualization</dt>
-                    <dd className="font-medium capitalize">{report.visualization_type.replace('_', ' ')}</dd>
+                    <dd className="font-medium">{formatStatus(report.visualization_type)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Audience</dt>

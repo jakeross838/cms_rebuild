@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { ArchiveJobButton } from './archive-job-button'
 import type { Metadata } from 'next'
 
@@ -94,7 +94,7 @@ export default async function JobDetailPage({
               )}
               <h1 className="text-2xl font-bold text-foreground">{job.name}</h1>
               <Badge className={getStatusColor(status)}>
-                {status.replace('_', ' ')}
+                {formatStatus(status)}
               </Badge>
             </div>
             {job.notes && (
@@ -183,11 +183,11 @@ export default async function JobDetailPage({
             <dl className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <dt className="text-muted-foreground">Contract Type</dt>
-                <dd className="font-medium">{(job.contract_type ?? 'N/A').replace('_', ' ')}</dd>
+                <dd className="font-medium">{formatStatus((job.contract_type ?? 'N/A'))}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">Status</dt>
-                <dd className="font-medium">{(status).replace('_', ' ')}</dd>
+                <dd className="font-medium">{formatStatus((status))}</dd>
               </div>
               {job.address && (
                 <div className="col-span-2">

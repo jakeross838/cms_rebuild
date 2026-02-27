@@ -232,7 +232,7 @@ export default function LienWaiverDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">
-                {waiver.waiver_type.replace(/_/g, ' ')}
+                {formatStatus(waiver.waiver_type)}
               </h1>
               <Badge className={getStatusColor(waiver.status)}>
                 {formatStatus(waiver.status)}
@@ -273,7 +273,7 @@ export default function LienWaiverDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Type</span>
-                    <p className="font-medium capitalize">{waiver.waiver_type.replace(/_/g, ' ')}</p>
+                    <p className="font-medium">{formatStatus(waiver.waiver_type)}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Amount</span>
@@ -331,7 +331,7 @@ export default function LienWaiverDetailPage() {
                     <label htmlFor="waiver_type" className="text-sm font-medium">Type <span className="text-red-500">*</span></label>
                     <select id="waiver_type" name="waiver_type" value={formData.waiver_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {WAIVER_TYPES.map((t) => (
-                        <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>
+                        <option key={t} value={t}>{formatStatus(t)}</option>
                       ))}
                     </select>
                   </div>
@@ -339,7 +339,7 @@ export default function LienWaiverDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>

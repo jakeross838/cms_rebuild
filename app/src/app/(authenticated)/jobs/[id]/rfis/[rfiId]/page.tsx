@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
@@ -219,7 +219,7 @@ export default function RFIDetailPage() {
               {rfi.rfi_number && <span className="text-lg font-mono text-muted-foreground">{rfi.rfi_number}</span>}
               <h1 className="text-2xl font-bold text-foreground">{rfi.subject ?? 'Untitled RFI'}</h1>
               <Badge className={`${getStatusColor(rfi.status ?? 'draft')} rounded`}>
-                {(rfi.status ?? 'draft').replace('_', ' ')}
+                {formatStatus((rfi.status ?? 'draft'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -261,7 +261,7 @@ export default function RFIDetailPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">Status</p>
                     <Badge className={`${getStatusColor(rfi.status ?? 'draft')} rounded`}>
-                      {(rfi.status ?? 'draft').replace('_', ' ')}
+                      {formatStatus((rfi.status ?? 'draft'))}
                     </Badge>
                   </div>
                   <div>

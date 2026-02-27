@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -229,7 +229,7 @@ export default function JobInvoiceDetailPage() {
                 Invoice {invoice.invoice_number ? `#${invoice.invoice_number}` : ''}
               </h1>
               <Badge className={`${getStatusColor(invoice.status || 'draft')} rounded`}>
-                {(invoice.status || 'draft').replace(/_/g, ' ')}
+                {formatStatus((invoice.status || 'draft'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -273,7 +273,7 @@ export default function JobInvoiceDetailPage() {
                     <span className="text-muted-foreground">Status</span>
                     <p className="font-medium">
                       <Badge className={`${getStatusColor(invoice.status || 'draft')} rounded`}>
-                        {(invoice.status || 'draft').replace(/_/g, ' ')}
+                        {formatStatus((invoice.status || 'draft'))}
                       </Badge>
                     </p>
                   </div>
@@ -327,7 +327,7 @@ export default function JobInvoiceDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>

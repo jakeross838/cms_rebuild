@@ -114,7 +114,7 @@ export default async function PunchListPage({
                 <Link key={item.id} href={`/jobs/${id}/punch-list/${item.id}`} className="block py-3 first:pt-0 last:pb-0 hover:bg-accent/50 -mx-2 px-2 rounded-md transition-colors">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{item.title ?? 'Untitled'}</span>
-                    <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>
+                    <Badge className={getStatusColor(item.status ?? 'open')}>{formatStatus((item.status ?? 'open'))}</Badge>
                     {item.priority && <Badge variant="outline" className="text-xs">{formatStatus(item.priority)}</Badge>}
                   </div>
                   {item.description && <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{item.description}</p>}

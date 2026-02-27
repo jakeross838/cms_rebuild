@@ -287,7 +287,7 @@ export default function PunchItemDetailPage() {
                   {item.category && (
                     <div>
                       <dt className="text-muted-foreground">Category</dt>
-                      <dd className="font-medium capitalize">{formatStatus(item.category)}</dd>
+                      <dd className="font-medium">{formatStatus(item.category)}</dd>
                     </div>
                   )}
                   {item.location && (

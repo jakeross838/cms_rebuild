@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Billing' }
@@ -104,7 +104,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                 <div key={event.id} className="py-3 first:pt-0 last:pb-0">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-sm font-medium">{event.event_type.replace('_', ' ')}</span>
+                      <span className="text-sm font-medium">{formatStatus(event.event_type)}</span>
                       {event.description && (
                         <p className="text-xs text-muted-foreground mt-0.5">{event.description}</p>
                       )}

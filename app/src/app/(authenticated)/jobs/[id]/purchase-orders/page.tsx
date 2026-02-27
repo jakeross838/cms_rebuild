@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Purchase Orders' }
@@ -127,7 +127,7 @@ export default async function PurchaseOrdersPage({
                         )}
                         <span className="font-medium">{po.title ?? 'Untitled'}</span>
                         <Badge className={getStatusColor(po.status ?? 'draft')}>
-                          {(po.status ?? 'draft').replace('_', ' ')}
+                          {formatStatus((po.status ?? 'draft'))}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

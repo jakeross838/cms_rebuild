@@ -117,7 +117,7 @@ export default async function RFIsPage({
                       <div className="flex items-center gap-2">
                         {rfi.rfi_number && <span className="text-sm font-mono text-muted-foreground">{rfi.rfi_number}</span>}
                         <span className="font-medium">{rfi.subject ?? 'Untitled'}</span>
-                        <Badge className={getStatusColor(rfi.status ?? 'draft')}>{(rfi.status ?? 'draft').replace('_', ' ')}</Badge>
+                        <Badge className={getStatusColor(rfi.status ?? 'draft')}>{formatStatus((rfi.status ?? 'draft'))}</Badge>
                         {rfi.priority && <Badge variant="outline" className="text-xs">{formatStatus(rfi.priority)}</Badge>}
                       </div>
                       {rfi.question && <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{rfi.question}</p>}

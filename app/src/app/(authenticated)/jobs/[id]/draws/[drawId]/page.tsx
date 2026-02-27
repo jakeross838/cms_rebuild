@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
@@ -226,7 +226,7 @@ export default function DrawRequestDetailPage() {
                 Draw Request {draw.draw_number != null ? `#${draw.draw_number}` : ''}
               </h1>
               <Badge className={`${getStatusColor(draw.status ?? 'draft')} rounded`}>
-                {(draw.status ?? 'draft').replace('_', ' ')}
+                {formatStatus((draw.status ?? 'draft'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -268,7 +268,7 @@ export default function DrawRequestDetailPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">Status</p>
                     <Badge className={`${getStatusColor(draw.status ?? 'draft')} rounded`}>
-                      {(draw.status ?? 'draft').replace('_', ' ')}
+                      {formatStatus((draw.status ?? 'draft'))}
                     </Badge>
                   </div>
                   <div>

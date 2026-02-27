@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface DailyLog {
@@ -107,7 +107,7 @@ export default async function DailyLogsPage({
                           <span className="font-medium">{log.log_date ? formatDate(log.log_date) : 'No date'}</span>
                         </div>
                         <Badge className={getStatusColor(log.status ?? 'draft')}>
-                          {(log.status ?? 'draft').replace('_', ' ')}
+                          {formatStatus((log.status ?? 'draft'))}
                         </Badge>
                       </div>
                       {(log.weather_summary || log.conditions) && (

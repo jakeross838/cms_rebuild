@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -113,8 +113,8 @@ export default async function LienWaiversPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{waiver.claimant_name ?? 'Unknown'}</span>
-                        <Badge className={getStatusColor(waiver.status ?? 'pending')}>{(waiver.status ?? 'pending').replace('_', ' ')}</Badge>
-                        {waiver.waiver_type && <Badge variant="outline" className="text-xs">{waiver.waiver_type.replace('_', ' ')}</Badge>}
+                        <Badge className={getStatusColor(waiver.status ?? 'pending')}>{formatStatus((waiver.status ?? 'pending'))}</Badge>
+                        {waiver.waiver_type && <Badge variant="outline" className="text-xs">{formatStatus(waiver.waiver_type)}</Badge>}
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {waiver.through_date && <span>Through: {formatDate(waiver.through_date)}</span>}

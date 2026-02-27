@@ -16,7 +16,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -282,7 +282,7 @@ export default async function DashboardOverviewPage() {
                         <p className="text-xs text-muted-foreground">{formatDate(job.updated_at)}</p>
                       </div>
                       <Badge className={getStatusColor(job.status ?? 'pre_construction')}>
-                        {(job.status ?? 'pre_construction').replace(/_/g, ' ')}
+                        {formatStatus((job.status ?? 'pre_construction'))}
                       </Badge>
                     </div>
                   </Link>

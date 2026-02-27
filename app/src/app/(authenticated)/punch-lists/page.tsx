@@ -106,7 +106,7 @@ export default async function PunchListsPage({
                   <div className="flex items-center gap-2">
                     <CheckSquare className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium">{item.title ?? 'Untitled'}</span>
-                    <Badge className={getStatusColor(item.status ?? 'open')}>{(item.status ?? 'open').replace('_', ' ')}</Badge>
+                    <Badge className={getStatusColor(item.status ?? 'open')}>{formatStatus((item.status ?? 'open'))}</Badge>
                     {item.priority && <Badge variant="outline" className="text-xs">{formatStatus(item.priority)}</Badge>}
                   </div>
                   <div className="flex items-center gap-3 ml-6 mt-1 text-xs text-muted-foreground">

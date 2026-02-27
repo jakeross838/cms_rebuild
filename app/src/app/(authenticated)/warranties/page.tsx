@@ -103,7 +103,7 @@ export default async function WarrantiesPage({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{warranty.title ?? 'Untitled'}</span>
-                      <Badge className={getStatusColor(warranty.status ?? 'active')}>{(warranty.status ?? 'active').replace('_', ' ')}</Badge>
+                      <Badge className={getStatusColor(warranty.status ?? 'active')}>{formatStatus((warranty.status ?? 'active'))}</Badge>
                       {warranty.warranty_type && <Badge variant="outline" className="text-xs">{formatStatus(warranty.warranty_type)}</Badge>}
                     </div>
                     <div className="text-sm text-muted-foreground mt-0.5">

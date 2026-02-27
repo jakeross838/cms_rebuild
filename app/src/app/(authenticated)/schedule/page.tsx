@@ -6,7 +6,7 @@ import { Calendar, Building2, Plus } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
 interface JobScheduleRow {
   id: string
@@ -75,7 +75,7 @@ export default async function SchedulePage() {
                             {job.name}
                           </span>
                           <Badge className={getStatusColor(job.status ?? 'active')}>
-                            {(job.status ?? 'active').replace('_', ' ')}
+                            {formatStatus((job.status ?? 'active'))}
                           </Badge>
                         </div>
                       </div>

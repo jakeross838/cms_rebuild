@@ -143,7 +143,7 @@ export default async function ChangeOrdersPage({
                         )}
                         <span className="font-medium">{co.title ?? 'Untitled'}</span>
                         <Badge className={getStatusColor(co.status ?? 'draft')}>
-                          {(co.status ?? 'draft').replace('_', ' ')}
+                          {formatStatus((co.status ?? 'draft'))}
                         </Badge>
                       </div>
                       {co.description && (

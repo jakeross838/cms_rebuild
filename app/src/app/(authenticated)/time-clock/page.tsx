@@ -83,7 +83,7 @@ export default async function TimeClockPage({
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{formatDate(entry.entry_date)}</span>
                         <Badge className={getStatusColor(entry.status)}>{formatStatus(entry.status)}</Badge>
-                        {entry.entry_method && <Badge variant="outline" className="text-xs">{entry.entry_method.replace('_', ' ')}</Badge>}
+                        {entry.entry_method && <Badge variant="outline" className="text-xs">{formatStatus(entry.entry_method)}</Badge>}
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         {entry.clock_in && <span>In: {formatDate(entry.clock_in)}</span>}

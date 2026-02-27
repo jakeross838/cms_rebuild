@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ContractTemplateData {
@@ -223,7 +223,7 @@ export default function ContractTemplateDetailPage() {
                 <Badge variant="outline" className="text-xs text-blue-700 bg-blue-50">System</Badge>
               )}
             </div>
-            <p className="text-muted-foreground capitalize">{template.contract_type.replace(/_/g, ' ')} -- Updated {formatDate(template.updated_at)}</p>
+            <p className="text-muted-foreground">{formatStatus(template.contract_type)} -- Updated {formatDate(template.updated_at)}</p>
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
@@ -260,7 +260,7 @@ export default function ContractTemplateDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Contract Type</dt>
-                    <dd className="font-medium capitalize">{template.contract_type.replace(/_/g, ' ')}</dd>
+                    <dd className="font-medium">{formatStatus(template.contract_type)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>

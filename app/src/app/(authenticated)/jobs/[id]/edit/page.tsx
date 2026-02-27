@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { formatStatus } from '@/lib/utils'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -223,7 +224,7 @@ export default function EditJobPage() {
                 <label htmlFor="status" className="text-sm font-medium">Status</label>
                 <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   {STATUS_OPTIONS.map((s) => (
-                    <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
+                    <option key={s} value={s}>{formatStatus(s)}</option>
                   ))}
                 </select>
               </div>
@@ -231,7 +232,7 @@ export default function EditJobPage() {
                 <label htmlFor="contract_type" className="text-sm font-medium">Contract Type</label>
                 <select id="contract_type" name="contract_type" value={formData.contract_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   {CONTRACT_TYPE_OPTIONS.map((t) => (
-                    <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>
+                    <option key={t} value={t}>{formatStatus(t)}</option>
                   ))}
                 </select>
               </div>

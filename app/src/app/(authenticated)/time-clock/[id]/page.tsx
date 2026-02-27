@@ -276,7 +276,7 @@ export default function TimeClockDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Entry Method</p>
-                    <p className="font-medium">{entry.entry_method?.replace('_', ' ') || 'Manual'}</p>
+                    <p className="font-medium">{entry.entry_method ? formatStatus(entry.entry_method) : 'Manual'}</p>
                   </div>
                 </div>
               </CardContent>

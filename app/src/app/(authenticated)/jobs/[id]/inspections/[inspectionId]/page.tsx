@@ -227,7 +227,7 @@ export default function InspectionDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground capitalize">
-                {inspection.inspection_type.replace(/_/g, ' ')}
+                {formatStatus(inspection.inspection_type)}
               </h1>
               <Badge className={resultColor[inspection.status] || getStatusColor(inspection.status)}>
                 {formatStatus(inspection.status)}
@@ -271,7 +271,7 @@ export default function InspectionDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Type</span>
-                    <p className="font-medium capitalize">{inspection.inspection_type.replace(/_/g, ' ')}</p>
+                    <p className="font-medium">{formatStatus(inspection.inspection_type)}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Status</span>
@@ -355,7 +355,7 @@ export default function InspectionDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>

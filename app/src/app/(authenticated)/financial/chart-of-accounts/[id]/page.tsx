@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { formatStatus } from '@/lib/utils'
 
 interface AccountData {
   id: string
@@ -230,7 +231,7 @@ export default function ChartOfAccountsDetailPage() {
                 <Badge variant="outline" className="text-xs text-blue-700 bg-blue-50">System</Badge>
               )}
             </div>
-            <p className="text-muted-foreground capitalize">{account.account_type.replace(/_/g, ' ')} -- Normal {account.normal_balance}</p>
+            <p className="text-muted-foreground">{formatStatus(account.account_type)} -- Normal {account.normal_balance}</p>
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
@@ -271,12 +272,12 @@ export default function ChartOfAccountsDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Account Type</dt>
-                    <dd className="font-medium capitalize">{account.account_type.replace(/_/g, ' ')}</dd>
+                    <dd className="font-medium">{formatStatus(account.account_type)}</dd>
                   </div>
                   {account.sub_type && (
                     <div>
                       <dt className="text-muted-foreground">Sub Type</dt>
-                      <dd className="font-medium capitalize">{account.sub_type.replace(/_/g, ' ')}</dd>
+                      <dd className="font-medium">{formatStatus(account.sub_type)}</dd>
                     </div>
                   )}
                   <div>

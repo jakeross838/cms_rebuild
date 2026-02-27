@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
 interface Lead {
   id: string
@@ -142,13 +142,13 @@ export default async function LeadsPage({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{lead.first_name} {lead.last_name}</span>
-                      <Badge className={getStatusColor(lead.status ?? 'new')}>{(lead.status ?? 'new').replace('_', ' ')}</Badge>
+                      <Badge className={getStatusColor(lead.status ?? 'new')}>{formatStatus((lead.status ?? 'new'))}</Badge>
                       {lead.score != null && (
                         <span className="text-xs text-muted-foreground">Score: {lead.score}</span>
                       )}
                     </div>
                     <div className="text-sm text-muted-foreground mt-0.5">
-                      {lead.email || 'No email'} {lead.source ? `• ${lead.source}` : ''} {lead.project_type ? `• ${lead.project_type.replace('_', ' ')}` : ''}
+                      {lead.email || 'No email'} {lead.source ? `• ${lead.source}` : ''} {lead.project_type ? `• ${formatStatus(lead.project_type)}` : ''}
                     </div>
                   </div>
                   <div className="text-right">

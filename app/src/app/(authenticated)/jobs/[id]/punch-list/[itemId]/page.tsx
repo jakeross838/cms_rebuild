@@ -292,7 +292,7 @@ export default function JobPunchItemDetailPage() {
                   {item.category && (
                     <div>
                       <dt className="text-muted-foreground">Category</dt>
-                      <dd className="font-medium capitalize">{formatStatus(item.category)}</dd>
+                      <dd className="font-medium">{formatStatus(item.category)}</dd>
                     </div>
                   )}
                   {item.location && (
@@ -365,7 +365,7 @@ export default function JobPunchItemDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ')}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>

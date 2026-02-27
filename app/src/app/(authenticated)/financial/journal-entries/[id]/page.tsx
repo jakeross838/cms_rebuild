@@ -236,7 +236,7 @@ export default function JournalEntryDetailPage() {
               </h1>
               <Badge className={`rounded ${getStatusColor(entry.status)}`}>{formatStatus(entry.status)}</Badge>
             </div>
-            <p className="text-muted-foreground">{formatDate(entry.entry_date)} -- {entry.source_type.replace(/_/g, ' ')}</p>
+            <p className="text-muted-foreground">{formatDate(entry.entry_date)} -- {formatStatus(entry.source_type)}</p>
           </div>
           <div className="flex items-center gap-2">
             {!editing ? (
@@ -281,7 +281,7 @@ export default function JournalEntryDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Source Type</dt>
-                    <dd className="font-medium capitalize">{entry.source_type.replace(/_/g, ' ')}</dd>
+                    <dd className="font-medium">{formatStatus(entry.source_type)}</dd>
                   </div>
                   {entry.posted_at && (
                     <div>

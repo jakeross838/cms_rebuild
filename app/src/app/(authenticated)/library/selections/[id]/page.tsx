@@ -270,7 +270,7 @@ export default function SelectionCategoryDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Pricing Model</p>
-                    <p className="font-medium">{category.pricing_model.replace('_', ' ')}</p>
+                    <p className="font-medium">{formatStatus(category.pricing_model)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Allowance</p>
@@ -332,7 +332,7 @@ export default function SelectionCategoryDetailPage() {
                     <label htmlFor="pricing_model" className="text-sm font-medium">Pricing Model</label>
                     <select id="pricing_model" name="pricing_model" value={formData.pricing_model} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {PRICING_OPTIONS.map((p) => (
-                        <option key={p} value={p}>{p.replace('_', ' ')}</option>
+                        <option key={p} value={p}>{formatStatus(p)}</option>
                       ))}
                     </select>
                   </div>
@@ -340,7 +340,7 @@ export default function SelectionCategoryDetailPage() {
                     <label htmlFor="status" className="text-sm font-medium">Status</label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s.replace('_', ' ')}</option>
+                        <option key={s} value={s}>{formatStatus(s)}</option>
                       ))}
                     </select>
                   </div>

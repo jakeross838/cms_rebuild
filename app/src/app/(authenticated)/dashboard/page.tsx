@@ -15,7 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatRelativeDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatRelativeDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Job, Client } from '@/types/database'
 
 export const metadata: Metadata = { title: 'Dashboard' }
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
                           {job.name}
                         </span>
                         <Badge className={getStatusColor(job.status ?? 'active')}>
-                          {(job.status ?? 'active').replace('_', ' ')}
+                          {formatStatus((job.status ?? 'active'))}
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">

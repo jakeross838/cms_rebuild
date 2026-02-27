@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Schedule' }
@@ -138,7 +138,7 @@ export default async function SchedulePage({
                     <div className="flex items-center gap-2">
                       <span className="font-medium truncate">{task.name}</span>
                       <Badge className={getStatusColor(task.status ?? 'not_started')}>
-                        {(task.status ?? 'not started').replace('_', ' ')}
+                        {formatStatus((task.status ?? 'not started'))}
                       </Badge>
                       {task.is_critical_path && (
                         <Badge variant="outline" className="text-red-700 bg-red-50 border-red-200 text-xs">

@@ -207,7 +207,7 @@ export default function InsurancePolicyDetailPage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-foreground">{policy.insurance_type.replace(/_/g, ' ')}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{formatStatus(policy.insurance_type)}</h1>
               <Badge className={`rounded ${getStatusColor(policy.status)}`}>{formatStatus(policy.status)}</Badge>
               {isExpired && (
                 <Badge className="rounded bg-red-100 text-red-700">Expired</Badge>
@@ -250,7 +250,7 @@ export default function InsurancePolicyDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Insurance Type</dt>
-                    <dd className="font-medium capitalize">{policy.insurance_type.replace(/_/g, ' ')}</dd>
+                    <dd className="font-medium">{formatStatus(policy.insurance_type)}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Carrier</dt>

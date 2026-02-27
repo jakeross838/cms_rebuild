@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
 interface Invoice {
   id: string
@@ -141,7 +141,7 @@ export default async function InvoicesPage({
                   <div>
                     <div className="flex items-center gap-2">
                       {inv.invoice_number && <span className="text-sm font-mono text-muted-foreground">{inv.invoice_number}</span>}
-                      <Badge className={getStatusColor(inv.status ?? 'draft')}>{(inv.status ?? 'draft').replace('_', ' ')}</Badge>
+                      <Badge className={getStatusColor(inv.status ?? 'draft')}>{formatStatus((inv.status ?? 'draft'))}</Badge>
                     </div>
                     <div className="text-sm text-muted-foreground mt-0.5">
                       {inv.jobs?.name || 'No job'}

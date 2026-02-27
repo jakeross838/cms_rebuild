@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { JobStatus } from '@/types/database'
 
 interface JobWithClient {
@@ -178,7 +178,7 @@ export default async function JobsPage({
                             {job.name}
                           </span>
                           <Badge className={getStatusColor(job.status ?? 'active')}>
-                            {(job.status ?? 'active').replace('_', ' ')}
+                            {formatStatus((job.status ?? 'active'))}
                           </Badge>
                         </div>
                         <div className="text-sm text-muted-foreground mt-0.5">

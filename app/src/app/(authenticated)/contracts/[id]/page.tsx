@@ -243,7 +243,7 @@ export default function ContractDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Type</span>
-                    <p className="font-medium">{contract.contract_type ? contract.contract_type.replace('_', ' ') : '--'}</p>
+                    <p className="font-medium">{contract.contract_type ? formatStatus(contract.contract_type) : '--'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Contract Value</span>
@@ -310,7 +310,7 @@ export default function ContractDetailPage() {
                     <label htmlFor="contract_type" className="text-sm font-medium">Contract Type</label>
                     <select id="contract_type" name="contract_type" value={formData.contract_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       <option value="">--</option>
-                      {CONTRACT_TYPE_OPTIONS.map((t) => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
+                      {CONTRACT_TYPE_OPTIONS.map((t) => <option key={t} value={t}>{formatStatus(t)}</option>)}
                     </select>
                   </div>
                 </div>

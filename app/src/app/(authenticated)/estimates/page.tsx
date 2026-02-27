@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
 interface Estimate {
   id: string
@@ -141,13 +141,13 @@ export default async function EstimatesPage({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{est.name}</span>
-                      <Badge className={getStatusColor(est.status ?? 'draft')}>{(est.status ?? 'draft').replace('_', ' ')}</Badge>
+                      <Badge className={getStatusColor(est.status ?? 'draft')}>{formatStatus((est.status ?? 'draft'))}</Badge>
                       {est.version && est.version > 1 && (
                         <span className="text-xs text-muted-foreground">v{est.version}</span>
                       )}
                     </div>
                     <div className="text-sm text-muted-foreground mt-0.5">
-                      {est.jobs?.name || 'No job'} {est.estimate_type ? `• ${est.estimate_type.replace('_', ' ')}` : ''}
+                      {est.jobs?.name || 'No job'} {est.estimate_type ? `• ${formatStatus(est.estimate_type)}` : ''}
                     </div>
                   </div>
                   <div className="text-right">

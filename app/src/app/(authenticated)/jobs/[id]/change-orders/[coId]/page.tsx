@@ -219,7 +219,7 @@ export default function ChangeOrderDetailPage() {
               {co.co_number && <span className="text-lg font-mono text-muted-foreground">{co.co_number}</span>}
               <h1 className="text-2xl font-bold text-foreground">{co.title ?? 'Untitled Change Order'}</h1>
               <Badge className={`${getStatusColor(co.status ?? 'draft')} rounded`}>
-                {(co.status ?? 'draft').replace('_', ' ')}
+                {formatStatus((co.status ?? 'draft'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -261,7 +261,7 @@ export default function ChangeOrderDetailPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">Status</p>
                     <Badge className={`${getStatusColor(co.status ?? 'draft')} rounded`}>
-                      {(co.status ?? 'draft').replace('_', ' ')}
+                      {formatStatus((co.status ?? 'draft'))}
                     </Badge>
                   </div>
                   <div>

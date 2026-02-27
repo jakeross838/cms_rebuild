@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types ------------------------------------------------------------------
@@ -218,7 +218,7 @@ export default function DailyLogDetailPage() {
                 Daily Log {log.log_date ? `- ${formatDate(log.log_date)}` : ''}
               </h1>
               <Badge className={`${getStatusColor(log.status ?? 'draft')} rounded`}>
-                {(log.status ?? 'draft').replace('_', ' ')}
+                {formatStatus((log.status ?? 'draft'))}
               </Badge>
             </div>
             <p className="text-muted-foreground">
@@ -260,7 +260,7 @@ export default function DailyLogDetailPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">Status</p>
                     <Badge className={`${getStatusColor(log.status ?? 'draft')} rounded`}>
-                      {(log.status ?? 'draft').replace('_', ' ')}
+                      {formatStatus((log.status ?? 'draft'))}
                     </Badge>
                   </div>
                 </div>

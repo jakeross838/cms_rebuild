@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, getStatusColor, formatStatus} from '@/lib/utils'
 
 interface Equipment {
   id: string
@@ -141,7 +141,7 @@ export default async function EquipmentPage({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{item.name}</span>
-                      <Badge className={getStatusColor(item.status ?? 'available')}>{(item.status ?? 'available').replace('_', ' ')}</Badge>
+                      <Badge className={getStatusColor(item.status ?? 'available')}>{formatStatus((item.status ?? 'available'))}</Badge>
                     </div>
                     <div className="text-sm text-muted-foreground mt-0.5">
                       {[item.make, item.model, item.year].filter(Boolean).join(' ')}
