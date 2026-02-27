@@ -46,10 +46,21 @@ export const POST = createApiHandler(
       await admin.from('auth_audit_log').insert(auditEntry as never)
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       requestId: ctx.requestId,
     })
+
+    // Clear custom company context cookie
+    response.cookies.set('rossos_company_id', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+    })
+
+    return response
   },
   {
     requireAuth: true,
