@@ -76,6 +76,8 @@ export default function NewBidPackagePage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
+      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('bid_packages')

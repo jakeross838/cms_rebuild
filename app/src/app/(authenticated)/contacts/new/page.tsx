@@ -79,6 +79,8 @@ export default function NewContactPage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.vendor_id) { setError('Vendor is required'); setLoading(false); return }
+      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('vendor_contacts')

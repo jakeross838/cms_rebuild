@@ -52,6 +52,8 @@ export default function NewLeadPage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.first_name.trim()) { setError('First name is required'); setLoading(false); return }
+      if (!formData.last_name.trim()) { setError('Last name is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('leads')

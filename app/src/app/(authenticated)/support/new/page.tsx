@@ -49,6 +49,9 @@ export default function NewSupportTicketPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.subject.trim()) { setError('Subject is required'); setLoading(false); return }
+      if (!formData.description.trim()) { setError('Description is required'); setLoading(false); return }
+
       const ticketNumber = `TKT-${Date.now().toString(36).toUpperCase()}`
 
       const insertPayload: Record<string, unknown> = {

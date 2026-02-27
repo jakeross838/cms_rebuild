@@ -73,6 +73,11 @@ export default function NewReceivablePage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.client_id) { setError('Client is required'); setLoading(false); return }
+      if (!formData.invoice_number.trim()) { setError('Invoice number is required'); setLoading(false); return }
+      if (!formData.invoice_date) { setError('Invoice date is required'); setLoading(false); return }
+      if (!formData.due_date) { setError('Due date is required'); setLoading(false); return }
+
       const amount = parseFloat(formData.amount)
       if (isNaN(amount)) throw new Error('Amount must be a valid number')
 

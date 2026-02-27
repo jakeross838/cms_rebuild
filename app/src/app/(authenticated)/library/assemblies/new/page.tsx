@@ -49,6 +49,8 @@ export default function NewAssemblyPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.name.trim()) { setError('Assembly name is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('assemblies')
         .insert({

@@ -71,6 +71,10 @@ export default function NewInsurancePolicyPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.vendor_id) { setError('Vendor is required'); setLoading(false); return }
+      if (!formData.policy_number.trim()) { setError('Policy number is required'); setLoading(false); return }
+      if (!formData.expiration_date) { setError('Expiration date is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('vendor_insurance')
         .insert({

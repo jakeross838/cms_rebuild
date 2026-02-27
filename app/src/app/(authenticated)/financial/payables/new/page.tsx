@@ -73,6 +73,11 @@ export default function NewPayablePage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.vendor_id) { setError('Vendor is required'); setLoading(false); return }
+      if (!formData.bill_number.trim()) { setError('Bill number is required'); setLoading(false); return }
+      if (!formData.bill_date) { setError('Bill date is required'); setLoading(false); return }
+      if (!formData.due_date) { setError('Due date is required'); setLoading(false); return }
+
       const amount = parseFloat(formData.amount)
       if (isNaN(amount)) throw new Error('Amount must be a valid number')
 

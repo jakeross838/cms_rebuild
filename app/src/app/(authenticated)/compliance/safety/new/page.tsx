@@ -84,6 +84,11 @@ export default function NewSafetyIncidentPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
+      if (!formData.incident_number.trim()) { setError('Incident number is required'); setLoading(false); return }
+      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
+      if (!formData.incident_date) { setError('Incident date is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('safety_incidents')
         .insert({

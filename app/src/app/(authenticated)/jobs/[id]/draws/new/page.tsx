@@ -56,6 +56,10 @@ export default function NewDrawRequestPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.draw_number.trim()) { setError('Draw number is required'); setLoading(false); return }
+      if (!formData.application_date) { setError('Application date is required'); setLoading(false); return }
+      if (!formData.period_to) { setError('Period to date is required'); setLoading(false); return }
+
       // Verify job belongs to company
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
       if (!jobCheck) throw new Error('Job not found or access denied')

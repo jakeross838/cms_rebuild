@@ -57,6 +57,8 @@ export default function NewEquipmentPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.name.trim()) { setError('Equipment name is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('equipment')
         .insert({

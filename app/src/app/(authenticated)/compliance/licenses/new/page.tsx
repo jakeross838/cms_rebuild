@@ -73,6 +73,9 @@ export default function NewCertificationPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.employee_id) { setError('Employee is required'); setLoading(false); return }
+      if (!formData.certification_name.trim()) { setError('Certification name is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('employee_certifications')
         .insert({

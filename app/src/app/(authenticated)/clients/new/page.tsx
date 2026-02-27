@@ -53,6 +53,7 @@ export default function NewClientPage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
 
       const { data: client, error: insertError } = await supabase
         .from('clients')

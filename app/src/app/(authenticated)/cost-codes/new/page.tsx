@@ -51,6 +51,9 @@ export default function NewCostCodePage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.code.trim()) { setError('Code is required'); setLoading(false); return }
+      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
+      if (!formData.division.trim()) { setError('Division is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('cost_codes')

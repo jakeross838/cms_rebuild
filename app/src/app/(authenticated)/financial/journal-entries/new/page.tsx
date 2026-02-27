@@ -124,6 +124,8 @@ export default function NewJournalEntryPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.entry_date) { setError('Entry date is required'); setLoading(false); return }
+
       // Create the journal entry header
       const { data: entry, error: entryError } = await supabase
         .from('gl_journal_entries')

@@ -78,7 +78,8 @@ export default function NewCommunicationPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
-      if (!formData.job_id) throw new Error('Please select a job')
+      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
+      if (!formData.subject.trim()) { setError('Subject is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('communications')

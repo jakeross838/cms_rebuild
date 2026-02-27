@@ -58,6 +58,9 @@ export default function NewWarrantyPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.start_date) { setError('Start date is required'); setLoading(false); return }
+      if (!formData.end_date) { setError('End date is required'); setLoading(false); return }
+
       // Verify job belongs to company
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
       if (!jobCheck) throw new Error('Job not found or access denied')

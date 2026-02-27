@@ -54,6 +54,8 @@ export default function NewCommunicationPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.subject.trim()) { setError('Subject is required'); setLoading(false); return }
+
       // Verify job belongs to company
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
       if (!jobCheck) throw new Error('Job not found or access denied')

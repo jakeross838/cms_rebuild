@@ -84,6 +84,8 @@ export default function NewWarrantyClaimPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
+
       const claimNumber = `WC-${Date.now().toString(36).toUpperCase()}`
 
       const insertPayload = {

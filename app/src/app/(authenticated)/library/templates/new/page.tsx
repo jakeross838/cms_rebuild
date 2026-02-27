@@ -49,6 +49,8 @@ export default function NewTemplatePage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.name.trim()) { setError('Template name is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('contract_templates')
         .insert({

@@ -53,6 +53,8 @@ export default function NewInventoryItemPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.name.trim()) { setError('Item name is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('inventory_items')
         .insert({

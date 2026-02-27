@@ -65,6 +65,9 @@ export default function NewAccountPage() {
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
 
+      if (!formData.account_number.trim()) { setError('Account number is required'); setLoading(false); return }
+      if (!formData.name.trim()) { setError('Account name is required'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('gl_accounts')
         .insert({

@@ -57,6 +57,7 @@ export default function NewJobPage() {
     try {
       // Get user's company_id
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.name.trim()) { setError('Job name is required'); setLoading(false); return }
 
       const { data: job, error: insertError } = await supabase
         .from('jobs')

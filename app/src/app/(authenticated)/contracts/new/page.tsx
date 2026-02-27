@@ -91,6 +91,8 @@ export default function NewContractPage() {
 
     try {
       if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
+      if (!formData.contract_number.trim()) { setError('Contract number is required'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('contracts')
