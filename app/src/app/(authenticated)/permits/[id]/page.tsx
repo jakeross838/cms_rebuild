@@ -91,7 +91,7 @@ export default function PermitDetailPage() {
         permit_number: p.permit_number || '',
         permit_type: p.permit_type || '',
         jurisdiction: p.jurisdiction || '',
-        status: p.status || 'Applied',
+        status: p.status || 'draft',
         applied_date: p.applied_date || '',
         issued_date: p.issued_date || '',
         expiration_date: p.expiration_date || '',

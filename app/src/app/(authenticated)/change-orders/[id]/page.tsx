@@ -106,7 +106,7 @@ export default function ChangeOrderDetailPage() {
         title: co.title,
         description: co.description || '',
         change_type: co.change_type || 'owner_requested',
-        status: co.status || 'Draft',
+        status: co.status || 'draft',
         amount: co.amount != null ? String(co.amount) : '',
         cost_impact: co.cost_impact != null ? String(co.cost_impact) : '',
         schedule_impact_days: co.schedule_impact_days != null ? String(co.schedule_impact_days) : '',

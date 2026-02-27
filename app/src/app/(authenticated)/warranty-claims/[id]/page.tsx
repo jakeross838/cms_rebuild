@@ -99,8 +99,8 @@ export default function WarrantyClaimDetailPage() {
       setFormData({
         title: c.title,
         description: c.description || '',
-        priority: c.priority || 'Medium',
-        status: c.status || 'Open',
+        priority: c.priority || 'normal',
+        status: c.status || 'submitted',
         due_date: c.due_date || '',
         resolution_notes: c.resolution_notes || '',
         resolution_cost: c.resolution_cost !== null ? String(c.resolution_cost) : '',

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Lien Waivers' }
@@ -34,7 +34,7 @@ function statusBadge(status: string | null) {
   }
   return (
     <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${colors[s] || colors.draft}`}>
-      {status || 'Draft'}
+      {formatStatus(status || 'draft')}
     </span>
   )
 }

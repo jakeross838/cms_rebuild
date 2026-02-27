@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Draw Requests' }
@@ -205,7 +205,7 @@ export default async function DrawRequestsPage({
                     </td>
                     <td className="p-3">
                       <Badge variant={statusVariant(draw.status)}>
-                        {draw.status || 'Draft'}
+                        {formatStatus(draw.status || 'draft')}
                       </Badge>
                     </td>
                     <td className="p-3 text-right font-medium text-foreground">

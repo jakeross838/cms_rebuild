@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 
 interface PermitRow {
   id: string
@@ -140,7 +140,7 @@ export default async function PermitsPage({
                     <td className="px-4 py-3 text-muted-foreground">{permit.jurisdiction || '-'}</td>
                     <td className="px-4 py-3">
                       <Badge className={`${getStatusColor(permit.status ?? 'draft')} rounded`}>
-                        {permit.status || 'Applied'}
+                        {formatStatus(permit.status ?? 'draft')}
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{formatDate(permit.applied_date)}</td>

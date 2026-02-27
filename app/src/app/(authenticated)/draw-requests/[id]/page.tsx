@@ -20,7 +20,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -377,7 +377,7 @@ export default function DrawRequestDetailPage() {
                     <dt className="text-muted-foreground">Status</dt>
                     <dd>
                       <Badge variant={statusVariant(draw.status)}>
-                        {draw.status || 'Draft'}
+                        {formatStatus(draw.status || 'draft')}
                       </Badge>
                     </dd>
                   </div>

@@ -88,7 +88,7 @@ export default function SubmittalDetailPage() {
         submitted_to: sub.submitted_to || '',
         submission_date: sub.submission_date || '',
         required_date: sub.required_date || '',
-        priority: sub.priority || 'Medium',
+        priority: sub.priority || 'normal',
         notes: sub.notes || '',
       })
       setLoading(false)
