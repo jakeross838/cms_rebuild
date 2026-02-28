@@ -152,7 +152,7 @@ export default function NewPunchItemPage() {
                 <select id="category" name="category" value={formData.category} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   <option value="">Select category...</option>
                   {['structural', 'electrical', 'plumbing', 'hvac', 'finish', 'paint', 'flooring', 'cabinets', 'countertops', 'fixtures', 'appliances', 'exterior', 'landscaping', 'other'].map((c) => (
-                    <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+                    <option key={c} value={c}>{formatStatus(c)}</option>
                   ))}
                 </select>
               </div>
@@ -171,7 +171,7 @@ export default function NewPunchItemPage() {
                 <label htmlFor="priority" className="text-sm font-medium">Priority <span className="text-red-500">*</span></label>
                 <select id="priority" name="priority" value={formData.priority} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   {['low', 'normal', 'high', 'critical'].map((p) => (
-                    <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
+                    <option key={p} value={p}>{formatStatus(p)}</option>
                   ))}
                 </select>
               </div>

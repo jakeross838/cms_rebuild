@@ -219,13 +219,6 @@ export default function SubmittalDetailPage() {
     )
   }
 
-  const priorityColor: Record<string, string> = {
-    low: 'bg-warm-100 text-warm-700',
-    normal: 'bg-info-bg text-info-dark',
-    high: 'bg-warning-bg text-warning-dark',
-    urgent: 'bg-danger-bg text-danger-dark',
-  }
-
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
@@ -239,8 +232,8 @@ export default function SubmittalDetailPage() {
               <Badge className={getStatusColor(submittal.status)}>
                 {formatStatus(submittal.status)}
               </Badge>
-              <Badge className={priorityColor[submittal.priority] || 'bg-warm-100 text-warm-700'}>
-                {submittal.priority}
+              <Badge className={getStatusColor(submittal.priority || 'normal')}>
+                {formatStatus(submittal.priority || 'normal')}
               </Badge>
             </div>
             <p className="text-muted-foreground">{submittal.title}</p>

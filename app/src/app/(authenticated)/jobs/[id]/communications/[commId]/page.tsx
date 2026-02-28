@@ -207,13 +207,6 @@ export default function CommunicationDetailPage() {
     )
   }
 
-  const priorityColor: Record<string, string> = {
-    low: 'bg-warm-100 text-warm-700',
-    normal: 'bg-info-bg text-info-dark',
-    high: 'bg-warning-bg text-warning-dark',
-    urgent: 'bg-danger-bg text-danger-dark',
-  }
-
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
@@ -227,8 +220,8 @@ export default function CommunicationDetailPage() {
               <Badge className={getStatusColor(comm.status)}>
                 {formatStatus(comm.status)}
               </Badge>
-              <Badge className={priorityColor[comm.priority] || 'bg-warm-100 text-warm-700'}>
-                {comm.priority}
+              <Badge className={getStatusColor(comm.priority || 'normal')}>
+                {formatStatus(comm.priority || 'normal')}
               </Badge>
             </div>
             <p className="text-muted-foreground">

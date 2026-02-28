@@ -4,7 +4,7 @@ import { Home } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 interface JobPropertyData {
@@ -80,9 +80,9 @@ export default async function JobPropertyPage({
             <Field label="Status" value={j.status} />
             <Field label="Contract Type" value={j.contract_type} />
             <Field label="Contract Amount" value={j.contract_amount != null ? formatCurrency(j.contract_amount) : null} />
-            <Field label="Start Date" value={j.start_date} />
-            <Field label="Target Completion" value={j.target_completion} />
-            <Field label="Actual Completion" value={j.actual_completion} />
+            <Field label="Start Date" value={j.start_date ? formatDate(j.start_date) : null} />
+            <Field label="Target Completion" value={j.target_completion ? formatDate(j.target_completion) : null} />
+            <Field label="Actual Completion" value={j.actual_completion ? formatDate(j.actual_completion) : null} />
             <Field label="Notes" value={j.notes} />
           </div>
         </CardContent>

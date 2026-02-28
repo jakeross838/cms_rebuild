@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatStatus } from '@/lib/utils'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -200,7 +200,7 @@ export default function NewJournalEntryPage() {
                 <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                 <select id="status" name="status" value={formData.status} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   {['draft', 'posted', 'voided'].map((s) => (
-                    <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                    <option key={s} value={s}>{formatStatus(s)}</option>
                   ))}
                 </select>
               </div>

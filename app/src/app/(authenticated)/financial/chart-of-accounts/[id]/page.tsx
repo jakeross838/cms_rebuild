@@ -15,7 +15,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { formatStatus } from '@/lib/utils'
+import { formatStatus, getStatusColor } from '@/lib/utils'
 
 interface AccountData {
   id: string
@@ -287,7 +287,7 @@ export default function ChartOfAccountsDetailPage() {
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
                     <dd>
-                      <Badge className={`rounded ${account.is_active !== false ? 'bg-success-bg text-success-dark' : 'bg-warm-100 text-warm-700'}`}>
+                      <Badge className={getStatusColor(account.is_active !== false ? 'active' : 'inactive')}>
                         {account.is_active !== false ? 'Active' : 'Inactive'}
                       </Badge>
                     </dd>
