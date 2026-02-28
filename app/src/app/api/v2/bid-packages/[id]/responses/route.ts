@@ -78,6 +78,7 @@ export const GET = createApiHandler(
       .from('bid_responses')
       .select('*', { count: 'exact' })
       .eq('bid_package_id', bidPackageId)
+      .is('deleted_at', null)
       .order('submitted_at', { ascending: false })
       .range(offset, offset + limit - 1)
 

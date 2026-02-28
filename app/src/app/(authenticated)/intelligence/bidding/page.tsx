@@ -40,7 +40,7 @@ export default async function BiddingPage() {
     supabase.from('bid_packages').select('*', { count: 'exact', head: true })
       .eq('company_id', companyId).is('deleted_at', null).eq('status', 'closed'),
     supabase.from('bid_responses').select('*', { count: 'exact', head: true })
-      .eq('company_id', companyId),
+      .eq('company_id', companyId).is('deleted_at', null),
     supabase.from('bid_packages').select('id, title, status, trade, bid_due_date, updated_at')
       .eq('company_id', companyId).is('deleted_at', null)
       .order('updated_at', { ascending: false }).limit(5),
