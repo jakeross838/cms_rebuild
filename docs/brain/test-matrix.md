@@ -1,5 +1,24 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 35 — React Query Hooks (2026-02-28)
+
+### Hooks Compilation
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `tsc --noEmit` passes for all 51 hooks files | zero errors | PASS |
+| All 54 acceptance test files pass | 3261/3263 (2 pre-existing design-system failures) | PASS |
+| Module 07 (scheduling) — 58/58 tests | all pass | PASS |
+| Module 08 (daily-logs) — 40/40 tests | all pass | PASS |
+| Module 09 (budget) — 39/39 tests | all pass | PASS |
+| Module 10 (vendor-management) — 41/41 tests | all pass | PASS |
+| Module 11 (accounting) — 57/57 tests | all pass | PASS |
+
+### Pre-existing Failures (not related to this work)
+| Test | Reason |
+|------|--------|
+| design-system.test.ts: dropdown-menu.tsx exists | component not yet created |
+| design-system.test.ts: tooltip.tsx exists | component not yet created |
+
 ## Session 34 — Module 11 Native Accounting API Routes (2026-02-28)
 
 ### GL Accounts

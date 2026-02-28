@@ -1,5 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-28: Session 35 — React Query Hooks for All 52 Modules
+
+### Why (41 new hooks files)
+- All 52 modules have API routes (v1 for Modules 01-11, v2 for Modules 12-52) and type definitions, but most lacked React Query hooks connecting the UI to the API layer
+- Without hooks, UI pages would need to manually construct `fetch()` calls with proper query keys, cache invalidation, and mutation handling — hooks abstract this into single-import, typed functions
+- The `createApiHooks` factory generates 5 standard CRUD hooks from a queryKey + basePath, eliminating ~50 lines of boilerplate per entity
+- Custom hooks for nested resources (e.g., estimate lines within an estimate, punch item photos) require manual `useQuery`/`useMutation` with proper parent+child cache invalidation
+- Workflow action hooks (approve, submit, void, close, clock-in/out) wrap single POST/PATCH calls with automatic query invalidation so list views refresh after state transitions
+- Three parallel agents built hooks for Modules 12-19/51/52, 20-30, and 31-50 simultaneously — reducing build time from ~30 minutes to ~10 minutes
+
 ## 2026-02-28: Session 34 — Module 11 Native Accounting API Routes
 
 ### Why (10 route files + 1 hooks file)

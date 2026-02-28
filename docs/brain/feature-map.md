@@ -1,5 +1,63 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 35 — React Query Hooks for All 52 Modules (2026-02-28)
+
+### Hooks Layer Complete
+- **51 hooks files** in `app/src/hooks/` covering all 52 modules
+- Each file exports typed React Query hooks for CRUD + custom operations
+- Factory pattern: `createApiHooks<TParams, TCreate>(queryKey, basePath)` generates `useList`, `useDetail`, `useCreate`, `useUpdate`, `useDelete`
+- Custom hooks: `useQuery`/`useMutation` for nested resources, workflow actions (approve, submit, void, close)
+- v1 API hooks: Modules 01-11 (scheduling, daily-logs, budget, vendor-management, accounting)
+- v2 API hooks: Modules 12-52 (client-portal through marketing-site)
+- All hooks invalidate parent + child query keys on mutation success
+- All hooks use `fetchJson` from `@/lib/api/fetch` for HTTP calls
+- `tsc --noEmit` passes clean — zero type errors across all 51 files
+
+### Files Created This Session
+| Hook File | Module(s) | Key Hooks |
+|-----------|-----------|-----------|
+| `use-client-portal.ts` | 12/29 | messages, approvals, invitations, payments, settings |
+| `use-time-tracking.ts` | 51 | time entries, clock-in/out, payroll, labor rates |
+| `use-invoice-processing.ts` | 13 | extractions, rules, review, create-bill |
+| `use-lien-waivers.ts` | 14 | waivers, templates, tracking, approve |
+| `use-draw-requests.ts` | 15 | draws, lines, submit, approve |
+| `use-integrations.ts` | 16 | connections, sync, mappings, conflicts, marketplace |
+| `use-change-orders.ts` | 17 | orders, items, submit, approve |
+| `use-purchase-orders.ts` | 18 | POs, lines, receipts, approve, send |
+| `use-financial-reporting.ts` | 19 | definitions, snapshots, schedules, periods |
+| `use-inventory.ts` | 52 | items, locations, stock, transactions, material requests |
+| `use-estimating.ts` | 20 | estimates, sections, lines, versions, assemblies |
+| `use-selections.ts` | 21 | selections, categories, options, history |
+| `use-vendor-performance.ts` | 22 | scores, ratings, callbacks, notes |
+| `use-price-intelligence.ts` | 23 | master items, vendor prices, labor rates |
+| `use-ai-documents.ts` | 24 | classifications, templates, extractions, queue |
+| `use-schedule-intelligence.ts` | 25 | predictions, weather, risk scores, scenarios |
+| `use-bids.ts` | 26 | packages, invitations, responses, comparisons |
+| `use-rfis.ts` | 27 | RFIs, responses, routing, templates |
+| `use-punch-lists.ts` | 28 | punch items, photos, checklists, templates |
+| `use-full-client-portal.ts` | 29 | enhanced portal: approvals, selections, payments |
+| `use-vendor-portal.ts` | 30 | vendor portal: submissions, messages, access |
+| `use-warranty.ts` | 31 | warranties, claims, maintenance schedules |
+| `use-permitting.ts` | 32 | permits, inspections, documents, fees |
+| `use-safety.ts` | 33 | incidents, inspections, toolbox talks |
+| `use-hr.ts` | 34 | employees, certifications, documents |
+| `use-equipment.ts` | 35 | equipment, maintenance, inspections, costs |
+| `use-crm.ts` | 36 | leads, sources, pipelines, activities |
+| `use-marketing.ts` | 37 | portfolio, reviews, campaigns |
+| `use-contracts.ts` | 38 | contracts, templates, clauses, signing |
+| `use-advanced-reporting.ts` | 39 | reports, dashboards, generate |
+| `use-mobile.ts` | 40 | push tokens, sync queue |
+| `use-onboarding.ts` | 41 | sessions, milestones, reminders |
+| `use-data-migration.ts` | 42 | migration jobs, templates, mappings |
+| `use-billing.ts` | 43 | plans, addons, subscriptions, usage |
+| `use-white-label.ts` | 44 | branding, domains, email config |
+| `use-marketplace.ts` | 45 | API keys, webhooks, templates |
+| `use-support.ts` | 46 | tickets, KB articles, feature requests |
+| `use-training.ts` | 47 | courses, paths, progress, certifications |
+| `use-templates.ts` | 48 | publishers, shared templates, installs |
+| `use-platform-analytics.ts` | 49 | metrics, health scores, experiments |
+| `use-marketing-site.ts` | 50 | leads, referrals, testimonials, blog |
+
 ## Session 34 — Module 11 Native Accounting API Routes (2026-02-28)
 
 ### New API Endpoints — GL Accounts
