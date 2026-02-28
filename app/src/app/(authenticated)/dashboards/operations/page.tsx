@@ -76,9 +76,10 @@ export default async function OperationsDashboardPage() {
       .is('deleted_at', null)
       .neq('status', 'closed'),
 
-    // Action 3: Expiring Certifications (within 30 days)
+    // Action 3: Expiring Certifications (within 30 days, exclude revoked)
     supabase.from('employee_certifications').select('*', { count: 'exact', head: true })
       .eq('company_id', companyId)
+      .neq('status', 'revoked')
       .lt('expiration_date', thirtyDaysFromNow),
 
     // List 1: Recent Daily Logs (last 5)
