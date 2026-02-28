@@ -1,5 +1,249 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 34 — Module 11 Native Accounting API Routes (2026-02-28)
+
+### New API Endpoints — GL Accounts
+
+#### GET /api/v1/gl-accounts
+- Lists GL accounts for the company (paginated, ordered: account_number ASC)
+- Filters: `account_type` (asset/liability/equity/revenue/expense/cogs), `is_active` (bool), `parent_account_id` (UUID), `q` (search on name + account_number)
+- No deleted_at — accounts are deactivated via `is_active: false`, never soft-deleted
+
+#### POST /api/v1/gl-accounts
+- Creates a new GL account
+- Required role: owner/admin/pm/office
+- Sets company_id from ctx; body includes account_number, name, account_type, normal_balance, optional sub_type, parent_account_id, description
+- Audit action: `gl_account.create`
+
+#### GET /api/v1/gl-accounts/[id]
+- Returns a single GL account by ID; 404 if not found or wrong company
+
+#### PATCH /api/v1/gl-accounts/[id]
+- Updates an existing GL account (any mutable field)
+- Required role: owner/admin/pm/office
+- Ownership check: verifies company_id before update
+- Audit action: `gl_account.update`
+
+### New API Endpoints — Journal Entries
+
+#### GET /api/v1/journal-entries
+- Lists journal entries for the company (paginated, ordered: entry_date DESC)
+- Filters: `status` (draft/posted/voided), `source_type`, `start_date`, `end_date`, `q` (memo + reference_number)
+- No deleted_at — entries are voided via status, never soft-deleted
+
+#### POST /api/v1/journal-entries
+- Creates a journal entry header + lines in a two-step insert (entry first, lines second with entry ID)
+- Validates min 2 lines per entry
+- Entry starts with status = 'draft'; caller must PATCH to 'posted' to post it
+- Required role: owner/admin/pm/office
+- Audit action: `journal_entry.create`
+
+#### GET /api/v1/journal-entries/[id]
+- Returns a single journal entry + embedded `gl_journal_lines` array via Supabase join
+
+#### PATCH /api/v1/journal-entries/[id]
+- Updates entry header fields
+- If `status` transitions to 'posted', also sets `posted_at` and `posted_by` automatically
+- If `lines` array provided (min 2), replaces all existing lines: DELETE then INSERT
+- Audit action: `journal_entry.update`
+
+### New API Endpoints — AP Bills
+
+#### GET /api/v1/ap-bills
+- Lists AP bills for company (paginated, ordered: bill_date DESC)
+- Filters: `vendor_id`, `job_id`, `status`, `start_date`, `end_date`, `q` (bill_number + description)
+- Soft-delete filtered: `.is('deleted_at', null)`
+- Includes left join on `vendors(id, name)`
+
+#### POST /api/v1/ap-bills
+- Creates a bill header + optional bill lines in two-step insert
+- Sets status = 'draft', balance_due = amount on create
+- Required role: owner/admin/pm/office
+- Audit action: `ap_bill.create`
+
+#### GET /api/v1/ap-bills/[id]
+- Returns bill + embedded `ap_bill_lines` + `vendors(id, name)`
+- Soft-delete filtered
+
+#### PATCH /api/v1/ap-bills/[id]
+- Updates bill fields; optional `lines` array replaces all existing lines
+- Required role: owner/admin/pm/office
+- Audit action: `ap_bill.update`
+
+#### DELETE /api/v1/ap-bills/[id]
+- Soft-deletes by setting `deleted_at` + `updated_at`
+- Required role: owner/admin only
+- Audit action: `ap_bill.delete`
+
+### New API Endpoints — AP Payments
+
+#### GET /api/v1/ap-payments
+- Lists AP payments for company (paginated, ordered: payment_date DESC)
+- Filters: `vendor_id`, `status`, `start_date`, `end_date`
+- No deleted_at — payments are voided via status
+- Includes left join on `vendors(id, name)`
+
+#### POST /api/v1/ap-payments
+- Creates a payment record + payment applications in two-step insert
+- payment_applications links each payment to one or more bills with amounts
+- Sets status = 'pending' on create
+- Required role: owner/admin/pm/office
+- Audit action: `ap_payment.create`
+
+### New API Endpoints — AR Invoices
+
+#### GET /api/v1/ar-invoices
+- Lists AR invoices for company (paginated, ordered: invoice_date DESC)
+- Filters: `client_id`, `job_id`, `status`, `start_date`, `end_date`, `q` (invoice_number + notes)
+- Soft-delete filtered; includes left join on `clients(id, name)`
+
+#### POST /api/v1/ar-invoices
+- Creates invoice header + optional invoice lines in two-step insert
+- Sets status = 'draft', balance_due = amount on create
+- Required role: owner/admin/pm/office
+- Audit action: `ar_invoice.create`
+
+#### GET /api/v1/ar-invoices/[id]
+- Returns invoice + embedded `ar_invoice_lines` + `clients(id, name)`
+
+#### PATCH /api/v1/ar-invoices/[id]
+- Updates invoice fields; optional `lines` array replaces all existing lines
+- Required role: owner/admin/pm/office
+- Audit action: `ar_invoice.update`
+
+#### DELETE /api/v1/ar-invoices/[id]
+- Soft-deletes by setting `deleted_at` + `updated_at`
+- Required role: owner/admin only
+- Audit action: `ar_invoice.delete`
+
+### New API Endpoints — AR Receipts
+
+#### GET /api/v1/ar-receipts
+- Lists AR receipts for company (paginated, ordered: receipt_date DESC)
+- Filters: `client_id`, `status`, `start_date`, `end_date`
+- No deleted_at — receipts are voided via status
+- Includes left join on `clients(id, name)`
+
+#### POST /api/v1/ar-receipts
+- Creates a receipt record + receipt applications in two-step insert
+- receipt_applications links each receipt to one or more invoices with amounts
+- Sets status = 'pending' on create
+- Required role: owner/admin/pm/office
+- Audit action: `ar_receipt.create`
+
+### New React Query Hooks (`use-accounting.ts`)
+
+| Hook | Purpose |
+|------|---------|
+| `useGlAccounts(params?)` | List GL accounts with optional filters |
+| `useGlAccount(id)` | Get single GL account |
+| `useCreateGlAccount()` | POST new GL account, invalidates gl-accounts |
+| `useUpdateGlAccount(id)` | PATCH GL account, invalidates gl-accounts |
+| `useJournalEntries(params?)` | List journal entries with optional filters |
+| `useJournalEntry(id)` | Get single journal entry (includes lines) |
+| `useCreateJournalEntry()` | POST new entry + lines, invalidates journal-entries |
+| `useUpdateJournalEntry(id)` | PATCH entry/lines, invalidates journal-entries |
+| `useJournalLines(entryId)` | Fetch just the lines from a journal entry detail |
+| `usePostJournalEntry(id)` | PATCH status to 'posted', invalidates entry |
+| `useVoidJournalEntry(id)` | PATCH status to 'voided', invalidates entry |
+| `useApBills(params?)` | List AP bills with filters |
+| `useApBill(id)` | Get single AP bill (includes lines) |
+| `useCreateApBill()` | POST bill + optional lines, invalidates ap-bills |
+| `useUpdateApBill(id)` | PATCH bill/lines, invalidates ap-bills |
+| `useDeleteApBill()` | DELETE (soft) AP bill, invalidates ap-bills |
+| `useApBillLines(billId)` | Fetch just the lines from a bill detail |
+| `useApPayments(params?)` | List AP payments with filters |
+| `useCreateApPayment()` | POST payment + applications, invalidates ap-payments |
+| `useVoidApPayment()` | PATCH status to 'voided', invalidates ap-payments |
+| `useArInvoices(params?)` | List AR invoices with filters |
+| `useArInvoice(id)` | Get single AR invoice (includes lines) |
+| `useCreateArInvoice()` | POST invoice + optional lines, invalidates ar-invoices |
+| `useUpdateArInvoice(id)` | PATCH invoice/lines, invalidates ar-invoices |
+| `useDeleteArInvoice()` | DELETE (soft) AR invoice, invalidates ar-invoices |
+| `useArInvoiceLines(invoiceId)` | Fetch just the lines from an invoice detail |
+| `useArReceipts(params?)` | List AR receipts with filters |
+| `useCreateArReceipt()` | POST receipt + applications, invalidates ar-receipts |
+| `useVoidArReceipt()` | PATCH status to 'voided', invalidates ar-receipts |
+
+### Soft-Delete Behavior by Table
+| Table | Archive Method |
+|-------|---------------|
+| `gl_accounts` | `is_active: false` (no deleted_at) |
+| `gl_journal_entries` | `status: 'voided'` (no deleted_at) |
+| `ap_bills` | `deleted_at` (soft delete) |
+| `ap_payments` | `status: 'voided'` (no deleted_at) |
+| `ar_invoices` | `deleted_at` (soft delete) |
+| `ar_receipts` | `status: 'voided'` (no deleted_at) |
+
+## Session 33 — Module 10 Vendor Management Sub-Resource API Routes (2026-02-28)
+
+### New API Endpoints
+
+#### GET /api/v1/vendors/[id]/contacts
+- Lists all contacts for a vendor (paginated, ordered: primary first, then by name)
+- Verifies vendor belongs to company before querying
+- Accepts: `page`, `limit` query params
+
+#### POST /api/v1/vendors/[id]/contacts
+- Creates a new vendor contact record
+- Required role: owner/admin/pm
+- Sets `vendor_id`, `company_id` from context
+- Audit action: `vendor_contact.create`
+
+#### GET /api/v1/vendors/[id]/insurance
+- Lists insurance records for a vendor (paginated, ordered by expiration_date ASC)
+- Verifies vendor belongs to company before querying
+- Accepts: `page`, `limit`, `status`, `insurance_type` filter params
+
+#### POST /api/v1/vendors/[id]/insurance
+- Creates a new vendor insurance record
+- Required role: owner/admin/pm
+- Sets `vendor_id`, `company_id` from context
+- Audit action: `vendor_insurance.create`
+
+#### GET /api/v1/vendors/[id]/compliance
+- Lists compliance records for a vendor (paginated, ordered by requirement_name ASC)
+- Verifies vendor belongs to company before querying
+- Accepts: `page`, `limit`, `status`, `requirement_type` filter params
+
+#### POST /api/v1/vendors/[id]/compliance
+- Creates a new vendor compliance record
+- Required role: owner/admin/pm
+- Sets `vendor_id`, `company_id` from context
+- Audit action: `vendor_compliance.create`
+
+#### GET /api/v1/vendors/[id]/ratings
+- Lists ratings for a vendor (paginated, ordered by created_at DESC)
+- Verifies vendor belongs to company before querying
+- Accepts: `page`, `limit`, `category`, `job_id` filter params
+- vendor_ratings has no deleted_at — no soft-delete filter needed
+
+#### POST /api/v1/vendors/[id]/ratings
+- Creates a new vendor rating
+- Required role: owner/admin/pm
+- Sets `vendor_id`, `company_id` from context, `rated_by` = ctx.user.id
+- Audit action: `vendor_rating.create`
+
+### New React Query Hooks (`use-vendor-management.ts`)
+
+| Hook | Purpose |
+|------|---------|
+| `useVendorContacts(vendorId, params?)` | List contacts, disabled when no vendorId |
+| `useCreateVendorContact(vendorId)` | POST contact, invalidates vendor-contacts + vendors |
+| `useVendorInsurance(vendorId, params?)` | List insurance, filter by status/type |
+| `useCreateVendorInsurance(vendorId)` | POST insurance, invalidates vendor-insurance + vendors |
+| `useVendorCompliance(vendorId, params?)` | List compliance, filter by status/requirement_type |
+| `useCreateVendorCompliance(vendorId)` | POST compliance, invalidates vendor-compliance + vendors |
+| `useVendorRatings(vendorId, params?)` | List ratings, filter by category/job_id |
+| `useCreateVendorRating(vendorId)` | POST rating, invalidates vendor-ratings + vendors |
+
+### Security Pattern (all 4 sub-resource routes)
+- Vendor ownership check: verify vendor.company_id matches ctx.companyId before any operation
+- Returns 404 (not 403) on ownership mismatch to avoid leaking IDs
+- All mutations require role: owner/admin/pm
+- GET routes use permission: `jobs:read:all`
+- POST routes use permission: `jobs:update:all`
+
 ## Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter (2026-02-27)
 
 ### Billing Page

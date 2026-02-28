@@ -1,5 +1,30 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-28: Session 34 — Module 11 Native Accounting API Routes
+
+### Why (10 route files + 1 hooks file)
+- Module 11 (Native Accounting) requires a full GL/AP/AR backend — chart of accounts, double-entry journal entries, vendor bills, payments, client invoices, and receipts
+- GL accounts are the backbone of double-entry accounting; every transaction line references an account
+- Journal entries require transactional two-step inserts (header then lines) to maintain referential integrity; Supabase doesn't have multi-table transactions via REST so we insert header first, then lines using the returned ID
+- AP bills and AR invoices have `deleted_at` because they are legal documents that need an audit trail; payments/receipts don't because voiding (status change) is the correct accounting correction for a cleared payment
+- Payment applications (ap_payment_applications, ar_receipt_applications) link payments to bills/invoices — this is the standard accounting pattern for partial payment tracking and balance_due calculation
+- The `balance_due` field is pre-set to `amount` on create because payments haven't been applied yet; application of payments reduces this value (done via DB trigger or future accounting engine)
+- PATCH on journal entries handles status transitions with automatic `posted_at`/`posted_by` stamping when status → 'posted'; this mirrors standard accounting workflow
+- Line replacement on PATCH (DELETE + INSERT) is the simplest correct approach for draft documents; posted entries should not have lines modified (enforced via business logic)
+- React Query hooks in `use-accounting.ts` expose all 29 operations; custom `useQuery` overrides for nested data (journal lines, bill lines, invoice lines) return typed arrays directly so components don't need to unwrap the response shape
+- Three void mutation hooks (`usePostJournalEntry`, `useVoidJournalEntry`, `useVoidApPayment`, `useVoidArReceipt`) provide one-click status transitions without requiring callers to construct PATCH bodies
+
+## 2026-02-28: Session 33 — Module 10 Vendor Management Sub-Resource API Routes
+
+### Why (4 sub-resource route files + 1 hooks file)
+- Module 10 (Vendor Management) requires contacts, insurance, compliance, and ratings to be first-class sub-resources, not embedded JSON on the vendor record
+- Separate tables (vendor_contacts, vendor_insurance, vendor_compliance, vendor_ratings) allow independent CRUD, filtering, and audit trails per record
+- Vendor contacts are needed for the contact directory on vendor detail pages
+- Insurance and compliance records drive the expiration/status dashboards and compliance reports
+- Ratings are needed for Module 22 (Vendor Performance) scorecards
+- React Query hooks in `use-vendor-management.ts` expose all 8 operations to client components without them needing to know URL structure
+- Vendor ownership check on every request prevents cross-tenant access even if a valid UUID from another tenant is guessed
+
 ## 2026-02-27: Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter
 
 ### Why (Billing badge — 1 file)

@@ -1,5 +1,186 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 34 — Module 11 Native Accounting API Routes (2026-02-28)
+
+### GL Accounts
+| Test Case | Expected |
+|-----------|----------|
+| GET /gl-accounts — valid company | 200 + paginated accounts ordered account_number ASC |
+| GET /gl-accounts?account_type=expense | 200 + only expense accounts |
+| GET /gl-accounts?is_active=false | 200 + only inactive accounts |
+| GET /gl-accounts?q=cash | 200 + accounts matching 'cash' in name or account_number |
+| GET /gl-accounts — unauthenticated | 401 |
+| POST /gl-accounts — valid body | 201 + account with company_id set |
+| POST /gl-accounts — missing account_number | 400 Validation Error |
+| POST /gl-accounts — missing normal_balance | 400 Validation Error |
+| POST /gl-accounts — invalid account_type | 400 Validation Error |
+| POST /gl-accounts — field role | 403 (requires pm+) |
+| GET /gl-accounts/[id] — valid | 200 + account |
+| GET /gl-accounts/[id] — wrong company UUID | 404 Not Found |
+| GET /gl-accounts/[id] — invalid UUID | 400 Bad Request |
+| PATCH /gl-accounts/[id] — valid update | 200 + updated account |
+| PATCH /gl-accounts/[id] — deactivate (is_active: false) | 200 + account with is_active=false |
+| PATCH /gl-accounts/[id] — wrong company | 404 Not Found |
+
+### Journal Entries
+| Test Case | Expected |
+|-----------|----------|
+| GET /journal-entries — valid company | 200 + paginated entries ordered entry_date DESC |
+| GET /journal-entries?status=posted | 200 + only posted entries |
+| GET /journal-entries?source_type=manual | 200 + only manual entries |
+| GET /journal-entries?start_date=2026-01-01&end_date=2026-01-31 | 200 + date-range filtered |
+| GET /journal-entries?q=payroll | 200 + matching memo or reference_number |
+| POST /journal-entries — valid with 2+ lines | 201 + entry + lines array |
+| POST /journal-entries — only 1 line | 400 (min 2 lines required) |
+| POST /journal-entries — missing entry_date | 400 Validation Error |
+| POST /journal-entries — bad date format | 400 Validation Error |
+| GET /journal-entries/[id] — valid | 200 + entry + gl_journal_lines |
+| GET /journal-entries/[id] — wrong company | 404 Not Found |
+| PATCH /journal-entries/[id] — update memo | 200 + updated entry |
+| PATCH /journal-entries/[id] — status → posted | 200 + posted_at and posted_by set |
+| PATCH /journal-entries/[id] — replace lines | 200 + new lines array |
+| PATCH /journal-entries/[id] — only 1 line in patch | 400 Validation Error |
+
+### AP Bills
+| Test Case | Expected |
+|-----------|----------|
+| GET /ap-bills — valid company | 200 + paginated bills, soft-deleted excluded |
+| GET /ap-bills?vendor_id=[uuid] | 200 + filtered by vendor |
+| GET /ap-bills?status=approved | 200 + only approved bills |
+| GET /ap-bills?start_date=2026-01-01 | 200 + bills on or after start_date |
+| GET /ap-bills?q=INV-001 | 200 + matching bill_number or description |
+| POST /ap-bills — valid body no lines | 201 + bill with status=draft, balance_due=amount |
+| POST /ap-bills — valid body with lines | 201 + bill + ap_bill_lines array |
+| POST /ap-bills — missing vendor_id | 400 Validation Error |
+| POST /ap-bills — negative amount | 400 Validation Error |
+| GET /ap-bills/[id] — valid | 200 + bill + ap_bill_lines + vendor |
+| GET /ap-bills/[id] — soft-deleted bill | 404 Not Found |
+| GET /ap-bills/[id] — wrong company | 404 Not Found |
+| PATCH /ap-bills/[id] — update status | 200 + updated bill |
+| PATCH /ap-bills/[id] — replace lines | 200 + new lines |
+| DELETE /ap-bills/[id] — valid | 200 + id + deleted_at set |
+| DELETE /ap-bills/[id] — already deleted | 404 Not Found |
+| DELETE /ap-bills/[id] — office role | 403 (requires admin+) |
+
+### AP Payments
+| Test Case | Expected |
+|-----------|----------|
+| GET /ap-payments — valid company | 200 + paginated payments ordered payment_date DESC |
+| GET /ap-payments?vendor_id=[uuid] | 200 + filtered by vendor |
+| GET /ap-payments?status=cleared | 200 + only cleared payments |
+| POST /ap-payments — valid with 1+ applications | 201 + payment + applications array |
+| POST /ap-payments — missing applications | 400 (min 1 application required) |
+| POST /ap-payments — invalid payment_method | 400 Validation Error |
+| POST /ap-payments — missing vendor_id | 400 Validation Error |
+
+### AR Invoices
+| Test Case | Expected |
+|-----------|----------|
+| GET /ar-invoices — valid company | 200 + paginated invoices, soft-deleted excluded |
+| GET /ar-invoices?client_id=[uuid] | 200 + filtered by client |
+| GET /ar-invoices?status=sent | 200 + only sent invoices |
+| GET /ar-invoices?job_id=[uuid] | 200 + filtered by job |
+| GET /ar-invoices?q=INV-2026 | 200 + matching invoice_number or notes |
+| POST /ar-invoices — valid body no lines | 201 + invoice with status=draft, balance_due=amount |
+| POST /ar-invoices — valid body with lines | 201 + invoice + ar_invoice_lines |
+| POST /ar-invoices — missing client_id | 400 Validation Error |
+| POST /ar-invoices — negative amount | 400 Validation Error |
+| GET /ar-invoices/[id] — valid | 200 + invoice + ar_invoice_lines + client |
+| GET /ar-invoices/[id] — soft-deleted | 404 Not Found |
+| PATCH /ar-invoices/[id] — mark as sent | 200 + status=sent |
+| PATCH /ar-invoices/[id] — replace lines | 200 + new lines |
+| DELETE /ar-invoices/[id] — valid | 200 + id + deleted_at |
+| DELETE /ar-invoices/[id] — office role | 403 (requires admin+) |
+
+### AR Receipts
+| Test Case | Expected |
+|-----------|----------|
+| GET /ar-receipts — valid company | 200 + paginated receipts ordered receipt_date DESC |
+| GET /ar-receipts?client_id=[uuid] | 200 + filtered by client |
+| GET /ar-receipts?status=cleared | 200 + only cleared receipts |
+| POST /ar-receipts — valid with 1+ applications | 201 + receipt + applications array |
+| POST /ar-receipts — missing applications | 400 (min 1 application required) |
+| POST /ar-receipts — invalid payment_method | 400 Validation Error |
+
+### React Query Hooks (use-accounting.ts)
+| Test Case | Expected |
+|-----------|----------|
+| useGlAccounts(null) | query runs with no filters |
+| useGlAccounts({ account_type: 'expense' }) | includes ?account_type=expense in URL |
+| useGlAccount('uuid') | fetches /api/v1/gl-accounts/uuid |
+| useGlAccount(null) | query disabled |
+| useCreateGlAccount — success | invalidates gl-accounts query key |
+| useJournalEntries({ status: 'posted' }) | includes ?status=posted |
+| useJournalEntry — with lines | returns data.gl_journal_lines |
+| useJournalLines(entryId) | returns typed GlJournalLine[] |
+| useJournalLines(null) | query disabled |
+| usePostJournalEntry(id) — success | invalidates journal-entries and entry detail |
+| useVoidJournalEntry(id) — success | invalidates journal-entries and entry detail |
+| useApBills({ vendor_id: 'uuid' }) | includes ?vendor_id=uuid |
+| useApBillLines(billId) | returns typed ApBillLine[] |
+| useDeleteApBill — success | invalidates ap-bills |
+| useArInvoices({ status: 'overdue' }) | includes ?status=overdue |
+| useArInvoiceLines(invoiceId) | returns typed ArInvoiceLine[] |
+| useDeleteArInvoice — success | invalidates ar-invoices |
+| useVoidApPayment — success | invalidates ap-payments |
+| useVoidArReceipt — success | invalidates ar-receipts |
+
+## Session 33 — Module 10 Vendor Management Sub-Resource API Routes (2026-02-28)
+
+### Vendor Contacts
+| Test Case | Expected |
+|-----------|----------|
+| GET /vendors/[id]/contacts — valid vendor | 200 + paginated contacts ordered primary-first |
+| GET /vendors/[id]/contacts — vendor from another company | 404 Not Found |
+| GET /vendors/[id]/contacts — invalid UUID | 400 Bad Request |
+| GET /vendors/[id]/contacts — deleted vendor | 404 Not Found |
+| POST /vendors/[id]/contacts — valid body | 201 + contact record with vendor_id and company_id set |
+| POST /vendors/[id]/contacts — missing name | 400 Validation Error |
+| POST /vendors/[id]/contacts — unauthenticated | 401 |
+| POST /vendors/[id]/contacts — field role | 403 Forbidden (requires pm+) |
+
+### Vendor Insurance
+| Test Case | Expected |
+|-----------|----------|
+| GET /vendors/[id]/insurance — valid vendor | 200 + paginated records ordered by expiration_date ASC |
+| GET /vendors/[id]/insurance?status=expired | 200 + only expired records |
+| GET /vendors/[id]/insurance?insurance_type=workers_comp | 200 + only workers_comp records |
+| GET /vendors/[id]/insurance — vendor from another company | 404 Not Found |
+| POST /vendors/[id]/insurance — valid body | 201 + insurance record |
+| POST /vendors/[id]/insurance — missing required fields | 400 Validation Error |
+| POST /vendors/[id]/insurance — bad date format | 400 Validation Error |
+
+### Vendor Compliance
+| Test Case | Expected |
+|-----------|----------|
+| GET /vendors/[id]/compliance — valid vendor | 200 + paginated records ordered by requirement_name ASC |
+| GET /vendors/[id]/compliance?status=non_compliant | 200 + filtered records |
+| GET /vendors/[id]/compliance?requirement_type=license | 200 + filtered records |
+| GET /vendors/[id]/compliance — vendor from another company | 404 Not Found |
+| POST /vendors/[id]/compliance — valid body | 201 + compliance record |
+| POST /vendors/[id]/compliance — invalid status enum | 400 Validation Error |
+
+### Vendor Ratings
+| Test Case | Expected |
+|-----------|----------|
+| GET /vendors/[id]/ratings — valid vendor | 200 + paginated ratings ordered by created_at DESC |
+| GET /vendors/[id]/ratings?category=quality | 200 + filtered records |
+| GET /vendors/[id]/ratings?job_id=[uuid] | 200 + ratings for that job |
+| GET /vendors/[id]/ratings — vendor from another company | 404 Not Found |
+| POST /vendors/[id]/ratings — valid body | 201 + rating with rated_by = user.id |
+| POST /vendors/[id]/ratings — rating out of range (0 or 6) | 400 Validation Error |
+| POST /vendors/[id]/ratings — invalid category | 400 Validation Error |
+
+### React Query Hooks (use-vendor-management.ts)
+| Test Case | Expected |
+|-----------|----------|
+| useVendorContacts(null) | query disabled, no fetch |
+| useVendorContacts('uuid') | fetches /api/v1/vendors/uuid/contacts |
+| useCreateVendorContact — success | invalidates vendor-contacts + vendors query keys |
+| useVendorInsurance — with status filter | includes ?status= in URL |
+| useVendorRatings — with category filter | includes ?category= in URL |
+| useCreateVendorRating — success | invalidates vendor-ratings + vendors |
+
 ## Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter (2026-02-27)
 
 ### Display Consistency
