@@ -102,7 +102,7 @@ export default async function JobSubmittalsPage({
                         {sub.submittal_number && <span className="text-sm font-mono text-muted-foreground">{sub.submittal_number}</span>}
                         <span className="font-medium">{sub.title}</span>
                         <Badge className={getStatusColor(sub.status)}>{formatStatus(sub.status)}</Badge>
-                        {sub.priority && <Badge variant="outline" className="text-xs">{formatStatus(sub.priority)}</Badge>}
+                        {sub.priority && <Badge className={getStatusColor(sub.priority)}>{formatStatus(sub.priority)}</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {sub.spec_section && <span>Spec {sub.spec_section}</span>}

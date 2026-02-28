@@ -95,7 +95,7 @@ export default async function JobCommunicationsPage({
                         {comm.subject && <span className="font-medium">{comm.subject}</span>}
                         <Badge variant="outline" className="text-xs">{comm.communication_type}</Badge>
                         <Badge className={getStatusColor(comm.status)}>{formatStatus(comm.status)}</Badge>
-                        {comm.priority && <Badge variant="outline" className="text-xs">{formatStatus(comm.priority)}</Badge>}
+                        {comm.priority && <Badge className={getStatusColor(comm.priority)}>{formatStatus(comm.priority)}</Badge>}
                       </div>
                       {comm.message_body && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{comm.message_body}</p>}
                       {comm.recipient && <p className="text-xs text-muted-foreground mt-1">To: {comm.recipient}</p>}

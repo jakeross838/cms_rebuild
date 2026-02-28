@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate , formatStatus } from '@/lib/utils'
+import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
 interface EmployeeCertification {
   id: string
@@ -83,7 +83,7 @@ export default async function LicensesPage({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{cert.certification_name}</span>
-                        <Badge variant="outline" className="text-xs">{formatStatus(cert.status)}</Badge>
+                        <Badge className={getStatusColor(cert.status || 'active')}>{formatStatus(cert.status || 'active')}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         {cert.issuing_authority && <span>{cert.issuing_authority}</span>}

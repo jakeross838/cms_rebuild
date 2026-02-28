@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ContractData {
@@ -201,7 +201,7 @@ export default function ContractDetailPage() {
                 {contract.title || 'Untitled Contract'}
               </h1>
               {contract.status && (
-                <Badge variant="outline" className="text-xs">{formatStatus(contract.status)}</Badge>
+                <Badge className={getStatusColor(contract.status || 'draft')}>{formatStatus(contract.status || 'draft')}</Badge>
               )}
             </div>
             <p className="text-muted-foreground">

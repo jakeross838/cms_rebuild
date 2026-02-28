@@ -118,7 +118,7 @@ export default async function JobClosePage() {
                     <div className="flex items-center gap-2">
                       {job.job_number && <span className="text-sm font-mono text-muted-foreground">{job.job_number}</span>}
                       <span className="font-medium">{job.name}</span>
-                      {job.status && <Badge variant="outline" className="text-xs">{formatStatus(job.status)}</Badge>}
+                      {job.status && <Badge className={getStatusColor(job.status)}>{formatStatus(job.status)}</Badge>}
                     </div>
                     {job.contract_amount && <span className="font-medium">{formatCurrency(job.contract_amount)}</span>}
                   </div>

@@ -266,7 +266,7 @@ export default function RFIDetailPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Priority</p>
-                    <Badge variant="outline">{rfi.priority || 'normal'}</Badge>
+                    <Badge className={getStatusColor(rfi.priority || 'normal')}>{formatStatus(rfi.priority || 'normal')}</Badge>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Category</p>

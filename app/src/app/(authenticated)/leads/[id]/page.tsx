@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface LeadData {
@@ -231,10 +231,10 @@ export default function LeadDetailPage() {
                 {lead.first_name} {lead.last_name}
               </h1>
               {lead.status && (
-                <Badge variant="outline" className="text-xs">{formatStatus(lead.status)}</Badge>
+                <Badge className={getStatusColor(lead.status || 'new')}>{formatStatus(lead.status || 'new')}</Badge>
               )}
               {lead.priority && (
-                <Badge variant="outline" className="text-xs">{formatStatus(lead.priority)}</Badge>
+                <Badge className={getStatusColor(lead.priority || 'normal')}>{formatStatus(lead.priority || 'normal')}</Badge>
               )}
             </div>
             <p className="text-muted-foreground">

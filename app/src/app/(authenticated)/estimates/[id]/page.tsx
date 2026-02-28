@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface EstimateData {
@@ -211,7 +211,7 @@ export default function EstimateDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{estimate.name}</h1>
               {estimate.status && (
-                <Badge variant="outline" className="text-xs">{formatStatus(estimate.status)}</Badge>
+                <Badge className={getStatusColor(estimate.status || 'draft')}>{formatStatus(estimate.status || 'draft')}</Badge>
               )}
               {estimate.version && estimate.version > 1 && (
                 <span className="text-xs text-muted-foreground">v{estimate.version}</span>

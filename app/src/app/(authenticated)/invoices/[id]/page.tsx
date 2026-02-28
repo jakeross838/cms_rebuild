@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface InvoiceData {
@@ -183,7 +183,7 @@ export default function InvoiceDetailPage() {
                 {invoice.invoice_number || 'Invoice'}
               </h1>
               {invoice.status && (
-                <Badge variant="outline" className="text-xs">{formatStatus(invoice.status)}</Badge>
+                <Badge className={getStatusColor(invoice.status || 'draft')}>{formatStatus(invoice.status || 'draft')}</Badge>
               )}
             </div>
             <p className="text-muted-foreground">

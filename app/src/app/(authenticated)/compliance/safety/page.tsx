@@ -113,7 +113,7 @@ export default async function SafetyPage({
                           <span className="text-sm font-mono text-muted-foreground">{inc.incident_number}</span>
                           <span className="font-medium">{inc.title}</span>
                           <Badge className={getStatusColor(inc.status)}>{formatStatus(inc.status)}</Badge>
-                          <Badge variant="outline" className="text-xs">{inc.severity}</Badge>
+                          <Badge className={getStatusColor(inc.severity)}>{formatStatus(inc.severity)}</Badge>
                           {inc.osha_recordable && <Badge className="text-red-700 bg-red-100">OSHA</Badge>}
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">
