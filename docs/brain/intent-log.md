@@ -1,5 +1,29 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 30 — Utility Centralization + Display Consistency
+
+### Why (Local Function Elimination — 50+ files)
+- Removed 14 local color/variant functions (getPriorityColor, getSeverityColor, getDifficultyColor, getUrgencyColor, statusBadge, statusVariant, getStatusBadgeClasses, getPriorityBadgeClasses) → all replaced with centralized getStatusColor()
+- Removed 11 local formatCurrency/fmtCurrency functions → all replaced with centralized formatCurrency()
+- Removed 4 local formatFileSize functions → centralized new formatFileSize() in utils.ts
+- Removed 1 local formatKey function → replaced with formatStatus()
+- Replaced 13 manual .charAt(0).toUpperCase() patterns in select dropdowns → formatStatus()
+- Fixed 3 raw date displays in jobs/[id]/property without formatDate()
+
+### Why (Badge Consistency — 20+ files)
+- Replaced variant="outline" on status/priority Badges with getStatusColor() in 16 pages
+- Removed hardcoded `<span>` badge elements in files/photos pages → proper `<Badge>` components
+- Fixed conflicting Badge props (variant="outline" + hardcoded colors) in 5 pages
+- Replaced 2 duplicate priorityColor maps with getStatusColor() (communications, submittals detail)
+- Replaced hardcoded active/inactive colors with getStatusColor() in chart-of-accounts list + detail
+- Replaced hardcoded green "Verified" badge with getStatusColor('verified') in insurance list
+
+### Why (Centralization Strategy)
+- Every display utility should exist once in lib/utils.ts — prevents inconsistency and reduces bundle size
+- getStatusColor() now handles 55+ status/priority/state values with consistent semantic colors
+- formatFileSize() centralized to handle B/KB/MB/GB with null safety
+- Zero local format/color helper functions remain in page files (except cost-code categoryColors which are domain-specific)
+
 ## 2026-02-27: Session 29 — Complete formatStatus() Rollout + Final Data Integrity Sweep
 
 ### Why (Universal formatStatus() — 80+ pages)

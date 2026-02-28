@@ -1,5 +1,26 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 30 — Utility Centralization + Display Consistency (2026-02-27)
+
+### Centralized Utilities (lib/utils.ts)
+- **formatCurrency()** — now the ONLY currency formatter (11 local copies removed)
+- **formatFileSize()** — NEW: handles null, B/KB/MB/GB (4 local copies removed)
+- **formatStatus()** — handles all snake_case → Title Case (1 local formatKey removed, 13 charAt() replaced)
+- **getStatusColor()** — handles 55+ status/priority/state values (14 local color functions removed)
+- **Zero local format/color helpers remain** (except cost-code categoryColors and inspection resultColor which have domain-specific values)
+
+### Badge Component Patterns — Fully Standardized
+- **Status/priority display:** `<Badge className={getStatusColor(value)}>{formatStatus(value)}</Badge>`
+- **Metadata display:** `<Badge variant="outline">` (categories, types, rooms) — intentional
+- **Flag badges:** Hardcoded colors for Critical (red), Re-inspection (amber), Primary (blue), System (blue), OSHA (red) — intentional
+- **No hardcoded `<span>` badges remain** — all converted to `<Badge>` components
+- **No conflicting Badge props** (variant + hardcoded className) remain
+
+### Files Changed This Session
+- 50+ page files across authenticated app
+- lib/utils.ts (added formatFileSize)
+- Commits: 4bcb71fc, 74f252b5, 9aeb784e, e7f33135, 2692ef7b, 2f86e602, fdd7e0bd, 89c615ea
+
 ## Session 29 — Complete formatStatus() Rollout + Data Integrity (2026-02-27)
 
 ### formatStatus() — Universal Coverage

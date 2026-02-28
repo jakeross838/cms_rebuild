@@ -1,5 +1,26 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 30 — Utility Centralization + Display Consistency (2026-02-27)
+
+### Local Function Elimination
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero local formatCurrency/fmtCurrency in page files | Grep finds 0 | pass |
+| Zero local formatFileSize in page files | Grep finds 0 | pass |
+| Zero local formatKey in page files | Grep finds 0 (uses formatStatus alias) | pass |
+| Zero local color/variant functions (getPriorityColor, etc.) | Grep finds 0 | pass |
+| Zero .charAt(0).toUpperCase() in authenticated pages | Grep finds 0 | pass |
+| All dates use formatDate() (not raw display) | Only 1 defensive pattern remains (warranty-claims) | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Badge Consistency
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| No variant="outline" on status/priority Badges | Only metadata Badges use outline | pass |
+| No hardcoded `<span>` acting as badges | All use `<Badge>` component | pass |
+| No conflicting variant + hardcoded className on Badges | Clean separation | pass |
+| getStatusColor() used for all status/priority display | Consistent semantic colors | pass |
+
 ## Session 29 — Complete formatStatus() Rollout (2026-02-27)
 
 ### Universal Status Display
