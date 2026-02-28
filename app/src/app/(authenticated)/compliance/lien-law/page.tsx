@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 
 interface LienWaiverTracking {
   id: string
@@ -100,7 +100,7 @@ export default async function LienLawPage({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Badge className={record.is_compliant ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+                        <Badge className={getStatusColor(record.is_compliant ? 'approved' : 'rejected')}>
                           {record.is_compliant ? 'Compliant' : 'Non-Compliant'}
                         </Badge>
                         {record.period_start && record.period_end && (

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike } from '@/lib/utils'
+import { safeOrIlike, getStatusColor } from '@/lib/utils'
 
 interface ContractTemplate {
   id: string
@@ -86,7 +86,7 @@ export default async function LegalCompliancePage({
                         <span className="font-medium">{tmpl.name}</span>
                         <Badge variant="outline" className="text-xs">{tmpl.contract_type}</Badge>
                         {tmpl.is_system && <Badge variant="outline" className="text-xs">System</Badge>}
-                        <Badge className={tmpl.is_active ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+                        <Badge className={getStatusColor(tmpl.is_active ? 'active' : 'archived')}>
                           {tmpl.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>

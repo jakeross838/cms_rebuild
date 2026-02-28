@@ -308,7 +308,7 @@ export default async function DashboardOverviewPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{formatCurrency(inv.amount || 0)}</span>
                         <Badge className={getStatusColor(inv.status ?? 'draft')}>
-                          {inv.status ?? 'draft'}
+                          {formatStatus(inv.status ?? 'draft')}
                         </Badge>
                       </div>
                     </div>

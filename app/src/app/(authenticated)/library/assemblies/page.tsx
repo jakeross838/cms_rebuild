@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike } from '@/lib/utils'
+import { safeOrIlike, getStatusColor } from '@/lib/utils'
 
 interface Assembly {
   id: string
@@ -80,7 +80,7 @@ export default async function AssembliesPage({
                         <span className="font-medium">{asm.name}</span>
                         {asm.category && <Badge variant="outline" className="text-xs">{asm.category}</Badge>}
                         {asm.parameter_unit && <Badge variant="outline" className="text-xs">per {asm.parameter_unit}</Badge>}
-                        <Badge className={asm.is_active ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+                        <Badge className={getStatusColor(asm.is_active ? 'active' : 'archived')}>
                           {asm.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>

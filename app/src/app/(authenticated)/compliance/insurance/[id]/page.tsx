@@ -210,7 +210,7 @@ export default function InsurancePolicyDetailPage() {
               <h1 className="text-2xl font-bold text-foreground">{formatStatus(policy.insurance_type)}</h1>
               <Badge className={`rounded ${getStatusColor(policy.status)}`}>{formatStatus(policy.status)}</Badge>
               {isExpired && (
-                <Badge className="rounded bg-red-100 text-red-700">Expired</Badge>
+                <Badge className={`rounded ${getStatusColor('expired')}`}>Expired</Badge>
               )}
             </div>
             <p className="text-muted-foreground">{vendorName} -- {policy.carrier_name}</p>

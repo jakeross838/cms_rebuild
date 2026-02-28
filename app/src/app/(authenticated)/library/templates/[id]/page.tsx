@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface TemplateData {
@@ -173,7 +174,7 @@ export default function TemplateDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{template.name}</h1>
-              <Badge className={template.is_active ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+              <Badge className={getStatusColor(template.is_active ? 'active' : 'archived')}>
                 {template.is_active ? 'Active' : 'Inactive'}
               </Badge>
               {template.is_system && (

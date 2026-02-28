@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike } from '@/lib/utils'
+import { safeOrIlike, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Financial Reports' }
@@ -81,7 +81,7 @@ export default async function FinancialReportsPage({
                         <span className="font-medium">{report.name}</span>
                         <Badge variant="outline" className="text-xs">{report.report_type}</Badge>
                         {report.is_system && <Badge variant="outline" className="text-xs">System</Badge>}
-                        <Badge className={report.is_active !== false ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+                        <Badge className={getStatusColor(report.is_active !== false ? 'active' : 'archived')}>
                           {report.is_active !== false ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>

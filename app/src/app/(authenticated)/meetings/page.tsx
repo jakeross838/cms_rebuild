@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 
 // ── Constants ────────────────────────────────────────────────────────
 
@@ -215,7 +215,7 @@ export default async function MeetingsPage({ searchParams }: PageProps) {
                         )}
                       </div>
                       <Badge className={getStatusColor(inspection.status)}>
-                        {inspection.status}
+                        {formatStatus(inspection.status)}
                       </Badge>
                     </div>
                   </div>

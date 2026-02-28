@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 
 interface Employee {
   id: string
@@ -138,8 +138,8 @@ export default async function HRWorkforcePage({
                             <span className="font-medium">{emp.first_name} {emp.last_name}</span>
                             <span className="text-xs font-mono text-muted-foreground">{emp.employee_number}</span>
                             <Badge variant="outline" className="text-xs">{emp.employment_type}</Badge>
-                            <Badge className={emp.employment_status === 'active' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
-                              {emp.employment_status}
+                            <Badge className={getStatusColor(emp.employment_status ?? 'active')}>
+                              {formatStatus(emp.employment_status)}
                             </Badge>
                           </div>
                           <div className="text-sm text-muted-foreground mt-1">

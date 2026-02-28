@@ -17,7 +17,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -327,7 +327,7 @@ export default async function OperationsDashboardPage() {
                         <p className="text-xs text-muted-foreground">{insp.jobName}</p>
                       </div>
                       <Badge className={getStatusColor(insp.status)}>
-                        {formatDate(insp.scheduled_date)}
+                        {formatStatus(insp.status)}
                       </Badge>
                     </div>
                   </div>

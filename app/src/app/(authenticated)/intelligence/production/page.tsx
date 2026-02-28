@@ -14,7 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -209,7 +209,7 @@ export default async function ProductionPage() {
                       )}
                     </div>
                     <Badge className={getStatusColor(log.status)}>
-                      {log.status}
+                      {formatStatus(log.status)}
                     </Badge>
                   </div>
                 </Link>

@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -161,7 +161,7 @@ export default async function BiddingPage() {
                       </div>
                     </div>
                     <Badge className={getStatusColor(bid.status)}>
-                      {bid.status}
+                      {formatStatus(bid.status)}
                     </Badge>
                   </div>
                 </Link>

@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface EmployeeData {
@@ -238,7 +238,7 @@ export default function EmployeeDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{employee.first_name} {employee.last_name}</h1>
-              <Badge className={employee.employment_status === 'active' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+              <Badge className={getStatusColor(employee.employment_status ?? 'active')}>
                 {statusLabels[employee.employment_status ?? ''] || employee.employment_status || 'Unknown'}
               </Badge>
             </div>

@@ -212,7 +212,7 @@ export default function SelectionDetailPage() {
                 Selection
               </h1>
               <Badge className={getStatusColor(selection.status)}>
-                {selection.status}
+                {formatStatus(selection.status)}
               </Badge>
               {selection.room && (
                 <Badge variant="outline" className="text-xs">{selection.room}</Badge>

@@ -15,7 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -288,7 +288,7 @@ export default async function FinancialDashboardPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{formatCurrency(bill.balance_due)}</span>
                         <Badge className={getStatusColor(bill.status)}>
-                          {bill.status}
+                          {formatStatus(bill.status)}
                         </Badge>
                       </div>
                     </div>
@@ -330,7 +330,7 @@ export default async function FinancialDashboardPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{formatCurrency(draw.current_due)}</span>
                         <Badge className={getStatusColor(draw.status)}>
-                          {draw.status}
+                          {formatStatus(draw.status)}
                         </Badge>
                       </div>
                     </div>

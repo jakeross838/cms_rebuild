@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface AssemblyData {
@@ -172,7 +173,7 @@ export default function AssemblyDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{assembly.name}</h1>
-              <Badge className={assembly.is_active ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}>
+              <Badge className={getStatusColor(assembly.is_active ? 'active' : 'archived')}>
                 {assembly.is_active ? 'Active' : 'Inactive'}
               </Badge>
             </div>

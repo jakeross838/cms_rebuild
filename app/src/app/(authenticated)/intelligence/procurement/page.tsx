@@ -14,7 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ export default async function ProcurementPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">{formatCurrency(po.total_amount)}</span>
                       <Badge className={getStatusColor(po.status)}>
-                        {po.status}
+                        {formatStatus(po.status)}
                       </Badge>
                     </div>
                   </div>
