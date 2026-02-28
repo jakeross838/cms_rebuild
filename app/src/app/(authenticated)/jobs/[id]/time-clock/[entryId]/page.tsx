@@ -65,6 +65,7 @@ export default function TimeEntryDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<TimeEntryFormData>({
     entry_date: '',
@@ -133,6 +134,7 @@ export default function TimeEntryDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteTimeEntry.mutateAsync(entryId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/time-clock`)
@@ -141,6 +143,7 @@ export default function TimeEntryDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -265,8 +268,8 @@ export default function TimeEntryDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Entry
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Entry'}
               </Button>
             </div>
           </>

@@ -54,6 +54,7 @@ export default function FileDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
     filename: '',
@@ -101,6 +102,7 @@ export default function FileDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteDocument.mutateAsync(fileId)
       toast.success('Archived')
 
@@ -111,6 +113,7 @@ export default function FileDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
 }
 
@@ -213,8 +216,8 @@ export default function FileDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive File
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive File'}
               </Button>
             </div>
           </>

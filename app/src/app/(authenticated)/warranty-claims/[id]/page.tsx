@@ -48,6 +48,7 @@ export default function WarrantyClaimDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -119,6 +120,7 @@ export default function WarrantyClaimDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await fetchJson(`/api/v2/warranty-claims/${claimId}`, { method: 'DELETE' })
       toast.success('Archived')
       router.push('/warranty-claims')
@@ -127,6 +129,7 @@ export default function WarrantyClaimDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -233,8 +236,8 @@ export default function WarrantyClaimDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Claim
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Claim'}
               </Button>
             </div>
           </>

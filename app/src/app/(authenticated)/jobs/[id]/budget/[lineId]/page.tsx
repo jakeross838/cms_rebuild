@@ -62,6 +62,7 @@ export default function BudgetLineDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<BudgetFormData>({
     description: '',
@@ -127,6 +128,7 @@ export default function BudgetLineDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await fetchJson(`/api/v2/budget-lines/${lineId}`, { method: 'DELETE' })
       toast.success('Archived')
       router.push(`/jobs/${jobId}/budget`)
@@ -135,6 +137,7 @@ export default function BudgetLineDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -258,8 +261,8 @@ export default function BudgetLineDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Budget Line
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Budget Line'}
               </Button>
             </div>
           </>

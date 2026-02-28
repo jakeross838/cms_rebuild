@@ -59,6 +59,7 @@ export default function SelectionDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<SelectionFormData>({
     status: 'pending',
@@ -118,6 +119,7 @@ export default function SelectionDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteSelection.mutateAsync(selectionId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/selections`)
@@ -126,6 +128,7 @@ export default function SelectionDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -243,8 +246,8 @@ export default function SelectionDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Selection
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Selection'}
               </Button>
             </div>
           </>

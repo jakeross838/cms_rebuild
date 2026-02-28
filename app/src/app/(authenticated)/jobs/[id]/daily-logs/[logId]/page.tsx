@@ -61,6 +61,7 @@ export default function DailyLogDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<DailyLogFormData>({
     log_date: '',
@@ -121,6 +122,7 @@ export default function DailyLogDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteDailyLog.mutateAsync(logId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/daily-logs`)
@@ -129,6 +131,7 @@ export default function DailyLogDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -251,8 +254,8 @@ export default function DailyLogDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Log
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Log'}
               </Button>
             </div>
           </>

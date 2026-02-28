@@ -60,6 +60,7 @@ export default function PhotoDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<PhotoFormData>({
     title: '',
@@ -120,6 +121,7 @@ export default function PhotoDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteMutation.mutateAsync(photoId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/photos`)
@@ -128,6 +130,7 @@ export default function PhotoDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -250,8 +253,8 @@ export default function PhotoDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Photo
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Photo'}
               </Button>
             </div>
           </>

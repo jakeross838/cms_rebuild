@@ -67,6 +67,7 @@ export default function JobPunchItemDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<PunchItemFormData>({
     title: '',
@@ -136,15 +137,17 @@ export default function JobPunchItemDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deletePunchItem.mutateAsync(itemId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/punch-list`)
       router.refresh()
-  
+
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
 }
 
@@ -281,8 +284,8 @@ export default function JobPunchItemDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Item
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Item'}
               </Button>
             </div>
           </>

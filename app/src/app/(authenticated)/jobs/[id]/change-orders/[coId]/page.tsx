@@ -63,6 +63,7 @@ export default function ChangeOrderDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<ChangeOrderFormData>({
     co_number: '',
@@ -124,6 +125,7 @@ export default function ChangeOrderDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteChangeOrder.mutateAsync(coId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/change-orders`)
@@ -132,6 +134,7 @@ export default function ChangeOrderDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -247,8 +250,8 @@ export default function ChangeOrderDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Change Order
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Change Order'}
               </Button>
             </div>
           </>

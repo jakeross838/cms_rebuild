@@ -65,6 +65,7 @@ export default function DrawRequestDetailPage() {
   const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   const [formData, setFormData] = useState<DrawRequestFormData>({
     draw_number: '',
@@ -123,6 +124,7 @@ export default function DrawRequestDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteDrawRequest.mutateAsync(drawId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/draws`)
@@ -131,6 +133,7 @@ export default function DrawRequestDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -258,8 +261,8 @@ export default function DrawRequestDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Draw Request
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Draw Request'}
               </Button>
             </div>
           </>
