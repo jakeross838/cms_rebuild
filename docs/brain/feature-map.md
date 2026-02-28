@@ -1,5 +1,43 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 38 — Complete React Query Migration (2026-02-28)
+
+### 8 New API Route Sets Created (16 route files)
+| Entity | Table | List Route | Detail Route | Delete Strategy |
+|--------|-------|-----------|--------------|-----------------|
+| Communications | `communications` | `/api/v2/communications` | `/api/v2/communications/[id]` | Soft delete |
+| Invoices | `invoices` | `/api/v2/invoices` | `/api/v2/invoices/[id]` | Status → 'denied' (no deleted_at) |
+| Job Photos | `job_photos` | `/api/v2/job-photos` | `/api/v2/job-photos/[id]` | Soft delete |
+| Inspections | `permit_inspections` | `/api/v2/inspections` | `/api/v2/inspections/[id]` | Hard delete (no deleted_at) |
+| Warranty Claims | `warranty_claims` | `/api/v2/warranty-claims` | `/api/v2/warranty-claims/[id]` | Soft delete (flat route) |
+| Project User Roles | `project_user_roles` | `/api/v2/project-user-roles` | `/api/v2/project-user-roles/[id]` | Hard delete (no deleted_at) |
+| Contacts | `vendor_contacts` | `/api/v2/contacts` | `/api/v2/contacts/[id]` | Soft delete (flat route) |
+| Vendor Insurance | `vendor_insurance` | `/api/v2/vendor-insurance` | `/api/v2/vendor-insurance/[id]` | Soft delete (flat route) |
+
+### 5 New Hook Files + 3 Existing Files Extended
+| Hook File | Hooks Added |
+|-----------|-------------|
+| `use-communications.ts` (NEW) | useCommunications, useCommunication, useCreateCommunication, useUpdateCommunication, useDeleteCommunication |
+| `use-invoices.ts` (NEW) | useInvoices, useInvoice, useCreateInvoice, useUpdateInvoice, useDeleteInvoice |
+| `use-job-photos.ts` (NEW) | useJobPhotos, useJobPhoto, useCreateJobPhoto, useUpdateJobPhoto, useDeleteJobPhoto |
+| `use-inspections.ts` (NEW) | useInspections, useInspection, useCreateInspection, useUpdateInspection, useDeleteInspection |
+| `use-project-user-roles.ts` (NEW) | useProjectUserRoles, useProjectUserRole, useCreateProjectUserRole, useUpdateProjectUserRole, useDeleteProjectUserRole |
+| `use-warranty.ts` (EXTENDED) | useWarrantyClaimFlat, useUpdateWarrantyClaimFlat, useCreateWarrantyClaimFlat |
+| `use-vendor-management.ts` (EXTENDED) | useContactFlat, useUpdateContactFlat, useCreateContactFlat, useVendorInsuranceFlat, useUpdateVendorInsuranceFlat, useCreateVendorInsuranceFlat |
+| `use-lien-waivers.ts` (EXTENDED) | useCreateLienWaiverTracking |
+
+### 41 Pages Migrated in Session 38 (22 dropdown + 19 detail/create)
+**Batch 1 — 22 dropdown-only create pages:** Replaced `useEffect` + `createClient` dropdown loading with React Query list hooks (`useJobs`, `useVendors`, `useUsers`, `useClients`, `useGlAccounts`, `usePermits`, `useWarranties`, `useSelectionCategories`, `useSelectionOptions`, `useInventoryItems`)
+
+**Batch 2 — 8 detail pages:** warranty-claims/[id], contacts/[id], compliance/insurance/[id], invoices/[id], jobs/[id]/invoices/[invoiceId], jobs/[id]/photos/[photoId], jobs/[id]/inspections/[inspectionId], jobs/[id]/communications/[commId]
+
+**Batch 3 — 10 create pages:** warranty-claims/new, contacts/new, compliance/insurance/new, compliance/lien-law/new, communications/new, invoices/new, jobs/[id]/photos/new, jobs/[id]/inspections/new, jobs/[id]/communications/new, jobs/[id]/team/new
+
+### Client-Side Supabase Status
+- **Before Session 38:** 49 pages used `createClient` from client-side
+- **After Session 38:** Only 2 budget pages remain (`jobs/[id]/budget/[lineId]`, `jobs/[id]/budget/new`) — blocked on needing budgetId lookup
+- All other `createClient` usages are server-side (layout.tsx, dashboards, notifications, api-marketplace) — correct usage
+
 ## Session 37 — Additional Create Page React Query Migrations (2026-02-28)
 
 ### 2 More Create Pages Migrated, 5 Skipped

@@ -1,5 +1,46 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 38 — Complete React Query Migration (2026-02-28)
+
+### Type Safety
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `tsc --noEmit` — zero errors after 50 files changed | 0 errors | PASS |
+| 8 new validation schemas compile clean | 0 errors | PASS |
+| 16 new API route files compile clean | 0 errors | PASS |
+| 5 new hook files compile clean | 0 errors | PASS |
+
+### API Routes Created
+| Route | Methods | Table | Company Isolation | Rate Limited |
+|-------|---------|-------|-------------------|-------------|
+| `/api/v2/communications` | GET, POST | communications | yes | yes |
+| `/api/v2/communications/[id]` | GET, PATCH, DELETE | communications | yes | yes |
+| `/api/v2/invoices` | GET, POST | invoices | yes | yes |
+| `/api/v2/invoices/[id]` | GET, PATCH, DELETE | invoices | yes | yes |
+| `/api/v2/job-photos` | GET, POST | job_photos | yes | yes |
+| `/api/v2/job-photos/[id]` | GET, PATCH, DELETE | job_photos | yes | yes |
+| `/api/v2/inspections` | GET, POST | permit_inspections | yes | yes |
+| `/api/v2/inspections/[id]` | GET, PATCH, DELETE | permit_inspections | yes | yes |
+| `/api/v2/warranty-claims` | GET, POST | warranty_claims | yes | yes |
+| `/api/v2/warranty-claims/[id]` | GET, PATCH, DELETE | warranty_claims | yes | yes |
+| `/api/v2/project-user-roles` | GET, POST | project_user_roles | yes | yes |
+| `/api/v2/project-user-roles/[id]` | GET, PATCH, DELETE | project_user_roles | yes | yes |
+| `/api/v2/contacts` | GET, POST | vendor_contacts | yes | yes |
+| `/api/v2/contacts/[id]` | GET, PATCH, DELETE | vendor_contacts | yes | yes |
+| `/api/v2/vendor-insurance` | GET, POST | vendor_insurance | yes | yes |
+| `/api/v2/vendor-insurance/[id]` | GET, PATCH, DELETE | vendor_insurance | yes | yes |
+
+### Page Migrations
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Client-side createClient imports reduced from 49 to 2 | 2 remaining | PASS |
+| All remaining createClient are server-side (layout, dashboards, etc.) | server-side only | PASS |
+| Detail pages use hook for loading instead of useEffect | hooks | PASS |
+| Detail pages use mutation for save instead of supabase.update() | mutations | PASS |
+| Detail pages use mutation/fetchJson for archive/delete | mutations | PASS |
+| Create pages use mutation for submit instead of supabase.insert() | mutations | PASS |
+| Dropdown selects use React Query list hooks instead of useEffect | hooks | PASS |
+
 ## Session 37 — Additional Create Page Migrations (2026-02-28)
 
 ### Type Safety

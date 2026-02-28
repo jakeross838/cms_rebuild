@@ -1,5 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-28: Session 38 — Complete React Query Migration
+
+### Why
+- Eliminated nearly all client-side Supabase usage (49 → 2 pages) by creating missing API routes, hooks, and flat lookup routes
+- 8 new API route sets (communications, invoices, job-photos, inspections, warranty-claims, project-user-roles, contacts, vendor-insurance) with full CRUD — all client requests now route through API middleware with rate limiting, RBAC, and audit logging
+- "Flat route" pattern solved parent-ID problem: warranty claims, vendor contacts, and vendor insurance can now be accessed by their own ID without knowing parent (warranty_id, vendor_id) — the API queries the table directly with company_id isolation
+- 41 pages migrated total: 22 dropdown-only + 8 detail + 11 create (1 already done)
+- Only 2 budget pages remain on client-side Supabase — blocked on needing budgetId which isn't in the URL
+- All other remaining createClient usages are server-side (correct pattern)
+
 ## 2026-02-28: Session 37 — Additional Create Page React Query Migrations
 
 ### Why
