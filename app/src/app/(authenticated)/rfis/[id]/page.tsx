@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -259,7 +259,7 @@ export default function RfiDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Cost Impact</dt>
-                    <dd className="font-medium">{rfi.cost_impact != null ? `$${Number(rfi.cost_impact).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : 'None'}</dd>
+                    <dd className="font-medium">{rfi.cost_impact != null ? formatCurrency(rfi.cost_impact) : 'None'}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Schedule Impact</dt>

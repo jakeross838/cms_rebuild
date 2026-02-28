@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Draw Requests' }
@@ -26,19 +26,6 @@ interface DrawRequest {
   lender_reference: string | null
   created_at: string | null
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-const currencyFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-})
-
-function formatCurrency(value: number | null): string {
-  if (value === null || value === undefined) return '$0.00'
-  return currencyFmt.format(value)
-}
-
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 

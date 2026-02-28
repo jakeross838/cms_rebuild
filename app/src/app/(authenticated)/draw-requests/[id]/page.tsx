@@ -20,7 +20,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -43,20 +43,6 @@ interface DrawRequestData {
   notes: string | null
   created_at: string | null
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-const currencyFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-})
-
-function formatCurrency(value: number | null): string {
-  if (value === null || value === undefined) return '$0.00'
-  return currencyFmt.format(value)
-}
-
-
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 

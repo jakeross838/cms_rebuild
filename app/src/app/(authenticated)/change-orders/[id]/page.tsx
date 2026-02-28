@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types --------------------------------------------------------------------
@@ -34,14 +34,6 @@ interface ChangeOrderData {
   client_approved: boolean | null
   client_approved_at: string | null
   created_at: string | null
-}
-
-// -- Helpers ------------------------------------------------------------------
-
-
-function formatCurrency(value: number | null): string {
-  if (value == null) return 'None'
-  return `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
 }
 
 // -- Component ----------------------------------------------------------------
