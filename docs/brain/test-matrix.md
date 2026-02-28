@@ -2,6 +2,20 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Edit Validation (4 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| contracts/[id] validates title before save | toast.error + return | PASS |
+| permits/[id] validates permit_number | toast.error + return | PASS |
+| time-clock/[id] validates entry_date and clock_in | toast.error + return | PASS |
+| warranties/[id] validates title | toast.error + return | PASS |
+
+### Success Banner Cleanup (24 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 24 pages use toast.success() only — no success state | No redundant banner | PASS |
+| `tsc --noEmit` — zero errors after removing success state | 0 errors | PASS |
+
 ### Archive Button Safety (54 pages)
 | Test Case | Expected | Status |
 |-----------|----------|--------|

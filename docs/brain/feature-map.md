@@ -2,6 +2,14 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Missing Edit Validation Added (4 pages)
+- contracts/[id] (title), permits/[id] (permit_number), time-clock/[id] (entry_date, clock_in), warranties/[id] (title)
+
+### Redundant Success Banners Removed (24 pages)
+- Removed `const [success, setSuccess]`, success banner JSX, and setTimeout auto-dismiss
+- Standardized on toast.success() as single save feedback mechanism
+- Pages: compliance/insurance, contacts, invoices, warranty-claims, jobs/[id]/edit + 19 job sub-pages
+
 ### Save Handler Error Reset (35 pages)
 35 non-job detail pages now clear error state at the start of handleSave:
 - Pattern: `setError(null)` added before the try block (after validation early returns)
