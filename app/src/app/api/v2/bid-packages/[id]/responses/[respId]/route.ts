@@ -61,6 +61,7 @@ export const GET = createApiHandler(
       .select('*')
       .eq('id', respId)
       .eq('bid_package_id', bidPackageId)
+      .eq('company_id', ctx.companyId!)
       .single()
 
     if (error) {
@@ -132,6 +133,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', respId)
       .eq('bid_package_id', bidPackageId)
+      .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
 

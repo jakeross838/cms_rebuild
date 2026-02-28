@@ -38,6 +38,7 @@ export const GET = createApiHandler(
       .from('marketing_leads')
       .select('*')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
 
@@ -101,6 +102,7 @@ export const PUT = createApiHandler(
       .from('marketing_leads')
       .update(updates)
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('*')
       .single()
@@ -138,6 +140,7 @@ export const DELETE = createApiHandler(
       .from('marketing_leads')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('id')
       .single()
