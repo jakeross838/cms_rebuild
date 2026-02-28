@@ -164,22 +164,29 @@ export default function TimeClockDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: archiveError } = await supabase
-      .from('time_entries')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', entryId)
-      .eq('company_id', companyId)
+    try {
+      const { error: archiveError } = await supabase
+        .from('time_entries')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', entryId)
+        .eq('company_id', companyId)
 
-    if (archiveError) {
-      setError('Failed to archive entry')
-      toast.error('Failed to archive entry')
-      return
+      if (archiveError) {
+        setError('Failed to archive entry')
+        toast.error('Failed to archive entry')
+        return
+      }
+      toast.success('Archived')
+
+      router.push('/time-clock')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-
-    router.push('/time-clock')
-    router.refresh()
-  }
+}
 
   const totalHours = (entry?.regular_hours ?? 0) + (entry?.overtime_hours ?? 0)
 

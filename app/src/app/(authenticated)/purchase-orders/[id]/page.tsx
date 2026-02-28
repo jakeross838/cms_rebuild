@@ -261,22 +261,29 @@ export default function PurchaseOrderDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('purchase_orders')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('purchase_orders')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive purchase order')
-      toast.error('Failed to archive purchase order')
-      return
+      if (deleteError) {
+        setError('Failed to archive purchase order')
+        toast.error('Failed to archive purchase order')
+        return
+      }
+
+      toast.success('Purchase order archived')
+      router.push('/purchase-orders')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Purchase order archived')
-    router.push('/purchase-orders')
-    router.refresh()
-  }
+}
 
   const selectClassName = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
   const textareaClassName = 'flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'

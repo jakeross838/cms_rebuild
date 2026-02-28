@@ -139,22 +139,29 @@ export default function SupportTicketDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('support_tickets')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('support_tickets')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive ticket')
-      toast.error('Failed to archive ticket')
-      return
+      if (deleteError) {
+        setError('Failed to archive ticket')
+        toast.error('Failed to archive ticket')
+        return
+      }
+      toast.success('Archived')
+
+      router.push('/support')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-
-    router.push('/support')
-    router.refresh()
-  }
+}
 
   // ── Loading State ────────────────────────────────────────────────
 

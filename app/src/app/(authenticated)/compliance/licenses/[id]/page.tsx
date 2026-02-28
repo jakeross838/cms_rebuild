@@ -168,22 +168,29 @@ export default function LicenseDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
-    const { error: archiveError } = await supabase
-      .from('employee_certifications')
-      .update({ status: 'revoked' })
-      .eq('id', certId)
-      .eq('company_id', companyId)
-    if (archiveError) {
-      setError('Failed to archive certification')
-      toast.error('Failed to archive certification')
-      setArchiving(false)
-      return
+    try {
+      setArchiving(true)
+      const { error: archiveError } = await supabase
+        .from('employee_certifications')
+        .update({ status: 'revoked' })
+        .eq('id', certId)
+        .eq('company_id', companyId)
+      if (archiveError) {
+        setError('Failed to archive certification')
+        toast.error('Failed to archive certification')
+        setArchiving(false)
+        return
+      }
+      toast.success('Archived')
+      router.push('/compliance/licenses')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-    router.push('/compliance/licenses')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

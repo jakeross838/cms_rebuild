@@ -158,22 +158,29 @@ export default function RfiDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('rfis')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('rfis')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive RFI')
-      toast.error('Failed to archive RFI')
-      return
+      if (deleteError) {
+        setError('Failed to archive RFI')
+        toast.error('Failed to archive RFI')
+        return
+      }
+
+      toast.success('RFI archived')
+      router.push('/rfis')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('RFI archived')
-    router.push('/rfis')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

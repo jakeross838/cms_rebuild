@@ -19,26 +19,32 @@ export function ArchiveJobButton({ jobId }: { jobId: string }) {
   const { profile: authProfile } = useAuth()
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
+    try {
+      setArchiving(true)
 
-    const companyId = authProfile?.company_id
+      const companyId = authProfile?.company_id
 
 
-    if (!companyId) { toast.error('No company found'); setArchiving(false); return }
+      if (!companyId) { toast.error('No company found'); setArchiving(false); return }
 
-    const { error } = await supabase
-      .from('jobs')
-      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
-      .eq('id', jobId)
-      .eq('company_id', companyId)
-    if (error) {
-      toast.error('Failed to archive job')
+      const { error } = await supabase
+        .from('jobs')
+        .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+        .eq('id', jobId)
+        .eq('company_id', companyId)
+      if (error) {
+        toast.error('Failed to archive job')
+        setArchiving(false)
+        return
+      }
+      toast.success('Job archived')
+      router.push('/jobs')
+      router.refresh()
+  
+    } catch (err) {
+      toast.error((err as Error)?.message || 'Failed to archive job')
       setArchiving(false)
-      return
     }
-    toast.success('Job archived')
-    router.push('/jobs')
-    router.refresh()
   }
 
   return (

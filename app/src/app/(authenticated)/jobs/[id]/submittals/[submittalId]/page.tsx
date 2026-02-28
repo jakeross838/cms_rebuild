@@ -182,23 +182,30 @@ export default function SubmittalDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('submittals')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', submittalId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('submittals')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', submittalId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive submittal')
-      toast.error('Failed to archive submittal')
-      return
+      if (deleteError) {
+        setError('Failed to archive submittal')
+        toast.error('Failed to archive submittal')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/submittals`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/submittals`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

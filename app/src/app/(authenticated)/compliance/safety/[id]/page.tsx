@@ -233,22 +233,29 @@ export default function SafetyIncidentDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('safety_incidents')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('safety_incidents')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive incident')
-      toast.error('Failed to archive incident')
-      return
+      if (deleteError) {
+        setError('Failed to archive incident')
+        toast.error('Failed to archive incident')
+        return
+      }
+
+      toast.success('Archived')
+      router.push('/compliance/safety')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push('/compliance/safety')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

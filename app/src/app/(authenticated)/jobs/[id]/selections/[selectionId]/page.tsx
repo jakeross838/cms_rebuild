@@ -162,23 +162,30 @@ export default function SelectionDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('selections')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', selectionId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('selections')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', selectionId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive selection')
-      toast.error('Failed to archive selection')
-      return
+      if (deleteError) {
+        setError('Failed to archive selection')
+        toast.error('Failed to archive selection')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/selections`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/selections`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

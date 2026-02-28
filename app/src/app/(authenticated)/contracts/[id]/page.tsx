@@ -153,22 +153,29 @@ export default function ContractDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('contracts')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('contracts')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive contract')
-      toast.error('Failed to archive contract')
-      return
+      if (deleteError) {
+        setError('Failed to archive contract')
+        toast.error('Failed to archive contract')
+        return
+      }
+
+      toast.success('Contract archived')
+      router.push('/contracts')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Contract archived')
-    router.push('/contracts')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

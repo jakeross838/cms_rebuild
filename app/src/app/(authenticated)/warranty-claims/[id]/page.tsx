@@ -154,22 +154,29 @@ export default function WarrantyClaimDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('warranty_claims')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('warranty_claims')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive warranty claim')
-      toast.error('Failed to archive warranty claim')
-      return
+      if (deleteError) {
+        setError('Failed to archive warranty claim')
+        toast.error('Failed to archive warranty claim')
+        return
+      }
+      toast.success('Archived')
+
+      router.push('/warranty-claims')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-
-    router.push('/warranty-claims')
-    router.refresh()
-  }
+}
 
   // ── Loading state ────────────────────────────────────────────────
   if (loading) {

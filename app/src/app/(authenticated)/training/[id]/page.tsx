@@ -171,22 +171,29 @@ export default function TrainingCourseDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
-    const { error: archiveError } = await supabase
-      .from('training_courses')
-      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
-    if (archiveError) {
-      setError('Failed to archive course')
-      toast.error('Failed to archive course')
-      setArchiving(false)
-      return
+    try {
+      setArchiving(true)
+      const { error: archiveError } = await supabase
+        .from('training_courses')
+        .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
+      if (archiveError) {
+        setError('Failed to archive course')
+        toast.error('Failed to archive course')
+        setArchiving(false)
+        return
+      }
+      toast.success('Archived')
+      router.push('/training')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-    router.push('/training')
-    router.refresh()
-  }
+}
 
   // ── Loading State ────────────────────────────────────────────────
 

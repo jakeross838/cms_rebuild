@@ -157,22 +157,29 @@ export default function ChangeOrderDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('change_orders')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('change_orders')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive change order')
-      toast.error('Failed to archive change order')
-      return
+      if (deleteError) {
+        setError('Failed to archive change order')
+        toast.error('Failed to archive change order')
+        return
+      }
+
+      toast.success('Change order archived')
+      router.push('/change-orders')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Change order archived')
-    router.push('/change-orders')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (
@@ -334,8 +341,6 @@ export default function ChangeOrderDetailPage() {
                     <option value="regulatory">Regulatory</option>
                     <option value="allowance">Allowance</option>
                     <option value="credit">Credit</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Allowance">Allowance</option>
                   </select>
                 </div>
               </CardContent>

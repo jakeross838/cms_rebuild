@@ -170,23 +170,30 @@ export default function ChangeOrderDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('change_orders')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', coId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('change_orders')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', coId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive change order')
-      toast.error('Failed to archive change order')
-      return
+      if (deleteError) {
+        setError('Failed to archive change order')
+        toast.error('Failed to archive change order')
+        return
+      }
+      toast.success('Archived')
+
+      router.push(`/jobs/${jobId}/change-orders`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-
-    router.push(`/jobs/${jobId}/change-orders`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

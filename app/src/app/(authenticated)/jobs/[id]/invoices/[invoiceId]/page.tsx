@@ -179,23 +179,30 @@ export default function JobInvoiceDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
-    const { error: archiveError } = await supabase
-      .from('invoices')
-      .update({ status: 'denied' })
-      .eq('id', invoiceId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
-    if (archiveError) {
-      setError('Failed to archive invoice')
-      toast.error('Failed to archive invoice')
-      setArchiving(false)
-      return
+    try {
+      setArchiving(true)
+      const { error: archiveError } = await supabase
+        .from('invoices')
+        .update({ status: 'denied' })
+        .eq('id', invoiceId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
+      if (archiveError) {
+        setError('Failed to archive invoice')
+        toast.error('Failed to archive invoice')
+        setArchiving(false)
+        return
+      }
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/invoices`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/invoices`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

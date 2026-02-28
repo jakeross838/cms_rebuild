@@ -162,23 +162,30 @@ export default function PhotoDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('job_photos')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', photoId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('job_photos')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', photoId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive photo')
-      toast.error('Failed to archive photo')
-      return
+      if (deleteError) {
+        setError('Failed to archive photo')
+        toast.error('Failed to archive photo')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/photos`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/photos`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

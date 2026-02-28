@@ -176,23 +176,30 @@ export default function DrawRequestDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('draw_requests')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', drawId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('draw_requests')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', drawId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive draw request')
-      toast.error('Failed to archive draw request')
-      return
+      if (deleteError) {
+        setError('Failed to archive draw request')
+        toast.error('Failed to archive draw request')
+        return
+      }
+      toast.success('Archived')
+
+      router.push(`/jobs/${jobId}/draws`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-
-    router.push(`/jobs/${jobId}/draws`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

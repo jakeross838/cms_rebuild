@@ -161,23 +161,30 @@ export default function WarrantyDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('warranties')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', warrantyId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('warranties')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', warrantyId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive warranty')
-      toast.error('Failed to archive warranty')
-      return
+      if (deleteError) {
+        setError('Failed to archive warranty')
+        toast.error('Failed to archive warranty')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/warranties`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/warranties`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

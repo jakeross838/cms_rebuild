@@ -171,23 +171,30 @@ export default function InspectionDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
-    const { error: archiveError } = await supabase
-      .from('permit_inspections')
-      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
-      .eq('id', inspectionId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
-    if (archiveError) {
-      setError('Failed to archive inspection')
-      toast.error('Failed to archive inspection')
-      setArchiving(false)
-      return
+    try {
+      setArchiving(true)
+      const { error: archiveError } = await supabase
+        .from('permit_inspections')
+        .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+        .eq('id', inspectionId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
+      if (archiveError) {
+        setError('Failed to archive inspection')
+        toast.error('Failed to archive inspection')
+        setArchiving(false)
+        return
+      }
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/inspections`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/inspections`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

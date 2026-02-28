@@ -154,22 +154,29 @@ export default function EstimateDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('estimates')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('estimates')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive estimate')
-      toast.error('Failed to archive estimate')
-      return
+      if (deleteError) {
+        setError('Failed to archive estimate')
+        toast.error('Failed to archive estimate')
+        return
+      }
+
+      toast.success('Estimate archived')
+      router.push('/estimates')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Estimate archived')
-    router.push('/estimates')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

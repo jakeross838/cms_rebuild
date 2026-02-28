@@ -170,23 +170,30 @@ export default function BudgetLineDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: archiveError } = await supabase
-      .from('budget_lines')
-      .update({ deleted_at: new Date().toISOString() } as never)
-      .eq('id', lineId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: archiveError } = await supabase
+        .from('budget_lines')
+        .update({ deleted_at: new Date().toISOString() } as never)
+        .eq('id', lineId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (archiveError) {
-      setError('Failed to archive budget line')
-      toast.error('Failed to archive budget line')
-      return
+      if (archiveError) {
+        setError('Failed to archive budget line')
+        toast.error('Failed to archive budget line')
+        return
+      }
+      toast.success('Archived')
+
+      router.push(`/jobs/${jobId}/budget`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-    toast.success('Archived')
-
-    router.push(`/jobs/${jobId}/budget`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

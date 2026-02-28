@@ -147,23 +147,30 @@ export default function LienWaiverDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('lien_waivers')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('lien_waivers')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      const errorMessage = 'Failed to archive lien waiver'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      return
+      if (deleteError) {
+        const errorMessage = 'Failed to archive lien waiver'
+        setError(errorMessage)
+        toast.error(errorMessage)
+        return
+      }
+
+      toast.success('Archived')
+      router.push('/lien-waivers')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push('/lien-waivers')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

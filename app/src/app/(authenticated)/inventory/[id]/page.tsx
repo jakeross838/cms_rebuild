@@ -153,23 +153,30 @@ export default function InventoryItemDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('inventory_items')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('inventory_items')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      const errorMessage = 'Failed to archive item'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      return
+      if (deleteError) {
+        const errorMessage = 'Failed to archive item'
+        setError(errorMessage)
+        toast.error(errorMessage)
+        return
+      }
+
+      toast.success('Archived')
+      router.push('/inventory')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push('/inventory')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

@@ -180,23 +180,30 @@ export default function TimeEntryDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('time_entries')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', entryId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('time_entries')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', entryId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive time entry')
-      toast.error('Failed to archive time entry')
-      return
+      if (deleteError) {
+        setError('Failed to archive time entry')
+        toast.error('Failed to archive time entry')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/time-clock`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/time-clock`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

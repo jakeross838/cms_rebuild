@@ -171,23 +171,30 @@ export default function EmployeeDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('employees')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('employees')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      const errorMessage = 'Failed to archive employee'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      return
+      if (deleteError) {
+        const errorMessage = 'Failed to archive employee'
+        setError(errorMessage)
+        toast.error(errorMessage)
+        return
+      }
+
+      toast.success('Archived')
+      router.push('/hr')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push('/hr')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

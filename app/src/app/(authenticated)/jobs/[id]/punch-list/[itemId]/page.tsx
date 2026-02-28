@@ -182,23 +182,30 @@ export default function JobPunchItemDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('punch_items')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', itemId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('punch_items')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', itemId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive punch item')
-      toast.error('Failed to archive punch item')
-      return
+      if (deleteError) {
+        setError('Failed to archive punch item')
+        toast.error('Failed to archive punch item')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/punch-list`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/punch-list`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

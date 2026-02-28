@@ -163,22 +163,29 @@ export default function LienLawDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: archiveError } = await supabase
-      .from('lien_waiver_tracking')
-      .update({ deleted_at: new Date().toISOString() } as never)
-      .eq('id', recordId)
-      .eq('company_id', companyId)
+    try {
+      const { error: archiveError } = await supabase
+        .from('lien_waiver_tracking')
+        .update({ deleted_at: new Date().toISOString() } as never)
+        .eq('id', recordId)
+        .eq('company_id', companyId)
 
-    if (archiveError) {
-      setError('Failed to archive record')
-      toast.error('Failed to archive record')
-      return
+      if (archiveError) {
+        setError('Failed to archive record')
+        toast.error('Failed to archive record')
+        return
+      }
+
+      toast.success('Archived')
+      router.push('/compliance/lien-law')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push('/compliance/lien-law')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

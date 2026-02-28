@@ -181,23 +181,30 @@ export default function SelectionCategoryDetailPage() {
   }
 
   const handleArchive = async () => {
-    const { error: deleteError } = await supabase
-      .from('selection_categories')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', categoryId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('selection_categories')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', categoryId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      const errorMessage = 'Failed to archive category'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      return
+      if (deleteError) {
+        const errorMessage = 'Failed to archive category'
+        setError(errorMessage)
+        toast.error(errorMessage)
+        return
+      }
+
+      toast.success('Archived')
+      router.push('/library/selections')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push('/library/selections')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

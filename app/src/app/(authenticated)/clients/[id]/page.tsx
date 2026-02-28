@@ -139,22 +139,29 @@ export default function ClientDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('clients')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', params.id as string)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('clients')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', params.id as string)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive client')
-      toast.error('Failed to archive client')
-      return
+      if (deleteError) {
+        setError('Failed to archive client')
+        toast.error('Failed to archive client')
+        return
+      }
+
+      toast.success('Client archived')
+      router.push('/clients')
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Client archived')
-    router.push('/clients')
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (

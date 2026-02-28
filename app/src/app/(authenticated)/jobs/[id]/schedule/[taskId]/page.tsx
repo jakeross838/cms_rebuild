@@ -187,23 +187,30 @@ export default function ScheduleTaskDetailPage() {
   }
 
   const handleDelete = async () => {
-    const { error: deleteError } = await supabase
-      .from('schedule_tasks')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', taskId)
-      .eq('job_id', jobId)
-      .eq('company_id', companyId)
+    try {
+      const { error: deleteError } = await supabase
+        .from('schedule_tasks')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', taskId)
+        .eq('job_id', jobId)
+        .eq('company_id', companyId)
 
-    if (deleteError) {
-      setError('Failed to archive task')
-      toast.error('Failed to archive task')
-      return
+      if (deleteError) {
+        setError('Failed to archive task')
+        toast.error('Failed to archive task')
+        return
+      }
+
+      toast.success('Archived')
+      router.push(`/jobs/${jobId}/schedule`)
+      router.refresh()
+  
+    } catch (err) {
+      const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
+      toast.error(msg)
     }
-
-    toast.success('Archived')
-    router.push(`/jobs/${jobId}/schedule`)
-    router.refresh()
-  }
+}
 
   if (loading) {
     return (
