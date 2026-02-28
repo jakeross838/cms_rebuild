@@ -46,16 +46,6 @@ interface JobLookup {
   name: string
 }
 
-function getPriorityColor(priority: string): string {
-  const colors: Record<string, string> = {
-    critical: 'bg-red-100 text-red-700',
-    high: 'bg-orange-100 text-orange-700',
-    medium: 'bg-amber-100 text-amber-700',
-    low: 'bg-green-100 text-green-700',
-  }
-  return colors[priority] || 'bg-warm-100 text-warm-700'
-}
-
 export default function PunchItemDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -238,7 +228,7 @@ export default function PunchItemDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
               <Badge className={`rounded ${getStatusColor(item.status)}`}>{formatStatus(item.status)}</Badge>
-              <Badge className={`rounded ${getPriorityColor(item.priority)}`}>{formatStatus(item.priority)}</Badge>
+              <Badge className={`rounded ${getStatusColor(item.priority)}`}>{formatStatus(item.priority)}</Badge>
             </div>
             <p className="text-muted-foreground">{jobName}{item.location ? ` -- ${item.location}` : ''}{item.room ? ` -- ${item.room}` : ''}</p>
           </div>
@@ -282,7 +272,7 @@ export default function PunchItemDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Priority</dt>
-                    <dd><Badge className={`rounded ${getPriorityColor(item.priority)}`}>{formatStatus(item.priority)}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(item.priority)}`}>{formatStatus(item.priority)}</Badge></dd>
                   </div>
                   {item.category && (
                     <div>

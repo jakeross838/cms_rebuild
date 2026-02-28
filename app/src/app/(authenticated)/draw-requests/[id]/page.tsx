@@ -20,7 +20,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -56,21 +56,7 @@ function formatCurrency(value: number | null): string {
   return currencyFmt.format(value)
 }
 
-function statusVariant(
-  status: string | null
-): 'default' | 'secondary' | 'destructive' | 'outline' {
-  switch (status?.toLowerCase()) {
-    case 'approved':
-      return 'default'
-    case 'submitted':
-    case 'pending':
-      return 'secondary'
-    case 'rejected':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
-}
+
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
@@ -376,7 +362,7 @@ export default function DrawRequestDetailPage() {
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
                     <dd>
-                      <Badge variant={statusVariant(draw.status)}>
+                      <Badge className={getStatusColor(draw.status || 'draft')}>
                         {formatStatus(draw.status || 'draft')}
                       </Badge>
                     </dd>

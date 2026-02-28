@@ -54,16 +54,6 @@ interface JobLookup {
   name: string
 }
 
-function getSeverityColor(severity: string): string {
-  const colors: Record<string, string> = {
-    critical: 'bg-red-100 text-red-700',
-    high: 'bg-orange-100 text-orange-700',
-    medium: 'bg-amber-100 text-amber-700',
-    low: 'bg-green-100 text-green-700',
-  }
-  return colors[severity] || 'bg-warm-100 text-warm-700'
-}
-
 export default function SafetyIncidentDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -290,7 +280,7 @@ export default function SafetyIncidentDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{incident.title}</h1>
               <Badge className={`rounded ${getStatusColor(incident.status)}`}>{formatStatus(incident.status)}</Badge>
-              <Badge className={`rounded ${getSeverityColor(incident.severity)}`}>{incident.severity}</Badge>
+              <Badge className={`rounded ${getStatusColor(incident.severity)}`}>{formatStatus(incident.severity)}</Badge>
             </div>
             <p className="text-muted-foreground">#{incident.incident_number} -- {jobName} -- {formatDate(incident.incident_date)}</p>
           </div>
@@ -330,7 +320,7 @@ export default function SafetyIncidentDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Severity</dt>
-                    <dd><Badge className={`rounded ${getSeverityColor(incident.severity)}`}>{incident.severity}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(incident.severity)}`}>{formatStatus(incident.severity)}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>

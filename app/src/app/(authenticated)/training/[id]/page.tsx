@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatStatus } from '@/lib/utils'
+import { formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -44,17 +44,6 @@ interface CourseFormData {
 }
 
 const DIFFICULTY_OPTIONS = ['beginner', 'intermediate', 'advanced'] as const
-
-// ── Difficulty Badge ─────────────────────────────────────────────────
-
-function getDifficultyColor(difficulty: string | null): string {
-  switch (difficulty) {
-    case 'beginner': return 'bg-green-100 text-green-700'
-    case 'intermediate': return 'bg-amber-100 text-amber-700'
-    case 'advanced': return 'bg-red-100 text-red-700'
-    default: return 'bg-warm-100 text-warm-700'
-  }
-}
 
 // ── Page Component ───────────────────────────────────────────────────
 
@@ -241,7 +230,7 @@ export default function TrainingCourseDetailPage() {
             <h1 className="text-2xl font-bold text-foreground">{course.title}</h1>
             <div className="flex items-center gap-2 mt-2">
               {course.difficulty && (
-                <Badge className={`${getDifficultyColor(course.difficulty)} rounded`}>{course.difficulty}</Badge>
+                <Badge className={getStatusColor(course.difficulty || 'beginner')}>{formatStatus(course.difficulty || 'beginner')}</Badge>
               )}
               {course.is_published ? (
                 <Badge className="bg-green-100 text-green-700 rounded">Published</Badge>

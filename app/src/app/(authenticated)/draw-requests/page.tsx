@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, formatStatus } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Draw Requests' }
@@ -39,21 +39,6 @@ function formatCurrency(value: number | null): string {
   return currencyFmt.format(value)
 }
 
-function statusVariant(
-  status: string | null
-): 'default' | 'secondary' | 'destructive' | 'outline' {
-  switch (status?.toLowerCase()) {
-    case 'approved':
-      return 'default'
-    case 'submitted':
-    case 'pending':
-      return 'secondary'
-    case 'rejected':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
-}
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
@@ -204,7 +189,7 @@ export default async function DrawRequestsPage({
                       {formatDate(draw.period_to)}
                     </td>
                     <td className="p-3">
-                      <Badge variant={statusVariant(draw.status)}>
+                      <Badge className={getStatusColor(draw.status || 'draft')}>
                         {formatStatus(draw.status || 'draft')}
                       </Badge>
                     </td>

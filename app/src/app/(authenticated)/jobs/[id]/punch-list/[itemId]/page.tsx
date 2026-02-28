@@ -49,16 +49,6 @@ interface PunchItemFormData {
 const STATUS_OPTIONS = ['open', 'in_progress', 'completed', 'verified', 'rejected'] as const
 const PRIORITY_OPTIONS = ['low', 'medium', 'high', 'critical'] as const
 
-function getPriorityColor(priority: string): string {
-  const colors: Record<string, string> = {
-    critical: 'bg-red-100 text-red-700',
-    high: 'bg-orange-100 text-orange-700',
-    medium: 'bg-amber-100 text-amber-700',
-    low: 'bg-green-100 text-green-700',
-  }
-  return colors[priority] || 'bg-warm-100 text-warm-700'
-}
-
 // -- Component --------------------------------------------------------------
 
 export default function JobPunchItemDetailPage() {
@@ -240,7 +230,7 @@ export default function JobPunchItemDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
               <Badge className={`rounded ${getStatusColor(item.status)}`}>{formatStatus(item.status)}</Badge>
-              <Badge className={`rounded ${getPriorityColor(item.priority)}`}>{formatStatus(item.priority)}</Badge>
+              <Badge className={`rounded ${getStatusColor(item.priority)}`}>{formatStatus(item.priority)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {item.location ? `${item.location}` : ''}
@@ -287,7 +277,7 @@ export default function JobPunchItemDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Priority</dt>
-                    <dd><Badge className={`rounded ${getPriorityColor(item.priority)}`}>{formatStatus(item.priority)}</Badge></dd>
+                    <dd><Badge className={`rounded ${getStatusColor(item.priority)}`}>{formatStatus(item.priority)}</Badge></dd>
                   </div>
                   {item.category && (
                     <div>
@@ -373,7 +363,7 @@ export default function JobPunchItemDetailPage() {
                     <label htmlFor="priority" className="text-sm font-medium">Priority <span className="text-red-500">*</span></label>
                     <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       {PRIORITY_OPTIONS.map((p) => (
-                        <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
+                        <option key={p} value={p}>{formatStatus(p)}</option>
                       ))}
                     </select>
                   </div>

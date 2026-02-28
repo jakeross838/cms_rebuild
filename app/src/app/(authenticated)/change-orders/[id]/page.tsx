@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate , formatStatus } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // -- Types --------------------------------------------------------------------
@@ -38,15 +38,6 @@ interface ChangeOrderData {
 
 // -- Helpers ------------------------------------------------------------------
 
-function statusVariant(status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' {
-  switch (status) {
-    case 'Draft': return 'secondary'
-    case 'Pending': return 'default'
-    case 'Approved': return 'outline'
-    case 'Rejected': return 'destructive'
-    default: return 'default'
-  }
-}
 
 function formatCurrency(value: number | null): string {
   if (value == null) return 'None'
@@ -214,7 +205,7 @@ export default function ChangeOrderDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{changeOrder.title}</h1>
-              <Badge variant={statusVariant(changeOrder.status)}>{formatStatus(changeOrder.status || 'draft')}</Badge>
+              <Badge className={getStatusColor(changeOrder.status || 'draft')}>{formatStatus(changeOrder.status || 'draft')}</Badge>
             </div>
             <p className="text-muted-foreground">
               {changeOrder.co_number ? `${changeOrder.co_number} \u00b7 ` : ''}

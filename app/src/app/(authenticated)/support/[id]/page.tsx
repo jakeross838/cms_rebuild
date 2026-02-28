@@ -32,18 +32,6 @@ interface TicketData {
   updated_at: string | null
 }
 
-// ── Priority Badge ───────────────────────────────────────────────────
-
-function getPriorityColor(priority: string | null): string {
-  switch (priority) {
-    case 'urgent': return 'bg-red-100 text-red-700'
-    case 'high': return 'bg-red-100 text-red-700'
-    case 'medium': return 'bg-amber-100 text-amber-700'
-    case 'low': return 'bg-warm-100 text-warm-700'
-    default: return 'bg-warm-100 text-warm-700'
-  }
-}
-
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function SupportTicketDetailPage() {
@@ -240,7 +228,7 @@ export default function SupportTicketDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium w-20">Priority</span>
-                  <Badge className={`${getPriorityColor(ticket.priority)} rounded`}>{ticket.priority || 'medium'}</Badge>
+                  <Badge className={getStatusColor(ticket.priority || 'medium')}>{formatStatus(ticket.priority || 'medium')}</Badge>
                 </div>
                 {ticket.category && (
                   <div className="flex items-center gap-2">

@@ -33,15 +33,6 @@ interface WarrantyClaimData {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
-function getPriorityColor(priority: string): string {
-  const colors: Record<string, string> = {
-    Low: 'bg-warm-100 text-warm-700',
-    Medium: 'bg-info-bg text-info-dark',
-    High: 'bg-warning-bg text-warning-dark',
-    Urgent: 'bg-danger-bg text-danger-dark',
-  }
-  return colors[priority] || 'bg-warm-100 text-warm-700'
-}
 
 function formatCurrency(value: number | null): string {
   if (value === null || value === undefined) return '--'
@@ -220,7 +211,7 @@ export default function WarrantyClaimDetailPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{claim.title}</h1>
               <Badge className={getStatusColor(claim.status.toLowerCase().replace(/ /g, '_'))}>{formatStatus(claim.status)}</Badge>
-              {claim.priority && <Badge className={getPriorityColor(claim.priority)}>{formatStatus(claim.priority)}</Badge>}
+              {claim.priority && <Badge className={getStatusColor(claim.priority)}>{formatStatus(claim.priority)}</Badge>}
             </div>
             <p className="text-muted-foreground">
               {claim.claim_number && <span className="font-mono text-xs mr-2">{claim.claim_number}</span>}

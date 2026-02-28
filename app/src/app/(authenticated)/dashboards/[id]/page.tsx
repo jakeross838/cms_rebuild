@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ReportData {
@@ -30,14 +30,6 @@ interface ReportData {
   created_at: string
 }
 
-function statusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-  switch (status) {
-    case 'published': return 'default'
-    case 'draft': return 'secondary'
-    case 'archived': return 'outline'
-    default: return 'default'
-  }
-}
 
 export default function DashboardDetailPage() {
   const params = useParams()
@@ -204,7 +196,7 @@ export default function DashboardDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">{report.name}</h1>
-              <Badge variant={statusVariant(report.status)}>{formatStatus(report.status)}</Badge>
+              <Badge className={getStatusColor(report.status)}>{formatStatus(report.status)}</Badge>
             </div>
             <p className="text-muted-foreground">
               {report.visualization_type} &middot; {report.audience}

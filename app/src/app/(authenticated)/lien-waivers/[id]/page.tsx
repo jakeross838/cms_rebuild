@@ -7,13 +7,14 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { ArrowLeft, Loader2, Save } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, formatStatus } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const WAIVER_TYPES = [
@@ -37,23 +38,6 @@ interface LienWaiverData {
   approved_at: string | null
   created_at: string | null
   updated_at: string | null
-}
-
-// ── Status Badge Colors ──────────────────────────────────────────
-function statusBadge(status: string | null) {
-  const s = (status || 'draft').toLowerCase()
-  const colors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-700',
-    requested: 'bg-blue-100 text-blue-700',
-    received: 'bg-amber-100 text-amber-700',
-    approved: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700',
-  }
-  return (
-    <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${colors[s] || colors.draft}`}>
-      {formatStatus(status || 'draft')}
-    </span>
-  )
 }
 
 export default function LienWaiverDetailPage() {
@@ -256,7 +240,7 @@ export default function LienWaiverDetailPage() {
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
-                    <dd className="mt-0.5">{statusBadge(waiver.status)}</dd>
+                    <dd className="mt-0.5"><Badge className={getStatusColor(waiver.status || 'draft')}>{formatStatus(waiver.status || 'draft')}</Badge></dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Through Date</dt>

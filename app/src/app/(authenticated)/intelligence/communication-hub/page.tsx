@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -44,16 +44,6 @@ export default async function CommunicationHubPage() {
     id: string; title: string; body: string | null; category: string; read: boolean | null
     created_at: string | null; url_path: string | null; urgency: string | null
   }[]
-
-  function getUrgencyColor(urgency: string | null): string {
-    switch (urgency) {
-      case 'critical': return 'bg-red-100 text-red-700'
-      case 'high': return 'bg-amber-100 text-amber-700'
-      case 'normal': return 'bg-blue-100 text-blue-700'
-      case 'low': return 'bg-slate-100 text-slate-700'
-      default: return 'bg-slate-100 text-slate-700'
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -151,7 +141,7 @@ export default async function CommunicationHubPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                      <Badge className={getUrgencyColor(notif.urgency)}>
+                      <Badge className={getStatusColor(notif.urgency || 'normal')}>
                         {notif.category}
                       </Badge>
                       <span className="text-xs text-muted-foreground">{formatDate(notif.created_at)}</span>
