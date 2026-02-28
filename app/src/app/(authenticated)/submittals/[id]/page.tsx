@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, formatStatus } from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface SubmittalData {
@@ -170,27 +170,6 @@ export default function SubmittalDetailPage() {
     }
   }
 
-  const getStatusBadgeClasses = (status: string): string => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-700'
-      case 'rejected': return 'bg-red-100 text-red-700'
-      case 'submitted': return 'bg-blue-100 text-blue-700'
-      case 'in_review': return 'bg-purple-100 text-purple-700'
-      case 'draft': return 'bg-gray-100 text-gray-700'
-      default: return 'bg-gray-100 text-gray-700'
-    }
-  }
-
-  const getPriorityBadgeClasses = (priority: string): string => {
-    switch (priority) {
-      case 'Urgent': return 'bg-red-100 text-red-700'
-      case 'High': return 'bg-amber-100 text-amber-700'
-      case 'Medium': return 'bg-blue-100 text-blue-700'
-      case 'Low': return 'bg-gray-100 text-gray-700'
-      default: return 'bg-gray-100 text-gray-700'
-    }
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -222,11 +201,11 @@ export default function SubmittalDetailPage() {
               <h1 className="text-2xl font-bold text-foreground">
                 {submittal.title}
               </h1>
-              <Badge variant="outline" className={`text-xs rounded ${getStatusBadgeClasses(submittal.status)}`}>
+              <Badge className={getStatusColor(submittal.status)}>
                 {formatStatus(submittal.status)}
               </Badge>
-              <Badge variant="outline" className={`text-xs rounded ${getPriorityBadgeClasses(submittal.priority)}`}>
-                {submittal.priority}
+              <Badge className={getStatusColor(submittal.priority)}>
+                {formatStatus(submittal.priority)}
               </Badge>
             </div>
             <p className="text-muted-foreground">

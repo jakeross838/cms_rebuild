@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 import { FolderOpen, FileText, FileImage, File, Search } from 'lucide-react'
 
 interface Document {
@@ -131,9 +132,9 @@ export default async function FilesPage({
                     <td className="p-3 text-sm text-muted-foreground">{formatFileSize(doc.file_size)}</td>
                     <td className="p-3">
                       {doc.status && (
-                        <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                          {doc.status}
-                        </span>
+                        <Badge className={getStatusColor(doc.status)}>
+                          {formatStatus(doc.status)}
+                        </Badge>
                       )}
                     </td>
                     <td className="p-3 text-sm text-muted-foreground">

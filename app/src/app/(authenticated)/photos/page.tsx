@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 import { Camera } from 'lucide-react'
 
 interface PhotoDocument {
@@ -100,9 +101,9 @@ export default async function PhotosPage({
                   </td>
                   <td className="p-3">
                     {photo.status && (
-                      <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                        {photo.status}
-                      </span>
+                      <Badge className={getStatusColor(photo.status)}>
+                        {formatStatus(photo.status)}
+                      </Badge>
                     )}
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
