@@ -10,20 +10,16 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateBudgetLineFlat } from '@/hooks/use-budget'
 import { toast } from 'sonner'
 
 export default function NewBudgetLinePage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const createBudgetLine = useCreateBudgetLineFlat()
 
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -40,68 +36,19 @@ export default function NewBudgetLinePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createBudgetLine.isPending) return
     setError(null)
-    setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
+      if (!formData.description.trim()) { setError('Description is required'); return }
 
-      if (!formData.description.trim()) { setError('Description is required'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      // Find or create a budget for this job
-      let budgetId: string
-      const { data: existingBudget, error: budgetLookupError } = await supabase
-        .from('budgets')
-        .select('id')
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-
-      // PGRST116 = no rows found, which is expected for new jobs
-      if (budgetLookupError && budgetLookupError.code !== 'PGRST116') throw budgetLookupError
-
-      if (existingBudget) {
-        budgetId = (existingBudget as { id: string }).id
-      } else {
-        const { data: newBudget, error: budgetError } = await supabase
-          .from('budgets')
-          .insert({
-            company_id: companyId,
-            job_id: jobId,
-            name: 'Primary Budget',
-            status: 'draft',
-            total_amount: 0,
-            version: 1,
-            created_by: authUser.id,
-          })
-          .select('id')
-          .single()
-
-        if (budgetError) throw budgetError
-        budgetId = (newBudget as { id: string }).id
-      }
-
-      const { error: insertError } = await supabase
-        .from('budget_lines')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          budget_id: budgetId,
-          description: formData.description,
-          phase: formData.phase || null,
-          estimated_amount: formData.estimated_amount ? parseFloat(formData.estimated_amount) : 0,
-          notes: formData.notes || null,
-        })
-
-      if (insertError) throw insertError
+      await createBudgetLine.mutateAsync({
+        job_id: jobId,
+        description: formData.description,
+        phase: formData.phase || null,
+        estimated_amount: formData.estimated_amount ? parseFloat(formData.estimated_amount) : 0,
+        notes: formData.notes || null,
+      })
 
       toast.success('Budget line created')
       router.push(`/jobs/${jobId}/budget`)
@@ -110,8 +57,6 @@ export default function NewBudgetLinePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create budget line'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -160,8 +105,8 @@ export default function NewBudgetLinePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href={`/jobs/${jobId}/budget`}><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Budget Line'}
+          <Button type="submit" disabled={createBudgetLine.isPending}>
+            {createBudgetLine.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Budget Line'}
           </Button>
         </div>
       </form>

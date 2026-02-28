@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useBudgetLineFlat, useUpdateBudgetLineFlat } from '@/hooks/use-budget'
+import { fetchJson } from '@/lib/api/fetch'
 import { formatCurrency } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -48,16 +48,15 @@ interface BudgetFormData {
 export default function BudgetLineDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const lineId = params.lineId as string
 
-  const [line, setLine] = useState<BudgetLineData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading, error: fetchError } = useBudgetLineFlat(lineId)
+  const updateMutation = useUpdateBudgetLineFlat(lineId)
+
+  const line = (response as { data: BudgetLineData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -74,40 +73,17 @@ export default function BudgetLineDetailPage() {
   })
 
   useEffect(() => {
-    async function loadLine() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('budget_lines')
-        .select('*, cost_codes(code, name)')
-        .eq('id', lineId)
-        .eq('job_id', jobId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Budget line not found')
-        setLoading(false)
-        return
-      }
-
-      const l = data as BudgetLineData
-      setLine(l)
+    if (line) {
       setFormData({
-        description: l.description,
-        phase: l.phase || '',
-        estimated_amount: String(l.estimated_amount),
-        actual_amount: String(l.actual_amount),
-        committed_amount: String(l.committed_amount),
-        notes: l.notes || '',
+        description: line.description,
+        phase: line.phase || '',
+        estimated_amount: String(line.estimated_amount),
+        actual_amount: String(line.actual_amount),
+        committed_amount: String(line.committed_amount),
+        notes: line.notes || '',
       })
-      setLoading(false)
     }
-    loadLine()
-  }, [lineId, jobId, companyId])
+  }, [line])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -126,38 +102,17 @@ export default function BudgetLineDetailPage() {
       const committed = Number(formData.committed_amount) || 0
       const variance = estimated - actual
 
-      const { error: updateError } = await supabase
-        .from('budget_lines')
-        .update({
-          description: formData.description,
-          phase: formData.phase || null,
-          estimated_amount: estimated,
-          actual_amount: actual,
-          committed_amount: committed,
-          variance_amount: variance,
-          notes: formData.notes || null,
-        })
-        .eq('id', lineId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
+      await updateMutation.mutateAsync({
+        description: formData.description,
+        phase: formData.phase || null,
+        estimated_amount: estimated,
+        actual_amount: actual,
+        committed_amount: committed,
+        variance_amount: variance,
+        notes: formData.notes || null,
+      })
 
-      if (updateError) throw updateError
       toast.success('Saved')
-
-      setLine((prev) =>
-        prev
-          ? {
-              ...prev,
-              description: formData.description,
-              phase: formData.phase || null,
-              estimated_amount: estimated,
-              actual_amount: actual,
-              committed_amount: committed,
-              variance_amount: variance,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -172,31 +127,18 @@ export default function BudgetLineDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: archiveError } = await supabase
-        .from('budget_lines')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', lineId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (archiveError) {
-        setError('Failed to archive budget line')
-        toast.error('Failed to archive budget line')
-        return
-      }
+      await fetchJson(`/api/v2/budget-lines/${lineId}`, { method: 'DELETE' })
       toast.success('Archived')
-
       router.push(`/jobs/${jobId}/budget`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -210,7 +152,7 @@ export default function BudgetLineDetailPage() {
         <Link href={`/jobs/${jobId}/budget`} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Budget
         </Link>
-        <p className="text-destructive">{error || 'Budget line not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Budget line not found'}</p>
       </div>
     )
   }

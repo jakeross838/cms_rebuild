@@ -107,6 +107,49 @@ export function useDeleteBudgetLine(budgetId: string) {
   })
 }
 
+// ── Budget Lines (flat routes — no budgetId needed) ─────────────────────
+
+export function useBudgetLineFlat(lineId: string | null) {
+  return useQuery({
+    queryKey: ['budget-lines-flat', lineId],
+    queryFn: () => fetchJson(`/api/v2/budget-lines/${lineId}`),
+    enabled: !!lineId,
+  })
+}
+
+export function useUpdateBudgetLineFlat(lineId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v2/budget-lines/${lineId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['budget-lines-flat', lineId] })
+      qc.invalidateQueries({ queryKey: ['budget-lines'] })
+      qc.invalidateQueries({ queryKey: ['budgets'] })
+    },
+  })
+}
+
+export function useCreateBudgetLineFlat() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson('/api/v2/budget-lines', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['budget-lines'] })
+      qc.invalidateQueries({ queryKey: ['budgets'] })
+    },
+  })
+}
+
 // ── Cost Transactions ───────────────────────────────────────────────────
 
 type TxnListParams = {
