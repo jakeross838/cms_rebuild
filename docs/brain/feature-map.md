@@ -1,5 +1,20 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 31 — Data Integrity Bugs + Form Validation (2026-02-27)
+
+### Archive Mechanisms (Corrected)
+- **invoices** — archive via `status: 'denied'` (no `deleted_at` column on this table)
+- **employee_certifications** — archive via `status: 'revoked'` (no `deleted_at` column)
+- All other tenant tables — archive via `deleted_at` timestamp (soft delete)
+
+### Query Filter Fixes
+- **Financial Dashboard** — invoice total excludes `status='denied'`, budget lines filter `.is('deleted_at', null)`
+- **Accuracy Engine** — budget lines filter `.is('deleted_at', null)`
+
+### Form Validation Fixes
+- **payables/new** — amount must be > 0 (was allowing zero)
+- **invoices/new** — amount must be > 0 (was allowing zero)
+
 ## Session 30 — Utility Centralization + Display Consistency (2026-02-27)
 
 ### Centralized Utilities (lib/utils.ts)

@@ -83,8 +83,8 @@ export default function NewInvoicePage() {
     setError(null)
 
     const amount = parseFloat(formData.amount)
-    if (isNaN(amount)) {
-      setError('Amount is required')
+    if (isNaN(amount) || amount <= 0) {
+      setError('Amount must be greater than zero')
       return
     }
 

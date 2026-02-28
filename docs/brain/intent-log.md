@@ -1,5 +1,22 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 31 — Data Integrity Bugs + Form Validation
+
+### Why (Archive Mechanism Bugs — 3 files)
+- `invoices/[id]` and `jobs/[id]/invoices/[invoiceId]` were calling `.update({ deleted_at: ... })` on the `invoices` table which has NO `deleted_at` column — would silently fail or error at DB level
+- `compliance/licenses/[id]` same issue on `employee_certifications` — no `deleted_at` column
+- Fixed: invoices archive via `status: 'denied'`, certifications via `status: 'revoked'` (matches existing patterns)
+
+### Why (Missing Query Filters — 2 files)
+- `dashboards/financial` included denied/archived invoices in total invoiced amount — inflated KPI
+- `dashboards/financial` and `intelligence/accuracy-engine` included archived budget lines in estimated/actual totals — skewed accuracy metrics
+- Fixed: added `.neq('status', 'denied')` to invoice totals, `.is('deleted_at', null)` to budget line queries
+
+### Why (Zero-Amount Validation — 2 files)
+- `financial/payables/new` and `invoices/new` validated NaN but allowed zero amounts
+- `parseFloat("0") = 0` passes `isNaN()` check, but a $0 bill or invoice is always a data entry error
+- Fixed: changed to `isNaN(amount) || amount <= 0` with user-friendly error message
+
 ## 2026-02-27: Session 30 — Utility Centralization + Display Consistency
 
 ### Why (Local Function Elimination — 50+ files)

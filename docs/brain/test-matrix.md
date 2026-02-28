@@ -1,5 +1,29 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 31 — Data Integrity Bugs + Form Validation (2026-02-27)
+
+### Archive Mechanism Correctness
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| invoices/[id] archive sets status='denied' | No deleted_at on invoices table | pass |
+| jobs/[id]/invoices/[invoiceId] archive sets status='denied' | Same | pass |
+| compliance/licenses/[id] archive sets status='revoked' | No deleted_at on certifications | pass |
+
+### Query Filter Correctness
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Financial dashboard invoice total excludes denied | .neq('status', 'denied') present | pass |
+| Financial dashboard budget lines filter archived | .is('deleted_at', null) present | pass |
+| Accuracy engine budget lines filter archived | .is('deleted_at', null) present | pass |
+
+### Form Validation
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| payables/new rejects zero amount | Error: "Amount must be greater than zero" | pass |
+| invoices/new rejects zero amount | Error: "Amount must be greater than zero" | pass |
+| payables/new rejects empty amount (NaN) | Same error | pass |
+| invoices/new rejects empty amount (NaN) | Same error | pass |
+
 ## Session 30 — Utility Centralization + Display Consistency (2026-02-27)
 
 ### Local Function Elimination
