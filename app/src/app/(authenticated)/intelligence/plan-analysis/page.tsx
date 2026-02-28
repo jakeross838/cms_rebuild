@@ -13,18 +13,10 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatStatus, getStatusColor } from '@/lib/utils'
+import { formatStatus, getStatusColor, formatFileSize } from '@/lib/utils'
 import type { Metadata } from 'next'
 
-// ── Helpers ──────────────────────────────────────────────────────────
 
-function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
-}
 
 // ── Page ─────────────────────────────────────────────────────────────
 

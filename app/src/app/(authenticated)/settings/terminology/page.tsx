@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
+import { formatStatus } from '@/lib/utils'
 
 interface Term {
   key: string
@@ -163,7 +164,7 @@ export default function TerminologyPage() {
     }
   }
 
-  const formatKey = (key: string) => key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  const formatKey = formatStatus
 
   if (loading) {
     return (

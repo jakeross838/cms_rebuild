@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatFileSize } from '@/lib/utils'
 
 import type { Metadata } from 'next'
 
@@ -28,13 +28,6 @@ function getFileIcon(mimeType: string | null) {
   if (!mimeType) return File
   if (mimeType.startsWith('image/')) return Image
   return FileText
-}
-
-function formatFileSize(bytes: number | null): string {
-  if (!bytes) return '—'
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export default async function FilesPage({

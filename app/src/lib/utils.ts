@@ -122,6 +122,15 @@ export function formatStatus(status: string | null): string {
   return status.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 }
 
+/** Format a byte count for display: 1024 → '1.0 KB', 1048576 → '1.0 MB' */
+export function formatFileSize(bytes: number | null): string {
+  if (bytes == null || bytes === 0) return '—'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+}
+
 /** Escape special characters in LIKE/ILIKE patterns to prevent query injection */
 export function escapeLike(input: string): string {
   return input.replace(/[%_\\]/g, '\\$&')

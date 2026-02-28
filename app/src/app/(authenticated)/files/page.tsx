@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatStatus, getStatusColor, formatFileSize } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { FolderOpen, FileText, FileImage, File, Search } from 'lucide-react'
 
@@ -19,12 +19,6 @@ interface Document {
   created_at: string | null
 }
 
-function formatFileSize(bytes: number | null): string {
-  if (!bytes) return '—'
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
 
 function getFileIcon(mimeType: string | null) {
   if (!mimeType) return File

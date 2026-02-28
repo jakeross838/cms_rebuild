@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatDate, getStatusColor, formatFileSize } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -30,13 +30,6 @@ interface DocumentData {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
-
-function formatFileSize(bytes: number | null): string {
-  if (!bytes) return '\u2014'
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
 
 function getFileIcon(mimeType: string | null) {
   if (!mimeType) return File
