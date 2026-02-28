@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
+import { formatDate, formatTime, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -273,11 +273,11 @@ export default function TimeEntryDetailPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Clock In</span>
-                    <p className="font-medium">{entry.clock_in ? new Date(entry.clock_in).toLocaleTimeString() : 'N/A'}</p>
+                    <p className="font-medium">{entry.clock_in ? formatTime(entry.clock_in) : 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Clock Out</span>
-                    <p className="font-medium">{entry.clock_out ? new Date(entry.clock_out).toLocaleTimeString() : 'N/A'}</p>
+                    <p className="font-medium">{entry.clock_out ? formatTime(entry.clock_out) : 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Regular Hours</span>

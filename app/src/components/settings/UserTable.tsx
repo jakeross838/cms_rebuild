@@ -269,6 +269,7 @@ export function UserTable({
                           <Button
                             variant="ghost"
                             size="sm"
+                            aria-label="Open actions menu"
                             onClick={() =>
                               setOpenDropdown(openDropdown === user.id ? null : user.id)
                             }

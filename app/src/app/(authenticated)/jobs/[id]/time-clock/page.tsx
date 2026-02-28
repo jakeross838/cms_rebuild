@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
+import { formatDate, formatTime, getStatusColor, formatStatus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Time Clock' }
@@ -93,8 +93,8 @@ export default async function JobTimeClockPage({
                         <Badge className={getStatusColor(entry.status)}>{formatStatus(entry.status)}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
-                        {entry.clock_in && `In: ${new Date(entry.clock_in).toLocaleTimeString()}`}
-                        {entry.clock_out && ` — Out: ${new Date(entry.clock_out).toLocaleTimeString()}`}
+                        {entry.clock_in && `In: ${formatTime(entry.clock_in)}`}
+                        {entry.clock_out && ` — Out: ${formatTime(entry.clock_out)}`}
                         {entry.notes && ` • ${entry.notes}`}
                       </div>
                     </div>
