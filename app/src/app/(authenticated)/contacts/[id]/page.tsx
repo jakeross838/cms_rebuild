@@ -76,6 +76,7 @@ export default function ContactDetailPage() {
       await fetchJson(`/api/v2/contacts/${contactId}`, { method: 'DELETE' })
       toast.success('Archived')
       router.push('/contacts')
+      router.refresh()
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
       setError(errorMessage)
@@ -156,7 +157,7 @@ export default function ContactDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

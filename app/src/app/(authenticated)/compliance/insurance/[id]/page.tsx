@@ -138,6 +138,7 @@ export default function InsurancePolicyDetailPage() {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -185,7 +186,7 @@ export default function InsurancePolicyDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

@@ -77,6 +77,7 @@ export default function InvoiceDetailPage() {
       await deleteMutation.mutateAsync(invoiceId)
       toast.success('Invoice archived')
       router.push('/invoices')
+      router.refresh()
     } catch (err) {
       setError((err as Error)?.message || 'Failed to archive')
       toast.error('Failed to archive invoice')
@@ -158,7 +159,7 @@ export default function InvoiceDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
