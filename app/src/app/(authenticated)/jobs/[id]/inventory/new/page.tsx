@@ -83,6 +83,9 @@ export default function NewInventoryTransactionPage() {
       if (!formData.item_id) throw new Error('Please select an inventory item')
       if (!formData.quantity) throw new Error('Please enter a quantity')
 
+      const quantity = parseFloat(formData.quantity)
+      if (isNaN(quantity) || quantity <= 0) { setError('Quantity must be greater than zero'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('inventory_transactions')
         .insert({
@@ -90,7 +93,7 @@ export default function NewInventoryTransactionPage() {
           item_id: formData.item_id,
           job_id: jobId,
           transaction_type: formData.transaction_type as 'receive' | 'consume' | 'transfer' | 'adjust',
-          quantity: parseFloat(formData.quantity),
+          quantity,
           unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : null,
           notes: formData.notes || null,
           performed_by: authUser.id,

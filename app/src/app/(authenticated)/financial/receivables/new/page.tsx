@@ -75,7 +75,7 @@ export default function NewReceivablePage() {
       if (!formData.due_date) { setError('Due date is required'); setLoading(false); return }
 
       const amount = parseFloat(formData.amount)
-      if (isNaN(amount)) throw new Error('Amount must be a valid number')
+      if (isNaN(amount) || amount <= 0) { setError('Amount must be greater than zero'); setLoading(false); return }
 
       const { error: insertError } = await supabase
         .from('ar_invoices')
