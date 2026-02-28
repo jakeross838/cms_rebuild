@@ -2,6 +2,11 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Save Handler Error Reset (35 pages)
+35 non-job detail pages now clear error state at the start of handleSave:
+- Pattern: `setError(null)` added before the try block (after validation early returns)
+- Prevents stale error banners from persisting when user corrects input and retries
+
 ### Cancel Button Error Reset (58 pages)
 All detail pages with edit mode now clear error state on Cancel click:
 - Pattern: `onClick={() => { setEditing(false); setError(null) }}`

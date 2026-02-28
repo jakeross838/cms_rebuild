@@ -5,6 +5,7 @@
 ### Why
 - 54 archive buttons across all detail pages lacked `disabled` state — users could double-click and trigger duplicate soft-delete API calls. Added `archiving` state with disabled button + text toggle to all 54 pages (18 job sub-pages + 36 non-job pages)
 - 58 Cancel buttons on edit-mode detail pages didn't clear error state — stale error banners persisted after canceling. Added `setError(null)` to all Cancel onClick handlers
+- 35 handleSave functions on non-job detail pages didn't reset error state before retrying — stale error banners persisted. Added `setError(null)` before try block
 - 2 archive handlers (contacts/[id], invoices/[id]) were missing `router.refresh()` after `router.push()` — stale list data could show the archived item
 - Budget pages (last 2 client-side Supabase pages) migrated to React Query via new flat API routes (`/api/v2/budget-lines/`) that solve the budgetId problem
 - **Result: Zero client-side Supabase queries remain in authenticated pages**

@@ -16,6 +16,12 @@
 | 58 Cancel buttons call `setError(null)` | Error banner clears on cancel | PASS |
 | `tsc --noEmit` — zero errors after 58 files changed | 0 errors | PASS |
 
+### Save Handler Error Reset (35 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 35 handleSave functions call `setError(null)` before try | Stale errors clear on retry | PASS |
+| `tsc --noEmit` — zero errors after 35 files changed | 0 errors | PASS |
+
 ### Missing router.refresh() (2 pages)
 | Test Case | Expected | Status |
 |-----------|----------|--------|
