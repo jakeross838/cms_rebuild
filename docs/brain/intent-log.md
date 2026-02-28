@@ -1,5 +1,13 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-28: Session 37 — Additional Create Page React Query Migrations
+
+### Why
+- 2 more create pages migrated from direct Supabase to React Query hooks (compliance/licenses/new, submittals/new)
+- These pages were skipped in Session 36 but DO have matching hooks (`useCreateHrCertification`, `useCreateSubmittal`)
+- Fixed `SubmittalCreateInput` type to match actual DB columns (`submission_date` not `submitted_date`, added `submitted_to` and `priority`)
+- 5 pages correctly skipped: contacts/new, compliance/insurance/new, warranty-claims/new require parent IDs at hook instantiation time (vendorId, warrantyId) but the parent is selected dynamically via form dropdown; compliance/lien-law/new, communications/new, invoices/new have no matching hooks
+
 ## 2026-02-28: Session 36 — Full React Query UI Migration (90+ pages)
 
 ### Why

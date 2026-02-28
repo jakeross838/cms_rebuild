@@ -1,5 +1,25 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 37 — Additional Create Page Migrations (2026-02-28)
+
+### Type Safety
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `tsc --noEmit` — zero errors after 2 page migrations + type fix | 0 errors | PASS |
+
+### Migration Correctness
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `compliance/licenses/new` uses `createCertification.mutateAsync()` | present | PASS |
+| `compliance/licenses/new` button disabled on `createCertification.isPending` | present | PASS |
+| `compliance/licenses/new` removed `authUser` destructuring (unused) | removed | PASS |
+| `compliance/licenses/new` keeps `useAuth`/`createClient` for employee dropdown | retained | PASS |
+| `submittals/new` uses `createSubmittal.mutateAsync()` | present | PASS |
+| `submittals/new` button disabled on `createSubmittal.isPending` | present | PASS |
+| `submittals/new` removed `authUser` destructuring (unused) | removed | PASS |
+| `submittals/new` keeps `useAuth`/`createClient` for jobs dropdown | retained | PASS |
+| `SubmittalCreateInput` type matches DB columns (submission_date, submitted_to, priority) | corrected | PASS |
+
 ## Session 36 — Full React Query UI Migration (2026-02-28)
 
 ### Type Safety

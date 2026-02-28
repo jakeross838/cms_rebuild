@@ -1,5 +1,28 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 37 — Additional Create Page React Query Migrations (2026-02-28)
+
+### 2 More Create Pages Migrated, 5 Skipped
+
+#### Migrated
+| Page | Hook Used | Notes |
+|------|-----------|-------|
+| `compliance/licenses/new` | `useCreateHrCertification()` from `use-hr` | Removed `loading` state, `authUser`, `company_id`/`created_by` from payload. Dropdown still uses `createClient` for employees list. |
+| `submittals/new` | `useCreateSubmittal()` from `use-submittals` | Removed `loading` state, `authUser`, `company_id`/`created_by`/`submitted_by` from payload. Dropdown still uses `createClient` for jobs list. |
+
+#### Type Fix
+- `use-submittals.ts` `SubmittalCreateInput` corrected: `submitted_date` -> `submission_date`, added `submitted_to`, `priority` fields to match actual DB columns
+
+#### Skipped (with reasons)
+| Page | Reason |
+|------|--------|
+| `contacts/new` | `useCreateVendorContact(vendorId)` requires vendorId at hook call time; page selects vendor dynamically via form dropdown |
+| `compliance/insurance/new` | `useCreateVendorInsurance(vendorId)` requires vendorId at hook call time; same dynamic vendor selection issue |
+| `warranty-claims/new` | `useCreateWarrantyClaim(warrantyId)` requires warrantyId at hook call time; warranty selected dynamically via form |
+| `compliance/lien-law/new` | No matching hook exists |
+| `communications/new` | No matching hook exists |
+| `invoices/new` | No matching hook exists |
+
 ## Session 36 — Full React Query UI Migration (2026-02-28)
 
 ### 90+ Pages Migrated from Direct Supabase to React Query Hooks
