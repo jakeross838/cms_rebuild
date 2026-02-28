@@ -80,6 +80,7 @@ export default function ContractDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateContract.mutateAsync({
         title: formData.title || undefined,

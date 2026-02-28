@@ -108,6 +108,7 @@ export default function ARInvoiceDetailPage() {
     if (!formData.invoice_date) { toast.error('Invoice Date is required'); return }
     if (!formData.due_date) { toast.error('Due Date is required'); return }
 
+    setError(null)
     try {
       await updateInvoice.mutateAsync({
         invoice_number: formData.invoice_number,

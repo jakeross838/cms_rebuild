@@ -84,6 +84,7 @@ export default function DashboardDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
 
+    setError(null)
     try {
       await updateReport.mutateAsync({
         name: formData.name,

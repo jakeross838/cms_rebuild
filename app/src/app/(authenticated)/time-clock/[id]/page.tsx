@@ -90,6 +90,7 @@ export default function TimeClockDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateEntry.mutateAsync({
         entry_date: formData.entry_date || undefined,

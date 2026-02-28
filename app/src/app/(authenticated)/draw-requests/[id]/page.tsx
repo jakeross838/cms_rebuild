@@ -108,6 +108,7 @@ export default function DrawRequestDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateDraw.mutateAsync({
         draw_number: formData.draw_number

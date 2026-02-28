@@ -97,6 +97,7 @@ export default function BillDetailPage() {
     if (!formData.bill_date) { toast.error('Bill Date is required'); return }
     if (!formData.due_date) { toast.error('Due Date is required'); return }
 
+    setError(null)
     try {
       await updateBill.mutateAsync({
         bill_number: formData.bill_number,

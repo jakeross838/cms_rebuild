@@ -91,6 +91,7 @@ export default function LienLawDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateTracking.mutateAsync({
         job_id: formData.job_id || undefined,

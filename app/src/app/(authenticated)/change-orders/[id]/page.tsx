@@ -86,6 +86,7 @@ export default function ChangeOrderDetailPage() {
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
 
+    setError(null)
     try {
       await updateCO.mutateAsync({
         co_number: formData.co_number || undefined,

@@ -110,6 +110,7 @@ export default function JournalEntryDetailPage() {
     if (!formData.status) { toast.error('Status is required'); return }
     if (!formData.source_type) { toast.error('Source Type is required'); return }
 
+    setError(null)
     try {
       await updateEntry.mutateAsync({
         entry_date: formData.entry_date,

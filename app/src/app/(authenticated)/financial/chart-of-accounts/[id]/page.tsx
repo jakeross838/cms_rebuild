@@ -100,6 +100,7 @@ export default function ChartOfAccountsDetailPage() {
     if (!formData.account_type) { toast.error('Account Type is required'); return }
     if (!formData.normal_balance) { toast.error('Normal Balance is required'); return }
 
+    setError(null)
     try {
       await updateAccount.mutateAsync({
         account_number: formData.account_number,

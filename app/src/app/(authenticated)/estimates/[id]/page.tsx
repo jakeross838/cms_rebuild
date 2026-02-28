@@ -87,6 +87,7 @@ export default function EstimateDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
 
+    setError(null)
     try {
       await updateEstimate.mutateAsync({
         name: formData.name,

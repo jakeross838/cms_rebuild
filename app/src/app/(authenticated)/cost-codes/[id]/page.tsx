@@ -79,6 +79,7 @@ export default function CostCodeDetailPage() {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
     if (!formData.division.trim()) { toast.error('Division is required'); return }
 
+    setError(null)
     try {
       await updateCostCode.mutateAsync({
         code: formData.code,

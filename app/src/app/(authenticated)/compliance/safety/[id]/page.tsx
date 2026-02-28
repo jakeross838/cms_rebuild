@@ -137,6 +137,7 @@ export default function SafetyIncidentDetailPage() {
     if (!formData.incident_date.trim()) { toast.error('Incident date is required'); return }
     if (!formData.job_id.trim()) { toast.error('Job is required'); return }
 
+    setError(null)
     try {
       await updateIncident.mutateAsync({
         title: formData.title,

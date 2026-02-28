@@ -85,6 +85,7 @@ export default function BidPackageDetailPage() {
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
 
+    setError(null)
     try {
       await updateBid.mutateAsync({
         title: formData.title,

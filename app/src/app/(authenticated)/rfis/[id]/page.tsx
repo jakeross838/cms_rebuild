@@ -90,6 +90,7 @@ export default function RfiDetailPage() {
   const handleSave = async () => {
     if (!formData.subject.trim()) { toast.error('Subject is required'); return }
 
+    setError(null)
     try {
       await updateRfi.mutateAsync({
         rfi_number: formData.rfi_number || undefined,

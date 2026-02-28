@@ -99,6 +99,7 @@ export default function TrainingCourseDetailPage() {
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
 
+    setError(null)
     try {
       await updateCourse.mutateAsync({
         title: formData.title,

@@ -87,6 +87,7 @@ export default function VendorDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Company name is required'); return }
 
+    setError(null)
     try {
       await updateVendor.mutateAsync({
         name: formData.name,

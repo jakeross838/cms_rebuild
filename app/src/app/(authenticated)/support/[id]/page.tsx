@@ -76,6 +76,7 @@ export default function SupportTicketDetailPage() {
   const handleSave = async () => {
     if (!formData.subject.trim()) { toast.error('Subject is required'); return }
 
+    setError(null)
     try {
       const updatePayload: Record<string, unknown> = {
         subject: formData.subject,

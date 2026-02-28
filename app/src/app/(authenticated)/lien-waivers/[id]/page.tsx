@@ -84,6 +84,7 @@ export default function LienWaiverDetailPage() {
   const handleSave = async () => {
     if (!formData.claimant_name.trim()) { toast.error('Claimant Name is required'); return }
 
+    setError(null)
     try {
       await updateWaiver.mutateAsync({
         claimant_name: formData.claimant_name || null,

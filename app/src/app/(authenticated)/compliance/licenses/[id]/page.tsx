@@ -96,6 +96,7 @@ export default function LicenseDetailPage() {
   const handleSave = async () => {
     if (!formData.certification_name.trim()) { toast.error('Certification name is required'); return }
 
+    setError(null)
     try {
       await updateCert.mutateAsync({
         certification_name: formData.certification_name,

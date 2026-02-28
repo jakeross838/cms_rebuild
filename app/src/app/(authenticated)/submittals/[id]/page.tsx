@@ -84,6 +84,7 @@ export default function SubmittalDetailPage() {
     if (!formData.submittal_number.trim()) { toast.error('Submittal Number is required'); return }
     if (!formData.title.trim()) { toast.error('Title is required'); return }
 
+    setError(null)
     try {
       await updateSubmittal.mutateAsync({
         submittal_number: formData.submittal_number || undefined,

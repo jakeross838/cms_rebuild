@@ -102,6 +102,7 @@ export default function SelectionCategoryDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateCategory.mutateAsync({
         name: formData.name,

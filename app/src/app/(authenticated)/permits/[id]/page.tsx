@@ -85,6 +85,7 @@ export default function PermitDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updatePermit.mutateAsync({
         permit_number: formData.permit_number || null,

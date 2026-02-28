@@ -91,6 +91,7 @@ export default function EquipmentDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
 
+    setError(null)
     try {
       await updateEquipment.mutateAsync({
         name: formData.name,

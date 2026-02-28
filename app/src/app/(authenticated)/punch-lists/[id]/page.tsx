@@ -107,6 +107,7 @@ export default function PunchItemDetailPage() {
     if (!formData.status) { toast.error('Status is required'); return }
     if (!formData.priority) { toast.error('Priority is required'); return }
 
+    setError(null)
     try {
       await updatePunchItem.mutateAsync({
         title: formData.title,

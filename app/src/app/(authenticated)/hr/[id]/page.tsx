@@ -96,6 +96,7 @@ export default function EmployeeDetailPage() {
     if (!formData.first_name.trim()) { toast.error('First Name is required'); return }
     if (!formData.last_name.trim()) { toast.error('Last Name is required'); return }
 
+    setError(null)
     try {
       await updateEmployee.mutateAsync({
         first_name: formData.first_name,

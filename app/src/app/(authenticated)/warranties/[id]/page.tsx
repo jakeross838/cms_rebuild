@@ -83,6 +83,7 @@ export default function WarrantyDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateWarranty.mutateAsync({
         title: formData.title || undefined,

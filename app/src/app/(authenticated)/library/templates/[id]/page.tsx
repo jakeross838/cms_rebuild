@@ -81,6 +81,7 @@ export default function TemplateDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
 
+    setError(null)
     try {
       await updateTemplate.mutateAsync({
         name: formData.name,

@@ -98,6 +98,7 @@ export default function LeadDetailPage() {
   }
 
   const handleSave = async () => {
+    setError(null)
     try {
       await updateLead.mutateAsync({
         first_name: formData.first_name || undefined,

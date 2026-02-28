@@ -124,6 +124,7 @@ export default function PurchaseOrderDetailPage() {
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
 
+    setError(null)
     try {
       const subtotal = formData.subtotal ? parseFloat(formData.subtotal) : 0
       const taxAmount = formData.tax_amount ? parseFloat(formData.tax_amount) : 0

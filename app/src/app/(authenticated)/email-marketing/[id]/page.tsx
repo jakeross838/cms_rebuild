@@ -101,6 +101,7 @@ export default function CampaignDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Campaign Name is required'); return }
 
+    setError(null)
     try {
       await updateCampaign.mutateAsync({
         name: formData.name,
