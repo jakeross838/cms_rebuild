@@ -55,7 +55,7 @@ export default function NewBudgetLinePage() {
 
       // Find or create a budget for this job
       let budgetId: string
-      const { data: existingBudget } = await supabase
+      const { data: existingBudget, error: budgetLookupError } = await supabase
         .from('budgets')
         .select('id')
         .eq('job_id', jobId)
@@ -64,6 +64,9 @@ export default function NewBudgetLinePage() {
         .order('created_at', { ascending: false })
         .limit(1)
         .single()
+
+      // PGRST116 = no rows found, which is expected for new jobs
+      if (budgetLookupError && budgetLookupError.code !== 'PGRST116') throw budgetLookupError
 
       if (existingBudget) {
         budgetId = (existingBudget as { id: string }).id

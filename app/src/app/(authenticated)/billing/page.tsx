@@ -33,7 +33,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       .range(offset, offset + pageSize - 1),
   ])
 
-  if (subscriptionRes.error) throw subscriptionRes.error
+  // subscription may not exist yet (PGRST116) — that's fine, show null
+  if (subscriptionRes.error && subscriptionRes.error.code !== 'PGRST116') throw subscriptionRes.error
   if (eventsRes.error) throw eventsRes.error
 
   const subscription = subscriptionRes.data
