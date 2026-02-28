@@ -60,6 +60,7 @@ export default function PunchItemDetailPage() {
   const jobs = ((jobsResponse as { data: JobLookup[] } | undefined)?.data ?? []) as JobLookup[]
 
   const [editing, setEditing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -178,7 +179,7 @@ export default function PunchItemDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updatePunchItem.isPending}>
                   {updatePunchItem.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

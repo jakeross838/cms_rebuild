@@ -43,6 +43,7 @@ export default function ContractTemplateDetailPage() {
   const template = (response as { data: ContractTemplateData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
   const [showToggleDialog, setShowToggleDialog] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
@@ -168,7 +169,7 @@ export default function ContractTemplateDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateTemplate.isPending}>
                   {updateTemplate.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

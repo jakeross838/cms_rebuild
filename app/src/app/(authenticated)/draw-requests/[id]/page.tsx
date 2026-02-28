@@ -56,6 +56,7 @@ export default function DrawRequestDetailPage() {
   const draw = (response as { data: DrawRequestData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -202,7 +203,7 @@ export default function DrawRequestDetailPage() {
               </Button>
             ) : (
               <>
-                <Button onClick={() => setEditing(false)} variant="outline">
+                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">
                   Cancel
                 </Button>
                 <Button onClick={handleSave} disabled={updateDraw.isPending}>
