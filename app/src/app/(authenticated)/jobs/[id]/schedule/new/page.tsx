@@ -46,6 +46,7 @@ export default function NewScheduleTaskPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     setError(null)
     setLoading(true)
 

@@ -45,6 +45,7 @@ export default function NewPermitPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     setError(null)
     setLoading(true)
 

@@ -94,6 +94,7 @@ export default function NewPurchaseOrderPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     setError(null)
 
     if (!formData.job_id) {

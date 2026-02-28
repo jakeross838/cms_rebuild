@@ -64,6 +64,7 @@ export default function NewChangeOrderPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     setError(null)
 
     if (!formData.title) {

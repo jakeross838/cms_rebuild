@@ -101,6 +101,7 @@ export default function NewJournalEntryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     setError(null)
 
     // Validate lines

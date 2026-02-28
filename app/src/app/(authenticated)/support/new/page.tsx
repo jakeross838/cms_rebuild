@@ -38,6 +38,7 @@ export default function NewSupportTicketPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     setError(null)
     setLoading(true)
 
