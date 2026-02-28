@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useWarranty, useUpdateWarranty, useDeleteWarranty } from '@/hooks/use-warranty'
 import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -36,16 +35,13 @@ interface WarrantyData {
 export default function WarrantyDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const warrantyId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useWarranty(warrantyId)
+  const updateWarranty = useUpdateWarranty(warrantyId)
+  const deleteWarranty = useDeleteWarranty()
+  const warranty = (response as { data: WarrantyData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [warranty, setWarranty] = useState<WarrantyData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -63,46 +59,21 @@ export default function WarrantyDetailPage() {
   })
 
   useEffect(() => {
-    async function loadWarranty() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('warranties')
-          .select('*')
-          .eq('company_id', companyId)
-          .eq('id', params.id as string)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Warranty not found')
-          setLoading(false)
-          return
-        }
-
-        const w = data as WarrantyData
-        setWarranty(w)
-        setFormData({
-          title: w.title || '',
-          warranty_type: w.warranty_type || '',
-          start_date: w.start_date || '',
-          end_date: w.end_date || '',
-          coverage_details: w.coverage_details || '',
-          exclusions: w.exclusions || '',
-          contact_name: w.contact_name || '',
-          contact_phone: w.contact_phone || '',
-          contact_email: w.contact_email || '',
-          description: w.description || '',
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load warranty')
-        setLoading(false)
-      }
+    if (warranty) {
+      setFormData({
+        title: warranty.title || '',
+        warranty_type: warranty.warranty_type || '',
+        start_date: warranty.start_date || '',
+        end_date: warranty.end_date || '',
+        coverage_details: warranty.coverage_details || '',
+        exclusions: warranty.exclusions || '',
+        contact_name: warranty.contact_name || '',
+        contact_phone: warranty.contact_phone || '',
+        contact_email: warranty.contact_email || '',
+        description: warranty.description || '',
+      })
     }
-    loadWarranty()
-  }, [params.id, companyId])
+  }, [warranty])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -110,79 +81,36 @@ export default function WarrantyDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('warranties')
-        .update({
-          title: formData.title || undefined,
-          warranty_type: formData.warranty_type || undefined,
-          start_date: formData.start_date || undefined,
-          end_date: formData.end_date || undefined,
-          coverage_details: formData.coverage_details || null,
-          exclusions: formData.exclusions || null,
-          contact_name: formData.contact_name || null,
-          contact_phone: formData.contact_phone || null,
-          contact_email: formData.contact_email || null,
-          description: formData.description || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setWarranty((prev) => prev ? {
-        ...prev,
-        title: formData.title || null,
-        warranty_type: formData.warranty_type || null,
-        start_date: formData.start_date || null,
-        end_date: formData.end_date || null,
+      await updateWarranty.mutateAsync({
+        title: formData.title || undefined,
+        warranty_type: formData.warranty_type || undefined,
+        start_date: formData.start_date || undefined,
+        end_date: formData.end_date || undefined,
         coverage_details: formData.coverage_details || null,
         exclusions: formData.exclusions || null,
         contact_name: formData.contact_name || null,
         contact_phone: formData.contact_phone || null,
         contact_email: formData.contact_email || null,
         description: formData.description || null,
-      } : prev)
+      })
       toast.success('Warranty updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save warranty')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('warranties')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive warranty')
-        toast.error('Failed to archive warranty')
-        return
-      }
-
+      await deleteWarranty.mutateAsync(warrantyId)
       toast.success('Warranty archived')
       router.push('/warranties')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -198,7 +126,7 @@ export default function WarrantyDetailPage() {
         <Link href="/warranties" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Warranties
         </Link>
-        <p className="text-destructive">{error || 'Warranty not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Warranty not found'}</p>
       </div>
     )
   }
@@ -240,8 +168,8 @@ export default function WarrantyDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateWarranty.isPending}>
+                  {updateWarranty.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -250,8 +178,7 @@ export default function WarrantyDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Warranty updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

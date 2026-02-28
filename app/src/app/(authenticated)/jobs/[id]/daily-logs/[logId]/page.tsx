@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useDailyLog, useUpdateDailyLog, useDeleteDailyLog } from '@/hooks/use-daily-logs'
 import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -48,16 +47,15 @@ const STATUS_OPTIONS = ['draft', 'submitted', 'approved', 'rejected'] as const
 export default function DailyLogDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const logId = params.logId as string
 
-  const [log, setLog] = useState<DailyLogData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useDailyLog(logId)
+  const updateDailyLog = useUpdateDailyLog(logId)
+  const deleteDailyLog = useDeleteDailyLog()
+  const log = (response as { data: DailyLogData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -75,42 +73,18 @@ export default function DailyLogDetailPage() {
   })
 
   useEffect(() => {
-    async function loadLog() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('daily_logs')
-        .select('*')
-        .eq('id', logId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Daily log not found')
-        setLoading(false)
-        return
-      }
-
-      const d = data as DailyLogData
-      setLog(d)
+    if (log) {
       setFormData({
-        log_date: d.log_date || '',
-        status: d.status || 'draft',
-        weather_summary: d.weather_summary || '',
-        high_temp: d.high_temp != null ? String(d.high_temp) : '',
-        low_temp: d.low_temp != null ? String(d.low_temp) : '',
-        notes: d.notes || '',
-        conditions: d.conditions || '',
+        log_date: log.log_date || '',
+        status: log.status || 'draft',
+        weather_summary: log.weather_summary || '',
+        high_temp: log.high_temp != null ? String(log.high_temp) : '',
+        low_temp: log.low_temp != null ? String(log.low_temp) : '',
+        notes: log.notes || '',
+        conditions: log.conditions || '',
       })
-      setLoading(false)
     }
-    loadLog()
-  }, [jobId, logId, companyId])
+  }, [log])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -123,38 +97,16 @@ export default function DailyLogDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('daily_logs')
-        .update({
-          log_date: formData.log_date || undefined,
-          status: formData.status || 'draft',
-          weather_summary: formData.weather_summary || undefined,
-          high_temp: formData.high_temp ? Number(formData.high_temp) : undefined,
-          low_temp: formData.low_temp ? Number(formData.low_temp) : undefined,
-          notes: formData.notes || undefined,
-          conditions: formData.conditions || undefined,
-        })
-        .eq('id', logId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateDailyLog.mutateAsync({
+        log_date: formData.log_date || undefined,
+        status: formData.status || 'draft',
+        weather_summary: formData.weather_summary || undefined,
+        high_temp: formData.high_temp ? Number(formData.high_temp) : undefined,
+        low_temp: formData.low_temp ? Number(formData.low_temp) : undefined,
+        notes: formData.notes || undefined,
+        conditions: formData.conditions || undefined,
+      })
       toast.success('Saved')
-
-      setLog((prev) =>
-        prev
-          ? {
-              ...prev,
-              log_date: formData.log_date || null,
-              status: formData.status,
-              weather_summary: formData.weather_summary || null,
-              high_temp: formData.high_temp ? Number(formData.high_temp) : null,
-              low_temp: formData.low_temp ? Number(formData.low_temp) : null,
-              notes: formData.notes || null,
-              conditions: formData.conditions || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -169,29 +121,16 @@ export default function DailyLogDetailPage() {
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('daily_logs')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', logId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive daily log')
-        toast.error('Failed to archive daily log')
-        return
-      }
+      await deleteDailyLog.mutateAsync(logId)
       toast.success('Archived')
-
       router.push(`/jobs/${jobId}/daily-logs`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useCreateBidPackage } from '@/hooks/use-bids'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -27,7 +28,7 @@ export default function NewBidPackagePage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createBidPackage = useCreateBidPackage()
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<JobOption[]>([])
   const [jobsLoading, setJobsLoading] = useState(true)
@@ -71,32 +72,22 @@ export default function NewBidPackagePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createBidPackage.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.job_id) { setError('Job is required'); return }
+    if (!formData.title.trim()) { setError('Title is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
-      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('bid_packages')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          title: formData.title,
-          trade: formData.trade || null,
-          description: formData.description || null,
-          scope_of_work: formData.scope_of_work || null,
-          bid_due_date: formData.bid_due_date || null,
-          status: 'draft',
-          created_by: authUser.id,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createBidPackage.mutateAsync({
+        job_id: formData.job_id,
+        title: formData.title,
+        trade: formData.trade || null,
+        description: formData.description || null,
+        scope_of_work: formData.scope_of_work || null,
+        bid_due_date: formData.bid_due_date || null,
+        status: 'draft',
+      })
 
       toast.success('Bid package created')
       router.push('/bids')
@@ -105,8 +96,6 @@ export default function NewBidPackagePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create bid package'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -183,8 +172,8 @@ export default function NewBidPackagePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/bids"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Bid Package'}
+          <Button type="submit" disabled={createBidPackage.isPending}>
+            {createBidPackage.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Bid Package'}
           </Button>
         </div>
       </form>

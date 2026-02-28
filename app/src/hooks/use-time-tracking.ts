@@ -56,10 +56,11 @@ type TimeEntryCreateInput = {
   entry_date: string
   clock_in?: string | null
   clock_out?: string | null
-  regular_hours?: number
-  overtime_hours?: number
-  double_time_hours?: number
-  break_minutes?: number
+  regular_hours?: number | null
+  overtime_hours?: number | null
+  double_time_hours?: number | null
+  break_minutes?: number | null
+  status: string
   notes?: string | null
   entry_method?: string
 }

@@ -11,8 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useInventoryItem, useUpdateInventoryItem, useDeleteInventoryItem } from '@/hooks/use-inventory'
 import { formatCurrency } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -34,16 +33,13 @@ interface InventoryItemData {
 export default function InventoryItemDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useInventoryItem(entityId)
+  const updateItem = useUpdateInventoryItem(entityId)
+  const deleteItem = useDeleteInventoryItem()
+  const item = (response as { data: InventoryItemData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [item, setItem] = useState<InventoryItemData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -60,39 +56,20 @@ export default function InventoryItemDetailPage() {
   })
 
   useEffect(() => {
-    async function loadItem() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('inventory_items')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Inventory item not found')
-        setLoading(false)
-        return
-      }
-
-      const i = data as InventoryItemData
-      setItem(i)
+    if (item) {
       setFormData({
-        name: i.name,
-        sku: i.sku || '',
-        description: i.description || '',
-        category: i.category || '',
-        unit_of_measure: i.unit_of_measure,
-        unit_cost: i.unit_cost != null ? String(i.unit_cost) : '',
-        reorder_point: i.reorder_point != null ? String(i.reorder_point) : '',
-        reorder_quantity: i.reorder_quantity != null ? String(i.reorder_quantity) : '',
-        is_active: i.is_active,
+        name: item.name,
+        sku: item.sku || '',
+        description: item.description || '',
+        category: item.category || '',
+        unit_of_measure: item.unit_of_measure,
+        unit_cost: item.unit_cost != null ? String(item.unit_cost) : '',
+        reorder_point: item.reorder_point != null ? String(item.reorder_point) : '',
+        reorder_quantity: item.reorder_quantity != null ? String(item.reorder_quantity) : '',
+        is_active: item.is_active,
       })
-      setLoading(false)
     }
-    loadItem()
-  }, [params.id, companyId])
+  }, [item])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -102,83 +79,36 @@ export default function InventoryItemDetailPage() {
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
     if (!formData.unit_of_measure) { toast.error('Unit of Measure is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('inventory_items')
-        .update({
-          name: formData.name,
-          sku: formData.sku || null,
-          description: formData.description || null,
-          category: formData.category || null,
-          unit_of_measure: formData.unit_of_measure,
-          unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : 0,
-          reorder_point: formData.reorder_point ? parseFloat(formData.reorder_point) : 0,
-          reorder_quantity: formData.reorder_quantity ? parseFloat(formData.reorder_quantity) : 0,
-          is_active: formData.is_active,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setItem((prev) =>
-        prev
-          ? {
-              ...prev,
-              name: formData.name,
-              sku: formData.sku || null,
-              description: formData.description || null,
-              category: formData.category || null,
-              unit_of_measure: formData.unit_of_measure,
-              unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : 0,
-              reorder_point: formData.reorder_point ? parseFloat(formData.reorder_point) : 0,
-              reorder_quantity: formData.reorder_quantity ? parseFloat(formData.reorder_quantity) : 0,
-              is_active: formData.is_active,
-            }
-          : prev
-      )
-      setSuccess(true)
-      setEditing(false)
+      await updateItem.mutateAsync({
+        name: formData.name,
+        sku: formData.sku || null,
+        description: formData.description || null,
+        category: formData.category || null,
+        unit_of_measure: formData.unit_of_measure,
+        unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : 0,
+        reorder_point: formData.reorder_point ? parseFloat(formData.reorder_point) : 0,
+        reorder_quantity: formData.reorder_quantity ? parseFloat(formData.reorder_quantity) : 0,
+        is_active: formData.is_active,
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('inventory_items')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive item'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteItem.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/inventory')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -194,7 +124,7 @@ export default function InventoryItemDetailPage() {
         <Link href="/inventory" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Inventory
         </Link>
-        <p className="text-destructive">{error || 'Inventory item not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Inventory item not found'}</p>
       </div>
     )
   }
@@ -218,8 +148,8 @@ export default function InventoryItemDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateItem.isPending}>
+                  {updateItem.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -228,8 +158,7 @@ export default function InventoryItemDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Inventory item updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

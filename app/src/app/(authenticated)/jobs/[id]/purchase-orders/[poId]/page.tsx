@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { usePurchaseOrder, useUpdatePurchaseOrder, useDeletePurchaseOrder } from '@/hooks/use-purchase-orders'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -56,16 +55,15 @@ const STATUS_OPTIONS = ['draft', 'sent', 'acknowledged', 'partially_received', '
 export default function PurchaseOrderDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const poId = params.poId as string
 
-  const [po, setPo] = useState<PurchaseOrderData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = usePurchaseOrder(poId)
+  const updatePurchaseOrder = useUpdatePurchaseOrder(poId)
+  const deletePurchaseOrder = useDeletePurchaseOrder()
+  const po = (response as { data: PurchaseOrderData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -85,73 +83,20 @@ export default function PurchaseOrderDetailPage() {
   })
 
   useEffect(() => {
-    async function loadPO() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('purchase_orders')
-        .select('*')
-        .eq('id', poId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Purchase order not found')
-        setLoading(false)
-        return
-      }
-
-      // Fetch vendor name separately (no FK relationship in generated types)
-      let vendorName: string | null = null
-      if (data.vendor_id) {
-        const { data: vendorData } = await supabase
-          .from('vendors')
-          .select('name')
-          .eq('id', data.vendor_id)
-          .eq('company_id', companyId)
-          .single()
-        vendorName = vendorData?.name ?? null
-      }
-
-      const p: PurchaseOrderData = {
-        id: data.id,
-        po_number: data.po_number,
-        title: data.title,
-        vendor_id: data.vendor_id,
-        status: data.status,
-        subtotal: data.subtotal,
-        tax_amount: data.tax_amount,
-        shipping_amount: data.shipping_amount,
-        total_amount: data.total_amount,
-        delivery_date: data.delivery_date,
-        shipping_address: data.shipping_address,
-        terms: data.terms,
-        notes: data.notes,
-        created_at: data.created_at,
-        vendor_name: vendorName,
-      }
-
-      setPo(p)
+    if (po) {
       setFormData({
-        title: p.title,
-        status: p.status,
-        subtotal: String(p.subtotal),
-        tax_amount: String(p.tax_amount),
-        shipping_amount: String(p.shipping_amount),
-        delivery_date: p.delivery_date || '',
-        shipping_address: p.shipping_address || '',
-        terms: p.terms || '',
-        notes: p.notes || '',
+        title: po.title,
+        status: po.status,
+        subtotal: String(po.subtotal),
+        tax_amount: String(po.tax_amount),
+        shipping_amount: String(po.shipping_amount),
+        delivery_date: po.delivery_date || '',
+        shipping_address: po.shipping_address || '',
+        terms: po.terms || '',
+        notes: po.notes || '',
       })
-      setLoading(false)
     }
-    loadPO()
-  }, [poId, jobId, companyId])
+  }, [po])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -169,43 +114,18 @@ export default function PurchaseOrderDetailPage() {
       const tax = Number(formData.tax_amount) || 0
       const shipping = Number(formData.shipping_amount) || 0
 
-      const { error: updateError } = await supabase
-        .from('purchase_orders')
-        .update({
-          title: formData.title,
-          status: formData.status,
-          subtotal,
-          tax_amount: tax,
-          shipping_amount: shipping,
-          total_amount: subtotal + tax + shipping,
-          delivery_date: formData.delivery_date || null,
-          shipping_address: formData.shipping_address || null,
-          terms: formData.terms || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', poId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setPo((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: formData.title,
-              status: formData.status,
-              subtotal,
-              tax_amount: tax,
-              shipping_amount: shipping,
-              total_amount: subtotal + tax + shipping,
-              delivery_date: formData.delivery_date || null,
-              shipping_address: formData.shipping_address || null,
-              terms: formData.terms || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
+      await updatePurchaseOrder.mutateAsync({
+        title: formData.title,
+        status: formData.status,
+        subtotal,
+        tax_amount: tax,
+        shipping_amount: shipping,
+        total_amount: subtotal + tax + shipping,
+        delivery_date: formData.delivery_date || null,
+        shipping_address: formData.shipping_address || null,
+        terms: formData.terms || null,
+        notes: formData.notes || null,
+      } as never)
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -221,29 +141,16 @@ export default function PurchaseOrderDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('purchase_orders')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', poId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive purchase order')
-        toast.error('Failed to archive purchase order')
-        return
-      }
-
+      await deletePurchaseOrder.mutateAsync(poId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/purchase-orders`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

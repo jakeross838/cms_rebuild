@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useAssembly, useUpdateAssembly, useDeleteAssembly } from '@/hooks/use-estimating'
 import { getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -30,16 +29,13 @@ interface AssemblyData {
 export default function AssemblyDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useAssembly(entityId)
+  const updateAssembly = useUpdateAssembly(entityId)
+  const deleteAssembly = useDeleteAssembly()
+  const assembly = (response as { data: AssemblyData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [assembly, setAssembly] = useState<AssemblyData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -51,35 +47,15 @@ export default function AssemblyDetailPage() {
   })
 
   useEffect(() => {
-    async function loadAssembly() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('assemblies')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Assembly not found')
-        setLoading(false)
-        return
-      }
-
-      const a = data as AssemblyData
-      setAssembly(a)
+    if (assembly) {
       setFormData({
-        name: a.name,
-        category: a.category || '',
-        parameter_unit: a.parameter_unit || '',
-        description: a.description || '',
+        name: assembly.name,
+        category: assembly.category || '',
+        parameter_unit: assembly.parameter_unit || '',
+        description: assembly.description || '',
       })
-      setLoading(false)
     }
-    loadAssembly()
-  }, [params.id, companyId])
+  }, [assembly])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -88,69 +64,31 @@ export default function AssemblyDetailPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('assemblies')
-        .update({
-          name: formData.name,
-          category: formData.category || null,
-          parameter_unit: formData.parameter_unit || null,
-          description: formData.description || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setAssembly((prev) => prev ? {
-        ...prev,
+      await updateAssembly.mutateAsync({
         name: formData.name,
         category: formData.category || null,
         parameter_unit: formData.parameter_unit || null,
         description: formData.description || null,
-      } : prev)
-      setSuccess(true)
-      setEditing(false)
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('assemblies')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive assembly'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteAssembly.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/library/assemblies')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -166,7 +104,7 @@ export default function AssemblyDetailPage() {
         <Link href="/library/assemblies" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Assemblies
         </Link>
-        <p className="text-destructive">{error || 'Assembly not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Assembly not found'}</p>
       </div>
     )
   }
@@ -195,8 +133,8 @@ export default function AssemblyDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateAssembly.isPending}>
+                  {updateAssembly.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -205,8 +143,7 @@ export default function AssemblyDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Assembly updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

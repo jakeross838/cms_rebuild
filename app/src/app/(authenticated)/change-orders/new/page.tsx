@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateChangeOrder } from '@/hooks/use-change-orders'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -26,7 +27,7 @@ export default function NewChangeOrderPage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createChangeOrder = useCreateChangeOrder()
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<JobOption[]>([])
 
@@ -68,7 +69,7 @@ export default function NewChangeOrderPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createChangeOrder.isPending) return
     setError(null)
 
     if (!formData.title) {
@@ -80,30 +81,18 @@ export default function NewChangeOrderPage() {
       return
     }
 
-    setLoading(true)
-
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('change_orders')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          co_number: formData.co_number || `CO-${Date.now()}`,
-          title: formData.title,
-          description: formData.description || null,
-          change_type: formData.change_type,
-          amount: formData.amount ? parseFloat(formData.amount) : null,
-          cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
-          schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
-          status: 'draft',
-          created_by: authUser.id,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createChangeOrder.mutateAsync({
+        job_id: formData.job_id,
+        co_number: formData.co_number || `CO-${Date.now()}`,
+        title: formData.title,
+        description: formData.description || null,
+        change_type: formData.change_type,
+        amount: formData.amount ? parseFloat(formData.amount) : null,
+        cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
+        schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
+        status: 'draft',
+      })
 
       toast.success('Change order created')
       router.push('/change-orders')
@@ -112,8 +101,6 @@ export default function NewChangeOrderPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create change order'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -194,8 +181,8 @@ export default function NewChangeOrderPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/change-orders"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Change Order'}
+          <Button type="submit" disabled={createChangeOrder.isPending}>
+            {createChangeOrder.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Change Order'}
           </Button>
         </div>
       </form>

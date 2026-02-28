@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useSelectionCategory, useUpdateSelectionCategory, useDeleteSelectionCategory } from '@/hooks/use-selections'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -51,18 +50,13 @@ const PRICING_OPTIONS = ['allowance', 'fixed', 'cost_plus', 'no_charge'] as cons
 export default function SelectionCategoryDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const categoryId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useSelectionCategory(categoryId)
+  const updateCategory = useUpdateSelectionCategory(categoryId)
+  const deleteCategory = useDeleteSelectionCategory()
+  const category = (response as { data: CategoryData } | undefined)?.data ?? null
 
-  const [category, setCategory] = useState<CategoryData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -80,41 +74,21 @@ export default function SelectionCategoryDetailPage() {
   })
 
   useEffect(() => {
-    async function loadCategory() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('selection_categories')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', categoryId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Selection category not found')
-        setLoading(false)
-        return
-      }
-
-      const d = data as CategoryData
-      setCategory(d)
+    if (category) {
       setFormData({
-        name: d.name || '',
-        room: d.room || '',
-        sort_order: d.sort_order != null ? String(d.sort_order) : '',
-        pricing_model: d.pricing_model || 'allowance',
-        allowance_amount: d.allowance_amount != null ? String(d.allowance_amount) : '',
-        deadline: d.deadline || '',
-        lead_time_buffer_days: d.lead_time_buffer_days != null ? String(d.lead_time_buffer_days) : '',
-        status: d.status || 'pending',
-        designer_access: d.designer_access ?? false,
-        notes: d.notes || '',
+        name: category.name || '',
+        room: category.room || '',
+        sort_order: category.sort_order != null ? String(category.sort_order) : '',
+        pricing_model: category.pricing_model || 'allowance',
+        allowance_amount: category.allowance_amount != null ? String(category.allowance_amount) : '',
+        deadline: category.deadline || '',
+        lead_time_buffer_days: category.lead_time_buffer_days != null ? String(category.lead_time_buffer_days) : '',
+        status: category.status || 'pending',
+        designer_access: category.designer_access ?? false,
+        notes: category.notes || '',
       })
-      setLoading(false)
     }
-    loadCategory()
-  }, [categoryId, companyId])
+  }, [category])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target
@@ -126,85 +100,36 @@ export default function SelectionCategoryDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('selection_categories')
-        .update({
-          name: formData.name,
-          room: formData.room || undefined,
-          sort_order: formData.sort_order ? Number(formData.sort_order) : undefined,
-          pricing_model: formData.pricing_model,
-          allowance_amount: formData.allowance_amount ? Number(formData.allowance_amount) : undefined,
-          deadline: formData.deadline || undefined,
-          lead_time_buffer_days: formData.lead_time_buffer_days ? Number(formData.lead_time_buffer_days) : undefined,
-          status: formData.status,
-          designer_access: formData.designer_access,
-          notes: formData.notes || undefined,
-        })
-        .eq('id', categoryId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setCategory((prev) =>
-        prev
-          ? {
-              ...prev,
-              name: formData.name,
-              room: formData.room || null,
-              sort_order: formData.sort_order ? Number(formData.sort_order) : null,
-              pricing_model: formData.pricing_model,
-              allowance_amount: formData.allowance_amount ? Number(formData.allowance_amount) : null,
-              deadline: formData.deadline || null,
-              lead_time_buffer_days: formData.lead_time_buffer_days ? Number(formData.lead_time_buffer_days) : null,
-              status: formData.status,
-              designer_access: formData.designer_access,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
-      setSuccess(true)
-      setEditing(false)
+      await updateCategory.mutateAsync({
+        name: formData.name,
+        room: formData.room || undefined,
+        sort_order: formData.sort_order ? Number(formData.sort_order) : undefined,
+        pricing_model: formData.pricing_model,
+        allowance_amount: formData.allowance_amount ? Number(formData.allowance_amount) : undefined,
+        deadline: formData.deadline || undefined,
+        lead_time_buffer_days: formData.lead_time_buffer_days ? Number(formData.lead_time_buffer_days) : undefined,
+        status: formData.status,
+        designer_access: formData.designer_access,
+        notes: formData.notes || undefined,
+      })
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('selection_categories')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', categoryId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive category'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteCategory.mutateAsync(categoryId)
       toast.success('Archived')
       router.push('/library/selections')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -220,7 +145,7 @@ export default function SelectionCategoryDetailPage() {
         <Link href="/library/selections" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Selections
         </Link>
-        <p className="text-destructive">{error || 'Category not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Category not found'}</p>
       </div>
     )
   }
@@ -247,8 +172,8 @@ export default function SelectionCategoryDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateCategory.isPending}>
+                  {updateCategory.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -257,8 +182,7 @@ export default function SelectionCategoryDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Category updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

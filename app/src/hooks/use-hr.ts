@@ -53,15 +53,17 @@ type EmployeeCreateInput = {
   last_name: string
   employee_number: string
   hire_date: string
-  employment_status?: string
-  employment_type?: string
-  pay_type?: string
-  base_wage?: number
+  employment_status?: string | null
+  employment_type?: string | null
+  pay_type?: string | null
+  base_wage?: number | null
   email?: string | null
   phone?: string | null
   department_id?: string | null
   position_id?: string | null
   address?: string | null
+  emergency_contact_name?: string | null
+  emergency_contact_phone?: string | null
   notes?: string | null
 }
 

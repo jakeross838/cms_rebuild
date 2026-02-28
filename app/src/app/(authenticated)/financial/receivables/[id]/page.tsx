@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useArInvoice, useUpdateArInvoice, useDeleteArInvoice } from '@/hooks/use-accounting'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -48,18 +47,15 @@ interface JobLookup {
 export default function ARInvoiceDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useArInvoice(entityId)
+  const updateInvoice = useUpdateArInvoice(entityId)
+  const deleteInvoice = useDeleteArInvoice()
+  const invoice = (response as { data: ARInvoiceData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [invoice, setInvoice] = useState<ARInvoiceData | null>(null)
-  const [clients, setClients] = useState<ClientLookup[]>([])
-  const [jobs, setJobs] = useState<JobLookup[]>([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [clients] = useState<ClientLookup[]>([])
+  const [jobs] = useState<JobLookup[]>([])
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -77,48 +73,21 @@ export default function ARInvoiceDetailPage() {
   })
 
   useEffect(() => {
-    async function loadData() {
-      // Get current user's company_id for tenant-scoped dropdown queries
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const [invoiceRes, clientsRes, jobsRes] = await Promise.all([
-        supabase
-          .from('ar_invoices')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single(),
-        supabase.from('clients').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
-
-      if (invoiceRes.error || !invoiceRes.data) {
-        setError('Invoice not found')
-        setLoading(false)
-        return
-      }
-
-      const inv = invoiceRes.data as ARInvoiceData
-      setInvoice(inv)
-      setClients((clientsRes.data as ClientLookup[]) || [])
-      setJobs((jobsRes.data as JobLookup[]) || [])
+    if (invoice) {
       setFormData({
-        invoice_number: inv.invoice_number,
-        client_id: inv.client_id,
-        job_id: inv.job_id || '',
-        amount: String(inv.amount),
-        balance_due: String(inv.balance_due),
-        status: inv.status,
-        invoice_date: inv.invoice_date,
-        due_date: inv.due_date,
-        terms: inv.terms || '',
-        notes: inv.notes || '',
+        invoice_number: invoice.invoice_number,
+        client_id: invoice.client_id,
+        job_id: invoice.job_id || '',
+        amount: String(invoice.amount),
+        balance_due: String(invoice.balance_due),
+        status: invoice.status,
+        invoice_date: invoice.invoice_date,
+        due_date: invoice.due_date,
+        terms: invoice.terms || '',
+        notes: invoice.notes || '',
       })
-      setLoading(false)
     }
-    loadData()
-  }, [params.id, companyId])
+  }, [invoice])
 
   const clientName = clients.find((c) => c.id === invoice?.client_id)?.name || 'Unknown Client'
   const jobName = jobs.find((j) => j.id === invoice?.job_id)?.name
@@ -136,85 +105,37 @@ export default function ARInvoiceDetailPage() {
     if (!formData.balance_due.trim()) { toast.error('Balance Due is required'); return }
     if (!formData.invoice_date) { toast.error('Invoice Date is required'); return }
     if (!formData.due_date) { toast.error('Due Date is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('ar_invoices')
-        .update({
-          invoice_number: formData.invoice_number,
-          client_id: formData.client_id,
-          job_id: formData.job_id || null,
-          amount: parseFloat(formData.amount) || 0,
-          balance_due: parseFloat(formData.balance_due) || 0,
-          status: formData.status,
-          invoice_date: formData.invoice_date,
-          due_date: formData.due_date,
-          terms: formData.terms || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setInvoice((prev) =>
-        prev
-          ? {
-              ...prev,
-              invoice_number: formData.invoice_number,
-              client_id: formData.client_id,
-              job_id: formData.job_id || null,
-              amount: parseFloat(formData.amount) || 0,
-              balance_due: parseFloat(formData.balance_due) || 0,
-              status: formData.status,
-              invoice_date: formData.invoice_date,
-              due_date: formData.due_date,
-              terms: formData.terms || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
-      setSuccess(true)
-      setEditing(false)
+      await updateInvoice.mutateAsync({
+        invoice_number: formData.invoice_number,
+        client_id: formData.client_id,
+        job_id: formData.job_id || null,
+        amount: parseFloat(formData.amount) || 0,
+        balance_due: parseFloat(formData.balance_due) || 0,
+        status: formData.status,
+        invoice_date: formData.invoice_date,
+        due_date: formData.due_date,
+        terms: formData.terms || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('ar_invoices')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive invoice'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteInvoice.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/financial/receivables')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -230,7 +151,7 @@ export default function ARInvoiceDetailPage() {
         <Link href="/financial/receivables" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Receivables
         </Link>
-        <p className="text-destructive">{error || 'Invoice not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Invoice not found'}</p>
       </div>
     )
   }
@@ -255,8 +176,8 @@ export default function ARInvoiceDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateInvoice.isPending}>
+                  {updateInvoice.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -265,8 +186,7 @@ export default function ARInvoiceDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Invoice updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

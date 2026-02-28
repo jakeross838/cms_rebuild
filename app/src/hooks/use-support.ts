@@ -51,7 +51,7 @@ type TicketListParams = {
 
 type TicketCreateInput = {
   subject: string
-  category: string
+  category?: string | null
   channel?: string
   description?: string | null
   status?: string

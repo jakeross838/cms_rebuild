@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateContractTemplate } from '@/hooks/use-contracts'
 import { toast } from 'sonner'
 
 export default function NewTemplatePage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createTemplate = useCreateContractTemplate()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -38,29 +33,20 @@ export default function NewTemplatePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createTemplate.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Template name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.name.trim()) { setError('Template name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('contract_templates')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          contract_type: formData.contract_type,
-          description: formData.description || null,
-          content: formData.content || null,
-          is_active: true,
-          is_system: false,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createTemplate.mutateAsync({
+        name: formData.name,
+        contract_type: formData.contract_type,
+        description: formData.description || null,
+        content: formData.content || null,
+        is_active: true,
+        is_system: false,
+      })
 
       toast.success('Template created')
       router.push('/library/templates')
@@ -69,8 +55,6 @@ export default function NewTemplatePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create template'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -131,8 +115,8 @@ export default function NewTemplatePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/library/templates"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Template'}
+          <Button type="submit" disabled={createTemplate.isPending}>
+            {createTemplate.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Template'}
           </Button>
         </div>
       </form>

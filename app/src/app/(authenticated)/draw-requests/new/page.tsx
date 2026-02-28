@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateDrawRequest } from '@/hooks/use-draw-requests'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -32,7 +33,7 @@ export default function NewDrawRequestPage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createDrawRequest = useCreateDrawRequest()
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<JobOption[]>([])
 
@@ -74,50 +75,41 @@ export default function NewDrawRequestPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createDrawRequest.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.draw_number || !formData.application_date || !formData.period_to) {
+      setError('Draw number, application date, and period to are required')
+      return
+    }
+
+    if (!formData.job_id) { setError('Job is required'); return }
+
+    const drawNumber = parseInt(formData.draw_number, 10)
+    if (isNaN(drawNumber) || drawNumber <= 0) { setError('Draw number must be a positive number'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.draw_number || !formData.application_date || !formData.period_to) {
-        throw new Error('Draw number, application date, and period to are required')
-      }
-
-      if (!formData.job_id) throw new Error('Job is required')
-
-      const drawNumber = parseInt(formData.draw_number, 10)
-      if (isNaN(drawNumber) || drawNumber <= 0) { setError('Draw number must be a positive number'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('draw_requests')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          draw_number: drawNumber,
-          application_date: formData.application_date,
-          period_to: formData.period_to,
-          status: 'draft',
-          contract_amount: formData.contract_amount
-            ? parseFloat(formData.contract_amount)
-            : undefined,
-          total_completed: formData.total_completed
-            ? parseFloat(formData.total_completed)
-            : undefined,
-          retainage_pct: formData.retainage_pct
-            ? parseFloat(formData.retainage_pct)
-            : undefined,
-          current_due: formData.current_due
-            ? parseFloat(formData.current_due)
-            : undefined,
-          lender_reference: formData.lender_reference || undefined,
-          notes: formData.notes || undefined,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createDrawRequest.mutateAsync({
+        job_id: formData.job_id,
+        draw_number: drawNumber,
+        application_date: formData.application_date,
+        period_to: formData.period_to,
+        status: 'draft',
+        contract_amount: formData.contract_amount
+          ? parseFloat(formData.contract_amount)
+          : undefined,
+        total_completed: formData.total_completed
+          ? parseFloat(formData.total_completed)
+          : undefined,
+        retainage_pct: formData.retainage_pct
+          ? parseFloat(formData.retainage_pct)
+          : undefined,
+        current_due: formData.current_due
+          ? parseFloat(formData.current_due)
+          : undefined,
+        lender_reference: formData.lender_reference || undefined,
+        notes: formData.notes || undefined,
+      })
 
       toast.success('Draw request created')
       router.push('/draw-requests')
@@ -126,8 +118,6 @@ export default function NewDrawRequestPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create draw request'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -347,8 +337,8 @@ export default function NewDrawRequestPage() {
               Cancel
             </Button>
           </Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? (
+          <Button type="submit" disabled={createDrawRequest.isPending}>
+            {createDrawRequest.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 Creating...

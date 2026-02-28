@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateCostCode } from '@/hooks/use-cost-codes'
 import { toast } from 'sonner'
 
 export default function NewCostCodePage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createCostCode = useCreateCostCode()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -41,30 +36,23 @@ export default function NewCostCodePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createCostCode.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.code.trim()) { setError('Code is required'); return }
+    if (!formData.name.trim()) { setError('Name is required'); return }
+    if (!formData.division.trim()) { setError('Division is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.code.trim()) { setError('Code is required'); setLoading(false); return }
-      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
-      if (!formData.division.trim()) { setError('Division is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('cost_codes')
-        .insert({
-          company_id: companyId,
-          code: formData.code,
-          name: formData.name,
-          division: formData.division,
-          subdivision: formData.subdivision || null,
-          category: formData.category,
-          trade: formData.trade || null,
-          description: formData.description || null,
-        })
-
-      if (insertError) throw insertError
+      await createCostCode.mutateAsync({
+        code: formData.code,
+        name: formData.name,
+        division: formData.division,
+        subdivision: formData.subdivision || null,
+        category: formData.category,
+        trade: formData.trade || null,
+        description: formData.description || null,
+      })
 
       toast.success('Cost code created')
       router.push('/cost-codes')
@@ -73,8 +61,6 @@ export default function NewCostCodePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create cost code'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -145,8 +131,8 @@ export default function NewCostCodePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/cost-codes"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Cost Code'}
+          <Button type="submit" disabled={createCostCode.isPending}>
+            {createCostCode.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Cost Code'}
           </Button>
         </div>
       </form>

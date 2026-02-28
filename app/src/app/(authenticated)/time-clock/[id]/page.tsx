@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useTimeEntry, useUpdateTimeEntry, useDeleteTimeEntry } from '@/hooks/use-time-tracking'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -47,18 +46,13 @@ const STATUS_OPTIONS = ['pending', 'approved', 'rejected'] as const
 export default function TimeClockDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const entryId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useTimeEntry(entryId)
+  const updateEntry = useUpdateTimeEntry(entryId)
+  const deleteEntry = useDeleteTimeEntry()
+  const entry = (response as { data: TimeEntryData } | undefined)?.data ?? null
 
-  const [entry, setEntry] = useState<TimeEntryData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -74,38 +68,19 @@ export default function TimeClockDetailPage() {
   })
 
   useEffect(() => {
-    async function loadEntry() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('time_entries')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', entryId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Time entry not found')
-        setLoading(false)
-        return
-      }
-
-      const d = data as TimeEntryData
-      setEntry(d)
+    if (entry) {
       setFormData({
-        entry_date: d.entry_date || '',
-        clock_in: d.clock_in ? d.clock_in.slice(0, 16) : '',
-        clock_out: d.clock_out ? d.clock_out.slice(0, 16) : '',
-        regular_hours: d.regular_hours != null ? String(d.regular_hours) : '',
-        overtime_hours: d.overtime_hours != null ? String(d.overtime_hours) : '',
-        status: d.status || 'pending',
-        break_minutes: d.break_minutes != null ? String(d.break_minutes) : '',
-        notes: d.notes || '',
+        entry_date: entry.entry_date || '',
+        clock_in: entry.clock_in ? entry.clock_in.slice(0, 16) : '',
+        clock_out: entry.clock_out ? entry.clock_out.slice(0, 16) : '',
+        regular_hours: entry.regular_hours != null ? String(entry.regular_hours) : '',
+        overtime_hours: entry.overtime_hours != null ? String(entry.overtime_hours) : '',
+        status: entry.status || 'pending',
+        break_minutes: entry.break_minutes != null ? String(entry.break_minutes) : '',
+        notes: entry.notes || '',
       })
-      setLoading(false)
     }
-    loadEntry()
-  }, [entryId, companyId])
+  }, [entry])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -113,80 +88,34 @@ export default function TimeClockDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('time_entries')
-        .update({
-          entry_date: formData.entry_date || undefined,
-          clock_in: formData.clock_in || undefined,
-          clock_out: formData.clock_out || undefined,
-          regular_hours: formData.regular_hours ? Number(formData.regular_hours) : undefined,
-          overtime_hours: formData.overtime_hours ? Number(formData.overtime_hours) : undefined,
-          status: formData.status,
-          break_minutes: formData.break_minutes ? Number(formData.break_minutes) : undefined,
-          notes: formData.notes || undefined,
-        })
-        .eq('id', entryId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateEntry.mutateAsync({
+        entry_date: formData.entry_date || undefined,
+        clock_in: formData.clock_in || undefined,
+        clock_out: formData.clock_out || undefined,
+        regular_hours: formData.regular_hours ? Number(formData.regular_hours) : undefined,
+        overtime_hours: formData.overtime_hours ? Number(formData.overtime_hours) : undefined,
+        status: formData.status,
+        break_minutes: formData.break_minutes ? Number(formData.break_minutes) : undefined,
+        notes: formData.notes || undefined,
+      })
       toast.success('Saved')
-
-      setEntry((prev) =>
-        prev
-          ? {
-              ...prev,
-              entry_date: formData.entry_date,
-              clock_in: formData.clock_in || null,
-              clock_out: formData.clock_out || null,
-              regular_hours: formData.regular_hours ? Number(formData.regular_hours) : null,
-              overtime_hours: formData.overtime_hours ? Number(formData.overtime_hours) : null,
-              status: formData.status,
-              break_minutes: formData.break_minutes ? Number(formData.break_minutes) : null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: archiveError } = await supabase
-        .from('time_entries')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', entryId)
-        .eq('company_id', companyId)
-
-      if (archiveError) {
-        setError('Failed to archive entry')
-        toast.error('Failed to archive entry')
-        return
-      }
+      await deleteEntry.mutateAsync(entryId)
       toast.success('Archived')
-
       router.push('/time-clock')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   const totalHours = (entry?.regular_hours ?? 0) + (entry?.overtime_hours ?? 0)
 
@@ -204,7 +133,7 @@ export default function TimeClockDetailPage() {
         <Link href="/time-clock" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Time Clock
         </Link>
-        <p className="text-destructive">{error || 'Time entry not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Time entry not found'}</p>
       </div>
     )
   }
@@ -233,8 +162,8 @@ export default function TimeClockDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateEntry.isPending}>
+                  {updateEntry.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -243,8 +172,7 @@ export default function TimeClockDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Time entry updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

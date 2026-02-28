@@ -12,29 +12,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useApBill, useUpdateApBill, useDeleteApBill, type ApBill } from '@/hooks/use-accounting'
+import { useVendors } from '@/hooks/use-vendors'
+import { useJobs } from '@/hooks/use-jobs'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
-
-interface BillData {
-  id: string
-  company_id: string
-  vendor_id: string
-  bill_number: string
-  bill_date: string
-  due_date: string
-  amount: number
-  balance_due: number
-  status: string
-  job_id: string | null
-  description: string | null
-  received_date: string | null
-  terms: string | null
-  created_at: string | null
-  updated_at: string | null
-  deleted_at: string | null
-}
 
 interface VendorLookup {
   id: string
@@ -49,18 +31,18 @@ interface JobLookup {
 export default function BillDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const billId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useApBill(billId)
+  const updateBill = useUpdateApBill(billId)
+  const deleteBill = useDeleteApBill()
+  const { data: vendorsResponse } = useVendors()
+  const { data: jobsResponse } = useJobs()
 
-  const companyId = authProfile?.company_id || ''
-  const [bill, setBill] = useState<BillData | null>(null)
-  const [vendors, setVendors] = useState<VendorLookup[]>([])
-  const [jobs, setJobs] = useState<JobLookup[]>([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const bill = (response as { data: ApBill } | undefined)?.data ?? null
+  const vendors: VendorLookup[] = (vendorsResponse as { data: VendorLookup[] } | undefined)?.data ?? []
+  const jobs: JobLookup[] = (jobsResponse as { data: JobLookup[] } | undefined)?.data ?? []
+
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -79,48 +61,22 @@ export default function BillDetailPage() {
   })
 
   useEffect(() => {
-    async function loadData() {
-      // Get current user's company_id for tenant-scoped dropdown queries
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const [billRes, vendorsRes, jobsRes] = await Promise.all([
-        supabase
-          .from('ap_bills')
-          .select('*')
-          .eq('id', params.id as string)
-          .is('deleted_at', null)
-          .single(),
-        supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
-
-      if (billRes.error || !billRes.data) {
-        setError('Bill not found')
-        setLoading(false)
-        return
-      }
-
-      const b = billRes.data as BillData
-      setBill(b)
-      setVendors((vendorsRes.data as VendorLookup[]) || [])
-      setJobs((jobsRes.data as JobLookup[]) || [])
+    if (bill) {
       setFormData({
-        bill_number: b.bill_number,
-        vendor_id: b.vendor_id,
-        job_id: b.job_id || '',
-        amount: String(b.amount),
-        balance_due: String(b.balance_due),
-        status: b.status,
-        bill_date: b.bill_date,
-        due_date: b.due_date,
-        received_date: b.received_date || '',
-        terms: b.terms || '',
-        description: b.description || '',
+        bill_number: bill.bill_number,
+        vendor_id: bill.vendor_id,
+        job_id: bill.job_id || '',
+        amount: String(bill.amount),
+        balance_due: String(bill.balance_due),
+        status: bill.status,
+        bill_date: bill.bill_date,
+        due_date: bill.due_date,
+        received_date: bill.received_date || '',
+        terms: bill.terms || '',
+        description: bill.description || '',
       })
-      setLoading(false)
     }
-    loadData()
-  }, [params.id, companyId])
+  }, [bill])
 
   const vendorName = vendors.find((v) => v.id === bill?.vendor_id)?.name || 'Unknown Vendor'
   const jobName = jobs.find((j) => j.id === bill?.job_id)?.name
@@ -138,87 +94,41 @@ export default function BillDetailPage() {
     if (!formData.balance_due.trim()) { toast.error('Balance Due is required'); return }
     if (!formData.bill_date) { toast.error('Bill Date is required'); return }
     if (!formData.due_date) { toast.error('Due Date is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('ap_bills')
-        .update({
-          bill_number: formData.bill_number,
-          vendor_id: formData.vendor_id,
-          job_id: formData.job_id || null,
-          amount: parseFloat(formData.amount) || 0,
-          balance_due: parseFloat(formData.balance_due) || 0,
-          status: formData.status,
-          bill_date: formData.bill_date,
-          due_date: formData.due_date,
-          received_date: formData.received_date || null,
-          terms: formData.terms || null,
-          description: formData.description || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
+      await updateBill.mutateAsync({
+        bill_number: formData.bill_number,
+        vendor_id: formData.vendor_id,
+        job_id: formData.job_id || null,
+        amount: parseFloat(formData.amount) || 0,
+        balance_due: parseFloat(formData.balance_due) || 0,
+        status: formData.status,
+        bill_date: formData.bill_date,
+        due_date: formData.due_date,
+        received_date: formData.received_date || null,
+        terms: formData.terms || null,
+        description: formData.description || null,
+      } as never)
 
-      if (updateError) throw updateError
-
-      setBill((prev) =>
-        prev
-          ? {
-              ...prev,
-              bill_number: formData.bill_number,
-              vendor_id: formData.vendor_id,
-              job_id: formData.job_id || null,
-              amount: parseFloat(formData.amount) || 0,
-              balance_due: parseFloat(formData.balance_due) || 0,
-              status: formData.status,
-              bill_date: formData.bill_date,
-              due_date: formData.due_date,
-              received_date: formData.received_date || null,
-              terms: formData.terms || null,
-              description: formData.description || null,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('ap_bills')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive bill'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteBill.mutateAsync(billId)
       toast.success('Archived')
       router.push('/financial/payables')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -234,7 +144,7 @@ export default function BillDetailPage() {
         <Link href="/financial/payables" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Payables
         </Link>
-        <p className="text-destructive">{error || 'Bill not found'}</p>
+        <p className="text-destructive">{(fetchError as Error)?.message || 'Bill not found'}</p>
       </div>
     )
   }
@@ -259,8 +169,8 @@ export default function BillDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateBill.isPending}>
+                  {updateBill.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -269,8 +179,7 @@ export default function BillDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Bill updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{(fetchError as Error)?.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

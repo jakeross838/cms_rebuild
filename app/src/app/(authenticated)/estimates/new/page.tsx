@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateEstimate } from '@/hooks/use-estimating'
 import { toast } from 'sonner'
 
 export default function NewEstimatePage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createEstimate = useCreateEstimate()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -42,31 +37,23 @@ export default function NewEstimatePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createEstimate.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Estimate name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.name.trim()) { setError('Estimate name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('estimates')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          estimate_type: formData.estimate_type,
-          status: 'draft',
-          description: formData.description || null,
-          markup_pct: formData.markup_pct ? parseFloat(formData.markup_pct) : null,
-          overhead_pct: formData.overhead_pct ? parseFloat(formData.overhead_pct) : null,
-          profit_pct: formData.profit_pct ? parseFloat(formData.profit_pct) : null,
-          valid_until: formData.valid_until || null,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createEstimate.mutateAsync({
+        name: formData.name,
+        estimate_type: formData.estimate_type,
+        status: 'draft',
+        description: formData.description || null,
+        markup_pct: formData.markup_pct ? parseFloat(formData.markup_pct) : null,
+        overhead_pct: formData.overhead_pct ? parseFloat(formData.overhead_pct) : null,
+        profit_pct: formData.profit_pct ? parseFloat(formData.profit_pct) : null,
+        valid_until: formData.valid_until || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Estimate created')
       router.push('/estimates')
@@ -75,8 +62,6 @@ export default function NewEstimatePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create estimate'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -159,8 +144,8 @@ export default function NewEstimatePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/estimates"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Estimate'}
+          <Button type="submit" disabled={createEstimate.isPending}>
+            {createEstimate.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Estimate'}
           </Button>
         </div>
       </form>

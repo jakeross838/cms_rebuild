@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useLead, useUpdateLead, useDeleteLead } from '@/hooks/use-crm'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -43,16 +42,13 @@ const PRIORITY_OPTIONS = ['low', 'medium', 'high', 'urgent']
 export default function LeadDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useLead(entityId)
+  const updateLead = useUpdateLead(entityId)
+  const deleteLead = useDeleteLead()
+  const lead = (response as { data: LeadData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [lead, setLead] = useState<LeadData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -74,44 +70,25 @@ export default function LeadDetailPage() {
   })
 
   useEffect(() => {
-    async function loadLead() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('leads')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Lead not found')
-        setLoading(false)
-        return
-      }
-
-      const l = data as LeadData
-      setLead(l)
+    if (lead) {
       setFormData({
-        first_name: l.first_name || '',
-        last_name: l.last_name || '',
-        email: l.email || '',
-        phone: l.phone || '',
-        source: l.source || '',
-        source_detail: l.source_detail || '',
-        project_type: l.project_type || '',
-        expected_contract_value: l.expected_contract_value?.toString() || '',
-        priority: l.priority || '',
-        address: l.address || '',
-        lot_address: l.lot_address || '',
-        timeline: l.timeline || '',
-        budget_range_low: l.budget_range_low?.toString() || '',
-        budget_range_high: l.budget_range_high?.toString() || '',
+        first_name: lead.first_name || '',
+        last_name: lead.last_name || '',
+        email: lead.email || '',
+        phone: lead.phone || '',
+        source: lead.source || '',
+        source_detail: lead.source_detail || '',
+        project_type: lead.project_type || '',
+        expected_contract_value: lead.expected_contract_value?.toString() || '',
+        priority: lead.priority || '',
+        address: lead.address || '',
+        lot_address: lead.lot_address || '',
+        timeline: lead.timeline || '',
+        budget_range_low: lead.budget_range_low?.toString() || '',
+        budget_range_high: lead.budget_range_high?.toString() || '',
       })
-      setLoading(false)
     }
-    loadLead()
-  }, [params.id, companyId])
+  }, [lead])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -119,87 +96,40 @@ export default function LeadDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('leads')
-        .update({
-          first_name: formData.first_name || undefined,
-          last_name: formData.last_name || undefined,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          source: formData.source || undefined,
-          source_detail: formData.source_detail || null,
-          project_type: formData.project_type || null,
-          expected_contract_value: formData.expected_contract_value ? parseFloat(formData.expected_contract_value) : null,
-          priority: formData.priority || undefined,
-          address: formData.address || null,
-          lot_address: formData.lot_address || null,
-          timeline: formData.timeline || null,
-          budget_range_low: formData.budget_range_low ? parseFloat(formData.budget_range_low) : null,
-          budget_range_high: formData.budget_range_high ? parseFloat(formData.budget_range_high) : null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setLead((prev) => prev ? {
-        ...prev,
-        first_name: formData.first_name || null,
-        last_name: formData.last_name || null,
+      await updateLead.mutateAsync({
+        first_name: formData.first_name || undefined,
+        last_name: formData.last_name || undefined,
         email: formData.email || null,
         phone: formData.phone || null,
-        source: formData.source || null,
+        source: formData.source || undefined,
         source_detail: formData.source_detail || null,
         project_type: formData.project_type || null,
         expected_contract_value: formData.expected_contract_value ? parseFloat(formData.expected_contract_value) : null,
-        priority: formData.priority || null,
+        priority: formData.priority || undefined,
         address: formData.address || null,
         lot_address: formData.lot_address || null,
         timeline: formData.timeline || null,
         budget_range_low: formData.budget_range_low ? parseFloat(formData.budget_range_low) : null,
         budget_range_high: formData.budget_range_high ? parseFloat(formData.budget_range_high) : null,
-      } : prev)
+      } as Record<string, unknown>)
       toast.success('Lead updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save lead')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('leads')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive lead')
-        toast.error('Failed to archive lead')
-        return
-      }
-
+      await deleteLead.mutateAsync(entityId)
       toast.success('Lead archived')
       router.push('/leads')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -215,7 +145,7 @@ export default function LeadDetailPage() {
         <Link href="/leads" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Leads
         </Link>
-        <p className="text-destructive">{error || 'Lead not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Lead not found'}</p>
       </div>
     )
   }
@@ -250,8 +180,8 @@ export default function LeadDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateLead.isPending}>
+                  {updateLead.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -260,8 +190,7 @@ export default function LeadDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Lead updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

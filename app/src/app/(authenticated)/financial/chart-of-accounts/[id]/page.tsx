@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useGlAccount, useUpdateGlAccount } from '@/hooks/use-accounting'
 import { toast } from 'sonner'
 import { formatStatus, getStatusColor } from '@/lib/utils'
 
@@ -36,18 +35,13 @@ interface AccountData {
 export default function ChartOfAccountsDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useGlAccount(entityId)
+  const updateAccount = useUpdateGlAccount(entityId)
+  const account = (response as { data: AccountData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [account, setAccount] = useState<AccountData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [archiving, setArchiving] = useState(false)
   const [showToggleDialog, setShowToggleDialog] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -62,37 +56,18 @@ export default function ChartOfAccountsDetailPage() {
   })
 
   useEffect(() => {
-    async function loadAccount() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('gl_accounts')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Account not found')
-        setLoading(false)
-        return
-      }
-
-      const a = data as AccountData
-      setAccount(a)
+    if (account) {
       setFormData({
-        account_number: a.account_number,
-        name: a.name,
-        account_type: a.account_type,
-        sub_type: a.sub_type || '',
-        normal_balance: a.normal_balance,
-        is_active: a.is_active !== false,
-        description: a.description || '',
+        account_number: account.account_number,
+        name: account.name,
+        account_type: account.account_type,
+        sub_type: account.sub_type || '',
+        normal_balance: account.normal_balance,
+        is_active: account.is_active !== false,
+        description: account.description || '',
       })
-      setLoading(false)
     }
-    loadAccount()
-  }, [params.id, companyId])
+  }, [account])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -105,22 +80,13 @@ export default function ChartOfAccountsDetailPage() {
   }
 
   const handleArchive = async () => {
-    setArchiving(true)
     try {
-      const { error: archiveError } = await supabase
-        .from('gl_accounts')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) throw archiveError
+      await updateAccount.mutateAsync({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       toast.success('Archived')
       router.push('/financial/chart-of-accounts')
       router.refresh()
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to archive'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      setArchiving(false)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
   }
 
@@ -129,51 +95,21 @@ export default function ChartOfAccountsDetailPage() {
     if (!formData.name.trim()) { toast.error('Account Name is required'); return }
     if (!formData.account_type) { toast.error('Account Type is required'); return }
     if (!formData.normal_balance) { toast.error('Normal Balance is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('gl_accounts')
-        .update({
-          account_number: formData.account_number,
-          name: formData.name,
-          account_type: formData.account_type,
-          sub_type: formData.sub_type || null,
-          normal_balance: formData.normal_balance,
-          is_active: formData.is_active,
-          description: formData.description || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
+      await updateAccount.mutateAsync({
+        account_number: formData.account_number,
+        name: formData.name,
+        account_type: formData.account_type,
+        sub_type: formData.sub_type || null,
+        normal_balance: formData.normal_balance,
+        is_active: formData.is_active,
+        description: formData.description || null,
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setAccount((prev) =>
-        prev
-          ? {
-              ...prev,
-              account_number: formData.account_number,
-              name: formData.name,
-              account_type: formData.account_type,
-              sub_type: formData.sub_type || null,
-              normal_balance: formData.normal_balance,
-              is_active: formData.is_active,
-              description: formData.description || null,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
@@ -182,21 +118,11 @@ export default function ChartOfAccountsDetailPage() {
     const action = newActive ? 'activate' : 'deactivate'
 
     try {
-      const { error: toggleError } = await supabase
-        .from('gl_accounts')
-        .update({ is_active: newActive })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (toggleError) throw toggleError
-
-      setAccount((prev) => prev ? { ...prev, is_active: newActive } : prev)
+      await updateAccount.mutateAsync({ is_active: newActive } as Record<string, unknown>)
       setFormData((prev) => ({ ...prev, is_active: newActive }))
       toast.success(`Account ${action}d`)
     } catch (err) {
-      const msg = (err as Error)?.message || `Failed to ${action} account`
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || `Failed to ${action} account`)
     }
   }
 
@@ -214,7 +140,7 @@ export default function ChartOfAccountsDetailPage() {
         <Link href="/financial/chart-of-accounts" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Chart of Accounts
         </Link>
-        <p className="text-destructive">{error || 'Account not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Account not found'}</p>
       </div>
     )
   }
@@ -242,13 +168,13 @@ export default function ChartOfAccountsDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={updateAccount.isPending} variant="outline" className="text-destructive hover:text-destructive">{updateAccount.isPending ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateAccount.isPending}>
+                  {updateAccount.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -257,8 +183,7 @@ export default function ChartOfAccountsDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Account updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

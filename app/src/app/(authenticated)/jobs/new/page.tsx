@@ -11,18 +11,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { CONTRACT_TYPES, US_STATES } from '@/config/constants'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateJob } from '@/hooks/use-jobs'
 import { toast } from 'sonner'
 
 export default function NewJobPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createJob = useCreateJob()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -46,46 +41,35 @@ export default function NewJobPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createJob.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Job name is required'); return }
 
     try {
-      // Get user's company_id
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.name.trim()) { setError('Job name is required'); setLoading(false); return }
-
-      const { data: job, error: insertError } = await supabase
-        .from('jobs')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          job_number: formData.job_number || null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip: formData.zip || null,
-          contract_amount: formData.contract_amount ? parseFloat(formData.contract_amount) : null,
-          contract_type: formData.contract_type as 'fixed_price' | 'cost_plus' | 'time_materials',
-          start_date: formData.start_date || null,
-          target_completion: formData.target_completion || null,
-          notes: formData.notes || null,
-          status: 'pre_construction' as const,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      const job = await createJob.mutateAsync({
+        name: formData.name,
+        job_number: formData.job_number || null,
+        address: formData.address || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zip: formData.zip || null,
+        contract_amount: formData.contract_amount ? parseFloat(formData.contract_amount) : null,
+        contract_type: formData.contract_type,
+        start_date: formData.start_date || null,
+        target_completion: formData.target_completion || null,
+        notes: formData.notes || null,
+        status: 'pre_construction',
+      })
 
       toast.success('Job created')
-      router.push(`/jobs/${job.id}`)
+      const jobId = (job as { id?: string })?.id
+      router.push(jobId ? `/jobs/${jobId}` : '/jobs')
       router.refresh()
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to create job'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -314,9 +298,9 @@ export default function NewJobPage() {
           </Link>
           <Button
             type="submit"
-            disabled={loading}
+            disabled={createJob.isPending}
           >
-            {loading ? (
+            {createJob.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 Creating...

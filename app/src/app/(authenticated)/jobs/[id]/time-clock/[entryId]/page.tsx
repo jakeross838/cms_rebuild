@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useTimeEntry, useUpdateTimeEntry, useDeleteTimeEntry } from '@/hooks/use-time-tracking'
 import { formatDate, formatTime, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -52,16 +51,15 @@ const STATUS_OPTIONS = ['pending', 'approved', 'rejected'] as const
 export default function TimeEntryDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const entryId = params.entryId as string
 
-  const [entry, setEntry] = useState<TimeEntryData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useTimeEntry(entryId)
+  const updateTimeEntry = useUpdateTimeEntry(entryId)
+  const deleteTimeEntry = useDeleteTimeEntry()
+  const entry = (response as { data: TimeEntryData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -80,43 +78,19 @@ export default function TimeEntryDetailPage() {
   })
 
   useEffect(() => {
-    async function loadEntry() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('time_entries')
-        .select('*')
-        .eq('id', entryId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Time entry not found')
-        setLoading(false)
-        return
-      }
-
-      const e = data as TimeEntryData
-      setEntry(e)
+    if (entry) {
       setFormData({
-        entry_date: e.entry_date || '',
-        clock_in: e.clock_in || '',
-        clock_out: e.clock_out || '',
-        regular_hours: String(e.regular_hours),
-        overtime_hours: String(e.overtime_hours),
-        break_minutes: String(e.break_minutes ?? 0),
-        status: e.status,
-        notes: e.notes || '',
+        entry_date: entry.entry_date || '',
+        clock_in: entry.clock_in || '',
+        clock_out: entry.clock_out || '',
+        regular_hours: String(entry.regular_hours),
+        overtime_hours: String(entry.overtime_hours),
+        break_minutes: String(entry.break_minutes ?? 0),
+        status: entry.status,
+        notes: entry.notes || '',
       })
-      setLoading(false)
     }
-    loadEntry()
-  }, [entryId, jobId, companyId])
+  }, [entry])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -134,39 +108,16 @@ export default function TimeEntryDetailPage() {
       const overtime = Number(formData.overtime_hours) || 0
       const breakMins = parseInt(formData.break_minutes, 10) || 0
 
-      const { error: updateError } = await supabase
-        .from('time_entries')
-        .update({
-          entry_date: formData.entry_date,
-          clock_in: formData.clock_in || null,
-          clock_out: formData.clock_out || null,
-          regular_hours: regular,
-          overtime_hours: overtime,
-          break_minutes: breakMins,
-          status: formData.status,
-          notes: formData.notes || null,
-        })
-        .eq('id', entryId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setEntry((prev) =>
-        prev
-          ? {
-              ...prev,
-              entry_date: formData.entry_date,
-              clock_in: formData.clock_in || null,
-              clock_out: formData.clock_out || null,
-              regular_hours: regular,
-              overtime_hours: overtime,
-              break_minutes: breakMins,
-              status: formData.status,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
+      await updateTimeEntry.mutateAsync({
+        entry_date: formData.entry_date,
+        clock_in: formData.clock_in || null,
+        clock_out: formData.clock_out || null,
+        regular_hours: regular,
+        overtime_hours: overtime,
+        break_minutes: breakMins,
+        status: formData.status,
+        notes: formData.notes || null,
+      } as never)
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -182,29 +133,16 @@ export default function TimeEntryDetailPage() {
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('time_entries')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', entryId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive time entry')
-        toast.error('Failed to archive time entry')
-        return
-      }
-
+      await deleteTimeEntry.mutateAsync(entryId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/time-clock`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

@@ -35,8 +35,11 @@ type DrawRequestCreateInput = {
   draw_number?: number
   application_date: string
   period_to: string
-  contract_amount?: number
-  retainage_pct?: number
+  status?: string
+  contract_amount?: number | null
+  retainage_pct?: number | null
+  total_completed?: number | null
+  current_due?: number | null
   notes?: string | null
   lender_reference?: string | null
 }

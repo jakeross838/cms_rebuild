@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useDrawRequest, useUpdateDrawRequest, useDeleteDrawRequest } from '@/hooks/use-draw-requests'
 import { formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -52,16 +51,15 @@ const STATUS_OPTIONS = ['draft', 'submitted', 'approved', 'rejected', 'paid'] as
 export default function DrawRequestDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const drawId = params.drawId as string
 
-  const [draw, setDraw] = useState<DrawRequestData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useDrawRequest(drawId)
+  const updateDrawRequest = useUpdateDrawRequest(drawId)
+  const deleteDrawRequest = useDeleteDrawRequest()
+  const draw = (response as { data: DrawRequestData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -80,43 +78,19 @@ export default function DrawRequestDetailPage() {
   })
 
   useEffect(() => {
-    async function loadDraw() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('draw_requests')
-        .select('*')
-        .eq('id', drawId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Draw request not found')
-        setLoading(false)
-        return
-      }
-
-      const d = data as DrawRequestData
-      setDraw(d)
+    if (draw) {
       setFormData({
-        draw_number: d.draw_number != null ? String(d.draw_number) : '',
-        status: d.status || 'draft',
-        contract_amount: d.contract_amount != null ? String(d.contract_amount) : '',
-        total_earned: d.total_earned != null ? String(d.total_earned) : '',
-        total_completed: d.total_completed != null ? String(d.total_completed) : '',
-        current_due: d.current_due != null ? String(d.current_due) : '',
-        retainage_amount: d.retainage_amount != null ? String(d.retainage_amount) : '',
-        application_date: d.application_date || '',
+        draw_number: draw.draw_number != null ? String(draw.draw_number) : '',
+        status: draw.status || 'draft',
+        contract_amount: draw.contract_amount != null ? String(draw.contract_amount) : '',
+        total_earned: draw.total_earned != null ? String(draw.total_earned) : '',
+        total_completed: draw.total_completed != null ? String(draw.total_completed) : '',
+        current_due: draw.current_due != null ? String(draw.current_due) : '',
+        retainage_amount: draw.retainage_amount != null ? String(draw.retainage_amount) : '',
+        application_date: draw.application_date || '',
       })
-      setLoading(false)
     }
-    loadDraw()
-  }, [jobId, drawId, companyId])
+  }, [draw])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -129,40 +103,12 @@ export default function DrawRequestDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('draw_requests')
-        .update({
-          draw_number: formData.draw_number ? Number(formData.draw_number) : undefined,
-          status: formData.status || 'draft',
-          contract_amount: formData.contract_amount ? Number(formData.contract_amount) : undefined,
-          total_earned: formData.total_earned ? Number(formData.total_earned) : undefined,
-          total_completed: formData.total_completed ? Number(formData.total_completed) : undefined,
-          current_due: formData.current_due ? Number(formData.current_due) : undefined,
-          retainage_amount: formData.retainage_amount ? Number(formData.retainage_amount) : undefined,
-          application_date: formData.application_date || undefined,
-        })
-        .eq('id', drawId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateDrawRequest.mutateAsync({
+        draw_number: formData.draw_number ? Number(formData.draw_number) : undefined,
+        contract_amount: formData.contract_amount ? Number(formData.contract_amount) : undefined,
+        application_date: formData.application_date || undefined,
+      } as never)
       toast.success('Saved')
-
-      setDraw((prev) =>
-        prev
-          ? {
-              ...prev,
-              draw_number: formData.draw_number ? Number(formData.draw_number) : null,
-              status: formData.status,
-              contract_amount: formData.contract_amount ? Number(formData.contract_amount) : null,
-              total_earned: formData.total_earned ? Number(formData.total_earned) : null,
-              total_completed: formData.total_completed ? Number(formData.total_completed) : null,
-              current_due: formData.current_due ? Number(formData.current_due) : null,
-              retainage_amount: formData.retainage_amount ? Number(formData.retainage_amount) : null,
-              application_date: formData.application_date || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -177,29 +123,16 @@ export default function DrawRequestDetailPage() {
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('draw_requests')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', drawId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive draw request')
-        toast.error('Failed to archive draw request')
-        return
-      }
+      await deleteDrawRequest.mutateAsync(drawId)
       toast.success('Archived')
-
       router.push(`/jobs/${jobId}/draws`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

@@ -38,9 +38,10 @@ type ChangeOrderCreateInput = {
   description?: string | null
   change_type: string
   status?: string
-  amount?: number
-  cost_impact?: number
-  schedule_impact_days?: number
+  amount?: number | null
+  cost_impact?: number | null
+  schedule_impact_days?: number | null
+  markup_amount?: number | null
   requested_by_type?: string | null
   requested_by_id?: string | null
   budget_id?: string | null

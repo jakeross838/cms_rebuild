@@ -19,6 +19,7 @@ type JobCreateInput = {
   job_number?: string | null
   client_id?: string | null
   status?: string
+  contract_type?: string | null
   start_date?: string | null
   target_completion?: string | null
   contract_amount?: number | null
@@ -27,6 +28,7 @@ type JobCreateInput = {
   city?: string | null
   state?: string | null
   zip?: string | null
+  notes?: string | null
 }
 
 const jobHooks = createApiHooks<JobListParams, JobCreateInput>(

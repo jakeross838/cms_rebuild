@@ -10,8 +10,7 @@ import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJob, useUpdateJob } from '@/hooks/use-jobs'
 import { toast } from 'sonner'
 import { formatStatus } from '@/lib/utils'
 
@@ -56,14 +55,13 @@ const CONTRACT_TYPE_OPTIONS = ['fixed_price', 'cost_plus', 'time_materials'] as 
 export default function EditJobPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
-
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
 
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useJob(jobId)
+  const updateJob = useUpdateJob(jobId)
+
+  const job = (response as { data: JobData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -84,41 +82,23 @@ export default function EditJobPage() {
   })
 
   useEffect(() => {
-    async function loadJob() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-        .eq('company_id', companyId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Job not found')
-        setLoading(false)
-        return
-      }
-
-      const j = data as JobData
+    if (job) {
       setFormData({
-        name: j.name,
-        job_number: j.job_number || '',
-        notes: j.notes || '',
-        status: j.status || 'pre_construction',
-        contract_type: j.contract_type || 'fixed_price',
-        contract_amount: j.contract_amount != null ? String(j.contract_amount) : '',
-        address: j.address || '',
-        city: j.city || '',
-        state: j.state || '',
-        zip: j.zip || '',
-        start_date: j.start_date || '',
-        target_completion: j.target_completion || '',
+        name: job.name,
+        job_number: job.job_number || '',
+        notes: job.notes || '',
+        status: job.status || 'pre_construction',
+        contract_type: job.contract_type || 'fixed_price',
+        contract_amount: job.contract_amount != null ? String(job.contract_amount) : '',
+        address: job.address || '',
+        city: job.city || '',
+        state: job.state || '',
+        zip: job.zip || '',
+        start_date: job.start_date || '',
+        target_completion: job.target_completion || '',
       })
-      setLoading(false)
     }
-    loadJob()
-  }, [jobId, companyId])
+  }, [job])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -136,26 +116,19 @@ export default function EditJobPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('jobs')
-        .update({
-          name: formData.name,
-          job_number: formData.job_number || null,
-          notes: formData.notes || null,
-          status: formData.status as 'pre_construction' | 'active' | 'on_hold' | 'completed' | 'warranty' | 'cancelled',
-          contract_type: (formData.contract_type || null) as 'fixed_price' | 'cost_plus' | 'time_materials' | null,
-          contract_amount: formData.contract_amount ? Number(formData.contract_amount) : null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip: formData.zip || null,
-          start_date: formData.start_date || null,
-          target_completion: formData.target_completion || null,
-        })
-        .eq('id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateJob.mutateAsync({
+        name: formData.name,
+        job_number: formData.job_number || null,
+        description: formData.notes || null,
+        status: formData.status,
+        contract_amount: formData.contract_amount ? Number(formData.contract_amount) : null,
+        address: formData.address || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zip: formData.zip || null,
+        start_date: formData.start_date || null,
+        target_completion: formData.target_completion || null,
+      } as never)
 
       toast.success('Job updated')
       setSuccess(true)
@@ -175,6 +148,15 @@ export default function EditJobPage() {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (fetchError || !job) {
+    return (
+      <div className="max-w-3xl mx-auto py-10">
+        <p className="text-destructive">{(fetchError as Error)?.message || 'Job not found'}</p>
+        <Link href="/jobs" className="text-sm text-muted-foreground hover:text-foreground mt-2 inline-block">Back to Jobs</Link>
       </div>
     )
   }

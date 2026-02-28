@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useTrainingCourse, useUpdateTrainingCourse, useDeleteTrainingCourse } from '@/hooks/use-training'
 import { formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -50,18 +49,14 @@ const DIFFICULTY_OPTIONS = ['beginner', 'intermediate', 'advanced'] as const
 export default function TrainingCourseDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const courseId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useTrainingCourse(courseId)
+  const updateCourse = useUpdateTrainingCourse(courseId)
+  const deleteCourse = useDeleteTrainingCourse()
+  const course = (response as { data: CourseData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [course, setCourse] = useState<CourseData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
 
   const [formData, setFormData] = useState<CourseFormData>({
@@ -76,39 +71,19 @@ export default function TrainingCourseDetailPage() {
   })
 
   useEffect(() => {
-    async function loadCourse() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('training_courses')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Course not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as CourseData
-      setCourse(c)
+    if (course) {
       setFormData({
-        title: c.title,
-        description: c.description || '',
-        course_type: c.course_type || '',
-        category: c.category || '',
-        difficulty: c.difficulty || '',
-        duration_minutes: c.duration_minutes != null ? String(c.duration_minutes) : '',
-        content_url: c.content_url || '',
-        is_published: c.is_published,
+        title: course.title,
+        description: course.description || '',
+        course_type: course.course_type || '',
+        category: course.category || '',
+        difficulty: course.difficulty || '',
+        duration_minutes: course.duration_minutes != null ? String(course.duration_minutes) : '',
+        content_url: course.content_url || '',
+        is_published: course.is_published,
       })
-      setLoading(false)
     }
-    loadCourse()
-  }, [params.id, companyId])
+  }, [course])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -121,80 +96,35 @@ export default function TrainingCourseDetailPage() {
 
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('training_courses')
-        .update({
-          title: formData.title,
-          description: formData.description || null,
-          course_type: formData.course_type || undefined,
-          category: formData.category || null,
-          difficulty: formData.difficulty || undefined,
-          duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes, 10) : null,
-          content_url: formData.content_url || null,
-          is_published: formData.is_published,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateCourse.mutateAsync({
+        title: formData.title,
+        description: formData.description || null,
+        course_type: formData.course_type || undefined,
+        category: formData.category || null,
+        difficulty: formData.difficulty || undefined,
+        duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes, 10) : null,
+        content_url: formData.content_url || null,
+        is_published: formData.is_published,
+      })
       toast.success('Saved')
-
-      setCourse((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: formData.title,
-              description: formData.description || null,
-              course_type: formData.course_type || null,
-              category: formData.category || null,
-              difficulty: formData.difficulty || null,
-              duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes, 10) : null,
-              content_url: formData.content_url || null,
-              is_published: formData.is_published,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleConfirmArchive = async () => {
     try {
-      setArchiving(true)
-      const { error: archiveError } = await supabase
-        .from('training_courses')
-        .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) {
-        setError('Failed to archive course')
-        toast.error('Failed to archive course')
-        setArchiving(false)
-        return
-      }
+      await deleteCourse.mutateAsync(courseId)
       toast.success('Archived')
       router.push('/training')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   // ── Loading State ────────────────────────────────────────────────
 
@@ -214,7 +144,7 @@ export default function TrainingCourseDetailPage() {
         <Link href="/training" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Training
         </Link>
-        <p className="text-destructive">{error || 'Course not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Course not found'}</p>
       </div>
     )
   }
@@ -257,13 +187,13 @@ export default function TrainingCourseDetailPage() {
             {!editing ? (
               <>
                 <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-                <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
+                <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteCourse.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteCourse.isPending ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateCourse.isPending}>
+                  {updateCourse.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -272,8 +202,7 @@ export default function TrainingCourseDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Course updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

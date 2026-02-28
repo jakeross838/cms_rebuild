@@ -10,19 +10,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateDailyLog } from '@/hooks/use-daily-logs'
 import { toast } from 'sonner'
 
 export default function NewDailyLogPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
+  const createDailyLog = useCreateDailyLog()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -49,28 +45,17 @@ export default function NewDailyLogPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
       if (!formData.log_date) { setError('Date is required'); setLoading(false); return }
 
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      const { error: insertError } = await supabase
-        .from('daily_logs')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          log_date: formData.log_date,
-          weather_summary: formData.weather_summary || null,
-          high_temp: formData.high_temp ? parseFloat(formData.high_temp) : null,
-          low_temp: formData.low_temp ? parseFloat(formData.low_temp) : null,
-          conditions: formData.conditions || null,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createDailyLog.mutateAsync({
+        job_id: jobId,
+        log_date: formData.log_date,
+        weather_summary: formData.weather_summary || null,
+        high_temp: formData.high_temp ? parseFloat(formData.high_temp) : null,
+        low_temp: formData.low_temp ? parseFloat(formData.low_temp) : null,
+        conditions: formData.conditions || null,
+        notes: formData.notes || null,
+      } as never)
 
       toast.success('Daily log created')
       router.push(`/jobs/${jobId}/daily-logs`)

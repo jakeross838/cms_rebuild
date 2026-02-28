@@ -10,19 +10,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateDrawRequest } from '@/hooks/use-draw-requests'
 import { toast } from 'sonner'
 
 export default function NewDrawRequestPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
+  const createDrawRequest = useCreateDrawRequest()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -50,15 +46,9 @@ export default function NewDrawRequestPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
       if (!formData.draw_number.trim()) { setError('Draw number is required'); setLoading(false); return }
       if (!formData.application_date) { setError('Application date is required'); setLoading(false); return }
       if (!formData.period_to) { setError('Period to date is required'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
 
       const drawNumber = parseInt(formData.draw_number, 10)
       if (isNaN(drawNumber) || drawNumber <= 0) { setError('Draw number must be a positive number'); setLoading(false); return }
@@ -70,26 +60,21 @@ export default function NewDrawRequestPage() {
       const totalEarned = totalCompleted - retainageAmount
       const balanceToFinish = contractAmount - totalCompleted
 
-      const { error: insertError } = await supabase
-        .from('draw_requests')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          draw_number: drawNumber,
-          application_date: formData.application_date,
-          period_to: formData.period_to,
-          status: 'draft',
-          contract_amount: contractAmount,
-          total_completed: totalCompleted,
-          retainage_pct: retainagePct,
-          retainage_amount: retainageAmount,
-          total_earned: totalEarned,
-          current_due: totalEarned,
-          balance_to_finish: balanceToFinish,
-          notes: formData.notes || null,
-        })
-
-      if (insertError) throw insertError
+      await createDrawRequest.mutateAsync({
+        job_id: jobId,
+        draw_number: drawNumber,
+        application_date: formData.application_date,
+        period_to: formData.period_to,
+        status: 'draft',
+        contract_amount: contractAmount,
+        total_completed: totalCompleted,
+        retainage_pct: retainagePct,
+        retainage_amount: retainageAmount,
+        total_earned: totalEarned,
+        current_due: totalEarned,
+        balance_to_finish: balanceToFinish,
+        notes: formData.notes || null,
+      } as never)
 
       toast.success('Draw request created')
       router.push(`/jobs/${jobId}/draws`)

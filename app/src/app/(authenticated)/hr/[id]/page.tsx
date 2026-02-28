@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useEmployee, useUpdateEmployee, useDeleteEmployee } from '@/hooks/use-hr'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -40,16 +39,13 @@ interface EmployeeData {
 export default function EmployeeDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useEmployee(entityId)
+  const updateEmployee = useUpdateEmployee(entityId)
+  const deleteEmployee = useDeleteEmployee()
+  const employee = (response as { data: EmployeeData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [employee, setEmployee] = useState<EmployeeData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -70,43 +66,24 @@ export default function EmployeeDetailPage() {
   })
 
   useEffect(() => {
-    async function loadEmployee() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('employees')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Employee not found')
-        setLoading(false)
-        return
-      }
-
-      const e = data as EmployeeData
-      setEmployee(e)
+    if (employee) {
       setFormData({
-        first_name: e.first_name,
-        last_name: e.last_name,
-        email: e.email || '',
-        phone: e.phone || '',
-        employment_status: e.employment_status || '',
-        employment_type: e.employment_type || '',
-        base_wage: e.base_wage != null ? String(e.base_wage) : '',
-        pay_type: e.pay_type || '',
-        workers_comp_class: e.workers_comp_class || '',
-        emergency_contact_name: e.emergency_contact_name || '',
-        emergency_contact_phone: e.emergency_contact_phone || '',
-        address: e.address || '',
-        notes: e.notes || '',
+        first_name: employee.first_name,
+        last_name: employee.last_name,
+        email: employee.email || '',
+        phone: employee.phone || '',
+        employment_status: employee.employment_status || '',
+        employment_type: employee.employment_type || '',
+        base_wage: employee.base_wage != null ? String(employee.base_wage) : '',
+        pay_type: employee.pay_type || '',
+        workers_comp_class: employee.workers_comp_class || '',
+        emergency_contact_name: employee.emergency_contact_name || '',
+        emergency_contact_phone: employee.emergency_contact_phone || '',
+        address: employee.address || '',
+        notes: employee.notes || '',
       })
-      setLoading(false)
     }
-    loadEmployee()
-  }, [params.id, companyId])
+  }, [employee])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -116,41 +93,15 @@ export default function EmployeeDetailPage() {
   const handleSave = async () => {
     if (!formData.first_name.trim()) { toast.error('First Name is required'); return }
     if (!formData.last_name.trim()) { toast.error('Last Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('employees')
-        .update({
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          employment_status: formData.employment_status || undefined,
-          employment_type: formData.employment_type || undefined,
-          base_wage: formData.base_wage ? Number(formData.base_wage) : null,
-          pay_type: formData.pay_type || null,
-          workers_comp_class: formData.workers_comp_class || null,
-          emergency_contact_name: formData.emergency_contact_name || null,
-          emergency_contact_phone: formData.emergency_contact_phone || null,
-          address: formData.address || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setEmployee((prev) => prev ? {
-        ...prev,
+      await updateEmployee.mutateAsync({
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email || null,
         phone: formData.phone || null,
-        employment_status: formData.employment_status || null,
-        employment_type: formData.employment_type || null,
+        employment_status: formData.employment_status || undefined,
+        employment_type: formData.employment_type || undefined,
         base_wage: formData.base_wage ? Number(formData.base_wage) : null,
         pay_type: formData.pay_type || null,
         workers_comp_class: formData.workers_comp_class || null,
@@ -158,45 +109,24 @@ export default function EmployeeDetailPage() {
         emergency_contact_phone: formData.emergency_contact_phone || null,
         address: formData.address || null,
         notes: formData.notes || null,
-      } : prev)
-      setSuccess(true)
-      setEditing(false)
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('employees')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive employee'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteEmployee.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/hr')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -212,7 +142,7 @@ export default function EmployeeDetailPage() {
         <Link href="/hr" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to HR
         </Link>
-        <p className="text-destructive">{error || 'Employee not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Employee not found'}</p>
       </div>
     )
   }
@@ -263,8 +193,8 @@ export default function EmployeeDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateEmployee.isPending}>
+                  {updateEmployee.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -273,8 +203,7 @@ export default function EmployeeDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Employee updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

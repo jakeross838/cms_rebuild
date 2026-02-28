@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateEmployee } from '@/hooks/use-hr'
 import { toast } from 'sonner'
 
 export default function NewEmployeePage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createEmployee = useCreateEmployee()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -47,39 +42,30 @@ export default function NewEmployeePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createEmployee.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.first_name.trim()) { setError('First name is required'); return }
+    if (!formData.last_name.trim()) { setError('Last name is required'); return }
+    if (!formData.hire_date) { setError('Hire date is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.first_name.trim()) { setError('First name is required'); setLoading(false); return }
-      if (!formData.last_name.trim()) { setError('Last name is required'); setLoading(false); return }
-      if (!formData.hire_date) { setError('Hire date is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('employees')
-        .insert({
-          company_id: companyId,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          employee_number: formData.employee_number,
-          hire_date: formData.hire_date,
-          employment_status: 'active',
-          employment_type: formData.employment_type,
-          pay_type: formData.pay_type || null,
-          base_wage: formData.base_wage ? parseFloat(formData.base_wage) : null,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          emergency_contact_name: formData.emergency_contact_name || null,
-          emergency_contact_phone: formData.emergency_contact_phone || null,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createEmployee.mutateAsync({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        employee_number: formData.employee_number,
+        hire_date: formData.hire_date,
+        employment_status: 'active',
+        employment_type: formData.employment_type,
+        pay_type: formData.pay_type || null,
+        base_wage: formData.base_wage ? parseFloat(formData.base_wage) : null,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        emergency_contact_name: formData.emergency_contact_name || null,
+        emergency_contact_phone: formData.emergency_contact_phone || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Employee created')
       router.push('/hr')
@@ -88,8 +74,6 @@ export default function NewEmployeePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create employee'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -210,8 +194,8 @@ export default function NewEmployeePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/hr"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Employee'}
+          <Button type="submit" disabled={createEmployee.isPending}>
+            {createEmployee.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Employee'}
           </Button>
         </div>
       </form>

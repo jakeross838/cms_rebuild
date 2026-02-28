@@ -12,8 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { US_STATES } from '@/config/constants'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useClient, useUpdateClient, useDeleteClient } from '@/hooks/use-clients'
 import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -33,16 +32,13 @@ interface ClientData {
 export default function ClientDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const clientId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useClient(clientId)
+  const updateClient = useUpdateClient(clientId)
+  const deleteClient = useDeleteClient()
+  const client = (response as { data: ClientData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [client, setClient] = useState<ClientData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -58,44 +54,19 @@ export default function ClientDetailPage() {
   })
 
   useEffect(() => {
-    async function loadClient() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('clients')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Client not found')
-          setLoading(false)
-          return
-        }
-
-        const c = data as ClientData
-        setClient(c)
-        setFormData({
-          name: c.name,
-          email: c.email || '',
-          phone: c.phone || '',
-          address: c.address || '',
-          city: c.city || '',
-          state: c.state || '',
-          zip: c.zip || '',
-          notes: c.notes || '',
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load client')
-        setLoading(false)
-      }
+    if (client) {
+      setFormData({
+        name: client.name,
+        email: client.email || '',
+        phone: client.phone || '',
+        address: client.address || '',
+        city: client.city || '',
+        state: client.state || '',
+        zip: client.zip || '',
+        notes: client.notes || '',
+      })
     }
-    loadClient()
-  }, [params.id, companyId])
+  }, [client])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -104,65 +75,37 @@ export default function ClientDetailPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('clients')
-        .update({
-          name: formData.name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip: formData.zip || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
+      await updateClient.mutateAsync({
+        name: formData.name,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zip: formData.zip || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setClient((prev) => prev ? { ...prev, ...formData } : prev)
       toast.success('Client updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save client')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save client')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('clients')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive client')
-        toast.error('Failed to archive client')
-        return
-      }
-
+      await deleteClient.mutateAsync(clientId)
       toast.success('Client archived')
       router.push('/clients')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -178,7 +121,7 @@ export default function ClientDetailPage() {
         <Link href="/clients" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Clients
         </Link>
-        <p className="text-destructive">{error || 'Client not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Client not found'}</p>
       </div>
     )
   }
@@ -202,8 +145,8 @@ export default function ClientDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateClient.isPending}>
+                  {updateClient.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -212,8 +155,7 @@ export default function ClientDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Client updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

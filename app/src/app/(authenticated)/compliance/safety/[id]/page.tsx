@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useSafetyIncident, useUpdateSafetyIncident, useDeleteSafetyIncident } from '@/hooks/use-safety'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
@@ -60,14 +61,15 @@ export default function SafetyIncidentDetailPage() {
   const supabase = createClient()
 
   const { profile: authProfile } = useAuth()
-
   const companyId = authProfile?.company_id || ''
-  const [incident, setIncident] = useState<SafetyIncidentData | null>(null)
+
+  const incidentId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useSafetyIncident(incidentId)
+  const updateIncident = useUpdateSafetyIncident(incidentId)
+  const deleteIncident = useDeleteSafetyIncident()
+  const incident = (response as { data: SafetyIncidentData } | undefined)?.data ?? null
+
   const [jobs, setJobs] = useState<JobLookup[]>([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -94,56 +96,46 @@ export default function SafetyIncidentDetailPage() {
     medical_treatment: false,
   })
 
+  // Load jobs for dropdown (still needs direct Supabase since no hook for job list here)
   useEffect(() => {
-    async function loadData() {
-      // Get current user's company_id for tenant-scoped dropdown queries
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const [incidentRes, jobsRes] = await Promise.all([
-        supabase
-          .from('safety_incidents')
-          .select('*')
-          .eq('id', params.id as string)
-          .is('deleted_at', null)
-          .single(),
-        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
-
-      if (incidentRes.error || !incidentRes.data) {
-        setError('Safety incident not found')
-        setLoading(false)
-        return
+    async function loadJobs() {
+      if (!companyId) return
+      try {
+        const { data } = await supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name')
+        setJobs((data as JobLookup[]) || [])
+      } catch {
+        // silently fail - jobs dropdown just won't populate
       }
-
-      const inc = incidentRes.data as SafetyIncidentData
-      setIncident(inc)
-      setJobs((jobsRes.data as JobLookup[]) || [])
-      setFormData({
-        incident_number: inc.incident_number,
-        title: inc.title,
-        description: inc.description || '',
-        incident_type: inc.incident_type,
-        severity: inc.severity,
-        status: inc.status,
-        incident_date: inc.incident_date,
-        incident_time: inc.incident_time || '',
-        job_id: inc.job_id,
-        location: inc.location || '',
-        injured_party: inc.injured_party || '',
-        injury_description: inc.injury_description || '',
-        root_cause: inc.root_cause || '',
-        corrective_actions: inc.corrective_actions || '',
-        preventive_actions: inc.preventive_actions || '',
-        osha_recordable: inc.osha_recordable,
-        osha_report_number: inc.osha_report_number || '',
-        lost_work_days: String(inc.lost_work_days),
-        restricted_days: String(inc.restricted_days),
-        medical_treatment: inc.medical_treatment,
-      })
-      setLoading(false)
     }
-    loadData()
-  }, [params.id, companyId])
+    loadJobs()
+  }, [companyId])
+
+  useEffect(() => {
+    if (incident) {
+      setFormData({
+        incident_number: incident.incident_number,
+        title: incident.title,
+        description: incident.description || '',
+        incident_type: incident.incident_type,
+        severity: incident.severity,
+        status: incident.status,
+        incident_date: incident.incident_date,
+        incident_time: incident.incident_time || '',
+        job_id: incident.job_id,
+        location: incident.location || '',
+        injured_party: incident.injured_party || '',
+        injury_description: incident.injury_description || '',
+        root_cause: incident.root_cause || '',
+        corrective_actions: incident.corrective_actions || '',
+        preventive_actions: incident.preventive_actions || '',
+        osha_recordable: incident.osha_recordable,
+        osha_report_number: incident.osha_report_number || '',
+        lost_work_days: String(incident.lost_work_days),
+        restricted_days: String(incident.restricted_days),
+        medical_treatment: incident.medical_treatment,
+      })
+    }
+  }, [incident])
 
   const jobName = jobs.find((j) => j.id === incident?.job_id)?.name || 'Unknown Job'
 
@@ -164,104 +156,41 @@ export default function SafetyIncidentDetailPage() {
     if (!formData.severity.trim()) { toast.error('Severity is required'); return }
     if (!formData.incident_date.trim()) { toast.error('Incident date is required'); return }
     if (!formData.job_id.trim()) { toast.error('Job is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('safety_incidents')
-        .update({
-          incident_number: formData.incident_number,
-          title: formData.title,
-          description: formData.description || null,
-          incident_type: formData.incident_type,
-          severity: formData.severity,
-          status: formData.status,
-          incident_date: formData.incident_date,
-          incident_time: formData.incident_time || null,
-          job_id: formData.job_id,
-          location: formData.location || null,
-          injured_party: formData.injured_party || null,
-          injury_description: formData.injury_description || null,
-          root_cause: formData.root_cause || null,
-          corrective_actions: formData.corrective_actions || null,
-          preventive_actions: formData.preventive_actions || null,
-          osha_recordable: formData.osha_recordable,
-          osha_report_number: formData.osha_report_number || null,
-          lost_work_days: parseInt(formData.lost_work_days) || 0,
-          restricted_days: parseInt(formData.restricted_days) || 0,
-          medical_treatment: formData.medical_treatment,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateIncident.mutateAsync({
+        title: formData.title,
+        description: formData.description || null,
+        incident_type: formData.incident_type,
+        severity: formData.severity,
+        status: formData.status,
+        incident_date: formData.incident_date,
+        incident_time: formData.incident_time || null,
+        job_id: formData.job_id,
+        location: formData.location || null,
+        osha_recordable: formData.osha_recordable,
+        notes: null,
+      } as Record<string, unknown>)
 
       toast.success('Saved')
-      setIncident((prev) =>
-        prev
-          ? {
-              ...prev,
-              incident_number: formData.incident_number,
-              title: formData.title,
-              description: formData.description || null,
-              incident_type: formData.incident_type,
-              severity: formData.severity,
-              status: formData.status,
-              incident_date: formData.incident_date,
-              incident_time: formData.incident_time || null,
-              job_id: formData.job_id,
-              location: formData.location || null,
-              injured_party: formData.injured_party || null,
-              injury_description: formData.injury_description || null,
-              root_cause: formData.root_cause || null,
-              corrective_actions: formData.corrective_actions || null,
-              preventive_actions: formData.preventive_actions || null,
-              osha_recordable: formData.osha_recordable,
-              osha_report_number: formData.osha_report_number || null,
-              lost_work_days: parseInt(formData.lost_work_days) || 0,
-              restricted_days: parseInt(formData.restricted_days) || 0,
-              medical_treatment: formData.medical_treatment,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('safety_incidents')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive incident')
-        toast.error('Failed to archive incident')
-        return
-      }
-
+      await deleteIncident.mutateAsync(incidentId)
       toast.success('Archived')
       router.push('/compliance/safety')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -277,7 +206,7 @@ export default function SafetyIncidentDetailPage() {
         <Link href="/compliance/safety" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Safety
         </Link>
-        <p className="text-destructive">{error || 'Incident not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Incident not found'}</p>
       </div>
     )
   }
@@ -303,8 +232,8 @@ export default function SafetyIncidentDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateIncident.isPending}>
+                  {updateIncident.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -313,8 +242,7 @@ export default function SafetyIncidentDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Incident updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

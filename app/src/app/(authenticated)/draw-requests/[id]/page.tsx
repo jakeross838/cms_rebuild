@@ -18,8 +18,7 @@ import {
 } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useDrawRequest, useUpdateDrawRequest, useDeleteDrawRequest } from '@/hooks/use-draw-requests'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -49,16 +48,13 @@ interface DrawRequestData {
 export default function DrawRequestDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const drawId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useDrawRequest(drawId)
+  const updateDraw = useUpdateDrawRequest(drawId)
+  const deleteDraw = useDeleteDrawRequest()
+  const draw = (response as { data: DrawRequestData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [draw, setDraw] = useState<DrawRequestData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -80,44 +76,25 @@ export default function DrawRequestDetailPage() {
   })
 
   useEffect(() => {
-    async function loadDraw() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('draw_requests')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Draw request not found')
-        setLoading(false)
-        return
-      }
-
-      const d = data as DrawRequestData
-      setDraw(d)
+    if (draw) {
       setFormData({
-        draw_number: d.draw_number?.toString() || '',
-        application_date: d.application_date || '',
-        period_to: d.period_to || '',
-        status: d.status || '',
-        contract_amount: d.contract_amount?.toString() || '',
-        total_completed: d.total_completed?.toString() || '',
-        retainage_pct: d.retainage_pct?.toString() || '',
-        retainage_amount: d.retainage_amount?.toString() || '',
-        total_earned: d.total_earned?.toString() || '',
-        less_previous: d.less_previous?.toString() || '',
-        current_due: d.current_due?.toString() || '',
-        balance_to_finish: d.balance_to_finish?.toString() || '',
-        lender_reference: d.lender_reference || '',
-        notes: d.notes || '',
+        draw_number: draw.draw_number?.toString() || '',
+        application_date: draw.application_date || '',
+        period_to: draw.period_to || '',
+        status: draw.status || '',
+        contract_amount: draw.contract_amount?.toString() || '',
+        total_completed: draw.total_completed?.toString() || '',
+        retainage_pct: draw.retainage_pct?.toString() || '',
+        retainage_amount: draw.retainage_amount?.toString() || '',
+        total_earned: draw.total_earned?.toString() || '',
+        less_previous: draw.less_previous?.toString() || '',
+        current_due: draw.current_due?.toString() || '',
+        balance_to_finish: draw.balance_to_finish?.toString() || '',
+        lender_reference: draw.lender_reference || '',
+        notes: draw.notes || '',
       })
-      setLoading(false)
     }
-    loadDraw()
-  }, [params.id, companyId])
+  }, [draw])
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -129,128 +106,42 @@ export default function DrawRequestDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('draw_requests')
-        .update({
-          draw_number: formData.draw_number
-            ? parseInt(formData.draw_number, 10)
-            : undefined,
-          application_date: formData.application_date || undefined,
-          period_to: formData.period_to || undefined,
-          status: formData.status || undefined,
-          contract_amount: formData.contract_amount
-            ? parseFloat(formData.contract_amount)
-            : undefined,
-          total_completed: formData.total_completed
-            ? parseFloat(formData.total_completed)
-            : undefined,
-          retainage_pct: formData.retainage_pct
-            ? parseFloat(formData.retainage_pct)
-            : undefined,
-          retainage_amount: formData.retainage_amount
-            ? parseFloat(formData.retainage_amount)
-            : undefined,
-          total_earned: formData.total_earned
-            ? parseFloat(formData.total_earned)
-            : undefined,
-          less_previous: formData.less_previous
-            ? parseFloat(formData.less_previous)
-            : undefined,
-          current_due: formData.current_due
-            ? parseFloat(formData.current_due)
-            : undefined,
-          balance_to_finish: formData.balance_to_finish
-            ? parseFloat(formData.balance_to_finish)
-            : undefined,
-          lender_reference: formData.lender_reference || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateDraw.mutateAsync({
+        draw_number: formData.draw_number
+          ? parseInt(formData.draw_number, 10)
+          : undefined,
+        application_date: formData.application_date || undefined,
+        period_to: formData.period_to || undefined,
+        contract_amount: formData.contract_amount
+          ? parseFloat(formData.contract_amount)
+          : undefined,
+        retainage_pct: formData.retainage_pct
+          ? parseFloat(formData.retainage_pct)
+          : undefined,
+        lender_reference: formData.lender_reference || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
       toast.success('Saved')
-      setDraw((prev) =>
-        prev
-          ? {
-              ...prev,
-              draw_number: formData.draw_number
-                ? parseInt(formData.draw_number, 10)
-                : null,
-              application_date: formData.application_date || null,
-              period_to: formData.period_to || null,
-              status: formData.status || null,
-              contract_amount: formData.contract_amount
-                ? parseFloat(formData.contract_amount)
-                : null,
-              total_completed: formData.total_completed
-                ? parseFloat(formData.total_completed)
-                : null,
-              retainage_pct: formData.retainage_pct
-                ? parseFloat(formData.retainage_pct)
-                : null,
-              retainage_amount: formData.retainage_amount
-                ? parseFloat(formData.retainage_amount)
-                : null,
-              total_earned: formData.total_earned
-                ? parseFloat(formData.total_earned)
-                : null,
-              less_previous: formData.less_previous
-                ? parseFloat(formData.less_previous)
-                : null,
-              current_due: formData.current_due
-                ? parseFloat(formData.current_due)
-                : null,
-              balance_to_finish: formData.balance_to_finish
-                ? parseFloat(formData.balance_to_finish)
-                : null,
-              lender_reference: formData.lender_reference || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('draw_requests')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive draw request')
-        toast.error('Failed to archive draw request')
-        return
-      }
-
+      await deleteDraw.mutateAsync(drawId)
       toast.success('Archived')
       router.push('/draw-requests')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   // ── Loading state ────────────────────────────────────────────────────────
 
@@ -274,7 +165,7 @@ export default function DrawRequestDetailPage() {
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to Draw Requests
         </Link>
-        <p className="text-destructive">{error || 'Draw request not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Draw request not found'}</p>
       </div>
     )
   }
@@ -311,8 +202,8 @@ export default function DrawRequestDetailPage() {
                 <Button onClick={() => setEditing(false)} variant="outline">
                   Cancel
                 </Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? (
+                <Button onClick={handleSave} disabled={updateDraw.isPending}>
+                  {updateDraw.isPending ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
                     <Save className="h-4 w-4 mr-2" />
@@ -325,14 +216,9 @@ export default function DrawRequestDetailPage() {
         </div>
       </div>
 
-      {error && (
+      {fetchError && (
         <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">
-          Draw request updated successfully
+          {fetchError.message}
         </div>
       )}
 

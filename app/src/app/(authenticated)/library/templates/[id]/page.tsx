@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useContractTemplate, useUpdateContractTemplate, useDeleteContractTemplate } from '@/hooks/use-contracts'
 import { getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -31,18 +30,14 @@ interface TemplateData {
 export default function TemplateDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useContractTemplate(entityId)
+  const updateTemplate = useUpdateContractTemplate(entityId)
+  const deleteTemplate = useDeleteContractTemplate()
+  const template = (response as { data: TemplateData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [template, setTemplate] = useState<TemplateData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -53,34 +48,15 @@ export default function TemplateDetailPage() {
   })
 
   useEffect(() => {
-    async function loadTemplate() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('contract_templates')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Template not found')
-        setLoading(false)
-        return
-      }
-
-      const t = data as TemplateData
-      setTemplate(t)
+    if (template) {
       setFormData({
-        name: t.name,
-        contract_type: t.contract_type || '',
-        description: t.description || '',
-        content: t.content || '',
+        name: template.name,
+        contract_type: template.contract_type || '',
+        description: template.description || '',
+        content: template.content || '',
       })
-      setLoading(false)
     }
-    loadTemplate()
-  }, [params.id, companyId])
+  }, [template])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -88,61 +64,30 @@ export default function TemplateDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
     try {
-      const { error: archiveError } = await supabase
-        .from('contract_templates')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) throw archiveError
+      await deleteTemplate.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/library/templates')
+      router.refresh()
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to archive'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      setArchiving(false)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
   }
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('contract_templates')
-        .update({
-          name: formData.name,
-          contract_type: formData.contract_type || undefined,
-          description: formData.description || null,
-          content: formData.content || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setTemplate((prev) => prev ? {
-        ...prev,
+      await updateTemplate.mutateAsync({
         name: formData.name,
-        contract_type: formData.contract_type,
+        contract_type: formData.contract_type || undefined,
         description: formData.description || null,
         content: formData.content || null,
-      } : prev)
-      setSuccess(true)
-      setEditing(false)
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
@@ -160,7 +105,7 @@ export default function TemplateDetailPage() {
         <Link href="/library/templates" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Templates
         </Link>
-        <p className="text-destructive">{error || 'Template not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Template not found'}</p>
       </div>
     )
   }
@@ -190,13 +135,13 @@ export default function TemplateDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteTemplate.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteTemplate.isPending ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateTemplate.isPending}>
+                  {updateTemplate.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -205,8 +150,7 @@ export default function TemplateDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Template updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateJournalEntry } from '@/hooks/use-accounting'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -40,7 +41,7 @@ export default function NewJournalEntryPage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createJournalEntry = useCreateJournalEntry()
   const [error, setError] = useState<string | null>(null)
   const [accounts, setAccounts] = useState<AccountOption[]>([])
 
@@ -101,7 +102,7 @@ export default function NewJournalEntryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createJournalEntry.isPending) return
     setError(null)
 
     // Validate lines
@@ -115,44 +116,21 @@ export default function NewJournalEntryPage() {
       return
     }
 
-    setLoading(true)
+    if (!formData.entry_date) { setError('Entry date is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.entry_date) { setError('Entry date is required'); setLoading(false); return }
-
-      // Create the journal entry header
-      const { data: entry, error: entryError } = await supabase
-        .from('gl_journal_entries')
-        .insert({
-          company_id: companyId,
-          entry_date: formData.entry_date,
-          reference_number: formData.reference_number || null,
-          memo: formData.memo || null,
-          status: formData.status,
-          source_type: formData.source_type,
-          created_by: authUser.id,
-        })
-        .select('id')
-        .single()
-
-      if (entryError || !entry) throw entryError || new Error('Failed to create entry')
-
-      // Insert journal lines
-      const lineInserts = validLines.map((l) => ({
-        journal_entry_id: (entry as { id: string }).id,
-        account_id: l.account_id,
-        debit_amount: parseFloat(l.debit_amount) || 0,
-        credit_amount: parseFloat(l.credit_amount) || 0,
-        memo: l.memo || null,
-      }))
-
-      const { error: linesError } = await supabase
-        .from('gl_journal_lines')
-        .insert(lineInserts)
-
-      if (linesError) throw linesError
+      await createJournalEntry.mutateAsync({
+        entry_date: formData.entry_date,
+        reference_number: formData.reference_number || null,
+        memo: formData.memo || null,
+        source_type: formData.source_type,
+        lines: validLines.map((l) => ({
+          account_id: l.account_id,
+          debit_amount: parseFloat(l.debit_amount) || 0,
+          credit_amount: parseFloat(l.credit_amount) || 0,
+          memo: l.memo || null,
+        })),
+      })
 
       toast.success('Journal entry created')
       router.push('/financial/journal-entries')
@@ -161,8 +139,6 @@ export default function NewJournalEntryPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create journal entry'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -345,8 +321,8 @@ export default function NewJournalEntryPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/financial/journal-entries"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading || (!isBalanced && (totalDebits > 0 || totalCredits > 0))}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Journal Entry'}
+          <Button type="submit" disabled={createJournalEntry.isPending || (!isBalanced && (totalDebits > 0 || totalCredits > 0))}>
+            {createJournalEntry.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Journal Entry'}
           </Button>
         </div>
       </form>

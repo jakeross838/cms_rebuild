@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateAssembly } from '@/hooks/use-estimating'
 import { toast } from 'sonner'
 
 export default function NewAssemblyPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createAssembly = useCreateAssembly()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -38,27 +33,19 @@ export default function NewAssemblyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createAssembly.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Assembly name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.name.trim()) { setError('Assembly name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('assemblies')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          category: formData.category || null,
-          parameter_unit: formData.parameter_unit || null,
-          description: formData.description || null,
-          is_active: true,
-        })
-
-      if (insertError) throw insertError
+      await createAssembly.mutateAsync({
+        name: formData.name,
+        category: formData.category || null,
+        parameter_unit: formData.parameter_unit || null,
+        description: formData.description || null,
+        is_active: true,
+      })
 
       toast.success('Assembly created')
       router.push('/library/assemblies')
@@ -67,8 +54,6 @@ export default function NewAssemblyPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create assembly'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -114,8 +99,8 @@ export default function NewAssemblyPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/library/assemblies"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Assembly'}
+          <Button type="submit" disabled={createAssembly.isPending}>
+            {createAssembly.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Assembly'}
           </Button>
         </div>
       </form>

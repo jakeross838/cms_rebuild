@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { usePurchaseOrder, useUpdatePurchaseOrder, useDeletePurchaseOrder } from '@/hooks/use-purchase-orders'
+import { useJobs } from '@/hooks/use-jobs'
+import { useVendors } from '@/hooks/use-vendors'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -59,25 +60,23 @@ const PO_STATUSES = ['draft', 'pending_approval', 'approved', 'sent', 'partially
 export default function PurchaseOrderDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const poId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = usePurchaseOrder(poId)
+  const updatePo = useUpdatePurchaseOrder(poId)
+  const deletePo = useDeletePurchaseOrder()
+  const po = (response as { data: PurchaseOrderData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
+  const { data: jobsResponse } = useJobs({ limit: 1000 } as Record<string, string | number | boolean | undefined>)
+  const jobs = ((jobsResponse as { data: JobInfo[] } | undefined)?.data ?? []) as JobInfo[]
+  const { data: vendorsResponse } = useVendors({ limit: 1000 } as Record<string, string | number | boolean | undefined>)
+  const vendors = ((vendorsResponse as { data: VendorInfo[] } | undefined)?.data ?? []) as VendorInfo[]
 
-  const [po, setPo] = useState<PurchaseOrderData | null>(null)
-  const [job, setJob] = useState<JobInfo | null>(null)
-  const [vendor, setVendor] = useState<VendorInfo | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const job = jobs.find((j) => j.id === po?.job_id) ?? null
+  const vendor = vendors.find((v) => v.id === po?.vendor_id) ?? null
+
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-
-  // ── Options for edit mode selectors ──
-  const [jobs, setJobs] = useState<JobInfo[]>([])
-  const [vendors, setVendors] = useState<VendorInfo[]>([])
 
   const [formData, setFormData] = useState({
     po_number: '',
@@ -94,87 +93,24 @@ export default function PurchaseOrderDetailPage() {
     notes: '',
   })
 
-  // ── Load PO data ──
-
   useEffect(() => {
-    async function loadPurchaseOrder() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('purchase_orders')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Purchase order not found')
-        setLoading(false)
-        return
-      }
-
-      const poData = data as PurchaseOrderData
-      setPo(poData)
+    if (po) {
       setFormData({
-        po_number: poData.po_number || '',
-        title: poData.title || '',
-        status: poData.status || 'draft',
-        job_id: poData.job_id || '',
-        vendor_id: poData.vendor_id || '',
-        subtotal: poData.subtotal != null ? String(poData.subtotal) : '',
-        tax_amount: poData.tax_amount != null ? String(poData.tax_amount) : '',
-        shipping_amount: poData.shipping_amount != null ? String(poData.shipping_amount) : '',
-        delivery_date: poData.delivery_date || '',
-        shipping_address: poData.shipping_address || '',
-        terms: poData.terms || '',
-        notes: poData.notes || '',
+        po_number: po.po_number || '',
+        title: po.title || '',
+        status: po.status || 'draft',
+        job_id: po.job_id || '',
+        vendor_id: po.vendor_id || '',
+        subtotal: po.subtotal != null ? String(po.subtotal) : '',
+        tax_amount: po.tax_amount != null ? String(po.tax_amount) : '',
+        shipping_amount: po.shipping_amount != null ? String(po.shipping_amount) : '',
+        delivery_date: po.delivery_date || '',
+        shipping_address: po.shipping_address || '',
+        terms: po.terms || '',
+        notes: po.notes || '',
       })
-
-      // Fetch related job and vendor for display (scoped by company_id for defense-in-depth)
-      if (poData.job_id) {
-        const { data: jobData } = await supabase
-          .from('jobs')
-          .select('id, name, job_number')
-          .eq('id', poData.job_id)
-          .eq('company_id', companyId)
-          .single()
-        if (jobData) setJob(jobData as JobInfo)
-      }
-
-      if (poData.vendor_id) {
-        const { data: vendorData } = await supabase
-          .from('vendors')
-          .select('id, name')
-          .eq('id', poData.vendor_id)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-        if (vendorData) setVendor(vendorData as VendorInfo)
-      }
-
-      setLoading(false)
     }
-    loadPurchaseOrder()
-  }, [params.id, companyId])
-
-  // ── Load job/vendor options when entering edit mode ──
-
-  useEffect(() => {
-    if (!editing) return
-
-    async function loadOptions() {
-      if (!companyId) return
-
-      const [jobsResult, vendorsResult] = await Promise.all([
-        supabase.from('jobs').select('id, name, job_number').eq('company_id', companyId).is('deleted_at', null).order('name'),
-        supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
-      setJobs((jobsResult.data || []) as JobInfo[])
-      setVendors((vendorsResult.data || []) as VendorInfo[])
-    }
-    loadOptions()
-  }, [editing, companyId])
+  }, [po])
 
   // ── Handlers ──
 
@@ -185,9 +121,6 @@ export default function PurchaseOrderDetailPage() {
 
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
       const subtotal = formData.subtotal ? parseFloat(formData.subtotal) : 0
@@ -195,96 +128,38 @@ export default function PurchaseOrderDetailPage() {
       const shippingAmount = formData.shipping_amount ? parseFloat(formData.shipping_amount) : 0
       const totalAmount = subtotal + taxAmount + shippingAmount
 
-      const { error: updateError } = await supabase
-        .from('purchase_orders')
-        .update({
-          po_number: formData.po_number || undefined,
-          title: formData.title || undefined,
-          status: formData.status || undefined,
-          job_id: formData.job_id || undefined,
-          vendor_id: formData.vendor_id || undefined,
-          subtotal,
-          tax_amount: taxAmount,
-          shipping_amount: shippingAmount,
-          total_amount: totalAmount,
-          delivery_date: formData.delivery_date || undefined,
-          shipping_address: formData.shipping_address || undefined,
-          terms: formData.terms || undefined,
-          notes: formData.notes || undefined,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      // Update local state
-      setPo((prev) => prev ? {
-        ...prev,
-        po_number: formData.po_number || null,
-        title: formData.title || null,
-        status: formData.status || null,
-        job_id: formData.job_id || null,
-        vendor_id: formData.vendor_id || null,
+      await updatePo.mutateAsync({
+        po_number: formData.po_number || undefined,
+        title: formData.title || undefined,
+        status: formData.status || undefined,
+        job_id: formData.job_id || undefined,
+        vendor_id: formData.vendor_id || undefined,
         subtotal,
         tax_amount: taxAmount,
         shipping_amount: shippingAmount,
         total_amount: totalAmount,
-        delivery_date: formData.delivery_date || null,
-        shipping_address: formData.shipping_address || null,
-        terms: formData.terms || null,
-        notes: formData.notes || null,
-      } : prev)
-
-      // Update job/vendor display
-      if (formData.job_id) {
-        const found = jobs.find((j) => j.id === formData.job_id)
-        if (found) setJob(found)
-      } else {
-        setJob(null)
-      }
-      if (formData.vendor_id) {
-        const found = vendors.find((v) => v.id === formData.vendor_id)
-        if (found) setVendor(found)
-      } else {
-        setVendor(null)
-      }
-
+        delivery_date: formData.delivery_date || undefined,
+        shipping_address: formData.shipping_address || undefined,
+        terms: formData.terms || undefined,
+        notes: formData.notes || undefined,
+      })
       toast.success('Purchase order updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save purchase order')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('purchase_orders')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive purchase order')
-        toast.error('Failed to archive purchase order')
-        return
-      }
-
+      await deletePo.mutateAsync(poId)
       toast.success('Purchase order archived')
       router.push('/purchase-orders')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   const selectClassName = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
   const textareaClassName = 'flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
@@ -307,7 +182,7 @@ export default function PurchaseOrderDetailPage() {
         <Link href="/purchase-orders" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Purchase Orders
         </Link>
-        <p className="text-destructive">{error || 'Purchase order not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Purchase order not found'}</p>
       </div>
     )
   }
@@ -341,8 +216,8 @@ export default function PurchaseOrderDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updatePo.isPending}>
+                  {updatePo.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -351,8 +226,7 @@ export default function PurchaseOrderDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Purchase order updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

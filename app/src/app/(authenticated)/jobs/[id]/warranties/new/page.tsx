@@ -10,19 +10,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateWarranty } from '@/hooks/use-warranty'
 import { toast } from 'sonner'
 
 export default function NewWarrantyPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
+  const createWarranty = useCreateWarranty()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -52,35 +48,23 @@ export default function NewWarrantyPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
       if (!formData.start_date) { setError('Start date is required'); setLoading(false); return }
       if (!formData.end_date) { setError('End date is required'); setLoading(false); return }
 
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      const { error: insertError } = await supabase
-        .from('warranties')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          title: formData.title,
-          description: formData.description || null,
-          warranty_type: formData.warranty_type,
-          status: formData.status,
-          start_date: formData.start_date,
-          end_date: formData.end_date,
-          coverage_details: formData.coverage_details || null,
-          exclusions: formData.exclusions || null,
-          contact_name: formData.contact_name || null,
-          contact_phone: formData.contact_phone || null,
-          contact_email: formData.contact_email || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createWarranty.mutateAsync({
+        job_id: jobId,
+        title: formData.title,
+        description: formData.description || null,
+        warranty_type: formData.warranty_type,
+        status: formData.status,
+        start_date: formData.start_date,
+        end_date: formData.end_date,
+        coverage_details: formData.coverage_details || null,
+        exclusions: formData.exclusions || null,
+        contact_name: formData.contact_name || null,
+        contact_phone: formData.contact_phone || null,
+        contact_email: formData.contact_email || null,
+      } as never)
 
       toast.success('Warranty created')
       router.push(`/jobs/${jobId}/warranties`)

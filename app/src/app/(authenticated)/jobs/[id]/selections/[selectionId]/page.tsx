@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useSelection, useUpdateSelection, useDeleteSelection } from '@/hooks/use-selections'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -46,16 +45,15 @@ const STATUS_OPTIONS = ['pending', 'selected', 'confirmed', 'rejected']
 export default function SelectionDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const selectionId = params.selectionId as string
 
-  const [selection, setSelection] = useState<SelectionData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useSelection(selectionId)
+  const updateSelection = useUpdateSelection(selectionId)
+  const deleteSelection = useDeleteSelection()
+  const selection = (response as { data: SelectionData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -72,41 +70,17 @@ export default function SelectionDetailPage() {
   })
 
   useEffect(() => {
-    async function loadSelection() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('selections')
-        .select('*')
-        .eq('id', selectionId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Selection not found')
-        setLoading(false)
-        return
-      }
-
-      const s = data as SelectionData
-      setSelection(s)
+    if (selection) {
       setFormData({
-        status: s.status,
-        room: s.room || '',
-        selected_at: s.selected_at || '',
-        confirmed_at: s.confirmed_at || '',
-        category_id: s.category_id,
-        option_id: s.option_id,
+        status: selection.status,
+        room: selection.room || '',
+        selected_at: selection.selected_at || '',
+        confirmed_at: selection.confirmed_at || '',
+        category_id: selection.category_id,
+        option_id: selection.option_id,
       })
-      setLoading(false)
     }
-    loadSelection()
-  }, [selectionId, jobId, companyId])
+  }, [selection])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -121,35 +95,14 @@ export default function SelectionDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('selections')
-        .update({
-          status: formData.status,
-          room: formData.room || null,
-          selected_at: formData.selected_at || null,
-          confirmed_at: formData.confirmed_at || null,
-          category_id: formData.category_id,
-          option_id: formData.option_id,
-        })
-        .eq('id', selectionId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setSelection((prev) =>
-        prev
-          ? {
-              ...prev,
-              status: formData.status,
-              room: formData.room || null,
-              selected_at: formData.selected_at || null,
-              confirmed_at: formData.confirmed_at || null,
-              category_id: formData.category_id,
-              option_id: formData.option_id,
-            }
-          : prev
-      )
+      await updateSelection.mutateAsync({
+        status: formData.status,
+        room: formData.room || null,
+        selected_at: formData.selected_at || null,
+        confirmed_at: formData.confirmed_at || null,
+        category_id: formData.category_id,
+        option_id: formData.option_id,
+      } as never)
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -165,29 +118,16 @@ export default function SelectionDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('selections')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', selectionId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive selection')
-        toast.error('Failed to archive selection')
-        return
-      }
-
+      await deleteSelection.mutateAsync(selectionId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/selections`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

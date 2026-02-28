@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreatePunchItem } from '@/hooks/use-punch-lists'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -18,11 +19,11 @@ import { formatStatus } from '@/lib/utils'
 export default function NewPunchItemPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createPunchItem = useCreatePunchItem()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -65,34 +66,26 @@ export default function NewPunchItemPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createPunchItem.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.job_id) { setError('Job is required'); return }
+    if (!formData.title.trim()) { setError('Title is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
-      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('punch_items')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          title: formData.title,
-          location: formData.location || null,
-          room: formData.room || null,
-          category: formData.category || null,
-          priority: formData.priority,
-          status: formData.status,
-          assigned_to: formData.assigned_to || null,
-          description: formData.description || null,
-          due_date: formData.due_date || null,
-          cost_estimate: formData.cost_estimate ? parseFloat(formData.cost_estimate) : null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createPunchItem.mutateAsync({
+        job_id: formData.job_id,
+        title: formData.title,
+        location: formData.location || null,
+        room: formData.room || null,
+        category: formData.category || null,
+        priority: formData.priority,
+        status: formData.status,
+        assigned_to: formData.assigned_to || null,
+        description: formData.description || null,
+        due_date: formData.due_date || null,
+        cost_estimate: formData.cost_estimate ? parseFloat(formData.cost_estimate) : null,
+      })
 
       toast.success('Punch item created')
       router.push('/punch-lists')
@@ -101,8 +94,6 @@ export default function NewPunchItemPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create punch item'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -221,8 +212,8 @@ export default function NewPunchItemPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/punch-lists"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Punch Item'}
+          <Button type="submit" disabled={createPunchItem.isPending}>
+            {createPunchItem.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Punch Item'}
           </Button>
         </div>
       </form>

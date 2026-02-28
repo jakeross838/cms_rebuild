@@ -60,6 +60,7 @@ type LeadCreateInput = {
   phone?: string | null
   address?: string | null
   lot_address?: string | null
+  source_detail?: string | null
   project_type?: string | null
   budget_range_low?: number | null
   budget_range_high?: number | null
@@ -67,8 +68,9 @@ type LeadCreateInput = {
   pipeline_id?: string | null
   stage_id?: string | null
   assigned_to?: string | null
-  expected_contract_value?: number
-  probability_pct?: number
+  estimated_value?: number | null
+  expected_contract_value?: number | null
+  probability_pct?: number | null
   notes?: string | null
 }
 

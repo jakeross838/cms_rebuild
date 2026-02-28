@@ -1,5 +1,40 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 36 — Detail Page React Query Migration (2026-02-28)
+
+### Type Safety
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `tsc --noEmit` — zero errors in 10 migrated detail pages | no errors in migrated files | PASS |
+| All pre-existing errors remain only in `new/page.tsx` files | unchanged from before migration | PASS |
+
+### Migration Correctness (all 10 files)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| No `createClient` import remains in migrated files | removed | PASS |
+| No `useAuth` import remains in migrated files | removed | PASS |
+| No manual `loading`/`saving`/`error`/`success` useState in migrated files | removed | PASS |
+| No `useEffect` with Supabase `.from().select()` in migrated files | removed | PASS |
+| Each file uses `useDetail(entityId)` for data fetching | present | PASS |
+| Each file uses `useUpdate(entityId)` for saves | present | PASS |
+| Each file uses `useDelete()` or `useUpdate()` for archive | present | PASS |
+| `handleSave` calls `updateEntity.mutateAsync()` | present | PASS |
+| `handleDelete/Archive` calls `deleteEntity.mutateAsync()` or `updateEntity.mutateAsync()` | present | PASS |
+| Save button shows `updateEntity.isPending` spinner | present | PASS |
+| Error banner uses `fetchError?.message` | present | PASS |
+| `toast.success()` on save/archive success | present | PASS |
+| `toast.error()` on save/archive failure | present | PASS |
+| `formData` state, `editing` state, `showArchiveDialog` state preserved | unchanged | PASS |
+| `handleChange` function preserved | unchanged | PASS |
+| All JSX structure preserved | unchanged | PASS |
+| `ConfirmDialog` for archive preserved | unchanged | PASS |
+
+### Skipped File Verification
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `invoices/[id]/page.tsx` still uses direct Supabase pattern | not migrated | PASS |
+| No hooks exist in `use-invoice-processing.ts` for `invoices` table | only `invoice_extractions` hooks | PASS |
+
 ## Session 35 — React Query Hooks (2026-02-28)
 
 ### Hooks Compilation

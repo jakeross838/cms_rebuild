@@ -13,8 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useBidPackage, useUpdateBidPackage, useDeleteBidPackage } from '@/hooks/use-bids'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -41,17 +40,14 @@ interface JobInfo {
 export default function BidPackageDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const bidId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useBidPackage(bidId)
+  const updateBid = useUpdateBidPackage(bidId)
+  const deleteBid = useDeleteBidPackage()
+  const bid = (response as { data: BidPackageData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [bid, setBid] = useState<BidPackageData | null>(null)
-  const [jobInfo, setJobInfo] = useState<JobInfo | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [jobInfo] = useState<JobInfo | null>(null)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -64,57 +60,19 @@ export default function BidPackageDetailPage() {
     status: 'draft',
   })
 
-  // ── Load bid package ────────────────────────────────────────────────
+  // ── Initialize form data when bid loads ────────────────────────
   useEffect(() => {
-    async function loadBid() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('bid_packages')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Bid package not found')
-          setLoading(false)
-          return
-        }
-
-        const b = data as BidPackageData
-        setBid(b)
-        setFormData({
-          title: b.title,
-          trade: b.trade || '',
-          description: b.description || '',
-          scope_of_work: b.scope_of_work || '',
-          bid_due_date: b.bid_due_date || '',
-          status: b.status,
-        })
-
-        // Load job name if job_id exists
-        if (b.job_id) {
-          const { data: jobData } = await supabase
-            .from('jobs')
-            .select('id, name')
-            .eq('id', b.job_id)
-            .eq('company_id', companyId)
-            .single()
-
-          if (jobData) setJobInfo(jobData as JobInfo)
-        }
-
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load bid package')
-        setLoading(false)
-      }
+    if (bid) {
+      setFormData({
+        title: bid.title,
+        trade: bid.trade || '',
+        description: bid.description || '',
+        scope_of_work: bid.scope_of_work || '',
+        bid_due_date: bid.bid_due_date || '',
+        status: bid.status,
+      })
     }
-    loadBid()
-  }, [params.id, companyId])
+  }, [bid])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -124,65 +82,37 @@ export default function BidPackageDetailPage() {
   // ── Save changes ────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('bid_packages')
-        .update({
-          title: formData.title,
-          trade: formData.trade || null,
-          description: formData.description || null,
-          scope_of_work: formData.scope_of_work || null,
-          bid_due_date: formData.bid_due_date || null,
-          status: formData.status,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
+      await updateBid.mutateAsync({
+        title: formData.title,
+        trade: formData.trade || null,
+        description: formData.description || null,
+        scope_of_work: formData.scope_of_work || null,
+        bid_due_date: formData.bid_due_date || null,
+        status: formData.status,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setBid((prev) => prev ? { ...prev, ...formData, trade: formData.trade || null, description: formData.description || null, scope_of_work: formData.scope_of_work || null, bid_due_date: formData.bid_due_date || null } : prev)
       toast.success('Saved')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   // ── Archive (soft delete) ───────────────────────────────────────────
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('bid_packages')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive bid package')
-        toast.error('Failed to archive bid package')
-        return
-      }
-
+      await deleteBid.mutateAsync(bidId)
       toast.success('Archived')
       router.push('/bids')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   // ── Loading state ───────────────────────────────────────────────────
   if (loading) {
@@ -200,7 +130,7 @@ export default function BidPackageDetailPage() {
         <Link href="/bids" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Bids
         </Link>
-        <p className="text-destructive">{error || 'Bid package not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Bid package not found'}</p>
       </div>
     )
   }
@@ -228,8 +158,8 @@ export default function BidPackageDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateBid.isPending}>
+                  {updateBid.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -238,8 +168,7 @@ export default function BidPackageDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Bid package updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

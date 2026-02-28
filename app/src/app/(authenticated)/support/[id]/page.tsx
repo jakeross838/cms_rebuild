@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useSupportTicket, useUpdateSupportTicket, useDeleteSupportTicket } from '@/hooks/use-support'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -37,16 +36,13 @@ interface TicketData {
 export default function SupportTicketDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const ticketId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useSupportTicket(ticketId)
+  const updateTicket = useUpdateSupportTicket(ticketId)
+  const deleteTicket = useDeleteSupportTicket()
+  const ticket = (response as { data: TicketData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [ticket, setTicket] = useState<TicketData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -59,36 +55,16 @@ export default function SupportTicketDetailPage() {
   })
 
   useEffect(() => {
-    async function loadTicket() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('support_tickets')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Ticket not found')
-        setLoading(false)
-        return
-      }
-
-      const t = data as TicketData
-      setTicket(t)
+    if (ticket) {
       setFormData({
-        subject: t.subject,
-        description: t.description || '',
-        priority: t.priority || 'medium',
-        category: t.category || '',
-        status: t.status,
+        subject: ticket.subject,
+        description: ticket.description || '',
+        priority: ticket.priority || 'medium',
+        category: ticket.category || '',
+        status: ticket.status,
       })
-      setLoading(false)
     }
-    loadTicket()
-  }, [params.id, companyId])
+  }, [ticket])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -97,9 +73,6 @@ export default function SupportTicketDetailPage() {
 
   const handleSave = async () => {
     if (!formData.subject.trim()) { toast.error('Subject is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
       const updatePayload: Record<string, unknown> = {
@@ -110,59 +83,24 @@ export default function SupportTicketDetailPage() {
       if (formData.priority) updatePayload.priority = formData.priority
       if (formData.category) updatePayload.category = formData.category
 
-      const { error: updateError } = await supabase
-        .from('support_tickets')
-        .update(updatePayload as never)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateTicket.mutateAsync(updatePayload)
       toast.success('Saved')
-
-      setTicket((prev) => prev ? {
-        ...prev,
-        subject: formData.subject,
-        description: formData.description || null,
-        priority: formData.priority || null,
-        category: formData.category || null,
-        status: formData.status,
-      } : prev)
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('support_tickets')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive ticket')
-        toast.error('Failed to archive ticket')
-        return
-      }
+      await deleteTicket.mutateAsync(ticketId)
       toast.success('Archived')
-
       router.push('/support')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   // ── Loading State ────────────────────────────────────────────────
 
@@ -182,7 +120,7 @@ export default function SupportTicketDetailPage() {
         <Link href="/support" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Support
         </Link>
-        <p className="text-destructive">{error || 'Ticket not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Ticket not found'}</p>
       </div>
     )
   }
@@ -208,8 +146,8 @@ export default function SupportTicketDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateTicket.isPending}>
+                  {updateTicket.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -218,8 +156,7 @@ export default function SupportTicketDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Ticket updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

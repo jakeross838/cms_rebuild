@@ -11,18 +11,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { US_STATES } from '@/config/constants'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateClient } from '@/hooks/use-clients'
 import { toast } from 'sonner'
 
 export default function NewClientPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createClient = useCreateClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -43,31 +38,22 @@ export default function NewClientPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createClient.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
-
-      const { data: client, error: insertError } = await supabase
-        .from('clients')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip: formData.zip || null,
-          notes: formData.notes || null,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createClient.mutateAsync({
+        name: formData.name,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zip: formData.zip || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Client created')
       router.push('/clients')
@@ -76,8 +62,6 @@ export default function NewClientPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create client'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -154,8 +138,8 @@ export default function NewClientPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/clients"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Client'}
+          <Button type="submit" disabled={createClient.isPending}>
+            {createClient.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Client'}
           </Button>
         </div>
       </form>

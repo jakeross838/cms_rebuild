@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreatePermit } from '@/hooks/use-permitting'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -17,11 +18,11 @@ import { toast } from 'sonner'
 export default function NewPermitPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createPermit = useCreatePermit()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -59,29 +60,21 @@ export default function NewPermitPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createPermit.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.job_id) { setError('Job is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('permits')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          permit_number: formData.permit_number || null,
-          permit_type: formData.permit_type || 'Other',
-          jurisdiction: formData.jurisdiction || null,
-          applied_date: formData.applied_date || null,
-          notes: formData.notes || null,
-          status: 'applied',
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createPermit.mutateAsync({
+        job_id: formData.job_id,
+        permit_number: formData.permit_number || null,
+        permit_type: formData.permit_type || 'Other',
+        jurisdiction: formData.jurisdiction || null,
+        applied_date: formData.applied_date || null,
+        notes: formData.notes || null,
+        status: 'applied',
+      })
 
       toast.success('Permit created')
       router.push('/permits')
@@ -90,8 +83,6 @@ export default function NewPermitPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create permit'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -163,8 +154,8 @@ export default function NewPermitPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/permits"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Permit'}
+          <Button type="submit" disabled={createPermit.isPending}>
+            {createPermit.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Permit'}
           </Button>
         </div>
       </form>

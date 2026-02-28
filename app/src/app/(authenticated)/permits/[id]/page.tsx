@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { usePermit, useUpdatePermit, useDeletePermit } from '@/hooks/use-permitting'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -40,18 +39,13 @@ const STATUS_OPTIONS = ['Applied', 'Under Review', 'Approved', 'Issued', 'Expire
 export default function PermitDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const permitId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = usePermit(permitId)
+  const updatePermit = useUpdatePermit(permitId)
+  const deletePermit = useDeletePermit()
+  const permit = (response as { data: PermitData } | undefined)?.data ?? null
 
-  const [permit, setPermit] = useState<PermitData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -68,40 +62,20 @@ export default function PermitDetailPage() {
   })
 
   useEffect(() => {
-    async function loadPermit() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('permits')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', permitId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Permit not found')
-        setLoading(false)
-        return
-      }
-
-      const p = data as PermitData
-      setPermit(p)
+    if (permit) {
       setFormData({
-        permit_number: p.permit_number || '',
-        permit_type: p.permit_type || '',
-        jurisdiction: p.jurisdiction || '',
-        status: p.status || 'draft',
-        applied_date: p.applied_date || '',
-        issued_date: p.issued_date || '',
-        expiration_date: p.expiration_date || '',
-        conditions: p.conditions || '',
-        notes: p.notes || '',
+        permit_number: permit.permit_number || '',
+        permit_type: permit.permit_type || '',
+        jurisdiction: permit.jurisdiction || '',
+        status: permit.status || 'draft',
+        applied_date: permit.applied_date || '',
+        issued_date: permit.issued_date || '',
+        expiration_date: permit.expiration_date || '',
+        conditions: permit.conditions || '',
+        notes: permit.notes || '',
       })
-      setLoading(false)
     }
-    loadPermit()
-  }, [permitId, companyId])
+  }, [permit])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -109,81 +83,35 @@ export default function PermitDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('permits')
-        .update({
-          permit_number: formData.permit_number || null,
-          permit_type: formData.permit_type || undefined,
-          jurisdiction: formData.jurisdiction || null,
-          status: formData.status,
-          applied_date: formData.applied_date || null,
-          issued_date: formData.issued_date || null,
-          expiration_date: formData.expiration_date || null,
-          conditions: formData.conditions || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', permitId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setPermit((prev) =>
-        prev
-          ? {
-              ...prev,
-              permit_number: formData.permit_number || null,
-              permit_type: formData.permit_type || null,
-              jurisdiction: formData.jurisdiction || null,
-              status: formData.status,
-              applied_date: formData.applied_date || null,
-              issued_date: formData.issued_date || null,
-              expiration_date: formData.expiration_date || null,
-              conditions: formData.conditions || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
+      await updatePermit.mutateAsync({
+        permit_number: formData.permit_number || null,
+        permit_type: formData.permit_type || undefined,
+        jurisdiction: formData.jurisdiction || null,
+        status: formData.status,
+        applied_date: formData.applied_date || null,
+        issued_date: formData.issued_date || null,
+        expiration_date: formData.expiration_date || null,
+        conditions: formData.conditions || null,
+        notes: formData.notes || null,
+      })
       toast.success('Permit updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save permit')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('permits')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', permitId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive permit')
-        toast.error('Failed to archive permit')
-        return
-      }
-
+      await deletePermit.mutateAsync(permitId)
       toast.success('Permit archived')
       router.push('/permits')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -199,7 +127,7 @@ export default function PermitDetailPage() {
         <Link href="/permits" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Permits
         </Link>
-        <p className="text-destructive">{error || 'Permit not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Permit not found'}</p>
       </div>
     )
   }
@@ -223,8 +151,8 @@ export default function PermitDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updatePermit.isPending}>
+                  {updatePermit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -233,8 +161,7 @@ export default function PermitDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Permit updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

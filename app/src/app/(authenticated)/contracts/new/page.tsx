@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateContract } from '@/hooks/use-contracts'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -26,7 +27,7 @@ export default function NewContractPage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createContract = useCreateContract()
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<SelectOption[]>([])
   const [clients, setClients] = useState<SelectOption[]>([])
@@ -85,33 +86,25 @@ export default function NewContractPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createContract.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.title.trim()) { setError('Title is required'); return }
+    if (!formData.contract_number.trim()) { setError('Contract number is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
-      if (!formData.contract_number.trim()) { setError('Contract number is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('contracts')
-        .insert({
-          company_id: companyId,
-          title: formData.title,
-          contract_number: formData.contract_number,
-          contract_type: formData.contract_type,
-          status: 'draft',
-          contract_value: formData.contract_value ? parseFloat(formData.contract_value) : null,
-          description: formData.description || null,
-          job_id: formData.job_id || null,
-          client_id: formData.client_id || null,
-          start_date: formData.start_date || null,
-          end_date: formData.end_date || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createContract.mutateAsync({
+        title: formData.title,
+        contract_number: formData.contract_number,
+        contract_type: formData.contract_type,
+        status: 'draft',
+        contract_value: formData.contract_value ? parseFloat(formData.contract_value) : null,
+        description: formData.description || null,
+        job_id: formData.job_id || null,
+        client_id: formData.client_id || null,
+        start_date: formData.start_date || null,
+        end_date: formData.end_date || null,
+      })
 
       toast.success('Contract created')
       router.push('/contracts')
@@ -120,8 +113,6 @@ export default function NewContractPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create contract'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -221,8 +212,8 @@ export default function NewContractPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/contracts"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Contract'}
+          <Button type="submit" disabled={createContract.isPending}>
+            {createContract.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Contract'}
           </Button>
         </div>
       </form>

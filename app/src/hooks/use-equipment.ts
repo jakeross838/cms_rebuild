@@ -58,9 +58,9 @@ type EquipmentCreateInput = {
   serial_number?: string | null
   year?: number | null
   purchase_date?: string | null
-  purchase_price?: number
-  current_value?: number
-  daily_rate?: number
+  purchase_price?: number | null
+  current_value?: number | null
+  daily_rate?: number | null
   location?: string | null
   notes?: string | null
 }

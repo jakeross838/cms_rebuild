@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateTimeEntry } from '@/hooks/use-time-tracking'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -17,11 +18,11 @@ import { toast } from 'sonner'
 export default function NewTimeEntryPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createTimeEntry = useCreateTimeEntry()
 
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -70,31 +71,23 @@ export default function NewTimeEntryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createTimeEntry.isPending) return
     setError(null)
-    setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('time_entries')
-        .insert({
-          company_id: companyId,
-          user_id: formData.user_id || currentUserId,
-          job_id: formData.job_id,
-          entry_date: formData.entry_date,
-          clock_in: formData.clock_in ? new Date(formData.clock_in).toISOString() : null,
-          clock_out: formData.clock_out ? new Date(formData.clock_out).toISOString() : null,
-          regular_hours: formData.regular_hours ? parseFloat(formData.regular_hours) : 0,
-          overtime_hours: formData.overtime_hours ? parseFloat(formData.overtime_hours) : 0,
-          break_minutes: parseInt(formData.break_minutes) || 0,
-          entry_method: formData.entry_method,
-          status: formData.status,
-          notes: formData.notes || null,
-        })
-
-      if (insertError) throw insertError
+      await createTimeEntry.mutateAsync({
+        user_id: formData.user_id || currentUserId,
+        job_id: formData.job_id,
+        entry_date: formData.entry_date,
+        clock_in: formData.clock_in ? new Date(formData.clock_in).toISOString() : null,
+        clock_out: formData.clock_out ? new Date(formData.clock_out).toISOString() : null,
+        regular_hours: formData.regular_hours ? parseFloat(formData.regular_hours) : 0,
+        overtime_hours: formData.overtime_hours ? parseFloat(formData.overtime_hours) : 0,
+        break_minutes: parseInt(formData.break_minutes) || 0,
+        entry_method: formData.entry_method,
+        status: formData.status,
+        notes: formData.notes || null,
+      })
 
       toast.success('Time entry created')
       router.push('/time-clock')
@@ -103,8 +96,6 @@ export default function NewTimeEntryPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create time entry'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -226,8 +217,8 @@ export default function NewTimeEntryPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/time-clock"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Time Entry'}
+          <Button type="submit" disabled={createTimeEntry.isPending}>
+            {createTimeEntry.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Time Entry'}
           </Button>
         </div>
       </form>

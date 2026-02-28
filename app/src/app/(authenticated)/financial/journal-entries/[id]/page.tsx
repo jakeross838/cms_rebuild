@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJournalEntry, useUpdateJournalEntry, useJournalLines } from '@/hooks/use-accounting'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -54,20 +53,16 @@ interface AccountLookup {
 export default function JournalEntryDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useJournalEntry(entityId)
+  const updateEntry = useUpdateJournalEntry(entityId)
+  const entry = (response as { data: JournalEntryData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [entry, setEntry] = useState<JournalEntryData | null>(null)
-  const [lines, setLines] = useState<JournalLineData[]>([])
-  const [accounts, setAccounts] = useState<AccountLookup[]>([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const { data: linesData } = useJournalLines(entityId)
+  const lines: JournalLineData[] = (linesData ?? []) as JournalLineData[]
+
   const [editing, setEditing] = useState(false)
-  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -79,57 +74,16 @@ export default function JournalEntryDetailPage() {
   })
 
   useEffect(() => {
-    async function loadData() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const [entryRes, linesRes, accountsRes] = await Promise.all([
-        supabase
-          .from('gl_journal_entries')
-          .select('*')
-          .eq('id', params.id as string)
-          .single(),
-        supabase
-          .from('gl_journal_lines')
-          .select('*')
-          .eq('journal_entry_id', params.id as string)
-          .order('created_at'),
-        supabase.from('gl_accounts').select('id, name, account_number').eq('company_id', companyId).is('deleted_at', null).order('account_number'),
-      ])
-
-      if (entryRes.error || !entryRes.data) {
-        setError('Journal entry not found')
-        setLoading(false)
-        return
-      }
-
-      const e = entryRes.data as JournalEntryData
-      setEntry(e)
-      setAccounts((accountsRes.data as AccountLookup[]) || [])
-
-      const accountMap = new Map<string, AccountLookup>()
-      ;((accountsRes.data as AccountLookup[]) || []).forEach((a) => accountMap.set(a.id, a))
-
-      const enrichedLines = ((linesRes.data as JournalLineData[]) || []).map((line) => {
-        const acct = accountMap.get(line.account_id)
-        return {
-          ...line,
-          account_name: acct?.name || 'Unknown',
-          account_number: acct?.account_number || '',
-        }
-      })
-      setLines(enrichedLines)
-
+    if (entry) {
       setFormData({
-        entry_date: e.entry_date,
-        reference_number: e.reference_number || '',
-        memo: e.memo || '',
-        status: e.status,
-        source_type: e.source_type,
+        entry_date: entry.entry_date,
+        reference_number: entry.reference_number || '',
+        memo: entry.memo || '',
+        status: entry.status,
+        source_type: entry.source_type,
       })
-      setLoading(false)
     }
-    loadData()
-  }, [params.id, companyId])
+  }, [entry])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -137,21 +91,13 @@ export default function JournalEntryDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
     try {
-      const { error: archiveError } = await supabase
-        .from('gl_journal_entries')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) throw archiveError
+      await updateEntry.mutateAsync({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       toast.success('Archived')
       router.push('/financial/journal-entries')
+      router.refresh()
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to archive'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      setArchiving(false)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
   }
 
@@ -159,47 +105,19 @@ export default function JournalEntryDetailPage() {
     if (!formData.entry_date) { toast.error('Entry Date is required'); return }
     if (!formData.status) { toast.error('Status is required'); return }
     if (!formData.source_type) { toast.error('Source Type is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('gl_journal_entries')
-        .update({
-          entry_date: formData.entry_date,
-          reference_number: formData.reference_number || null,
-          memo: formData.memo || null,
-          status: formData.status,
-          source_type: formData.source_type,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setEntry((prev) =>
-        prev
-          ? {
-              ...prev,
-              entry_date: formData.entry_date,
-              reference_number: formData.reference_number || null,
-              memo: formData.memo || null,
-              status: formData.status,
-              source_type: formData.source_type,
-            }
-          : prev
-      )
-      setSuccess(true)
-      setEditing(false)
+      await updateEntry.mutateAsync({
+        entry_date: formData.entry_date,
+        reference_number: formData.reference_number || null,
+        memo: formData.memo || null,
+        status: formData.status,
+        source_type: formData.source_type,
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
@@ -220,7 +138,7 @@ export default function JournalEntryDetailPage() {
         <Link href="/financial/journal-entries" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Journal Entries
         </Link>
-        <p className="text-destructive">{error || 'Journal entry not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Journal entry not found'}</p>
       </div>
     )
   }
@@ -245,13 +163,13 @@ export default function JournalEntryDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={updateEntry.isPending} variant="outline" className="text-destructive hover:text-destructive">{updateEntry.isPending ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateEntry.isPending}>
+                  {updateEntry.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -260,8 +178,7 @@ export default function JournalEntryDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Journal entry updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

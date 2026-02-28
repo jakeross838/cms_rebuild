@@ -1,5 +1,17 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-28: Session 36 — Detail Page React Query Migration
+
+### Why (10 detail pages migrated)
+- Detail pages were using direct `createClient()` + `useAuth()` + `useEffect` fetch pattern, which bypasses the API route layer and its middleware (rate limiting, audit logging, RBAC checks)
+- React Query hooks route all requests through `/api/v1/` or `/api/v2/` endpoints, ensuring consistent multi-tenant security, caching, and error handling
+- Eliminates ~30-50 lines of boilerplate per page (manual loading/saving/error states, fetch logic, company_id extraction)
+- Mutation hooks (`useUpdate`, `useDelete`) automatically invalidate related query caches, keeping list pages fresh without manual refetch
+- `isPending` from mutation hooks replaces manual `saving` state, reducing state management complexity
+- `toast.success()`/`toast.error()` replaces verbose success/error banner state for cleaner UX
+- `invoices/[id]` was correctly skipped because no hooks exist for the `invoices` table — only `invoice_extractions` has hooks, and that is a different entity (Module 13 AI processing vs the raw invoices table)
+- For journal entries and GL accounts, no delete hooks are exported because accounting entities should not be soft-deleted via a DELETE endpoint — they use status changes or `deleted_at` via PATCH instead, which is the correct accounting pattern
+
 ## 2026-02-28: Session 35 — React Query Hooks for All 52 Modules
 
 ### Why (41 new hooks files)

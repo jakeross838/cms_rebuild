@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateEquipment } from '@/hooks/use-equipment'
 import { toast } from 'sonner'
 
 export default function NewEquipmentPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createEquipment = useCreateEquipment()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -46,36 +41,27 @@ export default function NewEquipmentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createEquipment.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Equipment name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.name.trim()) { setError('Equipment name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('equipment')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          equipment_type: formData.equipment_type,
-          ownership_type: formData.ownership_type,
-          status: 'available',
-          make: formData.make || null,
-          model: formData.model || null,
-          year: formData.year ? parseInt(formData.year) : null,
-          serial_number: formData.serial_number || null,
-          daily_rate: formData.daily_rate ? parseFloat(formData.daily_rate) : null,
-          purchase_price: formData.purchase_price ? parseFloat(formData.purchase_price) : null,
-          location: formData.location || null,
-          description: formData.description || null,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createEquipment.mutateAsync({
+        name: formData.name,
+        equipment_type: formData.equipment_type,
+        ownership_type: formData.ownership_type,
+        status: 'available',
+        make: formData.make || null,
+        model: formData.model || null,
+        year: formData.year ? parseInt(formData.year) : null,
+        serial_number: formData.serial_number || null,
+        daily_rate: formData.daily_rate ? parseFloat(formData.daily_rate) : null,
+        purchase_price: formData.purchase_price ? parseFloat(formData.purchase_price) : null,
+        location: formData.location || null,
+        description: formData.description || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Equipment added')
       router.push('/equipment')
@@ -84,8 +70,6 @@ export default function NewEquipmentPage() {
       const errorMessage = (err as Error)?.message || 'Failed to add equipment'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -204,8 +188,8 @@ export default function NewEquipmentPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/equipment"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Equipment'}
+          <Button type="submit" disabled={createEquipment.isPending}>
+            {createEquipment.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Equipment'}
           </Button>
         </div>
       </form>

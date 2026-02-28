@@ -40,10 +40,15 @@ type PoCreateInput = {
   status?: string
   budget_id?: string | null
   cost_code_id?: string | null
+  subtotal?: number | null
+  tax_amount?: number | null
+  shipping_amount?: number | null
+  total_amount?: number | null
   delivery_date?: string | null
   shipping_address?: string | null
   terms?: string | null
   notes?: string | null
+  description?: string | null
 }
 
 const poHooks = createApiHooks<PoListParams, PoCreateInput>(

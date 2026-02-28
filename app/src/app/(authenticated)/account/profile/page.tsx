@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 
-import { Loader2, Save, User, CheckCircle } from 'lucide-react'
+import { Loader2, Save, User } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/lib/auth/auth-context'
+import { useUser, useUpdateUser } from '@/hooks/use-users'
 import { formatDate, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -22,12 +23,13 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const supabase = createClient()
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const { profile: authProfile } = useAuth()
+  const userId = authProfile?.id || ''
+
+  const { data: response, isLoading: loading, error: fetchError } = useUser(userId || null)
+  const updateUser = useUpdateUser(userId)
+
+  const profile = (response as { data: UserProfile } | undefined)?.data ?? null
 
   const [formData, setFormData] = useState({
     name: '',
@@ -35,68 +37,25 @@ export default function ProfilePage() {
   })
 
   useEffect(() => {
-    async function loadProfile() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setError('Not authenticated')
-        setLoading(false)
-        return
-      }
-
-      const { data, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Failed to load profile')
-        setLoading(false)
-        return
-      }
-
-      const p = data as UserProfile
-      setProfile(p)
+    if (profile) {
       setFormData({
-        name: p.name || '',
-        phone: p.phone || '',
+        name: profile.name || '',
+        phone: profile.phone || '',
       })
-      setLoading(false)
     }
-    loadProfile()
-  }, [])
+  }, [profile])
 
   const handleSave = async () => {
     if (!profile) return
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          name: formData.name || undefined,
-          phone: formData.phone || undefined,
-        })
-        .eq('id', profile.id)
-
-      if (updateError) throw updateError
-
-      setProfile((prev) => prev ? {
-        ...prev,
-        name: formData.name || null,
-        phone: formData.phone || null,
-      } : prev)
-      setSuccess(true)
+      await updateUser.mutateAsync({
+        full_name: formData.name || undefined,
+        phone: formData.phone || undefined,
+      })
       toast.success('Profile saved')
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      toast.error(errorMessage)
-      setError(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
@@ -111,7 +70,7 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="max-w-2xl mx-auto">
-        <p className="text-destructive">{error || 'Profile not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Profile not found'}</p>
       </div>
     )
   }
@@ -126,14 +85,9 @@ export default function ProfilePage() {
         <p className="text-muted-foreground mt-1">Manage your account information</p>
       </div>
 
-      {error && (
+      {fetchError && (
         <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md flex items-center gap-2">
-          <CheckCircle className="h-4 w-4" /> Profile updated successfully
+          {fetchError.message}
         </div>
       )}
 
@@ -179,8 +133,8 @@ export default function ProfilePage() {
           </div>
         </CardContent>
         <CardFooter className="border-t justify-end">
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+          <Button onClick={handleSave} disabled={updateUser.isPending}>
+            {updateUser.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
             Save Profile
           </Button>
         </CardFooter>

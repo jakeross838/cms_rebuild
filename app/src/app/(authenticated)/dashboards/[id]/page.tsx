@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useAdvancedReport, useUpdateAdvancedReport, useDeleteAdvancedReport } from '@/hooks/use-advanced-reporting'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -34,16 +33,13 @@ interface ReportData {
 export default function DashboardDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const reportId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useAdvancedReport(reportId)
+  const updateReport = useUpdateAdvancedReport(reportId)
+  const deleteReport = useDeleteAdvancedReport()
+  const report = (response as { data: ReportData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [report, setReport] = useState<ReportData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -59,38 +55,19 @@ export default function DashboardDetailPage() {
   })
 
   useEffect(() => {
-    async function load() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('custom_reports')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Dashboard not found')
-        setLoading(false)
-        return
-      }
-
-      const r = data as ReportData
-      setReport(r)
+    if (report) {
       setFormData({
-        name: r.name,
-        description: r.description || '',
-        report_type: r.report_type,
-        visualization_type: r.visualization_type,
-        status: r.status,
-        audience: r.audience,
-        refresh_frequency: r.refresh_frequency,
-        is_template: r.is_template,
+        name: report.name,
+        description: report.description || '',
+        report_type: report.report_type,
+        visualization_type: report.visualization_type,
+        status: report.status,
+        audience: report.audience,
+        refresh_frequency: report.refresh_frequency,
+        is_template: report.is_template,
       })
-      setLoading(false)
     }
-    load()
-  }, [params.id, companyId])
+  }, [report])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target
@@ -104,31 +81,9 @@ export default function DashboardDetailPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('custom_reports')
-        .update({
-          name: formData.name,
-          description: formData.description || null,
-          report_type: formData.report_type,
-          visualization_type: formData.visualization_type,
-          status: formData.status,
-          audience: formData.audience,
-          refresh_frequency: formData.refresh_frequency,
-          is_template: formData.is_template,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      toast.success('Saved')
-      setReport((prev) => prev ? {
-        ...prev,
+      await updateReport.mutateAsync({
         name: formData.name,
         description: formData.description || null,
         report_type: formData.report_type,
@@ -137,43 +92,27 @@ export default function DashboardDetailPage() {
         audience: formData.audience,
         refresh_frequency: formData.refresh_frequency,
         is_template: formData.is_template,
-      } : prev)
-      setSuccess(true)
+      } as Record<string, unknown>)
+
+      toast.success('Saved')
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('custom_reports')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive dashboard')
-        toast.error('Failed to archive dashboard')
-        return
-      }
-
+      await deleteReport.mutateAsync(reportId)
       toast.success('Archived')
       router.push('/dashboards')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -189,7 +128,7 @@ export default function DashboardDetailPage() {
         <Link href="/dashboards" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Dashboards
         </Link>
-        <p className="text-destructive">{error || 'Dashboard not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Dashboard not found'}</p>
       </div>
     )
   }
@@ -219,8 +158,8 @@ export default function DashboardDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateReport.isPending}>
+                  {updateReport.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -229,8 +168,7 @@ export default function DashboardDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Dashboard updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

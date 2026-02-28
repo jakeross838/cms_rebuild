@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateAdvancedReport } from '@/hooks/use-advanced-reporting'
 import { toast } from 'sonner'
 
 export default function NewDashboardPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createReport = useCreateAdvancedReport()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -47,31 +42,22 @@ export default function NewDashboardPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createReport.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('custom_reports')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          description: formData.description || null,
-          report_type: formData.report_type,
-          visualization_type: formData.visualization_type,
-          status: formData.status,
-          audience: formData.audience,
-          refresh_frequency: formData.refresh_frequency,
-          is_template: formData.is_template,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createReport.mutateAsync({
+        name: formData.name,
+        description: formData.description || null,
+        report_type: formData.report_type,
+        visualization_type: formData.visualization_type,
+        status: formData.status,
+        audience: formData.audience,
+        refresh_frequency: formData.refresh_frequency,
+        is_template: formData.is_template,
+      })
 
       toast.success('Report created')
       router.push('/dashboards')
@@ -80,8 +66,6 @@ export default function NewDashboardPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create dashboard'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -204,8 +188,8 @@ export default function NewDashboardPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/dashboards"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Report'}
+          <Button type="submit" disabled={createReport.isPending}>
+            {createReport.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Report'}
           </Button>
         </div>
       </form>

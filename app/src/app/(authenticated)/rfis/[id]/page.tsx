@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useRfi, useUpdateRfi, useDeleteRfi } from '@/hooks/use-rfis'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -43,16 +42,13 @@ interface RfiData {
 export default function RfiDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const rfiId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useRfi(rfiId)
+  const updateRfi = useUpdateRfi(rfiId)
+  const deleteRfi = useDeleteRfi()
+  const rfi = (response as { data: RfiData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [rfi, setRfi] = useState<RfiData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -69,40 +65,20 @@ export default function RfiDetailPage() {
   })
 
   useEffect(() => {
-    async function loadRfi() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('rfis')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('RFI not found')
-        setLoading(false)
-        return
-      }
-
-      const r = data as RfiData
-      setRfi(r)
+    if (rfi) {
       setFormData({
-        rfi_number: r.rfi_number || '',
-        subject: r.subject,
-        question: r.question || '',
-        status: r.status || 'draft',
-        priority: r.priority || 'normal',
-        category: r.category || '',
-        due_date: r.due_date || '',
-        cost_impact: r.cost_impact != null ? String(r.cost_impact) : '',
-        schedule_impact_days: r.schedule_impact_days != null ? String(r.schedule_impact_days) : '',
+        rfi_number: rfi.rfi_number || '',
+        subject: rfi.subject,
+        question: rfi.question || '',
+        status: rfi.status || 'draft',
+        priority: rfi.priority || 'normal',
+        category: rfi.category || '',
+        due_date: rfi.due_date || '',
+        cost_impact: rfi.cost_impact != null ? String(rfi.cost_impact) : '',
+        schedule_impact_days: rfi.schedule_impact_days != null ? String(rfi.schedule_impact_days) : '',
       })
-      setLoading(false)
     }
-    loadRfi()
-  }, [params.id, companyId])
+  }, [rfi])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -111,77 +87,36 @@ export default function RfiDetailPage() {
 
   const handleSave = async () => {
     if (!formData.subject.trim()) { toast.error('Subject is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('rfis')
-        .update({
-          rfi_number: formData.rfi_number || undefined,
-          subject: formData.subject,
-          question: formData.question || undefined,
-          status: formData.status,
-          priority: formData.priority,
-          category: formData.category || undefined,
-          due_date: formData.due_date || undefined,
-          cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : undefined,
-          schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : undefined,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setRfi((prev) => prev ? {
-        ...prev,
-        rfi_number: formData.rfi_number || null,
+      await updateRfi.mutateAsync({
+        rfi_number: formData.rfi_number || undefined,
         subject: formData.subject,
-        question: formData.question || null,
+        question: formData.question || undefined,
         status: formData.status,
         priority: formData.priority,
-        category: formData.category || null,
-        due_date: formData.due_date || null,
-        cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
-        schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
-      } : prev)
+        category: formData.category || undefined,
+        due_date: formData.due_date || undefined,
+        cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : undefined,
+        schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : undefined,
+      })
       toast.success('RFI updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save RFI')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('rfis')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive RFI')
-        toast.error('Failed to archive RFI')
-        return
-      }
-
+      await deleteRfi.mutateAsync(rfiId)
       toast.success('RFI archived')
       router.push('/rfis')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -197,7 +132,7 @@ export default function RfiDetailPage() {
         <Link href="/rfis" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to RFIs
         </Link>
-        <p className="text-destructive">{error || 'RFI not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'RFI not found'}</p>
       </div>
     )
   }
@@ -226,8 +161,8 @@ export default function RfiDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateRfi.isPending}>
+                  {updateRfi.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -236,8 +171,7 @@ export default function RfiDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">RFI updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { usePunchItem, useUpdatePunchItem, useDeletePunchItem } from '@/hooks/use-punch-lists'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -54,16 +53,15 @@ const PRIORITY_OPTIONS = ['low', 'medium', 'high', 'critical'] as const
 export default function JobPunchItemDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const itemId = params.itemId as string
 
-  const [item, setItem] = useState<PunchItemData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = usePunchItem(itemId)
+  const updatePunchItem = useUpdatePunchItem(itemId)
+  const deletePunchItem = useDeletePunchItem()
+  const item = (response as { data: PunchItemData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -83,44 +81,20 @@ export default function JobPunchItemDetailPage() {
   })
 
   useEffect(() => {
-    async function loadItem() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('punch_items')
-        .select('*')
-        .eq('id', itemId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Punch item not found')
-        setLoading(false)
-        return
-      }
-
-      const p = data as PunchItemData
-      setItem(p)
+    if (item) {
       setFormData({
-        title: p.title || '',
-        description: p.description || '',
-        status: p.status || 'open',
-        priority: p.priority || 'medium',
-        category: p.category || '',
-        location: p.location || '',
-        room: p.room || '',
-        assigned_to: p.assigned_to || '',
-        due_date: p.due_date || '',
+        title: item.title || '',
+        description: item.description || '',
+        status: item.status || 'open',
+        priority: item.priority || 'medium',
+        category: item.category || '',
+        location: item.location || '',
+        room: item.room || '',
+        assigned_to: item.assigned_to || '',
+        due_date: item.due_date || '',
       })
-      setLoading(false)
     }
-    loadItem()
-  }, [jobId, itemId, companyId])
+  }, [item])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -136,41 +110,17 @@ export default function JobPunchItemDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('punch_items')
-        .update({
-          title: formData.title,
-          description: formData.description || null,
-          status: formData.status,
-          priority: formData.priority,
-          category: formData.category || null,
-          location: formData.location || null,
-          room: formData.room || null,
-          assigned_to: formData.assigned_to || null,
-          due_date: formData.due_date || null,
-        })
-        .eq('id', itemId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setItem((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: formData.title,
-              description: formData.description || null,
-              status: formData.status,
-              priority: formData.priority,
-              category: formData.category || null,
-              location: formData.location || null,
-              room: formData.room || null,
-              assigned_to: formData.assigned_to || null,
-              due_date: formData.due_date || null,
-            }
-          : prev
-      )
+      await updatePunchItem.mutateAsync({
+        title: formData.title,
+        description: formData.description || null,
+        status: formData.status,
+        priority: formData.priority,
+        category: formData.category || null,
+        location: formData.location || null,
+        room: formData.room || null,
+        assigned_to: formData.assigned_to || null,
+        due_date: formData.due_date || null,
+      } as never)
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -186,19 +136,7 @@ export default function JobPunchItemDetailPage() {
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('punch_items')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', itemId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive punch item')
-        toast.error('Failed to archive punch item')
-        return
-      }
-
+      await deletePunchItem.mutateAsync(itemId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/punch-list`)
       router.refresh()

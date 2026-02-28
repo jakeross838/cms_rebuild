@@ -88,11 +88,12 @@ type TemplateCreateInput = {
   tags?: string[]
   region_tags?: string[]
   construction_tags?: string[]
-  price?: number
+  price?: number | null
   currency?: string
   template_data?: Record<string, unknown>
   required_modules?: string[]
   version?: string
+  is_system?: boolean
   is_featured?: boolean
   is_active?: boolean
 }

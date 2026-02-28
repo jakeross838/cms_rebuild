@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateTrainingCourse } from '@/hooks/use-training'
 import { toast } from 'sonner'
 
 export default function NewTrainingCoursePage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createCourse = useCreateTrainingCourse()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -47,31 +42,22 @@ export default function NewTrainingCoursePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createCourse.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.title) { setError('Title is required'); return }
 
     try {
-      if (!formData.title) throw new Error('Title is required')
-
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('training_courses')
-        .insert({
-          company_id: companyId,
-          title: formData.title,
-          description: formData.description || null,
-          content_url: formData.content_url || null,
-          course_type: formData.course_type,
-          category: formData.category || null,
-          difficulty: formData.difficulty,
-          duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes, 10) : null,
-          is_published: formData.is_published,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createCourse.mutateAsync({
+        title: formData.title,
+        description: formData.description || null,
+        content_url: formData.content_url || null,
+        course_type: formData.course_type,
+        category: formData.category || null,
+        difficulty: formData.difficulty,
+        duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes, 10) : null,
+        is_published: formData.is_published,
+      })
 
       toast.success('Training course created')
       router.push('/training')
@@ -80,8 +66,6 @@ export default function NewTrainingCoursePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create course'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -161,8 +145,8 @@ export default function NewTrainingCoursePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/training"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Course'}
+          <Button type="submit" disabled={createCourse.isPending}>
+            {createCourse.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Course'}
           </Button>
         </div>
       </form>

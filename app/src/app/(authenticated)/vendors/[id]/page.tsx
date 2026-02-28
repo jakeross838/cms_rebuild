@@ -13,8 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { US_STATES } from '@/config/constants'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useVendor, useUpdateVendor, useDeleteVendor } from '@/hooks/use-vendors'
 import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -37,16 +36,14 @@ interface VendorData {
 export default function VendorDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const vendorId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useVendor(vendorId)
+  const updateVendor = useUpdateVendor(vendorId)
+  const deleteVendor = useDeleteVendor()
 
-  const companyId = authProfile?.company_id || ''
-  const [vendor, setVendor] = useState<VendorData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const vendor = (response as { data: VendorData } | undefined)?.data ?? null
+
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -64,46 +61,21 @@ export default function VendorDetailPage() {
   })
 
   useEffect(() => {
-    async function loadVendor() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('vendors')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Vendor not found')
-          setLoading(false)
-          return
-        }
-
-        const v = data as VendorData
-        setVendor(v)
-        setFormData({
-          name: v.name,
-          trade: v.trade || '',
-          email: v.email || '',
-          phone: v.phone || '',
-          address: v.address || '',
-          city: v.city || '',
-          state: v.state || '',
-          zip: v.zip || '',
-          tax_id: v.tax_id || '',
-          notes: v.notes || '',
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load vendor')
-        setLoading(false)
-      }
+    if (vendor) {
+      setFormData({
+        name: vendor.name,
+        trade: vendor.trade || '',
+        email: vendor.email || '',
+        phone: vendor.phone || '',
+        address: vendor.address || '',
+        city: vendor.city || '',
+        state: vendor.state || '',
+        zip: vendor.zip || '',
+        tax_id: vendor.tax_id || '',
+        notes: vendor.notes || '',
+      })
     }
-    loadVendor()
-  }, [params.id, companyId])
+  }, [vendor])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -112,67 +84,37 @@ export default function VendorDetailPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Company name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('vendors')
-        .update({
-          name: formData.name,
-          trade: formData.trade || null,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip: formData.zip || null,
-          tax_id: formData.tax_id || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setVendor((prev) => prev ? { ...prev, ...formData } : prev)
+      await updateVendor.mutateAsync({
+        name: formData.name,
+        trade: formData.trade || null,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zip: formData.zip || null,
+        tax_id: formData.tax_id || null,
+        notes: formData.notes || null,
+      })
       toast.success('Vendor updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save vendor')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save vendor')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('vendors')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive vendor')
-        toast.error('Failed to archive vendor')
-        return
-      }
-
+      await deleteVendor.mutateAsync(vendorId)
       toast.success('Vendor archived')
       router.push('/vendors')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive vendor')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -188,7 +130,7 @@ export default function VendorDetailPage() {
         <Link href="/vendors" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Vendors
         </Link>
-        <p className="text-destructive">{error || 'Vendor not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Vendor not found'}</p>
       </div>
     )
   }
@@ -217,8 +159,8 @@ export default function VendorDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateVendor.isPending}>
+                  {updateVendor.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -227,8 +169,7 @@ export default function VendorDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Vendor updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

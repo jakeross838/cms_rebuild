@@ -54,9 +54,10 @@ type ItemCreateInput = {
   description?: string | null
   category?: string | null
   unit_of_measure: string
-  unit_cost: number
-  reorder_point?: number
-  reorder_quantity?: number
+  unit_cost?: number | null
+  quantity_on_hand?: number | null
+  reorder_point?: number | null
+  reorder_quantity?: number | null
   is_active?: boolean
 }
 

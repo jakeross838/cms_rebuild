@@ -10,19 +10,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateScheduleTask } from '@/hooks/use-scheduling'
 import { toast } from 'sonner'
 
 export default function NewScheduleTaskPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
+  const createScheduleTask = useCreateScheduleTask()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -51,33 +47,21 @@ export default function NewScheduleTaskPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
       if (!formData.name.trim()) { setError('Task name is required'); setLoading(false); return }
 
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      const { error: insertError } = await supabase
-        .from('schedule_tasks')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          name: formData.name,
-          description: formData.description || null,
-          phase: formData.phase || null,
-          trade: formData.trade || null,
-          task_type: formData.task_type,
-          planned_start: formData.planned_start || null,
-          planned_end: formData.planned_end || null,
-          duration_days: formData.duration_days ? parseInt(formData.duration_days) : null,
-          status: formData.status,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createScheduleTask.mutateAsync({
+        job_id: jobId,
+        name: formData.name,
+        description: formData.description || null,
+        phase: formData.phase || null,
+        trade: formData.trade || null,
+        task_type: formData.task_type,
+        planned_start: formData.planned_start || null,
+        planned_end: formData.planned_end || null,
+        duration_days: formData.duration_days ? parseInt(formData.duration_days) : null,
+        status: formData.status,
+        notes: formData.notes || null,
+      } as never)
 
       toast.success('Schedule task created')
       router.push(`/jobs/${jobId}/schedule`)

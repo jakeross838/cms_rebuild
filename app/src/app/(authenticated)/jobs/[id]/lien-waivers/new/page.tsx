@@ -10,19 +10,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateLienWaiver } from '@/hooks/use-lien-waivers'
 import { toast } from 'sonner'
 
 export default function NewLienWaiverPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
+  const createLienWaiver = useCreateLienWaiver()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -48,29 +44,16 @@ export default function NewLienWaiverPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      const { error: insertError } = await supabase
-        .from('lien_waivers')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          waiver_type: formData.waiver_type,
-          status: formData.status,
-          claimant_name: formData.claimant_name || null,
-          amount: formData.amount ? parseFloat(formData.amount) : null,
-          through_date: formData.through_date || null,
-          check_number: formData.check_number || null,
-          notes: formData.notes || null,
-          requested_by: authUser.id,
-          requested_at: new Date().toISOString(),
-        })
-
-      if (insertError) throw insertError
+      await createLienWaiver.mutateAsync({
+        job_id: jobId,
+        waiver_type: formData.waiver_type,
+        status: formData.status,
+        claimant_name: formData.claimant_name || null,
+        amount: formData.amount ? parseFloat(formData.amount) : null,
+        through_date: formData.through_date || null,
+        check_number: formData.check_number || null,
+        notes: formData.notes || null,
+      } as never)
 
       toast.success('Lien waiver created')
       router.push(`/jobs/${jobId}/lien-waivers`)

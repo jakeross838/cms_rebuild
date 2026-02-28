@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateApBill } from '@/hooks/use-accounting'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -22,7 +23,7 @@ export default function NewPayablePage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createApBill = useCreateApBill()
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -63,39 +64,30 @@ export default function NewPayablePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createApBill.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.vendor_id) { setError('Vendor is required'); return }
+    if (!formData.bill_number.trim()) { setError('Bill number is required'); return }
+    if (!formData.bill_date) { setError('Bill date is required'); return }
+    if (!formData.due_date) { setError('Due date is required'); return }
+
+    const amount = parseFloat(formData.amount)
+    if (isNaN(amount) || amount <= 0) { setError('Amount must be greater than zero'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.vendor_id) { setError('Vendor is required'); setLoading(false); return }
-      if (!formData.bill_number.trim()) { setError('Bill number is required'); setLoading(false); return }
-      if (!formData.bill_date) { setError('Bill date is required'); setLoading(false); return }
-      if (!formData.due_date) { setError('Due date is required'); setLoading(false); return }
-
-      const amount = parseFloat(formData.amount)
-      if (isNaN(amount) || amount <= 0) { setError('Amount must be greater than zero'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('ap_bills')
-        .insert({
-          company_id: companyId,
-          vendor_id: formData.vendor_id,
-          job_id: formData.job_id || null,
-          bill_number: formData.bill_number,
-          bill_date: formData.bill_date,
-          due_date: formData.due_date,
-          amount: amount,
-          balance_due: amount,
-          description: formData.description || null,
-          terms: formData.terms || null,
-          status: formData.status,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createApBill.mutateAsync({
+        vendor_id: formData.vendor_id,
+        job_id: formData.job_id || null,
+        bill_number: formData.bill_number,
+        bill_date: formData.bill_date,
+        due_date: formData.due_date,
+        amount: amount,
+        balance_due: amount,
+        description: formData.description || null,
+        terms: formData.terms || null,
+        status: formData.status,
+      })
 
       toast.success('Payable created')
       router.push('/financial/payables')
@@ -104,8 +96,6 @@ export default function NewPayablePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create bill'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -206,8 +196,8 @@ export default function NewPayablePage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/financial/payables"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Bill'}
+          <Button type="submit" disabled={createApBill.isPending}>
+            {createApBill.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Bill'}
           </Button>
         </div>
       </form>

@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreatePurchaseOrder } from '@/hooks/use-purchase-orders'
 import { formatCurrency } from '@/lib/utils'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
@@ -33,11 +34,11 @@ interface VendorOption {
 export default function NewPurchaseOrderPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createPO = useCreatePurchaseOrder()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [jobs, setJobs] = useState<JobOption[]>([])
@@ -95,7 +96,7 @@ export default function NewPurchaseOrderPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createPO.isPending) return
     setError(null)
 
     if (!formData.job_id) {
@@ -107,37 +108,27 @@ export default function NewPurchaseOrderPage() {
       return
     }
 
-    setLoading(true)
-
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
       const subtotal = formData.subtotal ? parseFloat(formData.subtotal) : 0
       const taxAmount = formData.tax_amount ? parseFloat(formData.tax_amount) : 0
       const shippingAmount = formData.shipping_amount ? parseFloat(formData.shipping_amount) : 0
       const totalAmount = subtotal + taxAmount + shippingAmount
 
-      const { error: insertError } = await supabase
-        .from('purchase_orders')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          vendor_id: formData.vendor_id,
-          po_number: formData.po_number || `PO-${Date.now()}`,
-          title: formData.title,
-          status: 'draft',
-          subtotal,
-          tax_amount: taxAmount,
-          shipping_amount: shippingAmount,
-          total_amount: totalAmount,
-          delivery_date: formData.delivery_date || undefined,
-          shipping_address: formData.shipping_address || undefined,
-          terms: formData.terms || undefined,
-          notes: formData.notes || undefined,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createPO.mutateAsync({
+        job_id: formData.job_id,
+        vendor_id: formData.vendor_id,
+        po_number: formData.po_number || `PO-${Date.now()}`,
+        title: formData.title,
+        status: 'draft',
+        subtotal,
+        tax_amount: taxAmount,
+        shipping_amount: shippingAmount,
+        total_amount: totalAmount,
+        delivery_date: formData.delivery_date || null,
+        shipping_address: formData.shipping_address || null,
+        terms: formData.terms || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Purchase order created')
       router.push('/purchase-orders')
@@ -146,8 +137,6 @@ export default function NewPurchaseOrderPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create purchase order'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -319,8 +308,8 @@ export default function NewPurchaseOrderPage() {
         {/* ── Actions ── */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/purchase-orders"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Purchase Order'}
+          <Button type="submit" disabled={createPO.isPending}>
+            {createPO.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Purchase Order'}
           </Button>
         </div>
       </form>

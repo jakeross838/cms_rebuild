@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateSelectionCategory } from '@/hooks/use-selections'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -18,11 +19,11 @@ import { formatStatus } from '@/lib/utils'
 export default function NewSelectionCategoryPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createCategory = useCreateSelectionCategory()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -63,30 +64,21 @@ export default function NewSelectionCategoryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createCategory.isPending) return
     setError(null)
-    setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('selection_categories')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          name: formData.name,
-          room: formData.room || null,
-          pricing_model: formData.pricing_model,
-          allowance_amount: formData.allowance_amount ? parseFloat(formData.allowance_amount) : 0,
-          deadline: formData.deadline || null,
-          sort_order: parseInt(formData.sort_order) || 0,
-          status: formData.status,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createCategory.mutateAsync({
+        job_id: formData.job_id,
+        name: formData.name,
+        room: formData.room || null,
+        pricing_model: formData.pricing_model,
+        allowance_amount: formData.allowance_amount ? parseFloat(formData.allowance_amount) : 0,
+        deadline: formData.deadline || null,
+        sort_order: parseInt(formData.sort_order) || 0,
+        status: formData.status,
+        notes: formData.notes || null,
+      })
 
       toast.success('Selection category created')
       router.push('/library/selections')
@@ -95,8 +87,6 @@ export default function NewSelectionCategoryPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create selection category'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -202,8 +192,8 @@ export default function NewSelectionCategoryPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/library/selections"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Selection Category'}
+          <Button type="submit" disabled={createCategory.isPending}>
+            {createCategory.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Selection Category'}
           </Button>
         </div>
       </form>

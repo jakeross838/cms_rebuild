@@ -59,8 +59,8 @@ type ContractCreateInput = {
   template_id?: string | null
   vendor_id?: string | null
   client_id?: string | null
-  contract_value?: number
-  retention_pct?: number
+  contract_value?: number | null
+  retention_pct?: number | null
   start_date?: string | null
   end_date?: string | null
   content?: string | null
@@ -209,6 +209,7 @@ type TemplateCreateInput = {
   contract_type: string
   description?: string | null
   content?: string | null
+  is_system?: boolean
   is_active?: boolean
 }
 

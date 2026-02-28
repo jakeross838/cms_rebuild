@@ -28,6 +28,7 @@ type LogListParams = {
 type LogCreateInput = {
   job_id: string
   log_date: string
+  status?: string
   weather_summary?: string
   high_temp?: number
   low_temp?: number

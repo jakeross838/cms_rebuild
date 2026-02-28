@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCostCode, useUpdateCostCode, useDeleteCostCode } from '@/hooks/use-cost-codes'
 import { toast } from 'sonner'
 
 interface CostCodeData {
@@ -34,16 +33,13 @@ interface CostCodeData {
 export default function CostCodeDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const costCodeId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useCostCode(costCodeId)
+  const updateCostCode = useUpdateCostCode(costCodeId)
+  const deleteCostCode = useDeleteCostCode()
+  const costCode = (response as { data: CostCodeData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [costCode, setCostCode] = useState<CostCodeData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -58,43 +54,18 @@ export default function CostCodeDetailPage() {
   })
 
   useEffect(() => {
-    async function loadCostCode() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('cost_codes')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Cost code not found')
-          setLoading(false)
-          return
-        }
-
-        const c = data as CostCodeData
-        setCostCode(c)
-        setFormData({
-          code: c.code,
-          name: c.name,
-          division: c.division,
-          subdivision: c.subdivision || '',
-          category: c.category || 'subcontractor',
-          trade: c.trade || '',
-          description: c.description || '',
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load cost code')
-        setLoading(false)
-      }
+    if (costCode) {
+      setFormData({
+        code: costCode.code,
+        name: costCode.name,
+        division: costCode.division,
+        subdivision: costCode.subdivision || '',
+        category: costCode.category || 'subcontractor',
+        trade: costCode.trade || '',
+        description: costCode.description || '',
+      })
     }
-    loadCostCode()
-  }, [params.id, companyId])
+  }, [costCode])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -105,65 +76,34 @@ export default function CostCodeDetailPage() {
     if (!formData.code.trim()) { toast.error('Code is required'); return }
     if (!formData.name.trim()) { toast.error('Name is required'); return }
     if (!formData.division.trim()) { toast.error('Division is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('cost_codes')
-        .update({
-          code: formData.code,
-          name: formData.name,
-          division: formData.division,
-          subdivision: formData.subdivision || null,
-          category: formData.category,
-          trade: formData.trade || null,
-          description: formData.description || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
+      await updateCostCode.mutateAsync({
+        code: formData.code,
+        name: formData.name,
+        division: formData.division || undefined,
+        description: formData.description || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setCostCode((prev) => prev ? { ...prev, ...formData } : prev)
       toast.success('Saved')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('cost_codes')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive cost code')
-        toast.error('Failed to archive cost code')
-        return
-      }
-
+      await deleteCostCode.mutateAsync(costCodeId)
       toast.success('Archived')
       router.push('/cost-codes')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   const categoryColors: Record<string, string> = {
     labor: 'bg-blue-100 text-blue-700',
@@ -187,7 +127,7 @@ export default function CostCodeDetailPage() {
         <Link href="/cost-codes" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Cost Codes
         </Link>
-        <p className="text-destructive">{error || 'Cost code not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Cost code not found'}</p>
       </div>
     )
   }
@@ -222,8 +162,8 @@ export default function CostCodeDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateCostCode.isPending}>
+                  {updateCostCode.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -232,8 +172,7 @@ export default function CostCodeDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Cost code updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

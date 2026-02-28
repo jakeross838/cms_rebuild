@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useChangeOrder, useUpdateChangeOrder, useDeleteChangeOrder } from '@/hooks/use-change-orders'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -41,16 +40,13 @@ interface ChangeOrderData {
 export default function ChangeOrderDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const coId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useChangeOrder(coId)
+  const updateCO = useUpdateChangeOrder(coId)
+  const deleteCO = useDeleteChangeOrder()
+  const changeOrder = (response as { data: ChangeOrderData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [changeOrder, setChangeOrder] = useState<ChangeOrderData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -66,44 +62,19 @@ export default function ChangeOrderDetailPage() {
   })
 
   useEffect(() => {
-    async function loadChangeOrder() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('change_orders')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Change order not found')
-          setLoading(false)
-          return
-        }
-
-        const co = data as ChangeOrderData
-        setChangeOrder(co)
-        setFormData({
-          co_number: co.co_number || '',
-          title: co.title,
-          description: co.description || '',
-          change_type: co.change_type || 'owner_requested',
-          status: co.status || 'draft',
-          amount: co.amount != null ? String(co.amount) : '',
-          cost_impact: co.cost_impact != null ? String(co.cost_impact) : '',
-          schedule_impact_days: co.schedule_impact_days != null ? String(co.schedule_impact_days) : '',
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load change order')
-        setLoading(false)
-      }
+    if (changeOrder) {
+      setFormData({
+        co_number: changeOrder.co_number || '',
+        title: changeOrder.title,
+        description: changeOrder.description || '',
+        change_type: changeOrder.change_type || 'owner_requested',
+        status: changeOrder.status || 'draft',
+        amount: changeOrder.amount != null ? String(changeOrder.amount) : '',
+        cost_impact: changeOrder.cost_impact != null ? String(changeOrder.cost_impact) : '',
+        schedule_impact_days: changeOrder.schedule_impact_days != null ? String(changeOrder.schedule_impact_days) : '',
+      })
     }
-    loadChangeOrder()
-  }, [params.id, companyId])
+  }, [changeOrder])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -112,31 +83,10 @@ export default function ChangeOrderDetailPage() {
 
   const handleSave = async () => {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('change_orders')
-        .update({
-          co_number: formData.co_number || undefined,
-          title: formData.title,
-          description: formData.description || null,
-          change_type: formData.change_type,
-          status: formData.status,
-          amount: formData.amount ? parseFloat(formData.amount) : null,
-          cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
-          schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setChangeOrder((prev) => prev ? {
-        ...prev,
-        co_number: formData.co_number || null,
+      await updateCO.mutateAsync({
+        co_number: formData.co_number || undefined,
         title: formData.title,
         description: formData.description || null,
         change_type: formData.change_type,
@@ -144,43 +94,26 @@ export default function ChangeOrderDetailPage() {
         amount: formData.amount ? parseFloat(formData.amount) : null,
         cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
         schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
-      } : prev)
+      } as Record<string, unknown>)
+
       toast.success('Change order updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save change order')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save change order')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('change_orders')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive change order')
-        toast.error('Failed to archive change order')
-        return
-      }
-
+      await deleteCO.mutateAsync(coId)
       toast.success('Change order archived')
       router.push('/change-orders')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -196,7 +129,7 @@ export default function ChangeOrderDetailPage() {
         <Link href="/change-orders" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Change Orders
         </Link>
-        <p className="text-destructive">{error || 'Change order not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Change order not found'}</p>
       </div>
     )
   }
@@ -225,8 +158,8 @@ export default function ChangeOrderDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateCO.isPending}>
+                  {updateCO.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -235,8 +168,7 @@ export default function ChangeOrderDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Change order updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

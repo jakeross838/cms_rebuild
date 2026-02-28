@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateGlAccount } from '@/hooks/use-accounting'
 import { toast } from 'sonner'
 
 export default function NewAccountPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createGlAccount = useCreateGlAccount()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -54,30 +49,22 @@ export default function NewAccountPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createGlAccount.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.account_number.trim()) { setError('Account number is required'); return }
+    if (!formData.name.trim()) { setError('Account name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.account_number.trim()) { setError('Account number is required'); setLoading(false); return }
-      if (!formData.name.trim()) { setError('Account name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('gl_accounts')
-        .insert({
-          company_id: companyId,
-          account_number: formData.account_number,
-          name: formData.name,
-          account_type: formData.account_type,
-          sub_type: formData.sub_type || null,
-          description: formData.description || null,
-          normal_balance: formData.normal_balance,
-          is_active: formData.is_active,
-        })
-
-      if (insertError) throw insertError
+      await createGlAccount.mutateAsync({
+        account_number: formData.account_number,
+        name: formData.name,
+        account_type: formData.account_type,
+        sub_type: formData.sub_type || null,
+        description: formData.description || null,
+        normal_balance: formData.normal_balance,
+        is_active: formData.is_active,
+      })
 
       toast.success('Account created')
       router.push('/financial/chart-of-accounts')
@@ -86,8 +73,6 @@ export default function NewAccountPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create account'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -169,8 +154,8 @@ export default function NewAccountPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/financial/chart-of-accounts"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Account'}
+          <Button type="submit" disabled={createGlAccount.isPending}>
+            {createGlAccount.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Account'}
           </Button>
         </div>
       </form>

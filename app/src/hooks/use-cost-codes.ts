@@ -17,6 +17,9 @@ type CostCodeCreateInput = {
   code: string
   name: string
   division?: string | null
+  subdivision?: string | null
+  category?: string | null
+  trade?: string | null
   description?: string | null
   unit_of_measure?: string | null
   default_rate?: number | null

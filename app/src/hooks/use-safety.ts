@@ -54,11 +54,16 @@ type IncidentCreateInput = {
   incident_date: string
   severity: string
   incident_type: string
+  incident_number?: string | null
   description?: string | null
   location?: string | null
   incident_time?: string | null
   status?: string
   osha_recordable?: boolean
+  medical_treatment?: boolean
+  injured_party?: string | null
+  injury_description?: string | null
+  corrective_actions?: string | null
   notes?: string | null
 }
 

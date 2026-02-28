@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useScheduleTask, useUpdateScheduleTask, useDeleteScheduleTask } from '@/hooks/use-scheduling'
 import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -55,16 +54,15 @@ const STATUS_OPTIONS = ['not_started', 'in_progress', 'completed', 'on_hold', 'c
 export default function ScheduleTaskDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const taskId = params.taskId as string
 
-  const [task, setTask] = useState<ScheduleTaskData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useScheduleTask(taskId)
+  const updateScheduleTask = useUpdateScheduleTask(taskId)
+  const deleteScheduleTask = useDeleteScheduleTask()
+  const task = (response as { data: ScheduleTaskData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -85,45 +83,21 @@ export default function ScheduleTaskDetailPage() {
   })
 
   useEffect(() => {
-    async function loadTask() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('schedule_tasks')
-        .select('*')
-        .eq('id', taskId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Schedule task not found')
-        setLoading(false)
-        return
-      }
-
-      const t = data as ScheduleTaskData
-      setTask(t)
+    if (task) {
       setFormData({
-        name: t.name,
-        description: t.description || '',
-        phase: t.phase || '',
-        trade: t.trade || '',
-        status: t.status || 'not_started',
-        planned_start: t.planned_start || '',
-        planned_end: t.planned_end || '',
-        duration_days: t.duration_days != null ? String(t.duration_days) : '',
-        progress_pct: t.progress_pct != null ? String(t.progress_pct) : '',
-        notes: t.notes || '',
+        name: task.name,
+        description: task.description || '',
+        phase: task.phase || '',
+        trade: task.trade || '',
+        status: task.status || 'not_started',
+        planned_start: task.planned_start || '',
+        planned_end: task.planned_end || '',
+        duration_days: task.duration_days != null ? String(task.duration_days) : '',
+        progress_pct: task.progress_pct != null ? String(task.progress_pct) : '',
+        notes: task.notes || '',
       })
-      setLoading(false)
     }
-    loadTask()
-  }, [taskId, jobId, companyId])
+  }, [task])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -137,43 +111,18 @@ export default function ScheduleTaskDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('schedule_tasks')
-        .update({
-          name: formData.name,
-          description: formData.description || null,
-          phase: formData.phase || null,
-          trade: formData.trade || null,
-          status: formData.status || null,
-          planned_start: formData.planned_start || null,
-          planned_end: formData.planned_end || null,
-          duration_days: formData.duration_days ? Number(formData.duration_days) : null,
-          progress_pct: formData.progress_pct ? Number(formData.progress_pct) : null,
-          notes: formData.notes || null,
-        })
-        .eq('id', taskId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setTask((prev) =>
-        prev
-          ? {
-              ...prev,
-              name: formData.name,
-              description: formData.description || null,
-              phase: formData.phase || null,
-              trade: formData.trade || null,
-              status: formData.status || null,
-              planned_start: formData.planned_start || null,
-              planned_end: formData.planned_end || null,
-              duration_days: formData.duration_days ? Number(formData.duration_days) : null,
-              progress_pct: formData.progress_pct ? Number(formData.progress_pct) : null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
+      await updateScheduleTask.mutateAsync({
+        name: formData.name,
+        description: formData.description || null,
+        phase: formData.phase || null,
+        trade: formData.trade || null,
+        status: formData.status || null,
+        planned_start: formData.planned_start || null,
+        planned_end: formData.planned_end || null,
+        duration_days: formData.duration_days ? Number(formData.duration_days) : null,
+        progress_pct: formData.progress_pct ? Number(formData.progress_pct) : null,
+        notes: formData.notes || null,
+      } as never)
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -189,29 +138,16 @@ export default function ScheduleTaskDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('schedule_tasks')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', taskId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive task')
-        toast.error('Failed to archive task')
-        return
-      }
-
+      await deleteScheduleTask.mutateAsync(taskId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/schedule`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

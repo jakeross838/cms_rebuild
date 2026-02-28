@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useWarranty, useUpdateWarranty, useDeleteWarranty } from '@/hooks/use-warranty'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -46,16 +45,15 @@ const STATUS_OPTIONS = ['active', 'expired', 'claimed', 'void']
 export default function WarrantyDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const warrantyId = params.warrantyId as string
 
-  const [warranty, setWarranty] = useState<WarrantyData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useWarranty(warrantyId)
+  const updateWarranty = useUpdateWarranty(warrantyId)
+  const deleteWarranty = useDeleteWarranty()
+  const warranty = (response as { data: WarrantyData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -72,40 +70,17 @@ export default function WarrantyDetailPage() {
   })
 
   useEffect(() => {
-    async function loadWarranty() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('warranties')
-        .select('*')
-        .eq('id', warrantyId)
-        .eq('job_id', jobId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Warranty not found')
-        setLoading(false)
-        return
-      }
-
-      const w = data as WarrantyData
-      setWarranty(w)
+    if (warranty) {
       setFormData({
-        title: w.title,
-        status: w.status,
-        warranty_type: w.warranty_type || '',
-        start_date: w.start_date || '',
-        end_date: w.end_date || '',
-        description: w.description || '',
+        title: warranty.title,
+        status: warranty.status,
+        warranty_type: warranty.warranty_type || '',
+        start_date: warranty.start_date || '',
+        end_date: warranty.end_date || '',
+        description: warranty.description || '',
       })
-      setLoading(false)
     }
-    loadWarranty()
-  }, [warrantyId, jobId, companyId])
+  }, [warranty])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -119,35 +94,14 @@ export default function WarrantyDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('warranties')
-        .update({
-          title: formData.title,
-          status: formData.status,
-          warranty_type: formData.warranty_type || undefined,
-          start_date: formData.start_date || undefined,
-          end_date: formData.end_date || undefined,
-          description: formData.description || undefined,
-        })
-        .eq('id', warrantyId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setWarranty((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: formData.title,
-              status: formData.status,
-              warranty_type: formData.warranty_type || null,
-              start_date: formData.start_date || null,
-              end_date: formData.end_date || null,
-              description: formData.description || null,
-            }
-          : prev
-      )
+      await updateWarranty.mutateAsync({
+        title: formData.title,
+        status: formData.status,
+        warranty_type: formData.warranty_type || undefined,
+        start_date: formData.start_date || undefined,
+        end_date: formData.end_date || undefined,
+        description: formData.description || undefined,
+      } as never)
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -163,29 +117,16 @@ export default function WarrantyDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('warranties')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', warrantyId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive warranty')
-        toast.error('Failed to archive warranty')
-        return
-      }
-
+      await deleteWarranty.mutateAsync(warrantyId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/warranties`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

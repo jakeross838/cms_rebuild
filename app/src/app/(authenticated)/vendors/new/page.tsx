@@ -11,18 +11,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { US_STATES } from '@/config/constants'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateVendor } from '@/hooks/use-vendors'
 import { toast } from 'sonner'
 
 export default function NewVendorPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createVendor = useCreateVendor()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -44,30 +39,23 @@ export default function NewVendorPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createVendor.isPending) return
     setError(null)
-    setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
+      if (!formData.name.trim()) { setError('Name is required'); return }
 
-      const { error: insertError } = await supabase
-        .from('vendors')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          trade: formData.trade || null,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip: formData.zip || null,
-          notes: formData.notes || null,
-        })
-
-      if (insertError) throw insertError
+      await createVendor.mutateAsync({
+        name: formData.name,
+        trade: formData.trade || null,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zip: formData.zip || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Vendor created')
       router.push('/vendors')
@@ -76,8 +64,6 @@ export default function NewVendorPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create vendor'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -158,8 +144,8 @@ export default function NewVendorPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/vendors"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Vendor'}
+          <Button type="submit" disabled={createVendor.isPending}>
+            {createVendor.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Vendor'}
           </Button>
         </div>
       </form>

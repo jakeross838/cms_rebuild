@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useChangeOrder, useUpdateChangeOrder, useDeleteChangeOrder } from '@/hooks/use-change-orders'
 import { formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -50,16 +49,15 @@ const CHANGE_TYPE_OPTIONS = ['addition', 'deduction', 'revision'] as const
 export default function ChangeOrderDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const coId = params.coId as string
 
-  const [co, setCo] = useState<ChangeOrderData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useChangeOrder(coId)
+  const updateChangeOrder = useUpdateChangeOrder(coId)
+  const deleteChangeOrder = useDeleteChangeOrder()
+  const co = (response as { data: ChangeOrderData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -77,42 +75,18 @@ export default function ChangeOrderDetailPage() {
   })
 
   useEffect(() => {
-    async function loadCo() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('change_orders')
-        .select('*')
-        .eq('id', coId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Change order not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as ChangeOrderData
-      setCo(c)
+    if (co) {
       setFormData({
-        co_number: c.co_number || '',
-        title: c.title || '',
-        description: c.description || '',
-        amount: c.amount != null ? String(c.amount) : '',
-        status: c.status || 'draft',
-        change_type: c.change_type || 'addition',
-        schedule_impact_days: c.schedule_impact_days != null ? String(c.schedule_impact_days) : '',
+        co_number: co.co_number || '',
+        title: co.title || '',
+        description: co.description || '',
+        amount: co.amount != null ? String(co.amount) : '',
+        status: co.status || 'draft',
+        change_type: co.change_type || 'addition',
+        schedule_impact_days: co.schedule_impact_days != null ? String(co.schedule_impact_days) : '',
       })
-      setLoading(false)
     }
-    loadCo()
-  }, [jobId, coId, companyId])
+  }, [co])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -126,38 +100,16 @@ export default function ChangeOrderDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('change_orders')
-        .update({
-          co_number: formData.co_number || undefined,
-          title: formData.title || undefined,
-          description: formData.description || undefined,
-          amount: formData.amount ? Number(formData.amount) : undefined,
-          status: formData.status || 'draft',
-          change_type: formData.change_type || undefined,
-          schedule_impact_days: formData.schedule_impact_days ? Number(formData.schedule_impact_days) : undefined,
-        })
-        .eq('id', coId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateChangeOrder.mutateAsync({
+        co_number: formData.co_number || undefined,
+        title: formData.title || undefined,
+        description: formData.description || undefined,
+        amount: formData.amount ? Number(formData.amount) : undefined,
+        status: formData.status || 'draft',
+        change_type: formData.change_type || undefined,
+        schedule_impact_days: formData.schedule_impact_days ? Number(formData.schedule_impact_days) : undefined,
+      })
       toast.success('Saved')
-
-      setCo((prev) =>
-        prev
-          ? {
-              ...prev,
-              co_number: formData.co_number || null,
-              title: formData.title || null,
-              description: formData.description || null,
-              amount: formData.amount ? Number(formData.amount) : null,
-              status: formData.status,
-              change_type: formData.change_type || null,
-              schedule_impact_days: formData.schedule_impact_days ? Number(formData.schedule_impact_days) : null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -172,29 +124,16 @@ export default function ChangeOrderDetailPage() {
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('change_orders')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', coId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive change order')
-        toast.error('Failed to archive change order')
-        return
-      }
+      await deleteChangeOrder.mutateAsync(coId)
       toast.success('Archived')
-
       router.push(`/jobs/${jobId}/change-orders`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

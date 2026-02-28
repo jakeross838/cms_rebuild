@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useMarketingCampaign, useUpdateMarketingCampaign, useDeleteMarketingCampaign } from '@/hooks/use-marketing'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -40,18 +39,14 @@ interface CampaignData {
 export default function CampaignDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const campaignId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useMarketingCampaign(campaignId)
+  const updateCampaign = useUpdateMarketingCampaign(campaignId)
+  const deleteCampaign = useDeleteMarketingCampaign()
+  const campaign = (response as { data: CampaignData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [campaign, setCampaign] = useState<CampaignData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -67,38 +62,20 @@ export default function CampaignDetailPage() {
   })
 
   useEffect(() => {
-    async function loadCampaign() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('marketing_campaigns')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Campaign not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as CampaignData
-      setCampaign(c)
+    if (campaign) {
       setFormData({
-        name: c.name,
-        campaign_type: c.campaign_type || '',
-        channel: c.channel || '',
-        budget: c.budget?.toString() || '0',
-        start_date: c.start_date || '',
-        end_date: c.end_date || '',
-        target_audience: c.target_audience || '',
-        description: c.description || '',
-        notes: c.notes || '',
+        name: campaign.name,
+        campaign_type: campaign.campaign_type || '',
+        channel: campaign.channel || '',
+        budget: campaign.budget?.toString() || '0',
+        start_date: campaign.start_date || '',
+        end_date: campaign.end_date || '',
+        target_audience: campaign.target_audience || '',
+        description: campaign.description || '',
+        notes: campaign.notes || '',
       })
-      setLoading(false)
     }
-    loadCampaign()
-  }, [params.id, companyId])
+  }, [campaign])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -106,54 +83,24 @@ export default function CampaignDetailPage() {
   }
 
   const handleConfirmArchive = async () => {
-    setArchiving(true)
     try {
-      const { error: archiveError } = await supabase
-        .from('marketing_campaigns')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) throw archiveError
+      await deleteCampaign.mutateAsync(campaignId)
       toast.success('Archived')
       router.push('/email-marketing')
+      router.refresh()
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
-      setError(errorMessage)
       toast.error(errorMessage)
-      setArchiving(false)
     }
   }
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Campaign Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('marketing_campaigns')
-        .update({
-          name: formData.name,
-          campaign_type: formData.campaign_type || undefined,
-          channel: formData.channel || null,
-          budget: parseFloat(formData.budget) || 0,
-          start_date: formData.start_date || null,
-          end_date: formData.end_date || null,
-          target_audience: formData.target_audience || null,
-          description: formData.description || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      toast.success('Saved')
-      setCampaign((prev) => prev ? {
-        ...prev,
+      await updateCampaign.mutateAsync({
         name: formData.name,
-        campaign_type: formData.campaign_type,
+        campaign_type: formData.campaign_type || undefined,
         channel: formData.channel || null,
         budget: parseFloat(formData.budget) || 0,
         start_date: formData.start_date || null,
@@ -161,16 +108,13 @@ export default function CampaignDetailPage() {
         target_audience: formData.target_audience || null,
         description: formData.description || null,
         notes: formData.notes || null,
-      } : prev)
-      setSuccess(true)
+      } as Record<string, unknown>)
+
+      toast.success('Saved')
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -188,7 +132,7 @@ export default function CampaignDetailPage() {
         <Link href="/email-marketing" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Email Marketing
         </Link>
-        <p className="text-destructive">{error || 'Campaign not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Campaign not found'}</p>
       </div>
     )
   }
@@ -213,13 +157,13 @@ export default function CampaignDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteCampaign.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteCampaign.isPending ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateCampaign.isPending}>
+                  {updateCampaign.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -228,8 +172,7 @@ export default function CampaignDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Campaign updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

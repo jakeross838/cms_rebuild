@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateRfi } from '@/hooks/use-rfis'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -22,11 +23,11 @@ interface JobOption {
 export default function NewRfiPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createRfi = useCreateRfi()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<JobOption[]>([])
 
@@ -65,7 +66,7 @@ export default function NewRfiPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createRfi.isPending) return
     setError(null)
 
     if (!formData.subject) {
@@ -85,31 +86,19 @@ export default function NewRfiPage() {
       return
     }
 
-    setLoading(true)
-
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('rfis')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          rfi_number: formData.rfi_number,
-          subject: formData.subject,
-          question: formData.question,
-          priority: formData.priority,
-          category: formData.category || undefined,
-          due_date: formData.due_date || undefined,
-          cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : undefined,
-          schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : undefined,
-          status: 'draft',
-          created_by: authUser.id,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createRfi.mutateAsync({
+        job_id: formData.job_id,
+        rfi_number: formData.rfi_number,
+        subject: formData.subject,
+        question: formData.question,
+        priority: formData.priority,
+        category: formData.category || null,
+        due_date: formData.due_date || null,
+        cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
+        schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
+        status: 'draft',
+      })
 
       toast.success('RFI created')
       router.push('/rfis')
@@ -118,8 +107,6 @@ export default function NewRfiPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create RFI'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -204,8 +191,8 @@ export default function NewRfiPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/rfis"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create RFI'}
+          <Button type="submit" disabled={createRfi.isPending}>
+            {createRfi.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create RFI'}
           </Button>
         </div>
       </form>

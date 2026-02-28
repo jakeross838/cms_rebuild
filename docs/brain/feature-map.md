@@ -1,5 +1,43 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 36 — Detail Page React Query Migration (2026-02-28)
+
+### 10 Detail Pages Migrated from Direct Supabase to React Query Hooks
+
+All 10 detail pages below were converted from direct `createClient()` + `useAuth()` Supabase queries to typed React Query hooks. This eliminates manual fetch logic, adds automatic cache invalidation, and routes all data through the API layer for consistent multi-tenant security.
+
+#### Migration Pattern Applied to Each Page
+- **Removed:** `createClient()`, `useAuth()`, `companyId`, `loading`/`saving`/`error`/`success` state
+- **Added:** `useDetail(id)` for fetching, `useUpdate(id)` for saves, `useDelete()` for archive
+- **handleSave:** `updateEntity.mutateAsync({...})` with `toast.success('Saved')`
+- **handleDelete/Archive:** `deleteEntity.mutateAsync(entityId)` with `router.push()` + `router.refresh()`
+- **Render:** `saving` replaced by `updateEntity.isPending`, error banner uses `fetchError?.message`
+
+#### Files Migrated
+| File | Hooks Source | Hooks Used |
+|------|-------------|------------|
+| `financial/receivables/[id]/page.tsx` | `use-accounting` | `useArInvoice`, `useUpdateArInvoice`, `useDeleteArInvoice` |
+| `financial/journal-entries/[id]/page.tsx` | `use-accounting` | `useJournalEntry`, `useUpdateJournalEntry`, `useJournalLines` |
+| `financial/chart-of-accounts/[id]/page.tsx` | `use-accounting` | `useGlAccount`, `useUpdateGlAccount` |
+| `hr/[id]/page.tsx` | `use-hr` | `useEmployee`, `useUpdateEmployee`, `useDeleteEmployee` |
+| `inventory/[id]/page.tsx` | `use-inventory` | `useInventoryItem`, `useUpdateInventoryItem`, `useDeleteInventoryItem` |
+| `leads/[id]/page.tsx` | `use-crm` | `useLead`, `useUpdateLead`, `useDeleteLead` |
+| `legal/[id]/page.tsx` | `use-contracts` | `useContractTemplate`, `useUpdateContractTemplate`, `useDeleteContractTemplate` |
+| `lien-waivers/[id]/page.tsx` | `use-lien-waivers` | `useLienWaiver`, `useUpdateLienWaiver`, `useDeleteLienWaiver` |
+| `library/templates/[id]/page.tsx` | `use-contracts` | `useContractTemplate`, `useUpdateContractTemplate`, `useDeleteContractTemplate` |
+| `library/assemblies/[id]/page.tsx` | `use-estimating` | `useAssembly`, `useUpdateAssembly`, `useDeleteAssembly` |
+
+#### Skipped File
+| File | Reason |
+|------|--------|
+| `invoices/[id]/page.tsx` | No React Query hooks exist for the `invoices` table; `use-invoice-processing.ts` only covers `invoice_extractions` |
+
+#### Special Cases
+- **journal-entries:** No `useDeleteJournalEntry` exported; archive uses `useUpdateJournalEntry` with `{ deleted_at: new Date().toISOString() }`
+- **chart-of-accounts:** No `useDeleteGlAccount` exported; archive uses `useUpdateGlAccount` with `{ deleted_at: new Date().toISOString() }`; also has `handleToggleActive` using same update hook
+- **legal + library/templates:** Both pages share the `contract_templates` table; both use identical hooks from `use-contracts`
+- **receivables:** `clients` and `jobs` lookup arrays remain as empty `useState` (no separate hooks to fetch dropdown options); dropdowns will be empty in edit mode until lookup hooks are added
+
 ## Session 35 — React Query Hooks for All 52 Modules (2026-02-28)
 
 ### Hooks Layer Complete

@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateArInvoice } from '@/hooks/use-accounting'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -18,11 +19,11 @@ import { formatStatus } from '@/lib/utils'
 export default function NewReceivablePage() {
   const router = useRouter()
   const supabase = createClient()
+  const createArInvoice = useCreateArInvoice()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -63,39 +64,30 @@ export default function NewReceivablePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createArInvoice.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.client_id) { setError('Client is required'); return }
+    if (!formData.invoice_number.trim()) { setError('Invoice number is required'); return }
+    if (!formData.invoice_date) { setError('Invoice date is required'); return }
+    if (!formData.due_date) { setError('Due date is required'); return }
+
+    const amount = parseFloat(formData.amount)
+    if (isNaN(amount) || amount <= 0) { setError('Amount must be greater than zero'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.client_id) { setError('Client is required'); setLoading(false); return }
-      if (!formData.invoice_number.trim()) { setError('Invoice number is required'); setLoading(false); return }
-      if (!formData.invoice_date) { setError('Invoice date is required'); setLoading(false); return }
-      if (!formData.due_date) { setError('Due date is required'); setLoading(false); return }
-
-      const amount = parseFloat(formData.amount)
-      if (isNaN(amount) || amount <= 0) { setError('Amount must be greater than zero'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('ar_invoices')
-        .insert({
-          company_id: companyId,
-          client_id: formData.client_id,
-          job_id: formData.job_id || null,
-          invoice_number: formData.invoice_number,
-          invoice_date: formData.invoice_date,
-          due_date: formData.due_date,
-          amount: amount,
-          balance_due: amount,
-          terms: formData.terms || null,
-          notes: formData.notes || null,
-          status: formData.status,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createArInvoice.mutateAsync({
+        client_id: formData.client_id,
+        job_id: formData.job_id || null,
+        invoice_number: formData.invoice_number,
+        invoice_date: formData.invoice_date,
+        due_date: formData.due_date,
+        amount: amount,
+        balance_due: amount,
+        terms: formData.terms || null,
+        notes: formData.notes || null,
+        status: formData.status,
+      })
 
       toast.success('Receivable created')
       router.push('/financial/receivables')
@@ -104,8 +96,6 @@ export default function NewReceivablePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create invoice'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -206,8 +196,8 @@ export default function NewReceivablePage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/financial/receivables"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Invoice'}
+          <Button type="submit" disabled={createArInvoice.isPending}>
+            {createArInvoice.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Invoice'}
           </Button>
         </div>
       </form>

@@ -118,6 +118,8 @@ type ApBillCreateInput = {
   bill_date: string
   due_date: string
   amount: number
+  balance_due?: number | null
+  status?: string
   description?: string | null
   job_id?: string | null
   received_date?: string | null
@@ -191,6 +193,8 @@ type ArInvoiceCreateInput = {
   invoice_date: string
   due_date: string
   amount: number
+  balance_due?: number | null
+  status?: string
   terms?: string | null
   notes?: string | null
   lines?: {

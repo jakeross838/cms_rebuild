@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useLienWaiver, useUpdateLienWaiver, useDeleteLienWaiver } from '@/hooks/use-lien-waivers'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -51,16 +50,15 @@ const STATUS_OPTIONS = ['requested', 'received', 'approved', 'rejected', 'expire
 export default function LienWaiverDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const waiverId = params.waiverId as string
 
-  const [waiver, setWaiver] = useState<LienWaiverData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useLienWaiver(waiverId)
+  const updateLienWaiver = useUpdateLienWaiver(waiverId)
+  const deleteLienWaiver = useDeleteLienWaiver()
+  const waiver = (response as { data: LienWaiverData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -78,56 +76,18 @@ export default function LienWaiverDetailPage() {
   })
 
   useEffect(() => {
-    async function loadWaiver() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('lien_waivers')
-        .select('*, vendors(name)')
-        .eq('id', waiverId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Lien waiver not found')
-        setLoading(false)
-        return
-      }
-
-      const vendorData = data.vendors as { name: string } | null
-      const w: LienWaiverData = {
-        id: data.id,
-        waiver_type: data.waiver_type,
-        vendor_id: data.vendor_id,
-        amount: data.amount,
-        through_date: data.through_date,
-        status: data.status,
-        claimant_name: data.claimant_name,
-        check_number: data.check_number,
-        notes: data.notes,
-        created_at: data.created_at,
-        vendor_name: vendorData?.name ?? null,
-      }
-
-      setWaiver(w)
+    if (waiver) {
       setFormData({
-        waiver_type: w.waiver_type,
-        amount: w.amount != null ? String(w.amount) : '',
-        through_date: w.through_date || '',
-        status: w.status,
-        claimant_name: w.claimant_name || '',
-        check_number: w.check_number || '',
-        notes: w.notes || '',
+        waiver_type: waiver.waiver_type,
+        amount: waiver.amount != null ? String(waiver.amount) : '',
+        through_date: waiver.through_date || '',
+        status: waiver.status,
+        claimant_name: waiver.claimant_name || '',
+        check_number: waiver.check_number || '',
+        notes: waiver.notes || '',
       })
-      setLoading(false)
     }
-    loadWaiver()
-  }, [waiverId, jobId, companyId])
+  }, [waiver])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -141,37 +101,15 @@ export default function LienWaiverDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('lien_waivers')
-        .update({
-          waiver_type: formData.waiver_type,
-          amount: formData.amount ? Number(formData.amount) : null,
-          through_date: formData.through_date || null,
-          status: formData.status,
-          claimant_name: formData.claimant_name || null,
-          check_number: formData.check_number || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', waiverId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setWaiver((prev) =>
-        prev
-          ? {
-              ...prev,
-              waiver_type: formData.waiver_type,
-              amount: formData.amount ? Number(formData.amount) : null,
-              through_date: formData.through_date || null,
-              status: formData.status,
-              claimant_name: formData.claimant_name || null,
-              check_number: formData.check_number || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
+      await updateLienWaiver.mutateAsync({
+        waiver_type: formData.waiver_type,
+        amount: formData.amount ? Number(formData.amount) : null,
+        through_date: formData.through_date || null,
+        status: formData.status,
+        claimant_name: formData.claimant_name || null,
+        check_number: formData.check_number || null,
+        notes: formData.notes || null,
+      })
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -187,29 +125,16 @@ export default function LienWaiverDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('lien_waivers')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', waiverId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive lien waiver')
-        toast.error('Failed to archive lien waiver')
-        return
-      }
-
+      await deleteLienWaiver.mutateAsync(waiverId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/lien-waivers`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

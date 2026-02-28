@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateSafetyIncident } from '@/hooks/use-safety'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -21,7 +22,7 @@ export default function NewSafetyIncidentPage() {
   const { profile: authProfile, user: authUser } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createIncident = useCreateSafetyIncident()
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -73,42 +74,32 @@ export default function NewSafetyIncidentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createIncident.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.job_id) { setError('Job is required'); return }
+    if (!formData.incident_number.trim()) { setError('Incident number is required'); return }
+    if (!formData.title.trim()) { setError('Title is required'); return }
+    if (!formData.incident_date) { setError('Incident date is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.job_id) { setError('Job is required'); setLoading(false); return }
-      if (!formData.incident_number.trim()) { setError('Incident number is required'); setLoading(false); return }
-      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
-      if (!formData.incident_date) { setError('Incident date is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('safety_incidents')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          incident_number: formData.incident_number,
-          title: formData.title,
-          incident_date: formData.incident_date,
-          incident_time: formData.incident_time || null,
-          incident_type: formData.incident_type,
-          severity: formData.severity,
-          status: formData.status,
-          location: formData.location || null,
-          description: formData.description || null,
-          injured_party: formData.injured_party || null,
-          injury_description: formData.injury_description || null,
-          corrective_actions: formData.corrective_actions || null,
-          osha_recordable: formData.osha_recordable,
-          medical_treatment: formData.medical_treatment,
-          reported_by: authUser.id,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createIncident.mutateAsync({
+        job_id: formData.job_id,
+        incident_number: formData.incident_number,
+        title: formData.title,
+        incident_date: formData.incident_date,
+        incident_time: formData.incident_time || null,
+        incident_type: formData.incident_type,
+        severity: formData.severity,
+        status: formData.status,
+        location: formData.location || null,
+        description: formData.description || null,
+        injured_party: formData.injured_party || null,
+        injury_description: formData.injury_description || null,
+        corrective_actions: formData.corrective_actions || null,
+        osha_recordable: formData.osha_recordable,
+        medical_treatment: formData.medical_treatment,
+      })
 
       toast.success('Safety incident reported')
       router.push('/compliance/safety')
@@ -117,8 +108,6 @@ export default function NewSafetyIncidentPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create safety incident'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -280,8 +269,8 @@ export default function NewSafetyIncidentPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/compliance/safety"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Report Incident'}
+          <Button type="submit" disabled={createIncident.isPending}>
+            {createIncident.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Report Incident'}
           </Button>
         </div>
       </form>

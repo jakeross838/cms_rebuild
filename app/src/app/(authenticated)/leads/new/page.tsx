@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateLead } from '@/hooks/use-crm'
 import { toast } from 'sonner'
 
 export default function NewLeadPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createLead = useCreateLead()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -42,32 +37,24 @@ export default function NewLeadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createLead.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.first_name.trim()) { setError('First name is required'); return }
+    if (!formData.last_name.trim()) { setError('Last name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.first_name.trim()) { setError('First name is required'); setLoading(false); return }
-      if (!formData.last_name.trim()) { setError('Last name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('leads')
-        .insert({
-          company_id: companyId,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          source: formData.source,
-          source_detail: formData.source_detail || null,
-          project_type: formData.project_type || null,
-          expected_contract_value: formData.expected_contract_value ? parseFloat(formData.expected_contract_value) : null,
-          status: 'new',
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createLead.mutateAsync({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        source: formData.source,
+        source_detail: formData.source_detail || null,
+        project_type: formData.project_type || null,
+        expected_contract_value: formData.expected_contract_value ? parseFloat(formData.expected_contract_value) : null,
+        status: 'new',
+      })
 
       toast.success('Lead created')
       router.push('/leads')
@@ -76,8 +63,6 @@ export default function NewLeadPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create lead'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -164,8 +149,8 @@ export default function NewLeadPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/leads"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Lead'}
+          <Button type="submit" disabled={createLead.isPending}>
+            {createLead.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Lead'}
           </Button>
         </div>
       </form>

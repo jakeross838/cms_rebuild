@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useLienWaiver, useUpdateLienWaiver, useDeleteLienWaiver } from '@/hooks/use-lien-waivers'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -43,16 +42,13 @@ interface LienWaiverData {
 export default function LienWaiverDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const entityId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading: loading, error: fetchError } = useLienWaiver(entityId)
+  const updateWaiver = useUpdateLienWaiver(entityId)
+  const deleteWaiver = useDeleteLienWaiver()
+  const waiver = (response as { data: LienWaiverData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [waiver, setWaiver] = useState<LienWaiverData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -66,37 +62,17 @@ export default function LienWaiverDetailPage() {
   })
 
   useEffect(() => {
-    async function loadWaiver() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('lien_waivers')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Lien waiver not found')
-        setLoading(false)
-        return
-      }
-
-      const w = data as LienWaiverData
-      setWaiver(w)
+    if (waiver) {
       setFormData({
-        claimant_name: w.claimant_name || '',
-        waiver_type: w.waiver_type || 'Conditional Progress',
-        amount: w.amount != null ? String(w.amount) : '',
-        through_date: w.through_date || '',
-        check_number: w.check_number || '',
-        notes: w.notes || '',
+        claimant_name: waiver.claimant_name || '',
+        waiver_type: waiver.waiver_type || 'Conditional Progress',
+        amount: waiver.amount != null ? String(waiver.amount) : '',
+        through_date: waiver.through_date || '',
+        check_number: waiver.check_number || '',
+        notes: waiver.notes || '',
       })
-      setLoading(false)
     }
-    loadWaiver()
-  }, [params.id, companyId])
+  }, [waiver])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -105,73 +81,33 @@ export default function LienWaiverDetailPage() {
 
   const handleSave = async () => {
     if (!formData.claimant_name.trim()) { toast.error('Claimant Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('lien_waivers')
-        .update({
-          claimant_name: formData.claimant_name || null,
-          waiver_type: formData.waiver_type || undefined,
-          amount: formData.amount ? parseFloat(formData.amount) : null,
-          through_date: formData.through_date || null,
-          check_number: formData.check_number || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setWaiver((prev) => prev ? {
-        ...prev,
+      await updateWaiver.mutateAsync({
         claimant_name: formData.claimant_name || null,
-        waiver_type: formData.waiver_type || null,
+        waiver_type: formData.waiver_type || undefined,
         amount: formData.amount ? parseFloat(formData.amount) : null,
         through_date: formData.through_date || null,
         check_number: formData.check_number || null,
         notes: formData.notes || null,
-      } : prev)
-      setSuccess(true)
-      setEditing(false)
+      } as Record<string, unknown>)
       toast.success('Saved')
-      setTimeout(() => setSuccess(false), 3000)
+      setEditing(false)
     } catch (err) {
-      const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save')
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('lien_waivers')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        const errorMessage = 'Failed to archive lien waiver'
-        setError(errorMessage)
-        toast.error(errorMessage)
-        return
-      }
-
+      await deleteWaiver.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/lien-waivers')
       router.refresh()
-  
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
-      toast.error(msg)
+      toast.error((err as Error)?.message || 'Failed to archive')
     }
-}
+  }
 
   if (loading) {
     return (
@@ -187,7 +123,7 @@ export default function LienWaiverDetailPage() {
         <Link href="/lien-waivers" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Lien Waivers
         </Link>
-        <p className="text-destructive">{error || 'Lien waiver not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Lien waiver not found'}</p>
       </div>
     )
   }
@@ -211,8 +147,8 @@ export default function LienWaiverDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateWaiver.isPending}>
+                  {updateWaiver.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -221,8 +157,7 @@ export default function LienWaiverDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Lien waiver updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

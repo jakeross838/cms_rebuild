@@ -57,9 +57,9 @@ type EstimateCreateInput = {
   estimate_type: string
   contract_type?: string | null
   markup_type?: string | null
-  markup_pct?: number
-  overhead_pct?: number
-  profit_pct?: number
+  markup_pct?: number | null
+  overhead_pct?: number | null
+  profit_pct?: number | null
   valid_until?: string | null
   notes?: string | null
 }

@@ -10,18 +10,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateInventoryItem } from '@/hooks/use-inventory'
 import { toast } from 'sonner'
 
 export default function NewInventoryItemPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createItem = useCreateInventoryItem()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -42,31 +37,23 @@ export default function NewInventoryItemPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createItem.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.name.trim()) { setError('Item name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.name.trim()) { setError('Item name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('inventory_items')
-        .insert({
-          company_id: companyId,
-          name: formData.name,
-          sku: formData.sku || null,
-          category: formData.category || null,
-          unit_of_measure: formData.unit_of_measure,
-          unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : null,
-          reorder_point: formData.reorder_point ? parseInt(formData.reorder_point) : null,
-          reorder_quantity: formData.reorder_quantity ? parseInt(formData.reorder_quantity) : null,
-          description: formData.description || null,
-          is_active: true,
-        })
-
-      if (insertError) throw insertError
+      await createItem.mutateAsync({
+        name: formData.name,
+        sku: formData.sku || null,
+        category: formData.category || null,
+        unit_of_measure: formData.unit_of_measure,
+        unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : null,
+        reorder_point: formData.reorder_point ? parseInt(formData.reorder_point) : null,
+        reorder_quantity: formData.reorder_quantity ? parseInt(formData.reorder_quantity) : null,
+        description: formData.description || null,
+        is_active: true,
+      })
 
       toast.success('Inventory item created')
       router.push('/inventory')
@@ -75,8 +62,6 @@ export default function NewInventoryItemPage() {
       const errorMessage = (err as Error)?.message || 'Failed to add inventory item'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -168,8 +153,8 @@ export default function NewInventoryItemPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/inventory"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Item'}
+          <Button type="submit" disabled={createItem.isPending}>
+            {createItem.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Item'}
           </Button>
         </div>
       </form>

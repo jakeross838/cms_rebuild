@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useContract, useUpdateContract, useDeleteContract } from '@/hooks/use-contracts'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -37,16 +36,13 @@ const CONTRACT_TYPE_OPTIONS = ['prime', 'subcontract', 'purchase_order', 'servic
 export default function ContractDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const contractId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useContract(contractId)
+  const updateContract = useUpdateContract(contractId)
+  const deleteContract = useDeleteContract()
+  const contract = (response as { data: ContractData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [contract, setContract] = useState<ContractData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -62,44 +58,19 @@ export default function ContractDetailPage() {
   })
 
   useEffect(() => {
-    async function loadContract() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('contracts')
-          .select('*')
-          .eq('id', params.id as string)
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .single()
-
-        if (fetchError || !data) {
-          setError('Contract not found')
-          setLoading(false)
-          return
-        }
-
-        const c = data as ContractData
-        setContract(c)
-        setFormData({
-          title: c.title || '',
-          contract_number: c.contract_number || '',
-          contract_type: c.contract_type || '',
-          contract_value: c.contract_value?.toString() || '',
-          retention_pct: c.retention_pct?.toString() || '',
-          start_date: c.start_date || '',
-          end_date: c.end_date || '',
-          description: c.description || '',
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load contract')
-        setLoading(false)
-      }
+    if (contract) {
+      setFormData({
+        title: contract.title || '',
+        contract_number: contract.contract_number || '',
+        contract_type: contract.contract_type || '',
+        contract_value: contract.contract_value?.toString() || '',
+        retention_pct: contract.retention_pct?.toString() || '',
+        start_date: contract.start_date || '',
+        end_date: contract.end_date || '',
+        description: contract.description || '',
+      })
     }
-    loadContract()
-  }, [params.id, companyId])
+  }, [contract])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -107,75 +78,36 @@ export default function ContractDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('contracts')
-        .update({
-          title: formData.title || undefined,
-          contract_number: formData.contract_number || undefined,
-          contract_type: formData.contract_type || undefined,
-          contract_value: formData.contract_value ? parseFloat(formData.contract_value) : null,
-          retention_pct: formData.retention_pct ? parseFloat(formData.retention_pct) : null,
-          start_date: formData.start_date || null,
-          end_date: formData.end_date || null,
-          description: formData.description || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setContract((prev) => prev ? {
-        ...prev,
-        title: formData.title || null,
-        contract_number: formData.contract_number || null,
-        contract_type: formData.contract_type || null,
-        contract_value: formData.contract_value ? parseFloat(formData.contract_value) : null,
-        retention_pct: formData.retention_pct ? parseFloat(formData.retention_pct) : null,
+      await updateContract.mutateAsync({
+        title: formData.title || undefined,
+        contract_number: formData.contract_number || undefined,
+        contract_type: formData.contract_type || undefined,
+        contract_value: formData.contract_value ? parseFloat(formData.contract_value) : undefined,
+        retention_pct: formData.retention_pct ? parseFloat(formData.retention_pct) : undefined,
         start_date: formData.start_date || null,
         end_date: formData.end_date || null,
         description: formData.description || null,
-      } : prev)
+      } as Record<string, unknown>)
+
       toast.success('Contract updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save contract')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save contract')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('contracts')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive contract')
-        toast.error('Failed to archive contract')
-        return
-      }
-
+      await deleteContract.mutateAsync(contractId)
       toast.success('Contract archived')
       router.push('/contracts')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -191,7 +123,7 @@ export default function ContractDetailPage() {
         <Link href="/contracts" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Contracts
         </Link>
-        <p className="text-destructive">{error || 'Contract not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Contract not found'}</p>
       </div>
     )
   }
@@ -224,8 +156,8 @@ export default function ContractDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateContract.isPending}>
+                  {updateContract.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -234,8 +166,7 @@ export default function ContractDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Contract updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

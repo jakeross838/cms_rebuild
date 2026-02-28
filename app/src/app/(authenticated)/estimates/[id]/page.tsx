@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useEstimate, useUpdateEstimate, useDeleteEstimate } from '@/hooks/use-estimating'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -40,16 +39,13 @@ const ESTIMATE_TYPE_OPTIONS = ['lump_sum', 'cost_plus', 'time_and_materials', 'u
 export default function EstimateDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const estimateId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useEstimate(estimateId)
+  const updateEstimate = useUpdateEstimate(estimateId)
+  const deleteEstimate = useDeleteEstimate()
+  const estimate = (response as { data: EstimateData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [estimate, setEstimate] = useState<EstimateData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -66,39 +62,20 @@ export default function EstimateDetailPage() {
   })
 
   useEffect(() => {
-    async function loadEstimate() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('estimates')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Estimate not found')
-        setLoading(false)
-        return
-      }
-
-      const e = data as EstimateData
-      setEstimate(e)
+    if (estimate) {
       setFormData({
-        name: e.name || '',
-        estimate_type: e.estimate_type || '',
-        contract_type: e.contract_type || '',
-        markup_pct: e.markup_pct?.toString() || '',
-        overhead_pct: e.overhead_pct?.toString() || '',
-        profit_pct: e.profit_pct?.toString() || '',
-        valid_until: e.valid_until || '',
-        description: e.description || '',
-        notes: e.notes || '',
+        name: estimate.name || '',
+        estimate_type: estimate.estimate_type || '',
+        contract_type: estimate.contract_type || '',
+        markup_pct: estimate.markup_pct?.toString() || '',
+        overhead_pct: estimate.overhead_pct?.toString() || '',
+        profit_pct: estimate.profit_pct?.toString() || '',
+        valid_until: estimate.valid_until || '',
+        description: estimate.description || '',
+        notes: estimate.notes || '',
       })
-      setLoading(false)
     }
-    loadEstimate()
-  }, [params.id, companyId])
+  }, [estimate])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -107,77 +84,38 @@ export default function EstimateDetailPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('estimates')
-        .update({
-          name: formData.name,
-          estimate_type: formData.estimate_type || undefined,
-          contract_type: formData.contract_type || null,
-          markup_pct: formData.markup_pct ? parseFloat(formData.markup_pct) : null,
-          overhead_pct: formData.overhead_pct ? parseFloat(formData.overhead_pct) : null,
-          profit_pct: formData.profit_pct ? parseFloat(formData.profit_pct) : null,
-          valid_until: formData.valid_until || null,
-          description: formData.description || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setEstimate((prev) => prev ? {
-        ...prev,
+      await updateEstimate.mutateAsync({
         name: formData.name,
-        estimate_type: formData.estimate_type || null,
+        estimate_type: formData.estimate_type || undefined,
         contract_type: formData.contract_type || null,
-        markup_pct: formData.markup_pct ? parseFloat(formData.markup_pct) : null,
-        overhead_pct: formData.overhead_pct ? parseFloat(formData.overhead_pct) : null,
-        profit_pct: formData.profit_pct ? parseFloat(formData.profit_pct) : null,
+        markup_pct: formData.markup_pct ? parseFloat(formData.markup_pct) : undefined,
+        overhead_pct: formData.overhead_pct ? parseFloat(formData.overhead_pct) : undefined,
+        profit_pct: formData.profit_pct ? parseFloat(formData.profit_pct) : undefined,
         valid_until: formData.valid_until || null,
         description: formData.description || null,
         notes: formData.notes || null,
-      } : prev)
+      } as Record<string, unknown>)
+
       toast.success('Estimate updated')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError((err as Error)?.message || 'Failed to save')
-      toast.error('Failed to save estimate')
-    } finally {
-      setSaving(false)
+      toast.error((err as Error)?.message || 'Failed to save estimate')
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('estimates')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive estimate')
-        toast.error('Failed to archive estimate')
-        return
-      }
-
+      await deleteEstimate.mutateAsync(estimateId)
       toast.success('Estimate archived')
       router.push('/estimates')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -193,7 +131,7 @@ export default function EstimateDetailPage() {
         <Link href="/estimates" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Estimates
         </Link>
-        <p className="text-destructive">{error || 'Estimate not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Estimate not found'}</p>
       </div>
     )
   }
@@ -231,8 +169,8 @@ export default function EstimateDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateEstimate.isPending}>
+                  {updateEstimate.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -241,8 +179,7 @@ export default function EstimateDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Estimate updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

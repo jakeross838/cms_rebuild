@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { usePermit, useUpdatePermit, useDeletePermit } from '@/hooks/use-permitting'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -52,16 +51,15 @@ const STATUS_OPTIONS = ['draft', 'applied', 'issued', 'active', 'expired', 'clos
 export default function PermitDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const permitId = params.permitId as string
 
-  const [permit, setPermit] = useState<PermitData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = usePermit(permitId)
+  const updatePermit = useUpdatePermit(permitId)
+  const deletePermit = useDeletePermit()
+  const permit = (response as { data: PermitData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -81,44 +79,20 @@ export default function PermitDetailPage() {
   })
 
   useEffect(() => {
-    async function loadPermit() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('permits')
-        .select('*')
-        .eq('id', permitId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Permit not found')
-        setLoading(false)
-        return
-      }
-
-      const p = data as PermitData
-      setPermit(p)
+    if (permit) {
       setFormData({
-        permit_number: p.permit_number || '',
-        permit_type: p.permit_type,
-        status: p.status,
-        jurisdiction: p.jurisdiction || '',
-        applied_date: p.applied_date || '',
-        issued_date: p.issued_date || '',
-        expiration_date: p.expiration_date || '',
-        conditions: p.conditions || '',
-        notes: p.notes || '',
+        permit_number: permit.permit_number || '',
+        permit_type: permit.permit_type,
+        status: permit.status,
+        jurisdiction: permit.jurisdiction || '',
+        applied_date: permit.applied_date || '',
+        issued_date: permit.issued_date || '',
+        expiration_date: permit.expiration_date || '',
+        conditions: permit.conditions || '',
+        notes: permit.notes || '',
       })
-      setLoading(false)
     }
-    loadPermit()
-  }, [permitId, jobId, companyId])
+  }, [permit])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -132,41 +106,17 @@ export default function PermitDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('permits')
-        .update({
-          permit_number: formData.permit_number || null,
-          permit_type: formData.permit_type,
-          status: formData.status,
-          jurisdiction: formData.jurisdiction || null,
-          applied_date: formData.applied_date || null,
-          issued_date: formData.issued_date || null,
-          expiration_date: formData.expiration_date || null,
-          conditions: formData.conditions || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', permitId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setPermit((prev) =>
-        prev
-          ? {
-              ...prev,
-              permit_number: formData.permit_number || null,
-              permit_type: formData.permit_type,
-              status: formData.status,
-              jurisdiction: formData.jurisdiction || null,
-              applied_date: formData.applied_date || null,
-              issued_date: formData.issued_date || null,
-              expiration_date: formData.expiration_date || null,
-              conditions: formData.conditions || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
+      await updatePermit.mutateAsync({
+        permit_number: formData.permit_number || null,
+        permit_type: formData.permit_type,
+        status: formData.status,
+        jurisdiction: formData.jurisdiction || null,
+        applied_date: formData.applied_date || null,
+        issued_date: formData.issued_date || null,
+        expiration_date: formData.expiration_date || null,
+        conditions: formData.conditions || null,
+        notes: formData.notes || null,
+      })
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -182,29 +132,16 @@ export default function PermitDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('permits')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', permitId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive permit')
-        toast.error('Failed to archive permit')
-        return
-      }
-
+      await deletePermit.mutateAsync(permitId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/permits`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (

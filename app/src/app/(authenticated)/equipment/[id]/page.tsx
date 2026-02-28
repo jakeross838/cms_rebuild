@@ -12,9 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, getStatusColor, formatStatus} from '@/lib/utils'
+import { useEquipmentDetail, useUpdateEquipment, useDeleteEquipment } from '@/hooks/use-equipment'
+import { formatCurrency, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface EquipmentData {
@@ -38,16 +37,13 @@ interface EquipmentData {
 export default function EquipmentDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const equipmentId = params.id as string
+  const { data: response, isLoading: loading, error: fetchError } = useEquipmentDetail(equipmentId)
+  const updateEquipment = useUpdateEquipment(equipmentId)
+  const deleteEquipment = useDeleteEquipment()
+  const equipment = (response as { data: EquipmentData } | undefined)?.data ?? null
 
-  const companyId = authProfile?.company_id || ''
-  const [equipment, setEquipment] = useState<EquipmentData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -67,42 +63,23 @@ export default function EquipmentDetailPage() {
   })
 
   useEffect(() => {
-    async function loadEquipment() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('equipment')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Equipment not found')
-        setLoading(false)
-        return
-      }
-
-      const e = data as EquipmentData
-      setEquipment(e)
+    if (equipment) {
       setFormData({
-        name: e.name,
-        equipment_type: e.equipment_type || '',
-        ownership_type: e.ownership_type || '',
-        make: e.make || '',
-        model: e.model || '',
-        year: e.year != null ? String(e.year) : '',
-        serial_number: e.serial_number || '',
-        purchase_price: e.purchase_price != null ? String(e.purchase_price) : '',
-        daily_rate: e.daily_rate != null ? String(e.daily_rate) : '',
-        location: e.location || '',
-        description: e.description || '',
-        notes: e.notes || '',
+        name: equipment.name,
+        equipment_type: equipment.equipment_type || '',
+        ownership_type: equipment.ownership_type || '',
+        make: equipment.make || '',
+        model: equipment.model || '',
+        year: equipment.year != null ? String(equipment.year) : '',
+        serial_number: equipment.serial_number || '',
+        purchase_price: equipment.purchase_price != null ? String(equipment.purchase_price) : '',
+        daily_rate: equipment.daily_rate != null ? String(equipment.daily_rate) : '',
+        location: equipment.location || '',
+        description: equipment.description || '',
+        notes: equipment.notes || '',
       })
-      setLoading(false)
     }
-    loadEquipment()
-  }, [params.id, companyId])
+  }, [equipment])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -111,84 +88,42 @@ export default function EquipmentDetailPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) { toast.error('Name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('equipment')
-        .update({
-          name: formData.name,
-          equipment_type: formData.equipment_type || undefined,
-          ownership_type: formData.ownership_type || undefined,
-          make: formData.make || null,
-          model: formData.model || null,
-          year: formData.year ? Number(formData.year) : null,
-          serial_number: formData.serial_number || null,
-          purchase_price: formData.purchase_price ? Number(formData.purchase_price) : null,
-          daily_rate: formData.daily_rate ? Number(formData.daily_rate) : null,
-          location: formData.location || null,
-          description: formData.description || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      toast.success('Saved')
-      setEquipment((prev) => prev ? {
-        ...prev,
+      await updateEquipment.mutateAsync({
         name: formData.name,
-        equipment_type: formData.equipment_type || null,
-        ownership_type: formData.ownership_type || null,
+        equipment_type: formData.equipment_type || undefined,
+        ownership_type: formData.ownership_type || undefined,
         make: formData.make || null,
         model: formData.model || null,
         year: formData.year ? Number(formData.year) : null,
         serial_number: formData.serial_number || null,
-        purchase_price: formData.purchase_price ? Number(formData.purchase_price) : null,
-        daily_rate: formData.daily_rate ? Number(formData.daily_rate) : null,
+        purchase_price: formData.purchase_price ? Number(formData.purchase_price) : undefined,
+        daily_rate: formData.daily_rate ? Number(formData.daily_rate) : undefined,
         location: formData.location || null,
         description: formData.description || null,
         notes: formData.notes || null,
-      } : prev)
-      setSuccess(true)
+      } as Record<string, unknown>)
+
+      toast.success('Saved')
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('equipment')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive equipment')
-        toast.error('Failed to archive equipment')
-        return
-      }
-
+      await deleteEquipment.mutateAsync(equipmentId)
       toast.success('Archived')
       router.push('/equipment')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -204,7 +139,7 @@ export default function EquipmentDetailPage() {
         <Link href="/equipment" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Equipment
         </Link>
-        <p className="text-destructive">{error || 'Equipment not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Equipment not found'}</p>
       </div>
     )
   }
@@ -251,8 +186,8 @@ export default function EquipmentDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateEquipment.isPending}>
+                  {updateEquipment.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -261,8 +196,7 @@ export default function EquipmentDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Equipment updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (
