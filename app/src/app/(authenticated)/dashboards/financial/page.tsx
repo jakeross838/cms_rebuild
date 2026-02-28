@@ -48,9 +48,10 @@ export default async function FinancialDashboardPage() {
       .is('deleted_at', null)
       .neq('status', 'voided'),
 
-    // Total invoiced (all non-deleted invoices)
+    // Total invoiced (exclude denied/archived invoices)
     supabase.from('invoices').select('amount')
-      .eq('company_id', companyId),
+      .eq('company_id', companyId)
+      .neq('status', 'denied'),
 
     // Total paid
     supabase.from('invoices').select('amount')
@@ -68,9 +69,10 @@ export default async function FinancialDashboardPage() {
       .is('deleted_at', null)
       .not('status', 'in', '("paid","voided")'),
 
-    // Budget lines (estimated vs actual)
+    // Budget lines (estimated vs actual, exclude archived)
     supabase.from('budget_lines').select('estimated_amount, actual_amount, variance_amount')
-      .eq('company_id', companyId),
+      .eq('company_id', companyId)
+      .is('deleted_at', null),
 
     // Recent AP bills (last 5)
     supabase.from('ap_bills').select('id, bill_number, amount, balance_due, status, due_date, vendor_id, vendors(name)')

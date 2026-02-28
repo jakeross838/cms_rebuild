@@ -41,7 +41,7 @@ export default async function AccuracyEnginePage() {
     supabase.from('estimates').select('*', { count: 'exact', head: true })
       .eq('company_id', companyId).is('deleted_at', null).eq('status', 'sent'),
     supabase.from('budget_lines').select('estimated_amount, actual_amount')
-      .eq('company_id', companyId),
+      .eq('company_id', companyId).is('deleted_at', null),
     supabase.from('estimates').select('id, name, status, total, updated_at')
       .eq('company_id', companyId).is('deleted_at', null)
       .order('updated_at', { ascending: false }).limit(5),

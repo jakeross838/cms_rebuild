@@ -182,7 +182,7 @@ export default function JobInvoiceDetailPage() {
     setArchiving(true)
     const { error: archiveError } = await supabase
       .from('invoices')
-      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+      .update({ status: 'denied' })
       .eq('id', invoiceId)
       .eq('job_id', jobId)
       .eq('company_id', companyId)

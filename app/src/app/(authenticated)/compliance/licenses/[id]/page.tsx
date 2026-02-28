@@ -171,7 +171,7 @@ export default function LicenseDetailPage() {
     setArchiving(true)
     const { error: archiveError } = await supabase
       .from('employee_certifications')
-      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+      .update({ status: 'revoked' })
       .eq('id', certId)
       .eq('company_id', companyId)
     if (archiveError) {

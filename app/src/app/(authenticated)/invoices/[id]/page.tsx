@@ -93,7 +93,7 @@ export default function InvoiceDetailPage() {
     try {
       const { error: archiveError } = await supabase
         .from('invoices')
-        .update({ deleted_at: new Date().toISOString() } as never)
+        .update({ status: 'denied' })
         .eq('id', params.id as string)
         .eq('company_id', companyId)
       if (archiveError) throw archiveError
