@@ -1,0 +1,130 @@
+/**
+ * Vendor Insurance API (flat route) — List & Create
+ *
+ * GET  /api/v2/vendor-insurance — List vendor insurance records (filtered by company)
+ * POST /api/v2/vendor-insurance — Create a new vendor insurance record (vendor_id in body)
+ */
+
+import { NextResponse } from 'next/server'
+import { safeOrIlike } from '@/lib/utils'
+
+import {
+  createApiHandler,
+  getPaginationParams,
+  paginatedResponse,
+  mapDbError,
+  type ApiContext,
+} from '@/lib/api/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { listVendorInsuranceSchema, createVendorInsuranceSchema } from '@/lib/validation/schemas/vendor-insurance-flat'
+
+// ============================================================================
+// GET /api/v2/vendor-insurance
+// ============================================================================
+
+export const GET = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const url = req.nextUrl
+    const parseResult = listVendorInsuranceSchema.safeParse({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+      vendor_id: url.searchParams.get('vendor_id') ?? undefined,
+      status: url.searchParams.get('status') ?? undefined,
+      insurance_type: url.searchParams.get('insurance_type') ?? undefined,
+      q: url.searchParams.get('q') ?? undefined,
+    })
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid query parameters', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const filters = parseResult.data
+    const { page, limit, offset } = getPaginationParams(req)
+    const supabase = await createClient()
+
+    let query = supabase
+      .from('vendor_insurance')
+      .select('*', { count: 'exact' })
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
+
+    if (filters.vendor_id) {
+      query = query.eq('vendor_id', filters.vendor_id)
+    }
+    if (filters.status) {
+      query = query.eq('status', filters.status)
+    }
+    if (filters.insurance_type) {
+      query = query.eq('insurance_type', filters.insurance_type)
+    }
+    if (filters.q) {
+      query = query.or(`carrier_name.ilike.${safeOrIlike(filters.q)},policy_number.ilike.${safeOrIlike(filters.q)}`)
+    }
+
+    query = query.order('created_at', { ascending: false })
+
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
+
+    if (error) {
+      const mapped = mapDbError(error)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    return NextResponse.json(paginatedResponse(data ?? [], count ?? 0, page, limit, ctx.requestId))
+  },
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'] }
+)
+
+// ============================================================================
+// POST /api/v2/vendor-insurance — Create vendor insurance
+// ============================================================================
+
+export const POST = createApiHandler(
+  async (req, ctx: ApiContext) => {
+    const body = await req.json()
+    const parseResult = createVendorInsuranceSchema.safeParse(body)
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation Error', message: 'Invalid vendor insurance data', errors: parseResult.error.flatten().fieldErrors, requestId: ctx.requestId },
+        { status: 400 }
+      )
+    }
+
+    const input = parseResult.data
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('vendor_insurance')
+      .insert({
+        company_id: ctx.companyId!,
+        vendor_id: input.vendor_id,
+        insurance_type: input.insurance_type,
+        carrier_name: input.carrier_name,
+        policy_number: input.policy_number,
+        expiration_date: input.expiration_date,
+        coverage_amount: input.coverage_amount ?? null,
+        status: input.status ?? 'active',
+        certificate_document_id: input.certificate_document_id ?? null,
+      } as never)
+      .select('*')
+      .single()
+
+    if (error) {
+      const mapped = mapDbError(error)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    return NextResponse.json({ data, requestId: ctx.requestId }, { status: 201 })
+  },
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'vendor_insurance.create' }
+)

@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useContactFlat, useUpdateContactFlat } from '@/hooks/use-vendor-management'
+import { fetchJson } from '@/lib/api/fetch'
 import { toast } from 'sonner'
 
 interface ContactData {
@@ -30,13 +30,13 @@ interface ContactData {
 export default function ContactDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const contactId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading, error: fetchError } = useContactFlat(contactId)
+  const updateMutation = useUpdateContactFlat(contactId)
 
-  const companyId = authProfile?.company_id || ''
-  const [contact, setContact] = useState<ContactData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const contact = (response as { data: ContactData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -52,35 +52,18 @@ export default function ContactDetailPage() {
     is_primary: 'false',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadContact() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('vendor_contacts')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Contact not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as ContactData
-      setContact(c)
+    if (contact) {
       setFormData({
-        name: c.name,
-        title: c.title || '',
-        email: c.email || '',
-        phone: c.phone || '',
-        is_primary: c.is_primary ? 'true' : 'false',
+        name: contact.name,
+        title: contact.title || '',
+        email: contact.email || '',
+        phone: contact.phone || '',
+        is_primary: contact.is_primary ? 'true' : 'false',
       })
-      setLoading(false)
     }
-    loadContact()
-  }, [params.id, companyId])
+  }, [contact])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -90,12 +73,7 @@ export default function ContactDetailPage() {
   const handleConfirmArchive = async () => {
     setArchiving(true)
     try {
-      const { error: archiveError } = await supabase
-        .from('vendor_contacts')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) throw archiveError
+      await fetchJson(`/api/v2/contacts/${contactId}`, { method: 'DELETE' })
       toast.success('Archived')
       router.push('/contacts')
     } catch (err) {
@@ -113,29 +91,15 @@ export default function ContactDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('vendor_contacts')
-        .update({
-          name: formData.name,
-          title: formData.title || null,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          is_primary: formData.is_primary === 'true',
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      toast.success('Saved')
-      setContact((prev) => prev ? {
-        ...prev,
+      await updateMutation.mutateAsync({
         name: formData.name,
         title: formData.title || null,
         email: formData.email || null,
         phone: formData.phone || null,
         is_primary: formData.is_primary === 'true',
-      } : prev)
+      })
+
+      toast.success('Saved')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -148,7 +112,7 @@ export default function ContactDetailPage() {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -162,7 +126,7 @@ export default function ContactDetailPage() {
         <Link href="/contacts" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Contacts
         </Link>
-        <p className="text-destructive">{error || 'Contact not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Contact not found'}</p>
       </div>
     )
   }

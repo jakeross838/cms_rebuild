@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useVendorInsuranceFlat, useUpdateVendorInsuranceFlat } from '@/hooks/use-vendor-management'
+import { useVendors } from '@/hooks/use-vendors'
+import { fetchJson } from '@/lib/api/fetch'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -42,14 +43,15 @@ interface VendorLookup {
 export default function InsurancePolicyDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const insuranceId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading, error: fetchError } = useVendorInsuranceFlat(insuranceId)
+  const updateMutation = useUpdateVendorInsuranceFlat(insuranceId)
 
-  const companyId = authProfile?.company_id || ''
-  const [policy, setPolicy] = useState<InsurancePolicyData | null>(null)
-  const [vendors, setVendors] = useState<VendorLookup[]>([])
-  const [loading, setLoading] = useState(true)
+  const policy = (response as { data: InsurancePolicyData } | undefined)?.data ?? null
+
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as any)
+  const vendors = ((vendorsResponse as { data: VendorLookup[] } | undefined)?.data ?? [])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -67,46 +69,20 @@ export default function InsurancePolicyDetailPage() {
     status: '',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadData() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      try {
-        const [policyRes, vendorsRes] = await Promise.all([
-          supabase
-            .from('vendor_insurance')
-            .select('*')
-            .eq('id', params.id as string)
-            .single(),
-          supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-        ])
-
-        if (policyRes.error || !policyRes.data) {
-          setError('Insurance policy not found')
-          setLoading(false)
-          return
-        }
-
-        const p = policyRes.data as InsurancePolicyData
-        setPolicy(p)
-        setVendors((vendorsRes.data as VendorLookup[]) || [])
-        setFormData({
-          vendor_id: p.vendor_id,
-          insurance_type: p.insurance_type,
-          carrier_name: p.carrier_name,
-          policy_number: p.policy_number,
-          coverage_amount: p.coverage_amount != null ? String(p.coverage_amount) : '',
-          expiration_date: p.expiration_date,
-          status: p.status,
-        })
-        setLoading(false)
-      } catch (err) {
-        setError((err as Error)?.message || 'Failed to load insurance policy')
-        setLoading(false)
-      }
+    if (policy) {
+      setFormData({
+        vendor_id: policy.vendor_id,
+        insurance_type: policy.insurance_type,
+        carrier_name: policy.carrier_name,
+        policy_number: policy.policy_number,
+        coverage_amount: policy.coverage_amount != null ? String(policy.coverage_amount) : '',
+        expiration_date: policy.expiration_date,
+        status: policy.status,
+      })
     }
-    loadData()
-  }, [params.id, companyId])
+  }, [policy])
 
   const vendorName = vendors.find((v) => v.id === policy?.vendor_id)?.name || 'Unknown Vendor'
 
@@ -128,37 +104,17 @@ export default function InsurancePolicyDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('vendor_insurance')
-        .update({
-          vendor_id: formData.vendor_id,
-          insurance_type: formData.insurance_type,
-          carrier_name: formData.carrier_name,
-          policy_number: formData.policy_number,
-          coverage_amount: formData.coverage_amount ? parseFloat(formData.coverage_amount) : null,
-          expiration_date: formData.expiration_date,
-          status: formData.status,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateMutation.mutateAsync({
+        vendor_id: formData.vendor_id,
+        insurance_type: formData.insurance_type,
+        carrier_name: formData.carrier_name,
+        policy_number: formData.policy_number,
+        coverage_amount: formData.coverage_amount ? parseFloat(formData.coverage_amount) : null,
+        expiration_date: formData.expiration_date,
+        status: formData.status,
+      })
 
       toast.success('Saved')
-      setPolicy((prev) =>
-        prev
-          ? {
-              ...prev,
-              vendor_id: formData.vendor_id,
-              insurance_type: formData.insurance_type,
-              carrier_name: formData.carrier_name,
-              policy_number: formData.policy_number,
-              coverage_amount: formData.coverage_amount ? parseFloat(formData.coverage_amount) : null,
-              expiration_date: formData.expiration_date,
-              status: formData.status,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -174,29 +130,18 @@ export default function InsurancePolicyDetailPage() {
   const handleConfirmArchive = async () => {
     try {
       setArchiving(true)
-      const { error: archiveError } = await supabase
-        .from('vendor_insurance')
-        .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) {
-        setError('Failed to archive policy')
-        toast.error('Failed to archive policy')
-        setArchiving(false)
-        return
-      }
+      await fetchJson(`/api/v2/vendor-insurance/${insuranceId}`, { method: 'DELETE' })
       toast.success('Archived')
       router.push('/compliance/insurance')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -210,7 +155,7 @@ export default function InsurancePolicyDetailPage() {
         <Link href="/compliance/insurance" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Insurance
         </Link>
-        <p className="text-destructive">{error || 'Policy not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Policy not found'}</p>
       </div>
     )
   }

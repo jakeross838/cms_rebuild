@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useInvoice, useUpdateInvoice, useDeleteInvoice } from '@/hooks/use-invoices'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -31,13 +30,14 @@ interface InvoiceData {
 export default function InvoiceDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const invoiceId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading, error: fetchError } = useInvoice(invoiceId)
+  const updateMutation = useUpdateInvoice(invoiceId)
+  const deleteMutation = useDeleteInvoice()
 
-  const companyId = authProfile?.company_id || ''
-  const [invoice, setInvoice] = useState<InvoiceData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const invoice = (response as { data: InvoiceData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -53,35 +53,18 @@ export default function InvoiceDetailPage() {
     notes: '',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadInvoice() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('invoices')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Invoice not found')
-        setLoading(false)
-        return
-      }
-
-      const inv = data as InvoiceData
-      setInvoice(inv)
+    if (invoice) {
       setFormData({
-        invoice_number: inv.invoice_number || '',
-        amount: inv.amount?.toString() || '',
-        invoice_date: inv.invoice_date || '',
-        due_date: inv.due_date || '',
-        notes: inv.notes || '',
+        invoice_number: invoice.invoice_number || '',
+        amount: invoice.amount?.toString() || '',
+        invoice_date: invoice.invoice_date || '',
+        due_date: invoice.due_date || '',
+        notes: invoice.notes || '',
       })
-      setLoading(false)
     }
-    loadInvoice()
-  }, [params.id, companyId])
+  }, [invoice])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -91,12 +74,7 @@ export default function InvoiceDetailPage() {
   const handleConfirmArchive = async () => {
     setArchiving(true)
     try {
-      const { error: archiveError } = await supabase
-        .from('invoices')
-        .update({ status: 'denied' })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-      if (archiveError) throw archiveError
+      await deleteMutation.mutateAsync(invoiceId)
       toast.success('Invoice archived')
       router.push('/invoices')
     } catch (err) {
@@ -112,28 +90,14 @@ export default function InvoiceDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('invoices')
-        .update({
-          invoice_number: formData.invoice_number || null,
-          amount: formData.amount ? parseFloat(formData.amount) : undefined,
-          invoice_date: formData.invoice_date || null,
-          due_date: formData.due_date || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
-      setInvoice((prev) => prev ? {
-        ...prev,
+      await updateMutation.mutateAsync({
         invoice_number: formData.invoice_number || null,
-        amount: formData.amount ? parseFloat(formData.amount) : null,
+        amount: formData.amount ? parseFloat(formData.amount) : undefined,
         invoice_date: formData.invoice_date || null,
         due_date: formData.due_date || null,
         notes: formData.notes || null,
-      } : prev)
+      })
+
       toast.success('Invoice updated')
       setSuccess(true)
       setEditing(false)
@@ -146,7 +110,7 @@ export default function InvoiceDetailPage() {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -160,7 +124,7 @@ export default function InvoiceDetailPage() {
         <Link href="/invoices" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Invoices
         </Link>
-        <p className="text-destructive">{error || 'Invoice not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Invoice not found'}</p>
       </div>
     )
   }

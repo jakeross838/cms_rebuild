@@ -10,22 +10,16 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateCommunication } from '@/hooks/use-communications'
 import { toast } from 'sonner'
 
 export default function NewCommunicationPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
+  const createMutation = useCreateCommunication()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const [formData, setFormData] = useState({
     subject: '',
     message_body: '',
@@ -43,35 +37,22 @@ export default function NewCommunicationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.subject.trim()) { setError('Subject is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.subject.trim()) { setError('Subject is required'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      const { error: insertError } = await supabase
-        .from('communications')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          subject: formData.subject,
-          message_body: formData.message_body,
-          communication_type: formData.communication_type,
-          priority: formData.priority,
-          recipient: formData.recipient || null,
-          status: formData.status,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        job_id: jobId,
+        subject: formData.subject,
+        message_body: formData.message_body,
+        communication_type: formData.communication_type,
+        priority: formData.priority,
+        recipient: formData.recipient || null,
+        status: formData.status,
+        notes: formData.notes || null,
+      })
 
       toast.success('Communication created')
       router.push(`/jobs/${jobId}/communications`)
@@ -80,8 +61,6 @@ export default function NewCommunicationPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create communication'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -167,8 +146,8 @@ export default function NewCommunicationPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href={`/jobs/${jobId}/communications`}><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Communication'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Communication'}
           </Button>
         </div>
       </form>

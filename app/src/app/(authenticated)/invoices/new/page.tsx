@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -10,28 +10,33 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateInvoice } from '@/hooks/use-invoices'
+import { useJobs } from '@/hooks/use-jobs'
+import { useVendors } from '@/hooks/use-vendors'
 import { toast } from 'sonner'
 
-interface SelectOption {
-  id: string
-  label: string
-}
+type JobRow = { id: string; name: string; job_number: string | null }
+type VendorRow = { id: string; name: string }
 
 export default function NewInvoicePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClient()
+  const createMutation = useCreateInvoice()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  // ── Dropdown data ──────────────────────────────────────────────
+  const { data: jobsResponse } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const jobs: { id: string; label: string }[] = ((jobsResponse as { data: JobRow[] } | undefined)?.data ?? []).map((j) => ({
+    id: j.id,
+    label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
+  }))
 
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const vendors: { id: string; label: string }[] = ((vendorsResponse as { data: VendorRow[] } | undefined)?.data ?? []).map((v) => ({
+    id: v.id,
+    label: v.name,
+  }))
+
   const [error, setError] = useState<string | null>(null)
-  const [jobs, setJobs] = useState<SelectOption[]>([])
-  const [vendors, setVendors] = useState<SelectOption[]>([])
-
   const [formData, setFormData] = useState({
     invoice_number: '',
     amount: '',
@@ -42,37 +47,6 @@ export default function NewInvoicePage() {
     notes: '',
   })
 
-  useEffect(() => {
-    async function loadOptions() {
-      if (!companyId) return
-
-      const { data: jobsData } = await supabase
-        .from('jobs')
-        .select('id, name, job_number')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
-
-      setJobs((jobsData || []).map((j: { id: string; name: string; job_number: string | null }) => ({
-        id: j.id,
-        label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
-      })))
-
-      const { data: vendorsData } = await supabase
-        .from('vendors')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
-
-      setVendors((vendorsData || []).map((v: { id: string; name: string }) => ({
-        id: v.id,
-        label: v.name,
-      })))
-    }
-    loadOptions()
-  }, [companyId])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -80,7 +54,7 @@ export default function NewInvoicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
 
     const amount = parseFloat(formData.amount)
@@ -89,26 +63,17 @@ export default function NewInvoicePage() {
       return
     }
 
-    setLoading(true)
-
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('invoices')
-        .insert({
-          company_id: companyId,
-          invoice_number: formData.invoice_number || null,
-          amount,
-          invoice_date: formData.invoice_date || null,
-          due_date: formData.due_date || null,
-          job_id: formData.job_id || null,
-          vendor_id: formData.vendor_id || null,
-          status: 'draft',
-          notes: formData.notes || null,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        invoice_number: formData.invoice_number || null,
+        amount,
+        invoice_date: formData.invoice_date || null,
+        due_date: formData.due_date || null,
+        job_id: formData.job_id || null,
+        vendor_id: formData.vendor_id || null,
+        status: 'draft',
+        notes: formData.notes || null,
+      })
 
       toast.success('Invoice created')
       router.push('/invoices')
@@ -117,8 +82,6 @@ export default function NewInvoicePage() {
       const errorMessage = (err as Error)?.message || 'Failed to create invoice'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -201,8 +164,8 @@ export default function NewInvoicePage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/invoices"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Invoice'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Invoice'}
           </Button>
         </div>
       </form>

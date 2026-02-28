@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -10,25 +10,23 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateInspection } from '@/hooks/use-inspections'
+import { usePermits } from '@/hooks/use-permitting'
 import { toast } from 'sonner'
 
-type Permit = { id: string; permit_type: string; permit_number: string | null }
+type PermitRow = { id: string; permit_type: string; permit_number: string | null }
 
 export default function NewInspectionPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
+  const createMutation = useCreateInspection()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  // ── Dropdown data ──────────────────────────────────────────────
+  const { data: permitsResponse } = usePermits({ job_id: jobId, limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const permits: PermitRow[] = ((permitsResponse as { data: PermitRow[] } | undefined)?.data ?? [])
 
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [permits, setPermits] = useState<Permit[]>([])
-
   const [formData, setFormData] = useState({
     permit_id: '',
     inspection_type: 'foundation',
@@ -40,23 +38,6 @@ export default function NewInspectionPage() {
     notes: '',
   })
 
-  useEffect(() => {
-    async function loadPermits() {
-      if (!companyId) return
-
-      const { data } = await supabase
-        .from('permits')
-        .select('id, permit_type, permit_number')
-        .eq('company_id', companyId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-
-      if (data) setPermits(data as Permit[])
-    }
-    loadPermits()
-  }, [jobId, companyId])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -64,36 +45,23 @@ export default function NewInspectionPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.permit_id) { setError('Please select a permit'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      if (!formData.permit_id) throw new Error('Please select a permit')
-
-      const { error: insertError } = await supabase
-        .from('permit_inspections')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          permit_id: formData.permit_id,
-          inspection_type: formData.inspection_type,
-          status: formData.status,
-          scheduled_date: formData.scheduled_date || null,
-          scheduled_time: formData.scheduled_time || null,
-          inspector_name: formData.inspector_name || null,
-          inspector_phone: formData.inspector_phone || null,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        job_id: jobId,
+        permit_id: formData.permit_id,
+        inspection_type: formData.inspection_type,
+        status: formData.status,
+        scheduled_date: formData.scheduled_date || null,
+        scheduled_time: formData.scheduled_time || null,
+        inspector_name: formData.inspector_name || null,
+        inspector_phone: formData.inspector_phone || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Inspection created')
       router.push(`/jobs/${jobId}/inspections`)
@@ -102,8 +70,6 @@ export default function NewInspectionPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create inspection'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -205,8 +171,8 @@ export default function NewInspectionPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href={`/jobs/${jobId}/inspections`}><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Inspection'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Inspection'}
           </Button>
         </div>
       </form>

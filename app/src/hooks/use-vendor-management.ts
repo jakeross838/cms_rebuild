@@ -235,6 +235,94 @@ export function useCreateVendorRating(vendorId: string) {
   })
 }
 
+// ── Vendor Contacts (flat routes — no vendor_id required) ───────────────────
+
+export function useContactFlat(contactId: string | null) {
+  return useQuery({
+    queryKey: ['contacts-flat', contactId],
+    queryFn: () => fetchJson(`/api/v2/contacts/${contactId}`),
+    enabled: !!contactId,
+  })
+}
+
+export function useUpdateContactFlat(contactId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v2/contacts/${contactId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['contacts-flat', contactId] })
+      qc.invalidateQueries({ queryKey: ['vendor-contacts'] })
+      qc.invalidateQueries({ queryKey: ['vendors'] })
+    },
+  })
+}
+
+export function useCreateContactFlat() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson('/api/v2/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['contacts-flat'] })
+      qc.invalidateQueries({ queryKey: ['vendor-contacts'] })
+      qc.invalidateQueries({ queryKey: ['vendors'] })
+    },
+  })
+}
+
+// ── Vendor Insurance (flat routes — no vendor_id required) ──────────────────
+
+export function useVendorInsuranceFlat(insuranceId: string | null) {
+  return useQuery({
+    queryKey: ['vendor-insurance-flat', insuranceId],
+    queryFn: () => fetchJson(`/api/v2/vendor-insurance/${insuranceId}`),
+    enabled: !!insuranceId,
+  })
+}
+
+export function useUpdateVendorInsuranceFlat(insuranceId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v2/vendor-insurance/${insuranceId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vendor-insurance-flat', insuranceId] })
+      qc.invalidateQueries({ queryKey: ['vendor-insurance'] })
+      qc.invalidateQueries({ queryKey: ['vendors'] })
+    },
+  })
+}
+
+export function useCreateVendorInsuranceFlat() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson('/api/v2/vendor-insurance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vendor-insurance-flat'] })
+      qc.invalidateQueries({ queryKey: ['vendor-insurance'] })
+      qc.invalidateQueries({ queryKey: ['vendors'] })
+    },
+  })
+}
+
 // ── Re-export types ──────────────────────────────────────────────────────────
 
 export type { VendorContact, VendorInsurance, VendorCompliance, VendorRating }

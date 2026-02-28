@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,26 +10,27 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
+import { useCreateWarrantyClaimFlat, useWarranties } from '@/hooks/use-warranty'
 import { toast } from 'sonner'
+
+type JobRow = { id: string; name: string }
+type WarrantyRow = { id: string; title: string; job_id: string | null }
 
 export default function NewWarrantyClaimPage() {
   const router = useRouter()
-  const supabase = createClient()
-
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const createMutation = useCreateWarrantyClaimFlat()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const [jobs, setJobs] = useState<{ id: string; name: string }[]>([])
-  const [warranties, setWarranties] = useState<{ id: string; title: string; job_id: string | null }[]>([])
+  const { data: jobsResponse } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const jobs: JobRow[] = ((jobsResponse as { data: JobRow[] } | undefined)?.data ?? [])
+
+  const { data: warrantiesResponse } = useWarranties({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const warranties: WarrantyRow[] = ((warrantiesResponse as { data: WarrantyRow[] } | undefined)?.data ?? [])
 
   const today = new Date().toISOString().split('T')[0]
 
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     job_id: '',
     warranty_id: '',
@@ -40,21 +41,6 @@ export default function NewWarrantyClaimPage() {
     due_date: '',
     resolution_notes: '',
   })
-
-  useEffect(() => {
-    async function loadDropdowns() {
-      if (!companyId) return
-
-      const [jobsRes, warrantiesRes] = await Promise.all([
-        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-        supabase.from('warranties').select('id, title, job_id').eq('company_id', companyId).is('deleted_at', null).order('title'),
-      ])
-
-      if (jobsRes.data) setJobs(jobsRes.data)
-      if (warrantiesRes.data) setWarranties(warrantiesRes.data as { id: string; title: string; job_id: string | null }[])
-    }
-    loadDropdowns()
-  }, [companyId])
 
   // Filter warranties by selected job (if a job is selected)
   const filteredWarranties = formData.job_id
@@ -73,20 +59,13 @@ export default function NewWarrantyClaimPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.title.trim()) { setError('Title is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.title.trim()) { setError('Title is required'); setLoading(false); return }
-
-      const claimNumber = `WC-${Date.now().toString(36).toUpperCase()}`
-
-      const insertPayload = {
-        company_id: companyId,
-        claim_number: claimNumber,
+      await createMutation.mutateAsync({
         job_id: formData.job_id || null,
         warranty_id: formData.warranty_id || null,
         title: formData.title,
@@ -96,15 +75,7 @@ export default function NewWarrantyClaimPage() {
         reported_date: formData.reported_date || undefined,
         due_date: formData.due_date || undefined,
         resolution_notes: formData.resolution_notes || null,
-        reported_by: authUser.id,
-        created_by: authUser.id,
-      }
-
-      const { error: insertError } = await supabase
-        .from('warranty_claims')
-        .insert(insertPayload as never)
-
-      if (insertError) throw insertError
+      })
 
       toast.success('Warranty claim created')
       router.push('/warranty-claims')
@@ -113,8 +84,6 @@ export default function NewWarrantyClaimPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create warranty claim'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -227,8 +196,8 @@ export default function NewWarrantyClaimPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/warranty-claims"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Claim'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Claim'}
           </Button>
         </div>
       </form>

@@ -213,6 +213,50 @@ export function useCompleteMaintenanceTask(scheduleId: string, taskId: string) {
   })
 }
 
+// ── Warranty Claims (flat routes — no warranty_id required) ─────────────────
+
+export function useWarrantyClaimFlat(claimId: string | null) {
+  return useQuery({
+    queryKey: ['warranty-claims-flat', claimId],
+    queryFn: () => fetchJson(`/api/v2/warranty-claims/${claimId}`),
+    enabled: !!claimId,
+  })
+}
+
+export function useUpdateWarrantyClaimFlat(claimId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v2/warranty-claims/${claimId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['warranty-claims-flat', claimId] })
+      qc.invalidateQueries({ queryKey: ['warranty-claims'] })
+      qc.invalidateQueries({ queryKey: ['warranties'] })
+    },
+  })
+}
+
+export function useCreateWarrantyClaimFlat() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson('/api/v2/warranty-claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['warranty-claims-flat'] })
+      qc.invalidateQueries({ queryKey: ['warranty-claims'] })
+      qc.invalidateQueries({ queryKey: ['warranties'] })
+    },
+  })
+}
+
 // ── Re-export types ──────────────────────────────────────────────────────────
 
 export type { Warranty, WarrantyClaim, WarrantyClaimHistory, MaintenanceSchedule, MaintenanceTask }

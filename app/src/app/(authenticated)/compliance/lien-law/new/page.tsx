@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,23 +10,26 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
+import { useCreateLienWaiverTracking } from '@/hooks/use-lien-waivers'
+import { useVendors } from '@/hooks/use-vendors'
 import { toast } from 'sonner'
+
+type JobRow = { id: string; name: string }
+type VendorRow = { id: string; name: string }
 
 export default function NewLienLawRecordPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createMutation = useCreateLienWaiverTracking()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  // ── Dropdown data ──────────────────────────────────────────────
+  const { data: jobsResponse } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const jobs: JobRow[] = ((jobsResponse as { data: JobRow[] } | undefined)?.data ?? [])
 
-  const companyId = authProfile?.company_id || ''
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const vendors: VendorRow[] = ((vendorsResponse as { data: VendorRow[] } | undefined)?.data ?? [])
 
-  const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [jobs, setJobs] = useState<{id: string, name: string}[]>([])
-  const [vendors, setVendors] = useState<{id: string, name: string}[]>([])
-
   const [formData, setFormData] = useState({
     job_id: '',
     vendor_id: '',
@@ -36,33 +39,6 @@ export default function NewLienLawRecordPage() {
     is_compliant: true,
     notes: '',
   })
-
-  // Load jobs and vendors for dropdowns
-  useEffect(() => {
-    async function loadDropdownData() {
-      if (!companyId) return
-
-      const [jobsResult, vendorsResult] = await Promise.all([
-        supabase
-          .from('jobs')
-          .select('id, name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name'),
-        supabase
-          .from('vendors')
-          .select('id, name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name'),
-      ])
-
-      if (jobsResult.data) setJobs(jobsResult.data)
-      if (vendorsResult.data) setVendors(vendorsResult.data)
-    }
-
-    loadDropdownData()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -74,32 +50,24 @@ export default function NewLienLawRecordPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setSaving(true)
+    if (createMutation.isPending) return
     setError(null)
 
+    if (!formData.job_id.trim()) {
+      setError('Job is required')
+      return
+    }
+
     try {
-      if (!formData.job_id.trim()) {
-        setError('Job is required')
-        setSaving(false)
-        return
-      }
-
-      if (!companyId) throw new Error('No company found')
-
-      const { error: insertError } = await supabase
-        .from('lien_waiver_tracking')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          vendor_id: formData.vendor_id || undefined,
-          expected_amount: formData.expected_amount ? Number(formData.expected_amount) : null,
-          period_start: formData.period_start || null,
-          period_end: formData.period_end || null,
-          is_compliant: formData.is_compliant,
-          notes: formData.notes || null,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        job_id: formData.job_id,
+        vendor_id: formData.vendor_id || undefined,
+        expected_amount: formData.expected_amount ? Number(formData.expected_amount) : null,
+        period_start: formData.period_start || null,
+        period_end: formData.period_end || null,
+        is_compliant: formData.is_compliant,
+        notes: formData.notes || null,
+      })
 
       toast.success('Tracking record created')
       router.push('/compliance/lien-law')
@@ -108,8 +76,6 @@ export default function NewLienLawRecordPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create record'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -190,8 +156,8 @@ export default function NewLienLawRecordPage() {
 
         <div className="flex justify-end gap-2 mt-6">
           <Link href="/compliance/lien-law"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={saving}>
-            {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             Create Record
           </Button>
         </div>

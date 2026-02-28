@@ -13,8 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobPhoto, useUpdateJobPhoto, useDeleteJobPhoto } from '@/hooks/use-job-photos'
 import { formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -46,16 +45,16 @@ interface PhotoFormData {
 export default function PhotoDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const photoId = params.photoId as string
 
-  const [photo, setPhoto] = useState<PhotoData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading, error: fetchError } = useJobPhoto(photoId)
+  const updateMutation = useUpdateJobPhoto(photoId)
+  const deleteMutation = useDeleteJobPhoto()
+
+  const photo = (response as { data: PhotoData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -71,42 +70,19 @@ export default function PhotoDetailPage() {
     notes: '',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadPhoto() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('job_photos')
-        .select('*')
-        .eq('id', photoId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Photo not found')
-        setLoading(false)
-        return
-      }
-
-      const p = data as PhotoData
-      setPhoto(p)
+    if (photo) {
       setFormData({
-        title: p.title,
-        description: p.description || '',
-        category: p.category || '',
-        taken_date: p.taken_date || '',
-        location: p.location || '',
-        notes: p.notes || '',
+        title: photo.title,
+        description: photo.description || '',
+        category: photo.category || '',
+        taken_date: photo.taken_date || '',
+        location: photo.location || '',
+        notes: photo.notes || '',
       })
-      setLoading(false)
     }
-    loadPhoto()
-  }, [photoId, jobId, companyId])
+  }, [photo])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -120,35 +96,15 @@ export default function PhotoDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('job_photos')
-        .update({
-          title: formData.title,
-          description: formData.description || null,
-          category: formData.category || null,
-          taken_date: formData.taken_date || null,
-          location: formData.location || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', photoId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
+      await updateMutation.mutateAsync({
+        title: formData.title,
+        description: formData.description || null,
+        category: formData.category || null,
+        taken_date: formData.taken_date || null,
+        location: formData.location || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setPhoto((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: formData.title,
-              description: formData.description || null,
-              category: formData.category || null,
-              taken_date: formData.taken_date || null,
-              location: formData.location || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -164,31 +120,18 @@ export default function PhotoDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('job_photos')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', photoId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive photo')
-        toast.error('Failed to archive photo')
-        return
-      }
-
+      await deleteMutation.mutateAsync(photoId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/photos`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -202,7 +145,7 @@ export default function PhotoDetailPage() {
         <Link href={`/jobs/${jobId}/photos`} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Photos
         </Link>
-        <p className="text-destructive">{error || 'Photo not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Photo not found'}</p>
       </div>
     )
   }

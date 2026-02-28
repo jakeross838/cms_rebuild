@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useInvoice, useUpdateInvoice, useDeleteInvoice } from '@/hooks/use-invoices'
 import { formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -57,16 +56,16 @@ const STATUS_OPTIONS = [
 export default function JobInvoiceDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const invoiceId = params.invoiceId as string
 
-  const [invoice, setInvoice] = useState<InvoiceData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading, error: fetchError } = useInvoice(invoiceId)
+  const updateMutation = useUpdateInvoice(invoiceId)
+  const deleteMutation = useDeleteInvoice()
+
+  const invoice = (response as { data: InvoiceData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -84,42 +83,20 @@ export default function JobInvoiceDetailPage() {
     notes: '',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadInvoice() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('invoices')
-        .select('*')
-        .eq('id', invoiceId)
-        .eq('job_id', jobId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Invoice not found')
-        setLoading(false)
-        return
-      }
-
-      const inv = data as InvoiceData
-      setInvoice(inv)
+    if (invoice) {
       setFormData({
-        invoice_number: inv.invoice_number || '',
-        amount: String(inv.amount),
-        status: inv.status || 'draft',
-        invoice_date: inv.invoice_date || '',
-        due_date: inv.due_date || '',
-        vendor_id: inv.vendor_id || '',
-        notes: inv.notes || '',
+        invoice_number: invoice.invoice_number || '',
+        amount: String(invoice.amount),
+        status: invoice.status || 'draft',
+        invoice_date: invoice.invoice_date || '',
+        due_date: invoice.due_date || '',
+        vendor_id: invoice.vendor_id || '',
+        notes: invoice.notes || '',
       })
-      setLoading(false)
     }
-    loadInvoice()
-  }, [invoiceId, jobId, companyId])
+  }, [invoice])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -135,37 +112,16 @@ export default function JobInvoiceDetailPage() {
     try {
       const amount = Number(formData.amount) || 0
 
-      const { error: updateError } = await supabase
-        .from('invoices')
-        .update({
-          invoice_number: formData.invoice_number || null,
-          amount,
-          status: formData.status as 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied',
-          invoice_date: formData.invoice_date || null,
-          due_date: formData.due_date || null,
-          vendor_id: formData.vendor_id || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', invoiceId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
+      await updateMutation.mutateAsync({
+        invoice_number: formData.invoice_number || null,
+        amount,
+        status: formData.status as 'draft' | 'pm_pending' | 'accountant_pending' | 'owner_pending' | 'approved' | 'in_draw' | 'paid' | 'denied',
+        invoice_date: formData.invoice_date || null,
+        due_date: formData.due_date || null,
+        vendor_id: formData.vendor_id || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setInvoice((prev) =>
-        prev
-          ? {
-              ...prev,
-              invoice_number: formData.invoice_number || null,
-              amount,
-              status: formData.status,
-              invoice_date: formData.invoice_date || null,
-              due_date: formData.due_date || null,
-              vendor_id: formData.vendor_id || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -182,30 +138,18 @@ export default function JobInvoiceDetailPage() {
   const handleConfirmArchive = async () => {
     try {
       setArchiving(true)
-      const { error: archiveError } = await supabase
-        .from('invoices')
-        .update({ status: 'denied' })
-        .eq('id', invoiceId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-      if (archiveError) {
-        setError('Failed to archive invoice')
-        toast.error('Failed to archive invoice')
-        setArchiving(false)
-        return
-      }
+      await deleteMutation.mutateAsync(invoiceId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/invoices`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -219,7 +163,7 @@ export default function JobInvoiceDetailPage() {
         <Link href={`/jobs/${jobId}/invoices`} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Invoices
         </Link>
-        <p className="text-destructive">{error || 'Invoice not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Invoice not found'}</p>
       </div>
     )
   }

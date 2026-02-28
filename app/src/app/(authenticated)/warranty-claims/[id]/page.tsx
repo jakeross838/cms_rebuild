@@ -12,12 +12,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useWarrantyClaimFlat, useUpdateWarrantyClaimFlat } from '@/hooks/use-warranty'
+import { fetchJson } from '@/lib/api/fetch'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
-// ── Types ──────────────────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────
 interface WarrantyClaimData {
   id: string
   claim_number: string | null
@@ -32,17 +32,17 @@ interface WarrantyClaimData {
   created_at: string | null
 }
 
-// ── Component ──────────────────────────────────────────────────────
+// ── Component ──────────────────────────────────────────────────
 export default function WarrantyClaimDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const claimId = params.id as string
 
-  const { profile: authProfile } = useAuth()
+  const { data: response, isLoading, error: fetchError } = useWarrantyClaimFlat(claimId)
+  const updateMutation = useUpdateWarrantyClaimFlat(claimId)
 
-  const companyId = authProfile?.company_id || ''
-  const [claim, setClaim] = useState<WarrantyClaimData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const claim = (response as { data: WarrantyClaimData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -59,40 +59,20 @@ export default function WarrantyClaimDetailPage() {
     resolution_cost: '',
   })
 
-  // ── Load claim ───────────────────────────────────────────────────
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadClaim() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('warranty_claims')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Warranty claim not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as WarrantyClaimData
-      setClaim(c)
+    if (claim) {
       setFormData({
-        title: c.title,
-        description: c.description || '',
-        priority: c.priority || 'normal',
-        status: c.status || 'submitted',
-        due_date: c.due_date || '',
-        resolution_notes: c.resolution_notes || '',
-        resolution_cost: c.resolution_cost !== null ? String(c.resolution_cost) : '',
+        title: claim.title,
+        description: claim.description || '',
+        priority: claim.priority || 'normal',
+        status: claim.status || 'submitted',
+        due_date: claim.due_date || '',
+        resolution_notes: claim.resolution_notes || '',
+        resolution_cost: claim.resolution_cost !== null ? String(claim.resolution_cost) : '',
       })
-      setLoading(false)
     }
-    loadClaim()
-  }, [params.id, companyId])
+  }, [claim])
 
   // ── Handlers ─────────────────────────────────────────────────────
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -115,25 +95,7 @@ export default function WarrantyClaimDetailPage() {
         throw new Error('Resolution cost must be a valid number')
       }
 
-      const { error: updateError } = await supabase
-        .from('warranty_claims')
-        .update({
-          title: formData.title,
-          description: formData.description || null,
-          priority: formData.priority,
-          status: formData.status,
-          due_date: formData.due_date || null,
-          resolution_notes: formData.resolution_notes || null,
-          resolution_cost: costValue,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-      toast.success('Saved')
-
-      setClaim((prev) => prev ? {
-        ...prev,
+      await updateMutation.mutateAsync({
         title: formData.title,
         description: formData.description || null,
         priority: formData.priority,
@@ -141,7 +103,8 @@ export default function WarrantyClaimDetailPage() {
         due_date: formData.due_date || null,
         resolution_notes: formData.resolution_notes || null,
         resolution_cost: costValue,
-      } : prev)
+      })
+      toast.success('Saved')
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -156,31 +119,19 @@ export default function WarrantyClaimDetailPage() {
 
   const handleArchive = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('warranty_claims')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive warranty claim')
-        toast.error('Failed to archive warranty claim')
-        return
-      }
+      await fetchJson(`/api/v2/warranty-claims/${claimId}`, { method: 'DELETE' })
       toast.success('Archived')
-
       router.push('/warranty-claims')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   // ── Loading state ────────────────────────────────────────────────
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -195,7 +146,7 @@ export default function WarrantyClaimDetailPage() {
         <Link href="/warranty-claims" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Warranty Claims
         </Link>
-        <p className="text-destructive">{error || 'Warranty claim not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Warranty claim not found'}</p>
       </div>
     )
   }

@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCommunication, useUpdateCommunication, useDeleteCommunication } from '@/hooks/use-communications'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -50,16 +49,16 @@ const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'urgent']
 export default function CommunicationDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const commId = params.commId as string
 
-  const [comm, setComm] = useState<CommunicationData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading, error: fetchError } = useCommunication(commId)
+  const updateMutation = useUpdateCommunication(commId)
+  const deleteMutation = useDeleteCommunication()
+
+  const comm = (response as { data: CommunicationData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -76,43 +75,20 @@ export default function CommunicationDetailPage() {
     notes: '',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadComm() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('communications')
-        .select('*')
-        .eq('id', commId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Communication not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as CommunicationData
-      setComm(c)
+    if (comm) {
       setFormData({
-        subject: c.subject,
-        message_body: c.message_body,
-        communication_type: c.communication_type,
-        status: c.status,
-        priority: c.priority,
-        recipient: c.recipient || '',
-        notes: c.notes || '',
+        subject: comm.subject,
+        message_body: comm.message_body,
+        communication_type: comm.communication_type,
+        status: comm.status,
+        priority: comm.priority,
+        recipient: comm.recipient || '',
+        notes: comm.notes || '',
       })
-      setLoading(false)
     }
-    loadComm()
-  }, [commId, jobId, companyId])
+  }, [comm])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -126,38 +102,17 @@ export default function CommunicationDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('communications')
-        .update({
-          subject: formData.subject,
-          message_body: formData.message_body,
-          communication_type: formData.communication_type,
-          status: formData.status,
-          priority: formData.priority,
-          recipient: formData.recipient || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', commId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
+      await updateMutation.mutateAsync({
+        subject: formData.subject,
+        message_body: formData.message_body,
+        communication_type: formData.communication_type,
+        status: formData.status,
+        priority: formData.priority,
+        recipient: formData.recipient || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
       toast.success('Saved')
-
-      setComm((prev) =>
-        prev
-          ? {
-              ...prev,
-              subject: formData.subject,
-              message_body: formData.message_body,
-              communication_type: formData.communication_type,
-              status: formData.status,
-              priority: formData.priority,
-              recipient: formData.recipient || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -172,31 +127,18 @@ export default function CommunicationDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('communications')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', commId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive communication')
-        toast.error('Failed to archive communication')
-        return
-      }
+      await deleteMutation.mutateAsync(commId)
       toast.success('Archived')
-
       router.push(`/jobs/${jobId}/communications`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -210,7 +152,7 @@ export default function CommunicationDetailPage() {
         <Link href={`/jobs/${jobId}/communications`} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Communications
         </Link>
-        <p className="text-destructive">{error || 'Communication not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Communication not found'}</p>
       </div>
     )
   }

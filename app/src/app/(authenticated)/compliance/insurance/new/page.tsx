@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,23 +10,21 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateVendorInsuranceFlat } from '@/hooks/use-vendor-management'
+import { useVendors } from '@/hooks/use-vendors'
 import { toast } from 'sonner'
+
+type VendorRow = { id: string; name: string }
 
 export default function NewInsurancePolicyPage() {
   const router = useRouter()
-  const supabase = createClient()
-
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const createMutation = useCreateVendorInsuranceFlat()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const [vendors, setVendors] = useState<{ id: string; name: string }[]>([])
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const vendors: VendorRow[] = ((vendorsResponse as { data: VendorRow[] } | undefined)?.data ?? [])
 
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     vendor_id: '',
     insurance_type: 'general_liability',
@@ -37,26 +35,6 @@ export default function NewInsurancePolicyPage() {
     status: 'active',
   })
 
-  useEffect(() => {
-    async function loadDropdowns() {
-      if (!companyId) return
-
-      try {
-        const { data: vendorsData } = await supabase
-          .from('vendors')
-          .select('id, name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name')
-
-        if (vendorsData) setVendors(vendorsData)
-      } catch {
-        // Dropdown stays empty on failure — non-critical
-      }
-    }
-    loadDropdowns()
-  }, [companyId])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -64,31 +42,23 @@ export default function NewInsurancePolicyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.vendor_id) { setError('Vendor is required'); return }
+    if (!formData.policy_number.trim()) { setError('Policy number is required'); return }
+    if (!formData.expiration_date) { setError('Expiration date is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.vendor_id) { setError('Vendor is required'); setLoading(false); return }
-      if (!formData.policy_number.trim()) { setError('Policy number is required'); setLoading(false); return }
-      if (!formData.expiration_date) { setError('Expiration date is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('vendor_insurance')
-        .insert({
-          company_id: companyId,
-          vendor_id: formData.vendor_id,
-          insurance_type: formData.insurance_type,
-          carrier_name: formData.carrier_name,
-          policy_number: formData.policy_number,
-          coverage_amount: formData.coverage_amount ? parseFloat(formData.coverage_amount) : null,
-          expiration_date: formData.expiration_date,
-          status: formData.status,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        vendor_id: formData.vendor_id,
+        insurance_type: formData.insurance_type,
+        carrier_name: formData.carrier_name,
+        policy_number: formData.policy_number,
+        coverage_amount: formData.coverage_amount ? parseFloat(formData.coverage_amount) : null,
+        expiration_date: formData.expiration_date,
+        status: formData.status,
+      })
 
       toast.success('Insurance policy created')
       router.push('/compliance/insurance')
@@ -97,8 +67,6 @@ export default function NewInsurancePolicyPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create insurance policy'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -197,8 +165,8 @@ export default function NewInsurancePolicyPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/compliance/insurance"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Insurance Policy'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Insurance Policy'}
           </Button>
         </div>
       </form>

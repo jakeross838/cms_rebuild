@@ -146,6 +146,22 @@ export function useLienWaiverTrackingDetail(trackingId: string | null) {
   })
 }
 
+/** Create a lien waiver tracking record */
+export function useCreateLienWaiverTracking() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson('/api/v2/lien-waiver-tracking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lien-waiver-tracking'] })
+    },
+  })
+}
+
 /** Update a lien waiver tracking record */
 export function useUpdateLienWaiverTracking(trackingId: string) {
   const qc = useQueryClient()

@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useInspection, useUpdateInspection, useDeleteInspection } from '@/hooks/use-inspections'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -51,16 +50,16 @@ const STATUS_OPTIONS = ['scheduled', 'in_progress', 'passed', 'failed', 'cancell
 export default function InspectionDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const inspectionId = params.inspectionId as string
 
-  const [inspection, setInspection] = useState<InspectionData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading, error: fetchError } = useInspection(inspectionId)
+  const updateMutation = useUpdateInspection(inspectionId)
+  const deleteMutation = useDeleteInspection()
+
+  const inspection = (response as { data: InspectionData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -78,42 +77,20 @@ export default function InspectionDetailPage() {
     notes: '',
   })
 
+  // ── Sync form data from hook response ─────────────────────────
   useEffect(() => {
-    async function loadInspection() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('permit_inspections')
-        .select('*')
-        .eq('id', inspectionId)
-        .eq('job_id', jobId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Inspection not found')
-        setLoading(false)
-        return
-      }
-
-      const i = data as InspectionData
-      setInspection(i)
+    if (inspection) {
       setFormData({
-        inspection_type: i.inspection_type,
-        status: i.status,
-        scheduled_date: i.scheduled_date || '',
-        scheduled_time: i.scheduled_time || '',
-        inspector_name: i.inspector_name || '',
-        inspector_phone: i.inspector_phone || '',
-        notes: i.notes || '',
+        inspection_type: inspection.inspection_type,
+        status: inspection.status,
+        scheduled_date: inspection.scheduled_date || '',
+        scheduled_time: inspection.scheduled_time || '',
+        inspector_name: inspection.inspector_name || '',
+        inspector_phone: inspection.inspector_phone || '',
+        notes: inspection.notes || '',
       })
-      setLoading(false)
     }
-    loadInspection()
-  }, [inspectionId, jobId, companyId])
+  }, [inspection])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -127,37 +104,16 @@ export default function InspectionDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('permit_inspections')
-        .update({
-          inspection_type: formData.inspection_type,
-          status: formData.status,
-          scheduled_date: formData.scheduled_date || null,
-          scheduled_time: formData.scheduled_time || null,
-          inspector_name: formData.inspector_name || null,
-          inspector_phone: formData.inspector_phone || null,
-          notes: formData.notes || null,
-        })
-        .eq('id', inspectionId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
+      await updateMutation.mutateAsync({
+        inspection_type: formData.inspection_type,
+        status: formData.status,
+        scheduled_date: formData.scheduled_date || null,
+        scheduled_time: formData.scheduled_time || null,
+        inspector_name: formData.inspector_name || null,
+        inspector_phone: formData.inspector_phone || null,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setInspection((prev) =>
-        prev
-          ? {
-              ...prev,
-              inspection_type: formData.inspection_type,
-              status: formData.status,
-              scheduled_date: formData.scheduled_date || null,
-              scheduled_time: formData.scheduled_time || null,
-              inspector_name: formData.inspector_name || null,
-              inspector_phone: formData.inspector_phone || null,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -174,30 +130,18 @@ export default function InspectionDetailPage() {
   const handleConfirmArchive = async () => {
     try {
       setArchiving(true)
-      const { error: archiveError } = await supabase
-        .from('permit_inspections')
-        .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
-        .eq('id', inspectionId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-      if (archiveError) {
-        setError('Failed to archive inspection')
-        toast.error('Failed to archive inspection')
-        setArchiving(false)
-        return
-      }
+      await deleteMutation.mutateAsync(inspectionId)
       toast.success('Archived')
       router.push(`/jobs/${jobId}/inspections`)
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)
       toast.error(msg)
     }
-}
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -211,7 +155,7 @@ export default function InspectionDetailPage() {
         <Link href={`/jobs/${jobId}/inspections`} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Inspections
         </Link>
-        <p className="text-destructive">{error || 'Inspection not found'}</p>
+        <p className="text-destructive">{fetchError?.message || error || 'Inspection not found'}</p>
       </div>
     )
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -9,16 +9,11 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateProjectUserRole } from '@/hooks/use-project-user-roles'
+import { useUsers } from '@/hooks/use-users'
 import { toast } from 'sonner'
 
-interface CompanyUser {
-  id: string
-  name: string
-  email: string | null
-  role: string | null
-}
+type UserRow = { id: string; name: string; email: string | null; role: string | null }
 
 const ROLE_OPTIONS = [
   { value: '', label: 'No override (use company role)' },
@@ -35,41 +30,17 @@ export default function NewTeamMemberPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
+  const createMutation = useCreateProjectUserRole()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  // ── Dropdown data ──────────────────────────────────────────────
+  const { data: usersResponse, isLoading: loadingUsers } = useUsers({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const users: UserRow[] = ((usersResponse as { data: UserRow[] } | undefined)?.data ?? [])
 
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
-  const [loadingUsers, setLoadingUsers] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [users, setUsers] = useState<CompanyUser[]>([])
-
   const [formData, setFormData] = useState({
     user_id: '',
     role_override: '',
   })
-
-  useEffect(() => {
-    async function loadUsers() {
-      if (!companyId) { setLoadingUsers(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('users')
-        .select('id, name, email, role')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name', { ascending: true })
-
-      if (fetchError) {
-        setError('Failed to load users')
-      } else {
-        setUsers((data || []) as CompanyUser[])
-      }
-      setLoadingUsers(false)
-    }
-    loadUsers()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -78,32 +49,17 @@ export default function NewTeamMemberPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.user_id) { setError('Please select a user'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
-      if (!formData.user_id) throw new Error('Please select a user')
-
-      type RoleOverride = 'owner' | 'admin' | 'pm' | 'superintendent' | 'office' | 'field' | 'read_only'
-
-      const { error: insertError } = await supabase
-        .from('project_user_roles')
-        .insert({
-          company_id: companyId,
-          user_id: formData.user_id,
-          job_id: jobId,
-          role_override: (formData.role_override || null) as RoleOverride | null,
-          granted_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        user_id: formData.user_id,
+        job_id: jobId,
+        role_override: formData.role_override || null,
+      })
 
       toast.success('Team member added')
       router.push(`/jobs/${jobId}/team`)
@@ -112,8 +68,6 @@ export default function NewTeamMemberPage() {
       const errorMessage = (err as Error)?.message || 'Failed to add team member'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -169,8 +123,8 @@ export default function NewTeamMemberPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href={`/jobs/${jobId}/team`}><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Adding...</> : 'Add Team Member'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Adding...</> : 'Add Team Member'}
           </Button>
         </div>
       </form>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,26 +10,21 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateContactFlat } from '@/hooks/use-vendor-management'
+import { useVendors } from '@/hooks/use-vendors'
 import { toast } from 'sonner'
 
-interface SelectOption {
-  id: string
-  label: string
-}
+type VendorRow = { id: string; name: string }
 
 export default function NewContactPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const createMutation = useCreateContactFlat()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  // ── Dropdown data ──────────────────────────────────────────────
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const vendors: VendorRow[] = ((vendorsResponse as { data: VendorRow[] } | undefined)?.data ?? [])
 
-  const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [vendors, setVendors] = useState<SelectOption[]>([])
-
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -38,29 +33,6 @@ export default function NewContactPage() {
     vendor_id: '',
     is_primary: false,
   })
-
-  useEffect(() => {
-    async function loadVendors() {
-      if (!companyId) return
-
-      try {
-        const { data: vendorsData } = await supabase
-          .from('vendors')
-          .select('id, name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name')
-
-        setVendors((vendorsData || []).map((v: { id: string; name: string }) => ({
-          id: v.id,
-          label: v.name,
-        })))
-      } catch {
-        // Dropdown stays empty on failure — non-critical
-      }
-    }
-    loadVendors()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -73,28 +45,21 @@ export default function NewContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createMutation.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.vendor_id) { setError('Vendor is required'); return }
+    if (!formData.name.trim()) { setError('Name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-      if (!formData.vendor_id) { setError('Vendor is required'); setLoading(false); return }
-      if (!formData.name.trim()) { setError('Name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('vendor_contacts')
-        .insert({
-          company_id: companyId,
-          vendor_id: formData.vendor_id,
-          name: formData.name,
-          title: formData.title || null,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          is_primary: formData.is_primary,
-        })
-
-      if (insertError) throw insertError
+      await createMutation.mutateAsync({
+        vendor_id: formData.vendor_id,
+        name: formData.name,
+        title: formData.title || null,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        is_primary: formData.is_primary,
+      })
 
       toast.success('Contact created')
       router.push('/contacts')
@@ -103,8 +68,6 @@ export default function NewContactPage() {
       const errorMessage = (err as Error)?.message || 'Failed to add contact'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -160,7 +123,7 @@ export default function NewContactPage() {
               <label htmlFor="vendor_id" className="text-sm font-medium">Vendor <span className="text-red-500">*</span></label>
               <select id="vendor_id" name="vendor_id" value={formData.vendor_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                 <option value="">Select a vendor...</option>
-                {vendors.map((v) => <option key={v.id} value={v.id}>{v.label}</option>)}
+                {vendors.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
               </select>
             </div>
             <div className="flex items-center gap-2">
@@ -172,8 +135,8 @@ export default function NewContactPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/contacts"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Contact'}
+          <Button type="submit" disabled={createMutation.isPending}>
+            {createMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Contact'}
           </Button>
         </div>
       </form>
