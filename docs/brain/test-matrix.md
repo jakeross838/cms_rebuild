@@ -1,5 +1,27 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
+
+### Archive Button Safety
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 18 archive buttons have `disabled={archiving}` prop | All disabled during operation | PASS |
+| Archive buttons show "Archiving..." text during operation | Text toggles | PASS |
+| `setArchiving(true)` called before API request | Prevents double-submit | PASS |
+| `tsc --noEmit` — zero errors after 18 files changed | 0 errors | PASS |
+
+### Budget Flat Routes
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `GET /api/v2/budget-lines` returns paginated list | 200 with data array | PASS (compile) |
+| `POST /api/v2/budget-lines` auto-creates budget | 201 with budget_id | PASS (compile) |
+| `GET /api/v2/budget-lines/:id` returns single line | 200 with data | PASS (compile) |
+| `PATCH /api/v2/budget-lines/:id` updates line | 200 with updated data | PASS (compile) |
+| `DELETE /api/v2/budget-lines/:id` soft deletes | 200 with success | PASS (compile) |
+| Budget detail page uses `useBudgetLineFlat` hook | No createClient | PASS |
+| Budget new page uses `useCreateBudgetLineFlat` hook | No createClient | PASS |
+| Client-side Supabase usage = 0 pages | Zero remaining | PASS |
+
 ## Session 38 — Complete React Query Migration (2026-02-28)
 
 ### Type Safety

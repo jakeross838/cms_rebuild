@@ -1,5 +1,14 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-28: Session 39 — Archive Button Safety + Budget Page Migration
+
+### Why
+- 18 archive buttons on job sub-page detail pages lacked `disabled` state — users could double-click and trigger duplicate API calls (soft-delete race condition)
+- Added `const [archiving, setArchiving] = useState(false)` + `disabled={archiving}` + text toggle pattern to all 18 pages
+- Budget pages (last 2 client-side Supabase pages) migrated to React Query via new flat API routes (`/api/v2/budget-lines/`) that solve the budgetId problem by querying budget_lines directly by line ID + company_id
+- POST handler auto-creates a budget record if none exists for the job — this logic moved server-side from the client form
+- **Result: Zero client-side Supabase queries remain in authenticated pages**
+
 ## 2026-02-28: Session 38 — Complete React Query Migration
 
 ### Why

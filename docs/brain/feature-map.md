@@ -1,5 +1,30 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
+
+### Archive Button Disabled State (18 pages)
+All 18 job sub-page detail pages + warranty-claims/[id] now have `archiving` state preventing double-submit:
+- `const [archiving, setArchiving] = useState(false)` added
+- Archive handler sets `setArchiving(true)` before API call
+- Button shows `disabled={archiving}` + text toggle `{archiving ? 'Archiving...' : 'Archive ...'}`
+- Pages fixed: budget/[lineId], change-orders/[coId], communications/[commId], daily-logs/[logId], draws/[drawId], files/[fileId], lien-waivers/[waiverId], permits/[permitId], photos/[photoId], punch-list/[itemId], purchase-orders/[poId], rfis/[rfiId], schedule/[taskId], selections/[selectionId], submittals/[submittalId], time-clock/[entryId], warranties/[warrantyId], warranty-claims/[id]
+
+### Budget Pages Migrated to React Query (2 pages)
+| Page | Hooks Used | Notes |
+|------|-----------|-------|
+| `jobs/[id]/budget/[lineId]` | `useBudgetLineFlat(lineId)`, `useUpdateBudgetLineFlat(lineId)` | Flat route — no budgetId needed |
+| `jobs/[id]/budget/new` | `useCreateBudgetLineFlat()` | Auto-creates budget server-side via POST handler |
+
+### Budget Lines Flat API Routes Created
+| Route | Methods | Table | Notes |
+|-------|---------|-------|-------|
+| `/api/v2/budget-lines` | GET, POST | `budget_lines` | POST auto-creates budget if none exists for the job |
+| `/api/v2/budget-lines/[id]` | GET, PATCH, DELETE | `budget_lines` | Soft delete |
+
+### Client-Side Supabase Status: ZERO REMAINING
+- All 49 client-side `createClient` usages eliminated
+- Only server-side usages remain (layout.tsx, dashboards, notifications, API routes) — correct pattern
+
 ## Session 38 — Complete React Query Migration (2026-02-28)
 
 ### 8 New API Route Sets Created (16 route files)
