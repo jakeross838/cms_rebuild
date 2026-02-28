@@ -118,7 +118,7 @@ export default function ARInvoiceDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const clientName = clients.find((c) => c.id === invoice?.client_id)?.name || 'Unknown Client'
   const jobName = jobs.find((j) => j.id === invoice?.job_id)?.name

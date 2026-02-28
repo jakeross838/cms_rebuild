@@ -108,7 +108,7 @@ export default function TrainingCourseDetailPage() {
       setLoading(false)
     }
     loadCourse()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target

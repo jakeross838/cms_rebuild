@@ -78,7 +78,7 @@ export default function AssemblyDetailPage() {
       setLoading(false)
     }
     loadAssembly()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

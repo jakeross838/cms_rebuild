@@ -112,7 +112,7 @@ export default function CommunicationDetailPage() {
       setLoading(false)
     }
     loadComm()
-  }, [commId, jobId, supabase, companyId])
+  }, [commId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

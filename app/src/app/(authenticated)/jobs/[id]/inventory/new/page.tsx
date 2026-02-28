@@ -61,7 +61,7 @@ export default function NewInventoryTransactionPage() {
       setLoadingItems(false)
     }
     loadItems()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

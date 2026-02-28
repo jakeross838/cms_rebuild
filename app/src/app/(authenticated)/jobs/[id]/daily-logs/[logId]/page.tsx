@@ -110,7 +110,7 @@ export default function DailyLogDetailPage() {
       setLoading(false)
     }
     loadLog()
-  }, [jobId, logId, supabase, companyId])
+  }, [jobId, logId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

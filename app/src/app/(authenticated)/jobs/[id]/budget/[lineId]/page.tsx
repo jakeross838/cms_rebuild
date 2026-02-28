@@ -107,7 +107,7 @@ export default function BudgetLineDetailPage() {
       setLoading(false)
     }
     loadLine()
-  }, [lineId, jobId, supabase, companyId])
+  }, [lineId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

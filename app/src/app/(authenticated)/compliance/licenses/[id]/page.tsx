@@ -109,7 +109,7 @@ export default function LicenseDetailPage() {
       setLoading(false)
     }
     loadCertification()
-  }, [certId, supabase, companyId])
+  }, [certId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target

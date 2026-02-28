@@ -119,7 +119,7 @@ export default function JobInvoiceDetailPage() {
       setLoading(false)
     }
     loadInvoice()
-  }, [invoiceId, jobId, supabase, companyId])
+  }, [invoiceId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target

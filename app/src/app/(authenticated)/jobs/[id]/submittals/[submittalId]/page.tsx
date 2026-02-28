@@ -120,7 +120,7 @@ export default function SubmittalDetailPage() {
       setLoading(false)
     }
     loadSubmittal()
-  }, [submittalId, jobId, supabase, companyId])
+  }, [submittalId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

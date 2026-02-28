@@ -92,7 +92,7 @@ export default function WarrantyClaimDetailPage() {
       setLoading(false)
     }
     loadClaim()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   // ── Handlers ─────────────────────────────────────────────────────
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {

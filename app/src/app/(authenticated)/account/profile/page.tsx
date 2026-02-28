@@ -64,7 +64,7 @@ export default function ProfilePage() {
       setLoading(false)
     }
     loadProfile()
-  }, [supabase])
+  }, [])
 
   const handleSave = async () => {
     if (!profile) return

@@ -113,7 +113,7 @@ export default function InspectionDetailPage() {
       setLoading(false)
     }
     loadInspection()
-  }, [inspectionId, jobId, supabase, companyId])
+  }, [inspectionId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

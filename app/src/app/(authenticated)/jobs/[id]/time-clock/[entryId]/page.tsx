@@ -116,7 +116,7 @@ export default function TimeEntryDetailPage() {
       setLoading(false)
     }
     loadEntry()
-  }, [entryId, jobId, supabase, companyId])
+  }, [entryId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target

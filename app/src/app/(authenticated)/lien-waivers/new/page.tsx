@@ -61,7 +61,7 @@ export default function NewLienWaiverPage() {
       setJobs((data as JobOption[]) || [])
     }
     loadJobs()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

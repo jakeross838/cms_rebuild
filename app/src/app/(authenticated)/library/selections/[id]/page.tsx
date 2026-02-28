@@ -114,7 +114,7 @@ export default function SelectionCategoryDetailPage() {
       setLoading(false)
     }
     loadCategory()
-  }, [categoryId, supabase, companyId])
+  }, [categoryId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target

@@ -123,7 +123,7 @@ export default function ScheduleTaskDetailPage() {
       setLoading(false)
     }
     loadTask()
-  }, [taskId, jobId, supabase, companyId])
+  }, [taskId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

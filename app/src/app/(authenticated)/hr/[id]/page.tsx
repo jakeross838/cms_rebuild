@@ -106,7 +106,7 @@ export default function EmployeeDetailPage() {
       setLoading(false)
     }
     loadEmployee()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -83,7 +83,7 @@ export default function NewPurchaseOrderPage() {
       setLoadingOptions(false)
     }
     loadOptions()
-  }, [supabase, companyId])
+  }, [companyId])
 
   // ── Handlers ──
 

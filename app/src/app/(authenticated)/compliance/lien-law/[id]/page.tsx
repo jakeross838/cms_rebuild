@@ -103,7 +103,7 @@ export default function LienLawDetailPage() {
       setLoading(false)
     }
     loadRecord()
-  }, [recordId, supabase, companyId])
+  }, [recordId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target

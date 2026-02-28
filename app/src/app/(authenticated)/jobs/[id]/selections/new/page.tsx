@@ -64,7 +64,7 @@ export default function NewSelectionPage() {
       if (optionsResult.data) setOptions(optionsResult.data as Option[])
     }
     loadData()
-  }, [supabase, jobId, companyId])
+  }, [jobId, companyId])
 
   useEffect(() => {
     if (formData.category_id) {

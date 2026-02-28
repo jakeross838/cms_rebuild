@@ -61,7 +61,7 @@ export default function NewTimeEntryPage() {
       setFormData((prev) => ({ ...prev, user_id: authUser.id }))
     }
     loadDropdowns()
-  }, [supabase, companyId, authUser])
+  }, [companyId, authUser])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

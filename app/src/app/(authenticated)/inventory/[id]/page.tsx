@@ -92,7 +92,7 @@ export default function InventoryItemDetailPage() {
       setLoading(false)
     }
     loadItem()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

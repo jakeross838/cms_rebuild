@@ -106,7 +106,7 @@ export default function PhotoDetailPage() {
       setLoading(false)
     }
     loadPhoto()
-  }, [photoId, jobId, supabase, companyId])
+  }, [photoId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

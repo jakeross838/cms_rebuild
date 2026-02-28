@@ -105,7 +105,7 @@ export default function WarrantyDetailPage() {
       setLoading(false)
     }
     loadWarranty()
-  }, [warrantyId, jobId, supabase, companyId])
+  }, [warrantyId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

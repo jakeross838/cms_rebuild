@@ -63,7 +63,7 @@ export default function NewDrawRequestPage() {
       if (data) setJobs(data as JobOption[])
     }
     loadJobs()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

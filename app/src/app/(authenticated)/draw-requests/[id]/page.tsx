@@ -117,7 +117,7 @@ export default function DrawRequestDetailPage() {
       setLoading(false)
     }
     loadDraw()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (
     e: React.ChangeEvent<

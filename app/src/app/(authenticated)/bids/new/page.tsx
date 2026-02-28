@@ -57,7 +57,7 @@ export default function NewBidPackagePage() {
       setJobsLoading(false)
     }
     loadJobs()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

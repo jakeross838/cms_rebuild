@@ -115,7 +115,7 @@ export default function PunchItemDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const jobName = jobs.find((j) => j.id === item?.job_id)?.name || 'Unknown Job'
 

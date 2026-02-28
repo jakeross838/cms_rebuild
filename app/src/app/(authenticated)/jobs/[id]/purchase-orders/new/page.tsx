@@ -58,7 +58,7 @@ export default function NewPurchaseOrderPage() {
       if (data) setVendors(data as Vendor[])
     }
     loadVendors()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

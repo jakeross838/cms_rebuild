@@ -118,7 +118,7 @@ export default function EditJobPage() {
       setLoading(false)
     }
     loadJob()
-  }, [jobId, supabase, companyId])
+  }, [jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

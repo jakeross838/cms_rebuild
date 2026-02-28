@@ -62,7 +62,7 @@ export default function NewLienLawRecordPage() {
     }
 
     loadDropdownData()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target

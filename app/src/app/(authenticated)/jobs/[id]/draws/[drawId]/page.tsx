@@ -116,7 +116,7 @@ export default function DrawRequestDetailPage() {
       setLoading(false)
     }
     loadDraw()
-  }, [jobId, drawId, supabase, companyId])
+  }, [jobId, drawId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

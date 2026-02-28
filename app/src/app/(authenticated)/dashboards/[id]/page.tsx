@@ -90,7 +90,7 @@ export default function DashboardDetailPage() {
       setLoading(false)
     }
     load()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target

@@ -111,7 +111,7 @@ export default function LeadDetailPage() {
       setLoading(false)
     }
     loadLead()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

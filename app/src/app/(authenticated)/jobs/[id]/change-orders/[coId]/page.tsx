@@ -112,7 +112,7 @@ export default function ChangeOrderDetailPage() {
       setLoading(false)
     }
     loadCo()
-  }, [jobId, coId, supabase, companyId])
+  }, [jobId, coId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

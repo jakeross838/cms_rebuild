@@ -89,7 +89,7 @@ export default function ClientDetailPage() {
       setLoading(false)
     }
     loadClient()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

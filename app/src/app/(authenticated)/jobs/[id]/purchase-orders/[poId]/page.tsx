@@ -151,7 +151,7 @@ export default function PurchaseOrderDetailPage() {
       setLoading(false)
     }
     loadPO()
-  }, [poId, jobId, supabase, companyId])
+  }, [poId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

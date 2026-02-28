@@ -120,7 +120,7 @@ export default function JobPunchItemDetailPage() {
       setLoading(false)
     }
     loadItem()
-  }, [jobId, itemId, supabase, companyId])
+  }, [jobId, itemId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

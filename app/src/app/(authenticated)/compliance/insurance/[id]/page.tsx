@@ -101,7 +101,7 @@ export default function InsurancePolicyDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const vendorName = vendors.find((v) => v.id === policy?.vendor_id)?.name || 'Unknown Vendor'
 

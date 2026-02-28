@@ -55,7 +55,7 @@ export default function NewInspectionPage() {
       if (data) setPermits(data as Permit[])
     }
     loadPermits()
-  }, [supabase, jobId, companyId])
+  }, [jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

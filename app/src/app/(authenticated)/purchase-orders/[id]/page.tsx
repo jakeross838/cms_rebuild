@@ -156,7 +156,7 @@ export default function PurchaseOrderDetailPage() {
       setLoading(false)
     }
     loadPurchaseOrder()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   // ── Load job/vendor options when entering edit mode ──
 
@@ -174,7 +174,7 @@ export default function PurchaseOrderDetailPage() {
       setVendors((vendorsResult.data || []) as VendorInfo[])
     }
     loadOptions()
-  }, [editing, supabase, companyId])
+  }, [editing, companyId])
 
   // ── Handlers ──
 

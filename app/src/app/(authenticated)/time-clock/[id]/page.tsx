@@ -105,7 +105,7 @@ export default function TimeClockDetailPage() {
       setLoading(false)
     }
     loadEntry()
-  }, [entryId, supabase, companyId])
+  }, [entryId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

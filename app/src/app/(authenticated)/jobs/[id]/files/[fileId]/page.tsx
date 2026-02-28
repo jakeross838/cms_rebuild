@@ -93,7 +93,7 @@ export default function FileDetailPage() {
       setLoading(false)
     }
     loadDocument()
-  }, [fileId, jobId, supabase, companyId])
+  }, [fileId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

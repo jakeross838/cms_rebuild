@@ -112,7 +112,7 @@ export default function RFIDetailPage() {
       setLoading(false)
     }
     loadRfi()
-  }, [jobId, rfiId, supabase, companyId])
+  }, [jobId, rfiId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

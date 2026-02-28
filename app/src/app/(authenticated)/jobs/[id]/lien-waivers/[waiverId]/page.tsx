@@ -127,7 +127,7 @@ export default function LienWaiverDetailPage() {
       setLoading(false)
     }
     loadWaiver()
-  }, [waiverId, jobId, supabase, companyId])
+  }, [waiverId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

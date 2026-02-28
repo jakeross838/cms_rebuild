@@ -58,7 +58,7 @@ export default function NewCommunicationPage() {
       setJobsLoading(false)
     }
     loadJobs()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -120,7 +120,7 @@ export default function BillDetailPage() {
       setLoading(false)
     }
     loadData()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const vendorName = vendors.find((v) => v.id === bill?.vendor_id)?.name || 'Unknown Vendor'
   const jobName = jobs.find((j) => j.id === bill?.job_id)?.name

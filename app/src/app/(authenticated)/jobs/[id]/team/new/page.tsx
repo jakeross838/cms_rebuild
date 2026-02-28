@@ -69,7 +69,7 @@ export default function NewTeamMemberPage() {
       setLoadingUsers(false)
     }
     loadUsers()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target

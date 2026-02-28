@@ -118,7 +118,7 @@ export default function PermitDetailPage() {
       setLoading(false)
     }
     loadPermit()
-  }, [permitId, jobId, supabase, companyId])
+  }, [permitId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -98,7 +98,7 @@ export default function EstimateDetailPage() {
       setLoading(false)
     }
     loadEstimate()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

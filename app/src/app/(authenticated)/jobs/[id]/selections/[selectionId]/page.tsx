@@ -106,7 +106,7 @@ export default function SelectionDetailPage() {
       setLoading(false)
     }
     loadSelection()
-  }, [selectionId, jobId, supabase, companyId])
+  }, [selectionId, jobId, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -97,7 +97,7 @@ export default function ChangeOrderDetailPage() {
       setLoading(false)
     }
     loadChangeOrder()
-  }, [params.id, supabase, companyId])
+  }, [params.id, companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

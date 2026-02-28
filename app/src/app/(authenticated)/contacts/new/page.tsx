@@ -56,7 +56,7 @@ export default function NewContactPage() {
       })))
     }
     loadVendors()
-  }, [supabase, companyId])
+  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
