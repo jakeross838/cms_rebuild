@@ -15,20 +15,8 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
-
-// ── Helpers ──────────────────────────────────────────────────────────
-
-const currencyFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0,
-})
-
-function fmtCurrency(value: number): string {
-  return currencyFmt.format(value)
-}
 
 // ── Page ─────────────────────────────────────────────────────────────
 
@@ -169,7 +157,7 @@ export default async function FinancialDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Contract Value</p>
-                <p className="text-2xl font-bold">{fmtCurrency(totalContractValue)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalContractValue)}</p>
                 <p className="text-xs text-muted-foreground">all active contracts</p>
               </div>
               <Landmark className="h-8 w-8 text-blue-500/70" />
@@ -183,8 +171,8 @@ export default async function FinancialDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground">Total Invoiced</p>
-                  <p className="text-2xl font-bold">{fmtCurrency(totalInvoiced)}</p>
-                  <p className="text-xs text-muted-foreground">{fmtCurrency(totalPaid)} paid</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalInvoiced)}</p>
+                  <p className="text-xs text-muted-foreground">{formatCurrency(totalPaid)} paid</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-500/70" />
               </div>
@@ -198,7 +186,7 @@ export default async function FinancialDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground">Outstanding AR</p>
-                  <p className="text-2xl font-bold">{fmtCurrency(outstandingAr)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(outstandingAr)}</p>
                   <p className="text-xs text-muted-foreground">awaiting payment</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-amber-500/70" />
@@ -212,7 +200,7 @@ export default async function FinancialDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">AP Balance</p>
-                <p className="text-2xl font-bold">{fmtCurrency(apBalance)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(apBalance)}</p>
                 <p className="text-xs text-muted-foreground">bills outstanding</p>
               </div>
               <Receipt className="h-8 w-8 text-red-500/70" />
@@ -238,17 +226,17 @@ export default async function FinancialDashboardPage() {
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Total Estimated</p>
-                <p className="text-xl font-bold">{fmtCurrency(totalEstimated)}</p>
+                <p className="text-xl font-bold">{formatCurrency(totalEstimated)}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Total Actual</p>
-                <p className="text-xl font-bold">{fmtCurrency(totalActual)}</p>
+                <p className="text-xl font-bold">{formatCurrency(totalActual)}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Variance</p>
                 <div className="flex items-center gap-2">
                   <p className={`text-xl font-bold ${totalVariance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {fmtCurrency(totalVariance)}
+                    {formatCurrency(totalVariance)}
                   </p>
                   {totalVariance >= 0 ? (
                     <TrendingUp className="h-4 w-4 text-green-600" />
@@ -296,7 +284,7 @@ export default async function FinancialDashboardPage() {
                         <p className="text-xs text-muted-foreground">Due {formatDate(bill.due_date)}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{fmtCurrency(bill.balance_due)}</span>
+                        <span className="text-sm font-medium">{formatCurrency(bill.balance_due)}</span>
                         <Badge className={getStatusColor(bill.status)}>
                           {bill.status}
                         </Badge>
@@ -338,7 +326,7 @@ export default async function FinancialDashboardPage() {
                         <p className="text-xs text-muted-foreground">{formatDate(draw.application_date)}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{fmtCurrency(draw.current_due)}</span>
+                        <span className="text-sm font-medium">{formatCurrency(draw.current_due)}</span>
                         <Badge className={getStatusColor(draw.status)}>
                           {draw.status}
                         </Badge>

@@ -90,7 +90,7 @@ export default async function InsurancePage({
                         <span className="font-medium">{pol.carrier_name}</span>
                         <Badge variant="outline" className="text-xs">{pol.insurance_type}</Badge>
                         <Badge className={getStatusColor(pol.status)}>{formatStatus(pol.status)}</Badge>
-                        {pol.verified_at && <Badge className="text-green-700 bg-green-100">Verified</Badge>}
+                        {pol.verified_at && <Badge className={getStatusColor('verified')}>Verified</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
                         Policy #{pol.policy_number} &bull; Expires {formatDate(pol.expiration_date)}

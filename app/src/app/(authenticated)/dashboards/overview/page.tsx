@@ -16,20 +16,8 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, getStatusColor, formatStatus} from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { Metadata } from 'next'
-
-// ── Helpers ──────────────────────────────────────────────────────────
-
-const currencyFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0,
-})
-
-function fmtCurrency(value: number): string {
-  return currencyFmt.format(value)
-}
 
 // ── Page ─────────────────────────────────────────────────────────────
 
@@ -168,7 +156,7 @@ export default async function DashboardOverviewPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground">Revenue</p>
-                  <p className="text-2xl font-bold">{fmtCurrency(totalRevenue)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalRevenue)}</p>
                   <p className="text-xs text-muted-foreground">paid & approved</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-500/70" />
@@ -183,7 +171,7 @@ export default async function DashboardOverviewPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground">Pending Invoices</p>
-                  <p className="text-2xl font-bold">{fmtCurrency(pendingAmount)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(pendingAmount)}</p>
                   <p className="text-xs text-muted-foreground">{pendingInvoiceCount} invoices</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-amber-500/70" />
@@ -318,7 +306,7 @@ export default async function DashboardOverviewPage() {
                         <p className="text-xs text-muted-foreground">{formatDate(inv.created_at)}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{fmtCurrency(inv.amount || 0)}</span>
+                        <span className="text-sm font-medium">{formatCurrency(inv.amount || 0)}</span>
                         <Badge className={getStatusColor(inv.status ?? 'draft')}>
                           {inv.status ?? 'draft'}
                         </Badge>

@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ContractData {
@@ -183,10 +183,6 @@ export default function ContractDetailPage() {
     )
   }
 
-  const formatCurrency = (val: number | null) => {
-    if (val == null) return '--'
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val)
-  }
 
   return (
     <div className="max-w-3xl mx-auto">

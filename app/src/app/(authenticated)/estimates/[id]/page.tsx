@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface EstimateData {
@@ -190,10 +190,6 @@ export default function EstimateDetailPage() {
     )
   }
 
-  const formatCurrency = (val: number | null) => {
-    if (val == null) return '--'
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val)
-  }
 
   const formatPct = (val: number | null) => {
     if (val == null) return '--'
