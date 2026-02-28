@@ -1,5 +1,18 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 32 (continued) — Edit Form Validation + Router Fix
+
+### Why (Edit form handleSave validation — 47 files)
+- 47 detail/edit pages had required fields marked with red asterisks in the UI but NO JavaScript validation in handleSave before calling `.update()`
+- HTML `required` attribute only works with form submit events — these pages use button onClick handlers, so browser validation is bypassed
+- Users could clear a required field (e.g., name, title) and successfully save an empty string to the database
+- Fixed: added `.trim()` checks for text fields and empty checks for selects/dates before `setSaving(true)`
+
+### Why (Missing router.refresh() — 2 files)
+- `financial/chart-of-accounts/[id]` and `legal/[id]` called `router.push()` after archive but not `router.refresh()`
+- Result: destination list page could show the just-archived item from stale cache until manual page refresh
+- Fixed: added `router.refresh()` after `router.push()` in both files
+
 ## 2026-02-27: Session 32 — Error Handling Hardening (66 files)
 
 ### Why (useEffect try/catch — 15 files)

@@ -1,5 +1,23 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 32 (continued) — Edit Form Validation + Router Fix (2026-02-27)
+
+### Edit Form Validation
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All 47 detail pages validate required fields in handleSave | toast.error + early return before update | pass |
+| Text fields use .trim() check | Empty/whitespace-only strings rejected | pass |
+| Select fields use empty check (no .trim()) | Empty selects rejected | pass |
+| Date fields use empty check | Empty dates rejected | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Router Refresh
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| chart-of-accounts archive calls router.refresh() | Stale cache cleared on list page | pass |
+| legal archive calls router.refresh() | Stale cache cleared on list page | pass |
+| All 50+ archive handlers pair router.push() with router.refresh() | No stale cache after archive | pass |
+
 ## Session 32 — Error Handling Hardening (2026-02-27)
 
 ### useEffect Async Error Handling

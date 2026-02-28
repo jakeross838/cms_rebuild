@@ -1,5 +1,18 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 32 (continued) — Edit Form Validation + Router Fix (2026-02-27)
+
+### Edit Form Required Field Validation (47 files)
+- All 47 detail pages with red-asterisk required fields now validate in JS before `.update()`
+- Text fields: `.trim()` check (name, title, subject, etc.)
+- Select fields: empty check without `.trim()` (status, type, priority, etc.)
+- Date fields: empty check without `.trim()` (entry_date, due_date, etc.)
+- Pattern: `if (!formData.field.trim()) { toast.error('Field is required'); return }` before `setSaving(true)`
+
+### Router Refresh Fix (2 files)
+- **chart-of-accounts/[id]** — archive handler now calls `router.refresh()` after `router.push()`
+- **legal/[id]** — archive handler now calls `router.refresh()` after `router.push()`
+
 ## Session 32 — Error Handling Hardening (2026-02-27)
 
 ### useEffect Async Error Handling (15 files)

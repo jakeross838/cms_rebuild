@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatDate, formatStatus} from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getStatusColor} from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Billing' }
@@ -75,7 +75,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Status</p>
-                <Badge className="mt-1">{String((subscription as Record<string, unknown>).status || 'active')}</Badge>
+                <Badge className={`${getStatusColor(String((subscription as Record<string, unknown>).status || 'active'))} mt-1`}>{formatStatus(String((subscription as Record<string, unknown>).status || 'active'))}</Badge>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Next Billing</p>
