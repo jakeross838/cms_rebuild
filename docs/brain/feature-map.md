@@ -2,12 +2,22 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
-### Archive Button Disabled State (18 pages)
-All 18 job sub-page detail pages + warranty-claims/[id] now have `archiving` state preventing double-submit:
+### Cancel Button Error Reset (58 pages)
+All detail pages with edit mode now clear error state on Cancel click:
+- Pattern: `onClick={() => { setEditing(false); setError(null) }}`
+- 23 job sub-pages + contacts/[id] + invoices/[id] + compliance/insurance/[id] + warranty-claims/[id]
+- 35 non-job detail pages (bids, change-orders, clients, compliance/*, contracts, cost-codes, dashboards, draw-requests, email-marketing, equipment, estimates, financial/*, hr, inventory, leads, legal, library/*, lien-waivers, permits, punch-lists, purchase-orders, rfis, submittals, support, time-clock, training, vendors, warranties)
+
+### Missing router.refresh() Fixed (2 pages)
+- contacts/[id] and invoices/[id] — added `router.refresh()` after `router.push()` in archive handlers
+
+### Archive Button Disabled State (54 pages)
+All detail pages with archive buttons now have `archiving` state preventing double-submit:
 - `const [archiving, setArchiving] = useState(false)` added
 - Archive handler sets `setArchiving(true)` before API call
 - Button shows `disabled={archiving}` + text toggle `{archiving ? 'Archiving...' : 'Archive ...'}`
-- Pages fixed: budget/[lineId], change-orders/[coId], communications/[commId], daily-logs/[logId], draws/[drawId], files/[fileId], lien-waivers/[waiverId], permits/[permitId], photos/[photoId], punch-list/[itemId], purchase-orders/[poId], rfis/[rfiId], schedule/[taskId], selections/[selectionId], submittals/[submittalId], time-clock/[entryId], warranties/[warrantyId], warranty-claims/[id]
+- 18 job sub-pages (budget/[lineId] through warranty-claims/[id])
+- 36 non-job detail pages (bids through warranties)
 
 ### Budget Pages Migrated to React Query (2 pages)
 | Page | Hooks Used | Notes |

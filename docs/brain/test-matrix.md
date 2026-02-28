@@ -2,13 +2,25 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
-### Archive Button Safety
+### Archive Button Safety (54 pages)
 | Test Case | Expected | Status |
 |-----------|----------|--------|
-| 18 archive buttons have `disabled={archiving}` prop | All disabled during operation | PASS |
+| 54 archive buttons have `disabled={archiving}` prop | All disabled during operation | PASS |
 | Archive buttons show "Archiving..." text during operation | Text toggles | PASS |
 | `setArchiving(true)` called before API request | Prevents double-submit | PASS |
-| `tsc --noEmit` — zero errors after 18 files changed | 0 errors | PASS |
+| `tsc --noEmit` — zero errors after 54 files changed | 0 errors | PASS |
+
+### Cancel Error Reset (58 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 58 Cancel buttons call `setError(null)` | Error banner clears on cancel | PASS |
+| `tsc --noEmit` — zero errors after 58 files changed | 0 errors | PASS |
+
+### Missing router.refresh() (2 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| contacts/[id] archive handler has router.refresh() | Stale data cleared | PASS |
+| invoices/[id] archive handler has router.refresh() | Stale data cleared | PASS |
 
 ### Budget Flat Routes
 | Test Case | Expected | Status |

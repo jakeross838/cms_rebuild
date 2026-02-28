@@ -3,10 +3,10 @@
 ## 2026-02-28: Session 39 — Archive Button Safety + Budget Page Migration
 
 ### Why
-- 18 archive buttons on job sub-page detail pages lacked `disabled` state — users could double-click and trigger duplicate API calls (soft-delete race condition)
-- Added `const [archiving, setArchiving] = useState(false)` + `disabled={archiving}` + text toggle pattern to all 18 pages
-- Budget pages (last 2 client-side Supabase pages) migrated to React Query via new flat API routes (`/api/v2/budget-lines/`) that solve the budgetId problem by querying budget_lines directly by line ID + company_id
-- POST handler auto-creates a budget record if none exists for the job — this logic moved server-side from the client form
+- 54 archive buttons across all detail pages lacked `disabled` state — users could double-click and trigger duplicate soft-delete API calls. Added `archiving` state with disabled button + text toggle to all 54 pages (18 job sub-pages + 36 non-job pages)
+- 58 Cancel buttons on edit-mode detail pages didn't clear error state — stale error banners persisted after canceling. Added `setError(null)` to all Cancel onClick handlers
+- 2 archive handlers (contacts/[id], invoices/[id]) were missing `router.refresh()` after `router.push()` — stale list data could show the archived item
+- Budget pages (last 2 client-side Supabase pages) migrated to React Query via new flat API routes (`/api/v2/budget-lines/`) that solve the budgetId problem
 - **Result: Zero client-side Supabase queries remain in authenticated pages**
 
 ## 2026-02-28: Session 38 — Complete React Query Migration
