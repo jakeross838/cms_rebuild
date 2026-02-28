@@ -19,7 +19,7 @@ import {
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { cn, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface Phase {
@@ -275,10 +275,10 @@ export default function PhasesPage() {
                     <span title="System phase"><Lock className="h-3.5 w-3.5 text-muted-foreground" /></span>
                   ) : null}
                   {!phase.isActive ? (
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">Inactive</span>
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">Inactive</span>
                   ) : null}
                   {phase.milestoneType ? (
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 capitalize">{phase.milestoneType}</span>
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">{formatStatus(phase.milestoneType)}</span>
                   ) : null}
                 </div>
                 {phase.description ? (

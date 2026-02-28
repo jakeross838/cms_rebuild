@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatCurrency } from '@/lib/utils'
+import { safeOrIlike, formatCurrency, getStatusColor } from '@/lib/utils'
 
 interface InventoryItem {
   id: string
@@ -82,7 +82,7 @@ export default async function InventoryPage({
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{item.name}</span>
                       {item.sku && <span className="text-xs font-mono text-muted-foreground">{item.sku}</span>}
-                      <Badge variant="outline" className={item.is_active ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'}>
+                      <Badge className={getStatusColor(item.is_active ? 'active' : 'inactive')}>
                         {item.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>

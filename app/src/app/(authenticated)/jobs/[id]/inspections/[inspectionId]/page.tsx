@@ -233,7 +233,7 @@ export default function InspectionDetailPage() {
                 {formatStatus(inspection.status)}
               </Badge>
               {inspection.is_reinspection && (
-                <Badge variant="outline" className="text-amber-700 bg-amber-50 border-amber-200 text-xs">Re-inspection</Badge>
+                <Badge className="text-amber-700 bg-amber-50 border-amber-200 text-xs">Re-inspection</Badge>
               )}
             </div>
             <p className="text-muted-foreground">

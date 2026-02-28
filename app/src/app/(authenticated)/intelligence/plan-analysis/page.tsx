@@ -10,8 +10,10 @@ import {
   FileSpreadsheet,
 } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
+import { formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -212,9 +214,9 @@ export default async function PlanAnalysisPage() {
                     </div>
                     <div className="flex items-center gap-2 ml-4 flex-shrink-0">
                       {doc.ai_classification && (
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
-                          {doc.ai_classification}
-                        </span>
+                        <Badge className={getStatusColor(doc.ai_classification)}>
+                          {formatStatus(doc.ai_classification)}
+                        </Badge>
                       )}
                       <span className="text-xs text-muted-foreground">{formatFileSize(doc.file_size)}</span>
                     </div>

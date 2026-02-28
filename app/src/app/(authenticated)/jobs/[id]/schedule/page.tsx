@@ -141,7 +141,7 @@ export default async function SchedulePage({
                         {formatStatus((task.status ?? 'not started'))}
                       </Badge>
                       {task.is_critical_path && (
-                        <Badge variant="outline" className="text-red-700 bg-red-50 border-red-200 text-xs">
+                        <Badge className="text-red-700 bg-red-50 border-red-200 text-xs">
                           Critical
                         </Badge>
                       )}

@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
+import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -30,13 +30,6 @@ interface WarrantyClaimData {
   resolution_notes: string | null
   resolution_cost: number | null
   created_at: string | null
-}
-
-// ── Helpers ────────────────────────────────────────────────────────
-
-function formatCurrency(value: number | null): string {
-  if (value === null || value === undefined) return '--'
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 }
 
 // ── Component ──────────────────────────────────────────────────────

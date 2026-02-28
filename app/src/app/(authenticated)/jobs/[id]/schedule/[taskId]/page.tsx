@@ -238,7 +238,7 @@ export default function ScheduleTaskDetailPage() {
                 {formatStatus((task.status ?? 'not started'))}
               </Badge>
               {task.is_critical_path && (
-                <Badge variant="outline" className="text-red-700 bg-red-50 border-red-200 text-xs">Critical</Badge>
+                <Badge className="text-red-700 bg-red-50 border-red-200 text-xs">Critical</Badge>
               )}
             </div>
             <p className="text-muted-foreground">

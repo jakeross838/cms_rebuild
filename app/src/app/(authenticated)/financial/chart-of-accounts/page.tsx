@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike } from '@/lib/utils'
+import { safeOrIlike, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Chart of Accounts' }
@@ -110,7 +110,7 @@ export default async function ChartOfAccountsPage({
                       </td>
                       <td className="py-2 pr-4">
                         <Link href={`/financial/chart-of-accounts/${account.id}`} className="block">
-                          <Badge variant="outline" className={account.is_active !== false ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'}>
+                          <Badge className={getStatusColor(account.is_active !== false ? 'active' : 'inactive')}>
                             {account.is_active !== false ? 'Active' : 'Inactive'}
                           </Badge>
                         </Link>
