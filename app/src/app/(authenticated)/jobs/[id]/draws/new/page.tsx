@@ -59,6 +59,9 @@ export default function NewDrawRequestPage() {
       const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
       if (!jobCheck) throw new Error('Job not found or access denied')
 
+      const drawNumber = parseInt(formData.draw_number, 10)
+      if (isNaN(drawNumber) || drawNumber <= 0) { setError('Draw number must be a positive number'); setLoading(false); return }
+
       const contractAmount = formData.contract_amount ? parseFloat(formData.contract_amount) : 0
       const totalCompleted = formData.total_completed ? parseFloat(formData.total_completed) : 0
       const retainagePct = formData.retainage_pct ? parseFloat(formData.retainage_pct) : 10
@@ -71,7 +74,7 @@ export default function NewDrawRequestPage() {
         .insert({
           company_id: companyId,
           job_id: jobId,
-          draw_number: parseInt(formData.draw_number, 10),
+          draw_number: drawNumber,
           application_date: formData.application_date,
           period_to: formData.period_to,
           status: 'draft',

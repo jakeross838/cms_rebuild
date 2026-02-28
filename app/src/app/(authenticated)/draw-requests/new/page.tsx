@@ -86,12 +86,15 @@ export default function NewDrawRequestPage() {
 
       if (!formData.job_id) throw new Error('Job is required')
 
+      const drawNumber = parseInt(formData.draw_number, 10)
+      if (isNaN(drawNumber) || drawNumber <= 0) { setError('Draw number must be a positive number'); setLoading(false); return }
+
       const { error: insertError } = await supabase
         .from('draw_requests')
         .insert({
           company_id: companyId,
           job_id: formData.job_id,
-          draw_number: parseInt(formData.draw_number, 10),
+          draw_number: drawNumber,
           application_date: formData.application_date,
           period_to: formData.period_to,
           status: 'draft',
