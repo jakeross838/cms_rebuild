@@ -51,7 +51,6 @@ export default function FileDetailPage() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [archiving, setArchiving] = useState(false)
@@ -79,7 +78,6 @@ export default function FileDetailPage() {
     if (!formData.filename.trim()) { toast.error('Filename is required'); return }
     setSaving(true)
     setError(null)
-    setSuccess(false)
 
     try {
       await updateDocument.mutateAsync({
@@ -88,9 +86,7 @@ export default function FileDetailPage() {
       } as Record<string, unknown>)
       toast.success('Saved')
 
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
       setError(errorMessage)
@@ -176,7 +172,6 @@ export default function FileDetailPage() {
       </div>
 
       {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">File updated successfully</div>}
 
       <div className="space-y-6">
         {!editing ? (

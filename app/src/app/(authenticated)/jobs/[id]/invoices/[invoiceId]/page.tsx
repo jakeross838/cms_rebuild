@@ -68,7 +68,6 @@ export default function JobInvoiceDetailPage() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
@@ -107,7 +106,6 @@ export default function JobInvoiceDetailPage() {
     if (!formData.amount.trim()) { toast.error('Amount is required'); return }
     setSaving(true)
     setError(null)
-    setSuccess(false)
 
     try {
       const amount = Number(formData.amount) || 0
@@ -122,10 +120,8 @@ export default function JobInvoiceDetailPage() {
         notes: formData.notes || null,
       } as Record<string, unknown>)
 
-      setSuccess(true)
       setEditing(false)
       toast.success('Updated')
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
       setError(errorMessage)
@@ -206,7 +202,6 @@ export default function JobInvoiceDetailPage() {
       </div>
 
       {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Invoice updated successfully</div>}
 
       <div className="space-y-6">
         {!editing ? (

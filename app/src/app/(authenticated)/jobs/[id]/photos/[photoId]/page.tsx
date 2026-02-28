@@ -57,7 +57,6 @@ export default function PhotoDetailPage() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [archiving, setArchiving] = useState(false)
@@ -94,7 +93,6 @@ export default function PhotoDetailPage() {
     if (!formData.title.trim()) { toast.error('Title is required'); return }
     setSaving(true)
     setError(null)
-    setSuccess(false)
 
     try {
       await updateMutation.mutateAsync({
@@ -106,10 +104,8 @@ export default function PhotoDetailPage() {
         notes: formData.notes || null,
       } as Record<string, unknown>)
 
-      setSuccess(true)
       setEditing(false)
       toast.success('Updated')
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
       setError(errorMessage)
@@ -189,7 +185,6 @@ export default function PhotoDetailPage() {
       </div>
 
       {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Photo updated successfully</div>}
 
       <div className="space-y-6">
         {!editing ? (

@@ -64,7 +64,6 @@ export default function EditJobPage() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
 
   const [formData, setFormData] = useState<JobFormData>({
     name: '',
@@ -113,7 +112,6 @@ export default function EditJobPage() {
 
     setSaving(true)
     setError(null)
-    setSuccess(false)
 
     try {
       await updateJob.mutateAsync({
@@ -131,7 +129,6 @@ export default function EditJobPage() {
       } as never)
 
       toast.success('Job updated')
-      setSuccess(true)
       setTimeout(() => {
         router.push(`/jobs/${jobId}`)
         router.refresh()
@@ -182,7 +179,6 @@ export default function EditJobPage() {
       </div>
 
       {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Job updated successfully. Redirecting...</div>}
 
       <div className="space-y-6">
         <Card>

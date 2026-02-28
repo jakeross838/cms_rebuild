@@ -62,7 +62,6 @@ export default function DrawRequestDetailPage() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [archiving, setArchiving] = useState(false)
@@ -101,7 +100,6 @@ export default function DrawRequestDetailPage() {
   const handleSave = async () => {
     setSaving(true)
     setError(null)
-    setSuccess(false)
 
     try {
       await updateDrawRequest.mutateAsync({
@@ -110,9 +108,7 @@ export default function DrawRequestDetailPage() {
         application_date: formData.application_date || undefined,
       } as never)
       toast.success('Saved')
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
       setError(errorMessage)
@@ -193,7 +189,6 @@ export default function DrawRequestDetailPage() {
       </div>
 
       {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Draw request updated successfully</div>}
 
       <div className="space-y-6">
         {!editing ? (
