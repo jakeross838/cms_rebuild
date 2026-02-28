@@ -60,6 +60,7 @@ export default function PunchItemDetailPage() {
   const jobs = ((jobsResponse as { data: JobLookup[] } | undefined)?.data ?? []) as JobLookup[]
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -127,12 +128,14 @@ export default function PunchItemDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deletePunchItem.mutateAsync(punchItemId)
       toast.success('Archived')
       router.push('/punch-lists')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -267,8 +270,8 @@ export default function PunchItemDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Item
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Item'}
               </Button>
             </div>
           </>

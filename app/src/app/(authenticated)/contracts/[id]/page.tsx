@@ -44,6 +44,7 @@ export default function ContractDetailPage() {
   const contract = (response as { data: ContractData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -99,6 +100,7 @@ export default function ContractDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteContract.mutateAsync(contractId)
       toast.success('Contract archived')
       router.push('/contracts')
@@ -106,6 +108,7 @@ export default function ContractDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -224,8 +227,8 @@ export default function ContractDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Contract
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Contract'}
               </Button>
             </div>
           </>

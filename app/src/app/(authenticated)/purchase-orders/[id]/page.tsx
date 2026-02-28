@@ -76,6 +76,7 @@ export default function PurchaseOrderDetailPage() {
   const vendor = vendors.find((v) => v.id === po?.vendor_id) ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -152,12 +153,14 @@ export default function PurchaseOrderDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deletePo.mutateAsync(poId)
       toast.success('Purchase order archived')
       router.push('/purchase-orders')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -359,8 +362,8 @@ export default function PurchaseOrderDetailPage() {
 
             {/* Archive */}
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Purchase Order
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Purchase Order'}
               </Button>
             </div>
           </>

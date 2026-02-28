@@ -45,6 +45,7 @@ export default function VendorDetailPage() {
   const vendor = (response as { data: VendorData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -107,12 +108,14 @@ export default function VendorDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteVendor.mutateAsync(vendorId)
       toast.success('Vendor archived')
       router.push('/vendors')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive vendor')
+      setArchiving(false)
     }
   }
 
@@ -219,8 +222,8 @@ export default function VendorDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Vendor
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Vendor'}
               </Button>
             </div>
           </>

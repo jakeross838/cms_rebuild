@@ -50,6 +50,7 @@ export default function LienWaiverDetailPage() {
   const waiver = (response as { data: LienWaiverData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -100,12 +101,14 @@ export default function LienWaiverDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteWaiver.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/lien-waivers')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -230,8 +233,8 @@ export default function LienWaiverDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Lien Waiver
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Lien Waiver'}
               </Button>
             </div>
           </>

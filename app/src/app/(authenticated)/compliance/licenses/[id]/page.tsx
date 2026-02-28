@@ -58,6 +58,7 @@ export default function LicenseDetailPage() {
   const cert = (response as { data: CertificationData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState<CertificationFormData>({
@@ -115,6 +116,7 @@ export default function LicenseDetailPage() {
 
   const handleConfirmArchive = async () => {
     try {
+      setArchiving(true)
       await deleteCert.mutateAsync(certId)
       toast.success('Archived')
       router.push('/compliance/licenses')
@@ -122,6 +124,7 @@ export default function LicenseDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -224,7 +227,7 @@ export default function LicenseDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteCert.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteCert.isPending ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
             </div>
           </>
         ) : (

@@ -45,6 +45,7 @@ export default function EquipmentDetailPage() {
   const equipment = (response as { data: EquipmentData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -115,6 +116,7 @@ export default function EquipmentDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteEquipment.mutateAsync(equipmentId)
       toast.success('Archived')
       router.push('/equipment')
@@ -122,6 +124,7 @@ export default function EquipmentDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -276,8 +279,8 @@ export default function EquipmentDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Equipment
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Equipment'}
               </Button>
             </div>
           </>

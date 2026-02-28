@@ -50,6 +50,7 @@ export default function LeadDetailPage() {
   const lead = (response as { data: LeadData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -122,12 +123,14 @@ export default function LeadDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteLead.mutateAsync(entityId)
       toast.success('Lead archived')
       router.push('/leads')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -274,8 +277,8 @@ export default function LeadDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Lead
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Lead'}
               </Button>
             </div>
           </>

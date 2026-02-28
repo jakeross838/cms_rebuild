@@ -47,6 +47,7 @@ export default function EmployeeDetailPage() {
   const employee = (response as { data: EmployeeData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -119,12 +120,14 @@ export default function EmployeeDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteEmployee.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/hr')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -288,8 +291,8 @@ export default function EmployeeDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Employee
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Employee'}
               </Button>
             </div>
           </>

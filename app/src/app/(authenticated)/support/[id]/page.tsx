@@ -44,6 +44,7 @@ export default function SupportTicketDetailPage() {
   const ticket = (response as { data: TicketData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -93,12 +94,14 @@ export default function SupportTicketDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteTicket.mutateAsync(ticketId)
       toast.success('Archived')
       router.push('/support')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -206,8 +209,8 @@ export default function SupportTicketDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Ticket
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Ticket'}
               </Button>
             </div>
           </>

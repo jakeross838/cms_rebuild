@@ -43,6 +43,7 @@ export default function WarrantyDetailPage() {
   const warranty = (response as { data: WarrantyData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -103,12 +104,14 @@ export default function WarrantyDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteWarranty.mutateAsync(warrantyId)
       toast.success('Warranty archived')
       router.push('/warranties')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -259,8 +262,8 @@ export default function WarrantyDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Warranty
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Warranty'}
               </Button>
             </div>
           </>

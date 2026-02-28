@@ -43,6 +43,7 @@ export default function SubmittalDetailPage() {
   const submittal = (response as { data: SubmittalData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -104,6 +105,7 @@ export default function SubmittalDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteSubmittal.mutateAsync(submittalId)
       toast.success('Archived')
       router.push('/submittals')
@@ -111,6 +113,7 @@ export default function SubmittalDetailPage() {
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
       toast.error(errorMessage)
+      setArchiving(false)
     }
   }
 
@@ -161,7 +164,7 @@ export default function SubmittalDetailPage() {
             {!editing ? (
               <>
                 <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-                <Button onClick={() => setShowArchiveDialog(true)} variant="outline" className="text-destructive hover:text-destructive">Archive</Button>
+                <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>

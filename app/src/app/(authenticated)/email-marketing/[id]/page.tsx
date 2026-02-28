@@ -47,6 +47,7 @@ export default function CampaignDetailPage() {
   const campaign = (response as { data: CampaignData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -84,6 +85,7 @@ export default function CampaignDetailPage() {
 
   const handleConfirmArchive = async () => {
     try {
+      setArchiving(true)
       await deleteCampaign.mutateAsync(campaignId)
       toast.success('Archived')
       router.push('/email-marketing')
@@ -91,6 +93,7 @@ export default function CampaignDetailPage() {
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
       toast.error(errorMessage)
+      setArchiving(false)
     }
   }
 
@@ -157,7 +160,7 @@ export default function CampaignDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteCampaign.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteCampaign.isPending ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>

@@ -54,6 +54,7 @@ export default function LienLawDetailPage() {
   const record = (response as { data: TrackingData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState<TrackingFormData>({
@@ -109,6 +110,7 @@ export default function LienLawDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await updateTracking.mutateAsync({
         deleted_at: new Date().toISOString(),
       })
@@ -118,6 +120,7 @@ export default function LienLawDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -219,8 +222,8 @@ export default function LienLawDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Record
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Record'}
               </Button>
             </div>
           </>

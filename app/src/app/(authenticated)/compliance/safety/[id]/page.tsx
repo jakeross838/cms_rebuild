@@ -63,6 +63,7 @@ export default function SafetyIncidentDetailPage() {
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -160,6 +161,7 @@ export default function SafetyIncidentDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteIncident.mutateAsync(incidentId)
       toast.success('Archived')
       router.push('/compliance/safety')
@@ -167,6 +169,7 @@ export default function SafetyIncidentDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -344,8 +347,8 @@ export default function SafetyIncidentDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Incident
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Incident'}
               </Button>
             </div>
           </>

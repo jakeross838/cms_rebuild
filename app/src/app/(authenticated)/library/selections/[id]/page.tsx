@@ -58,6 +58,7 @@ export default function SelectionCategoryDetailPage() {
   const category = (response as { data: CategoryData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState<CategoryFormData>({
@@ -122,12 +123,14 @@ export default function SelectionCategoryDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteCategory.mutateAsync(categoryId)
       toast.success('Archived')
       router.push('/library/selections')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -237,8 +240,8 @@ export default function SelectionCategoryDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Category
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Category'}
               </Button>
             </div>
           </>

@@ -57,6 +57,7 @@ export default function ARInvoiceDetailPage() {
   const [clients] = useState<ClientLookup[]>([])
   const [jobs] = useState<JobLookup[]>([])
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -128,12 +129,14 @@ export default function ARInvoiceDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteInvoice.mutateAsync(entityId)
       toast.success('Archived')
       router.push('/financial/receivables')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -247,8 +250,8 @@ export default function ARInvoiceDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Invoice
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Invoice'}
               </Button>
             </div>
           </>

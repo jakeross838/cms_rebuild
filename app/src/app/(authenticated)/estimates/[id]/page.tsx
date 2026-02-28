@@ -47,6 +47,7 @@ export default function EstimateDetailPage() {
   const estimate = (response as { data: EstimateData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -107,6 +108,7 @@ export default function EstimateDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteEstimate.mutateAsync(estimateId)
       toast.success('Estimate archived')
       router.push('/estimates')
@@ -114,6 +116,7 @@ export default function EstimateDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -255,8 +258,8 @@ export default function EstimateDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Estimate
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Estimate'}
               </Button>
             </div>
           </>

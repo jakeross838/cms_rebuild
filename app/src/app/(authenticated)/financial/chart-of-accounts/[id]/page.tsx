@@ -42,6 +42,7 @@ export default function ChartOfAccountsDetailPage() {
   const account = (response as { data: AccountData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showToggleDialog, setShowToggleDialog] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -81,12 +82,14 @@ export default function ChartOfAccountsDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await updateAccount.mutateAsync({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       toast.success('Archived')
       router.push('/financial/chart-of-accounts')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -168,7 +171,7 @@ export default function ChartOfAccountsDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={updateAccount.isPending} variant="outline" className="text-destructive hover:text-destructive">{updateAccount.isPending ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>

@@ -54,6 +54,7 @@ export default function TimeClockDetailPage() {
   const entry = (response as { data: TimeEntryData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState<TimeEntryFormData>({
@@ -108,12 +109,14 @@ export default function TimeClockDetailPage() {
 
   const handleDelete = async () => {
     try {
+      setArchiving(true)
       await deleteEntry.mutateAsync(entryId)
       toast.success('Archived')
       router.push('/time-clock')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -227,8 +230,8 @@ export default function TimeClockDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Entry
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Entry'}
               </Button>
             </div>
           </>

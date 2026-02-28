@@ -63,6 +63,7 @@ export default function JournalEntryDetailPage() {
   const lines: JournalLineData[] = (linesData ?? []) as JournalLineData[]
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -92,12 +93,14 @@ export default function JournalEntryDetailPage() {
 
   const handleConfirmArchive = async () => {
     try {
+      setArchiving(true)
       await updateEntry.mutateAsync({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
       toast.success('Archived')
       router.push('/financial/journal-entries')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -163,7 +166,7 @@ export default function JournalEntryDetailPage() {
             {!editing ? (
               <>
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={updateEntry.isPending} variant="outline" className="text-destructive hover:text-destructive">{updateEntry.isPending ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>

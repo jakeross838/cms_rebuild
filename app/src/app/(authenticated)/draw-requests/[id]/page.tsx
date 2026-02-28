@@ -56,6 +56,7 @@ export default function DrawRequestDetailPage() {
   const draw = (response as { data: DrawRequestData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -133,6 +134,7 @@ export default function DrawRequestDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteDraw.mutateAsync(drawId)
       toast.success('Archived')
       router.push('/draw-requests')
@@ -140,6 +142,7 @@ export default function DrawRequestDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -348,8 +351,9 @@ export default function DrawRequestDetailPage() {
                 variant="outline"
                 className="text-destructive hover:text-destructive"
                 onClick={() => setShowArchiveDialog(true)}
+                disabled={archiving}
               >
-                Archive Draw Request
+                {archiving ? 'Archiving...' : 'Archive Draw Request'}
               </Button>
             </div>
           </>

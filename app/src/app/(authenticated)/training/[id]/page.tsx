@@ -57,6 +57,7 @@ export default function TrainingCourseDetailPage() {
   const course = (response as { data: CourseData } | undefined)?.data ?? null
 
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [editing, setEditing] = useState(false)
 
   const [formData, setFormData] = useState<CourseFormData>({
@@ -117,12 +118,14 @@ export default function TrainingCourseDetailPage() {
 
   const handleConfirmArchive = async () => {
     try {
+      setArchiving(true)
       await deleteCourse.mutateAsync(courseId)
       toast.success('Archived')
       router.push('/training')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -187,7 +190,7 @@ export default function TrainingCourseDetailPage() {
             {!editing ? (
               <>
                 <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
-                <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteCourse.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteCourse.isPending ? 'Archiving...' : 'Archive'}</Button>
+                <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
               </>
             ) : (
               <>

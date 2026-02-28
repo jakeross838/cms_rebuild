@@ -49,6 +49,7 @@ export default function BidPackageDetailPage() {
 
   const [jobInfo] = useState<JobInfo | null>(null)
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -104,6 +105,7 @@ export default function BidPackageDetailPage() {
   // ── Archive (soft delete) ───────────────────────────────────────────
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deleteBid.mutateAsync(bidId)
       toast.success('Archived')
       router.push('/bids')
@@ -111,6 +113,7 @@ export default function BidPackageDetailPage() {
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       toast.error(msg)
+      setArchiving(false)
     }
   }
 
@@ -223,8 +226,8 @@ export default function BidPackageDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Bid Package
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Bid Package'}
               </Button>
             </div>
           </>

@@ -47,6 +47,7 @@ export default function PermitDetailPage() {
   const permit = (response as { data: PermitData } | undefined)?.data ?? null
 
   const [editing, setEditing] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -104,12 +105,14 @@ export default function PermitDetailPage() {
 
   const handleArchive = async () => {
     try {
+      setArchiving(true)
       await deletePermit.mutateAsync(permitId)
       toast.success('Permit archived')
       router.push('/permits')
       router.refresh()
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to archive')
+      setArchiving(false)
     }
   }
 
@@ -225,8 +228,8 @@ export default function PermitDetailPage() {
             )}
 
             <div className="flex justify-end">
-              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)}>
-                Archive Permit
+              <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
+                {archiving ? 'Archiving...' : 'Archive Permit'}
               </Button>
             </div>
           </>
