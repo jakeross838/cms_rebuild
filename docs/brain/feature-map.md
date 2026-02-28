@@ -1,5 +1,30 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 31 (continued) — Badge Consistency + API Security + Accessibility (2026-02-27)
+
+### API Security Fixes
+- **marketing-site/leads/[id]** — GET/PUT/DELETE now filter by `company_id` (was missing)
+- **bid-packages/[id]/responses/[respId]** — GET/PUT now filter by `company_id` (defense-in-depth)
+- **bid-packages/[id]/invitations/[invId]** — GET/PUT now filter by `company_id` (defense-in-depth)
+
+### Badge Color Consistency (28 badges across 26 files)
+- All status/priority badges now use centralized `getStatusColor()` — no more inline color classes
+- Boolean badges (`is_active`, `is_compliant`) map to semantic statuses: `active`/`archived`, `approved`/`rejected`
+- Insurance `expired` badge uses `getStatusColor('expired')`
+- Employment status badges use `getStatusColor(emp.employment_status)` + `formatStatus()`
+
+### Raw Status Display Fixes (9 badges across 8 files)
+- All dashboard/intelligence pages now use `formatStatus()` for badge text
+- **dashboards/operations** — CRITICAL: was showing `formatDate(scheduled_date)` as badge text, now shows `formatStatus(status)`
+- Pages fixed: dashboards/financial, dashboards/overview, dashboards/operations, intelligence/bidding, intelligence/procurement, intelligence/production, jobs/[id]/selections/[selectionId], meetings
+
+### New Utility: `formatTime()`
+- `lib/utils.ts` — `formatTime(date)` → `h:mm AM/PM` format
+- Used by time-clock list and detail pages for clock in/out display
+
+### Accessibility
+- UserTable.tsx MoreHorizontal button now has `aria-label="Open actions menu"`
+
 ## Session 31 — Data Integrity Bugs + Form Validation (2026-02-27)
 
 ### Archive Mechanisms (Corrected)

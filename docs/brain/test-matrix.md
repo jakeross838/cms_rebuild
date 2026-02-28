@@ -1,5 +1,36 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 31 (continued) — Badge Consistency + API Security (2026-02-27)
+
+### API Security
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| marketing-site/leads/[id] GET filters by company_id | .eq('company_id', ctx.companyId!) present | pass |
+| marketing-site/leads/[id] PUT filters by company_id | .eq('company_id', ctx.companyId!) present | pass |
+| marketing-site/leads/[id] DELETE filters by company_id | .eq('company_id', ctx.companyId!) present | pass |
+| bid-packages/[id]/responses/[respId] GET filters by company_id | defense-in-depth | pass |
+| bid-packages/[id]/invitations/[invId] GET filters by company_id | defense-in-depth | pass |
+
+### Badge Color Consistency
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All status badges use getStatusColor() | No inline bg-*/text-* color classes on status badges | pass (28 fixed) |
+| Boolean badges (is_active) use getStatusColor('active'/'archived') | Consistent with design system | pass (12 fixed) |
+| All badge text uses formatStatus() | No raw snake_case status values displayed | pass (9 fixed) |
+| dashboards/operations inspection badge shows status text | formatStatus(insp.status), not formatDate() | pass (was critical bug) |
+
+### New Utilities
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| formatTime('2026-01-15T14:30:00') returns time string | '2:30 PM' format | pass |
+| formatTime(null) returns empty string | '' | pass |
+| formatTime('invalid') returns empty string | '' | pass |
+
+### Accessibility
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| UserTable MoreHorizontal button has aria-label | aria-label="Open actions menu" | pass |
+
 ## Session 31 — Data Integrity Bugs + Form Validation (2026-02-27)
 
 ### Archive Mechanism Correctness

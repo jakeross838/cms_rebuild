@@ -1,5 +1,31 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 31 (continued) — Badge Consistency + API Security + Accessibility
+
+### Why (API Security — 3 files, 7 queries)
+- `marketing-site/leads/[id]` GET/PUT/DELETE were missing `company_id` filter — CRITICAL cross-tenant data exposure
+- `bid-packages/[id]/responses/[respId]` and `invitations/[invId]` GET/PUT missing `company_id` — defense-in-depth (parent verified but child should also filter)
+- Fixed: added `.eq('company_id', ctx.companyId!)` to all 7 queries
+
+### Why (Hardcoded Badge Colors — 28 badges across 26 files)
+- 6 initial badges (notifications, rfis, support, training, cash-flow, accuracy-engine) and 22 more (boolean is_active/is_compliant ternaries, expired status) used inline color classes instead of centralized `getStatusColor()`
+- Inconsistency made it impossible to theme or update badge colors globally
+- Fixed: all replaced with `getStatusColor()` calls mapping to semantic status names
+
+### Why (Raw Status Display — 9 badges across 8 files)
+- Dashboard and intelligence pages showed raw snake_case DB status values (e.g., `pending_approval`) without `formatStatus()`
+- One CRITICAL bug: dashboards/operations showed `formatDate(insp.scheduled_date)` as badge text instead of `formatStatus(insp.status)` — wrong data entirely
+- Fixed: added `formatStatus()` calls to all 9 instances
+
+### Why (formatTime utility — 3 files)
+- Time-clock pages used raw `new Date(x).toLocaleTimeString()` which is locale-dependent and inconsistent
+- Created `formatTime()` in utils.ts for consistent `h:mm AM/PM` format
+- Fixed: 2 time-clock files now use `formatTime()` instead of raw toLocaleTimeString()
+
+### Why (Accessibility — 1 file)
+- UserTable.tsx had icon-only MoreHorizontal button without aria-label
+- Fixed: added `aria-label="Open actions menu"`
+
 ## 2026-02-27: Session 31 — Data Integrity Bugs + Form Validation
 
 ### Why (Archive Mechanism Bugs — 3 files)
