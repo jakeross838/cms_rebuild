@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { safeOrIlike, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
+import { safeOrIlike, formatDate, formatFileSize, formatStatus, getStatusColor } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Camera } from 'lucide-react'
 
@@ -97,7 +97,7 @@ export default async function PhotosPage({
                     </div>
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
-                    {photo.file_size ? `${(photo.file_size / (1024 * 1024)).toFixed(1)} MB` : '—'}
+                    {formatFileSize(photo.file_size)}
                   </td>
                   <td className="p-3">
                     {photo.status && (
