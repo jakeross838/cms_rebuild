@@ -13,8 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useSafetyIncident, useUpdateSafetyIncident, useDeleteSafetyIncident } from '@/hooks/use-safety'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -50,18 +49,9 @@ interface SafetyIncidentData {
   deleted_at: string | null
 }
 
-interface JobLookup {
-  id: string
-  name: string
-}
-
 export default function SafetyIncidentDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
-
-  const { profile: authProfile } = useAuth()
-  const companyId = authProfile?.company_id || ''
 
   const incidentId = params.id as string
   const { data: response, isLoading: loading, error: fetchError } = useSafetyIncident(incidentId)
@@ -69,7 +59,9 @@ export default function SafetyIncidentDetailPage() {
   const deleteIncident = useDeleteSafetyIncident()
   const incident = (response as { data: SafetyIncidentData } | undefined)?.data ?? null
 
-  const [jobs, setJobs] = useState<JobLookup[]>([])
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
+
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -95,20 +87,6 @@ export default function SafetyIncidentDetailPage() {
     restricted_days: '0',
     medical_treatment: false,
   })
-
-  // Load jobs for dropdown (still needs direct Supabase since no hook for job list here)
-  useEffect(() => {
-    async function loadJobs() {
-      if (!companyId) return
-      try {
-        const { data } = await supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name')
-        setJobs((data as JobLookup[]) || [])
-      } catch {
-        // silently fail - jobs dropdown just won't populate
-      }
-    }
-    loadJobs()
-  }, [companyId])
 
   useEffect(() => {
     if (incident) {

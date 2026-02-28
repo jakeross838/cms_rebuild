@@ -11,24 +11,25 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreateTimeEntry } from '@/hooks/use-time-tracking'
+import { useJobs } from '@/hooks/use-jobs'
+import { useUsers } from '@/hooks/use-users'
 import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 export default function NewTimeEntryPage() {
   const router = useRouter()
-  const supabase = createClient()
   const createTimeEntry = useCreateTimeEntry()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { user: authUser } = useAuth()
 
-  const companyId = authProfile?.company_id || ''
   const [error, setError] = useState<string | null>(null)
+  const currentUserId = authUser?.id || ''
 
-  // ── Dropdown data ──────────────────────────────────────────────
-  const [employees, setEmployees] = useState<{ id: string; name: string }[]>([])
-  const [jobs, setJobs] = useState<{ id: string; name: string }[]>([])
-  const [currentUserId, setCurrentUserId] = useState('')
+  const { data: employeesResponse } = useUsers({ limit: 500 } as any)
+  const employees = ((employeesResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
+
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     user_id: '',
@@ -44,25 +45,12 @@ export default function NewTimeEntryPage() {
     notes: '',
   })
 
+  // Default employee to current user
   useEffect(() => {
-    async function loadDropdowns() {
-      if (!companyId || !authUser) return
-
-      setCurrentUserId(authUser.id)
-
-      const [employeesRes, jobsRes] = await Promise.all([
-        supabase.from('users').select('id, name').eq('company_id', companyId).order('name'),
-        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
-
-      if (employeesRes.data) setEmployees(employeesRes.data)
-      if (jobsRes.data) setJobs(jobsRes.data)
-
-      // Default employee to current user
-      setFormData((prev) => ({ ...prev, user_id: authUser.id }))
+    if (currentUserId && !formData.user_id) {
+      setFormData((prev) => ({ ...prev, user_id: currentUserId }))
     }
-    loadDropdowns()
-  }, [companyId, authUser])
+  }, [currentUserId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

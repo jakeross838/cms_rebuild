@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,24 +11,22 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreateArInvoice } from '@/hooks/use-accounting'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useClients } from '@/hooks/use-clients'
+import { useJobs } from '@/hooks/use-jobs'
 import { toast } from 'sonner'
 import { formatStatus } from '@/lib/utils'
 
 export default function NewReceivablePage() {
   const router = useRouter()
-  const supabase = createClient()
   const createArInvoice = useCreateArInvoice()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const [error, setError] = useState<string | null>(null)
 
-  // ── Dropdown data ──────────────────────────────────────────────
-  const [clients, setClients] = useState<{ id: string; name: string }[]>([])
-  const [jobs, setJobs] = useState<{ id: string; name: string }[]>([])
+  const { data: clientsResponse } = useClients({ limit: 500 } as any)
+  const clients = ((clientsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
+
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     client_id: '',
@@ -41,21 +39,6 @@ export default function NewReceivablePage() {
     notes: '',
     status: 'draft',
   })
-
-  useEffect(() => {
-    async function loadDropdowns() {
-      if (!companyId) return
-
-      const [clientsRes, jobsRes] = await Promise.all([
-        supabase.from('clients').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-        supabase.from('jobs').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
-
-      if (clientsRes.data) setClients(clientsRes.data)
-      if (jobsRes.data) setJobs(jobsRes.data)
-    }
-    loadDropdowns()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

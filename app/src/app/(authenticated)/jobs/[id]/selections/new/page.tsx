@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -10,9 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
-import { useCreateSelection } from '@/hooks/use-selections'
+import { useCreateSelection, useSelectionCategories, useSelectionOptions } from '@/hooks/use-selections'
 import { toast } from 'sonner'
 
 type Category = { id: string; name: string; room: string | null }
@@ -22,17 +20,16 @@ export default function NewSelectionPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createSelection = useCreateSelection()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [categories, setCategories] = useState<Category[]>([])
-  const [options, setOptions] = useState<Option[]>([])
-  const [filteredOptions, setFilteredOptions] = useState<Option[]>([])
+
+  const { data: categoriesResponse } = useSelectionCategories({ limit: 500, job_id: jobId } as any)
+  const categories = ((categoriesResponse as { data: Category[] } | undefined)?.data ?? [])
+
+  const { data: optionsResponse } = useSelectionOptions({ limit: 500 } as any)
+  const options = ((optionsResponse as { data: Option[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     category_id: '',
@@ -42,40 +39,16 @@ export default function NewSelectionPage() {
     change_reason: '',
   })
 
-  useEffect(() => {
-    async function loadData() {
-      if (!companyId) return
-
-      const [categoriesResult, optionsResult] = await Promise.all([
-        supabase
-          .from('selection_categories')
-          .select('id, name, room')
-          .eq('company_id', companyId)
-          .eq('job_id', jobId)
-          .is('deleted_at', null)
-          .order('sort_order'),
-        supabase
-          .from('selection_options')
-          .select('id, name, category_id')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('sort_order'),
-      ])
-
-      if (categoriesResult.data) setCategories(categoriesResult.data as Category[])
-      if (optionsResult.data) setOptions(optionsResult.data as Option[])
-    }
-    loadData()
-  }, [jobId, companyId])
-
-  useEffect(() => {
+  const filteredOptions = useMemo(() => {
     if (formData.category_id) {
-      setFilteredOptions(options.filter((o) => o.category_id === formData.category_id))
-    } else {
-      setFilteredOptions([])
+      return options.filter((o) => o.category_id === formData.category_id)
     }
-    setFormData((prev) => ({ ...prev, option_id: '' }))
+    return []
   }, [formData.category_id, options])
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, option_id: '' }))
+  }, [formData.category_id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

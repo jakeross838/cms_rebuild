@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,19 +10,11 @@ import { ArrowLeft, Loader2, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useCreateJournalEntry } from '@/hooks/use-accounting'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateJournalEntry, useGlAccounts } from '@/hooks/use-accounting'
 import { toast } from 'sonner'
 import { formatCurrency, formatStatus } from '@/lib/utils'
 
 // ── Types ──────────────────────────────────────────────────────
-
-interface AccountOption {
-  id: string
-  name: string
-  account_number: string
-}
 
 interface JournalLine {
   _key: string
@@ -36,14 +28,12 @@ interface JournalLine {
 
 export default function NewJournalEntryPage() {
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createJournalEntry = useCreateJournalEntry()
   const [error, setError] = useState<string | null>(null)
-  const [accounts, setAccounts] = useState<AccountOption[]>([])
+
+  const { data: accountsResponse } = useGlAccounts({ limit: 500 } as any)
+  const accounts = ((accountsResponse as { data: { id: string; name: string; account_number: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     entry_date: '',
@@ -57,22 +47,6 @@ export default function NewJournalEntryPage() {
     { _key: crypto.randomUUID(), account_id: '', debit_amount: '', credit_amount: '', memo: '' },
     { _key: crypto.randomUUID(), account_id: '', debit_amount: '', credit_amount: '', memo: '' },
   ])
-
-  useEffect(() => {
-    async function loadAccounts() {
-      if (!companyId) return
-
-      const { data } = await supabase
-        .from('gl_accounts')
-        .select('id, name, account_number')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('account_number')
-
-      if (data) setAccounts(data as AccountOption[])
-    }
-    loadAccounts()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

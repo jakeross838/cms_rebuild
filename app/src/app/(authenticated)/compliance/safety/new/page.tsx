@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,22 +11,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreateSafetyIncident } from '@/hooks/use-safety'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
 import { toast } from 'sonner'
 
 export default function NewSafetyIncidentPage() {
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createIncident = useCreateSafetyIncident()
   const [error, setError] = useState<string | null>(null)
 
-  // ── Dropdown data ──────────────────────────────────────────────
-  const [jobs, setJobs] = useState<{ id: string; name: string }[]>([])
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     job_id: '',
@@ -45,22 +40,6 @@ export default function NewSafetyIncidentPage() {
     osha_recordable: false,
     medical_treatment: false,
   })
-
-  useEffect(() => {
-    async function loadDropdowns() {
-      if (!companyId) return
-
-      const { data: jobsData } = await supabase
-        .from('jobs')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
-
-      if (jobsData) setJobs(jobsData)
-    }
-    loadDropdowns()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target

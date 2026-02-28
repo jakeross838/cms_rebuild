@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,39 +11,24 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreatePurchaseOrder } from '@/hooks/use-purchase-orders'
+import { useJobs } from '@/hooks/use-jobs'
+import { useVendors } from '@/hooks/use-vendors'
 import { formatCurrency } from '@/lib/utils'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-
-// ── Types ────────────────────────────────────────────────────────────
-
-interface JobOption {
-  id: string
-  name: string
-  job_number: string | null
-}
-
-interface VendorOption {
-  id: string
-  name: string
-}
 
 // ── Component ────────────────────────────────────────────────────────
 
 export default function NewPurchaseOrderPage() {
   const router = useRouter()
-  const supabase = createClient()
   const createPO = useCreatePurchaseOrder()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const [error, setError] = useState<string | null>(null)
 
-  const [jobs, setJobs] = useState<JobOption[]>([])
-  const [vendors, setVendors] = useState<VendorOption[]>([])
-  const [loadingOptions, setLoadingOptions] = useState(true)
+  const { data: jobsResponse, isLoading: loadingOptions } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? [])
+
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as any)
+  const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     po_number: '',
@@ -58,34 +43,6 @@ export default function NewPurchaseOrderPage() {
     terms: '',
     notes: '',
   })
-
-  // ── Load jobs and vendors for selectors ──
-
-  useEffect(() => {
-    async function loadOptions() {
-      if (!companyId) return
-
-      const [jobsResult, vendorsResult] = await Promise.all([
-        supabase
-          .from('jobs')
-          .select('id, name, job_number')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name'),
-        supabase
-          .from('vendors')
-          .select('id, name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name'),
-      ])
-
-      setJobs((jobsResult.data || []) as JobOption[])
-      setVendors((vendorsResult.data || []) as VendorOption[])
-      setLoadingOptions(false)
-    }
-    loadOptions()
-  }, [companyId])
 
   // ── Handlers ──
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -10,26 +10,21 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
 import { useCreatePurchaseOrder } from '@/hooks/use-purchase-orders'
+import { useVendors } from '@/hooks/use-vendors'
 import { toast } from 'sonner'
-
-type Vendor = { id: string; name: string }
 
 export default function NewPurchaseOrderPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createPurchaseOrder = useCreatePurchaseOrder()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [vendors, setVendors] = useState<Vendor[]>([])
+
+  const { data: vendorsResponse } = useVendors({ limit: 500 } as any)
+  const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     po_number: '',
@@ -45,22 +40,6 @@ export default function NewPurchaseOrderPage() {
     terms: '',
     notes: '',
   })
-
-  useEffect(() => {
-    async function loadVendors() {
-      if (!companyId) return
-
-      const { data } = await supabase
-        .from('vendors')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
-
-      if (data) setVendors(data as Vendor[])
-    }
-    loadVendors()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,23 +10,20 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useCreateHrCertification } from '@/hooks/use-hr'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useCreateHrCertification, useEmployees } from '@/hooks/use-hr'
 import { toast } from 'sonner'
 
 export default function NewCertificationPage() {
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createCertification = useCreateHrCertification()
   const [error, setError] = useState<string | null>(null)
 
-  // ── Dropdown data ──────────────────────────────────────────────
-  const [employees, setEmployees] = useState<{ id: string; name: string }[]>([])
+  const { data: employeesResponse } = useEmployees({ limit: 500 } as any)
+  const employees = ((employeesResponse as { data: { id: string; first_name: string; last_name: string }[] } | undefined)?.data ?? []).map((e) => ({
+    id: e.id,
+    name: `${e.first_name} ${e.last_name}`,
+  }))
 
   const [formData, setFormData] = useState({
     employee_id: '',
@@ -39,26 +36,6 @@ export default function NewCertificationPage() {
     status: 'active',
     notes: '',
   })
-
-  useEffect(() => {
-    async function loadDropdowns() {
-      if (!companyId) return
-
-      try {
-        const { data: empsData } = await supabase
-          .from('employees')
-          .select('id, first_name, last_name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('last_name')
-
-        if (empsData) setEmployees(empsData.map((e) => ({ id: e.id, name: `${e.first_name} ${e.last_name}` })))
-      } catch {
-        // Dropdown stays empty on failure — non-critical
-      }
-    }
-    loadDropdowns()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,25 +17,17 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreateDrawRequest } from '@/hooks/use-draw-requests'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
 import { toast } from 'sonner'
-
-interface JobOption {
-  id: string
-  name: string
-}
 
 export default function NewDrawRequestPage() {
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createDrawRequest = useCreateDrawRequest()
   const [error, setError] = useState<string | null>(null)
-  const [jobs, setJobs] = useState<JobOption[]>([])
+
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     job_id: '',
@@ -49,22 +41,6 @@ export default function NewDrawRequestPage() {
     lender_reference: '',
     notes: '',
   })
-
-  useEffect(() => {
-    async function loadJobs() {
-      if (!companyId) return
-
-      const { data } = await supabase
-        .from('jobs')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
-        .limit(100)
-      if (data) setJobs(data as JobOption[])
-    }
-    loadJobs()
-  }, [companyId])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

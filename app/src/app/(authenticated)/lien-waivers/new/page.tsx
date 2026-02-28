@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,8 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreateLienWaiver } from '@/hooks/use-lien-waivers'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
 import { toast } from 'sonner'
 
 const WAIVER_TYPES = [
@@ -22,21 +21,14 @@ const WAIVER_TYPES = [
   'Unconditional Final',
 ]
 
-interface JobOption {
-  id: string
-  name: string
-}
-
 export default function NewLienWaiverPage() {
   const router = useRouter()
-  const supabase = createClient()
   const createLienWaiver = useCreateLienWaiver()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const [error, setError] = useState<string | null>(null)
-  const [jobs, setJobs] = useState<JobOption[]>([])
+
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     claimant_name: '',
@@ -47,22 +39,6 @@ export default function NewLienWaiverPage() {
     check_number: '',
     notes: '',
   })
-
-  useEffect(() => {
-    async function loadJobs() {
-      if (!companyId) return
-
-      const { data } = await supabase
-        .from('jobs')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name', { ascending: true })
-
-      setJobs((data as JobOption[]) || [])
-    }
-    loadJobs()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,26 +11,27 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCreateContract } from '@/hooks/use-contracts'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useJobs } from '@/hooks/use-jobs'
+import { useClients } from '@/hooks/use-clients'
 import { toast } from 'sonner'
-
-interface SelectOption {
-  id: string
-  label: string
-}
 
 export default function NewContractPage() {
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const createContract = useCreateContract()
   const [error, setError] = useState<string | null>(null)
-  const [jobs, setJobs] = useState<SelectOption[]>([])
-  const [clients, setClients] = useState<SelectOption[]>([])
+
+  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? []).map((j) => ({
+    id: j.id,
+    label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
+  }))
+
+  const { data: clientsResponse } = useClients({ limit: 500 } as any)
+  const clients = ((clientsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? []).map((c) => ({
+    id: c.id,
+    label: c.name,
+  }))
 
   const [formData, setFormData] = useState({
     title: '',
@@ -43,41 +44,6 @@ export default function NewContractPage() {
     start_date: '',
     end_date: '',
   })
-
-  useEffect(() => {
-    async function loadOptions() {
-      if (!companyId) return
-
-      try {
-        const { data: jobsData } = await supabase
-          .from('jobs')
-          .select('id, name, job_number')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name')
-
-        setJobs((jobsData || []).map((j: { id: string; name: string; job_number: string | null }) => ({
-          id: j.id,
-          label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
-        })))
-
-        const { data: clientsData } = await supabase
-          .from('clients')
-          .select('id, name')
-          .eq('company_id', companyId)
-          .is('deleted_at', null)
-          .order('name')
-
-        setClients((clientsData || []).map((c: { id: string; name: string }) => ({
-          id: c.id,
-          label: c.name,
-        })))
-      } catch {
-        // Dropdowns stay empty on failure — non-critical
-      }
-    }
-    loadOptions()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

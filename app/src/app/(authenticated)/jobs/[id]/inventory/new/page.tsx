@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -10,30 +10,19 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
-import { useCreateInventoryTransaction } from '@/hooks/use-inventory'
+import { useCreateInventoryTransaction, useInventoryItems } from '@/hooks/use-inventory'
 import { toast } from 'sonner'
-
-interface InventoryItem {
-  id: string
-  name: string
-  sku: string | null
-  unit_of_measure: string
-}
 
 export default function NewInventoryTransactionPage() {
   const router = useRouter()
   const params = useParams()
   const jobId = params.id as string
-  const supabase = createClient()
-  const { profile: authProfile } = useAuth()
-  const companyId = authProfile?.company_id || ''
   const createTransaction = useCreateInventoryTransaction()
   const [loading, setLoading] = useState(false)
-  const [loadingItems, setLoadingItems] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [items, setItems] = useState<InventoryItem[]>([])
+
+  const { data: itemsResponse, isLoading: loadingItems } = useInventoryItems({ limit: 500, is_active: true } as any)
+  const items = ((itemsResponse as { data: { id: string; name: string; sku: string | null; unit_of_measure: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
     item_id: '',
@@ -42,28 +31,6 @@ export default function NewInventoryTransactionPage() {
     unit_cost: '',
     notes: '',
   })
-
-  useEffect(() => {
-    async function loadItems() {
-      if (!companyId) { setLoadingItems(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('inventory_items')
-        .select('id, name, sku, unit_of_measure')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .eq('is_active', true)
-        .order('name', { ascending: true })
-
-      if (fetchError) {
-        setError('Failed to load inventory items')
-      } else {
-        setItems((data || []) as InventoryItem[])
-      }
-      setLoadingItems(false)
-    }
-    loadItems()
-  }, [companyId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
