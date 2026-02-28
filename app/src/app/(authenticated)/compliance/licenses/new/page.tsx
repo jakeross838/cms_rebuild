@@ -43,14 +43,18 @@ export default function NewCertificationPage() {
     async function loadDropdowns() {
       if (!companyId) return
 
-      const { data: empsData } = await supabase
-        .from('employees')
-        .select('id, first_name, last_name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('last_name')
+      try {
+        const { data: empsData } = await supabase
+          .from('employees')
+          .select('id, first_name, last_name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('last_name')
 
-      if (empsData) setEmployees(empsData.map((e) => ({ id: e.id, name: `${e.first_name} ${e.last_name}` })))
+        if (empsData) setEmployees(empsData.map((e) => ({ id: e.id, name: `${e.first_name} ${e.last_name}` })))
+      } catch {
+        // Dropdown stays empty on failure — non-critical
+      }
     }
     loadDropdowns()
   }, [companyId])

@@ -64,33 +64,39 @@ export default function ContractDetailPage() {
   useEffect(() => {
     async function loadContract() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('contracts')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
 
-      if (fetchError || !data) {
-        setError('Contract not found')
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('contracts')
+          .select('*')
+          .eq('id', params.id as string)
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .single()
+
+        if (fetchError || !data) {
+          setError('Contract not found')
+          setLoading(false)
+          return
+        }
+
+        const c = data as ContractData
+        setContract(c)
+        setFormData({
+          title: c.title || '',
+          contract_number: c.contract_number || '',
+          contract_type: c.contract_type || '',
+          contract_value: c.contract_value?.toString() || '',
+          retention_pct: c.retention_pct?.toString() || '',
+          start_date: c.start_date || '',
+          end_date: c.end_date || '',
+          description: c.description || '',
+        })
         setLoading(false)
-        return
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load contract')
+        setLoading(false)
       }
-
-      const c = data as ContractData
-      setContract(c)
-      setFormData({
-        title: c.title || '',
-        contract_number: c.contract_number || '',
-        contract_type: c.contract_type || '',
-        contract_value: c.contract_value?.toString() || '',
-        retention_pct: c.retention_pct?.toString() || '',
-        start_date: c.start_date || '',
-        end_date: c.end_date || '',
-        description: c.description || '',
-      })
-      setLoading(false)
     }
     loadContract()
   }, [params.id, companyId])

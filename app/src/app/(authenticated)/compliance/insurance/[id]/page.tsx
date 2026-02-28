@@ -71,34 +71,39 @@ export default function InsurancePolicyDetailPage() {
     async function loadData() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
 
-      const [policyRes, vendorsRes] = await Promise.all([
-        supabase
-          .from('vendor_insurance')
-          .select('*')
-          .eq('id', params.id as string)
-          .single(),
-        supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
-      ])
+      try {
+        const [policyRes, vendorsRes] = await Promise.all([
+          supabase
+            .from('vendor_insurance')
+            .select('*')
+            .eq('id', params.id as string)
+            .single(),
+          supabase.from('vendors').select('id, name').eq('company_id', companyId).is('deleted_at', null).order('name'),
+        ])
 
-      if (policyRes.error || !policyRes.data) {
-        setError('Insurance policy not found')
+        if (policyRes.error || !policyRes.data) {
+          setError('Insurance policy not found')
+          setLoading(false)
+          return
+        }
+
+        const p = policyRes.data as InsurancePolicyData
+        setPolicy(p)
+        setVendors((vendorsRes.data as VendorLookup[]) || [])
+        setFormData({
+          vendor_id: p.vendor_id,
+          insurance_type: p.insurance_type,
+          carrier_name: p.carrier_name,
+          policy_number: p.policy_number,
+          coverage_amount: p.coverage_amount != null ? String(p.coverage_amount) : '',
+          expiration_date: p.expiration_date,
+          status: p.status,
+        })
         setLoading(false)
-        return
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load insurance policy')
+        setLoading(false)
       }
-
-      const p = policyRes.data as InsurancePolicyData
-      setPolicy(p)
-      setVendors((vendorsRes.data as VendorLookup[]) || [])
-      setFormData({
-        vendor_id: p.vendor_id,
-        insurance_type: p.insurance_type,
-        carrier_name: p.carrier_name,
-        policy_number: p.policy_number,
-        coverage_amount: p.coverage_amount != null ? String(p.coverage_amount) : '',
-        expiration_date: p.expiration_date,
-        status: p.status,
-      })
-      setLoading(false)
     }
     loadData()
   }, [params.id, companyId])

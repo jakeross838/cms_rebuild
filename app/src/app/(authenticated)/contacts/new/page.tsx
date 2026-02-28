@@ -43,17 +43,21 @@ export default function NewContactPage() {
     async function loadVendors() {
       if (!companyId) return
 
-      const { data: vendorsData } = await supabase
-        .from('vendors')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
+      try {
+        const { data: vendorsData } = await supabase
+          .from('vendors')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name')
 
-      setVendors((vendorsData || []).map((v: { id: string; name: string }) => ({
-        id: v.id,
-        label: v.name,
-      })))
+        setVendors((vendorsData || []).map((v: { id: string; name: string }) => ({
+          id: v.id,
+          label: v.name,
+        })))
+      } catch {
+        // Dropdown stays empty on failure — non-critical
+      }
     }
     loadVendors()
   }, [companyId])

@@ -41,14 +41,18 @@ export default function NewInsurancePolicyPage() {
     async function loadDropdowns() {
       if (!companyId) return
 
-      const { data: vendorsData } = await supabase
-        .from('vendors')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
+      try {
+        const { data: vendorsData } = await supabase
+          .from('vendors')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name')
 
-      if (vendorsData) setVendors(vendorsData)
+        if (vendorsData) setVendors(vendorsData)
+      } catch {
+        // Dropdown stays empty on failure — non-critical
+      }
     }
     loadDropdowns()
   }, [companyId])

@@ -47,15 +47,20 @@ export default function NewCommunicationPage() {
     async function loadJobs() {
       if (!companyId) return
 
-      const { data } = await supabase
-        .from('jobs')
-        .select('id, name, job_number')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name', { ascending: true })
+      try {
+        const { data } = await supabase
+          .from('jobs')
+          .select('id, name, job_number')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name', { ascending: true })
 
-      setJobs((data || []) as JobOption[])
-      setJobsLoading(false)
+        setJobs((data || []) as JobOption[])
+      } catch {
+        // Dropdown stays empty on failure — non-critical
+      } finally {
+        setJobsLoading(false)
+      }
     }
     loadJobs()
   }, [companyId])

@@ -66,35 +66,40 @@ export default function WarrantyDetailPage() {
     async function loadWarranty() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
 
-      const { data, error: fetchError } = await supabase
-        .from('warranties')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('warranties')
+          .select('*')
+          .eq('company_id', companyId)
+          .eq('id', params.id as string)
+          .is('deleted_at', null)
+          .single()
 
-      if (fetchError || !data) {
-        setError('Warranty not found')
+        if (fetchError || !data) {
+          setError('Warranty not found')
+          setLoading(false)
+          return
+        }
+
+        const w = data as WarrantyData
+        setWarranty(w)
+        setFormData({
+          title: w.title || '',
+          warranty_type: w.warranty_type || '',
+          start_date: w.start_date || '',
+          end_date: w.end_date || '',
+          coverage_details: w.coverage_details || '',
+          exclusions: w.exclusions || '',
+          contact_name: w.contact_name || '',
+          contact_phone: w.contact_phone || '',
+          contact_email: w.contact_email || '',
+          description: w.description || '',
+        })
         setLoading(false)
-        return
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load warranty')
+        setLoading(false)
       }
-
-      const w = data as WarrantyData
-      setWarranty(w)
-      setFormData({
-        title: w.title || '',
-        warranty_type: w.warranty_type || '',
-        start_date: w.start_date || '',
-        end_date: w.end_date || '',
-        coverage_details: w.coverage_details || '',
-        exclusions: w.exclusions || '',
-        contact_name: w.contact_name || '',
-        contact_phone: w.contact_phone || '',
-        contact_email: w.contact_email || '',
-        description: w.description || '',
-      })
-      setLoading(false)
     }
     loadWarranty()
   }, [params.id, companyId])

@@ -60,33 +60,39 @@ export default function ClientDetailPage() {
   useEffect(() => {
     async function loadClient() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('clients')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
 
-      if (fetchError || !data) {
-        setError('Client not found')
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('clients')
+          .select('*')
+          .eq('id', params.id as string)
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .single()
+
+        if (fetchError || !data) {
+          setError('Client not found')
+          setLoading(false)
+          return
+        }
+
+        const c = data as ClientData
+        setClient(c)
+        setFormData({
+          name: c.name,
+          email: c.email || '',
+          phone: c.phone || '',
+          address: c.address || '',
+          city: c.city || '',
+          state: c.state || '',
+          zip: c.zip || '',
+          notes: c.notes || '',
+        })
         setLoading(false)
-        return
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load client')
+        setLoading(false)
       }
-
-      const c = data as ClientData
-      setClient(c)
-      setFormData({
-        name: c.name,
-        email: c.email || '',
-        phone: c.phone || '',
-        address: c.address || '',
-        city: c.city || '',
-        state: c.state || '',
-        zip: c.zip || '',
-        notes: c.notes || '',
-      })
-      setLoading(false)
     }
     loadClient()
   }, [params.id, companyId])

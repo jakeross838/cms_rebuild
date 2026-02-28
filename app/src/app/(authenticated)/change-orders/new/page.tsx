@@ -45,14 +45,18 @@ export default function NewChangeOrderPage() {
     async function loadJobs() {
       if (!companyId) return
 
-      const { data } = await supabase
-        .from('jobs')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
-        .limit(100)
-      if (data) setJobs(data as JobOption[])
+      try {
+        const { data } = await supabase
+          .from('jobs')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name')
+          .limit(100)
+        if (data) setJobs(data as JobOption[])
+      } catch {
+        // Dropdown stays empty on failure — non-critical
+      }
     }
     loadJobs()
   }, [companyId])

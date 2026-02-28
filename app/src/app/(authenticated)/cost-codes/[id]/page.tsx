@@ -60,32 +60,38 @@ export default function CostCodeDetailPage() {
   useEffect(() => {
     async function loadCostCode() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('cost_codes')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
 
-      if (fetchError || !data) {
-        setError('Cost code not found')
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('cost_codes')
+          .select('*')
+          .eq('id', params.id as string)
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .single()
+
+        if (fetchError || !data) {
+          setError('Cost code not found')
+          setLoading(false)
+          return
+        }
+
+        const c = data as CostCodeData
+        setCostCode(c)
+        setFormData({
+          code: c.code,
+          name: c.name,
+          division: c.division,
+          subdivision: c.subdivision || '',
+          category: c.category || 'subcontractor',
+          trade: c.trade || '',
+          description: c.description || '',
+        })
         setLoading(false)
-        return
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load cost code')
+        setLoading(false)
       }
-
-      const c = data as CostCodeData
-      setCostCode(c)
-      setFormData({
-        code: c.code,
-        name: c.name,
-        division: c.division,
-        subdivision: c.subdivision || '',
-        category: c.category || 'subcontractor',
-        trade: c.trade || '',
-        description: c.description || '',
-      })
-      setLoading(false)
     }
     loadCostCode()
   }, [params.id, companyId])

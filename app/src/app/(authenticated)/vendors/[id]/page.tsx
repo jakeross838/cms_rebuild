@@ -66,35 +66,41 @@ export default function VendorDetailPage() {
   useEffect(() => {
     async function loadVendor() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('vendors')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
 
-      if (fetchError || !data) {
-        setError('Vendor not found')
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('vendors')
+          .select('*')
+          .eq('id', params.id as string)
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .single()
+
+        if (fetchError || !data) {
+          setError('Vendor not found')
+          setLoading(false)
+          return
+        }
+
+        const v = data as VendorData
+        setVendor(v)
+        setFormData({
+          name: v.name,
+          trade: v.trade || '',
+          email: v.email || '',
+          phone: v.phone || '',
+          address: v.address || '',
+          city: v.city || '',
+          state: v.state || '',
+          zip: v.zip || '',
+          tax_id: v.tax_id || '',
+          notes: v.notes || '',
+        })
         setLoading(false)
-        return
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load vendor')
+        setLoading(false)
       }
-
-      const v = data as VendorData
-      setVendor(v)
-      setFormData({
-        name: v.name,
-        trade: v.trade || '',
-        email: v.email || '',
-        phone: v.phone || '',
-        address: v.address || '',
-        city: v.city || '',
-        state: v.state || '',
-        zip: v.zip || '',
-        tax_id: v.tax_id || '',
-        notes: v.notes || '',
-      })
-      setLoading(false)
     }
     loadVendor()
   }, [params.id, companyId])

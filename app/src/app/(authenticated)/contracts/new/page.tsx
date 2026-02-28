@@ -47,29 +47,33 @@ export default function NewContractPage() {
     async function loadOptions() {
       if (!companyId) return
 
-      const { data: jobsData } = await supabase
-        .from('jobs')
-        .select('id, name, job_number')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
+      try {
+        const { data: jobsData } = await supabase
+          .from('jobs')
+          .select('id, name, job_number')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name')
 
-      setJobs((jobsData || []).map((j: { id: string; name: string; job_number: string | null }) => ({
-        id: j.id,
-        label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
-      })))
+        setJobs((jobsData || []).map((j: { id: string; name: string; job_number: string | null }) => ({
+          id: j.id,
+          label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
+        })))
 
-      const { data: clientsData } = await supabase
-        .from('clients')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
+        const { data: clientsData } = await supabase
+          .from('clients')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name')
 
-      setClients((clientsData || []).map((c: { id: string; name: string }) => ({
-        id: c.id,
-        label: c.name,
-      })))
+        setClients((clientsData || []).map((c: { id: string; name: string }) => ({
+          id: c.id,
+          label: c.name,
+        })))
+      } catch {
+        // Dropdowns stay empty on failure — non-critical
+      }
     }
     loadOptions()
   }, [companyId])

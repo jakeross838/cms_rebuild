@@ -68,44 +68,50 @@ export default function BidPackageDetailPage() {
   useEffect(() => {
     async function loadBid() {
       if (!companyId) { setError('No company found'); setLoading(false); return }
-      const { data, error: fetchError } = await supabase
-        .from('bid_packages')
-        .select('*')
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .single()
 
-      if (fetchError || !data) {
-        setError('Bid package not found')
-        setLoading(false)
-        return
-      }
-
-      const b = data as BidPackageData
-      setBid(b)
-      setFormData({
-        title: b.title,
-        trade: b.trade || '',
-        description: b.description || '',
-        scope_of_work: b.scope_of_work || '',
-        bid_due_date: b.bid_due_date || '',
-        status: b.status,
-      })
-
-      // Load job name if job_id exists
-      if (b.job_id) {
-        const { data: jobData } = await supabase
-          .from('jobs')
-          .select('id, name')
-          .eq('id', b.job_id)
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('bid_packages')
+          .select('*')
+          .eq('id', params.id as string)
           .eq('company_id', companyId)
+          .is('deleted_at', null)
           .single()
 
-        if (jobData) setJobInfo(jobData as JobInfo)
-      }
+        if (fetchError || !data) {
+          setError('Bid package not found')
+          setLoading(false)
+          return
+        }
 
-      setLoading(false)
+        const b = data as BidPackageData
+        setBid(b)
+        setFormData({
+          title: b.title,
+          trade: b.trade || '',
+          description: b.description || '',
+          scope_of_work: b.scope_of_work || '',
+          bid_due_date: b.bid_due_date || '',
+          status: b.status,
+        })
+
+        // Load job name if job_id exists
+        if (b.job_id) {
+          const { data: jobData } = await supabase
+            .from('jobs')
+            .select('id, name')
+            .eq('id', b.job_id)
+            .eq('company_id', companyId)
+            .single()
+
+          if (jobData) setJobInfo(jobData as JobInfo)
+        }
+
+        setLoading(false)
+      } catch (err) {
+        setError((err as Error)?.message || 'Failed to load bid package')
+        setLoading(false)
+      }
     }
     loadBid()
   }, [params.id, companyId])

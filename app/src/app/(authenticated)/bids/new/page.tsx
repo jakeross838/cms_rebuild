@@ -46,15 +46,20 @@ export default function NewBidPackagePage() {
     async function loadJobs() {
       if (!companyId) return
 
-      const { data } = await supabase
-        .from('jobs')
-        .select('id, name')
-        .eq('company_id', companyId)
-        .is('deleted_at', null)
-        .order('name')
+      try {
+        const { data } = await supabase
+          .from('jobs')
+          .select('id, name')
+          .eq('company_id', companyId)
+          .is('deleted_at', null)
+          .order('name')
 
-      setJobs((data || []) as JobOption[])
-      setJobsLoading(false)
+        setJobs((data || []) as JobOption[])
+      } catch {
+        // Dropdown stays empty on failure — non-critical
+      } finally {
+        setJobsLoading(false)
+      }
     }
     loadJobs()
   }, [companyId])
