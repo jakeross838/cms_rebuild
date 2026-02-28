@@ -1,5 +1,21 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter
+
+### Why (Billing badge — 1 file)
+- `billing/page.tsx` displayed subscription status as raw text without `formatStatus()` or `getStatusColor()`
+- Fixed: added both formatStatus() for text and getStatusColor() for color
+
+### Why (Raw currency — 2 files)
+- `purchase-orders/new` and `purchase-orders/[id]` used `$` + `.toFixed(2)` for total display instead of `formatCurrency()`
+- Inconsistent with rest of codebase where all currency goes through centralized formatter
+- Fixed: replaced with `formatCurrency()` calls
+
+### Why (Dashboard filter — 1 file)
+- `dashboards/operations` counted expiring certifications including revoked ones
+- `employee_certifications` has no `deleted_at` — archive is via `status: 'revoked'`
+- Fixed: added `.neq('status', 'revoked')` to exclude revoked certs from count
+
 ## 2026-02-27: Session 32 (continued) — Edit Form Validation + Router Fix
 
 ### Why (Edit form handleSave validation — 47 files)

@@ -1,5 +1,40 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter (2026-02-27)
+
+### Display Consistency
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Billing page subscription status uses formatStatus() | Formatted text, not raw snake_case | pass |
+| Billing page status badge uses getStatusColor() | Colored badge, not plain | pass |
+| PO new/edit total uses formatCurrency() | Formatted $X,XXX.XX, not raw $X.XX | pass |
+| Operations dashboard excludes revoked certs | .neq('status', 'revoked') present | pass |
+
+### Comprehensive Audits Passed (No Fixes Needed)
+| Audit | Result |
+|-------|--------|
+| handleSave try/catch (63 files) | All have proper error handling |
+| Unused imports after batch changes | None found |
+| Create form required field validation (68 forms) | All validate before insert |
+| Select element accessibility (226 selects) | All properly labeled |
+| Select name attributes (57 forms) | All have name for state binding |
+| Textarea accessibility | All have aria-label or htmlFor |
+| deleted_at filters on list queries | All present |
+| Numeric field parsing guards | All properly guarded |
+| External link security (target="_blank") | All have rel="noopener noreferrer" |
+| List page error handling | All check error response |
+| Create form setLoading(false) in error paths | All have finally block |
+| Job ownership verification on nested pages | All 15 verify parent job |
+| Cancel button form state reset | All preserve original values |
+| Empty state handling on list pages | All show "No items found" |
+| Raw date displays | All use formatDate() |
+| Dashboard query filters | All properly filtered |
+| API route security (company_id, soft delete) | All correct |
+| Confirm dialog on destructive actions | All 50 use ConfirmDialog |
+| Image optimization (Next.js Image) | All use Image component |
+| Key props on .map() | All present |
+| Console.log leftovers | None in production code |
+
 ## Session 32 (continued) — Edit Form Validation + Router Fix (2026-02-27)
 
 ### Edit Form Validation

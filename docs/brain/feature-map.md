@@ -1,5 +1,16 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter (2026-02-27)
+
+### Billing Page
+- Subscription status badge now uses `formatStatus()` + `getStatusColor()` (was raw text)
+
+### Currency Formatting
+- **purchase-orders/new** and **purchase-orders/[id]** — total display uses `formatCurrency()` (was `$` + `.toFixed(2)`)
+
+### Dashboard Filter
+- **dashboards/operations** — expiring certifications count excludes revoked (`.neq('status', 'revoked')`)
+
 ## Session 32 (continued) — Edit Form Validation + Router Fix (2026-02-27)
 
 ### Edit Form Required Field Validation (47 files)
