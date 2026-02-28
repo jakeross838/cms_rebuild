@@ -85,6 +85,7 @@ export default function PermitDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.permit_number.trim()) { toast.error('Permit number is required'); return }
     setError(null)
     try {
       await updatePermit.mutateAsync({

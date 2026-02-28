@@ -80,6 +80,7 @@ export default function ContractDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.title.trim()) { toast.error('Title is required'); return }
     setError(null)
     try {
       await updateContract.mutateAsync({

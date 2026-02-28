@@ -90,6 +90,8 @@ export default function TimeClockDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.entry_date.trim()) { toast.error('Entry date is required'); return }
+    if (!formData.clock_in.trim()) { toast.error('Clock in time is required'); return }
     setError(null)
     try {
       await updateEntry.mutateAsync({
