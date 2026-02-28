@@ -98,7 +98,7 @@ export default function NewRfiPage() {
         cost_impact: formData.cost_impact ? parseFloat(formData.cost_impact) : null,
         schedule_impact_days: formData.schedule_impact_days ? parseInt(formData.schedule_impact_days, 10) : null,
         status: 'draft',
-      })
+      } as never)
 
       toast.success('RFI created')
       router.push('/rfis')

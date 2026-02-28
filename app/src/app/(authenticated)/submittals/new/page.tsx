@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateSubmittal } from '@/hooks/use-submittals'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -23,10 +24,10 @@ export default function NewSubmittalPage() {
   const router = useRouter()
   const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createSubmittal = useCreateSubmittal()
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<SelectOption[]>([])
 
@@ -69,38 +70,26 @@ export default function NewSubmittalPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createSubmittal.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.job_id) { setError('Please select a job'); return }
+    if (!formData.submittal_number) { setError('Submittal number is required'); return }
 
     try {
-      if (!formData.job_id) throw new Error('Please select a job')
-      if (!formData.submittal_number) throw new Error('Submittal number is required')
-
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('submittals')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          submittal_number: formData.submittal_number,
-          title: formData.title,
-          description: formData.description || null,
-          spec_section: formData.spec_section || null,
-          submitted_to: formData.submitted_to || null,
-          submitted_by: authUser.id,
-          submission_date: formData.submission_date || null,
-          required_date: formData.required_date || null,
-          priority: formData.priority,
-          status: 'draft',
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createSubmittal.mutateAsync({
+        job_id: formData.job_id,
+        submittal_number: formData.submittal_number,
+        title: formData.title,
+        description: formData.description || null,
+        spec_section: formData.spec_section || null,
+        submitted_to: formData.submitted_to || null,
+        submission_date: formData.submission_date || null,
+        required_date: formData.required_date || null,
+        priority: formData.priority,
+        status: 'draft',
+        notes: formData.notes || null,
+      })
 
       toast.success('Submittal created')
       router.push('/submittals')
@@ -109,8 +98,6 @@ export default function NewSubmittalPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create submittal'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -202,8 +189,8 @@ export default function NewSubmittalPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/submittals"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Submittal'}
+          <Button type="submit" disabled={createSubmittal.isPending}>
+            {createSubmittal.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Submittal'}
           </Button>
         </div>
       </form>

@@ -137,6 +137,31 @@ export function useLienWaiverTracking(params?: TrackingListParams) {
   })
 }
 
+/** Fetch a single lien waiver tracking record */
+export function useLienWaiverTrackingDetail(trackingId: string | null) {
+  return useQuery({
+    queryKey: ['lien-waiver-tracking', trackingId],
+    queryFn: () => fetchJson(`/api/v2/lien-waiver-tracking/${trackingId}`),
+    enabled: !!trackingId,
+  })
+}
+
+/** Update a lien waiver tracking record */
+export function useUpdateLienWaiverTracking(trackingId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v2/lien-waiver-tracking/${trackingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lien-waiver-tracking'] })
+    },
+  })
+}
+
 // ── Re-export types ─────────────────────────────────────────────────────────
 
 export type {

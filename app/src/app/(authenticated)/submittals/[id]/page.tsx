@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useSubmittal, useUpdateSubmittal, useDeleteSubmittal } from '@/hooks/use-submittals'
 import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -35,16 +34,14 @@ interface SubmittalData {
 export default function SubmittalDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
+  const submittalId = params.id as string
 
-  const companyId = authProfile?.company_id || ''
-  const [submittal, setSubmittal] = useState<SubmittalData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const { data: response, isLoading: loading, error: fetchError } = useSubmittal(submittalId)
+  const updateSubmittal = useUpdateSubmittal(submittalId)
+  const deleteSubmittal = useDeleteSubmittal()
+  const submittal = (response as { data: SubmittalData } | undefined)?.data ?? null
+
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -61,40 +58,20 @@ export default function SubmittalDetailPage() {
   })
 
   useEffect(() => {
-    async function loadSubmittal() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('submittals')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', params.id as string)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Submittal not found')
-        setLoading(false)
-        return
-      }
-
-      const sub = data as SubmittalData
-      setSubmittal(sub)
+    if (submittal) {
       setFormData({
-        submittal_number: sub.submittal_number || '',
-        title: sub.title || '',
-        description: sub.description || '',
-        spec_section: sub.spec_section || '',
-        submitted_to: sub.submitted_to || '',
-        submission_date: sub.submission_date || '',
-        required_date: sub.required_date || '',
-        priority: sub.priority || 'normal',
-        notes: sub.notes || '',
+        submittal_number: submittal.submittal_number || '',
+        title: submittal.title || '',
+        description: submittal.description || '',
+        spec_section: submittal.spec_section || '',
+        submitted_to: submittal.submitted_to || '',
+        submission_date: submittal.submission_date || '',
+        required_date: submittal.required_date || '',
+        priority: submittal.priority || 'normal',
+        notes: submittal.notes || '',
       })
-      setLoading(false)
     }
-    loadSubmittal()
-  }, [params.id, companyId])
+  }, [submittal])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -104,33 +81,10 @@ export default function SubmittalDetailPage() {
   const handleSave = async () => {
     if (!formData.submittal_number.trim()) { toast.error('Submittal Number is required'); return }
     if (!formData.title.trim()) { toast.error('Title is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('submittals')
-        .update({
-          submittal_number: formData.submittal_number || undefined,
-          title: formData.title,
-          description: formData.description || null,
-          spec_section: formData.spec_section || null,
-          submitted_to: formData.submitted_to || null,
-          submission_date: formData.submission_date || null,
-          required_date: formData.required_date || null,
-          priority: formData.priority,
-          notes: formData.notes || null,
-        })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-      toast.success('Saved')
-
-      setSubmittal((prev) => prev ? {
-        ...prev,
-        submittal_number: formData.submittal_number || prev.submittal_number,
+      await updateSubmittal.mutateAsync({
+        submittal_number: formData.submittal_number || undefined,
         title: formData.title,
         description: formData.description || null,
         spec_section: formData.spec_section || null,
@@ -139,35 +93,23 @@ export default function SubmittalDetailPage() {
         required_date: formData.required_date || null,
         priority: formData.priority,
         notes: formData.notes || null,
-      } : prev)
-      setSuccess(true)
+      } as Record<string, unknown>)
+      toast.success('Saved')
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleArchive = async () => {
     try {
-      const { error: archiveError } = await supabase
-        .from('submittals')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', params.id as string)
-        .eq('company_id', companyId)
-
-      if (archiveError) throw archiveError
+      await deleteSubmittal.mutateAsync(submittalId)
       toast.success('Archived')
-
       router.push('/submittals')
       router.refresh()
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
-      setError(errorMessage)
       toast.error(errorMessage)
     }
   }
@@ -186,7 +128,7 @@ export default function SubmittalDetailPage() {
         <Link href="/submittals" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Submittals
         </Link>
-        <p className="text-destructive">{error || 'Submittal not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Submittal not found'}</p>
       </div>
     )
   }
@@ -224,8 +166,8 @@ export default function SubmittalDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateSubmittal.isPending}>
+                  {updateSubmittal.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -234,8 +176,7 @@ export default function SubmittalDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Submittal updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

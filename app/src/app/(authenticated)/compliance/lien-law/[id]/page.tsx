@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useLienWaiverTrackingDetail, useUpdateLienWaiverTracking } from '@/hooks/use-lien-waivers'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -47,18 +46,13 @@ interface TrackingFormData {
 export default function LienLawDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const recordId = params.id as string
 
-  const [record, setRecord] = useState<TrackingData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const { data: response, isLoading: loading, error: fetchError } = useLienWaiverTrackingDetail(recordId)
+  const updateTracking = useUpdateLienWaiverTracking(recordId)
+  const record = (response as { data: TrackingData } | undefined)?.data ?? null
+
   const [editing, setEditing] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
@@ -73,37 +67,18 @@ export default function LienLawDetailPage() {
   })
 
   useEffect(() => {
-    async function loadRecord() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('lien_waiver_tracking')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', recordId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Record not found')
-        setLoading(false)
-        return
-      }
-
-      const r = data as TrackingData
-      setRecord(r)
+    if (record) {
       setFormData({
-        job_id: r.job_id || '',
-        vendor_id: r.vendor_id || '',
-        expected_amount: r.expected_amount != null ? String(r.expected_amount) : '',
-        period_start: r.period_start || '',
-        period_end: r.period_end || '',
-        is_compliant: r.is_compliant,
-        notes: r.notes || '',
+        job_id: record.job_id || '',
+        vendor_id: record.vendor_id || '',
+        expected_amount: record.expected_amount != null ? String(record.expected_amount) : '',
+        period_start: record.period_start || '',
+        period_end: record.period_end || '',
+        is_compliant: record.is_compliant,
+        notes: record.notes || '',
       })
-      setLoading(false)
     }
-    loadRecord()
-  }, [recordId, companyId])
+  }, [record])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -114,78 +89,37 @@ export default function LienLawDetailPage() {
   }
 
   const handleSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
-
     try {
-      const { error: updateError } = await supabase
-        .from('lien_waiver_tracking')
-        .update({
-          job_id: formData.job_id || undefined,
-          vendor_id: formData.vendor_id || undefined,
-          expected_amount: formData.expected_amount ? Number(formData.expected_amount) : null,
-          period_start: formData.period_start || null,
-          period_end: formData.period_end || null,
-          is_compliant: formData.is_compliant,
-          notes: formData.notes || null,
-        })
-        .eq('id', recordId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
+      await updateTracking.mutateAsync({
+        job_id: formData.job_id || undefined,
+        vendor_id: formData.vendor_id || undefined,
+        expected_amount: formData.expected_amount ? Number(formData.expected_amount) : null,
+        period_start: formData.period_start || null,
+        period_end: formData.period_end || null,
+        is_compliant: formData.is_compliant,
+        notes: formData.notes || null,
+      })
       toast.success('Saved')
-      setRecord((prev) =>
-        prev
-          ? {
-              ...prev,
-              job_id: formData.job_id || null,
-              vendor_id: formData.vendor_id || null,
-              expected_amount: formData.expected_amount ? Number(formData.expected_amount) : null,
-              period_start: formData.period_start || null,
-              period_end: formData.period_end || null,
-              is_compliant: formData.is_compliant,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
     try {
-      const { error: archiveError } = await supabase
-        .from('lien_waiver_tracking')
-        .update({ deleted_at: new Date().toISOString() } as never)
-        .eq('id', recordId)
-        .eq('company_id', companyId)
-
-      if (archiveError) {
-        setError('Failed to archive record')
-        toast.error('Failed to archive record')
-        return
-      }
-
+      await updateTracking.mutateAsync({
+        deleted_at: new Date().toISOString(),
+      })
       toast.success('Archived')
       router.push('/compliance/lien-law')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -201,7 +135,7 @@ export default function LienLawDetailPage() {
         <Link href="/compliance/lien-law" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Lien Law
         </Link>
-        <p className="text-destructive">{error || 'Record not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Record not found'}</p>
       </div>
     )
   }
@@ -228,8 +162,8 @@ export default function LienLawDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateTracking.isPending}>
+                  {updateTracking.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -238,8 +172,7 @@ export default function LienLawDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Record updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (

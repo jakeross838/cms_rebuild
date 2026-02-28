@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateLienWaiver } from '@/hooks/use-lien-waivers'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -29,11 +30,11 @@ interface JobOption {
 export default function NewLienWaiverPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createLienWaiver = useCreateLienWaiver()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<JobOption[]>([])
 
@@ -70,31 +71,21 @@ export default function NewLienWaiverPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createLienWaiver.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.job_id) { setError('Please select a job'); return }
 
     try {
-      if (!formData.job_id) throw new Error('Please select a job')
-
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('lien_waivers')
-        .insert({
-          company_id: companyId,
-          job_id: formData.job_id,
-          claimant_name: formData.claimant_name,
-          waiver_type: formData.waiver_type,
-          amount: formData.amount ? parseFloat(formData.amount) : null,
-          through_date: formData.through_date || null,
-          check_number: formData.check_number || null,
-          notes: formData.notes || null,
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
+      await createLienWaiver.mutateAsync({
+        job_id: formData.job_id,
+        claimant_name: formData.claimant_name,
+        waiver_type: formData.waiver_type,
+        amount: formData.amount ? parseFloat(formData.amount) : null,
+        through_date: formData.through_date || null,
+        check_number: formData.check_number || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Lien waiver created')
       router.push('/lien-waivers')
@@ -103,8 +94,6 @@ export default function NewLienWaiverPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create lien waiver'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -197,8 +186,8 @@ export default function NewLienWaiverPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/lien-waivers"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Lien Waiver'}
+          <Button type="submit" disabled={createLienWaiver.isPending}>
+            {createLienWaiver.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Lien Waiver'}
           </Button>
         </div>
       </form>

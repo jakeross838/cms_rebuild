@@ -7,14 +7,12 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { ArrowLeft, Loader2, Save, FileText, Image, File } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
-import { formatDate, getStatusColor, formatFileSize } from '@/lib/utils'
+import { useDocument, useUpdateDocument, useDeleteDocument } from '@/hooks/use-documents'
+import { formatDate, formatFileSize } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -42,16 +40,15 @@ function getFileIcon(mimeType: string | null) {
 export default function FileDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const fileId = params.fileId as string
 
-  const [document, setDocument] = useState<DocumentData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useDocument(fileId)
+  const updateDocument = useUpdateDocument(fileId)
+  const deleteDocument = useDeleteDocument()
+  const document = (response as { data: DocumentData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -64,36 +61,13 @@ export default function FileDetailPage() {
   })
 
   useEffect(() => {
-    async function loadDocument() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('documents')
-        .select('*')
-        .eq('id', fileId)
-        .eq('job_id', jobId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('File not found')
-        setLoading(false)
-        return
-      }
-
-      const d = data as DocumentData
-      setDocument(d)
+    if (document) {
       setFormData({
-        filename: d.filename,
-        document_type: d.document_type || '',
+        filename: document.filename,
+        document_type: document.document_type || '',
       })
-      setLoading(false)
     }
-    loadDocument()
-  }, [fileId, jobId, companyId])
+  }, [document])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -107,28 +81,12 @@ export default function FileDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('documents')
-        .update({
-          filename: formData.filename,
-          document_type: formData.document_type || null,
-        })
-        .eq('id', fileId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
+      await updateDocument.mutateAsync({
+        file_name: formData.filename,
+        file_type: formData.document_type || null,
+      } as Record<string, unknown>)
       toast.success('Saved')
 
-      setDocument((prev) =>
-        prev
-          ? {
-              ...prev,
-              filename: formData.filename,
-              document_type: formData.document_type || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       setTimeout(() => setSuccess(false), 3000)
@@ -143,23 +101,12 @@ export default function FileDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('documents')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', fileId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive file')
-        toast.error('Failed to archive file')
-        return
-      }
+      await deleteDocument.mutateAsync(fileId)
       toast.success('Archived')
 
       router.push(`/jobs/${jobId}/files`)
       router.refresh()
-  
+
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)

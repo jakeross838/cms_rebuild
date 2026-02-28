@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useSubmittal, useUpdateSubmittal, useDeleteSubmittal } from '@/hooks/use-submittals'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -54,16 +53,15 @@ const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'urgent']
 export default function SubmittalDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const jobId = params.id as string
   const submittalId = params.submittalId as string
 
-  const [submittal, setSubmittal] = useState<SubmittalData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: response, isLoading: loading, error: fetchError } = useSubmittal(submittalId)
+  const updateSubmittal = useUpdateSubmittal(submittalId)
+  const deleteSubmittal = useDeleteSubmittal()
+  const submittal = (response as { data: SubmittalData } | undefined)?.data ?? null
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -83,44 +81,20 @@ export default function SubmittalDetailPage() {
   })
 
   useEffect(() => {
-    async function loadSubmittal() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) { setError('Job not found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('submittals')
-        .select('*')
-        .eq('id', submittalId)
-        .eq('job_id', jobId)
-        .is('deleted_at', null)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Submittal not found')
-        setLoading(false)
-        return
-      }
-
-      const s = data as SubmittalData
-      setSubmittal(s)
+    if (submittal) {
       setFormData({
-        title: s.title,
-        description: s.description || '',
-        spec_section: s.spec_section || '',
-        submitted_to: s.submitted_to || '',
-        submission_date: s.submission_date || '',
-        required_date: s.required_date || '',
-        status: s.status,
-        priority: s.priority,
-        notes: s.notes || '',
+        title: submittal.title,
+        description: submittal.description || '',
+        spec_section: submittal.spec_section || '',
+        submitted_to: submittal.submitted_to || '',
+        submission_date: submittal.submission_date || '',
+        required_date: submittal.required_date || '',
+        status: submittal.status,
+        priority: submittal.priority,
+        notes: submittal.notes || '',
       })
-      setLoading(false)
     }
-    loadSubmittal()
-  }, [submittalId, jobId, companyId])
+  }, [submittal])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -134,41 +108,18 @@ export default function SubmittalDetailPage() {
     setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('submittals')
-        .update({
-          title: formData.title,
-          description: formData.description || null,
-          spec_section: formData.spec_section || null,
-          submitted_to: formData.submitted_to || null,
-          submission_date: formData.submission_date || null,
-          required_date: formData.required_date || null,
-          status: formData.status,
-          priority: formData.priority,
-          notes: formData.notes || null,
-        })
-        .eq('id', submittalId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
+      await updateSubmittal.mutateAsync({
+        title: formData.title,
+        description: formData.description || null,
+        spec_section: formData.spec_section || null,
+        submitted_to: formData.submitted_to || null,
+        submission_date: formData.submission_date || null,
+        required_date: formData.required_date || null,
+        status: formData.status,
+        priority: formData.priority,
+        notes: formData.notes || null,
+      } as Record<string, unknown>)
 
-      if (updateError) throw updateError
-
-      setSubmittal((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: formData.title,
-              description: formData.description || null,
-              spec_section: formData.spec_section || null,
-              submitted_to: formData.submitted_to || null,
-              submission_date: formData.submission_date || null,
-              required_date: formData.required_date || null,
-              status: formData.status,
-              priority: formData.priority,
-              notes: formData.notes || null,
-            }
-          : prev
-      )
       setSuccess(true)
       setEditing(false)
       toast.success('Updated')
@@ -184,23 +135,12 @@ export default function SubmittalDetailPage() {
 
   const handleDelete = async () => {
     try {
-      const { error: deleteError } = await supabase
-        .from('submittals')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', submittalId)
-        .eq('job_id', jobId)
-        .eq('company_id', companyId)
-
-      if (deleteError) {
-        setError('Failed to archive submittal')
-        toast.error('Failed to archive submittal')
-        return
-      }
+      await deleteSubmittal.mutateAsync(submittalId)
 
       toast.success('Archived')
       router.push(`/jobs/${jobId}/submittals`)
       router.refresh()
-  
+
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
       setError(msg)

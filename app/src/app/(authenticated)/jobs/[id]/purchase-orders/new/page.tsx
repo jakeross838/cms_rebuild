@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { useCreatePurchaseOrder } from '@/hooks/use-purchase-orders'
 import { toast } from 'sonner'
 
 type Vendor = { id: string; name: string }
@@ -22,9 +23,10 @@ export default function NewPurchaseOrderPage() {
   const jobId = params.id as string
   const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
+  const createPurchaseOrder = useCreatePurchaseOrder()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [vendors, setVendors] = useState<Vendor[]>([])
@@ -72,35 +74,23 @@ export default function NewPurchaseOrderPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
       if (!formData.vendor_id) throw new Error('Please select a vendor')
 
-      const { error: insertError } = await supabase
-        .from('purchase_orders')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          vendor_id: formData.vendor_id,
-          po_number: formData.po_number,
-          title: formData.title,
-          status: formData.status,
-          subtotal: formData.subtotal ? parseFloat(formData.subtotal) : 0,
-          tax_amount: formData.tax_amount ? parseFloat(formData.tax_amount) : 0,
-          shipping_amount: formData.shipping_amount ? parseFloat(formData.shipping_amount) : 0,
-          total_amount: formData.total_amount ? parseFloat(formData.total_amount) : 0,
-          delivery_date: formData.delivery_date || null,
-          shipping_address: formData.shipping_address || null,
-          terms: formData.terms || null,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createPurchaseOrder.mutateAsync({
+        job_id: jobId,
+        vendor_id: formData.vendor_id,
+        po_number: formData.po_number,
+        title: formData.title,
+        status: formData.status,
+        subtotal: formData.subtotal ? parseFloat(formData.subtotal) : null,
+        tax_amount: formData.tax_amount ? parseFloat(formData.tax_amount) : null,
+        shipping_amount: formData.shipping_amount ? parseFloat(formData.shipping_amount) : null,
+        total_amount: formData.total_amount ? parseFloat(formData.total_amount) : null,
+        delivery_date: formData.delivery_date || null,
+        shipping_address: formData.shipping_address || null,
+        terms: formData.terms || null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Purchase order created')
       router.push(`/jobs/${jobId}/purchase-orders`)

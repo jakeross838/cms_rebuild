@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateWarranty } from '@/hooks/use-warranty'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -22,11 +23,11 @@ interface SelectOption {
 export default function NewWarrantyPage() {
   const router = useRouter()
   const supabase = createClient()
+  const createWarranty = useCreateWarranty()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [jobs, setJobs] = useState<SelectOption[]>([])
   const [vendors, setVendors] = useState<SelectOption[]>([])
@@ -84,34 +85,25 @@ export default function NewWarrantyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createWarranty.isPending) return
     setError(null)
-    setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      const { error: insertError } = await supabase
-        .from('warranties')
-        .insert({
-          company_id: companyId,
-          title: formData.title,
-          warranty_type: formData.warranty_type,
-          status: 'active',
-          job_id: formData.job_id,
-          vendor_id: formData.vendor_id || null,
-          start_date: formData.start_date,
-          end_date: formData.end_date,
-          coverage_details: formData.coverage_details || null,
-          exclusions: formData.exclusions || null,
-          contact_name: formData.contact_name || null,
-          contact_email: formData.contact_email || null,
-          contact_phone: formData.contact_phone || null,
-          description: formData.description || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createWarranty.mutateAsync({
+        title: formData.title,
+        warranty_type: formData.warranty_type,
+        status: 'active',
+        job_id: formData.job_id,
+        vendor_id: formData.vendor_id || null,
+        start_date: formData.start_date,
+        end_date: formData.end_date,
+        coverage_details: formData.coverage_details || null,
+        exclusions: formData.exclusions || null,
+        contact_name: formData.contact_name || null,
+        contact_email: formData.contact_email || null,
+        contact_phone: formData.contact_phone || null,
+        description: formData.description || null,
+      })
 
       toast.success('Warranty created')
       router.push('/warranties')
@@ -120,8 +112,6 @@ export default function NewWarrantyPage() {
       const errorMessage = (err as Error)?.message || 'Failed to add warranty'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -242,8 +232,8 @@ export default function NewWarrantyPage() {
 
         <div className="flex items-center justify-end gap-4">
           <Link href="/warranties"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Warranty'}
+          <Button type="submit" disabled={createWarranty.isPending}>
+            {createWarranty.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Warranty'}
           </Button>
         </div>
       </form>

@@ -10,6 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useCreateHrCertification } from '@/hooks/use-hr'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -18,10 +19,10 @@ export default function NewCertificationPage() {
   const router = useRouter()
   const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
-  const [loading, setLoading] = useState(false)
+  const createCertification = useCreateHrCertification()
   const [error, setError] = useState<string | null>(null)
 
   // ── Dropdown data ──────────────────────────────────────────────
@@ -66,33 +67,24 @@ export default function NewCertificationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loading) return
+    if (createCertification.isPending) return
     setError(null)
-    setLoading(true)
+
+    if (!formData.employee_id) { setError('Employee is required'); return }
+    if (!formData.certification_name.trim()) { setError('Certification name is required'); return }
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      if (!formData.employee_id) { setError('Employee is required'); setLoading(false); return }
-      if (!formData.certification_name.trim()) { setError('Certification name is required'); setLoading(false); return }
-
-      const { error: insertError } = await supabase
-        .from('employee_certifications')
-        .insert({
-          company_id: companyId,
-          employee_id: formData.employee_id,
-          certification_name: formData.certification_name,
-          certification_type: formData.certification_type || null,
-          certification_number: formData.certification_number || null,
-          issuing_authority: formData.issuing_authority || null,
-          issued_date: formData.issued_date || null,
-          expiration_date: formData.expiration_date || null,
-          status: formData.status,
-          notes: formData.notes || null,
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createCertification.mutateAsync({
+        employee_id: formData.employee_id,
+        certification_name: formData.certification_name,
+        certification_type: formData.certification_type || null,
+        certification_number: formData.certification_number || null,
+        issuing_authority: formData.issuing_authority || null,
+        issued_date: formData.issued_date || null,
+        expiration_date: formData.expiration_date || null,
+        status: formData.status,
+        notes: formData.notes || null,
+      })
 
       toast.success('Certification created')
       router.push('/compliance/licenses')
@@ -101,8 +93,6 @@ export default function NewCertificationPage() {
       const errorMessage = (err as Error)?.message || 'Failed to create certification'
       toast.error(errorMessage)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -202,8 +192,8 @@ export default function NewCertificationPage() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <Link href="/compliance/licenses"><Button type="button" variant="outline">Cancel</Button></Link>
-          <Button type="submit" disabled={loading}>
-            {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Certification'}
+          <Button type="submit" disabled={createCertification.isPending}>
+            {createCertification.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Add Certification'}
           </Button>
         </div>
       </form>

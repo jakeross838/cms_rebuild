@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { useCreateSelection } from '@/hooks/use-selections'
 import { toast } from 'sonner'
 
 type Category = { id: string; name: string; room: string | null }
@@ -23,9 +24,10 @@ export default function NewSelectionPage() {
   const jobId = params.id as string
   const supabase = createClient()
 
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
 
   const companyId = authProfile?.company_id || ''
+  const createSelection = useCreateSelection()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
@@ -87,31 +89,17 @@ export default function NewSelectionPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
       if (!formData.category_id) throw new Error('Please select a category')
       if (!formData.option_id) throw new Error('Please select an option')
 
-      const { error: insertError } = await supabase
-        .from('selections')
-        .insert({
-          company_id: companyId,
-          job_id: jobId,
-          category_id: formData.category_id,
-          option_id: formData.option_id,
-          room: formData.room || null,
-          status: formData.status,
-          change_reason: formData.change_reason || null,
-          selected_by: authUser.id,
-          selected_at: new Date().toISOString(),
-          created_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createSelection.mutateAsync({
+        category_id: formData.category_id,
+        option_id: formData.option_id,
+        job_id: jobId,
+        room: formData.room || null,
+        status: formData.status,
+        change_reason: formData.change_reason || null,
+      })
 
       toast.success('Selection created')
       router.push(`/jobs/${jobId}/selections`)

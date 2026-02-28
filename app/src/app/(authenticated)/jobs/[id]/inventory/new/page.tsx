@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { useCreateInventoryTransaction } from '@/hooks/use-inventory'
 import { toast } from 'sonner'
 
 interface InventoryItem {
@@ -26,8 +27,9 @@ export default function NewInventoryTransactionPage() {
   const params = useParams()
   const jobId = params.id as string
   const supabase = createClient()
-  const { profile: authProfile, user: authUser } = useAuth()
+  const { profile: authProfile } = useAuth()
   const companyId = authProfile?.company_id || ''
+  const createTransaction = useCreateInventoryTransaction()
   const [loading, setLoading] = useState(false)
   const [loadingItems, setLoadingItems] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -75,32 +77,20 @@ export default function NewInventoryTransactionPage() {
     setLoading(true)
 
     try {
-      if (!authUser || !companyId) throw new Error('Not authenticated')
-
-      // Verify job belongs to company
-      const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
-      if (!jobCheck) throw new Error('Job not found or access denied')
-
       if (!formData.item_id) throw new Error('Please select an inventory item')
       if (!formData.quantity) throw new Error('Please enter a quantity')
 
       const quantity = parseFloat(formData.quantity)
       if (isNaN(quantity) || quantity <= 0) { setError('Quantity must be greater than zero'); setLoading(false); return }
 
-      const { error: insertError } = await supabase
-        .from('inventory_transactions')
-        .insert({
-          company_id: companyId,
-          item_id: formData.item_id,
-          job_id: jobId,
-          transaction_type: formData.transaction_type as 'receive' | 'consume' | 'transfer' | 'adjust',
-          quantity,
-          unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : null,
-          notes: formData.notes || null,
-          performed_by: authUser.id,
-        })
-
-      if (insertError) throw insertError
+      await createTransaction.mutateAsync({
+        item_id: formData.item_id,
+        job_id: jobId,
+        transaction_type: formData.transaction_type,
+        quantity,
+        unit_cost: formData.unit_cost ? parseFloat(formData.unit_cost) : null,
+        notes: formData.notes || null,
+      })
 
       toast.success('Inventory transaction created')
       router.push(`/jobs/${jobId}/inventory`)

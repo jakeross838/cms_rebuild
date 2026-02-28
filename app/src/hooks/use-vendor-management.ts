@@ -45,6 +45,14 @@ export function useVendorContacts(vendorId: string | null, params?: ContactListP
   })
 }
 
+export function useVendorContact(vendorId: string | null, contactId: string | null) {
+  return useQuery({
+    queryKey: ['vendor-contacts', vendorId, contactId],
+    queryFn: () => fetchJson(`/api/v1/vendors/${vendorId}/contacts/${contactId}`),
+    enabled: !!vendorId && !!contactId,
+  })
+}
+
 export function useCreateVendorContact(vendorId: string) {
   const qc = useQueryClient()
   return useMutation({
@@ -54,6 +62,34 @@ export function useCreateVendorContact(vendorId: string) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vendor-contacts', vendorId] })
+      qc.invalidateQueries({ queryKey: ['vendors', vendorId] })
+    },
+  })
+}
+
+export function useUpdateVendorContact(vendorId: string, contactId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v1/vendors/${vendorId}/contacts/${contactId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vendor-contacts', vendorId] })
+      qc.invalidateQueries({ queryKey: ['vendors', vendorId] })
+    },
+  })
+}
+
+export function useDeleteVendorContact(vendorId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (contactId: string) =>
+      fetchJson(`/api/v1/vendors/${vendorId}/contacts/${contactId}`, { method: 'DELETE' }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['vendor-contacts', vendorId] })
       qc.invalidateQueries({ queryKey: ['vendors', vendorId] })
@@ -79,6 +115,14 @@ export function useVendorInsurance(vendorId: string | null, params?: InsuranceLi
   })
 }
 
+export function useVendorInsuranceDetail(vendorId: string | null, insuranceId: string | null) {
+  return useQuery({
+    queryKey: ['vendor-insurance', vendorId, insuranceId],
+    queryFn: () => fetchJson(`/api/v1/vendors/${vendorId}/insurance/${insuranceId}`),
+    enabled: !!vendorId && !!insuranceId,
+  })
+}
+
 export function useCreateVendorInsurance(vendorId: string) {
   const qc = useQueryClient()
   return useMutation({
@@ -88,6 +132,34 @@ export function useCreateVendorInsurance(vendorId: string) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vendor-insurance', vendorId] })
+      qc.invalidateQueries({ queryKey: ['vendors', vendorId] })
+    },
+  })
+}
+
+export function useUpdateVendorInsurance(vendorId: string, insuranceId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchJson(`/api/v1/vendors/${vendorId}/insurance/${insuranceId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vendor-insurance', vendorId] })
+      qc.invalidateQueries({ queryKey: ['vendors', vendorId] })
+    },
+  })
+}
+
+export function useDeleteVendorInsurance(vendorId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (insuranceId: string) =>
+      fetchJson(`/api/v1/vendors/${vendorId}/insurance/${insuranceId}`, { method: 'DELETE' }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['vendor-insurance', vendorId] })
       qc.invalidateQueries({ queryKey: ['vendors', vendorId] })

@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/lib/auth/auth-context'
-import { createClient } from '@/lib/supabase/client'
+import { useHrCertification, useUpdateHrCertification, useDeleteHrCertification } from '@/hooks/use-hr'
 import { formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -50,20 +49,15 @@ const STATUS_OPTIONS = ['active', 'expired', 'revoked', 'pending'] as const
 export default function LicenseDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
 
-  const { profile: authProfile } = useAuth()
-
-  const companyId = authProfile?.company_id || ''
   const certId = params.id as string
 
-  const [cert, setCert] = useState<CertificationData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const { data: response, isLoading: loading, error: fetchError } = useHrCertification(certId)
+  const updateCert = useUpdateHrCertification(certId)
+  const deleteCert = useDeleteHrCertification()
+  const cert = (response as { data: CertificationData } | undefined)?.data ?? null
+
   const [editing, setEditing] = useState(false)
-  const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
 
   const [formData, setFormData] = useState<CertificationFormData>({
@@ -78,38 +72,19 @@ export default function LicenseDetailPage() {
   })
 
   useEffect(() => {
-    async function loadCertification() {
-      if (!companyId) { setError('No company found'); setLoading(false); return }
-
-      const { data, error: fetchError } = await supabase
-        .from('employee_certifications')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('id', certId)
-        .single()
-
-      if (fetchError || !data) {
-        setError('Certification not found')
-        setLoading(false)
-        return
-      }
-
-      const c = data as CertificationData
-      setCert(c)
+    if (cert) {
       setFormData({
-        certification_name: c.certification_name,
-        certification_type: c.certification_type || '',
-        issuing_authority: c.issuing_authority || '',
-        certification_number: c.certification_number || '',
-        issued_date: c.issued_date || '',
-        expiration_date: c.expiration_date || '',
-        status: c.status,
-        employee_id: c.employee_id,
+        certification_name: cert.certification_name,
+        certification_type: cert.certification_type || '',
+        issuing_authority: cert.issuing_authority || '',
+        certification_number: cert.certification_number || '',
+        issued_date: cert.issued_date || '',
+        expiration_date: cert.expiration_date || '',
+        status: cert.status,
+        employee_id: cert.employee_id,
       })
-      setLoading(false)
     }
-    loadCertification()
-  }, [certId, companyId])
+  }, [cert])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -118,80 +93,37 @@ export default function LicenseDetailPage() {
 
   const handleSave = async () => {
     if (!formData.certification_name.trim()) { toast.error('Certification name is required'); return }
-    setSaving(true)
-    setError(null)
-    setSuccess(false)
 
     try {
-      const { error: updateError } = await supabase
-        .from('employee_certifications')
-        .update({
-          certification_name: formData.certification_name,
-          certification_type: formData.certification_type || null,
-          issuing_authority: formData.issuing_authority || null,
-          certification_number: formData.certification_number || null,
-          issued_date: formData.issued_date || null,
-          expiration_date: formData.expiration_date || null,
-          status: formData.status,
-          employee_id: formData.employee_id,
-        })
-        .eq('id', certId)
-        .eq('company_id', companyId)
-
-      if (updateError) throw updateError
-
+      await updateCert.mutateAsync({
+        certification_name: formData.certification_name,
+        certification_type: formData.certification_type || null,
+        issuing_authority: formData.issuing_authority || null,
+        certification_number: formData.certification_number || null,
+        issued_date: formData.issued_date || null,
+        expiration_date: formData.expiration_date || null,
+        status: formData.status,
+        employee_id: formData.employee_id,
+      })
       toast.success('Saved')
-      setCert((prev) =>
-        prev
-          ? {
-              ...prev,
-              certification_name: formData.certification_name,
-              certification_type: formData.certification_type || null,
-              issuing_authority: formData.issuing_authority || null,
-              certification_number: formData.certification_number || null,
-              issued_date: formData.issued_date || null,
-              expiration_date: formData.expiration_date || null,
-              status: formData.status,
-              employee_id: formData.employee_id,
-            }
-          : prev
-      )
-      setSuccess(true)
       setEditing(false)
-      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to save'
-      setError(errorMessage)
       toast.error(errorMessage)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleConfirmArchive = async () => {
     try {
-      setArchiving(true)
-      const { error: archiveError } = await supabase
-        .from('employee_certifications')
-        .update({ status: 'revoked' })
-        .eq('id', certId)
-        .eq('company_id', companyId)
-      if (archiveError) {
-        setError('Failed to archive certification')
-        toast.error('Failed to archive certification')
-        setArchiving(false)
-        return
-      }
+      await deleteCert.mutateAsync(certId)
       toast.success('Archived')
       router.push('/compliance/licenses')
       router.refresh()
-  
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
-      setError(msg)
       toast.error(msg)
     }
-}
+  }
 
   if (loading) {
     return (
@@ -207,7 +139,7 @@ export default function LicenseDetailPage() {
         <Link href="/compliance/licenses" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" />Back to Licenses
         </Link>
-        <p className="text-destructive">{error || 'Certification not found'}</p>
+        <p className="text-destructive">{fetchError?.message || 'Certification not found'}</p>
       </div>
     )
   }
@@ -232,8 +164,8 @@ export default function LicenseDetailPage() {
             ) : (
               <>
                 <Button onClick={() => setEditing(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                <Button onClick={handleSave} disabled={updateCert.isPending}>
+                  {updateCert.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
                 </Button>
               </>
@@ -242,8 +174,7 @@ export default function LicenseDetailPage() {
         </div>
       </div>
 
-      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
-      {success && <div className="mb-4 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">Certification updated successfully</div>}
+      {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
 
       <div className="space-y-6">
         {!editing ? (
@@ -293,7 +224,7 @@ export default function LicenseDetailPage() {
             </Card>
 
             <div className="flex justify-end">
-              <Button onClick={() => setShowArchiveDialog(true)} disabled={archiving} variant="outline" className="text-destructive hover:text-destructive">{archiving ? 'Archiving...' : 'Archive'}</Button>
+              <Button onClick={() => setShowArchiveDialog(true)} disabled={deleteCert.isPending} variant="outline" className="text-destructive hover:text-destructive">{deleteCert.isPending ? 'Archiving...' : 'Archive'}</Button>
             </div>
           </>
         ) : (
