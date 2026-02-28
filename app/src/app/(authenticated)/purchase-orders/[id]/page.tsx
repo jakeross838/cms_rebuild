@@ -566,7 +566,7 @@ export default function PurchaseOrderDetailPage() {
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Total: <span className="font-medium text-foreground">
-                    ${((parseFloat(formData.subtotal) || 0) + (parseFloat(formData.tax_amount) || 0) + (parseFloat(formData.shipping_amount) || 0)).toFixed(2)}
+                    {formatCurrency((parseFloat(formData.subtotal) || 0) + (parseFloat(formData.tax_amount) || 0) + (parseFloat(formData.shipping_amount) || 0))}
                   </span>
                 </div>
               </CardContent>
