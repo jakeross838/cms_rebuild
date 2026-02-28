@@ -131,6 +131,13 @@ export default function BillDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.bill_number.trim()) { toast.error('Bill Number is required'); return }
+    if (!formData.vendor_id) { toast.error('Vendor is required'); return }
+    if (!formData.status) { toast.error('Status is required'); return }
+    if (!formData.amount.trim()) { toast.error('Amount is required'); return }
+    if (!formData.balance_due.trim()) { toast.error('Balance Due is required'); return }
+    if (!formData.bill_date) { toast.error('Bill Date is required'); return }
+    if (!formData.due_date) { toast.error('Due Date is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

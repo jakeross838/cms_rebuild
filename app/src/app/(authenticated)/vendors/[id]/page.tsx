@@ -111,6 +111,7 @@ export default function VendorDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.name.trim()) { toast.error('Company name is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

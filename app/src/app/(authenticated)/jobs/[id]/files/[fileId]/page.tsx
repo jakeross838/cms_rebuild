@@ -101,6 +101,7 @@ export default function FileDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.filename.trim()) { toast.error('Filename is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

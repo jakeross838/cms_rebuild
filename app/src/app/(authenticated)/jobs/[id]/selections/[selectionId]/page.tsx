@@ -114,6 +114,8 @@ export default function SelectionDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.category_id.trim()) { toast.error('Category ID is required'); return }
+    if (!formData.option_id.trim()) { toast.error('Option ID is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

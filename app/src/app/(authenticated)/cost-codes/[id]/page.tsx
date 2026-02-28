@@ -102,6 +102,9 @@ export default function CostCodeDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.code.trim()) { toast.error('Code is required'); return }
+    if (!formData.name.trim()) { toast.error('Name is required'); return }
+    if (!formData.division.trim()) { toast.error('Division is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

@@ -129,6 +129,13 @@ export default function ARInvoiceDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.invoice_number.trim()) { toast.error('Invoice Number is required'); return }
+    if (!formData.client_id) { toast.error('Client is required'); return }
+    if (!formData.status) { toast.error('Status is required'); return }
+    if (!formData.amount.trim()) { toast.error('Amount is required'); return }
+    if (!formData.balance_due.trim()) { toast.error('Balance Due is required'); return }
+    if (!formData.invoice_date) { toast.error('Invoice Date is required'); return }
+    if (!formData.due_date) { toast.error('Due Date is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

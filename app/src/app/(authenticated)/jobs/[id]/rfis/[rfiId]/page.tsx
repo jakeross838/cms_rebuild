@@ -120,6 +120,7 @@ export default function RFIDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.subject.trim()) { toast.error('Subject is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

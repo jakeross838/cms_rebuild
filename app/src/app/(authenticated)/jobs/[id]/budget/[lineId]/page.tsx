@@ -115,6 +115,7 @@ export default function BudgetLineDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.description.trim()) { toast.error('Description is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

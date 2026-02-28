@@ -156,6 +156,9 @@ export default function JournalEntryDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.entry_date) { toast.error('Entry Date is required'); return }
+    if (!formData.status) { toast.error('Status is required'); return }
+    if (!formData.source_type) { toast.error('Source Type is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

@@ -128,6 +128,9 @@ export default function JobPunchItemDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.title.trim()) { toast.error('Title is required'); return }
+    if (!formData.status) { toast.error('Status is required'); return }
+    if (!formData.priority) { toast.error('Priority is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

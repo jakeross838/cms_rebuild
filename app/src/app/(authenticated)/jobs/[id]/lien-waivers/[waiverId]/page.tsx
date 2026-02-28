@@ -135,6 +135,7 @@ export default function LienWaiverDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.waiver_type) { toast.error('Type is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

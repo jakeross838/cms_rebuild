@@ -118,6 +118,11 @@ export default function InsurancePolicyDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.vendor_id) { toast.error('Vendor is required'); return }
+    if (!formData.insurance_type.trim()) { toast.error('Insurance type is required'); return }
+    if (!formData.carrier_name.trim()) { toast.error('Carrier name is required'); return }
+    if (!formData.policy_number.trim()) { toast.error('Policy number is required'); return }
+    if (!formData.expiration_date.trim()) { toast.error('Expiration date is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

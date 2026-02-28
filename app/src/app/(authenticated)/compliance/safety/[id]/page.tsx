@@ -158,6 +158,12 @@ export default function SafetyIncidentDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.incident_number.trim()) { toast.error('Incident number is required'); return }
+    if (!formData.title.trim()) { toast.error('Title is required'); return }
+    if (!formData.incident_type.trim()) { toast.error('Incident type is required'); return }
+    if (!formData.severity.trim()) { toast.error('Severity is required'); return }
+    if (!formData.incident_date.trim()) { toast.error('Incident date is required'); return }
+    if (!formData.job_id.trim()) { toast.error('Job is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

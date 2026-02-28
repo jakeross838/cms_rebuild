@@ -107,6 +107,7 @@ export default function ContactDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.name.trim()) { toast.error('Name is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

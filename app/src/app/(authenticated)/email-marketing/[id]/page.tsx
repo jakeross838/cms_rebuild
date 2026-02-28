@@ -125,6 +125,7 @@ export default function CampaignDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.name.trim()) { toast.error('Campaign Name is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

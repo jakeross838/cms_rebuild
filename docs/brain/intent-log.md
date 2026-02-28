@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-02-27: Session 32 — Error Handling Hardening (66 files)
+
+### Why (useEffect try/catch — 15 files)
+- 15 async functions inside useEffect hooks had no try/catch — if the `await` itself threw (network failure, DNS timeout), the rejection was completely unhandled
+- 7 were dropdown loaders (bids/new, change-orders/new, communications/new, insurance/new, licenses/new, contacts/new, contracts/new) — non-critical, dropdown stays empty
+- 8 were detail page loaders (bids/[id], change-orders/[id], clients/[id], insurance/[id], contracts/[id], cost-codes/[id], vendors/[id], warranties/[id]) — must set error state and stop loading spinner
+- Fixed: all 15 wrapped in try/catch with appropriate error handling
+
+### Why (Archive handler try/catch — 51 files)
+- 51 archive/delete handlers used `const { error } = await supabase.from().update()` without try/catch
+- If the `await` itself throws (not the Supabase error return), the exception was completely unhandled
+- This is different from Supabase's `{ error }` destructuring — network-level failures bypass that pattern
+- Fixed: all 51 wrapped in try/catch with `toast.error()` + `setError()` in catch block
+- Special case: `archive-job-button.tsx` uses `toast.error()` + `setArchiving(false)` (no `setError` state in that component)
+
+### Why (Duplicate select options — 1 file)
+- `change-orders/[id]/page.tsx` had duplicate capitalized options (`"Credit"`, `"Allowance"`) alongside lowercase versions (`"credit"`, `"allowance"`)
+- Users could save inconsistent values depending on which option they clicked
+- Fixed: removed the duplicate capitalized options, kept only lowercase
+
 ## 2026-02-27: Session 31 (continued) — Badge Consistency + API Security + Accessibility
 
 ### Why (API Security — 3 files, 7 queries)

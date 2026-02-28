@@ -1,5 +1,32 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 32 — Error Handling Hardening (2026-02-27)
+
+### useEffect Async Error Handling
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All 15 useEffect async functions have try/catch | No unhandled promise rejections on network failure | pass |
+| Detail page loaders set error state on catch | setError() + setLoading(false) in catch block | pass |
+| Dropdown loaders fail silently on catch | Empty dropdown, no crash | pass |
+| TypeScript compiles clean | tsc --noEmit passes | pass |
+
+### Archive/Delete Handler Error Handling
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All 51 archive handlers have try/catch | No unhandled rejections on network failure | pass |
+| Catch blocks show user-facing error | toast.error() called with message | pass |
+| archive-job-button.tsx uses toast only (no setError) | Component has no error state | pass |
+
+### Data Consistency
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| change-orders/[id] has no duplicate select options | Only lowercase values in change_type select | pass |
+
+### Audits That Passed (No Fixes Needed)
+| Audit | Result |
+|-------|--------|
+| company_id filter on all archive/update queries | All 51 handlers include company_id guard |
+
 ## Session 31 (continued) — Badge Consistency + API Security (2026-02-27)
 
 ### API Security

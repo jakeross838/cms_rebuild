@@ -125,6 +125,10 @@ export default function PunchItemDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.title.trim()) { toast.error('Title is required'); return }
+    if (!formData.job_id) { toast.error('Job is required'); return }
+    if (!formData.status) { toast.error('Status is required'); return }
+    if (!formData.priority) { toast.error('Priority is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

@@ -124,6 +124,7 @@ export default function TimeEntryDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.entry_date) { toast.error('Date is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

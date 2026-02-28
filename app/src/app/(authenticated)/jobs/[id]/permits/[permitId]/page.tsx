@@ -126,6 +126,7 @@ export default function PermitDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.permit_type.trim()) { toast.error('Permit Type is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

@@ -1,5 +1,20 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 32 — Error Handling Hardening (2026-02-27)
+
+### useEffect Async Error Handling (15 files)
+- **Dropdown loaders** (7 files: bids/new, change-orders/new, communications/new, insurance/new, licenses/new, contacts/new, contracts/new) — wrapped in try/catch with empty catch (non-critical)
+- **Detail page loaders** (8 files: bids/[id], change-orders/[id], clients/[id], insurance/[id], contracts/[id], cost-codes/[id], vendors/[id], warranties/[id]) — wrapped in try/catch with `setError()` + `setLoading(false)`
+
+### Archive/Delete Handler Error Handling (51 files)
+- All 51 archive/delete handlers now have try/catch wrapping the entire async body
+- Pattern: catch block calls `setError(msg)` + `toast.error(msg)` with `(err as Error)?.message || 'Operation failed'`
+- Special case: `archive-job-button.tsx` uses `toast.error()` + `setArchiving(false)` (no setError state)
+- Files: 31 root detail pages + 20 job sub-detail pages
+
+### Data Consistency Fix
+- **change-orders/[id]** — removed duplicate capitalized select options ("Credit", "Allowance") — only lowercase values remain
+
 ## Session 31 (continued) — Badge Consistency + API Security + Accessibility (2026-02-27)
 
 ### API Security Fixes

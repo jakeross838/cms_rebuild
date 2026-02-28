@@ -114,6 +114,8 @@ export default function EmployeeDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.first_name.trim()) { toast.error('First Name is required'); return }
+    if (!formData.last_name.trim()) { toast.error('Last Name is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

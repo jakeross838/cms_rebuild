@@ -102,6 +102,8 @@ export default function SubmittalDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.submittal_number.trim()) { toast.error('Submittal Number is required'); return }
+    if (!formData.title.trim()) { toast.error('Title is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

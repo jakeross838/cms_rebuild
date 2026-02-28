@@ -113,6 +113,7 @@ export default function WarrantyDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.title.trim()) { toast.error('Title is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

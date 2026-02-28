@@ -115,6 +115,7 @@ export default function ChartOfAccountsDetailPage() {
       if (archiveError) throw archiveError
       toast.success('Archived')
       router.push('/financial/chart-of-accounts')
+      router.refresh()
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
       setError(errorMessage)
@@ -124,6 +125,10 @@ export default function ChartOfAccountsDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.account_number.trim()) { toast.error('Account Number is required'); return }
+    if (!formData.name.trim()) { toast.error('Account Name is required'); return }
+    if (!formData.account_type) { toast.error('Account Type is required'); return }
+    if (!formData.normal_balance) { toast.error('Normal Balance is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

@@ -111,6 +111,7 @@ export default function ContractTemplateDetailPage() {
       if (archiveError) throw archiveError
       toast.success('Archived')
       router.push('/legal')
+      router.refresh()
     } catch (err) {
       const errorMessage = (err as Error)?.message || 'Failed to archive'
       setError(errorMessage)
@@ -120,6 +121,8 @@ export default function ContractTemplateDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.name.trim()) { toast.error('Name is required'); return }
+    if (!formData.contract_type) { toast.error('Contract Type is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

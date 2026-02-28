@@ -121,6 +121,7 @@ export default function InspectionDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.inspection_type.trim()) { toast.error('Type is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)

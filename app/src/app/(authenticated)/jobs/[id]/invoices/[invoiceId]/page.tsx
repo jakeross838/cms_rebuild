@@ -127,6 +127,7 @@ export default function JobInvoiceDetailPage() {
   }
 
   const handleSave = async () => {
+    if (!formData.amount.trim()) { toast.error('Amount is required'); return }
     setSaving(true)
     setError(null)
     setSuccess(false)
