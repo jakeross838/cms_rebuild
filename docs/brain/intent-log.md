@@ -1,16 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
-## 2026-02-28: Session 36 — Detail Page React Query Migration
+## 2026-02-28: Session 36 — Full React Query UI Migration (90+ pages)
 
-### Why (10 detail pages migrated)
-- Detail pages were using direct `createClient()` + `useAuth()` + `useEffect` fetch pattern, which bypasses the API route layer and its middleware (rate limiting, audit logging, RBAC checks)
-- React Query hooks route all requests through `/api/v1/` or `/api/v2/` endpoints, ensuring consistent multi-tenant security, caching, and error handling
-- Eliminates ~30-50 lines of boilerplate per page (manual loading/saving/error states, fetch logic, company_id extraction)
-- Mutation hooks (`useUpdate`, `useDelete`) automatically invalidate related query caches, keeping list pages fresh without manual refetch
-- `isPending` from mutation hooks replaces manual `saving` state, reducing state management complexity
-- `toast.success()`/`toast.error()` replaces verbose success/error banner state for cleaner UX
-- `invoices/[id]` was correctly skipped because no hooks exist for the `invoices` table — only `invoice_extractions` has hooks, and that is a different entity (Module 13 AI processing vs the raw invoices table)
-- For journal entries and GL accounts, no delete hooks are exported because accounting entities should not be soft-deleted via a DELETE endpoint — they use status changes or `deleted_at` via PATCH instead, which is the correct accounting pattern
+### Why
+- 108 files migrated from direct `createClient()` + `useAuth()` + `useEffect` to React Query hooks
+- Direct Supabase queries bypass the API route layer and its middleware (rate limiting, audit logging, RBAC checks) — hooks route through `/api/v1/` or `/api/v2/` endpoints
+- Net -3,657 lines of boilerplate removed (manual loading/saving/error/success states, fetch logic, company_id extraction, cache invalidation)
+- Mutation hooks automatically invalidate related query caches — list pages refresh after saves without manual refetch
+- 15 hook type files widened (number|undefined → number|null) to match page patterns like `value || null`
+- Pages with dropdown `<select>` elements still use `createClient` for loading options — only the mutation (create/update/delete) was migrated to hooks
+- ~7 entity pages correctly skipped (contacts, compliance/insurance, compliance/licenses, compliance/lien-law, invoices, submittals, warranty-claims) — no matching hooks exist
 
 ## 2026-02-28: Session 35 — React Query Hooks for All 52 Modules
 

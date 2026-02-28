@@ -1,33 +1,29 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
-## Session 36 — Detail Page React Query Migration (2026-02-28)
+## Session 36 — Full React Query UI Migration (2026-02-28)
 
 ### Type Safety
 | Test Case | Expected | Status |
 |-----------|----------|--------|
-| `tsc --noEmit` — zero errors in 10 migrated detail pages | no errors in migrated files | PASS |
-| All pre-existing errors remain only in `new/page.tsx` files | unchanged from before migration | PASS |
+| `tsc --noEmit` — zero errors across all 108 migrated files | 0 errors | PASS |
+| 15 hook type files widened (number types to `| null`) compile clean | 0 errors | PASS |
 
-### Migration Correctness (all 10 files)
+### Migration Correctness (90+ pages)
 | Test Case | Expected | Status |
 |-----------|----------|--------|
-| No `createClient` import remains in migrated files | removed | PASS |
-| No `useAuth` import remains in migrated files | removed | PASS |
-| No manual `loading`/`saving`/`error`/`success` useState in migrated files | removed | PASS |
-| No `useEffect` with Supabase `.from().select()` in migrated files | removed | PASS |
-| Each file uses `useDetail(entityId)` for data fetching | present | PASS |
-| Each file uses `useUpdate(entityId)` for saves | present | PASS |
-| Each file uses `useDelete()` or `useUpdate()` for archive | present | PASS |
-| `handleSave` calls `updateEntity.mutateAsync()` | present | PASS |
-| `handleDelete/Archive` calls `deleteEntity.mutateAsync()` or `updateEntity.mutateAsync()` | present | PASS |
-| Save button shows `updateEntity.isPending` spinner | present | PASS |
-| Error banner uses `fetchError?.message` | present | PASS |
-| `toast.success()` on save/archive success | present | PASS |
-| `toast.error()` on save/archive failure | present | PASS |
-| `formData` state, `editing` state, `showArchiveDialog` state preserved | unchanged | PASS |
-| `handleChange` function preserved | unchanged | PASS |
+| Detail pages use `useDetail(id)` for data fetching | present in all migrated | PASS |
+| Detail pages use `useUpdate(id)` for saves | present | PASS |
+| Detail pages use `useDelete()` or `useUpdate()` for archive | present | PASS |
+| Create pages use `useCreate().mutateAsync()` for submission | present | PASS |
+| Create page buttons show `createHook.isPending` | present | PASS |
+| `company_id`/`created_by` removed from create payloads (API handles) | removed | PASS |
+| `toast.success()`/`toast.error()` on all mutations | present | PASS |
+| Dropdown pages retain `createClient` for `<select>` option loading only | correct | PASS |
+| No-dropdown create pages fully removed `useAuth`/`createClient` | removed | PASS |
+| Job sub-page detail pages use entity hooks with parent job context | present | PASS |
+| Job sub-page create pages use entity create hooks | present | PASS |
+| `formData`, `editing`, `showArchiveDialog` state preserved in all files | unchanged | PASS |
 | All JSX structure preserved | unchanged | PASS |
-| `ConfirmDialog` for archive preserved | unchanged | PASS |
 
 ### Skipped File Verification
 | Test Case | Expected | Status |
