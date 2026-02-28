@@ -75,7 +75,7 @@ export default async function SupportPage({
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{ticket.subject}</span>
                     <Badge className={getStatusColor(ticket.status)}>{formatStatus(ticket.status)}</Badge>
-                    {ticket.priority === 'high' && <Badge className="bg-red-100 text-red-700 rounded">High</Badge>}
+                    {ticket.priority === 'high' && <Badge className={`${getStatusColor('high')} rounded`}>High</Badge>}
                     {ticket.category && <Badge variant="outline" className="text-xs">{ticket.category}</Badge>}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">{formatDate(ticket.created_at)}</p>

@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, DollarSign, ArrowRightLeft, Clock } from 'luc
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency, formatRelativeDate } from '@/lib/utils'
+import { formatCurrency, formatRelativeDate, getStatusColor } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Cash Flow' }
 
@@ -174,7 +174,7 @@ export default async function CashFlowPage() {
                     <p className="text-sm font-semibold text-green-600">
                       +{formatCurrency(Number(inv.amount))}
                     </p>
-                    <Badge className="bg-green-100 text-green-700 rounded text-xs">Paid</Badge>
+                    <Badge className={`${getStatusColor('paid')} rounded text-xs`}>Paid</Badge>
                   </div>
                 </div>
               ))}

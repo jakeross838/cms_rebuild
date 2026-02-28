@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getServerAuth } from '@/lib/supabase/get-auth'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatStatus, getStatusColor } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 // ── Page ─────────────────────────────────────────────────────────────
@@ -204,8 +204,8 @@ export default async function AccuracyEnginePage() {
                       {est.total != null && (
                         <span className="text-sm font-medium">{formatCurrency(est.total)}</span>
                       )}
-                      <Badge className="bg-slate-100 text-slate-700">
-                        {est.status}
+                      <Badge className={getStatusColor(est.status)}>
+                        {formatStatus(est.status)}
                       </Badge>
                     </div>
                   </div>

@@ -135,7 +135,7 @@ export default async function RfisPage({
                         <span className="font-medium">{rfi.subject}</span>
                         <Badge className={getStatusColor(rfi.status)}>{formatStatus(rfi.status)}</Badge>
                         {rfi.priority === 'high' && (
-                          <Badge className="bg-red-100 text-red-700 rounded">High</Badge>
+                          <Badge className={`${getStatusColor('high')} rounded`}>High</Badge>
                         )}
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

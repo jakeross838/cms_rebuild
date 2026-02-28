@@ -233,9 +233,9 @@ export default function TrainingCourseDetailPage() {
                 <Badge className={getStatusColor(course.difficulty || 'beginner')}>{formatStatus(course.difficulty || 'beginner')}</Badge>
               )}
               {course.is_published ? (
-                <Badge className="bg-green-100 text-green-700 rounded">Published</Badge>
+                <Badge className={`${getStatusColor('published')} rounded`}>Published</Badge>
               ) : (
-                <Badge className="bg-warm-100 text-warm-700 rounded">Draft</Badge>
+                <Badge className={`${getStatusColor('draft')} rounded`}>Draft</Badge>
               )}
               {formattedDuration && (
                 <span className="flex items-center gap-1 text-sm text-muted-foreground">

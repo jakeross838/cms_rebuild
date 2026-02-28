@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
 import { createClient } from '@/lib/supabase/server'
-import { formatDate, formatStatus} from '@/lib/utils'
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 
 interface NotificationRow {
   id: string
@@ -139,7 +139,7 @@ function NotificationContent({ notification }: { notification: NotificationRow }
             <span className="text-sm font-medium">{notification.title}</span>
             <Badge variant="outline" className="text-xs">{formatStatus(notification.event_type)}</Badge>
             {notification.urgency === 'high' && (
-              <Badge className="bg-red-100 text-red-700 text-xs rounded">Urgent</Badge>
+              <Badge className={`${getStatusColor('urgent')} text-xs rounded`}>Urgent</Badge>
             )}
           </div>
           {notification.body && (
