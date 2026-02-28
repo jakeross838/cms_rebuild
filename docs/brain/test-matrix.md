@@ -21,8 +21,32 @@
 |-----------|----------|--------|
 | payables/new rejects zero amount | Error: "Amount must be greater than zero" | pass |
 | invoices/new rejects zero amount | Error: "Amount must be greater than zero" | pass |
-| payables/new rejects empty amount (NaN) | Same error | pass |
-| invoices/new rejects empty amount (NaN) | Same error | pass |
+| receivables/new rejects zero amount | Error: "Amount must be greater than zero" | pass |
+| inventory/new rejects empty quantity | Error: "Quantity must be greater than zero" | pass |
+| draw-requests/new rejects non-numeric draw_number | Error: "Draw number must be a positive number" | pass |
+| jobs/[id]/draws/new rejects non-numeric draw_number | Same error | pass |
+
+### useEffect Dependency Cleanup
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `supabase` in useEffect deps across authenticated pages | Grep finds 0 matches | pass |
+| All useEffect deps contain only reactive values | No missing companyId/params deps | pass |
+| TypeScript compiles clean after removal | tsc --noEmit passes | pass |
+
+### Deleted_at Filter Coverage
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| bid_responses count in bidding dashboard filters archived | .is('deleted_at', null) present | pass |
+| bid_responses list in API endpoint filters archived | .is('deleted_at', null) present | pass |
+| All tenant tables with deleted_at have filter in list queries | Comprehensive audit passed | pass |
+
+### Audits That Passed (No Fixes Needed)
+| Audit | Result |
+|-------|--------|
+| company_id on all .insert() calls | All 60+ create forms include company_id |
+| company_id on all .update() calls | All 61 files with .update() include company_id guard |
+| Empty useEffect deps after supabase removal | All 7 files with [] deps are correct |
+| Unused imports | No actual unused imports found |
 
 ## Session 30 — Utility Centralization + Display Consistency (2026-02-27)
 

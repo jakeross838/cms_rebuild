@@ -12,10 +12,24 @@
 - `dashboards/financial` and `intelligence/accuracy-engine` included archived budget lines in estimated/actual totals — skewed accuracy metrics
 - Fixed: added `.neq('status', 'denied')` to invoice totals, `.is('deleted_at', null)` to budget line queries
 
-### Why (Zero-Amount Validation — 2 files)
-- `financial/payables/new` and `invoices/new` validated NaN but allowed zero amounts
-- `parseFloat("0") = 0` passes `isNaN()` check, but a $0 bill or invoice is always a data entry error
+### Why (Zero-Amount Validation — 3 files)
+- `financial/payables/new`, `invoices/new`, and `financial/receivables/new` validated NaN but allowed zero amounts
+- `parseFloat("0") = 0` passes `isNaN()` check, but a $0 bill/invoice/receivable is always a data entry error
 - Fixed: changed to `isNaN(amount) || amount <= 0` with user-friendly error message
+
+### Why (Numeric Input Validation — 3 files)
+- `jobs/[id]/inventory/new` had bare `parseFloat(formData.quantity)` with no NaN or zero check
+- `draw-requests/new` and `jobs/[id]/draws/new` had bare `parseInt(formData.draw_number, 10)` — NaN on non-numeric input
+- Fixed: added `isNaN()` + `<= 0` guards before database insert
+
+### Why (useEffect Dependency Cleanup — 78 files)
+- 78 client components had `supabase` in useEffect dependency arrays
+- `createClient()` returns a singleton — including it in deps was unnecessary clutter
+- Removed from all files; only meaningful reactive values (params.id, companyId) remain
+
+### Why (Missing deleted_at Filter — 2 files)
+- `intelligence/bidding` count query and `api/v2/bid-packages/[id]/responses` list endpoint missing `.is('deleted_at', null)` on bid_responses
+- Archived bid responses were being included in KPI counts and list results
 
 ## 2026-02-27: Session 30 — Utility Centralization + Display Consistency
 

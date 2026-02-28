@@ -14,6 +14,19 @@
 ### Form Validation Fixes
 - **payables/new** — amount must be > 0 (was allowing zero)
 - **invoices/new** — amount must be > 0 (was allowing zero)
+- **receivables/new** — amount must be > 0 (was allowing zero)
+- **jobs/[id]/inventory/new** — quantity must be > 0 (was sending NaN on empty)
+- **draw-requests/new** — draw_number must be positive integer (was sending NaN)
+- **jobs/[id]/draws/new** — draw_number must be positive integer (was sending NaN)
+
+### useEffect Dependency Cleanup (78 files)
+- Removed `supabase` from all useEffect dependency arrays in client components
+- createClient() returns a singleton — not a meaningful reactive dependency
+- Only params.id, companyId, and other reactive values remain in deps
+
+### Query Filter Fixes (Additional)
+- **intelligence/bidding** — bid_responses count query now filters `.is('deleted_at', null)`
+- **api/v2/bid-packages/[id]/responses** — list endpoint now filters `.is('deleted_at', null)`
 
 ## Session 30 — Utility Centralization + Display Consistency (2026-02-27)
 
