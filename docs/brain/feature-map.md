@@ -2,6 +2,9 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Error Display Banners Added (35 pages)
+35 non-job detail pages had `const [error, setError]` but no error banner JSX — errors from save/archive were invisible (only toast). Added `{error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}` to all 35 pages.
+
 ### Missing Edit Validation Added (4 pages)
 - contracts/[id] (title), permits/[id] (permit_number), time-clock/[id] (entry_date, clock_in), warranties/[id] (title)
 

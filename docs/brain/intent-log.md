@@ -9,6 +9,7 @@
 - 2 archive handlers (contacts/[id], invoices/[id]) were missing `router.refresh()` after `router.push()` — stale list data could show the archived item
 - 4 detail pages (contracts, permits, time-clock, warranties) missing JS validation in handleSave — added required field checks
 - 24 detail pages had redundant success state banner + toast.success() — removed banner, standardized on toast-only feedback (-119 lines)
+- 35 non-job detail pages declared error state but never rendered the error banner — errors from save/archive were invisible to users. Added error display JSX to all 35
 - Budget pages (last 2 client-side Supabase pages) migrated to React Query via new flat API routes (`/api/v2/budget-lines/`) that solve the budgetId problem
 - **Result: Zero client-side Supabase queries remain in authenticated pages**
 

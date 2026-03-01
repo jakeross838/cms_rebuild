@@ -2,6 +2,13 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Error Display Banners (35 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 35 non-job detail pages render error banner JSX | Error visible on save/archive failure | PASS |
+| Error banner uses `text-destructive bg-destructive/10` styling | Consistent with other pages | PASS |
+| `tsc --noEmit` — zero errors after 35 files changed | 0 errors | PASS |
+
 ### Edit Validation (4 pages)
 | Test Case | Expected | Status |
 |-----------|----------|--------|
